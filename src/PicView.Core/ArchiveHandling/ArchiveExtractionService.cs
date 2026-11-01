@@ -156,7 +156,8 @@ public class ArchiveExtractionService
 
     /// <summary>
     ///     The file that <paramref name="entry" /> of the open archive was extracted to, or <c>null</c> when it is not
-    ///     extracted. For a fully extracted archive it checks the disk.
+    ///     extracted. A file still being written counts already, so look for it in the files a tab lists, which are
+    ///     written. For a fully extracted archive it checks the disk.
     /// </summary>
     public string? ExtractedPathOf(string entry)
     {
@@ -360,7 +361,6 @@ public class ArchiveExtractionService
                     if (!string.IsNullOrEmpty(extractedPath))
                     {
                         extractedMap[entry.Key] = extractedPath;
-                        Remember(entry.Key, extractedPath, tempDirectory);
                     }
 
                     // Stop early once all requested keys have been extracted
@@ -513,8 +513,7 @@ public class ArchiveExtractionService
                     return false;
                 }
 
-                var extractedPath = WriteEntryFlat(entry, tempDirectory, sharedFolderCount);
-                Remember(entry.Key!, extractedPath, tempDirectory);
+                WriteEntryFlat(entry, tempDirectory, sharedFolderCount);
                 extractedCount++;
                 batchCounter++;
                 left--;
@@ -752,7 +751,7 @@ public class ArchiveExtractionService
         return -1;
     }
 
-    // A cancelled extraction can still finish a file after its folder was cleaned up, so only a file in a folder that is
+    // A cancelled extraction can still start a file after its folder was cleaned up, so only a file in a folder that is
     // still there is remembered
     private void Remember(string entryKey, string extractedPath, string folder)
     {
@@ -805,7 +804,9 @@ public class ArchiveExtractionService
     private static string? PathInFolder(string path, string folder) =>
         IsInFolder(path, folder) ? path[(Path.TrimEndingDirectorySeparator(folder.AsSpan()).Length + 1)..] : null;
 
-    private static string WriteEntryFlat(IArchiveEntry entry, string destinationDirectory, int sharedFolderCount)
+    // Remembers the entry before its file is there: the watcher can list a page once it is, and a tab that waits for the
+    // page shows and records it at once
+    private string WriteEntryFlat(IArchiveEntry entry, string destinationDirectory, int sharedFolderCount)
     {
         // Flatten so the temp directory ends up with a flat layout that the rest of the navigation
         // pipeline can list without enabling recursive enumeration.
@@ -825,6 +826,7 @@ public class ArchiveExtractionService
             } while (File.Exists(destinationPath));
         }
 
+        Remember(entry.Key!, destinationPath, destinationDirectory);
         using var entryStream = entry.OpenEntryStream();
         using var fileStream = File.Create(destinationPath);
         entryStream.CopyTo(fileStream);

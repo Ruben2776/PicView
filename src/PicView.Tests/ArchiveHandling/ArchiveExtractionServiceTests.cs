@@ -613,6 +613,52 @@ public class ArchiveExtractionServiceTests
         }
     }
 
+    [Fact]
+    public async Task ExtractRemaining_PageFileIsThere_ItsEntryIsKnownAlready()
+    {
+        // The watcher can list a page once its file is there, and a tab that waits for it shows and records it at once. A
+        // large page takes long enough to write that its file is seen while it is written
+        var folder = Directory.CreateDirectory(
+            Path.Combine(Path.GetTempPath(), "PicViewEntries_" + Guid.NewGuid().ToString("N"))).FullName;
+        var zip = Path.Combine(folder, "large.zip");
+        using (var archive = ZipFile.Open(zip, ZipArchiveMode.Create))
+        {
+            // Zeros compress to almost nothing, so only the extracted file is large
+            using var stream = archive.CreateEntry("large.jpg").Open();
+            var zeros = new byte[1024 * 1024];
+            for (var i = 0; i < 64; i++)
+            {
+                stream.Write(zeros);
+            }
+        }
+
+        var service = new ArchiveExtractionService();
+        var preparation = await service.PrepareArchiveAsync(zip, (_, _) => Task.FromResult(false), string.CompareOrdinal);
+        var page = Path.Combine(preparation!.Value.TempDirectory, "large.jpg");
+
+        try
+        {
+            var extraction = Task.Run(() => service.ExtractRemaining(zip, ["large.jpg"],
+                ct: TestContext.Current.CancellationToken), TestContext.Current.CancellationToken);
+            // Looks as often as it can, so it sees the file within the write
+            var deadline = DateTime.UtcNow + TimeSpan.FromSeconds(10);
+            while (!File.Exists(page) && !extraction.IsCompleted && DateTime.UtcNow < deadline)
+            {
+                Thread.SpinWait(10);
+            }
+
+            var entryWhenThere = service.EntryOf(page);
+            await extraction.WaitAsync(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken);
+
+            Assert.Equal("large.jpg", entryWhenThere);
+        }
+        finally
+        {
+            service.Cleanup();
+            Directory.Delete(folder, true);
+        }
+    }
+
     // A solid 7z, one block, of img_01.jpg to img_05.jpg, made with 7-Zip: 7z a -t7z -ms=on -mx=9
     private const string SolidSevenZip =
         "N3q8ryccAARTbgTkngAAAAAAAAAiAAAAAAAAAFMK2JrgACcAFV0Af7Yb5ssI8BnpyTc9vFejmhDnqmt2AAAAgTMHrg/P2W+8D+vqnL82Pf6J" +
