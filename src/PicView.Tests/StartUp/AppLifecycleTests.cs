@@ -14,10 +14,12 @@ using PicView.Core.Config;
 using PicView.Core.Favorites;
 using PicView.Core.FileHandling;
 using PicView.Core.FileHistory;
+using PicView.Core.ImageDecoding;
 using PicView.Core.IPlatform;
 using PicView.Core.Keybindings;
 using PicView.Core.Localization;
 using PicView.Core.Models;
+using PicView.Core.Navigation.Tiff;
 using PicView.Core.Sizing;
 using PicView.Core.Update;
 using PicView.Core.ViewModels;
@@ -48,7 +50,10 @@ public class AppLifecycleTests : IAsyncDisposable
         ObservableSystem.DefaultFrameProvider = new MockFrameProvider();
         _folder = Path.Combine(Path.GetTempPath(), "PicViewAppLifecycleTests_" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(_folder);
-        _core = new CoreViewModel(new NoPlatform(), file => ValueTask.FromResult(new ImageModel { FileInfo = file }));
+        _core = new CoreViewModel(new NoPlatform(), file => ValueTask.FromResult(
+            file.Extension.Equals(".tif", StringComparison.OrdinalIgnoreCase)
+                ? ThreePageTiff(file)
+                : new ImageModel { FileInfo = file }));
         _provider = new LifecycleWindowProvider(_core);
         _sharedFiles = new FolderSharedFiles(_folder);
     }
@@ -609,8 +614,104 @@ public class AppLifecycleTests : IAsyncDisposable
         }
     }
 
+    [AvaloniaFact]
+    public async Task FileHistoryPrevAndNext_BetweenPagesOfTheShownTiff_TurnThePageWithoutOpeningTheFile()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var window = app.MainWindows.Open[0];
+        var vm = ViewModelOf(window);
+        var tab = vm.WindowTabs.ActiveTab.CurrentValue;
+        var tiff = Path.Combine(_folder, "pages.tif");
+        await File.WriteAllBytesAsync(tiff, [0x49, 0x49, 0x2A, 0x00], TestContext.Current.CancellationToken);
+        Application.Current!.DataContext = _core;
+        try
+        {
+            await SourceOpener.OpenAsync(window, _core, tiff);
+            var model = tab.Model;
+            tab.ShowPage(1);
+            tab.ShowPage(2);
+            // A load that begins after this one makes it stale, which tells whether a step opened the file
+            var load = tab.BeginLoad();
+
+            await vm.ActionRunner!.Run(Actions.FileHistoryPrev);
+            var pageAfterBack = model.TiffNavigation!.CurrentPage;
+            var imageAfterBack = model.Image;
+            await vm.ActionRunner.Run(Actions.FileHistoryPrev);
+            var pageAfterSecondBack = model.TiffNavigation.CurrentPage;
+            await vm.ActionRunner.Run(Actions.FileHistoryNext);
+
+            Assert.Equal(1, pageAfterBack);
+            Assert.Same(model.TiffNavigation.Pages![1], imageAfterBack);
+            Assert.Equal(0, pageAfterSecondBack);
+            Assert.Equal(1, model.TiffNavigation.CurrentPage);
+            Assert.Same(model, tab.Model);
+            Assert.True(tab.IsLatestLoad(load));
+            Assert.Equal(1, tab.ViewHistory.Cursor);
+            Assert.Equal([0, 1, 2], tab.ViewHistory.Entries.Select(entry => entry.Page));
+        }
+        finally
+        {
+            Application.Current.DataContext = null;
+        }
+    }
+
+    [AvaloniaFact]
+    public async Task FileHistoryPrev_FromAnotherFileToATiffPage_OpensTheFileAtThatPage()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var window = app.MainWindows.Open[0];
+        var vm = ViewModelOf(window);
+        var tab = vm.WindowTabs.ActiveTab.CurrentValue;
+        var tiff = Path.Combine(_folder, "pages.tif");
+        var other = Path.Combine(_folder, "other.png");
+        await File.WriteAllBytesAsync(tiff, [0x49, 0x49, 0x2A, 0x00], TestContext.Current.CancellationToken);
+        await File.WriteAllBytesAsync(other, [0x89, 0x50, 0x4E, 0x47], TestContext.Current.CancellationToken);
+        Application.Current!.DataContext = _core;
+        try
+        {
+            await SourceOpener.OpenAsync(window, _core, tiff);
+            tab.ShowPage(1);
+            await SourceOpener.OpenAsync(window, _core, other);
+            // Opening a file from a page of a TIFF goes to that file, it doesn't turn the page
+            Assert.Equal(other, tab.Model.FileInfo?.FullName);
+
+            await vm.ActionRunner!.Run(Actions.FileHistoryPrev);
+
+            Assert.Equal(tiff, tab.Model.FileInfo?.FullName);
+            Assert.Equal(1, tab.Model.TiffNavigation!.CurrentPage);
+            Assert.Same(tab.Model.TiffNavigation.Pages![1], tab.Model.Image);
+            Assert.Equal(1, tab.ViewHistory.Cursor);
+            // The file opened at page 1 at once. Page 0 would have been recorded as something else showing, and ended the step
+            Assert.Equal([tiff, tiff, other], tab.ViewHistory.Entries.Select(entry => entry.Path));
+            Assert.Equal([0, 1, -1], tab.ViewHistory.Entries.Select(entry => entry.Page));
+        }
+        finally
+        {
+            Application.Current.DataContext = null;
+        }
+    }
+
     private static WriteableBitmap NewBitmap() =>
         new(new PixelSize(4, 4), new Vector(96, 96), PixelFormat.Bgra8888, AlphaFormat.Premul);
+
+    /// <summary>
+    /// A multi-page TIFF as the image loader returns it: one bitmap per page, shown at the first.
+    /// </summary>
+    private static ImageModel ThreePageTiff(FileInfo file)
+    {
+        object[] pages = [NewBitmap(), NewBitmap(), NewBitmap()];
+        return new ImageModel
+        {
+            FileInfo = file,
+            Image = pages[0],
+            PixelWidth = 4,
+            PixelHeight = 4,
+            ImageType = ImageType.Bitmap,
+            TiffNavigation = new TiffNavigationInfo { PageCount = pages.Length, Pages = pages }
+        };
+    }
 
     /// <summary>
     /// The lock a tab's View History takes for each of its operations. A test holds it to stop <c>BeginStep</c> on its

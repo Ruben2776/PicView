@@ -166,13 +166,21 @@ public class TiffNavigationTests : IDisposable
     public async Task RequestPage_ThenNavigatingToTheTiff_ShowsThatPageFirst()
     {
         var tiffModel = CreateTiffModel(_files[1], 3);
+        var pages = tiffModel.TiffNavigation!.Pages!;
         SetModel(1, tiffModel);
         _tab.Model = new ImageModel();
         _tab.RequestPage(_files[1].FullName, 2);
+        var shown = new List<object?>();
+        using var subscription = _tab.Image.Subscribe(shown.Add);
+        // Subscribing replays the image the tab shows already
+        shown.Clear();
 
         await _iterator.NavigateAsync(NavigateTo.Next, SkipAmount.One, new CancellationTokenSource());
 
-        Assert.Equal(2, tiffModel.TiffNavigation!.CurrentPage);
+        Assert.Equal(2, tiffModel.TiffNavigation.CurrentPage);
+        Assert.Same(pages[2], tiffModel.Image);
+        // The tab never showed page 0, which a TIFF is entered at
+        Assert.Same(pages[2], Assert.Single(shown));
         Assert.Equal(2, Assert.Single(_tab.ViewHistory.Entries).Page);
     }
 
@@ -265,16 +273,18 @@ public class TiffNavigationTests : IDisposable
         var pages = new MagickImageCollection();
         for (int i = 0; i < pageCount; i++)
         {
-            pages.Add(new MagickImage(MagickColors.White, 1, 1));
+            // A width per page, so a failed assertion says which page showed
+            pages.Add(new MagickImage(MagickColors.White, (uint)(i + 1), 1));
         }
         
         model.TiffNavigation = new TiffNavigationInfo
         {
             PageCount = pageCount,
             CurrentPage = 0,
-            Pages = [pages]
+            // One object per page, as the loader makes them, so a turn can put its page on the model
+            Pages = pages.Cast<object>().ToArray()
         };
-        model.Image = pages[0];
+        model.Image = model.TiffNavigation.Pages[0];
         return model;
     }
 

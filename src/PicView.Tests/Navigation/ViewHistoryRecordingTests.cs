@@ -81,10 +81,15 @@ public class ViewHistoryRecordingTests : IDisposable
     [Fact]
     public void Display_MultiPageTiff_RecordsItsPage_AndEachPageShowPageTurnsTo()
     {
-        _tab.Display(TiffModel(PathOf("t.tif"), pageCount: 3));
+        var model = TiffModel(PathOf("t.tif"), pageCount: 3);
+        var pages = model.TiffNavigation!.Pages!;
+        _tab.Display(model);
 
         _tab.ShowPage(1);
+        // The window picks each page up from the model's image
+        Assert.Same(pages[1], model.Image);
         _tab.ShowPage(2);
+        Assert.Same(pages[2], model.Image);
 
         Assert.Equal([0, 1, 2], _tab.ViewHistory.Entries.Select(e => e.Page));
         Assert.Single(FileHistoryManager.AllEntries);
