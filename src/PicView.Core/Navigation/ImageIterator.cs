@@ -387,15 +387,27 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
         var ct = _tab.GetTabCancellation();
         if (Settings.ImageScaling.ShowImageSideBySide)
         {
-            var (iteration,  secondary, _) = SideBySidePair.Navigate(CurrentIndex, Files.Count, 
+            var (iteration,  secondary, _) = SideBySidePair.Navigate(CurrentIndex, Files.Count,
                 NavigateTo.Next, SkipAmount.None);
             if (secondary.HasValue)
             {
+                KeepTheShownPage();
                 await IterateToIndicesAsync(iteration, secondary.Value, ct).ConfigureAwait(false);
             }
             return;
         }
+        KeepTheShownPage();
         await IterateToIndexAsync(CurrentIndex, ct).ConfigureAwait(false);
+    }
+
+    // A reload shows the page of a multi-page TIFF the tab shows again, so it records nothing. Without this the file would
+    // show at its first page, as a new view that drops the entries after it
+    private void KeepTheShownPage()
+    {
+        if (_tab.Model is { FileInfo: { } file, TiffNavigation: { PageCount: > 1 } tiff })
+        {
+            _tab.RequestPage(file.FullName, tiff.CurrentPage);
+        }
     }
 
     #endregion

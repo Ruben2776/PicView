@@ -324,6 +324,35 @@ public class ViewHistoryRecordingTests : IDisposable
     }
 
     [Fact]
+    public async Task ReloadAsync_MultiPageTiffOnAPageAfterGoingBack_ShowsThatPageAndKeepsTheEntriesAfterIt()
+    {
+        var files = new[] { "a.jpg", "t.tif" }.Select(name => new FileInfo(PathOf(name))).ToList();
+        // A step skips the entries whose file is gone, so the files are on disk
+        foreach (var file in files)
+        {
+            await File.WriteAllBytesAsync(file.FullName, [0x49, 0x49, 0x2A, 0x00], TestContext.Current.CancellationToken);
+        }
+        // Each load decodes the TIFF anew, at its first page, as a reload does
+        var cache = new SharedImageCache(file =>
+            ValueTask.FromResult(file.Name == "t.tif" ? TiffModel(file.FullName, pageCount: 3) : Model(file.FullName)));
+        var iterator = new ImageIterator(cache, new MockThumbnailCache(), new MockThumbnailLoader(), _tab);
+        iterator.Initialize(files, 1);
+        await iterator.IterateToIndexAsync(1, new CancellationTokenSource());
+        _tab.ShowPage(1);
+        _tab.ShowPage(2);
+        var back = _tab.ViewHistory.BeginStep(forwards: false)!.Value;
+        _tab.ShowPage(1);
+        _tab.ViewHistory.EndStep(back);
+
+        await iterator.ReloadAsync();
+
+        Assert.Equal([0, 1, 2], _tab.ViewHistory.Entries.Select(e => e.Page));
+        Assert.Equal(1, _tab.ViewHistory.Cursor);
+        Assert.Equal(1, _tab.Model.TiffNavigation!.CurrentPage);
+        Assert.Same(_tab.Model.TiffNavigation.Pages![1], _tab.Image.Value);
+    }
+
+    [Fact]
     public void UpdateHistory_MarksTheEntryTheActiveTabsViewHistoryIsOn_IgnoringCase()
     {
         var window = new MainWindowViewModel(null!, null!, null!, null!, null!);
