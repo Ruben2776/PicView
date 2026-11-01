@@ -649,8 +649,11 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
     private ValueTask<(int Index, FileInfo[] Files)?> WaitForNextAsync(NavigateTo navigateTo, SkipAmount skipAmount,
         CancellationToken ct)
     {
+        // The flag before the list: an extraction's end lists its last pages before it lowers the flag, so a list read
+        // after the flag is down has them all. The wait reads both again, so this one needs no FilesChanged
+        var isExtracting = navigateTo is NavigateTo.Next && _tab.IsArchiveExtracting.Value;
         var shown = ShownIndexAndFiles();
-        if (navigateTo is not NavigateTo.Next || !_tab.IsArchiveExtracting.Value)
+        if (!isExtracting)
         {
             return ValueTask.FromResult<(int, FileInfo[])?>(shown);
         }
@@ -685,8 +688,10 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
         var timedOut = false;
         while (!ct.IsCancellationRequested)
         {
-            // Taken before the list is read, so a change in between is not missed
+            // Taken before the flag and the list are read, so a change in between is not missed
             var changed = FilesChanged();
+            // The flag before the list, as in WaitForNextAsync: once the flag is down, the list has every page
+            var isExtracting = _tab.IsArchiveExtracting.Value;
             var (index, files) = ShownIndexAndFiles();
             if (!IsSameFile(FileAt(files, index), shown))
             {
@@ -699,7 +704,7 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
                 return (index, files);
             }
 
-            if (!_tab.IsArchiveExtracting.Value)
+            if (!isExtracting)
             {
                 // Stopped, not finished, as when another archive starts opening: the list stays as it is, so stepping
                 // on it would go to the wrong page

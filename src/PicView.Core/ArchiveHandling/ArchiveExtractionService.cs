@@ -636,11 +636,13 @@ public class ArchiveExtractionService
     }
 
     /// <summary>
-    ///     Whether <see cref="StopExtraction" /> stopped the background extraction started last before it finished, so
-    ///     its pages that are not extracted yet never come. Another archive starting to open stops it, and so does
-    ///     <see cref="Cleanup()" />, which a URL load and closing the tab run. Leaving the archive for a file or a folder
-    ///     does not: <see cref="CleanupOpened" /> and <see cref="Cleanup(string?)" /> delete its folder, and the
-    ///     extraction then ends by itself without counting as stopped.
+    ///     Whether <see cref="StopExtraction" /> has run since the background extraction started last. Another archive
+    ///     starting to open runs it, and so does <see cref="Cleanup()" />, which a URL load and closing the tab run. The
+    ///     pages it had not extracted by then never come. It is true as well when the stop came after the extraction had
+    ///     finished, as the extraction stays the latest until another one starts. That is harmless where it is read, as
+    ///     the tab is leaving the archive then. Leaving the archive for a file or a folder does not count:
+    ///     <see cref="CleanupOpened" /> and <see cref="Cleanup(string?)" /> delete its folder, and the extraction then
+    ///     ends by itself without counting as stopped.
     /// </summary>
     public bool IsLatestExtractionStopped
     {
