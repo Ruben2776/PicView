@@ -254,6 +254,22 @@ public class TiffNavigationTests : IDisposable
     }
 
     [Fact]
+    public async Task Next_InsideTiffAtTheLastFileWhileExtracting_TurnsThePageWithoutWaiting()
+    {
+        // The TIFF is the last page extracted so far, and more are coming
+        var tiffModel = CreateTiffModel(_files[1], 3);
+        _iterator.Initialize([_files[0], _files[1]], 1);
+        _tab.Model = tiffModel;
+        _tab.IsArchiveExtracting.Value = true;
+
+        await _iterator.NavigateAsync(NavigateTo.Next, SkipAmount.One, new CancellationTokenSource())
+            .AsTask().WaitAsync(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken);
+
+        Assert.Equal(1, _iterator.CurrentIndex);
+        Assert.Equal(1, tiffModel.TiffNavigation!.CurrentPage);
+    }
+
+    [Fact]
     public async Task RepeatNavigateAsync_SideBySide_InsideTiff_AdvancesPage_AndStaysOnFile()
     {
         Settings.ImageScaling.ShowImageSideBySide = true;

@@ -456,6 +456,67 @@ public class ArchiveExtractionServiceTests
         await service.ExtractRemainingAsync("archive.zip", [], ct: TestContext.Current.CancellationToken);
     }
 
+    [Fact]
+    public async Task ExtractRemaining_ArchiveThatIsNotSolid_ExtractsTheKeysInTheOrderGiven()
+    {
+        var folder = Path.Combine(Path.GetTempPath(), "PicViewEntries_" + Guid.NewGuid().ToString("N"));
+        var source = Directory.CreateDirectory(Path.Combine(folder, "source")).FullName;
+        for (var i = 1; i <= 5; i++)
+        {
+            await File.WriteAllBytesAsync(Path.Combine(source, $"img_{i:D2}.jpg"), [0xFF, 0xD8, 0xFF],
+                TestContext.Current.CancellationToken);
+        }
+        var zip = Path.Combine(folder, "pages.zip");
+        ZipFile.CreateFromDirectory(source, zip);
+        var service = new ArchiveExtractionService();
+        await service.PrepareArchiveAsync(zip, (_, _) => Task.FromResult(false), string.CompareOrdinal);
+        var order = new ExtractionOrder(service);
+
+        try
+        {
+            // One file to a batch, so each report follows one file
+            service.ExtractRemaining(zip, ["img_04.jpg", "img_05.jpg", "img_02.jpg", "img_01.jpg"], progress: order,
+                batchSize: 1, ct: TestContext.Current.CancellationToken);
+
+            Assert.Equal(["img_04.jpg", "img_05.jpg", "img_02.jpg", "img_01.jpg"], order.Files);
+        }
+        finally
+        {
+            service.Cleanup();
+            Directory.Delete(folder, true);
+        }
+    }
+
+    [Fact]
+    public async Task ExtractRemaining_SolidArchive_WalksItInItsOwnOrderForEachSetOfKeys()
+    {
+        // A comic book name, so SharpCompress opens it rather than local software as for a .7z
+        var archive = Path.Combine(Path.GetTempPath(), "PicViewEntries_" + Guid.NewGuid().ToString("N") + ".cbz");
+        await File.WriteAllBytesAsync(archive, Convert.FromBase64String(SolidSevenZip), TestContext.Current.CancellationToken);
+        var service = new ArchiveExtractionService();
+        await service.PrepareArchiveAsync(archive, (_, _) => Task.FromResult(false), string.CompareOrdinal);
+        var order = new ExtractionOrder(service);
+
+        try
+        {
+            service.ExtractRemaining(archive, ["img_04.jpg", "img_05.jpg"], ["img_02.jpg", "img_01.jpg"], progress: order,
+                batchSize: 1, ct: TestContext.Current.CancellationToken);
+
+            Assert.Equal(["img_04.jpg", "img_05.jpg", "img_01.jpg", "img_02.jpg"], order.Files);
+        }
+        finally
+        {
+            service.Cleanup();
+            File.Delete(archive);
+        }
+    }
+
+    // A solid 7z, one block, of img_01.jpg to img_05.jpg, made with 7-Zip: 7z a -t7z -ms=on -mx=9
+    private const string SolidSevenZip =
+        "N3q8ryccAARTbgTkngAAAAAAAAAiAAAAAAAAAFMK2JrgACcAFV0Af7Yb5ssI8BnpyTc9vFejmhDnqmt2AAAAgTMHrg/P2W+8D+vqnL82Pf6J" +
+        "90X3LepWaMPhXOQo+F9u31WyWYsBYd3T3j3fKmoECsObR6BFn38aufG05Zuta+IsyzmssVSkob+AX2DH9615JCmwnvYfH8s6oZKZL4Hiwd" +
+        "ebUxC7S5Bsq5ohsUUnZTbYXyMUKYS0BJN4iRDUABcGHQEJgIEABwsBAAEjAwEBBV0AEAAADID6CgEwtof7AAA=";
+
     #endregion
 
     #region Cleanup
@@ -667,4 +728,22 @@ public class ArchiveExtractionServiceTests
     }
 
     #endregion
+
+    // The order files are extracted in: at each progress report, the extracted files it hasn't seen yet
+    private sealed class ExtractionOrder(ArchiveExtractionService service) : IProgress<int>
+    {
+        public List<string> Files { get; } = [];
+
+        public void Report(int value)
+        {
+            foreach (var path in Directory.GetFiles(service.TempZipDirectory!).Order(StringComparer.Ordinal))
+            {
+                var name = Path.GetFileName(path);
+                if (!Files.Contains(name))
+                {
+                    Files.Add(name);
+                }
+            }
+        }
+    }
 }

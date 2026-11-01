@@ -275,13 +275,16 @@ public class ArchiveExtractionService
     }
 
     /// <summary>
-    ///     Extracts every entry whose key is present in <paramref name="remainingKeys" /> to the
-    ///     <see cref="TempZipDirectory" /> in batches with low priority. The archive is opened once and walked in its native
-    ///     order, reporting extraction count progress after each batch.
+    ///     Extracts the entries whose keys are in <paramref name="remainingKeys" />, then those in
+    ///     <paramref name="laterKeys" />, to the <see cref="TempZipDirectory" /> with low priority, reporting extraction
+    ///     count progress after each batch. The archive is opened once, and its entries are extracted in the order of the
+    ///     keys. A solid archive is the exception: its entries are compressed as one stream, so reading them out of order
+    ///     would decompress it again for each entry. It is walked in its own order instead, once for each set of keys.
     /// </summary>
     public void ExtractRemaining(
         string archivePath,
-        IReadOnlyCollection<string> remainingKeys,
+        IReadOnlyList<string> remainingKeys,
+        IReadOnlyList<string>? laterKeys = null,
         int initialCount = 0,
         int totalCount = 0,
         IProgress<int>? progress = null,
@@ -289,46 +292,96 @@ public class ArchiveExtractionService
         CancellationToken ct = default)
     {
         var tempDirectory = TempZipDirectory;
-        if (string.IsNullOrEmpty(tempDirectory) || remainingKeys is null || remainingKeys.Count == 0)
+        laterKeys ??= [];
+        if (string.IsNullOrEmpty(tempDirectory) || remainingKeys is null || remainingKeys.Count + laterKeys.Count == 0)
         {
             return;
         }
 
         try
         {
-            var pending = new HashSet<string>(remainingKeys, StringComparer.Ordinal);
             using var archive = ArchiveFactory.OpenArchive(archivePath);
 
             var extractedCount = initialCount;
             var batchCounter = 0;
+            var left = remainingKeys.Count + laterKeys.Count;
 
+            if (archive.IsSolid)
+            {
+                if (ExtractInArchiveOrder(remainingKeys))
+                {
+                    ExtractInArchiveOrder(laterKeys);
+                }
+                return;
+            }
+
+            // Any other archive reads each entry on its own, so the keys set the order
+            var entries = new Dictionary<string, IArchiveEntry>(StringComparer.Ordinal);
             foreach (var entry in archive.Entries)
+            {
+                if (!entry.IsDirectory && !string.IsNullOrEmpty(entry.Key))
+                {
+                    entries.TryAdd(entry.Key, entry);
+                }
+            }
+
+            if (ExtractInKeyOrder(remainingKeys))
+            {
+                ExtractInKeyOrder(laterKeys);
+            }
+            return;
+
+            bool ExtractInKeyOrder(IReadOnlyList<string> keys)
+            {
+                foreach (var key in keys)
+                {
+                    // Removed, so that a key given twice is extracted once
+                    if (entries.Remove(key, out var entry) && !Extract(entry))
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            }
+
+            bool ExtractInArchiveOrder(IReadOnlyList<string> keys)
+            {
+                var pending = new HashSet<string>(keys, StringComparer.Ordinal);
+                foreach (var entry in archive.Entries)
+                {
+                    if (pending.Count == 0)
+                    {
+                        return true;
+                    }
+
+                    if (!entry.IsDirectory && !string.IsNullOrEmpty(entry.Key) && pending.Remove(entry.Key)
+                        && !Extract(entry))
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            }
+
+            // Whether to go on, as the extraction may be cancelled
+            bool Extract(IArchiveEntry entry)
             {
                 if (ct.IsCancellationRequested)
                 {
-                    return;
-                }
-
-                if (entry.IsDirectory || string.IsNullOrEmpty(entry.Key))
-                {
-                    continue;
-                }
-
-                if (!pending.Remove(entry.Key))
-                {
-                    continue;
+                    return false;
                 }
 
                 var extractedPath = WriteEntryFlat(entry, tempDirectory);
-                Remember(entry.Key, extractedPath, tempDirectory);
+                Remember(entry.Key!, extractedPath, tempDirectory);
                 extractedCount++;
                 batchCounter++;
+                left--;
 
                 // Yield CPU to higher-priority UI and navigation threads
                 Thread.Yield();
 
                 // Report progress after each batch or upon completing extraction
-                if (batchCounter >= batchSize || pending.Count == 0)
+                if (batchCounter >= batchSize || left == 0)
                 {
                     batchCounter = 0;
                     progress?.Report(extractedCount);
@@ -336,11 +389,7 @@ public class ArchiveExtractionService
                     // Brief pause between batches to give foreground operations maximum CPU/IO priority
                     Thread.Sleep(5);
                 }
-
-                if (pending.Count == 0)
-                {
-                    return;
-                }
+                return true;
             }
         }
         catch (OperationCanceledException)
@@ -358,7 +407,8 @@ public class ArchiveExtractionService
     /// </summary>
     public Task ExtractRemainingAsync(
         string archivePath,
-        IReadOnlyCollection<string> remainingKeys,
+        IReadOnlyList<string> remainingKeys,
+        IReadOnlyList<string>? laterKeys = null,
         int initialCount = 0,
         int totalCount = 0,
         IProgress<int>? progress = null,
@@ -370,7 +420,7 @@ public class ArchiveExtractionService
         {
             try
             {
-                ExtractRemaining(archivePath, remainingKeys, initialCount, totalCount, progress, batchSize, ct);
+                ExtractRemaining(archivePath, remainingKeys, laterKeys, initialCount, totalCount, progress, batchSize, ct);
                 tcs.TrySetResult();
             }
             catch (Exception ex)

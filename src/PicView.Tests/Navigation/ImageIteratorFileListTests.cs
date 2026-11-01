@@ -15,6 +15,12 @@ public class ImageIteratorFileListTests
 {
     private static readonly string TestDirectory = Path.Combine(Path.GetTempPath(), "PicViewIteratorFileListTests");
 
+    // How long Next gets to end before the file it waits for comes, which is the bug the extraction tests catch
+    private static readonly TimeSpan EarlyEndWait = TimeSpan.FromMilliseconds(500);
+
+    // Bounds each wait, so a failing test fails instead of hanging the run
+    private static readonly TimeSpan WaitLimit = TimeSpan.FromSeconds(10);
+
     private readonly SharedImageCache _cache;
     private readonly TabViewModel _tab;
     private readonly ImageIterator _iterator;
@@ -221,6 +227,84 @@ public class ImageIteratorFileListTests
         Assert.Equal(-1, _iterator.SecondaryCurrentIndex);
         Assert.Null(_tab.SecondaryModel);
     }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Next_AtTheLastFileWhileExtracting_WaitsForTheFileAfterTheShownOne(bool keyHeldDown)
+    {
+        var c = File("c.jpg");
+        var shown = new ImageModel { FileInfo = c, Image = new ProbeImage() };
+        _iterator.Initialize([c], 0);
+        _tab.Display(shown);
+        _tab.IsArchiveExtracting.Value = true;
+
+        var next = Next(keyHeldDown);
+        // An archive reopened at a page extracts pages before it too
+        _iterator.Insert(File("b.jpg"), string.CompareOrdinal);
+        await Task.WhenAny(next, Task.Delay(EarlyEndWait, TestContext.Current.CancellationToken));
+        var endedEarly = next.IsCompleted;
+        var stillShown = ReferenceEquals(shown, _tab.Model);
+        _iterator.Insert(File("d.jpg"), string.CompareOrdinal);
+        await next.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+
+        Assert.False(endedEarly, "A page before the shown one ended the wait");
+        Assert.True(stillShown, "The shown file was shown again");
+        Assert.Equal("d.jpg", _tab.Model.FileInfo?.Name);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Next_SideBySideAtTheLastPairWhileExtracting_WaitsForThePairAfterTheShownOne(bool keyHeldDown)
+    {
+        Settings.ImageScaling.ShowImageSideBySide = true;
+        // Looping would otherwise go round to the first pair
+        Settings.UIProperties.Looping = true;
+        var c = File("c.jpg");
+        var d = File("d.jpg");
+        var shown = new ImageModel { FileInfo = c, Image = new ProbeImage() };
+        _iterator.Initialize([c, d], 0);
+        _tab.Display(shown, new ImageModel { FileInfo = d, Image = new ProbeImage() });
+        _tab.IsArchiveExtracting.Value = true;
+
+        var next = Next(keyHeldDown);
+        _iterator.Insert(File("b.jpg"), string.CompareOrdinal);
+        // Half of the next pair
+        _iterator.Insert(File("e.jpg"), string.CompareOrdinal);
+        await Task.WhenAny(next, Task.Delay(EarlyEndWait, TestContext.Current.CancellationToken));
+        var endedEarly = next.IsCompleted;
+        var stillShown = ReferenceEquals(shown, _tab.Model);
+        _iterator.Insert(File("f.jpg"), string.CompareOrdinal);
+        await next.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+
+        Assert.False(endedEarly, "The pair after the shown one was not there yet");
+        Assert.True(stillShown, "Another pair was shown first");
+        Assert.Equal("e.jpg", _tab.Model.FileInfo?.Name);
+        Assert.Equal("f.jpg", _tab.SecondaryModel?.FileInfo?.Name);
+    }
+
+    [Fact]
+    public async Task Next_WaitingWhileExtracting_GivesUpWhenAnotherFileIsShown()
+    {
+        var c = File("c.jpg");
+        _iterator.Initialize([c], 0);
+        _tab.Display(new ImageModel { FileInfo = c, Image = new ProbeImage() });
+        _tab.IsArchiveExtracting.Value = true;
+        var next = Next(keyHeldDown: false);
+        _iterator.Insert(File("b.jpg"), string.CompareOrdinal);
+
+        // As a gallery click would, while Next still waits
+        await _iterator.IterateToIndexAsync(0, new CancellationTokenSource());
+        _iterator.Insert(File("d.jpg"), string.CompareOrdinal);
+        await next.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+
+        Assert.Equal("b.jpg", _tab.Model.FileInfo?.Name);
+    }
+
+    private Task Next(bool keyHeldDown) => keyHeldDown
+        ? _iterator.RepeatNavigateAsync(NavigateTo.Next, TimeSpan.Zero, new CancellationTokenSource()).AsTask()
+        : _iterator.NavigateAsync(NavigateTo.Next, SkipAmount.One, new CancellationTokenSource()).AsTask();
 
     private static FileInfo File(string name) => new(Path.Combine(TestDirectory, name));
 

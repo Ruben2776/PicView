@@ -331,9 +331,9 @@ public class NavigationService(
                 }
                 await RepopulateIterator(startFile, tab, ct, seedFiles).ConfigureAwait(false);
 
-                // Extract the others in order in the background, one by one, with no batches or progress indicator.
-                var remainingKeys = keys.Where((_, i) => i != start && i != partner).ToArray();
-                if (remainingKeys.Length > 0)
+                // Extract the others in the background, one by one, with no batches or progress indicator.
+                var (afterKeys, beforeKeys) = RemainingKeys(keys, start, start + 1, partner);
+                if (afterKeys.Length + beforeKeys.Length > 0)
                 {
                     var backgroundToken = tab.ArchiveExtractionService.ResetExtractionCts();
                     tab.IsArchiveExtracting.Value = true;
@@ -344,7 +344,8 @@ public class NavigationService(
                     {
                         try
                         {
-                            await tab.ArchiveExtractionService.ExtractRemainingAsync(archivePath, remainingKeys, ct: backgroundToken).ConfigureAwait(false);
+                            await tab.ArchiveExtractionService.ExtractRemainingAsync(archivePath, afterKeys, beforeKeys,
+                                ct: backgroundToken).ConfigureAwait(false);
                         }
                         finally
                         {
@@ -381,12 +382,12 @@ public class NavigationService(
             var seedFilesList = extractedPaths.Select(p => new FileInfo(p)).ToList();
             await RepopulateIterator(seedFilesList[0], tab, ct, seedFilesList).ConfigureAwait(false);
 
-            // Extract the rest in order in the background, in batches of 10. FileWatcherService picks them up.
+            // Extract the rest in the background, in batches of 10. FileWatcherService picks them up.
             if (keys.Length > initialKeys.Length)
             {
                 var totalCount = keys.Length;
                 var initialExtractedCount = extractedPaths.Count;
-                var remainingKeys = keys.Where((_, i) => i < start || i >= start + initialKeys.Length).ToArray();
+                var (afterKeys, beforeKeys) = RemainingKeys(keys, start, start + initialKeys.Length);
                 var backgroundToken = tab.ArchiveExtractionService.ResetExtractionCts();
 
                 tab.IsArchiveExtracting.Value = true;
@@ -403,7 +404,8 @@ public class NavigationService(
                     {
                         await tab.ArchiveExtractionService.ExtractRemainingAsync(
                             archivePath,
-                            remainingKeys,
+                            afterKeys,
+                            beforeKeys,
                             initialCount: initialExtractedCount,
                             totalCount: totalCount,
                             progress: progress,
@@ -445,6 +447,36 @@ public class NavigationService(
                 tab.ParentWindowContext.IsLoadingIndicatorShown.Value = false;
             }
         }
+    }
+
+    /// <summary>
+    /// The entries of an archive left to extract once those from <paramref name="start"/> up to <paramref name="end"/>
+    /// are shown: those after them in order, then those before the start, nearest first, so that paging either way from
+    /// the start soon finds its pages. <paramref name="alsoShown"/> is another entry shown with them, as the first one is
+    /// beside the last when looping.
+    /// </summary>
+    private static (string[] After, string[] Before) RemainingKeys(string[] keys, int start, int end,
+        int? alsoShown = null)
+    {
+        var after = new List<string>(keys.Length - end);
+        for (var i = end; i < keys.Length; i++)
+        {
+            if (i != alsoShown)
+            {
+                after.Add(keys[i]);
+            }
+        }
+
+        var before = new List<string>(start);
+        for (var i = start - 1; i >= 0; i--)
+        {
+            if (i != alsoShown)
+            {
+                before.Add(keys[i]);
+            }
+        }
+
+        return (after.ToArray(), before.ToArray());
     }
 
     public async ValueTask<LoadResult> LoadFromUrlAsync(string url, TabViewModel tab, CancellationTokenSource ct)
