@@ -132,8 +132,8 @@ public class NavigationService(
             return;
         }
         var load = tab.BeginLoad();
-        // The archive this load leaves: a newer archive's extraction must survive this load's cleanup
-        var tempZipDir = tab.ArchiveExtractionService?.TempZipDirectory;
+        // The archives the tab opened so far, which it leaves once the file shows. One that opens after survives this load
+        var opened = tab.ArchiveExtractionService?.OpenedArchives ?? 0;
         var iterator = tab.ImageIterator;
 
         if (iterator?.Files is null || iterator.Files.Count is 0)
@@ -161,20 +161,24 @@ public class NavigationService(
         if (index is { } found)
         {
             await tab.ImageIterator.IterateToIndexAsync(found, ct).ConfigureAwait(false);
+            tab.ArchiveExtractionService?.CleanupOpened(opened);
         }
         else
         {
             await Repopulate().ConfigureAwait(false);
         }
-        
-        tab.ArchiveExtractionService.Cleanup(tempZipDir);
 
         return;
 
+        // Only a file that shows leaves the archives, as a load that a newer one overtakes leaves them to it
         async Task Repopulate()
         {
             // AsTask, because Task.Run waits for a Task but returns a ValueTask without awaiting it
-            await Task.Run(() => RepopulateIterator(fileInfo, tab, ct, null, load).AsTask(), ct.Token).ConfigureAwait(false);
+            if (await Task.Run(() => RepopulateIterator(fileInfo, tab, ct, null, load).AsTask(), ct.Token)
+                    .ConfigureAwait(false))
+            {
+                tab.ArchiveExtractionService?.CleanupOpened(opened);
+            }
         }
     }
 
@@ -194,8 +198,8 @@ public class NavigationService(
     public async Task<bool> LoadFromDirectoryAsync(FileInfo source, TabViewModel tab, CancellationTokenSource ct)
     {
         var load = tab.BeginLoad();
-        // The archive this load leaves: a newer archive's extraction must survive this load's cleanup
-        var tempZipDir = tab.ArchiveExtractionService?.TempZipDirectory;
+        // The archives the tab opened so far, which it leaves once the file shows. One that opens after survives this load
+        var opened = tab.ArchiveExtractionService?.OpenedArchives ?? 0;
         var files = await Task.Run(() =>
         {
             var files = FileListRetriever.RetrieveFiles(source, stringComparer);
@@ -205,8 +209,10 @@ public class NavigationService(
         {
             return false;
         }
-        await RepopulateIterator(files[0], tab, ct, files, load).ConfigureAwait(false);
-        tab.ArchiveExtractionService.Cleanup(tempZipDir);
+        if (await RepopulateIterator(files[0], tab, ct, files, load).ConfigureAwait(false))
+        {
+            tab.ArchiveExtractionService?.CleanupOpened(opened);
+        }
         return true;
     }
 
@@ -234,12 +240,16 @@ public class NavigationService(
                 else
                 {
                     var load = tab.BeginLoad();
-                    // The archive this load leaves: a newer archive's extraction must survive this load's cleanup
-                    var tempZipDir = tab.ArchiveExtractionService?.TempZipDirectory;
+                    // The archives the tab opened so far, which it leaves once the file shows. One that opens after
+                    // survives this load
+                    var opened = tab.ArchiveExtractionService?.OpenedArchives ?? 0;
                     var files = await Task.Run(() => FileListRetriever.RetrieveFiles(new FileInfo(rootDirectory), stringComparer), ct.Token)
                         .ConfigureAwait(false);
-                    await RepopulateIterator(new FileInfo(check.Value.Data), tab, ct, files.Count > 0 ? files : null, load).ConfigureAwait(false);
-                    tab.ArchiveExtractionService.Cleanup(tempZipDir);
+                    if (await RepopulateIterator(new FileInfo(check.Value.Data), tab, ct, files.Count > 0 ? files : null,
+                            load).ConfigureAwait(false))
+                    {
+                        tab.ArchiveExtractionService?.CleanupOpened(opened);
+                    }
                 }
                 return LoadResult.Loaded;
             case FileTypeResolver.LoadAbleFileType.Directory:
@@ -275,8 +285,9 @@ public class NavigationService(
             tab.ParentWindowContext.IsLoadingIndicatorShown.Value = true;
         }
 
-        // Retrieve the temporary directory for the possible previous archive extraction
-        var tempZipDir = extraction.TempZipDirectory;
+        // The archives the tab opened so far, which it leaves once a page of this one shows: the one it reads, and those
+        // older loads opened, overtaken or not. This load's own opens after, as does a newer load's
+        var opened = extraction.OpenedArchives;
         // The folder this load's archive opens to. Unless a page from it shows, it goes again, and the tab's archive stays
         // the one it shows
         string? folder = null;
@@ -324,7 +335,7 @@ public class NavigationService(
                     return false;
                 }
 
-                extraction.Cleanup(tempZipDir);
+                extraction.CleanupOpened(opened);
                 return true;
             }
 
@@ -397,7 +408,7 @@ public class NavigationService(
                     tab.ArchiveExtractionProgressText.Value = null;
                 }
 
-                extraction.Cleanup(tempZipDir);
+                extraction.CleanupOpened(opened);
                 return true;
             }
 
@@ -464,7 +475,7 @@ public class NavigationService(
                 tab.ArchiveExtractionProgressText.Value = null;
             }
 
-            extraction.Cleanup(tempZipDir);
+            extraction.CleanupOpened(opened);
             return true;
         }
         catch (OperationCanceledException)

@@ -47,16 +47,18 @@ public class ArchiveExtractionService
     ///     names, or <see cref="NotRespectingStructure" /> when files are named by their file name only. Each folder keeps
     ///     its own, so every extraction to it names its files the same way, whichever archive opened since.
     /// </param>
+    /// <param name="Number">Which archive to open it is, counting from 1, as <see cref="OpenedArchives" /> counts.</param>
     private sealed record Extraction(
         string Folder,
         string Archive,
         bool IsFullyExtracted,
         int SharedFolderCount,
+        int Number,
         ConcurrentDictionary<string, string> EntryByFile,
         ConcurrentDictionary<string, string> FileByEntry)
     {
-        public Extraction(string folder, string archive, bool isFullyExtracted, int sharedFolderCount)
-            : this(folder, archive, isFullyExtracted, sharedFolderCount,
+        public Extraction(string folder, string archive, bool isFullyExtracted, int sharedFolderCount, int number)
+            : this(folder, archive, isFullyExtracted, sharedFolderCount, number,
                 new ConcurrentDictionary<string, string>(StringComparer.OrdinalIgnoreCase),
                 new ConcurrentDictionary<string, string>(StringComparer.Ordinal))
         {
@@ -77,6 +79,14 @@ public class ArchiveExtractionService
     private Extraction[] _extractions = [];
 
     private Extraction? Open => Volatile.Read(ref _extractions) is { Length: > 0 } extractions ? extractions[^1] : null;
+
+    private int _openedArchives;
+
+    /// <summary>
+    ///     How many archives have opened in the tab so far. A load takes it as it begins, and once its image shows, it
+    ///     cleans up the folders of those archives with <see cref="CleanupOpened" />.
+    /// </summary>
+    public int OpenedArchives => Volatile.Read(ref _openedArchives);
 
     /// <summary>
     ///     The archive, and the entry of it, that <paramref name="extractedPath" /> was extracted from, found by the
@@ -216,7 +226,7 @@ public class ArchiveExtractionService
             if (await OpenAsync(archivePath, tempDirectory, extractWithLocalSoftwareAsync, stringComparer)
                     .ConfigureAwait(false) is (var preparation, var sharedFolderCount))
             {
-                Publish(new Extraction(tempDirectory, archivePath, preparation.IsFullyExtracted, sharedFolderCount));
+                Publish(tempDirectory, archivePath, preparation.IsFullyExtracted, sharedFolderCount);
                 return preparation;
             }
         }
@@ -675,11 +685,30 @@ public class ArchiveExtractionService
         DeleteFolder(tempZipDirectory);
     }
 
-    // Makes an archive that opened the open one, last in the folders
-    private void Publish(Extraction extraction)
+    /// <summary>
+    ///     Cleans up the folders of the first <paramref name="openedArchives" /> archives that opened, those not cleaned up
+    ///     yet, as <see cref="Cleanup(string?)" /> does. A load calls it with the <see cref="OpenedArchives" /> it took as it
+    ///     began, once its image shows: the tab has then left the archive it was reading, and the archives older loads
+    ///     opened meanwhile, whether those loads were overtaken or not. An archive that opened after the load began is not
+    ///     among them, so a newer archive survives an older load.
+    /// </summary>
+    public void CleanupOpened(int openedArchives)
+    {
+        foreach (var extraction in Volatile.Read(ref _extractions))
+        {
+            if (extraction.Number <= openedArchives)
+            {
+                Cleanup(extraction.Folder);
+            }
+        }
+    }
+
+    // Makes an archive that opened the open one, last in the folders, numbered in the order the archives opened
+    private void Publish(string folder, string archive, bool isFullyExtracted, int sharedFolderCount)
     {
         lock (_lock)
         {
+            var extraction = new Extraction(folder, archive, isFullyExtracted, sharedFolderCount, ++_openedArchives);
             Volatile.Write(ref _extractions, [.. _extractions, extraction]);
         }
     }

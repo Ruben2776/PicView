@@ -724,6 +724,67 @@ public class NavigationServiceTests : IDisposable
         }
     }
 
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task LoadAfterAnOvertakenArchiveLoad_WhenItShows_CleansUpTheArchiveTheTabWasReading(bool loadsAnArchive)
+    {
+        // Local software opens b.7z, and its page loads until the test lets it
+        var b = Path.Combine(_testDirectory, "b.7z");
+        await File.WriteAllBytesAsync(b, [0x37, 0x7A], TestContext.Current.CancellationToken);
+        var platform = new MockPlatformSpecificService
+        {
+            LocalSoftware = (_, folder) =>
+            {
+                File.WriteAllBytes(Path.Combine(folder, "b.jpg"), [0xFF, 0xD8, 0xFF]);
+                return Task.FromResult(true);
+            }
+        };
+        var heldPage = new TaskCompletionSource<ImageModel>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var heldPageAsked = new TaskCompletionSource<FileInfo>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var cache = new SharedImageCache(file =>
+        {
+            if (file.Name != "b.jpg")
+            {
+                return ValueTask.FromResult(new ImageModel { FileInfo = file });
+            }
+
+            heldPageAsked.TrySetResult(file);
+            return new ValueTask<ImageModel>(heldPage.Task);
+        });
+        var navigation = new NavigationService(_mockImageModelLoader, cache, _mockFileWatcherService, platform,
+            string.CompareOrdinal);
+        var tab = CreateTab(_testDirectory, cache: cache);
+        var c = await CreateZipAsync("c.zip", 2);
+        var file = new FileInfo(await WriteImageAsync("x.jpg"));
+        // The tab reads archive a
+        await navigation.LoadFromArchiveAsync(await CreateZipAsync("a.zip", 2), tab, new CancellationTokenSource());
+        var read = tab.ArchiveExtractionService.TempZipDirectory;
+
+        try
+        {
+            // Two quick Backs: the first opens b, and the second begins once b's folder is published, before b's page
+            // shows, so the first is overtaken
+            var first = navigation.LoadFromArchiveAsync(b, tab, new CancellationTokenSource()).AsTask();
+            var page = await heldPageAsked.Task.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+            var second = loadsAnArchive
+                ? navigation.LoadFromArchiveAsync(c, tab, new CancellationTokenSource()).AsTask()
+                : navigation.LoadFromFileAsync(file, tab, new CancellationTokenSource()).AsTask();
+            await second.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+            heldPage.SetResult(new ImageModel { FileInfo = page });
+            await first.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+
+            Assert.False(Directory.Exists(read), "The folder of the archive the tab was reading was left behind");
+            Assert.Equal(loadsAnArchive ? c : null, tab.ArchiveExtractionService.LastOpenedArchive);
+            Assert.Equal(loadsAnArchive, tab.ArchiveExtractionService.IsArchived);
+        }
+        finally
+        {
+            heldPage.TrySetResult(new ImageModel());
+            tab.ArchiveExtractionService.Cleanup();
+        }
+    }
+
     [Fact]
     public async Task LoadFromArchiveAsync_SideBySidePartnerThatFailsToExtract_ShowsTheStartPageAlone()
     {
