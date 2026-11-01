@@ -101,6 +101,20 @@ public static class UINavigationHelper
                 UpdateImage.SetSingleImage(vm, mainWindow, entry.Model!, entry.SingleImageType, entry.Title ?? string.Empty);
                 break;
             case ViewHistoryKind.File:
+                if (entry.Page >= 0)
+                {
+                    if (tab.Model.TiffNavigation is not null &&
+                        string.Equals(tab.Model.FileInfo?.FullName, entry.Path, StringComparison.OrdinalIgnoreCase))
+                    {
+                        // The tab already shows the TIFF, so it only turns to the page
+                        tab.ShowPage(entry.Page);
+                        break;
+                    }
+
+                    // The load sets the page before the tab shows the file, so no other page shows first or is recorded
+                    tab.RequestPage(entry.Path!, entry.Page);
+                }
+
                 await OpenPathAsync(mainWindow, vm, entry.Path).ConfigureAwait(false);
                 break;
             case ViewHistoryKind.ArchivePage:

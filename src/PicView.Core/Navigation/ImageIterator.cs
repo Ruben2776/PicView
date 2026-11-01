@@ -227,6 +227,11 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
         {
             var (currentIndex, secondaryIndex, isReversed) = SideBySidePair.Navigate(CurrentIndex, Files.Count, navigateTo, skipAmount);
             IsReversed = isReversed;
+            if (ShouldNavigateTiffEntry(navigateTo, skipAmount))
+            {
+                return;
+            }
+
             if (secondaryIndex is { } secondary)
             {
                 await IterateToIndicesAsync(currentIndex, secondary, ct).ConfigureAwait(false);
@@ -250,6 +255,11 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
                 (iteration, isReversed) = IterationHelper.GetIteration(CurrentIndex, Files.Count, navigateTo, skipAmount);
             }
             IsReversed = isReversed;
+            if (ShouldNavigateTiffEntry(navigateTo, skipAmount))
+            {
+                return;
+            }
+
             await IterateToIndexAsync(iteration, ct).ConfigureAwait(false);
         }
     }
@@ -277,12 +287,6 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
             {
                 return;
             }
-        }
-        
-        // Handle internal TIFF navigation
-        if (_tab.Model?.TiffNavigation is not null && ShouldNavigateTiffEntry(_tab.Model, IsReversed))
-        {
-            return;
         }
 
         CurrentIndex = index;
@@ -315,13 +319,6 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
     public async ValueTask IterateToIndicesAsync(int index, int secondaryIndex, CancellationTokenSource ct)
     {
         if (index < 0 || index >= Files.Count || secondaryIndex < 0 || secondaryIndex >= Files.Count)
-        {
-            return;
-        }
-
-        // Handle internal TIFF navigation
-        // TODO: Figure out how to handle multi-page TIFF files when side-by-side is enabled
-        if (_tab.Model?.TiffNavigation is not null && ShouldNavigateTiffEntry(_tab.Model, IsReversed))
         {
             return;
         }
@@ -444,6 +441,11 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
         {
             (iteration, var secondary, isReversed) = SideBySidePair.Navigate(CurrentIndex, Files.Count, to, SkipAmount.One);
             IsReversed = isReversed;
+            if (ShouldNavigateTiffEntry(to, SkipAmount.One))
+            {
+                return;
+            }
+
             if (secondary.HasValue)
             {
                 await IterateToIndicesAsync(iteration, secondary.Value, ct).ConfigureAwait(false);
@@ -452,6 +454,11 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
         }
         (iteration, isReversed) = IterationHelper.GetIteration(CurrentIndex, Files.Count, to, SkipAmount.One);
         IsReversed = isReversed;
+        if (ShouldNavigateTiffEntry(to, SkipAmount.One))
+        {
+            return;
+        }
+
         await IterateToIndexAsync(iteration, ct).ConfigureAwait(false);
     }
 
@@ -601,32 +608,27 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
 
     #region TIFF Handling & Helpers
 
-    private static bool ShouldNavigateTiffEntry(ImageModel model, bool isPrevious)
+    /// <summary>
+    /// Turns the multi-page TIFF the tab shows to its previous page when <see cref="IsReversed"/>, else to its next,
+    /// instead of going to another file. Only stepping by one turns pages: a jump goes to the file it was given, and so
+    /// does a step from the first or last page.
+    /// </summary>
+    /// <returns>Whether a page was turned.</returns>
+    private bool ShouldNavigateTiffEntry(NavigateTo navigateTo, SkipAmount skipAmount)
     {
-        if (model.TiffNavigation is null)
+        if (navigateTo is not (NavigateTo.Next or NavigateTo.Previous) || skipAmount is not SkipAmount.One
+            || _tab.Model?.TiffNavigation is not { } tiff)
         {
             return false;
         }
-        if (isPrevious)
+
+        var page = IsReversed ? tiff.CurrentPage - 1 : tiff.CurrentPage + 1;
+        if (page < 0 || page >= tiff.PageCount)
         {
-            var prev = model.TiffNavigation.CurrentPage - 1;
-            if (prev < 0)
-            {
-                return false;
-            }
-            model.TiffNavigation.CurrentPage = prev;
-        }
-        else
-        {
-            var next = model.TiffNavigation.CurrentPage + 1;
-            if (next >= model.TiffNavigation.PageCount)
-            {
-                return false;
-            }
-            model.TiffNavigation.CurrentPage = next;
+            return false;
         }
 
-        UpdateImageFromPage(model);
+        _tab.ShowPage(page);
         return true;
     }
 

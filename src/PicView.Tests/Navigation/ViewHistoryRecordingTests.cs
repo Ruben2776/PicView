@@ -4,6 +4,7 @@ using PicView.Core.FileHistory;
 using PicView.Core.Models;
 using PicView.Core.Navigation;
 using PicView.Core.Navigation.Interfaces;
+using PicView.Core.Navigation.Tiff;
 using PicView.Core.ViewModels;
 using PicView.Tests.FileHistory;
 using R3;
@@ -75,6 +76,26 @@ public class ViewHistoryRecordingTests : IDisposable
         _tab.Display(Model(PathOf("a.jpg")));
 
         Assert.Single(_tab.ViewHistory.Entries);
+    }
+
+    [Fact]
+    public void Display_MultiPageTiff_RecordsItsPage_AndEachPageShowPageTurnsTo()
+    {
+        _tab.Display(TiffModel(PathOf("t.tif"), pageCount: 3));
+
+        _tab.ShowPage(1);
+        _tab.ShowPage(2);
+
+        Assert.Equal([0, 1, 2], _tab.ViewHistory.Entries.Select(e => e.Page));
+        Assert.Single(FileHistoryManager.AllEntries);
+    }
+
+    [Fact]
+    public void Display_SinglePageTiff_RecordsNoPage()
+    {
+        _tab.Display(TiffModel(PathOf("t.tif"), pageCount: 1));
+
+        Assert.Equal(-1, Assert.Single(_tab.ViewHistory.Entries).Page);
     }
 
     [Fact]
@@ -236,6 +257,17 @@ public class ViewHistoryRecordingTests : IDisposable
     private string PathOf(string name) => Path.Combine(_folder, name);
 
     private static ImageModel Model(string path) => new() { FileInfo = new FileInfo(path), Image = new object() };
+
+    private static ImageModel TiffModel(string path, int pageCount) => new()
+    {
+        FileInfo = new FileInfo(path),
+        Image = new object(),
+        TiffNavigation = new TiffNavigationInfo
+        {
+            PageCount = pageCount,
+            Pages = Enumerable.Range(0, pageCount).Select(_ => new object()).ToArray()
+        }
+    };
 
     private string CreateZip(params string[] images)
     {

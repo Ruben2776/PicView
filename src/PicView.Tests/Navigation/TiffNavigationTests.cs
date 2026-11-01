@@ -162,6 +162,103 @@ public class TiffNavigationTests : IDisposable
         Assert.Equal(prevModel, _tab.Model);
     }
 
+    [Fact]
+    public async Task RequestPage_ThenNavigatingToTheTiff_ShowsThatPageFirst()
+    {
+        var tiffModel = CreateTiffModel(_files[1], 3);
+        SetModel(1, tiffModel);
+        _tab.Model = new ImageModel();
+        _tab.RequestPage(_files[1].FullName, 2);
+
+        await _iterator.NavigateAsync(NavigateTo.Next, SkipAmount.One, new CancellationTokenSource());
+
+        Assert.Equal(2, tiffModel.TiffNavigation!.CurrentPage);
+        Assert.Equal(2, Assert.Single(_tab.ViewHistory.Entries).Page);
+    }
+
+    [Fact]
+    public async Task IterateToIndexAsync_FromATiffPage_GoesToTheFileInsteadOfTurningThePage()
+    {
+        var tiffModel = CreateTiffModel(_files[1], 3);
+        _iterator.SetCurrentIndex(1);
+        _tab.Model = tiffModel;
+        var target = new ImageModel { FileInfo = _files[0] };
+        SetModel(0, target);
+
+        await _iterator.IterateToIndexAsync(0, new CancellationTokenSource());
+
+        Assert.Equal(0, _iterator.CurrentIndex);
+        Assert.Same(target, _tab.Model);
+        Assert.Equal(0, tiffModel.TiffNavigation!.CurrentPage);
+    }
+
+    [Theory]
+    [InlineData(NavigateTo.Next, SkipAmount.Ten, 2)]
+    [InlineData(NavigateTo.Previous, SkipAmount.Hundred, 0)]
+    [InlineData(NavigateTo.First, SkipAmount.One, 0)]
+    [InlineData(NavigateTo.Last, SkipAmount.One, 2)]
+    public async Task NavigateAsync_JumpingFromATiffPage_GoesToTheFileInsteadOfTurningThePage(NavigateTo navigateTo,
+        SkipAmount skipAmount, int expectedIndex)
+    {
+        // On the middle page, so a page could turn either way
+        var tiffModel = CreateTiffModel(_files[1], 3);
+        tiffModel.TiffNavigation!.CurrentPage = 1;
+        _iterator.SetCurrentIndex(1);
+        _tab.Model = tiffModel;
+
+        await _iterator.NavigateAsync(navigateTo, skipAmount, new CancellationTokenSource());
+
+        Assert.Equal(expectedIndex, _iterator.CurrentIndex);
+        Assert.Equal(_files[expectedIndex].FullName, _tab.Model.FileInfo?.FullName);
+        Assert.Equal(1, tiffModel.TiffNavigation.CurrentPage);
+    }
+
+    [Fact]
+    public async Task RepeatNavigateAsync_InsideTiff_TurnsPages_ThenGoesToTheNextFile()
+    {
+        var tiffModel = CreateTiffModel(_files[1], 2);
+        _iterator.SetCurrentIndex(1);
+        _tab.Model = tiffModel;
+        var cts = new CancellationTokenSource();
+
+        await _iterator.RepeatNavigateAsync(NavigateTo.Next, TimeSpan.Zero, cts);
+        var indexAfterTurn = _iterator.CurrentIndex;
+        var pageAfterTurn = tiffModel.TiffNavigation!.CurrentPage;
+        await _iterator.RepeatNavigateAsync(NavigateTo.Next, TimeSpan.Zero, cts);
+
+        Assert.Equal(1, indexAfterTurn);
+        Assert.Equal(1, pageAfterTurn);
+        Assert.Equal(2, _iterator.CurrentIndex);
+    }
+
+    [Fact]
+    public async Task NavigateAsync_SideBySide_InsideTiff_AdvancesPage_AndStaysOnFile()
+    {
+        Settings.ImageScaling.ShowImageSideBySide = true;
+        var tiffModel = CreateTiffModel(_files[1], 3);
+        _iterator.SetCurrentIndex(1);
+        _tab.Model = tiffModel;
+
+        await _iterator.NavigateAsync(NavigateTo.Next, SkipAmount.One, new CancellationTokenSource());
+
+        Assert.Equal(1, _iterator.CurrentIndex);
+        Assert.Equal(1, tiffModel.TiffNavigation!.CurrentPage);
+    }
+
+    [Fact]
+    public async Task RepeatNavigateAsync_SideBySide_InsideTiff_AdvancesPage_AndStaysOnFile()
+    {
+        Settings.ImageScaling.ShowImageSideBySide = true;
+        var tiffModel = CreateTiffModel(_files[1], 3);
+        _iterator.SetCurrentIndex(1);
+        _tab.Model = tiffModel;
+
+        await _iterator.RepeatNavigateAsync(NavigateTo.Next, TimeSpan.Zero, new CancellationTokenSource());
+
+        Assert.Equal(1, _iterator.CurrentIndex);
+        Assert.Equal(1, tiffModel.TiffNavigation!.CurrentPage);
+    }
+
     private ImageModel CreateTiffModel(FileInfo file, int pageCount)
     {
         var model = new ImageModel { FileInfo = file };

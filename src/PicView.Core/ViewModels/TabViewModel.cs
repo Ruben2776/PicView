@@ -7,6 +7,7 @@ using PicView.Core.Localization;
 using PicView.Core.Models;
 using PicView.Core.Navigation;
 using PicView.Core.Navigation.Interfaces;
+using PicView.Core.Navigation.Tiff;
 using PicView.Core.Preloading;
 using PicView.Core.Titles;
 using PicView.Core.Generators;
@@ -135,12 +136,14 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
     /// <see cref="SecondaryModel"/> before <see cref="Model"/>, because the UI reacts to <see cref="Model"/> changing
     /// and reads the secondary model then, and sets the bindable properties so they never lag behind the models.
     /// Showing models from files means the tab no longer shows a single image, so <see cref="SingleImageType"/> is
-    /// reset. Once shown, the primary model is recorded in <see cref="ViewHistory"/> and File History, and becomes the
+    /// reset. A page asked for with <see cref="RequestPage"/> is set on the primary model first, when it is that file.
+    /// Once shown, the primary model is recorded in <see cref="ViewHistory"/> and File History, and becomes the
     /// <see cref="LastFile"/> when this is the active tab of the Active Main Window.
     /// </summary>
     public void Display(ImageModel primary, ImageModel? secondary = null)
     {
         SingleImageType = SingleImageType.None;
+        ApplyRequestedPage(primary);
         ShowModels(primary, secondary);
         RecordShown();
     }
@@ -162,6 +165,61 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
     // The title of the Single Image the tab shows, which its View History entry keeps
     private string? _singleImageTitle;
 
+    /// <summary>
+    /// Turns the multi-page TIFF the tab shows to <paramref name="page"/>, and records it. Does nothing when the tab shows
+    /// no multi-page TIFF, or the TIFF has no such page. The window picks the page up from the model's image.
+    /// </summary>
+    public void ShowPage(int page)
+    {
+        // A load may show another model meanwhile, so the page goes to the model it was checked against
+        var model = Model;
+        if (model.TiffNavigation is not { } tiff || page < 0 || page >= tiff.PageCount)
+        {
+            return;
+        }
+
+        SetPage(model, tiff, page);
+        RecordShown();
+    }
+
+    /// <summary>
+    /// Asks the next <see cref="Display"/> to show <paramref name="filePath"/> at <paramref name="page"/>, so opening a
+    /// TIFF at a page never shows another page first, or records it. That Display takes the request whichever file it
+    /// shows, and a newer request replaces this one.
+    /// </summary>
+    public void RequestPage(string filePath, int page) =>
+        Interlocked.Exchange(ref _pageRequest, new PageRequest(filePath, page));
+
+    private PageRequest? _pageRequest;
+
+    private sealed record PageRequest(string FilePath, int Page);
+
+    private void ApplyRequestedPage(ImageModel primary)
+    {
+        // Taken whether or not it fits, so a request that goes unused can't turn a page when the file shows much later
+        if (Interlocked.Exchange(ref _pageRequest, null) is not { } request)
+        {
+            return;
+        }
+
+        if (primary.TiffNavigation is { } tiff
+            && primary.FileInfo is { } file
+            && string.Equals(file.FullName, request.FilePath, StringComparison.OrdinalIgnoreCase)
+            && request.Page >= 0 && request.Page < tiff.PageCount)
+        {
+            SetPage(primary, tiff, request.Page);
+        }
+    }
+
+    private static void SetPage(ImageModel model, TiffNavigationInfo tiff, int page)
+    {
+        tiff.CurrentPage = page;
+        if (tiff.Pages is { } pages && page < pages.Length)
+        {
+            model.Image = pages[page];
+        }
+    }
+
     private void ShowModels(ImageModel primary, ImageModel? secondary)
     {
         SecondaryModel = secondary;
@@ -177,8 +235,9 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
 
     /// <summary>
     /// Records what the tab shows now in its <see cref="ViewHistory"/>, and a file, an archive or a URL in File History
-    /// and <see cref="LastFile"/>. It runs after the image is shown, so recording never delays it: it reads no disk, never
-    /// waits for the UI thread and allocates nothing for a file.
+    /// and <see cref="LastFile"/>. Each page of a multi-page TIFF is its own entry in the View History. It runs after the
+    /// image is shown, so recording never delays it: it reads no disk, never waits for the UI thread and allocates
+    /// nothing for a file.
     /// </summary>
     private void RecordShown()
     {
@@ -202,7 +261,9 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
         }
         else
         {
-            entry = ViewHistoryEntry.ForFile(file.FullName);
+            // Only a multi-page TIFF has pages of its own
+            var page = Model.TiffNavigation is { PageCount: > 1 } tiff ? tiff.CurrentPage : -1;
+            entry = ViewHistoryEntry.ForFile(file.FullName, page);
         }
 
         if (ViewHistory.Record(entry) && entry.HistoryPath is { } historyPath)
