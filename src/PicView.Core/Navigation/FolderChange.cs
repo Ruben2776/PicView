@@ -1,4 +1,6 @@
 
+using System.Runtime.InteropServices;
+
 namespace PicView.Core.Navigation;
 
 public enum FolderChangeKind
@@ -30,6 +32,7 @@ public enum FolderChangeKind
 /// <param name="OldFullPath">The file's path before it was renamed, else null.</param>
 /// <param name="Details">The file's details, read once for every tab that needs them.</param>
 /// <param name="CompareNames">How the file lists are sorted, to insert the file in its place.</param>
+[StructLayout(LayoutKind.Auto)] 
 public sealed record FolderChange(
     FolderChangeKind Kind,
     FileInfo File,

@@ -1,3 +1,5 @@
+using System.Runtime.InteropServices;
+
 namespace PicView.Core.Navigation;
 
 /// <summary>
@@ -5,6 +7,7 @@ namespace PicView.Core.Navigation;
 /// </summary>
 /// <param name="IsLoaded">Whether the source was loaded.</param>
 /// <param name="Error">Why loading failed, when there is something to tell the user (e.g., a failed download).</param>
+[StructLayout(LayoutKind.Auto)] 
 public readonly record struct LoadResult(bool IsLoaded, string? Error = null)
 {
     public static LoadResult Loaded { get; } = new(true);

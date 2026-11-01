@@ -1,4 +1,3 @@
-using ImageMagick;
 using PicView.Core.DebugTools;
 using PicView.Core.MotionPhoto;
 using PicView.Core.Navigation;
@@ -114,7 +113,7 @@ public class GalleryCoordinator : IDisposable
         }
     }
 
-    private Task Enqueue(Action work) => Enqueue<bool>(() =>
+    private Task<bool> Enqueue(Action work) => Enqueue(() =>
     {
         work();
         return true;
@@ -252,7 +251,7 @@ public class GalleryCoordinator : IDisposable
                 item.SetDetails(details ?? GalleryFileDetails.Unreadable);
                 Gallery.RaiseSizesChanged();
             });
-        });
+        }, _cts.Token);
     }
 
     private void SortItems(IReadOnlyList<FileInfo> files)
@@ -355,7 +354,7 @@ public class GalleryCoordinator : IDisposable
         var files = _files;
         // Taken now, as a restart can dispose the source before the thread pool runs the load
         var ct = cts.Token;
-        _ = Task.Run(() => LoadAsync(files, currentIndex, ct));
+        _ = Task.Run(() => LoadAsync(files, currentIndex, ct), ct);
     }
 
     /// <summary>
@@ -381,7 +380,7 @@ public class GalleryCoordinator : IDisposable
                 items[i] = CreateItem(files[i], null, maxHeight);
             });
 
-            // The current image and the files around it come first. Nothing else sees these items yet, so their
+            // The current image and the surrounding files come first. Nothing else sees these items yet, so their
             // details need no queue
             var center = Math.Clamp(currentIndex, 0, Math.Max(0, files.Count - 1));
             var start = Math.Max(0, center - NeighborsEachSide);
@@ -394,11 +393,13 @@ public class GalleryCoordinator : IDisposable
             // Cancellation happens on the queue too, so a change that started the load again owns the items
             await Enqueue(() =>
             {
-                if (!ct.IsCancellationRequested)
+                if (ct.IsCancellationRequested)
                 {
-                    Gallery.GalleryItems.AddRange(items);
-                    Gallery.LoadingState = GalleryLoadingState.Loading;
+                    return;
                 }
+
+                Gallery.GalleryItems.AddRange(items);
+                Gallery.LoadingState = GalleryLoadingState.Loading;
             }).ConfigureAwait(false);
 
             while (true)
@@ -548,24 +549,21 @@ public class GalleryCoordinator : IDisposable
             await ThumbnailSlots.WaitAsync(cancellationToken).ConfigureAwait(false);
             try
             {
-                return await Task.Run(async () =>
+                var thumb = await _thumbnailLoader.GetThumbnailAsync(file, (uint)maxHeight, core)
+                    .ConfigureAwait(false);
+                if (thumb is not null)
                 {
-                    var thumb = await _thumbnailLoader.GetThumbnailAsync(file, (uint)maxHeight, core)
-                        .ConfigureAwait(false);
-                    if (thumb is not null)
-                    {
-                        _thumbnailCache.Add(_tab.Id, file.FullName, thumb);
-                    }
+                    _thumbnailCache.Add(_tab.Id, file.FullName, thumb);
+                }
 
-                    // Detection reads the file again up to three times, so skip it while the badges are hidden
-                    if (Settings.Gallery.ShowMotionPhotoBadges)
-                    {
-                        item.IsMotionPhoto.Value = MotionPhotoDetector.TryDetect(
-                            item.FileInfo, item.Details?.XmpPacket, fastMode: true) is not null;
-                    }
+                // Detection reads the file again up to three times, so skip it while the badges are hidden
+                if (Settings.Gallery.ShowMotionPhotoBadges)
+                {
+                    item.IsMotionPhoto.Value = MotionPhotoDetector.TryDetect(
+                        item.FileInfo, item.Details?.XmpPacket, fastMode: true) is not null;
+                }
 
-                    return thumb;
-                }, cancellationToken).ConfigureAwait(false);
+                return thumb;
             }
             finally
             {
