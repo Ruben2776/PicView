@@ -623,6 +623,13 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
 
             if (!_tab.IsArchiveExtracting.Value)
             {
+                // Stopped, not finished, as when another archive starts opening: the list stays as it is, so stepping
+                // on it would go to the wrong page
+                if (_tab.ArchiveExtractionService?.IsLatestExtractionStopped is true)
+                {
+                    break;
+                }
+
                 // The step may stop on the shown file, which brings no new title, so the title says what it shows again
                 _tab.UpdateTabTitle();
                 return (index, files);

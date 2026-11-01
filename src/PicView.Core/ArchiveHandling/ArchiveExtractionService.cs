@@ -629,6 +629,21 @@ public class ArchiveExtractionService
     }
 
     /// <summary>
+    ///     Whether the background extraction started last was stopped before it finished, as when another archive starts
+    ///     opening, or the tab leaves its archive. Its pages that are not extracted then never come.
+    /// </summary>
+    public bool IsLatestExtractionStopped
+    {
+        get
+        {
+            lock (_lock)
+            {
+                return _latestExtraction.IsCancellationRequested;
+            }
+        }
+    }
+
+    /// <summary>
     ///     Stops the background extraction, as the tab opens another archive, whose pages then come sooner.
     /// </summary>
     public void StopExtraction()

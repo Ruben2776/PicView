@@ -394,6 +394,33 @@ public class ImageIteratorFileListTests
         Assert.Equal(title, _tab.Title.Value);
     }
 
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Next_WaitingWhenTheExtractionIsStoppedNotFinished_GivesUpAndShowsTheTitleAgain(bool keyHeldDown)
+    {
+        // Looping, which goes round to the first page when the extraction counts as finished
+        Settings.UIProperties.Looping = true;
+        var c = File("c.jpg");
+        _iterator.Initialize([File("a.jpg"), File("b.jpg"), c], 2);
+        _tab.IsSelected = true;
+        _tab.Display(new ImageModel { FileInfo = c, Image = new ProbeImage() });
+        _tab.UpdateTabTitle();
+        var title = _tab.Title!.Value;
+        var extraction = _tab.ArchiveExtractionService!.ResetExtractionCts();
+        _tab.IsArchiveExtracting.Value = true;
+
+        var next = Next(keyHeldDown);
+        // Another archive opens, which stops this one's extraction before its own page shows
+        _tab.ArchiveExtractionService.StopExtraction();
+        NavigationService.EndExtraction(_tab, extraction);
+        _iterator.NotifyFileAdded();
+        await next.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+
+        Assert.Equal("c.jpg", _tab.Model.FileInfo?.Name);
+        Assert.Equal(title, _tab.Title.Value);
+    }
+
     [Fact]
     public async Task Next_TwoPressesWaitingWhenTheNextFileComes_NeitherGoesRoundToTheFirst()
     {
