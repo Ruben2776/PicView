@@ -65,12 +65,19 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
     public int InsertMissing(IReadOnlyCollection<string> paths, string folder, Func<string, string, int> compareNames)
     {
         // Looked up before the lock, as it reads the disk: whether each file is there, which also reads its size and
-        // dates, so a sort by those compares them under the lock without reading the disk
-        var listed = Volatile.Read(ref _files);
+        // dates, so a sort by those compares them under the lock without reading the disk. One set of the listed paths,
+        // compared as IsSamePath does, keeps the look linear for an archive of thousands of pages
+        var files = Volatile.Read(ref _files);
+        var listed = new HashSet<string>(files.Length, StringComparer.OrdinalIgnoreCase);
+        foreach (var listedFile in files)
+        {
+            listed.Add(listedFile.FullName);
+        }
+
         List<FileInfo>? missing = null;
         foreach (var path in paths)
         {
-            if (IndexOf(listed, path) < 0 && new FileInfo(path) is { Exists: true } file)
+            if (!listed.Contains(path) && new FileInfo(path) is { Exists: true } file)
             {
                 (missing ??= []).Add(file);
             }
