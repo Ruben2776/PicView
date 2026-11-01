@@ -43,6 +43,17 @@ public class AppLifecycleTests : IAsyncDisposable
     private readonly List<string> _steps = [];
     private int _exits;
 
+    // Bounds each wait on a held load, so a failing test fails instead of hanging the run
+    private static readonly TimeSpan WaitLimit = TimeSpan.FromSeconds(10);
+
+    // How long a step gets to end before the file shows, which is the bug the held-load test catches
+    private static readonly TimeSpan EarlyEndWait = TimeSpan.FromMilliseconds(500);
+
+    // A test holds the load of the file at _heldPath: the image loader waits for _held, and says when it is asked
+    private string? _heldPath;
+    private readonly TaskCompletionSource<ImageModel> _held = new(TaskCreationOptions.RunContinuationsAsynchronously);
+    private readonly TaskCompletionSource _heldRequested = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
     public AppLifecycleTests()
     {
         SetDefaults();
@@ -50,10 +61,19 @@ public class AppLifecycleTests : IAsyncDisposable
         ObservableSystem.DefaultFrameProvider = new MockFrameProvider();
         _folder = Path.Combine(Path.GetTempPath(), "PicViewAppLifecycleTests_" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(_folder);
-        _core = new CoreViewModel(new NoPlatform(), file => ValueTask.FromResult(
-            file.Extension.Equals(".tif", StringComparison.OrdinalIgnoreCase)
-                ? ThreePageTiff(file)
-                : new ImageModel { FileInfo = file }));
+        _core = new CoreViewModel(new NoPlatform(), file =>
+        {
+            if (file.FullName == _heldPath)
+            {
+                _heldRequested.TrySetResult();
+                return new ValueTask<ImageModel>(_held.Task);
+            }
+
+            return ValueTask.FromResult(
+                file.Extension.Equals(".tif", StringComparison.OrdinalIgnoreCase)
+                    ? ThreePageTiff(file)
+                    : new ImageModel { FileInfo = file });
+        });
         _provider = new LifecycleWindowProvider(_core);
         _sharedFiles = new FolderSharedFiles(_folder);
     }
@@ -686,6 +706,53 @@ public class AppLifecycleTests : IAsyncDisposable
             // The file opened at page 1 at once. Page 0 would have been recorded as something else showing, and ended the step
             Assert.Equal([tiff, tiff, other], tab.ViewHistory.Entries.Select(entry => entry.Path));
             Assert.Equal([0, 1, -1], tab.ViewHistory.Entries.Select(entry => entry.Page));
+        }
+        finally
+        {
+            Application.Current.DataContext = null;
+        }
+    }
+
+    [AvaloniaFact]
+    public async Task FileHistoryPrevAndNext_BetweenFilesInOtherFolders_ShowThemWithoutRecordingThemAsNewViews()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var window = app.MainWindows.Open[0];
+        var vm = ViewModelOf(window);
+        var tab = vm.WindowTabs.ActiveTab.CurrentValue;
+        var a = Path.Combine(Directory.CreateDirectory(Path.Combine(_folder, "one")).FullName, "a.png");
+        var c = Path.Combine(Directory.CreateDirectory(Path.Combine(_folder, "two")).FullName, "c.png");
+        await File.WriteAllBytesAsync(a, [0x89, 0x50, 0x4E, 0x47], TestContext.Current.CancellationToken);
+        await File.WriteAllBytesAsync(c, [0x89, 0x50, 0x4E, 0x47], TestContext.Current.CancellationToken);
+        Application.Current!.DataContext = _core;
+        try
+        {
+            await SourceOpener.OpenAsync(window, _core, a);
+            await SourceOpener.OpenAsync(window, _core, c);
+            // Back loads a again, slowly, as it does once the cache has let go of its image
+            _core.SharedCache.Invalidate(a);
+            _heldPath = a;
+
+            var back = vm.ActionRunner!.Run(Actions.FileHistoryPrev).AsTask();
+            await _heldRequested.Task.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+            // A step that ends before the file shows ends within moments of the load being asked for. The file is then
+            // recorded as a new view when it shows, which drops the entries after it
+            await Task.WhenAny(back, Task.Delay(EarlyEndWait, TestContext.Current.CancellationToken));
+            _held.SetResult(new ImageModel { FileInfo = new FileInfo(a) });
+            await back.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+            var shownAfterBack = tab.Model.FileInfo?.FullName;
+            var countAfterBack = tab.ViewHistory.Count;
+            var cursorAfterBack = tab.ViewHistory.Cursor;
+
+            await vm.ActionRunner.Run(Actions.FileHistoryNext);
+
+            Assert.Equal(a, shownAfterBack);
+            Assert.Equal(2, countAfterBack);
+            Assert.Equal(0, cursorAfterBack);
+            Assert.Equal(c, tab.Model.FileInfo?.FullName);
+            Assert.Equal(2, tab.ViewHistory.Count);
+            Assert.Equal(1, tab.ViewHistory.Cursor);
         }
         finally
         {

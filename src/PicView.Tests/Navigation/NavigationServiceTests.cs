@@ -24,6 +24,17 @@ public class NavigationServiceTests : IDisposable
     private readonly NavigationService _navigationService;
     private readonly string _testDirectory;
 
+    // Bounds each wait on a held load, so a failing test fails instead of hanging the run
+    private static readonly TimeSpan WaitLimit = TimeSpan.FromSeconds(10);
+
+    // How long a call gets to end before the file shows, which is the bug the held-load tests catch
+    private static readonly TimeSpan EarlyEndWait = TimeSpan.FromMilliseconds(500);
+
+    // A test holds the load of the file at _heldPath: the cache's loader waits for _held, and says when it is asked
+    private string? _heldPath;
+    private readonly TaskCompletionSource<ImageModel> _held = new(TaskCreationOptions.RunContinuationsAsynchronously);
+    private readonly TaskCompletionSource _heldRequested = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
     public NavigationServiceTests()
     {
         ObservableSystem.DefaultFrameProvider = new MockFrameProvider();
@@ -35,7 +46,16 @@ public class NavigationServiceTests : IDisposable
         Directory.CreateDirectory(_testDirectory);
 
         _mockImageModelLoader = new MockImageModelLoader();
-        _cache = new SharedImageCache(static f => ValueTask.FromResult(new ImageModel { FileInfo = f }));
+        _cache = new SharedImageCache(file =>
+        {
+            if (file.FullName != _heldPath)
+            {
+                return ValueTask.FromResult(new ImageModel { FileInfo = file });
+            }
+
+            _heldRequested.TrySetResult();
+            return new ValueTask<ImageModel>(_held.Task);
+        });
         _mockFileWatcherService = new MockFileWatcherService();
         _mockThumbnailLoader = new MockThumbnailLoader();
 
@@ -176,6 +196,36 @@ public class NavigationServiceTests : IDisposable
         Assert.False(_mockFileWatcherService.UnwatchCalled, "The file list should not be rebuilt");
         Assert.Equal([a.FullName, copy.FullName, c.FullName], tab.ImageIterator.Files.Select(f => f.FullName));
         Assert.Equal(1, tab.ImageIterator.CurrentIndex);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task LoadFromFileAsync_FileInAFolderTheTabIsNotBrowsing_FinishesOnlyOnceTheTabShowsIt(bool tabHasFiles)
+    {
+        var tab = CreateTab(_testDirectory);
+        var browsed = new FileInfo(Path.Combine(_testDirectory, "browsed.jpg"));
+        var elsewhere = new FileInfo(Path.Combine(Directory.CreateDirectory(Path.Combine(_testDirectory, "other")).FullName,
+            "elsewhere.jpg"));
+        await File.WriteAllTextAsync(browsed.FullName, "x", TestContext.Current.CancellationToken);
+        await File.WriteAllTextAsync(elsewhere.FullName, "x", TestContext.Current.CancellationToken);
+        if (tabHasFiles)
+        {
+            tab.Model = new ImageModel { FileInfo = browsed };
+            tab.ImageIterator.Initialize([browsed]);
+        }
+        _heldPath = elsewhere.FullName;
+
+        var load = _navigationService.LoadFromFileAsync(elsewhere, tab, new CancellationTokenSource()).AsTask();
+        await _heldRequested.Task.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+        // A call that ends before the file shows ends within moments of the load being asked for
+        await Task.WhenAny(load, Task.Delay(EarlyEndWait, TestContext.Current.CancellationToken));
+        var endedEarly = load.IsCompleted;
+        _held.SetResult(new ImageModel { FileInfo = elsewhere });
+        await load.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+
+        Assert.False(endedEarly, "The call ended while the file was still loading");
+        Assert.Equal(elsewhere.FullName, tab.Model.FileInfo?.FullName);
     }
 
 

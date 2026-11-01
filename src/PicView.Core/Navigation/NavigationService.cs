@@ -159,7 +159,8 @@ public class NavigationService(
 
         async Task Repopulate()
         {
-            await Task.Run(() => RepopulateIterator(fileInfo, tab, ct, null, load).ConfigureAwait(false), ct.Token).ConfigureAwait(false);
+            // AsTask, because Task.Run waits for a Task but returns a ValueTask without awaiting it
+            await Task.Run(() => RepopulateIterator(fileInfo, tab, ct, null, load).AsTask(), ct.Token).ConfigureAwait(false);
         }
     }
 
