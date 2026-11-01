@@ -21,7 +21,6 @@ using PicView.Avalonia.Views.UC;
 using PicView.Avalonia.Views.UC.PopUps;
 using PicView.Avalonia.WindowBehavior;
 using PicView.Core.DebugTools;
-using PicView.Core.FileHistory;
 using PicView.Core.IPlatform;
 using PicView.Core.Sizing;
 using PicView.Core.ViewModels;
@@ -323,8 +322,6 @@ public abstract class MainWindow : Window, IMainWindow, IPlatformWindowService
 
     private void OnDeactivated(object? sender, EventArgs e)
     {
-        Settings.StartUp.LastFile = FileHistoryManager.CurrentEntry;
-        
         if (Application.Current.DataContext is not CoreViewModel core)
         {
             return;

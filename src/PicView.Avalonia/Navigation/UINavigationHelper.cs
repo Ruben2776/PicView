@@ -44,8 +44,6 @@ public static class UINavigationHelper
     
     public static async Task OpenLastFile(MainWindow mainWindow, MainWindowViewModel vm)
     {
-        var lastEntry = FileHistoryManager.GetLastEntry();
-        var pathToLoad = !string.IsNullOrWhiteSpace(lastEntry) ? lastEntry : Settings.StartUp.LastFile;
-        await OpenPathAsync(mainWindow, vm, pathToLoad).ConfigureAwait(false);
+        await OpenPathAsync(mainWindow, vm, Settings.StartUp.LastFile).ConfigureAwait(false);
     }
 }

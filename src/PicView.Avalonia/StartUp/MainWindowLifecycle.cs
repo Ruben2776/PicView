@@ -12,9 +12,8 @@ using PicView.Avalonia.Services;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.Views.UC;
 using PicView.Avalonia.WindowBehavior;
-using PicView.Core.FileHistory;
 using PicView.Core.FileSorting;
-using PicView.Core.Models;
+using PicView.Core.Navigation;
 using PicView.Core.Sizing;
 using PicView.Core.ViewModels;
 
@@ -203,7 +202,6 @@ public sealed class MainWindowLifecycle
         await Dispatcher.UIThread.InvokeAsync(window.Hide);
         if (remembers)
         {
-            // After hiding, since deactivating a window remembers the file history's current entry instead
             RememberFile(window);
         }
         // On macOS most Tool Windows have no owner, so they would outlive their Main Window
@@ -248,25 +246,7 @@ public sealed class MainWindowLifecycle
             return;
         }
 
-        var tab = vm.WindowTabs.ActiveTab.CurrentValue;
-        string? lastFile;
-        if (!string.IsNullOrEmpty(tab.ArchiveExtractionService?.LastOpenedArchive))
-        {
-            lastFile = tab.ArchiveExtractionService.LastOpenedArchive;
-        }
-        else if (tab.SingleImageType is SingleImageType.Url && tab.SourceURL is not null)
-        {
-            lastFile = tab.SourceURL;
-        }
-        else
-        {
-            lastFile = tab.Model?.FileInfo?.FullName ?? FileHistoryManager.GetLastEntry();
-        }
-
-        if (lastFile is not null)
-        {
-            Settings.StartUp.LastFile = lastFile;
-        }
+        LastFile.Remember(vm.WindowTabs.ActiveTab.CurrentValue);
     }
 
     private MainWindow Create(TabViewModel? firstTab = null, bool setMainWindow = true)

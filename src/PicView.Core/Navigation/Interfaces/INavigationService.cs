@@ -46,8 +46,6 @@ public interface INavigationService
     /// </summary>
     ValueTask SortAsync(TabViewModel tab, bool ascending, CancellationTokenSource ct);
 
-    ValueTask<bool> LoadLastFileAsync(TabViewModel tab, CancellationTokenSource ct);
-
     /// <summary>
     /// Navigates to the next folder relative to the current image's directory.
     /// If <see cref="PicView.Core.Config.Sorting.IncludeSubDirectories"/> is true, it explores subdirectories first.

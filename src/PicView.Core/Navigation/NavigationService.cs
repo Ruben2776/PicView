@@ -1,7 +1,6 @@
 using System.Collections.ObjectModel;
 using PicView.Core.DebugTools;
 using PicView.Core.FileHandling;
-using PicView.Core.FileHistory;
 using PicView.Core.FileSearch;
 using PicView.Core.FileSorting;
 using PicView.Core.Gallery;
@@ -536,22 +535,6 @@ public class NavigationService(
         await iterator.NavigateByIncrementsAsync(skipAmount,forwards, ct).ConfigureAwait(false);
     }
     
-    public async ValueTask<bool> LoadLastFileAsync(TabViewModel tab, CancellationTokenSource ct)
-    {
-        var lastFile = Settings.StartUp.LastFile;
-        var lastEntry = FileHistoryManager.GetLastEntry();
-
-        // determine which file source to use (prioritize LastFile, fallback to History)
-        var fileToLoad = !string.IsNullOrWhiteSpace(lastFile) ? lastFile : lastEntry;
-        if (string.IsNullOrWhiteSpace(fileToLoad))
-        {
-            return false;
-        }
-
-        await LoadFromStringAsync(fileToLoad, tab, ct).ConfigureAwait(false);
-        return true;
-    }
-
     public async ValueTask NavigateToNextFolderAsync(TabViewModel tab, CancellationTokenSource ct)
     {
         var currentDir = tab.Model?.FileInfo?.DirectoryName;

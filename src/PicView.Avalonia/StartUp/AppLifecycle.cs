@@ -155,7 +155,6 @@ public sealed class AppLifecycle
             await MainWindows.CloseAsync(window).ConfigureAwait(true);
         }
 
-        // After closing, since deactivating a window remembers the file history's current entry instead
         if (mostRecent is not null)
         {
             MainWindowLifecycle.RememberFile(mostRecent);

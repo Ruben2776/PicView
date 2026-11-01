@@ -135,7 +135,8 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
     /// <see cref="SecondaryModel"/> before <see cref="Model"/>, because the UI reacts to <see cref="Model"/> changing
     /// and reads the secondary model then, and sets the bindable properties so they never lag behind the models.
     /// Showing models from files means the tab no longer shows a single image, so <see cref="SingleImageType"/> is
-    /// reset. Once shown, the primary model is recorded in <see cref="ViewHistory"/> and File History.
+    /// reset. Once shown, the primary model is recorded in <see cref="ViewHistory"/> and File History, and becomes the
+    /// <see cref="LastFile"/> when this is the active tab of the Active Main Window.
     /// </summary>
     public void Display(ImageModel primary, ImageModel? secondary = null)
     {
@@ -175,9 +176,9 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
     }
 
     /// <summary>
-    /// Records what the tab shows now in its <see cref="ViewHistory"/>, and a file, an archive or a URL in File History.
-    /// It runs after the image is shown, so recording never delays it: it reads no disk, never waits for the UI thread
-    /// and allocates nothing for a file.
+    /// Records what the tab shows now in its <see cref="ViewHistory"/>, and a file, an archive or a URL in File History
+    /// and <see cref="LastFile"/>. It runs after the image is shown, so recording never delays it: it reads no disk, never
+    /// waits for the UI thread and allocates nothing for a file.
     /// </summary>
     private void RecordShown()
     {
@@ -207,6 +208,7 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
         if (ViewHistory.Record(entry) && entry.HistoryPath is { } historyPath)
         {
             FileHistoryManager.Add(historyPath);
+            LastFile.Record(this, historyPath);
         }
     }
 
