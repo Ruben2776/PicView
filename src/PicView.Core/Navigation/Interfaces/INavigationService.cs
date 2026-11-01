@@ -8,8 +8,13 @@ namespace PicView.Core.Navigation.Interfaces;
 
 public interface INavigationService
 {
+    /// <inheritdoc cref="LoadFromFileAsync(FileInfo, TabViewModel, CancellationTokenSource)"/>
     ValueTask LoadFromFileAsync(string source, TabViewModel tab, CancellationTokenSource ct);
-    
+
+    /// <summary>
+    /// Loads a file into <paramref name="tab"/>, and completes only once the file shows, a newer load supersedes this one,
+    /// or the load fails, since a step Back or Forward ends when its load completes (ADR-0012).
+    /// </summary>
     ValueTask LoadFromFileAsync(FileInfo fileInfo, TabViewModel tab, CancellationTokenSource ct);
     
     /// <returns><see langword="false"/> if the directory has no supported files.</returns>

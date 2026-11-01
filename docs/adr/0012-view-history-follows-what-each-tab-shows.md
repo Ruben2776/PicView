@@ -1,8 +1,8 @@
 # View History Follows What Each Tab Shows
 
-Each **Tab** keeps its own **View History**, and Back and Forward step through the active tab's and show that entry again in the same tab. They are still the `FileHistoryPrev` and `FileHistoryNext` Actions, since `keybindings.json` stores Actions by name. Before this, they walked **File History**: one static list with a single cursor, which every tab and every Main Window moved from whichever thread its load ran on. It held each path once, in the order it was first added, and never a Single Image, so Forward after revisiting a file went to the files first seen after it, and stepping past either end opened the last file.
+Each **Tab** keeps its own **View History**, and Back and Forward step through the active tab's View History and show each entry again in that tab. They are still the `FileHistoryPrev` and `FileHistoryNext` Actions, since `keybindings.json` stores Actions by name. Before this, they walked **File History**: one static list with a single cursor, which every tab and every Main Window moved from whichever thread its load ran on. It held each path once, in the order it was first added, and never a Single Image, so Forward after revisiting a file went to the files first seen after it, and stepping past either end opened the last file.
 
-A tab records its View History in the only three methods that change what it shows, `TabViewModel.Display`, `DisplaySingleImage` and `ShowPage`. Each records once the image is shown, so recording never delays showing. The same recording feeds File History and the **Last File**.
+A tab records its View History in the only three methods that show an image, `TabViewModel.Display`, `DisplaySingleImage` and `ShowPage`. Each records once the image is shown, so recording never delays showing. The same recording feeds File History and the **Last File**.
 
 A step only marks a target, and the cursor moves when the tab shows that entry. So the history follows what is on screen, even when loads fail or overtake each other.
 

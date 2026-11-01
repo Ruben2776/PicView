@@ -107,12 +107,17 @@ public class NavigationService(
         }
     }
 
+    /// <inheritdoc cref="LoadFromFileAsync(FileInfo, TabViewModel, CancellationTokenSource)"/>
     public async ValueTask LoadFromFileAsync(string source, TabViewModel tab, CancellationTokenSource ct)
     {
         ArgumentNullException.ThrowIfNull(source);
         await LoadFromFileAsync(new FileInfo(source), tab, ct).ConfigureAwait(false);
     }
 
+    /// <summary>
+    /// Loads a file into <paramref name="tab"/>, and completes only once the file shows, a newer load supersedes this one,
+    /// or the load fails, since a step Back or Forward ends when its load completes (ADR-0012).
+    /// </summary>
     public async ValueTask LoadFromFileAsync(FileInfo fileInfo, TabViewModel tab, CancellationTokenSource ct)
     {
         if (!fileInfo.Exists)

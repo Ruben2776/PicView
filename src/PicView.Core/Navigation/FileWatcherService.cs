@@ -12,13 +12,13 @@ namespace PicView.Core.Navigation;
 /// Watches the folders the tabs browse, and lets every tab watching a folder follow what happens to its files.
 /// </summary>
 /// <param name="fileRenamed">
-/// Gets a renamed file's old and new path before any tab follows the rename. A tab that shows the renamed file records
-/// it, which would count as a new view if the histories did not know the new name yet. It also gets every renamed path
-/// that is not an image, since that may be an archive.
+/// Gets the old and new path of a rename to an image before any tab follows it. A tab that shows the renamed file records
+/// it, which would count as a new view if the histories did not know the new name yet. It also gets a rename to an
+/// archive from a path that is not an image either, since the histories list an archive by its own path.
 /// </param>
 /// <param name="folderRenamed">
-/// The same for a renamed folder, with its old and new path: the watched folder, or one of its subfolders. Every renamed
-/// path that is not an image goes here too, since that may be a folder.
+/// The same for a renamed folder, with its old and new path: the watched folder, or one of its subfolders. A rename from
+/// a path that is not an image to another one goes here too, since that may be a folder.
 /// </param>
 public class FileWatcherService(
     Func<string, string, int> stringComparer,

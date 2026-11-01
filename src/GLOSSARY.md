@@ -33,7 +33,7 @@ The complete assignment of **Keybinds** to owners, where an owner is either an *
 _Avoid_: Shortcuts, custom shortcuts, keybindings dictionary
 
 **File History**:
-The chronological record of recently opened image files, archives, and web URLs, supporting forward/backward traversal and entry pinning.
+The image files, archives, and web URLs viewed most recently in any tab, ordered by when each was last viewed, with entry pinning. Back and Forward don't use it; they step through each tab's **View History**.
 _Avoid_: Favorites, folder bookmarks
 
 **Custom Title Bar**:

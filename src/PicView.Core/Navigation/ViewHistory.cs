@@ -66,7 +66,8 @@ public sealed class ViewHistory(Func<string, bool>? fileExists = null)
     }
 
     /// <summary>
-    /// The index of the entry the tab shows, -1 when there are no entries.
+    /// The index of the entry the tab shows, -1 when none is: there are no entries, or the entry the tab showed was the
+    /// first and was removed.
     /// </summary>
     public int Cursor
     {
@@ -80,7 +81,7 @@ public sealed class ViewHistory(Func<string, bool>? fileExists = null)
     }
 
     /// <summary>
-    /// The entry the tab shows, null when there are no entries.
+    /// The entry the tab shows, null when none is, as for <see cref="Cursor"/>.
     /// </summary>
     public ViewHistoryEntry? Current
     {
