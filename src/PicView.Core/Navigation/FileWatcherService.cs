@@ -251,8 +251,13 @@ public class FileWatcherService(
                     break;
                 case FolderChangeKind.FolderRenamed:
                     // A path that is not an image is a folder, or an archive, which the histories list by its own path.
-                    // Each call finds only its own: the exact path, or the paths under a folder. So both go
-                    fileRenamed?.Invoke(oldPath, fullPath);
+                    // Each call finds only its own: the exact path, or the paths under a folder. So both go, the file
+                    // rename only to an archive: a program that saves through ReplaceFile first renames the original
+                    // aside, as a.zip to a.zip~RF….TMP, and then deletes it under that name
+                    if (fullPath.IsArchive())
+                    {
+                        fileRenamed?.Invoke(oldPath, fullPath);
+                    }
                     folderRenamed?.Invoke(oldPath, fullPath);
                     break;
             }

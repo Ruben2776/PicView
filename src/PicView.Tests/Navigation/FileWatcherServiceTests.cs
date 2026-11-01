@@ -312,6 +312,36 @@ public class FileWatcherServiceTests : IDisposable
     }
 
     [Fact]
+    public async Task OnArchiveReplacedThroughTempFile_KeepsItsEntriesInTheHistoryUnderItsName()
+    {
+        // A program that saves with ReplaceFile moves the original aside, renames the temp file to its name, and deletes
+        // the original under the name it moved it to
+        var files = Files("a.jpg");
+        var tab = CreateTab(_testDirectory, files, files[0]);
+        var archive = Path.Combine(_testDirectory, "a.zip");
+        tab.ViewHistory.Record(ViewHistoryEntry.ForArchivePage(archive, "1.jpg"));
+        tab.ViewHistory.Record(ViewHistoryEntry.ForArchivePage(archive, "2.jpg"));
+        var renamedFiles = new List<string>();
+        _fileRenamed = (oldFile, newFile) =>
+        {
+            renamedFiles.Add(newFile);
+            tab.ViewHistory.Rename(oldFile, newFile);
+        };
+        string? lastRenamedFolder = null;
+        _folderRenamed = (oldFolder, _) => lastRenamedFolder = oldFolder;
+        var watch = Watch(tab);
+
+        watch.RaiseRenamed("a.zip", "a.zip~RF1.TMP");
+        watch.RaiseRenamed("a.zip~RF2.TMP", "a.zip");
+        watch.RaiseDeleted("a.zip~RF1.TMP");
+
+        // The events are handled in order, so the second rename handed on means the first one was handled
+        await WaitUntilAsync(() => lastRenamedFolder == Path.Combine(_testDirectory, "a.zip~RF2.TMP"));
+        Assert.All(tab.ViewHistory.Entries, entry => Assert.Equal(archive, entry.Path));
+        Assert.Equal([archive], renamedFiles);
+    }
+
+    [Fact]
     public async Task OnFileReplacedThroughTempFile_KeepsTheFileOnceInItsPlace()
     {
         // Arrange: how Windows Explorer saves an edited property, with ReplaceFile
