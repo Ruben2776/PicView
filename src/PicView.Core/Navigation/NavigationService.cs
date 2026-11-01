@@ -120,6 +120,8 @@ public class NavigationService(
             return;
         }
         var load = tab.BeginLoad();
+        // The archive this load leaves: a newer archive's extraction must survive this load's cleanup
+        var tempZipDir = tab.ArchiveExtractionService?.TempZipDirectory;
         var iterator = tab.ImageIterator;
 
         if (iterator?.Files is null || iterator.Files.Count is 0)
@@ -153,7 +155,7 @@ public class NavigationService(
             await Repopulate().ConfigureAwait(false);
         }
         
-        tab.ArchiveExtractionService.Cleanup();
+        tab.ArchiveExtractionService.Cleanup(tempZipDir);
 
         return;
 
@@ -180,6 +182,8 @@ public class NavigationService(
     public async Task<bool> LoadFromDirectoryAsync(FileInfo source, TabViewModel tab, CancellationTokenSource ct)
     {
         var load = tab.BeginLoad();
+        // The archive this load leaves: a newer archive's extraction must survive this load's cleanup
+        var tempZipDir = tab.ArchiveExtractionService?.TempZipDirectory;
         var files = await Task.Run(() =>
         {
             var files = FileListRetriever.RetrieveFiles(source, stringComparer);
@@ -190,7 +194,7 @@ public class NavigationService(
             return false;
         }
         await RepopulateIterator(files[0], tab, ct, files, load).ConfigureAwait(false);
-        tab.ArchiveExtractionService.Cleanup();
+        tab.ArchiveExtractionService.Cleanup(tempZipDir);
         return true;
     }
 
@@ -218,10 +222,12 @@ public class NavigationService(
                 else
                 {
                     var load = tab.BeginLoad();
+                    // The archive this load leaves: a newer archive's extraction must survive this load's cleanup
+                    var tempZipDir = tab.ArchiveExtractionService?.TempZipDirectory;
                     var files = await Task.Run(() => FileListRetriever.RetrieveFiles(new FileInfo(rootDirectory), stringComparer), ct.Token)
                         .ConfigureAwait(false);
                     await RepopulateIterator(new FileInfo(check.Value.Data), tab, ct, files.Count > 0 ? files : null, load).ConfigureAwait(false);
-                    tab.ArchiveExtractionService.Cleanup();
+                    tab.ArchiveExtractionService.Cleanup(tempZipDir);
                 }
                 return LoadResult.Loaded;
             case FileTypeResolver.LoadAbleFileType.Directory:

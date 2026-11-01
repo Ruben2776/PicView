@@ -203,17 +203,7 @@ public class NavigationServiceTests : IDisposable
     [InlineData(true)]
     public async Task LoadFromFileAsync_FileInAFolderTheTabIsNotBrowsing_FinishesOnlyOnceTheTabShowsIt(bool tabHasFiles)
     {
-        var tab = CreateTab(_testDirectory);
-        var browsed = new FileInfo(Path.Combine(_testDirectory, "browsed.jpg"));
-        var elsewhere = new FileInfo(Path.Combine(Directory.CreateDirectory(Path.Combine(_testDirectory, "other")).FullName,
-            "elsewhere.jpg"));
-        await File.WriteAllTextAsync(browsed.FullName, "x", TestContext.Current.CancellationToken);
-        await File.WriteAllTextAsync(elsewhere.FullName, "x", TestContext.Current.CancellationToken);
-        if (tabHasFiles)
-        {
-            tab.Model = new ImageModel { FileInfo = browsed };
-            tab.ImageIterator.Initialize([browsed]);
-        }
+        var (tab, elsewhere) = await CreateTabAndFileElsewhereAsync(tabHasFiles);
         _heldPath = elsewhere.FullName;
 
         var load = _navigationService.LoadFromFileAsync(elsewhere, tab, new CancellationTokenSource()).AsTask();
@@ -226,6 +216,71 @@ public class NavigationServiceTests : IDisposable
 
         Assert.False(endedEarly, "The call ended while the file was still loading");
         Assert.Equal(elsewhere.FullName, tab.Model.FileInfo?.FullName);
+    }
+
+    // The loads that clean up the extraction of the archive they leave
+    public enum LoadSite
+    {
+        File,
+        Directory,
+        FileWithRootDirectory
+    }
+
+    [Theory]
+    [InlineData(LoadSite.File, false)]
+    [InlineData(LoadSite.File, true)]
+    [InlineData(LoadSite.Directory, false)]
+    [InlineData(LoadSite.Directory, true)]
+    [InlineData(LoadSite.FileWithRootDirectory, false)]
+    [InlineData(LoadSite.FileWithRootDirectory, true)]
+    public async Task LoadFromFileOrDirectory_WhileANewerArchiveOpens_KeepsTheNewerExtraction(LoadSite site,
+        bool tabShowsAnArchive)
+    {
+        var (tab, elsewhere) = await CreateTabAndFileElsewhereAsync(tabHasFiles: true);
+        var left = tabShowsAnArchive ? await PrepareExtractionAsync(tab, "left.zip") : null;
+        _heldPath = elsewhere.FullName;
+        try
+        {
+            var load = StartLoad(site, tab, elsewhere);
+            await _heldRequested.Task.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+            // A quick second step can open an archive in the tab before the file shows
+            var newer = await PrepareExtractionAsync(tab, "newer.zip");
+            _held.SetResult(new ImageModel { FileInfo = elsewhere });
+            await load.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+
+            Assert.True(Directory.Exists(newer), "The load deleted the extraction of the archive that opened meanwhile");
+            Assert.Equal(newer, tab.ArchiveExtractionService.TempZipDirectory);
+            if (left is not null)
+            {
+                Assert.False(Directory.Exists(left), "The load left the extraction of the archive it left behind");
+            }
+        }
+        finally
+        {
+            tab.ArchiveExtractionService.Cleanup();
+            tab.ArchiveExtractionService.Cleanup(left);
+        }
+    }
+
+    [Theory]
+    [InlineData(LoadSite.File)]
+    [InlineData(LoadSite.Directory)]
+    [InlineData(LoadSite.FileWithRootDirectory)]
+    public async Task LoadFromFileOrDirectory_LeavingAnArchive_CleansUpItsExtraction(LoadSite site)
+    {
+        var (tab, elsewhere) = await CreateTabAndFileElsewhereAsync(tabHasFiles: true);
+        var left = await PrepareExtractionAsync(tab, "left.zip");
+        try
+        {
+            await StartLoad(site, tab, elsewhere).WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+
+            Assert.False(Directory.Exists(left), "The load left the archive's extraction behind");
+            Assert.False(tab.ArchiveExtractionService.IsArchived);
+        }
+        finally
+        {
+            tab.ArchiveExtractionService.Cleanup(left);
+        }
     }
 
 
@@ -249,6 +304,45 @@ public class NavigationServiceTests : IDisposable
         tab.Initialize(_cache, thumbCache, _mockThumbnailLoader, null, thumbCache);
         tab.ImageIterator.Initialize([]);
         return tab;
+    }
+
+    // A tab, and a file in a folder it is not browsing. With tabHasFiles the tab browses a file in its own folder,
+    // else it has no files
+    private async Task<(TabViewModel Tab, FileInfo Elsewhere)> CreateTabAndFileElsewhereAsync(bool tabHasFiles)
+    {
+        var tab = CreateTab(_testDirectory);
+        var browsed = new FileInfo(Path.Combine(_testDirectory, "browsed.jpg"));
+        var elsewhere = new FileInfo(Path.Combine(Directory.CreateDirectory(Path.Combine(_testDirectory, "other")).FullName,
+            "elsewhere.jpg"));
+        await File.WriteAllTextAsync(browsed.FullName, "x", TestContext.Current.CancellationToken);
+        await File.WriteAllTextAsync(elsewhere.FullName, "x", TestContext.Current.CancellationToken);
+        if (tabHasFiles)
+        {
+            tab.Model = new ImageModel { FileInfo = browsed };
+            tab.ImageIterator.Initialize([browsed]);
+        }
+
+        return (tab, elsewhere);
+    }
+
+    // Starts the load that a site is: a file, a directory, or a file listed from a root directory
+    private Task StartLoad(LoadSite site, TabViewModel tab, FileInfo file)
+    {
+        var ct = new CancellationTokenSource();
+        return site switch
+        {
+            LoadSite.File => _navigationService.LoadFromFileAsync(file, tab, ct).AsTask(),
+            LoadSite.Directory => _navigationService.LoadFromDirectoryAsync(new FileInfo(file.DirectoryName!), tab, ct),
+            _ => _navigationService.LoadFromStringAsync(file.FullName, tab, ct, file.DirectoryName).AsTask()
+        };
+    }
+
+    // Does what opening an archive does first: the tab's extraction service makes the archive's temp folder
+    private async Task<string> PrepareExtractionAsync(TabViewModel tab, string name)
+    {
+        var zip = await CreateZipAsync(name, 1);
+        await tab.ArchiveExtractionService.PrepareArchiveAsync(zip, (_, _) => Task.FromResult(false), string.CompareOrdinal);
+        return tab.ArchiveExtractionService.TempZipDirectory!;
     }
 
     private async Task<string> CreateZipAsync(string name, int images)
