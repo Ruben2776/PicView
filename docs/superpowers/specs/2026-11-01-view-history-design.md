@@ -1,13 +1,14 @@
 # Back and Forward Follow What Each Tab Shows
 
 **Date:** 2026-11-01
-**Status:** Designed in conversation; this write-up is waiting for review.
+**Status:** Designed in conversation and revised after the first review; waiting for review.
 **ADRs:** corrects one sentence of ADR-0001 and adds ADR-0012 (see [Decisions that change](#decisions-that-change)). ADR-0002, ADR-0005, ADR-0009 and ADR-0010 hold.
 
 ## Goal
 
 - Back and Forward retrace what a tab actually showed, in the order it showed it, the way a browser does. They are the `FileHistoryPrev` and `FileHistoryNext` Actions, on the mouse's back and forward buttons by default. What they retrace includes Single Images (a clipboard, base64 or dropped temp-file image, or a URL download) and every page of a multi-page TIFF or an archive.
 - "Open last file" in the start-up menu opens the file the user viewed last.
+- Renaming a file or a folder renames its entries everywhere: in FileHistory.json, in every tab's Back and Forward, and in the Last File.
 - The dropdown menu keeps listing recent files. Pins, the sort toggle and FileHistory.json stay as they are.
 
 ## Success criteria
@@ -16,12 +17,11 @@
 2. Back from page 3 of a multi-page TIFF or an archive shows page 2. Once the tab has left the archive, Back to one of its pages opens the archive again at that page.
 3. The user views A, then B, then A again, then opens a new tab: "Open last file" opens A. It still does after a restart, with A pinned, with file history turned off, and after clearing the history.
 4. Back and Forward never show another tab's images.
-5. Images the iterator passes over are not recorded:
-   - those whipped past while a navigation Keybind is held,
-   - those Next 10 and Next 100 jump over,
-   - any the user navigates away from before they show.
-6. Viewing a file that's already in the dropdown moves it to the top. An archive is listed as the archive, never as one of its extracted temp files.
-7. No file history list is read while a load thread changes it.
+5. Images the iterator passes over without showing them are not recorded: those Next 10 and Next 100 jump over, and any the user navigates away from before they show. Images shown while a navigation Keybind is held are recorded like any other.
+6. Recording never delays showing an image, whether a key is held or not.
+7. Viewing a file that's already in the dropdown moves it to the top. An archive is listed as the archive, never as one of its extracted temp files.
+8. No file history list is read while a load thread changes it.
+9. After the user renames the shown file, in PicView or in Explorer, Back and Forward still step through the tab's entries, with the file under its new name, and the forward entries survive the rename. The dropdown, FileHistory.json and "Open last file" use the new name. The same holds when a folder is renamed.
 
 ## Why it doesn't work today
 
@@ -34,6 +34,7 @@
   - `MainWindow.OnDeactivated` sets `Settings.StartUp.LastFile` to the cursor's entry whenever a window loses focus. That's whichever tab or window loaded last, or the side-by-side partner (it's added after the first image), or null when file history is off or was just cleared.
   - App Start reads `Settings.StartUp.LastFile`, while the button reads the history first.
 - **Archives leave temp files behind.** `RepopulateIterator` adds the first extracted temp file before `LoadFromArchiveAsync` adds the archive. So the dropdown lists files that are deleted when the tab leaves the archive.
+- **Renames are followed loosely.** `FileHistoryManager.Rename` looks for an exact, case-sensitive match, and otherwise takes the first path that merely contains the old one. A rename onto a path that's already listed leaves two entries for it. Folder renames aren't followed at all (the TODO in `Rename`).
 - **There is no lock.** Load threads change the list, while the UI thread enumerates it live when the dropdown opens: `AllEntries` is `AsReadOnly()`, and `PinnedEntries` is a lazy `Where`.
 
 ## Approaches considered
@@ -81,7 +82,7 @@ Three methods change what a tab shows, and each one records after showing:
 | A clipboard, base64 or dropped temp-file image | the shown model, with its type and title | nothing | nothing |
 | An empty model, as when a tab becomes fresh again | nothing | nothing | nothing |
 
-- **Repeats collapse.** Showing the entry the cursor is on records nothing. So a reload, a crop, a file changed on disk and the side-by-side partner add no entries.
+- **Repeats collapse.** Showing the entry the cursor is on records nothing. So a reload, a crop, a file changed on disk and the side-by-side partner add no entries. Neither does showing a renamed file again under its new name, since the rename reaches View History first (section 6).
 - **What counts as the same entry:**
   - for a file, the same path (compared ignoring case, as the file list does) and the same page;
   - for an archive page, the same archive and the same entry in it;
@@ -91,8 +92,8 @@ Three methods change what a tab shows, and each one records after showing:
 - **Passed-over images are not recorded.** An image counts once the tab shows it:
   - The thumbnail shown while an image loads doesn't count. An image the user navigates away from before it loads never shows, so it never counts.
   - Next 10, Next 100 and a gallery click record only where they land.
-  - While a held Keybind repeats navigation (`ImageIterator.RepeatNavigateAsync`), the tab records nothing. When the key is released (`StopRepeatedNavigation`), the image the iterator stopped on is recorded as soon as it shows.
-- **A slideshow records each image it shows**, since the user views them.
+- **Held-key navigation and slideshows record each image they show**, like any other navigation. How many images a held key shows depends on the navigation speed setting.
+- **Showing comes first.** A tab records only after it has shown the image, and recording never makes the next image wait. It does no disk access, never waits for the UI thread, and holds its locks only for a few in-memory list operations (section 7).
 - **Callers that change:**
   - The nine `FileHistoryManager.Add` calls in `NavigationService`, `ImageIterator` and `QuickLoad` go. After that, `Add` has one caller: a tab's recording.
   - `LoadFromUrlAsync` sets `SourceURL` first and shows its image with `DisplaySingleImage(model, SingleImageType.Url)`. Today it calls `Display` and sets the type afterwards.
@@ -110,7 +111,7 @@ Three methods change what a tab shows, and each one records after showing:
   - A step that's taken while another is under way counts from the earlier step's target, not from the cursor. Pressing Back three times quickly goes back three entries. If an entry between the cursor and the target shows on the way, the cursor moves to it instead of a new entry being added.
   - A step ends when its target shows, when anything else shows, or when its load finishes without showing the target. A load that fails leaves the cursor on the image that's still shown, and the next step counts from the cursor again.
   - Showing anything else, such as Next, a gallery click or a paste, is recorded as usual.
-- **Missing files are skipped.** Before showing a file, TIFF or archive entry, a step checks that its file still exists, off the UI thread. If it doesn't, the step removes the entry and goes on in the same direction. A renamed file counts as missing.
+- **Missing files are skipped.** Before showing a file, TIFF or archive entry, a step checks that its file still exists, off the UI thread. If it doesn't, the step removes the entry and goes on in the same direction. A file renamed where PicView couldn't see it counts as missing (section 6).
 
 ### 4. File History
 
@@ -119,7 +120,7 @@ Three methods change what a tab shows, and each one records after showing:
 - The cursor members go:
   - `CurrentIndex`, `HasNext`, `HasPrevious` and `CurrentEntry`,
   - `GetNextEntry`, `GetPreviousEntry`, `GetFirstEntry`, `GetLastEntry` and `GetEntry`.
-- These stay as they are: pin, unpin, remove, clear, rename, the sort toggle, the caps, and FileHistory.json's format.
+- These stay as they are: pin, unpin, remove, clear, the sort toggle, the caps, and FileHistory.json's format. Renames change (section 6).
 - `FileHistoryViewModel` fills the dropdown as it does now, but from the copies. It marks as current the entry for what the active tab's View History cursor is on: its file, archive or URL. So an archive is marked while the tab browses it. Today it never is, because the tab shows an extracted temp file.
 - With the file history setting off, nothing is recorded or shown, as today.
 
@@ -136,13 +137,34 @@ Three methods change what a tab shows, and each one records after showing:
   - `NavigationService.LoadLastFileAsync` and its `INavigationService` member, which nothing calls.
   - The `NavigationMode` enum, which nothing uses.
 
-### 6. Performance
+### 6. Renames
+
+- **One entry point applies a rename everywhere.** `FileRenames` (new, `PicView.Core/Navigation/FileRenames.cs`) renames in:
+  - File History, so the dropdown shows the new name and FileHistory.json gets it the next time it's saved;
+  - the View History of every tab in every Main Window;
+  - the Last File.
+- **A renamed file:** every entry with the old path gets the new path. Paths are compared ignoring case, as the file list does.
+  - In File History, the entry keeps its place and its pin. If the new path is already listed, the two entries become one, in the newer place, pinned if either was.
+  - In View History, every page of a TIFF gets the new path, and so does every page of an archive when the renamed file is the archive. If two neighboring entries become the same, they merge, and the cursor stays on the merged entry. The forward entries are kept.
+- **A renamed folder:** every entry under the old folder moves to the new one, by the same rules, through `FolderChange.PathInRenamedFolder`. This closes the TODO in `FileHistoryManager.Rename`.
+- **The renames PicView follows:**
+  - its own rename (`RenameHelper`), whether the extension stays or changes;
+  - converting to another format in the Resize Image window (`ResizeImageViewModel`), which replaces the original;
+  - the renames the folder watcher reports: of files and folders inside a folder a tab browses, and of that folder itself.
+- **A rename reaches the history before the tab shows the renamed file.** Otherwise the tab showing the file under its new name would be recorded as a new view, and the tab's forward entries would be dropped. So:
+  - The folder watcher applies a rename before it hands the event to the tabs. Today it renames in File History after them. `TabNavigationInitializer` creates `FileWatcherService`, and the `CoreViewModel` is at hand there, so it hands the watcher the rename to apply.
+  - `RenameHelper` and `ResizeImageViewModel` apply the rename once the new file is written, before they show it. When the folder watcher then reports the same rename, there's nothing left to rename.
+  - `FolderChanges.RenamedAsync` keeps the shown model's TIFF pages when it shows the renamed file, so the file still matches its entry.
+- `FileHistoryManager.Rename` matches the path exactly, instead of going through `GetEntryByString`, which falls back to the first path that merely contains the old one. `GetEntryByString` goes, since nothing else uses it.
+
+### 7. Performance
 
 - Recording an image takes a lock, a comparison and at most one list write.
   - Entries are small values (a `readonly record struct`) in a list sized for its cap up front.
   - Recording a file allocates nothing new: its path is the `FileInfo.FullName` string the tab already has.
   - A repeat returns before anything else happens.
-- While a held Keybind repeats navigation, recording is one flag check.
+- Recording runs after the image is shown, so images show as fast as today, with a key held or not. Each image a held key shows costs the same few microseconds as any other.
+- A rename goes once through File History and once through each tab's View History (at most 100 entries each), and never runs on a load.
 - Moving a File History entry to the newest end is a search and a move in a list of at most 55. Today's `Add` already searches that list.
 - The dropdown copies the lists only when it opens.
 - Writing the Last File costs two reference comparisons and a string assignment. The settings reach the disk only when they're saved, as today.
@@ -150,9 +172,10 @@ Three methods change what a tab shows, and each one records after showing:
 - Each tab keeps at most 10 Single Images, freed when they drop out or the tab closes.
 - Nothing new runs per frame.
 
-### 7. Threads and errors
+### 8. Threads and errors
 
 - `Display` runs on whichever thread a load finishes on. So View History takes a lock for every read and write, and so does File History. Callers get copies, never the live lists.
+- The folder watcher reports renames on its own thread. So `FileRenames` copies the list of Main Windows, and each window's tabs, instead of going through them live. Each View History applies a rename under its own lock.
 - `LastFile` reads the tab's Main Window and the Active Main Window at the moment the tab records. A tab without a Main Window, as in tests, never writes it.
 - An entry that can't be shown again for any other reason, such as a file that no longer decodes, behaves like a failed load: nothing is shown, and the cursor stays where it is.
 - Errors are logged with `DebugHelper`, as elsewhere.
@@ -165,21 +188,22 @@ Three methods change what a tab shows, and each one records after showing:
   - Back and Forward work per tab, and they no longer open the last file at either end.
   - The dropdown is ordered by when each entry was last viewed.
   - Turning file history off no longer turns off Back and Forward.
+  - File History follows renamed folders, and a renamed file keeps its place in the dropdown.
 
 ## Glossary
 
 These entries are added to `GLOSSARY.md` at the repository root, under Tabs:
 
 > **View History**:
-> What a tab has shown, oldest to newest, with a cursor on what it shows now: each file, each page of a multi-page TIFF or an archive, and each Single Image. Back and Forward move through it and show that entry again in the same tab. Showing something new after going back drops the entries after the cursor. Images the tab only passed over, such as those passed while a navigation Keybind is held, are not in it. It lives only in memory and holds up to 100 entries, at most 10 of them Single Images. It moves with its tab and ends when the tab closes.
+> What a tab has shown, oldest to newest, with a cursor on what it shows now: each file, each page of a multi-page TIFF or an archive, and each Single Image. Back and Forward move through it and show that entry again in the same tab. Showing something new after going back drops the entries after the cursor. Images the tab never showed, such as those Next 10 jumps over, are not in it, and renaming a file or folder renames its entries. It lives only in memory and holds up to 100 entries, at most 10 of them Single Images. It moves with its tab and ends when the tab closes.
 > _Avoid_: Navigation history, back stack, file history (for Back and Forward)
 >
 > **File History**:
-> The files, archives and URLs viewed most recently in any tab, listed in the dropdown menu by when each was last viewed: up to 50, plus up to 5 pinned ones. It is remembered between runs, and turning file history off stops it recording. Back and Forward don't use it.
+> The files, archives and URLs viewed most recently in any tab, listed in the dropdown menu by when each was last viewed: up to 50, plus up to 5 pinned ones. It is remembered between runs, renaming a file or folder renames its entries, and turning file history off stops it recording. Back and Forward don't use it.
 > _Avoid_: Recent files, history list
 >
 > **Last File**:
-> The file, archive or URL that the active tab of the Active Main Window showed most recently. "Open last file" opens it, and so does App Start when it opens the last file. Closing a Main Window, and App Shutdown, make that window's active tab's file the Last File. A Single Image without a path never becomes it.
+> The file, archive or URL that the active tab of the Active Main Window showed most recently. "Open last file" opens it, and so does App Start when it opens the last file. Closing a Main Window, and App Shutdown, make that window's active tab's file the Last File. A Single Image without a path never becomes it, and renaming its file, or the folder it's in, renames it.
 > _Avoid_: Last entry, current entry
 
 ## Build order
@@ -195,7 +219,8 @@ Each step leaves PicView working:
    This step alone fixes "Open last file".
 2. **View History on the same seam.** Back and Forward move onto it, Single Images included, and File History's cursor goes.
 3. **Pages:** `ShowPage`, opening a TIFF at a page, the archive's entry map, and opening an archive at a page.
-4. **Docs:** the glossary, ADR-0001 and ADR-0012.
+4. **Renames:** `FileRenames` for files and folders. The folder watcher, `RenameHelper` and `ResizeImageViewModel` apply a rename before the tab shows the renamed file.
+5. **Docs:** the glossary, ADR-0001 and ADR-0012.
 
 ## Testing
 
@@ -220,7 +245,7 @@ Each step leaves PicView working:
 - A TIFF records its page on `Display`, and `ShowPage` records each page turn.
 - A file in the tab's extraction folder records the archive and its entry. The first file shown after the tab leaves the archive records as a file.
 - A clipboard image and a URL download record their models. An empty model records nothing.
-- While repeat navigation runs, nothing is recorded. After `StopRepeatedNavigation`, the image the iterator stopped on is.
+- Repeat navigation records each image it shows, and none that the user passed before it loaded.
 
 **Opening at a page:**
 
@@ -243,24 +268,40 @@ Each step leaves PicView working:
 - It's still written with file history off.
 - The existing `AppLifecycleTests` for closing windows and App Shutdown keep passing.
 
+**`FileRenamesTests`:**
+
+- A file rename reaches File History, the View Histories of tabs in two Main Windows, and the Last File.
+- File History keeps the entry's place and its pin. A rename onto a path that's already listed merges the two entries.
+- View History renames every page of a TIFF, and every page of a renamed archive. Neighbors that become the same merge, the cursor stays on the merged entry, and the forward entries are kept.
+- A folder rename moves every entry under the old folder, including those in its subfolders.
+- Matching ignores case, and never takes a path that only contains the old one.
+- Applying the same rename twice changes nothing the second time.
+
+**Renames in order:**
+
+- `FileWatcherServiceTests`: a rename the folder watcher reports reaches the history before the tabs follow it, so the tab showing the file again under its new name adds no entry.
+- `RenameTests`: renaming the shown file in PicView, with the same extension or a new one, leaves the tab on the same View History entry under the new name.
+
+**Allocations** (Release, like `InputAllocationTests`): recording a file into View History allocates nothing, and nor does recording a file that's already in File History.
+
 **Headless, end to end:** view a file and paste a clipboard image. Back shows the file, and Forward shows the same clipboard image again.
 
 `InputAllocationTests` still pass in Release. All other existing tests keep passing. Tests that use removed members are updated.
 
 **By hand:**
 
-1. In one tab, browse a folder and paste a screenshot.
+1. In one tab, browse a folder, partly by holding the right arrow key, and paste a screenshot.
 2. Open an archive and turn three pages, then open a multi-page TIFF and turn two.
-3. Walk all the way back with the mouse's back button, then forward again.
-4. Close the tab, open a new one, and check that "Open last file" opens the TIFF.
+3. Walk all the way back with the mouse's back button, then forward again. Holding the arrow key shouldn't feel any slower than before.
+4. Rename the TIFF in PicView, and its folder in Explorer, then walk back and forward again. The dropdown, FileHistory.json and "Open last file" should show the new names.
+5. Close the tab, open a new one, and check that "Open last file" opens the TIFF.
 
 ## Out of scope
 
-- Following renames inside View History. A renamed file is skipped as missing.
+- Renames PicView doesn't see: those made while it isn't running, or in folders no tab browses. Back and Forward skip those entries as missing.
 - Keeping View History between runs.
 - Renaming the `FileHistoryPrev` and `FileHistoryNext` Actions.
 - Building the dropdown's entries more cheaply. It creates them all again each time it opens, as today.
-- File History entries for the files of a renamed folder (the existing TODO in `FileHistoryManager.Rename`).
 
 ## Files
 
@@ -269,8 +310,11 @@ Paths are relative to `src/`.
 - **Core:**
   - `PicView.Core/Navigation/ViewHistory.cs` and `ViewHistoryEntry.cs` (new)
   - `PicView.Core/Navigation/LastFile.cs` (new)
+  - `PicView.Core/Navigation/FileRenames.cs` (new)
   - `PicView.Core/ViewModels/TabViewModel.cs`
   - `PicView.Core/Navigation/ImageIterator.cs`
+  - `PicView.Core/Navigation/FileWatcherService.cs` and `FolderChanges.cs`
+  - `PicView.Core/ViewModels/ResizeImageViewModel.cs`
   - `PicView.Core/Navigation/NavigationService.cs` and `Interfaces/INavigationService.cs`
   - `PicView.Core/Navigation/NavigationMode.cs` (deleted)
   - `PicView.Core/ArchiveHandling/ArchiveExtractionService.cs`
@@ -280,11 +324,12 @@ Paths are relative to `src/`.
   - `PicView.Avalonia/Navigation/UINavigationHelper.cs`
   - `PicView.Avalonia/Navigation/UpdateImage.cs`
   - `PicView.Avalonia/StartUp/QuickLoad.cs`
-  - `PicView.Avalonia/StartUp/MainWindowLifecycle.cs` and `AppLifecycle.cs`
+  - `PicView.Avalonia/StartUp/MainWindowLifecycle.cs`, `AppLifecycle.cs` and `TabNavigationInitializer.cs`
   - `PicView.Avalonia/CustomControls/MainWindow.cs`
+  - `PicView.Avalonia/UI/RenameHelper.cs`
 - **Tests:**
-  - new: `ViewHistoryTests`, `ViewHistoryRecordingTests`, `LastFileTests`, and a headless Back and Forward test;
-  - updated: `FileHistoryManagerTests`, `TiffNavigationTests`, `NavigationServiceTests`, `AppLifecycleTests`.
+  - new: `ViewHistoryTests`, `ViewHistoryRecordingTests`, `LastFileTests`, `FileRenamesTests`, an allocation test, and a headless Back and Forward test;
+  - updated: `FileHistoryManagerTests`, `TiffNavigationTests`, `NavigationServiceTests`, `AppLifecycleTests`, `FileWatcherServiceTests`, `RenameTests`.
 - **Docs** (at the repository root):
   - `GLOSSARY.md`
   - `docs/adr/0001-separate-favorites-and-file-history.md`
