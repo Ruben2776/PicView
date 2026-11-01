@@ -1,4 +1,5 @@
 using PicView.Core.FileHistory;
+using PicView.Core.Navigation;
 
 namespace PicView.Tests.FileHistory;
 
@@ -36,6 +37,21 @@ public class HistoryAllocationTests : IDisposable
         {
             FileHistoryManager.Add("/path/a.jpg");
             FileHistoryManager.Add("/path/b.jpg");
+        }));
+    }
+
+    [Fact]
+    public void ViewHistoryRecord_NewFilesAndRepeats_AllocatesNothing()
+    {
+        var history = new ViewHistory();
+        var a = ViewHistoryEntry.ForFile("/path/a.jpg");
+        var b = ViewHistoryEntry.ForFile("/path/b.jpg");
+
+        Assert.Equal(0, AllocatedBytes(() =>
+        {
+            history.Record(a);
+            history.Record(a);
+            history.Record(b);
         }));
     }
 
