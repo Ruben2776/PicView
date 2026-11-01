@@ -377,12 +377,13 @@ public class ArchiveExtractionService
     }
 
     /// <summary>
-    ///     Extracts the entries whose keys are in <paramref name="remainingKeys" />, then those in
-    ///     <paramref name="laterKeys" />, to the <see cref="TempZipDirectory" /> with low priority, reporting extraction
-    ///     count progress after each batch. The archive is opened once, and its entries are extracted in the order of the
-    ///     keys. A solid archive is the exception: its entries are compressed as one stream, so reading them out of order
-    ///     would decompress it again for each entry. It is walked in its own order instead, once for each set of keys.
-    ///     It stops once its folder is cleaned up, as the tab has left the archive.
+    ///     Extracts the entries whose keys are in <paramref name="remainingKeys" /> and <paramref name="laterKeys" /> to the
+    ///     <see cref="TempZipDirectory" /> with low priority, reporting extraction count progress after each batch. The
+    ///     archive is opened once, and its entries are extracted in the order of the keys, the two sets taking turns. A
+    ///     solid archive is the exception: its entries are compressed as one stream, so reading them out of order would
+    ///     decompress it again for each entry. It is walked in its own order instead, once for
+    ///     <paramref name="remainingKeys" /> and then once for <paramref name="laterKeys" />. It stops once its folder is
+    ///     cleaned up, as the tab has left the archive.
     /// </summary>
     /// <param name="folder">The folder to extract to, as <see cref="ExtractEntriesAsync" /> takes it.</param>
     public void ExtractRemaining(
@@ -430,24 +431,20 @@ public class ArchiveExtractionService
                 }
             }
 
-            if (ExtractInKeyOrder(remainingKeys))
+            // The two sets take turns, so after an archive opened again at a page, the pages either side of it come
+            // nearest first, and paging either way soon finds its next page. The longer set finishes in its order
+            for (var i = 0; i < Math.Max(remainingKeys.Count, laterKeys.Count); i++)
             {
-                ExtractInKeyOrder(laterKeys);
+                if ((i < remainingKeys.Count && !ExtractKey(remainingKeys[i])) ||
+                    (i < laterKeys.Count && !ExtractKey(laterKeys[i])))
+                {
+                    return;
+                }
             }
             return;
 
-            bool ExtractInKeyOrder(IReadOnlyList<string> keys)
-            {
-                foreach (var key in keys)
-                {
-                    // Removed, so that a key given twice is extracted once
-                    if (entries.Remove(key, out var entry) && !Extract(entry))
-                    {
-                        return false;
-                    }
-                }
-                return true;
-            }
+            // Removed, so that a key given twice is extracted once
+            bool ExtractKey(string key) => !entries.Remove(key, out var entry) || Extract(entry);
 
             bool ExtractInArchiveOrder(IReadOnlyList<string> keys)
             {

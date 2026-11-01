@@ -508,9 +508,9 @@ public class NavigationService(
 
     /// <summary>
     /// The entries of an archive left to extract once those from <paramref name="start"/> up to <paramref name="end"/>
-    /// are shown: those after them in order, then those before the start, nearest first, so that paging either way from
-    /// the start soon finds its pages. <paramref name="alsoShown"/> is another entry shown with them, as the first one is
-    /// beside the last when looping.
+    /// are shown: those after them in order, and those before the start, nearest first. The extraction takes turns
+    /// between the two, so that paging either way from the start soon finds its pages. <paramref name="alsoShown"/> is
+    /// another entry shown with them, as the first one is beside the last when looping.
     /// </summary>
     private static (string[] After, string[] Before) RemainingKeys(string[] keys, int start, int end,
         int? alsoShown = null)

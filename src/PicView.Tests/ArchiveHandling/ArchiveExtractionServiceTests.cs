@@ -555,6 +555,40 @@ public class ArchiveExtractionServiceTests
         }
     }
 
+    [Theory]
+    // Nearest first both ways from a page an archive opened again at
+    [InlineData(new[] { "img_04.jpg", "img_05.jpg" }, new[] { "img_02.jpg", "img_01.jpg" },
+        new[] { "img_04.jpg", "img_02.jpg", "img_05.jpg", "img_01.jpg" })]
+    // The longer set finishes in its order
+    [InlineData(new[] { "img_03.jpg", "img_04.jpg", "img_05.jpg" }, new[] { "img_01.jpg" },
+        new[] { "img_03.jpg", "img_01.jpg", "img_04.jpg", "img_05.jpg" })]
+    [InlineData(new[] { "img_05.jpg" }, new[] { "img_03.jpg", "img_02.jpg", "img_01.jpg" },
+        new[] { "img_05.jpg", "img_03.jpg", "img_02.jpg", "img_01.jpg" })]
+    public async Task ExtractRemaining_ArchiveThatIsNotSolid_TakesTurnsBetweenTheTwoSetsOfKeys(string[] remainingKeys,
+        string[] laterKeys, string[] expected)
+    {
+        var folder = Path.Combine(Path.GetTempPath(), "PicViewEntries_" + Guid.NewGuid().ToString("N"));
+        var zip = await CreateZipAsync(folder, "pages.zip",
+            "img_01.jpg", "img_02.jpg", "img_03.jpg", "img_04.jpg", "img_05.jpg");
+        var service = new ArchiveExtractionService();
+        await service.PrepareArchiveAsync(zip, (_, _) => Task.FromResult(false), string.CompareOrdinal);
+        var order = new ExtractionOrder(service);
+
+        try
+        {
+            // One file to a batch, so each report follows one file
+            service.ExtractRemaining(zip, remainingKeys, laterKeys, progress: order, batchSize: 1,
+                ct: TestContext.Current.CancellationToken);
+
+            Assert.Equal(expected, order.Files);
+        }
+        finally
+        {
+            service.Cleanup();
+            Directory.Delete(folder, true);
+        }
+    }
+
     [Fact]
     public async Task ExtractRemaining_SolidArchive_WalksItInItsOwnOrderForEachSetOfKeys()
     {

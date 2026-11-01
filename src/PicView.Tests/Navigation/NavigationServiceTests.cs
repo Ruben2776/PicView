@@ -521,13 +521,20 @@ public class NavigationServiceTests : IDisposable
     }
 
     [Theory]
-    [InlineData(false)]
-    [InlineData(true)]
-    public async Task LoadFromArchiveAsync_StartEntry_ExtractsThePagesAfterItThenThoseBeforeIt(
-        bool alwaysUncompressEntireArchive)
+    // One by one, the pages either side of the start take turns
+    [InlineData(false, 5, new[] { "img_04.jpg", "img_02.jpg", "img_05.jpg", "img_01.jpg" })]
+    // In batches, the ten from the start come first, then those either side of them take turns
+    [InlineData(true, 5, new[] { "img_04.jpg", "img_05.jpg", "img_02.jpg", "img_01.jpg" })]
+    [InlineData(true, 15, new[]
+    {
+        "img_04.jpg", "img_05.jpg", "img_06.jpg", "img_07.jpg", "img_08.jpg", "img_09.jpg", "img_10.jpg", "img_11.jpg",
+        "img_12.jpg", "img_13.jpg", "img_02.jpg", "img_14.jpg", "img_01.jpg", "img_15.jpg"
+    })]
+    public async Task LoadFromArchiveAsync_StartEntry_ExtractsTheNearestPagesFirst(bool alwaysUncompressEntireArchive,
+        int pages, string[] expected)
     {
         Settings.Navigation.AlwaysUncompressEntireArchive = alwaysUncompressEntireArchive;
-        var zip = await CreateZipAsync($"order_{alwaysUncompressEntireArchive}.zip", 5);
+        var zip = await CreateZipAsync($"order_{alwaysUncompressEntireArchive}_{pages}.zip", pages);
         var tab = CreateTab(_testDirectory);
         var extracted = new ConcurrentQueue<string>();
         FileSystemWatcher? folderWatcher = null;
@@ -550,10 +557,10 @@ public class NavigationServiceTests : IDisposable
                 startEntry: "img_03.jpg");
             // The pages extracted together with the start entry, after it
             var withTheStart = tab.ImageIterator.Files.Select(f => f.Name).Where(name => name != "img_03.jpg").ToArray();
-            await WaitUntil(() => !tab.IsArchiveExtracting.Value && withTheStart.Length + extracted.Count >= 4,
+            await WaitUntil(() => !tab.IsArchiveExtracting.Value && withTheStart.Length + extracted.Count >= pages - 1,
                 () => string.Join(", ", extracted));
 
-            Assert.Equal(["img_04.jpg", "img_05.jpg", "img_02.jpg", "img_01.jpg"], withTheStart.Concat(extracted));
+            Assert.Equal(expected, withTheStart.Concat(extracted));
         }
         finally
         {
@@ -756,6 +763,38 @@ public class NavigationServiceTests : IDisposable
         {
             folderWatcher.Dispose();
             tab.ArchiveExtractionService.Cleanup();
+        }
+    }
+
+    [Fact]
+    public async Task LoadFromArchiveAsync_StartEntryThenNextTwiceOneByOne_ShowsThePagesAfterIt()
+    {
+        // One by one, the pages either side of the start take turns, so img_02 comes between img_04 and img_05, before
+        // the shown page
+        Settings.Navigation.AlwaysUncompressEntireArchive = false;
+        var zip = await CreateZipAsync("next_twice.zip", 5);
+        var tab = CreateTab(_testDirectory);
+        var folderWatcher = new FileWatcherService(string.CompareOrdinal, _cache);
+        var navigation = new NavigationService(_mockImageModelLoader, _cache, folderWatcher,
+            new MockPlatformSpecificService(), string.CompareOrdinal);
+
+        try
+        {
+            await navigation.LoadFromArchiveAsync(zip, tab, new CancellationTokenSource(), startEntry: "img_03.jpg");
+            await tab.ImageIterator.NavigateAsync(NavigateTo.Next, SkipAmount.One, new CancellationTokenSource())
+                .AsTask().WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+            var afterTheFirst = tab.Model.FileInfo!.Name;
+            await tab.ImageIterator.NavigateAsync(NavigateTo.Next, SkipAmount.One, new CancellationTokenSource())
+                .AsTask().WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+
+            Assert.Equal("img_04.jpg", afterTheFirst);
+            Assert.Equal("img_05.jpg", tab.Model.FileInfo!.Name);
+        }
+        finally
+        {
+            folderWatcher.Dispose();
+            tab.ArchiveExtractionService.Cleanup();
+            Settings.Navigation.AlwaysUncompressEntireArchive = true;
         }
     }
 

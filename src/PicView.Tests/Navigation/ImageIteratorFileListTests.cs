@@ -172,6 +172,31 @@ public class ImageIteratorFileListTests
     }
 
     [Fact]
+    public async Task IterateToIndices_PageInsertedBeforeThePairWhileItLoads_ShowsThePair()
+    {
+        Settings.ImageScaling.ShowImageSideBySide = true;
+        var held = new TaskCompletionSource<ImageModel>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var cache = new SharedImageCache(file => file.Name == "e.jpg"
+            ? new ValueTask<ImageModel>(held.Task)
+            : ValueTask.FromResult(new ImageModel { FileInfo = file, Image = new ProbeImage() }));
+        var iterator = new ImageIterator(cache, new ThumbnailCache(), new MockThumbnailLoader(), _tab);
+        var c = File("c.jpg");
+        var e = File("e.jpg");
+        iterator.Initialize([c, File("d.jpg"), e, File("f.jpg")], 0);
+        _tab.Display(new ImageModel { FileInfo = c, Image = new ProbeImage() });
+
+        // An archive's extraction inserts a page before the pair while the pair still loads
+        var next = iterator.IterateToIndicesAsync(2, 3, new CancellationTokenSource()).AsTask();
+        iterator.Insert(File("b.jpg"), string.CompareOrdinal);
+        held.SetResult(new ImageModel { FileInfo = e, Image = new ProbeImage() });
+        await next.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+
+        Assert.Equal("e.jpg", _tab.Model.FileInfo?.Name);
+        Assert.Equal("f.jpg", _tab.SecondaryModel?.FileInfo?.Name);
+        Assert.Equal((3, 4), (iterator.CurrentIndex, iterator.SecondaryCurrentIndex));
+    }
+
+    [Fact]
     public async Task NavigateAsync_SideBySide_UsesIterateToIndicesNotIterateToIndex()
     {
         Settings.ImageScaling.ShowImageSideBySide = true;
