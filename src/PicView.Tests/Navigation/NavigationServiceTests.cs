@@ -201,6 +201,20 @@ public class NavigationServiceTests : IDisposable
         return tab;
     }
 
+    private async Task<string> CreateZipAsync(string name, int images)
+    {
+        var source = Directory.CreateDirectory(
+            Path.Combine(_testDirectory, Path.GetFileNameWithoutExtension(name) + "_source")).FullName;
+        for (var i = 1; i <= images; i++)
+        {
+            await File.WriteAllBytesAsync(Path.Combine(source, $"img_{i:D2}.jpg"), [0xFF, 0xD8, 0xFF],
+                TestContext.Current.CancellationToken);
+        }
+        var zip = Path.Combine(_testDirectory, name);
+        System.IO.Compression.ZipFile.CreateFromDirectory(source, zip);
+        return zip;
+    }
+
     [Fact]
     public async Task LoadFromArchiveAsync_AlwaysUncompressEntireArchiveTrue_ExtractsInitial10SeedFiles()
     {
@@ -273,6 +287,26 @@ public class NavigationServiceTests : IDisposable
             Assert.True(tab.CanNavigateForwards.Value);
             // Should not show the batched progress text indicator
             Assert.Null(tab.ArchiveExtractionProgressText.Value);
+        }
+        finally
+        {
+            tab.ArchiveExtractionService.Cleanup();
+        }
+    }
+
+    [Fact]
+    public async Task LoadFromArchiveAsync_RecordsTheArchiveAndNoneOfItsTempFiles()
+    {
+        Settings.Navigation.IsFileHistoryEnabled = true;
+        FileHistoryManager.Initialize(Path.Combine(_testDirectory, "history.json"));
+        var zip = await CreateZipAsync("recorded.zip", 3);
+        var tab = CreateTab(_testDirectory);
+
+        try
+        {
+            await _navigationService.LoadFromArchiveAsync(zip, tab, new CancellationTokenSource());
+
+            Assert.Equal([zip], FileHistoryManager.AllEntries.Select(e => e.Path));
         }
         finally
         {

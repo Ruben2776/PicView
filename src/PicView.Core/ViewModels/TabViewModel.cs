@@ -2,6 +2,7 @@ using System.Diagnostics;
 using PicView.Core.ArchiveHandling;
 using PicView.Core.DebugTools;
 using PicView.Core.Extensions;
+using PicView.Core.FileHistory;
 using PicView.Core.Localization;
 using PicView.Core.Models;
 using PicView.Core.Navigation;
@@ -80,7 +81,12 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
     private SingleImageType _singleImageType;
 
     public string? SourceURL { get; set; }
-    
+
+    /// <summary>
+    /// What this tab has shown, which Back and Forward step through. The tab records into it each time it shows an image.
+    /// </summary>
+    public ViewHistory ViewHistory { get; } = new();
+
     #endregion
 
     #region UI view models
@@ -129,24 +135,31 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
     /// <see cref="SecondaryModel"/> before <see cref="Model"/>, because the UI reacts to <see cref="Model"/> changing
     /// and reads the secondary model then, and sets the bindable properties so they never lag behind the models.
     /// Showing models from files means the tab no longer shows a single image, so <see cref="SingleImageType"/> is
-    /// reset.
+    /// reset. Once shown, the primary model is recorded in <see cref="ViewHistory"/> and File History.
     /// </summary>
     public void Display(ImageModel primary, ImageModel? secondary = null)
     {
         SingleImageType = SingleImageType.None;
         ShowModels(primary, secondary);
+        RecordShown();
     }
 
     /// <summary>
     /// Shows a single image that is not browsed with the tab's files, such as a clipboard image, in its own
     /// <paramref name="model"/>. Sets <see cref="SingleImageType"/> before the model, because the UI reads it when
-    /// the model changes.
+    /// the model changes. Once shown, it is recorded in <see cref="ViewHistory"/> with <paramref name="title"/>, which
+    /// shows it again later.
     /// </summary>
-    public void DisplaySingleImage(ImageModel model, SingleImageType type)
+    public void DisplaySingleImage(ImageModel model, SingleImageType type, string? title = null)
     {
         SingleImageType = type;
+        _singleImageTitle = title;
         ShowModels(model, null);
+        RecordShown();
     }
+
+    // The title of the Single Image the tab shows, which its View History entry keeps
+    private string? _singleImageTitle;
 
     private void ShowModels(ImageModel primary, ImageModel? secondary)
     {
@@ -160,6 +173,52 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
         Image.Value = primary.Image;
         ImageType.Value = primary.ImageType;
     }
+
+    /// <summary>
+    /// Records what the tab shows now in its <see cref="ViewHistory"/>, and a file, an archive or a URL in File History.
+    /// It runs after the image is shown, so recording never delays it: it reads no disk, never waits for the UI thread
+    /// and allocates nothing for a file.
+    /// </summary>
+    private void RecordShown()
+    {
+        ViewHistoryEntry entry;
+        if (SingleImageType is not SingleImageType.None)
+        {
+            entry = ViewHistoryEntry.ForSingleImage(Model, SingleImageType, _singleImageTitle,
+                SingleImageType is SingleImageType.Url ? SourceURL : null);
+        }
+        else if (Model.FileInfo is not { } file)
+        {
+            // An empty model, as when the tab becomes fresh again
+            return;
+        }
+        else if (ArchiveExtractionService is { TempZipDirectory: { } folder, LastOpenedArchive: { } archive }
+                 && IsInFolder(file.FullName, folder))
+        {
+            // Leaving an archive shows the next file before its extraction is cleaned up, so only a file in the
+            // extraction folder is an archive page
+            entry = ViewHistoryEntry.ForArchivePage(archive, entry: null);
+        }
+        else
+        {
+            entry = ViewHistoryEntry.ForFile(file.FullName);
+        }
+
+        if (ViewHistory.Record(entry) && entry.HistoryPath is { } historyPath)
+        {
+            FileHistoryManager.Add(historyPath);
+        }
+    }
+
+    // Compares spans, so a file recorded in every held-key view allocates nothing
+    private static bool IsInFolder(string path, string folder)
+    {
+        var trimmed = Path.TrimEndingDirectorySeparator(folder.AsSpan());
+        return path.Length > trimmed.Length + 1
+               && path.AsSpan().StartsWith(trimmed, StringComparison.OrdinalIgnoreCase)
+               && path[trimmed.Length] is '\\' or '/';
+    }
+
     /// <summary>
     /// The tab's Quarter Turn and flip.
     /// </summary>

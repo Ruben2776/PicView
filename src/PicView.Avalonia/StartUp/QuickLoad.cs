@@ -9,7 +9,6 @@ using PicView.Avalonia.UI;
 using PicView.Avalonia.Views.UC;
 using PicView.Avalonia.WindowBehavior;
 using PicView.Core.DebugTools;
-using PicView.Core.FileHistory;
 using PicView.Core.FileSorting;
 using PicView.Core.Models;
 using PicView.Core.Navigation;
@@ -159,8 +158,6 @@ public static class QuickLoad
         {
             core.PlatformService.SetTaskbarProgress((ulong)tab.ImageIterator.CurrentIndex, (ulong)tab.ImageIterator.Files.Count);
         }
-
-        FileHistoryManager.Add(fileInfo.FullName);
 
         if (rootDirectory is not null)
         {

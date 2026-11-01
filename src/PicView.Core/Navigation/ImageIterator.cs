@@ -1,5 +1,4 @@
 using PicView.Core.FileSorting;
-using PicView.Core.FileHistory;
 using PicView.Core.Models;
 using PicView.Core.Navigation.Interfaces;
 using PicView.Core.ViewModels;
@@ -361,12 +360,6 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
             _tab.Display(firstModel, secondModel);
             UpdateNavigationProperties();
             TriggerPreload();
-
-            if (!_tab.ArchiveExtractionService.IsArchived)
-            {
-                FileHistoryManager.Add(firstModel.FileInfo.FullName);
-                FileHistoryManager.Add(secondModel.FileInfo.FullName);
-            }
         }
 
         bool IsCurrent() => index == CurrentIndex && secondaryIndex == SecondaryCurrentIndex;
@@ -588,12 +581,6 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
         _tab.Display(newModel);
         UpdateNavigationProperties();
         TriggerPreload();
-
-        if (!_tab.ArchiveExtractionService.IsArchived)
-        {
-            // Update the file history
-            FileHistoryManager.Add(newModel.FileInfo.FullName);
-        }
     }
 
     private void TriggerPreload()

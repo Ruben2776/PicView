@@ -67,13 +67,14 @@ public class FileHistoryViewModel
         
         HasPinnedEntries.Value = pinnedEntries.Length > 0;
         
-        var currentFilePath = _vm.WindowTabs?.ActiveTab?.Value?.Model?.FileInfo?.FullName;
-        
+        // What the active tab shows: its file, its archive or its URL, which is not always the file it has open
+        var currentPath = _vm.WindowTabs?.ActiveTab?.Value?.ViewHistory.Current?.HistoryPath;
+
         foreach (var entry in pinnedEntries)
         {
             var fileName = Path.GetFileName(entry.Path);
             var pinnedEntry = new FileHistoryEntryViewModel();
-            var isCurrentItem = currentFilePath is not null && string.Equals(entry.Path, currentFilePath, StringComparison.Ordinal);
+            var isCurrentItem = currentPath is not null && string.Equals(entry.Path, currentPath, StringComparison.OrdinalIgnoreCase);
             pinnedEntry.Initialize(
                 entry.Path, 
                 fileName, 
@@ -93,7 +94,7 @@ public class FileHistoryViewModel
                 var index = i + 1;
                 var fileName = Path.GetFileName(path);
                 var entry = new FileHistoryEntryViewModel();
-                var isCurrentItem = currentFilePath is not null && string.Equals(path, currentFilePath, StringComparison.Ordinal);
+                var isCurrentItem = currentPath is not null && string.Equals(path, currentPath, StringComparison.OrdinalIgnoreCase);
                 entry.Initialize(
                     path, 
                     fileName, 
@@ -113,7 +114,7 @@ public class FileHistoryViewModel
                 var fileName = Path.GetFileName(entry.Path);
                 var unpinnedEntry = new FileHistoryEntryViewModel();
                 
-                var isCurrentItem = currentFilePath is not null && string.Equals(entry.Path, currentFilePath, StringComparison.Ordinal);
+                var isCurrentItem = currentPath is not null && string.Equals(entry.Path, currentPath, StringComparison.OrdinalIgnoreCase);
                 unpinnedEntry.Initialize(
                     entry.Path, 
                     fileName, 

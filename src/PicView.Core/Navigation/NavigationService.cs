@@ -94,7 +94,6 @@ public class NavigationService(
                 }
                 cache.Preload(tab.Id, currentFile, false, tab.GetTabCancellation().Token);
             }
-            FileHistoryManager.Add(fileInfo.FullName);
         }
         catch (Exception e)
         {
@@ -289,7 +288,6 @@ public class NavigationService(
 
                 await RepopulateIterator(allFiles[0], tab, ct, allFiles).ConfigureAwait(false);
 
-                FileHistoryManager.Add(archivePath);
                 tab.ArchiveExtractionService.Cleanup(tempZipDir);
                 return true;
             }
@@ -322,8 +320,6 @@ public class NavigationService(
                     var seedFiles = new List<FileInfo> { new(firstPath) };
                     await RepopulateIterator(seedFiles[0], tab, ct, seedFiles).ConfigureAwait(false);
                 }
-
-                FileHistoryManager.Add(archivePath);
 
                 // Kick off background extraction of remaining entries one by one without batching or progress indicator.
                 var initialCount = SideBySidePair.ShownCount(prep.EntryKeys.Length);
@@ -374,8 +370,6 @@ public class NavigationService(
             // Seed iterator with initial extracted pages for immediate viewing and preloading
             var seedFilesList = extractedPaths.Select(p => new FileInfo(p)).ToList();
             await RepopulateIterator(seedFilesList[0], tab, ct, seedFilesList).ConfigureAwait(false);
-
-            FileHistoryManager.Add(archivePath);
 
             // Kick off background extraction of remaining entries in batches of 10. FileWatcherService picks them up.
             if (prep.EntryKeys.Length > initialKeys.Length)
@@ -497,17 +491,17 @@ public class NavigationService(
 
             var model = await imageModelLoader.GetImageModelAsync(new FileInfo(destPath), ct.Token)
                 .ConfigureAwait(false);
-            tab.Display(model);
+
+            // Set before the image is shown, since the tab records the URL then
+            tab.SourceURL = url;
+            tab.DisplaySingleImage(model, SingleImageType.Url, url);
 
             // Set titles to filename after successful load
-            tab.SourceURL = url;
-            tab.SingleImageType = SingleImageType.Url;
             tab.UpdateTabTitle();
 
             tab.CanNavigateBackwards.Value = false;
             tab.CanNavigateForwards.Value = false;
 
-            FileHistoryManager.Add(url);
             tab.ArchiveExtractionService.Cleanup();
             return LoadResult.Loaded;
         }
