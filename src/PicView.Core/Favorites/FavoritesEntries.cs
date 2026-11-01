@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices;
 using System.Text.Json.Serialization;
 
 namespace PicView.Core.Favorites;
@@ -6,6 +7,7 @@ namespace PicView.Core.Favorites;
 /// A favorite folder. <see cref="Slot"/> is its number in 1..<see cref="FavoritesManager.MaxSlots"/>,
 /// which gives it the OpenFavorite action of that number, or <c>null</c> when it has no slot.
 /// </summary>
+[StructLayout(LayoutKind.Auto)] 
 public struct FavoriteEntry(string filePath, int? slot)
 {
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]

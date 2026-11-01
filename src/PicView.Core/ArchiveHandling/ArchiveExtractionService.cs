@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using PicView.Core.DebugTools;
 using PicView.Core.FileHandling;
+using PicView.Core.FileSorting;
 using PicView.Core.Navigation;
 using SharpCompress.Archives;
 using ZLinq;
@@ -41,15 +42,22 @@ public class ArchiveExtractionService
     ///     Local software extracted the whole archive, keeping its folders, so the files are not in the maps: a file's path
     ///     in the folder is its entry.
     /// </param>
+    /// <param name="SharedFolderCount">
+    ///     The number of leading folders every entry of the archive shares, which are left out of the extracted file
+    ///     names, or <see cref="NotRespectingStructure" /> when files are named by their file name only. Each folder keeps
+    ///     its own, so every extraction to it names its files the same way, whichever archive opened since.
+    /// </param>
     private sealed record Extraction(
         string Folder,
         string Archive,
         bool IsFullyExtracted,
+        int SharedFolderCount,
         ConcurrentDictionary<string, string> EntryByFile,
         ConcurrentDictionary<string, string> FileByEntry)
     {
-        public Extraction(string folder, string archive, bool isFullyExtracted)
-            : this(folder, archive, isFullyExtracted, new ConcurrentDictionary<string, string>(StringComparer.OrdinalIgnoreCase),
+        public Extraction(string folder, string archive, bool isFullyExtracted, int sharedFolderCount)
+            : this(folder, archive, isFullyExtracted, sharedFolderCount,
+                new ConcurrentDictionary<string, string>(StringComparer.OrdinalIgnoreCase),
                 new ConcurrentDictionary<string, string>(StringComparer.Ordinal))
         {
         }
@@ -206,9 +214,9 @@ public class ArchiveExtractionService
         {
             Directory.CreateDirectory(tempDirectory);
             if (await OpenAsync(archivePath, tempDirectory, extractWithLocalSoftwareAsync, stringComparer)
-                    .ConfigureAwait(false) is { } preparation)
+                    .ConfigureAwait(false) is (var preparation, var sharedFolderCount))
             {
-                Publish(new Extraction(tempDirectory, archivePath, preparation.IsFullyExtracted));
+                Publish(new Extraction(tempDirectory, archivePath, preparation.IsFullyExtracted, sharedFolderCount));
                 return preparation;
             }
         }
@@ -221,8 +229,9 @@ public class ArchiveExtractionService
         return null;
     }
 
-    // Lists the archive's entries, or has local software extract it to the folder. Null when it does not open
-    private static async Task<ArchivePreparation?> OpenAsync(
+    // Lists the archive's entries, or has local software extract it to the folder. Null when it does not open. The
+    // shared folder count is how its files are named, as the extraction folder keeps it
+    private static async Task<(ArchivePreparation Preparation, int SharedFolderCount)?> OpenAsync(
         string archivePath,
         string tempDirectory,
         Func<string, string, Task<bool>> extractWithLocalSoftwareAsync,
@@ -250,8 +259,17 @@ public class ArchiveExtractionService
                 return null;
             }
 
-            SortByFileName(files, stringComparer);
-            return new ArchivePreparation(tempDirectory, files, IsFullyExtracted: true);
+            if (IsRespectingStructure)
+            {
+                SortByPath(files, SplitPaths(files, tempDirectory), stringComparer);
+            }
+            else
+            {
+                SortByFileName(files, stringComparer);
+            }
+
+            // Local software names the files itself
+            return (new ArchivePreparation(tempDirectory, files, IsFullyExtracted: true), NotRespectingStructure);
         }
 
         var archive = await ArchiveFactory.OpenAsyncArchive(archivePath).ConfigureAwait(false);
@@ -268,14 +286,25 @@ public class ArchiveExtractionService
                 return null;
             }
 
-            SortByFileName(entries, stringComparer);
-            return new ArchivePreparation(tempDirectory, entries, IsFullyExtracted: false);
+            var sharedFolderCount = NotRespectingStructure;
+            if (IsRespectingStructure)
+            {
+                var segments = SplitPaths(entries);
+                SortByPath(entries, segments, stringComparer);
+                sharedFolderCount = CountSharedFolders(segments);
+            }
+            else
+            {
+                SortByFileName(entries, stringComparer);
+            }
+
+            return (new ArchivePreparation(tempDirectory, entries, IsFullyExtracted: false), sharedFolderCount);
         }
     }
 
     /// <summary>
     ///     Extracts a set of archive entries to the previously created <see cref="TempZipDirectory" />.
-    ///     Entries are written flat (without preserving the entry's directory structure) so the
+    ///     Entries are written flat (when respecting the archive structure, their folders are kept in the file name) so the
     ///     standard, non-recursive file listing/sorting works on the result.
     ///     The archive is opened once and entries are extracted in order.
     /// </summary>
@@ -298,6 +327,7 @@ public class ArchiveExtractionService
 
         try
         {
+            var sharedFolderCount = SharedFolderCountOf(tempDirectory);
             var keySet = new HashSet<string>(entryKeys, StringComparer.Ordinal);
             var extractedMap = new Dictionary<string, string>(StringComparer.Ordinal);
 
@@ -317,7 +347,7 @@ public class ArchiveExtractionService
                         continue;
                     }
 
-                    var extractedPath = WriteEntryFlat(entry, tempDirectory);
+                    var extractedPath = WriteEntryFlat(entry, tempDirectory, sharedFolderCount);
                     if (!string.IsNullOrEmpty(extractedPath))
                     {
                         extractedMap[entry.Key] = extractedPath;
@@ -356,7 +386,7 @@ public class ArchiveExtractionService
 
     /// <summary>
     ///     Extracts a single archive entry to the previously created <see cref="TempZipDirectory" />.
-    ///     Entries are written flat (without preserving the entry's directory structure) so the
+    ///     Entries are written flat (when respecting the archive structure, their folders are kept in the file name) so the
     ///     standard, non-recursive file listing/sorting works on the result.
     /// </summary>
     /// <param name="folder">The folder to extract to, as <see cref="ExtractEntriesAsync" /> takes it.</param>
@@ -406,6 +436,7 @@ public class ArchiveExtractionService
 
         try
         {
+            var sharedFolderCount = SharedFolderCountOf(tempDirectory);
             using var archive = ArchiveFactory.OpenArchive(archivePath);
 
             var extractedCount = initialCount;
@@ -473,7 +504,7 @@ public class ArchiveExtractionService
                     return false;
                 }
 
-                var extractedPath = WriteEntryFlat(entry, tempDirectory);
+                var extractedPath = WriteEntryFlat(entry, tempDirectory, sharedFolderCount);
                 Remember(entry.Key!, extractedPath, tempDirectory);
                 extractedCount++;
                 batchCounter++;
@@ -544,6 +575,15 @@ public class ArchiveExtractionService
     }
 
     private CancellationTokenSource? _extractionCts;
+
+    private const int NotRespectingStructure = -1;
+
+    /// <summary>
+    ///     Whether images are ordered by their folder inside the archive before their file name.
+    ///     Only applies when sorting by name, as the folder has no say in the other sort orders.
+    /// </summary>
+    private static bool IsRespectingStructure =>
+        Settings.Navigation.IsRespectingArchiveStructure && FileSortOrder.GetSortOrder == SortFilesBy.Name;
 
     // The token of the background extraction started last. Stopping or cleaning up cancels it but keeps it the latest, as
     // the tab extracts nothing after that
@@ -652,6 +692,10 @@ public class ArchiveExtractionService
         return index >= 0 ? extractions[index] : null;
     }
 
+    // How the files extracted to the folder are named, the way its archive's preparation worked it out
+    private int SharedFolderCountOf(string folder) =>
+        FindExtraction(folder)?.SharedFolderCount ?? NotRespectingStructure;
+
     private static int IndexOfFolder(Extraction[] extractions, string folder)
     {
         for (var i = 0; i < extractions.Length; i++)
@@ -718,16 +762,11 @@ public class ArchiveExtractionService
     private static string? PathInFolder(string path, string folder) =>
         IsInFolder(path, folder) ? path[(Path.TrimEndingDirectorySeparator(folder.AsSpan()).Length + 1)..] : null;
 
-    private static string WriteEntryFlat(IArchiveEntry entry, string destinationDirectory)
+    private static string WriteEntryFlat(IArchiveEntry entry, string destinationDirectory, int sharedFolderCount)
     {
-        // Flatten: use just the file name portion of the key so the temp directory
-        // ends up with a flat layout that the rest of the navigation pipeline can list
-        // without enabling recursive enumeration.
-        var fileName = Path.GetFileName(entry.Key!);
-        if (string.IsNullOrEmpty(fileName))
-        {
-            fileName = entry.Key!;
-        }
+        // Flatten so the temp directory ends up with a flat layout that the rest of the navigation
+        // pipeline can list without enabling recursive enumeration.
+        var fileName = GetFlatFileName(entry.Key!, sharedFolderCount);
 
         var destinationPath = Path.Combine(destinationDirectory, fileName);
 
@@ -752,6 +791,91 @@ public class ArchiveExtractionService
 #endif
 
         return destinationPath;
+    }
+
+    /// <summary>
+    ///     Gets the name an entry is extracted under. When respecting the archive structure, the entry's folders
+    ///     are kept in the name, so <c>Volume 01/001.jpg</c> becomes <c>Volume 01 - 001.jpg</c> and sorting the
+    ///     flat folder by name gives the archive's folder-then-file order. Otherwise, it is just the file name.
+    /// </summary>
+    private static string GetFlatFileName(string key, int sharedFolderCount)
+    {
+        var segments = sharedFolderCount is NotRespectingStructure ? [] : SplitPath(key);
+        if (segments.Length <= sharedFolderCount || segments.Length is 0)
+        {
+            var fileName = Path.GetFileName(key);
+            return string.IsNullOrEmpty(fileName) ? key : fileName;
+        }
+
+        return string.Join(" - ", segments, sharedFolderCount, segments.Length - sharedFolderCount);
+    }
+
+    private static string[] SplitPath(string path) =>
+        path.Split(['/', '\\'], StringSplitOptions.RemoveEmptyEntries);
+
+    /// <summary>
+    ///     Splits each path into its folders and file name, relative to <paramref name="root" /> when given.
+    /// </summary>
+    private static string[][] SplitPaths(string[] paths, string? root = null)
+    {
+        var segments = new string[paths.Length][];
+        for (var i = 0; i < paths.Length; i++)
+        {
+            segments[i] = SplitPath(root is null ? paths[i] : Path.GetRelativePath(root, paths[i]));
+        }
+        return segments;
+    }
+
+    /// <summary>
+    ///     Sorts the paths by folder, then file name, comparing one path segment at a time, so
+    ///     <c>Volume 01/003.jpg</c> comes before <c>Volume 02/001.jpg</c>. Descending reverses the whole order.
+    /// </summary>
+    private static void SortByPath(string[] paths, string[][] segments, Func<string, string, int> stringComparer)
+    {
+        var ascending = Settings.Sorting.Ascending;
+        Array.Sort(segments, paths, Comparer<string[]>.Create((a, b) =>
+            ascending ? CompareSegments(a, b, stringComparer) : CompareSegments(b, a, stringComparer)));
+    }
+
+    private static int CompareSegments(string[] a, string[] b, Func<string, string, int> stringComparer)
+    {
+        var count = Math.Min(a.Length, b.Length);
+        for (var i = 0; i < count; i++)
+        {
+            var result = stringComparer(a[i], b[i]);
+            if (result != 0)
+            {
+                return result;
+            }
+        }
+        return a.Length.CompareTo(b.Length);
+    }
+
+    /// <summary>
+    ///     Counts the leading folders that every path shares, such as the single <c>Comic</c> folder many archives
+    ///     wrap their contents in. Repeating it in every file name would add nothing.
+    /// </summary>
+    private static int CountSharedFolders(string[][] segments)
+    {
+        var shared = int.MaxValue;
+        foreach (var path in segments)
+        {
+            // The last segment is the file name, which is never shared.
+            shared = Math.Min(shared, path.Length - 1);
+        }
+
+        for (var i = 0; i < shared; i++)
+        {
+            var folder = segments[0][i];
+            foreach (var path in segments)
+            {
+                if (!string.Equals(path[i], folder, StringComparison.Ordinal))
+                {
+                    return i;
+                }
+            }
+        }
+        return Math.Max(shared, 0);
     }
 
     private static void SortByFileName(string[] paths, Func<string, string, int> stringComparer)

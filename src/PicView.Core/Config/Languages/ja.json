@@ -342,6 +342,7 @@
   "ResizeSettings": "リサイズ設定",
   "Resolution": "解像度",
   "ResolutionUnit": "解像度の単位",
+  "RespectArchiveFolderStructure": "アーカイブ内のフォルダー構造を維持する",
   "RestartApp": "アプリの再起動",
   "RestoreDown": "復元する",
   "Reverse": "反転",

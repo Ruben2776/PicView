@@ -1,3 +1,5 @@
+using System.Runtime.InteropServices;
+
 namespace PicView.Core.Navigation;
 
 public enum FileListChangeKind
@@ -35,6 +37,7 @@ public enum FileListChangeKind
 /// </summary>
 /// <param name="Files">The list after the change.</param>
 /// <param name="Details">The changed file's details, read once for every tab, when the change has them.</param>
+[StructLayout(LayoutKind.Auto)] 
 public readonly record struct FileListChange(
     FileListChangeKind Kind,
     IReadOnlyList<FileInfo> Files,

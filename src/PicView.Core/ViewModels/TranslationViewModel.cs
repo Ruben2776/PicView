@@ -271,6 +271,7 @@ public class TranslationViewModel
         ResizeSettings.Value = t.ResizeSettings;
         Resolution.Value = t.Resolution;
         ResolutionUnit.Value = t.ResolutionUnit;
+        RespectArchiveFolderStructure.Value = t.RespectArchiveFolderStructure;
         RestoreDown.Value = t.RestoreDown;
         Reverse.Value = t.Reverse;
         Right.Value = t.Right;
@@ -647,6 +648,7 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> ResizeSettings { get; } = new();
     public BindableReactiveProperty<string?> Resolution { get; } = new();
     public BindableReactiveProperty<string?> ResolutionUnit { get; } = new();
+    public BindableReactiveProperty<string?> RespectArchiveFolderStructure { get; } = new();
     public BindableReactiveProperty<string?> RestoreDown { get; } = new();
     public BindableReactiveProperty<string?> Reverse { get; } = new();
     public BindableReactiveProperty<string?> Right { get; } = new();

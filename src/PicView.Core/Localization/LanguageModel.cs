@@ -354,6 +354,7 @@ public class LanguageModel
     public string? ResizeSettings { get; set; }
     public string? Resolution { get; set; }
     public string? ResolutionUnit { get; set; }
+    public string? RespectArchiveFolderStructure { get; set; }
     public string? RestartApp { get; set; }
     public string? RestoreDown { get; set; }
     public string? Reverse { get; set; }

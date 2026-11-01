@@ -342,6 +342,7 @@
   "ResizeSettings": "Resize settings",
   "Resolution": "Resolution",
   "ResolutionUnit": "Resolution unit",
+  "RespectArchiveFolderStructure": "Respect folder structure inside archives",
   "RestartApp": "Restart the application",
   "RestoreDown": "Restore",
   "Reverse": "Reverse",

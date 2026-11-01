@@ -342,6 +342,7 @@
   "ResizeSettings": "크기 조정 설정",
   "Resolution": "해상도",
   "ResolutionUnit": "해상도 단위",
+  "RespectArchiveFolderStructure": "압축 파일 내 폴더 구조 유지",
   "RestartApp": "응용 프로그램 다시 시작",
   "RestoreDown": "복원",
   "Reverse": "역방향",

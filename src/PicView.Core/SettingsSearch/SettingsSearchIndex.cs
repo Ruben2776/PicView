@@ -184,6 +184,10 @@ public static class SettingsSearchIndex
         {
             list.Add(new SettingsSearchItem(t.AlwaysUncompressEntireArchive, data.NavigationArchiveSearchTags));
         }
+        if (t.RespectArchiveFolderStructure != null)
+        {
+            list.Add(new SettingsSearchItem(t.RespectArchiveFolderStructure, data.NavigationArchiveSearchTags));
+        }
 
         // Gallery
         if (t.ShowDockedGallery != null)

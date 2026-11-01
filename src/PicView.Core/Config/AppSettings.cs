@@ -457,4 +457,10 @@ public class Navigation
     /// Indicates whether all files in an archive should be extracted at once when opening an archive.
     /// </summary>
     public bool AlwaysUncompressEntireArchive { get; set; } = true;
+
+    /// <summary>
+    /// Indicates whether images in an archive are ordered by their folder inside the archive before their file name,
+    /// so an archive with one folder per volume or chapter opens in reading order. Applies when sorting by name.
+    /// </summary>
+    public bool IsRespectingArchiveStructure { get; set; } = true;
 }

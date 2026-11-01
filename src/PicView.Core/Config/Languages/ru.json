@@ -342,6 +342,7 @@
   "ResizeSettings": "Параметры изменения размера",
   "Resolution": "Разрешение",
   "ResolutionUnit": "Единица разрешения",
+  "RespectArchiveFolderStructure": "Учитывать структуру папок в архивах",
   "RestartApp": "Перезапустить приложение",
   "RestoreDown": "Восстановить",
   "Reverse": "Назад",
