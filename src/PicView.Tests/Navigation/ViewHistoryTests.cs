@@ -379,6 +379,104 @@ public class ViewHistoryTests
     }
 
     [Fact]
+    public void Rename_File_RenamesEveryEntryForIt()
+    {
+        _history.Record(FileEntry("t.tif", page: 0));
+        _history.Record(FileEntry("t.tif", page: 1));
+        _history.Record(FileEntry("b.jpg"));
+
+        _history.Rename(PathOf("t.tif"), PathOf("u.tif"));
+
+        Assert.Equal(["u.tif", "u.tif", "b.jpg"], Names());
+        Assert.Equal(2, _history.Cursor);
+    }
+
+    [Fact]
+    public void Rename_Archive_RenamesItsPages()
+    {
+        _history.Record(ViewHistoryEntry.ForArchivePage(PathOf("a.zip"), "1.jpg"));
+        _history.Record(ViewHistoryEntry.ForArchivePage(PathOf("a.zip"), "2.jpg"));
+
+        _history.Rename(PathOf("a.zip"), PathOf("b.zip"));
+
+        Assert.All(_history.Entries, e => Assert.Equal(PathOf("b.zip"), e.Path));
+    }
+
+    [Fact]
+    public void Rename_NeighborsBecomeTheSame_MergesThem_AndKeepsTheForwardEntries()
+    {
+        RecordAll("a.jpg", "b.jpg", "c.jpg", "d.jpg");
+        _history.Record(_history.BeginStep(forwards: false)!.Value.Target);
+
+        _history.Rename(PathOf("b.jpg"), PathOf("c.jpg"));
+
+        Assert.Equal(["a.jpg", "c.jpg", "d.jpg"], Names());
+        Assert.Equal(1, _history.Cursor);
+    }
+
+    [Fact]
+    public void Rename_NeighborsBecomeTheSame_CursorOnTheEarlierOne_StaysOnTheMergedEntry()
+    {
+        RecordAll("a.jpg", "b.jpg", "c.jpg");
+        _history.Record(_history.BeginStep(forwards: false)!.Value.Target);
+
+        _history.Rename(PathOf("c.jpg"), PathOf("b.jpg"));
+
+        Assert.Equal(["a.jpg", "b.jpg"], Names());
+        Assert.Equal(1, _history.Cursor);
+    }
+
+    [Fact]
+    public void Rename_NeighborsBecomeTheSameBeforeAStepsTarget_TheStepStillReachesIt()
+    {
+        RecordAll("a.jpg", "b.jpg", "c.jpg", "d.jpg");
+        _history.BeginStep(forwards: false);
+
+        // The merge takes an entry out from before both the cursor and the target
+        _history.Rename(PathOf("b.jpg"), PathOf("a.jpg"));
+
+        Assert.True(_history.Record(FileEntry("c.jpg")));
+        Assert.Equal(["a.jpg", "c.jpg", "d.jpg"], Names());
+        Assert.Equal(1, _history.Cursor);
+    }
+
+    [Fact]
+    public void Rename_IgnoresCase_AndNeverMatchesAPathThatOnlyContainsTheOld()
+    {
+        _history.Record(ViewHistoryEntry.ForFile(PathOf("A.jpg")));
+        _history.Record(ViewHistoryEntry.ForFile(PathOf("a.jpg.bak")));
+
+        _history.Rename(PathOf("a.jpg"), PathOf("z.jpg"));
+
+        Assert.Equal(["z.jpg", "a.jpg.bak"], Names());
+    }
+
+    [Fact]
+    public void Rename_APathThatIsTheUrlOfADownload_LeavesTheSingleImage()
+    {
+        const string url = "https://example.com/a.png";
+        _history.Record(ViewHistoryEntry.ForSingleImage(new ImageModel(), SingleImageType.Url, url, url));
+
+        _history.Rename(url, PathOf("z.png"));
+
+        Assert.Equal(url, Assert.Single(_history.Entries).Path);
+    }
+
+    [Fact]
+    public void RenameFolder_MovesEveryEntryUnderIt()
+    {
+        _history.Record(ViewHistoryEntry.ForFile(Path.Combine(Root, "x", "a.jpg")));
+        _history.Record(ViewHistoryEntry.ForFile(Path.Combine(Root, "x", "sub", "b.jpg")));
+        _history.Record(ViewHistoryEntry.ForFile(Path.Combine(Root, "xy", "c.jpg")));
+
+        _history.RenameFolder(Path.Combine(Root, "x"), Path.Combine(Root, "y"));
+
+        Assert.Equal(
+            [Path.Combine(Root, "y", "a.jpg"), Path.Combine(Root, "y", "sub", "b.jpg"), Path.Combine(Root, "xy", "c.jpg")],
+            _history.Entries.Select(e => e.Path));
+    }
+
+    [Fact]
     public async Task Record_FromSeveralThreads_WhileAnotherReadsAndSteps_NeverThrows()
     {
         var recording = Enumerable.Range(0, 4).Select(thread => Task.Run(() =>

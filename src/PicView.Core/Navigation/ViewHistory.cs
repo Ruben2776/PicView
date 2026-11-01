@@ -16,8 +16,8 @@ public readonly record struct ViewHistoryStep(ViewHistoryEntry Target, int Id);
 /// <remarks>
 /// A step only marks a target. The cursor moves when the tab shows that entry and records it, so the cursor follows what
 /// the tab shows, never what was asked for. Every member takes the lock, since a load records from whichever thread it
-/// finishes on. Neighbors are never the same entry: a repeat is not recorded, and a removal that would leave two merges
-/// them.
+/// finishes on. Neighbors are never the same entry: a repeat is not recorded, and a removal or a rename that would leave
+/// two merges them.
 /// </remarks>
 /// <param name="fileExists">
 /// Whether a file is still on disk, which a step asks to skip the entries whose file is gone. Defaults to
@@ -227,6 +227,46 @@ public sealed class ViewHistory(Func<string, bool>? fileExists = null)
         }
     }
 
+    /// <summary>
+    /// Renames the entries for the file <paramref name="oldPath"/> to <paramref name="newPath"/>, which includes every page
+    /// of a multi-page TIFF, and every page of an archive when the file is the archive. Paths compare ignoring case, and a
+    /// path that only contains the old one is not the old one. If that leaves two neighbors for the same thing, they merge,
+    /// so the cursor stays on the merged entry and the entries after it are kept.
+    /// </summary>
+    public void Rename(string oldPath, string newPath) =>
+        RenameMatching(path => string.Equals(path, oldPath, StringComparison.OrdinalIgnoreCase) ? newPath : null);
+
+    /// <summary>
+    /// Moves the entries for the files in <paramref name="oldFolder"/>, subfolders included, to
+    /// <paramref name="newFolder"/>, by the same rules as <see cref="Rename"/>.
+    /// </summary>
+    public void RenameFolder(string oldFolder, string newFolder) =>
+        RenameMatching(path => FolderChange.PathInRenamedFolder(path, oldFolder, newFolder));
+
+    // newPathOf gives the path a file moves to, or null for one that stays. A Single Image has no file path, since a
+    // download's path is its URL, so it never moves. A rename never runs on a load, so it may allocate
+    private void RenameMatching(Func<string, string?> newPathOf)
+    {
+        lock (_lock)
+        {
+            var isRenamed = false;
+            for (var i = 0; i < _entries.Count; i++)
+            {
+                var entry = _entries[i];
+                if (entry.FilePath is { } path && newPathOf(path) is { } newPath)
+                {
+                    _entries[i] = entry with { Path = newPath };
+                    isRenamed = true;
+                }
+            }
+
+            if (isRenamed)
+            {
+                MergeNeighbors();
+            }
+        }
+    }
+
     // The members below run with the lock held
 
     // Where a step this way goes: one entry from the target of the step under way, else from the cursor
@@ -271,6 +311,24 @@ public sealed class ViewHistory(Func<string, bool>? fileExists = null)
         if (index > 0 && index < _entries.Count && _entries[index - 1].Matches(_entries[index]))
         {
             RemoveAt(index);
+        }
+    }
+
+    // A rename can make neighbors the same without removing anything. The later one of each pair goes through RemoveAt,
+    // so the cursor and the target move as they do for any removal
+    private void MergeNeighbors()
+    {
+        var i = 1;
+        while (i < _entries.Count)
+        {
+            if (_entries[i - 1].Matches(_entries[i]))
+            {
+                RemoveAt(i);
+            }
+            else
+            {
+                i++;
+            }
         }
     }
 

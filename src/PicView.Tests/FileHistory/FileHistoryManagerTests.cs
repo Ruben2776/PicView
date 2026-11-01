@@ -86,6 +86,87 @@ public class FileHistoryManagerTests : IDisposable
     }
 
     [Fact]
+    public void Rename_KeepsTheEntrysPlaceAndPin()
+    {
+        FileHistoryManager.Add("/path/a.jpg");
+        FileHistoryManager.Pin("/path/a.jpg");
+        FileHistoryManager.Add("/path/b.jpg");
+
+        FileHistoryManager.Rename("/path/a.jpg", "/path/z.jpg");
+
+        Assert.Equal(["/path/z.jpg", "/path/b.jpg"], FileHistoryManager.AllEntries.Select(e => e.Path));
+        Assert.Equal("/path/z.jpg", Assert.Single(FileHistoryManager.PinnedEntries).Path);
+    }
+
+    [Fact]
+    public void Rename_OntoAListedPath_MergesThemInTheNewerPlace_PinnedIfEitherWas()
+    {
+        FileHistoryManager.Add("/path/a.jpg");
+        FileHistoryManager.Pin("/path/a.jpg");
+        FileHistoryManager.Add("/path/b.jpg");
+        FileHistoryManager.Add("/path/c.jpg");
+
+        FileHistoryManager.Rename("/path/a.jpg", "/path/c.jpg");
+
+        Assert.Equal(["/path/b.jpg", "/path/c.jpg"], FileHistoryManager.AllEntries.Select(e => e.Path));
+        Assert.True(FileHistoryManager.AllEntries[1].IsPinned);
+    }
+
+    [Fact]
+    public void Rename_IgnoresCase_AndNeverMatchesAPathThatOnlyContainsTheOld()
+    {
+        FileHistoryManager.Add("/Path/A.jpg");
+        FileHistoryManager.Add("/path/a.jpg.bak");
+
+        FileHistoryManager.Rename("/path/a.jpg", "/path/z.jpg");
+
+        Assert.Equal(["/path/z.jpg", "/path/a.jpg.bak"], FileHistoryManager.AllEntries.Select(e => e.Path));
+    }
+
+    [Fact]
+    public void Rename_SameRenameTwice_ChangesNothingTheSecondTime()
+    {
+        FileHistoryManager.Add("/path/a.jpg");
+        FileHistoryManager.Add("/path/b.jpg");
+        FileHistoryManager.Rename("/path/a.jpg", "/path/z.jpg");
+
+        FileHistoryManager.Rename("/path/a.jpg", "/path/z.jpg");
+
+        Assert.Equal(["/path/z.jpg", "/path/b.jpg"], FileHistoryManager.AllEntries.Select(e => e.Path));
+    }
+
+    [Fact]
+    public void RenameFolder_MovesEveryEntryUnderTheFolder()
+    {
+        var x = Path.Combine(_tempRoot, "x");
+        FileHistoryManager.Add(Path.Combine(x, "a.jpg"));
+        FileHistoryManager.Add(Path.Combine(x, "sub", "b.jpg"));
+        FileHistoryManager.Add(Path.Combine(_tempRoot, "xy", "c.jpg"));
+
+        FileHistoryManager.RenameFolder(x, Path.Combine(_tempRoot, "y"));
+
+        Assert.Equal(
+            [Path.Combine(_tempRoot, "y", "a.jpg"), Path.Combine(_tempRoot, "y", "sub", "b.jpg"), Path.Combine(_tempRoot, "xy", "c.jpg")],
+            FileHistoryManager.AllEntries.Select(e => e.Path));
+    }
+
+    [Fact]
+    public void RenameFolder_OntoListedPaths_MergesThemInTheNewerPlace_PinnedIfEitherWas()
+    {
+        var x = Path.Combine(_tempRoot, "x");
+        var y = Path.Combine(_tempRoot, "y");
+        FileHistoryManager.Add(Path.Combine(x, "a.jpg"));
+        FileHistoryManager.Pin(Path.Combine(x, "a.jpg"));
+        FileHistoryManager.Add(Path.Combine(y, "b.jpg"));
+        FileHistoryManager.Add(Path.Combine(y, "a.jpg"));
+
+        FileHistoryManager.RenameFolder(x, y);
+
+        Assert.Equal([Path.Combine(y, "b.jpg"), Path.Combine(y, "a.jpg")], FileHistoryManager.AllEntries.Select(e => e.Path));
+        Assert.True(FileHistoryManager.AllEntries[1].IsPinned);
+    }
+
+    [Fact]
     public void Add_PathAlreadyListed_MovesItToTheNewestEnd()
     {
         FileHistoryManager.Add("/path/a.jpg");
@@ -298,6 +379,50 @@ public class FileHistoryManagerTests : IDisposable
         FileHistoryManager.Unload();
         FileHistoryManager.Initialize(_configPath);
         Assert.Empty(FileHistoryManager.AllEntries);
+    }
+
+    // A rename in the first moments of start-up must not be undone when the history file loads
+
+    [Fact]
+    public void Rename_PathAddedBeforeTheLoad_ListsItUnderTheNewNameWhenTheLoadFinishes()
+    {
+        FileHistoryManager.Unload();
+        FileHistoryManager.Add("/path/a.jpg");
+        FileHistoryManager.Add("/path/b.jpg");
+
+        FileHistoryManager.Rename("/PATH/A.JPG", "/path/z.jpg");
+        FileHistoryManager.Initialize(_configPath);
+
+        Assert.Equal(["/path/z.jpg", "/path/b.jpg"], FileHistoryManager.AllEntries.Select(e => e.Path));
+    }
+
+    [Fact]
+    public void Rename_PathAddedBeforeTheLoad_OntoAnotherWaitingPath_ListsItOnceInTheNewerPlace()
+    {
+        FileHistoryManager.Unload();
+        FileHistoryManager.Add("/path/a.jpg");
+        FileHistoryManager.Add("/path/b.jpg");
+        FileHistoryManager.Add("/path/c.jpg");
+
+        FileHistoryManager.Rename("/path/a.jpg", "/path/c.jpg");
+        FileHistoryManager.Initialize(_configPath);
+
+        Assert.Equal(["/path/b.jpg", "/path/c.jpg"], FileHistoryManager.AllEntries.Select(e => e.Path));
+    }
+
+    [Fact]
+    public void RenameFolder_PathsAddedBeforeTheLoad_ListsThemUnderTheNewFolderWhenTheLoadFinishes()
+    {
+        var x = Path.Combine(_tempRoot, "x");
+        FileHistoryManager.Unload();
+        FileHistoryManager.Add(Path.Combine(x, "a.jpg"));
+        FileHistoryManager.Add(Path.Combine(_tempRoot, "xy", "b.jpg"));
+
+        FileHistoryManager.RenameFolder(x, Path.Combine(_tempRoot, "y"));
+        FileHistoryManager.Initialize(_configPath);
+
+        Assert.Equal([Path.Combine(_tempRoot, "y", "a.jpg"), Path.Combine(_tempRoot, "xy", "b.jpg")],
+            FileHistoryManager.AllEntries.Select(e => e.Path));
     }
 
     /// <summary>

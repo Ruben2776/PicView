@@ -41,4 +41,29 @@ public static class LastFile
             Settings.StartUp.LastFile = path;
         }
     }
+
+    /// <summary>
+    /// Follows a rename: the Last File becomes <paramref name="newPath"/> when it is <paramref name="oldPath"/>. Paths
+    /// compare ignoring case, and a path that only contains the old one is not the old one.
+    /// </summary>
+    public static void Rename(string oldPath, string newPath)
+    {
+        if (string.Equals(Settings.StartUp.LastFile, oldPath, StringComparison.OrdinalIgnoreCase))
+        {
+            Settings.StartUp.LastFile = newPath;
+        }
+    }
+
+    /// <summary>
+    /// Follows a folder rename: the Last File moves to <paramref name="newFolder"/> when it is in
+    /// <paramref name="oldFolder"/>, subfolders included.
+    /// </summary>
+    public static void RenameFolder(string oldFolder, string newFolder)
+    {
+        if (Settings.StartUp.LastFile is { } path &&
+            FolderChange.PathInRenamedFolder(path, oldFolder, newFolder) is { } movedPath)
+        {
+            Settings.StartUp.LastFile = movedPath;
+        }
+    }
 }

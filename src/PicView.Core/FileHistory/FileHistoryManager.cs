@@ -2,6 +2,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using PicView.Core.Config.ConfigFileManagement;
 using PicView.Core.DebugTools;
+using PicView.Core.Navigation;
 
 namespace PicView.Core.FileHistory;
 
@@ -278,32 +279,6 @@ public static class FileHistoryManager
     }
 
     /// <summary>
-    ///     Tries to find an entry that matches or contains the given string.
-    /// </summary>
-    public static Entry? GetEntryByString(string searchString)
-    {
-        lock (_lock)
-        {
-            if (_entries is null || string.IsNullOrWhiteSpace(searchString))
-            {
-                return null;
-            }
-
-            // First try exact match.
-            var exactMatch = _entries.FirstOrDefault(e =>
-                string.Equals(e.Path, searchString, StringComparison.Ordinal));
-
-            if (exactMatch != null)
-            {
-                return exactMatch;
-            }
-
-            // Then try contains.
-            return _entries.Find(e => e.Path.Contains(searchString, StringComparison.Ordinal));
-        }
-    }
-
-    /// <summary>
     ///     Clears all history entries.
     /// </summary>
     public static void Clear()
@@ -337,39 +312,102 @@ public static class FileHistoryManager
         }
     }
 
-    // TODO: Rename the entries of the files in a renamed folder too. FileWatcherService only renames single files here,
-    // so a folder rename (FolderChangeKind.FolderRenamed) leaves its files' entries under the old paths.
     /// <summary>
-    ///     Renames a file in the history, replacing the old entry with the new one.
+    ///     Renames a file in the history. The entry keeps its place and its pin. If the new path is already listed, the two
+    ///     entries become one, in the newer place and pinned if either was. Paths compare ignoring case, and a path that
+    ///     only contains the old one is not the old one.
     /// </summary>
-    public static void Rename(string oldName, string newName)
+    public static void Rename(string oldPath, string newPath)
     {
-        try
+        if (string.IsNullOrWhiteSpace(oldPath) || string.IsNullOrWhiteSpace(newPath))
         {
-            lock (_lock)
+            return;
+        }
+
+        RenameMatching(path => string.Equals(path, oldPath, StringComparison.OrdinalIgnoreCase) ? newPath : null);
+    }
+
+    /// <summary>
+    ///     Renames the entries of the files in a renamed folder, subfolders included, by the same rules as
+    ///     <see cref="Rename" />.
+    /// </summary>
+    public static void RenameFolder(string oldFolder, string newFolder)
+    {
+        if (string.IsNullOrWhiteSpace(oldFolder) || string.IsNullOrWhiteSpace(newFolder))
+        {
+            return;
+        }
+
+        RenameMatching(path => FolderChange.PathInRenamedFolder(path, oldFolder, newFolder));
+    }
+
+    // newPathOf gives the path a listed path is renamed to, or null for one that stays. A rename never runs on a load, so
+    // it may allocate
+    private static void RenameMatching(Func<string, string?> newPathOf)
+    {
+        lock (_lock)
+        {
+            // Before the first load the paths added so far wait in their own list, which the load adds to the entries. If
+            // they kept their old names, the load would undo the rename
+            RenameEarlyPaths(newPathOf);
+
+            if (_entries is null)
             {
-                if (_entries is null || string.IsNullOrWhiteSpace(oldName) || string.IsNullOrWhiteSpace(newName))
+                return;
+            }
+
+            for (var i = 0; i < _entries.Count; i++)
+            {
+                if (newPathOf(_entries[i].Path) is not { } newPath)
                 {
-                    return;
+                    continue;
                 }
 
-                var entry = GetEntryByString(oldName);
-                if (string.IsNullOrWhiteSpace(entry?.Path) || _entries.TrueForAll(x => !string.Equals(x.Path, entry?.Path, StringComparison.Ordinal)))
+                var listed = IndexOfPath(_entries, newPath, i);
+                if (listed < 0)
                 {
-                    return;
+                    _entries[i].Path = newPath;
+                    continue;
                 }
 
-                var index = _entries.FindIndex(x => string.Equals(x.Path, entry.Path, StringComparison.Ordinal));
-                if (index >= 0)
-                {
-                    _entries[index].Path = newName;
-                }
+                // The new path is listed already, so the two entries become one: the one nearer the newest end stays,
+                // pinned if either was
+                var kept = Math.Max(i, listed);
+                var dropped = Math.Min(i, listed);
+                _entries[kept].Path = newPath;
+                _entries[kept].IsPinned |= _entries[dropped].IsPinned;
+                _entries.RemoveAt(dropped);
+
+                // The entries after the dropped one moved down, so the loop looks at this index again
+                i--;
             }
         }
-        catch (Exception e)
+    }
+
+    // Callers hold the lock. If the new path waits as well, the load lists the two as one, as it does any path added twice
+    private static void RenameEarlyPaths(Func<string, string?> newPathOf)
+    {
+        for (var i = 0; i < _earlyPaths.Count; i++)
         {
-            DebugHelper.LogDebug(nameof(FileHistoryManager), nameof(Rename), e);
+            if (newPathOf(_earlyPaths[i]) is { } newPath)
+            {
+                _earlyPaths[i] = newPath;
+            }
         }
+    }
+
+    // Callers hold the lock. The index of the entry for the path, not counting the one at except, else -1
+    private static int IndexOfPath(List<Entry> entries, string path, int except)
+    {
+        for (var i = 0; i < entries.Count; i++)
+        {
+            if (i != except && string.Equals(entries[i].Path, path, StringComparison.OrdinalIgnoreCase))
+            {
+                return i;
+            }
+        }
+
+        return -1;
     }
 
     /// <summary>
