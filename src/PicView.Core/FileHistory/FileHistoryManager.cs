@@ -2,8 +2,6 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using PicView.Core.Config.ConfigFileManagement;
 using PicView.Core.DebugTools;
-using ZLinq;
-using ZLinq.Linq;
 
 namespace PicView.Core.FileHistory;
 
@@ -20,13 +18,24 @@ internal partial class FileHistoryGenerationContext : JsonSerializerContext;
 /// </summary>
 public static class FileHistoryManager
 {
+    // Load threads call Add while the UI thread reads the lists. Held for in-memory work only, never across disk access or an await.
+    private static readonly Lock _lock = new();
     private static List<Entry>? _entries;
     private static FileHistoryConfiguration? _fileHistoryConfiguration;
 
     /// <summary>
     ///     Gets the number of entries in the file history.
     /// </summary>
-    public static int Count => _entries?.Count ?? 0;
+    public static int Count
+    {
+        get
+        {
+            lock (_lock)
+            {
+                return _entries?.Count ?? 0;
+            }
+        }
+    }
 
     /// <summary>
     ///     Gets or sets whether the history is sorted in descending order.
@@ -34,15 +43,32 @@ public static class FileHistoryManager
     public static bool IsSortingDescending { get; set; }
 
     /// <summary>
-    ///     Gets all history entries.
+    ///     Gets a copy of all history entries, the one viewed longest ago first.
     /// </summary>
-    public static IReadOnlyList<Entry> AllEntries => _entries?.AsReadOnly() ?? (IReadOnlyList<Entry>)[];
+    public static Entry[] AllEntries
+    {
+        get
+        {
+            lock (_lock)
+            {
+                return _entries?.ToArray() ?? [];
+            }
+        }
+    }
 
-    public static ValueEnumerable<FromEnumerable<Entry>, Entry> PinnedEntries =>
-        (_entries ?? []).Where(e => e.IsPinned).AsValueEnumerable();
-
-    public static ValueEnumerable<FromEnumerable<Entry>, Entry> UnPinnedEntries =>
-        (_entries ?? []).Where(e => !e.IsPinned).AsValueEnumerable();
+    /// <summary>
+    ///     Gets a copy of the pinned history entries, in the same order as <see cref="AllEntries" />.
+    /// </summary>
+    public static Entry[] PinnedEntries
+    {
+        get
+        {
+            lock (_lock)
+            {
+                return _entries?.Where(e => e.IsPinned).ToArray() ?? [];
+            }
+        }
+    }
 
     /// <summary>
     /// Gets or sets the index of the current file entry in the history.
@@ -52,7 +78,8 @@ public static class FileHistoryManager
     public static int CurrentIndex
     {
         get;
-        private set => field = Math.Clamp(value, -1, Count - 1);
+        // Its callers hold the lock, so it reads _entries rather than taking the lock again through Count
+        private set => field = Math.Clamp(value, -1, (_entries?.Count ?? 0) - 1);
     } = -1;
 
     /// <summary>
@@ -63,13 +90,30 @@ public static class FileHistoryManager
     /// <summary>
     ///     Indicates whether there is a next entry available in history (newer entry).
     /// </summary>
-    public static bool HasNext => CurrentIndex < Count - 1 && Count > 0;
+    public static bool HasNext
+    {
+        get
+        {
+            lock (_lock)
+            {
+                return CurrentIndex < Count - 1 && Count > 0;
+            }
+        }
+    }
 
     /// <summary>
     ///     Gets the current entry at the current index.
     /// </summary>
-    public static string? CurrentEntry =>
-        _entries is not null && CurrentIndex >= 0 && CurrentIndex < Count ? _entries[CurrentIndex].Path : null;
+    public static string? CurrentEntry
+    {
+        get
+        {
+            lock (_lock)
+            {
+                return _entries is not null && CurrentIndex >= 0 && CurrentIndex < Count ? _entries[CurrentIndex].Path : null;
+            }
+        }
+    }
 
     /// <summary>
     ///     Gets the file history file path with normalized slashes.
@@ -86,11 +130,7 @@ public static class FileHistoryManager
     {
         _fileHistoryConfiguration = new FileHistoryConfiguration();
         _fileHistoryConfiguration.CorrectPath = ConfigFileManager.ResolveDefaultConfigPath(_fileHistoryConfiguration);
-        _entries = new List<Entry>(FileHistoryConfiguration.MaxHistoryEntries);
-        LoadFromFile(_fileHistoryConfiguration.TryGetCurrentUserConfigPath);
-
-        // Set the current index to the most recent entry.
-        CurrentIndex = Count > 0 ? Count - 1 : -1;
+        ReplaceEntries(LoadFromFile(_fileHistoryConfiguration.TryGetCurrentUserConfigPath));
     }
 
     /// <summary>
@@ -102,14 +142,27 @@ public static class FileHistoryManager
         {
             CorrectPath = configPath
         };
-        _entries = new List<Entry>(FileHistoryConfiguration.MaxHistoryEntries);
-        if (File.Exists(configPath))
+        ReplaceEntries(LoadFromFile(configPath));
+    }
+
+    /// <summary>
+    ///     Replaces the entries with those loaded from the file. The file is read before this, so the lock is not held for it.
+    /// </summary>
+    private static void ReplaceEntries(List<Entry>? loaded)
+    {
+        var entries = new List<Entry>(FileHistoryConfiguration.MaxHistoryEntries);
+        if (loaded is not null)
         {
-            LoadFromFile(configPath);
+            entries.AddRange(loaded);
         }
 
-        // Set the current index to the most recent entry.
-        CurrentIndex = Count > 0 ? Count - 1 : -1;
+        lock (_lock)
+        {
+            _entries = entries;
+
+            // Set the current index to the most recent entry.
+            CurrentIndex = entries.Count > 0 ? entries.Count - 1 : -1;
+        }
     }
 
     /// <summary>
@@ -126,77 +179,94 @@ public static class FileHistoryManager
 
     private static void SetPinnedState(string path, bool isPinned)
     {
-        if (_entries is null || string.IsNullOrWhiteSpace(path))
+        lock (_lock)
         {
-            return;
-        }
-
-        var entryIndex = _entries.FindIndex(x => string.Equals(x.Path, path, StringComparison.Ordinal));
-        if (entryIndex < 0 || _entries[entryIndex].IsPinned == isPinned)
-        {
-            return;
-        }
-
-        if (isPinned && _entries.Count(e => e.IsPinned) >= FileHistoryConfiguration.MaxPinnedEntries)
-        {
-            // Unpin the oldest pinned entry to make room
-            var oldestPinned = _entries.Where(e => e.IsPinned).OrderBy(e => _entries.IndexOf(e)).FirstOrDefault();
-            if (oldestPinned != null)
+            if (_entries is null || string.IsNullOrWhiteSpace(path))
             {
-                var oldestIndex = _entries.IndexOf(oldestPinned);
-                _entries[oldestIndex].IsPinned = false;
+                return;
             }
-        }
 
-        _entries[entryIndex].IsPinned = isPinned;
+            var entryIndex = _entries.FindIndex(x => string.Equals(x.Path, path, StringComparison.Ordinal));
+            if (entryIndex < 0 || _entries[entryIndex].IsPinned == isPinned)
+            {
+                return;
+            }
+
+            if (isPinned && _entries.Count(e => e.IsPinned) >= FileHistoryConfiguration.MaxPinnedEntries)
+            {
+                // Unpin the oldest pinned entry to make room
+                var oldestPinned = _entries.Where(e => e.IsPinned).OrderBy(e => _entries.IndexOf(e)).FirstOrDefault();
+                if (oldestPinned != null)
+                {
+                    var oldestIndex = _entries.IndexOf(oldestPinned);
+                    _entries[oldestIndex].IsPinned = false;
+                }
+            }
+
+            _entries[entryIndex].IsPinned = isPinned;
+        }
     }
 
     /// <summary>
-    ///     Adds an entry to the history.
+    ///     Adds an entry to the history. One that is already listed moves to the newest end, unless it is pinned.
     /// </summary>
     public static void Add(string path)
     {
-        if (!Settings.Navigation.IsFileHistoryEnabled || _entries is null || string.IsNullOrWhiteSpace(path))
+        if (!Settings.Navigation.IsFileHistoryEnabled || string.IsNullOrWhiteSpace(path))
         {
             return;
         }
 
-        var existingIndex = _entries.FindIndex(x => string.Equals(x.Path, path, StringComparison.Ordinal));
-
-        if (existingIndex >= 0)
+        lock (_lock)
         {
-            // If entry already exists, update the current index to point to it.
-            CurrentIndex = existingIndex;
-            return;
-        }
+            if (_entries is null)
+            {
+                return;
+            }
 
-        // Count unpinned entries
-        var unpinnedCount = _entries.Count(e => e?.IsPinned == false);
-
-        // If we'll exceed the maximum unpinned entries, remove the oldest unpinned entry
-        if (unpinnedCount >= FileHistoryConfiguration.MaxHistoryEntries)
-        {
+            // A tab calls this for every image it shows, so a path that is already listed must not allocate:
+            // no LINQ or lambdas here. While looking for the path, count the unpinned entries and note the oldest.
+            var unpinnedCount = 0;
+            var oldestUnpinned = -1;
             for (var i = 0; i < _entries.Count; i++)
             {
-                if (_entries[i]?.IsPinned == true)
+                var entry = _entries[i];
+                if (string.Equals(entry.Path, path, StringComparison.OrdinalIgnoreCase))
+                {
+                    var index = i;
+                    if (!entry.IsPinned)
+                    {
+                        // Entries are ordered by when each was last viewed, so this one goes last
+                        _entries.RemoveAt(i);
+                        _entries.Add(entry);
+                        index = _entries.Count - 1;
+                    }
+
+                    CurrentIndex = index;
+                    return;
+                }
+
+                if (entry.IsPinned)
                 {
                     continue;
                 }
 
-                _entries.RemoveAt(i);
-
-                // Adjust the current index since we removed an item.
-                if (CurrentIndex > i)
+                unpinnedCount++;
+                if (oldestUnpinned < 0)
                 {
-                    CurrentIndex--;
+                    oldestUnpinned = i;
                 }
-
-                break;
             }
-        }
 
-        _entries.Add(new Entry { Path = path, IsPinned = false });
-        CurrentIndex = _entries.Count - 1;
+            // If we'll exceed the maximum unpinned entries, remove the oldest unpinned entry
+            if (unpinnedCount >= FileHistoryConfiguration.MaxHistoryEntries)
+            {
+                _entries.RemoveAt(oldestUnpinned);
+            }
+
+            _entries.Add(new Entry { Path = path, IsPinned = false });
+            CurrentIndex = _entries.Count - 1;
+        }
     }
 
     /// <summary>
@@ -204,13 +274,16 @@ public static class FileHistoryManager
     /// </summary>
     public static string? GetNextEntry()
     {
-        if (!HasNext)
+        lock (_lock)
         {
-            return null;
-        }
+            if (!HasNext)
+            {
+                return null;
+            }
 
-        CurrentIndex++;
-        return CurrentEntry;
+            CurrentIndex++;
+            return CurrentEntry;
+        }
     }
 
     /// <summary>
@@ -218,13 +291,16 @@ public static class FileHistoryManager
     /// </summary>
     public static string? GetPreviousEntry()
     {
-        if (!HasPrevious)
+        lock (_lock)
         {
-            return null;
-        }
+            if (!HasPrevious)
+            {
+                return null;
+            }
 
-        CurrentIndex--;
-        return CurrentEntry;
+            CurrentIndex--;
+            return CurrentEntry;
+        }
     }
 
     /// <summary>
@@ -232,47 +308,63 @@ public static class FileHistoryManager
     /// </summary>
     public static Entry? GetEntry(int index)
     {
-        if (_entries is null || index < 0 || index >= _entries.Count)
+        lock (_lock)
         {
-            return null;
-        }
+            if (_entries is null || index < 0 || index >= _entries.Count)
+            {
+                return null;
+            }
 
-        return _entries[index];
+            return _entries[index];
+        }
     }
 
     /// <summary>
     ///     Gets the first entry in history (oldest).
     /// </summary>
-    public static string? GetFirstEntry() =>
-        _entries is { Count: > 0 } ? _entries[0].Path : null;
+    public static string? GetFirstEntry()
+    {
+        lock (_lock)
+        {
+            return _entries is { Count: > 0 } ? _entries[0].Path : null;
+        }
+    }
 
     /// <summary>
     ///     Gets the last entry in history (newest).
     /// </summary>
-    public static string? GetLastEntry() =>
-        _entries is { Count: > 0 } ? _entries[^1].Path : null;
+    public static string? GetLastEntry()
+    {
+        lock (_lock)
+        {
+            return _entries is { Count: > 0 } ? _entries[^1].Path : null;
+        }
+    }
 
     /// <summary>
     ///     Tries to find an entry that matches or contains the given string.
     /// </summary>
     public static Entry? GetEntryByString(string searchString)
     {
-        if (_entries is null || string.IsNullOrWhiteSpace(searchString))
+        lock (_lock)
         {
-            return null;
+            if (_entries is null || string.IsNullOrWhiteSpace(searchString))
+            {
+                return null;
+            }
+
+            // First try exact match.
+            var exactMatch = _entries.FirstOrDefault(e =>
+                string.Equals(e.Path, searchString, StringComparison.Ordinal));
+
+            if (exactMatch != null)
+            {
+                return exactMatch;
+            }
+
+            // Then try contains.
+            return _entries.Find(e => e.Path.Contains(searchString, StringComparison.Ordinal));
         }
-
-        // First try exact match.
-        var exactMatch = _entries.FirstOrDefault(e =>
-            string.Equals(e.Path, searchString, StringComparison.Ordinal));
-
-        if (exactMatch != null)
-        {
-            return exactMatch;
-        }
-
-        // Then try contains.
-        return _entries.Find(e => e.Path.Contains(searchString, StringComparison.Ordinal));
     }
 
     /// <summary>
@@ -280,8 +372,11 @@ public static class FileHistoryManager
     /// </summary>
     public static void Clear()
     {
-        _entries?.Clear();
-        CurrentIndex = -1;
+        lock (_lock)
+        {
+            _entries?.Clear();
+            CurrentIndex = -1;
+        }
     }
 
     /// <summary>
@@ -289,26 +384,29 @@ public static class FileHistoryManager
     /// </summary>
     public static bool Remove(string path)
     {
-        if (_entries is null || string.IsNullOrWhiteSpace(path))
+        lock (_lock)
         {
-            return false;
+            if (_entries is null || string.IsNullOrWhiteSpace(path))
+            {
+                return false;
+            }
+
+            var index = _entries.FindIndex(e => string.Equals(e.Path, path, StringComparison.Ordinal));
+            if (index < 0)
+            {
+                return false;
+            }
+
+            _entries.RemoveAt(index);
+
+            // Adjust current index if necessary.
+            if (index <= CurrentIndex)
+            {
+                CurrentIndex = Math.Max(-1, CurrentIndex - 1);
+            }
+
+            return true;
         }
-
-        var index = _entries.FindIndex(e => string.Equals(e.Path, path, StringComparison.Ordinal));
-        if (index < 0)
-        {
-            return false;
-        }
-
-        _entries.RemoveAt(index);
-
-        // Adjust current index if necessary.
-        if (index <= CurrentIndex)
-        {
-            CurrentIndex = Math.Max(-1, CurrentIndex - 1);
-        }
-
-        return true;
     }
 
     // TODO: Rename the entries of the files in a renamed folder too. FileWatcherService only renames single files here,
@@ -320,21 +418,24 @@ public static class FileHistoryManager
     {
         try
         {
-            if (_entries is null || string.IsNullOrWhiteSpace(oldName) || string.IsNullOrWhiteSpace(newName))
+            lock (_lock)
             {
-                return;
-            }
+                if (_entries is null || string.IsNullOrWhiteSpace(oldName) || string.IsNullOrWhiteSpace(newName))
+                {
+                    return;
+                }
 
-            var entry = GetEntryByString(oldName);
-            if (string.IsNullOrWhiteSpace(entry?.Path) || _entries.TrueForAll(x => !string.Equals(x.Path, entry?.Path, StringComparison.Ordinal)))
-            {
-                return;
-            }
+                var entry = GetEntryByString(oldName);
+                if (string.IsNullOrWhiteSpace(entry?.Path) || _entries.TrueForAll(x => !string.Equals(x.Path, entry?.Path, StringComparison.Ordinal)))
+                {
+                    return;
+                }
 
-            var index = _entries.FindIndex(x => string.Equals(x.Path, entry.Path, StringComparison.Ordinal));
-            if (index >= 0)
-            {
-                _entries[index].Path = newName;
+                var index = _entries.FindIndex(x => string.Equals(x.Path, entry.Path, StringComparison.Ordinal));
+                if (index >= 0)
+                {
+                    _entries[index].Path = newName;
+                }
             }
         }
         catch (Exception e)
@@ -356,16 +457,20 @@ public static class FileHistoryManager
                 _fileHistoryConfiguration.CorrectPath = ConfigFileManager.ResolveDefaultConfigPath(_fileHistoryConfiguration);
             }
 
-            var entries = _entries ?? [];
-
             // Create a new sorted list with pinned entries first (max 5), then unpinned entries (max MaxHistoryEntries)
             var sortedEntries = new List<Entry>();
 
-            // Add pinned entries (max 5)
-            sortedEntries.AddRange(entries.Where(e => e.IsPinned).Take(FileHistoryConfiguration.MaxPinnedEntries));
-            // Add unpinned entries (max MaxHistoryEntries)
-            sortedEntries.AddRange(entries.Where(e => !e.IsPinned)
-                .Take(FileHistoryConfiguration.MaxHistoryEntries));
+            // Copy under the lock, so the file is saved without holding it
+            lock (_lock)
+            {
+                var entries = _entries ?? [];
+
+                // Add pinned entries (max 5)
+                sortedEntries.AddRange(entries.Where(e => e.IsPinned).Take(FileHistoryConfiguration.MaxPinnedEntries));
+                // Add unpinned entries (max MaxHistoryEntries)
+                sortedEntries.AddRange(entries.Where(e => !e.IsPinned)
+                    .Take(FileHistoryConfiguration.MaxHistoryEntries));
+            }
 
             var historyEntries = new FileHistoryEntries
             {
@@ -386,18 +491,19 @@ public static class FileHistoryManager
     /// <summary>
     ///     Loads the history from the specified history file path.
     /// </summary>
-    private static void LoadFromFile(string? configPath)
+    /// <returns>The entries in the file, or null when there are none to load.</returns>
+    private static List<Entry>? LoadFromFile(string? configPath)
     {
         if (!Settings.Navigation.IsFileHistoryEnabled)
         {
-            return;
+            return null;
         }
         
         try
         {
             if (string.IsNullOrEmpty(configPath) || !File.Exists(configPath))
             {
-                return;
+                return null;
             }
 
             var bytes = File.ReadAllBytes(configPath);
@@ -407,22 +513,16 @@ public static class FileHistoryManager
                 is not FileHistoryEntries entries)
             {
                 DebugHelper.LogDebug(nameof(FileHistoryManager), nameof(LoadFromFile), "Failed to deserialize settings");
-                return;
+                return null;
             }
 
             IsSortingDescending = entries.IsSortingDescending;
-            _entries?.Clear();
-            if (entries.Entries is not null && _entries is not null)
-            {
-                foreach (var entry in entries.Entries)
-                {
-                    _entries.Add(entry);
-                }
-            }
+            return entries.Entries;
         }
         catch (Exception ex)
         {
             DebugHelper.LogDebug(nameof(FileHistoryManager), nameof(LoadFromFile), ex);
+            return null;
         }
     }
 }

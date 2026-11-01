@@ -1,7 +1,6 @@
 using ObservableCollections;
 using PicView.Core.FileHistory;
 using R3;
-using ZLinq;
 using PicView.Core.Keybindings;
 
 namespace PicView.Core.ViewModels;
@@ -66,7 +65,7 @@ public class FileHistoryViewModel
         var pinnedEntries = FileHistoryManager.PinnedEntries;
         var entries = FileHistoryManager.AllEntries;
         
-        HasPinnedEntries.Value = pinnedEntries.Any();
+        HasPinnedEntries.Value = pinnedEntries.Length > 0;
         
         var currentFilePath = _vm.WindowTabs?.ActiveTab?.Value?.Model?.FileInfo?.FullName;
         
@@ -85,12 +84,12 @@ public class FileHistoryViewModel
             PinnedEntries.Add(pinnedEntry);
         }
 
-        var count = entries.Count;
+        var count = entries.Length;
         if (FileHistoryManager.IsSortingDescending)
         {
             for (var i = 0; i < count; i++)
             {
-                var path = entries.ElementAt(i).Path;
+                var path = entries[i].Path;
                 var index = i + 1;
                 var fileName = Path.GetFileName(path);
                 var entry = new FileHistoryEntryViewModel();
@@ -109,7 +108,7 @@ public class FileHistoryViewModel
         {
             for (var i = count - 1; i >= 0; i--)
             {
-                var entry = entries.ElementAt(i);
+                var entry = entries[i];
                 var index = i + 1;
                 var fileName = Path.GetFileName(entry.Path);
                 var unpinnedEntry = new FileHistoryEntryViewModel();

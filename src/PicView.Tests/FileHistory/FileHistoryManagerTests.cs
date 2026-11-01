@@ -1,5 +1,4 @@
 using PicView.Core.FileHistory;
-using ZLinq;
 
 namespace PicView.Tests.FileHistory;
 
@@ -110,5 +109,93 @@ public class FileHistoryManagerTests : IDisposable
         Assert.True(removed);
         Assert.Equal(1, FileHistoryManager.Count);
         Assert.Equal("/path/new.jpg", FileHistoryManager.CurrentEntry);
+    }
+
+    [Fact]
+    public void Add_PathAlreadyListed_MovesItToTheNewestEnd()
+    {
+        FileHistoryManager.Add("/path/a.jpg");
+        FileHistoryManager.Add("/path/b.jpg");
+        FileHistoryManager.Add("/path/c.jpg");
+
+        FileHistoryManager.Add("/path/a.jpg");
+
+        Assert.Equal(["/path/b.jpg", "/path/c.jpg", "/path/a.jpg"], FileHistoryManager.AllEntries.Select(e => e.Path));
+    }
+
+    [Fact]
+    public void Add_PinnedPathAgain_KeepsItsPlace()
+    {
+        FileHistoryManager.Add("/path/a.jpg");
+        FileHistoryManager.Pin("/path/a.jpg");
+        FileHistoryManager.Add("/path/b.jpg");
+
+        FileHistoryManager.Add("/path/a.jpg");
+
+        Assert.Equal(["/path/a.jpg", "/path/b.jpg"], FileHistoryManager.AllEntries.Select(e => e.Path));
+    }
+
+    [Fact]
+    public void Add_SamePathInAnotherCase_DoesNotAddItAgain()
+    {
+        FileHistoryManager.Add(@"C:\Pics\A.jpg");
+
+        FileHistoryManager.Add(@"c:\pics\a.jpg");
+
+        Assert.Equal(1, FileHistoryManager.Count);
+    }
+
+    [Fact]
+    public void Add_NewPathAtTheCap_EvictsTheOldestUnpinnedEntry()
+    {
+        FileHistoryManager.Add("/path/pinned.jpg");
+        FileHistoryManager.Pin("/path/pinned.jpg");
+        for (var i = 1; i <= 50; i++)
+        {
+            FileHistoryManager.Add($"/path/{i}.jpg");
+        }
+
+        FileHistoryManager.Add("/path/new.jpg");
+
+        var paths = FileHistoryManager.AllEntries.Select(e => e.Path).ToArray();
+        Assert.Equal(51, paths.Length);
+        Assert.Equal("/path/pinned.jpg", paths[0]);
+        Assert.Equal("/path/2.jpg", paths[1]);
+        Assert.Equal("/path/new.jpg", paths[^1]);
+    }
+
+    [Fact]
+    public void AllEntries_IsACopy_ThatLaterAddsLeaveAlone()
+    {
+        FileHistoryManager.Add("/path/a.jpg");
+        var copy = FileHistoryManager.AllEntries;
+
+        FileHistoryManager.Add("/path/b.jpg");
+
+        Assert.Single(copy);
+    }
+
+    [Fact]
+    public async Task AllEntries_WhileOtherThreadsAdd_NeverThrows()
+    {
+        var adding = Enumerable.Range(0, 4).Select(thread => Task.Run(() =>
+        {
+            for (var i = 0; i < 2000; i++)
+            {
+                FileHistoryManager.Add($"/thread{thread}/{i % 80}.jpg");
+            }
+        })).ToArray();
+
+        while (!adding.All(task => task.IsCompleted))
+        {
+            foreach (var entry in FileHistoryManager.AllEntries)
+            {
+                Assert.NotNull(entry.Path);
+            }
+            Assert.True(FileHistoryManager.PinnedEntries.Length <= 5);
+        }
+
+        await Task.WhenAll(adding);
+        Assert.Equal(50, FileHistoryManager.Count);
     }
 }
