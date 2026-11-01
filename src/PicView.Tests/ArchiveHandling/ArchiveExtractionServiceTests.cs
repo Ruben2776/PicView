@@ -171,6 +171,74 @@ public class ArchiveExtractionServiceTests
     }
 
     [Fact]
+    public async Task PrepareArchiveAsync_ArchiveThatFailsToOpen_LeavesTheOpenArchiveAsItWas()
+    {
+        var folder = Path.Combine(Path.GetTempPath(), "PicViewEntries_" + Guid.NewGuid().ToString("N"));
+        var zip = await CreateZipAsync(folder, "open.zip", "1.jpg");
+        // Local software opens a .7z, and fails as when it is not installed
+        var broken = Path.Combine(folder, "broken.7z");
+        await File.WriteAllBytesAsync(broken, [0x37, 0x7A], TestContext.Current.CancellationToken);
+        var service = new ArchiveExtractionService();
+
+        try
+        {
+            await service.PrepareArchiveAsync(zip, (_, _) => Task.FromResult(false), string.CompareOrdinal);
+            var openFolder = service.TempZipDirectory;
+            var page = await service.ExtractEntryAsync(zip, "1.jpg", TestContext.Current.CancellationToken);
+            var extracting = service.ResetExtractionCts();
+            string? brokenFolder = null;
+
+            var preparation = await service.PrepareArchiveAsync(broken, (_, created) =>
+            {
+                brokenFolder = created;
+                return Task.FromResult(false);
+            }, string.CompareOrdinal);
+
+            Assert.Null(preparation);
+            Assert.Equal(openFolder, service.TempZipDirectory);
+            Assert.Equal(zip, service.LastOpenedArchive);
+            Assert.Equal("1.jpg", service.EntryOf(page!));
+            Assert.False(extracting.IsCancellationRequested, "The open archive stopped extracting");
+            Assert.False(Directory.Exists(brokenFolder), "The folder of the archive that failed to open was left behind");
+        }
+        finally
+        {
+            service.Cleanup();
+            Directory.Delete(folder, true);
+        }
+    }
+
+    [Fact]
+    public async Task EntryOf_FileOfAnArchiveOpenedBeforeTheOpenOne_IsItsEntryUntilItsFolderIsCleanedUp()
+    {
+        var folder = Path.Combine(Path.GetTempPath(), "PicViewEntries_" + Guid.NewGuid().ToString("N"));
+        var first = await CreateZipAsync(folder, "first.zip", "1.jpg");
+        var second = await CreateZipAsync(folder, "second.zip", "2.jpg");
+        var service = new ArchiveExtractionService();
+
+        try
+        {
+            await service.PrepareArchiveAsync(first, (_, _) => Task.FromResult(false), string.CompareOrdinal);
+            var firstFolder = service.TempZipDirectory;
+            var page = await service.ExtractEntryAsync(first, "1.jpg", TestContext.Current.CancellationToken);
+            // The second opens before the first one's page shows
+            await service.PrepareArchiveAsync(second, (_, _) => Task.FromResult(false), string.CompareOrdinal);
+            var entryWhileBothAreOpen = service.EntryOf(page!);
+
+            service.Cleanup(firstFolder);
+
+            Assert.Equal("1.jpg", entryWhileBothAreOpen);
+            Assert.Null(service.EntryOf(page!));
+            Assert.Equal(second, service.LastOpenedArchive);
+        }
+        finally
+        {
+            service.Cleanup();
+            Directory.Delete(folder, true);
+        }
+    }
+
+    [Fact]
     public async Task EntryOf_FileOfAFullyExtractedArchive_IsItsPathInTheFolder()
     {
         var archive = Path.Combine(Path.GetTempPath(), "PicViewEntries_" + Guid.NewGuid().ToString("N") + ".7z");
@@ -728,6 +796,21 @@ public class ArchiveExtractionServiceTests
     }
 
     #endregion
+
+    // A zip in the folder that holds the images given, each a few bytes
+    private static async Task<string> CreateZipAsync(string folder, string name, params string[] images)
+    {
+        var source = Directory.CreateDirectory(Path.Combine(folder, Path.GetFileNameWithoutExtension(name))).FullName;
+        foreach (var image in images)
+        {
+            await File.WriteAllBytesAsync(Path.Combine(source, image), [0xFF, 0xD8, 0xFF],
+                TestContext.Current.CancellationToken);
+        }
+
+        var zip = Path.Combine(folder, name);
+        ZipFile.CreateFromDirectory(source, zip);
+        return zip;
+    }
 
     // The order files are extracted in: at each progress report, the extracted files it hasn't seen yet
     private sealed class ExtractionOrder(ArchiveExtractionService service) : IProgress<int>

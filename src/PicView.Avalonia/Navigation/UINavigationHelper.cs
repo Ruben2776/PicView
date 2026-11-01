@@ -121,12 +121,7 @@ public static class UINavigationHelper
                 await OpenPathAsync(mainWindow, vm, entry.Path).ConfigureAwait(false);
                 break;
             case ViewHistoryKind.ArchivePage:
-                if (entry.ArchiveEntry is { } archiveEntry
-                    && tab.ArchiveExtractionService is { LastOpenedArchive: { } archive } extraction
-                    && string.Equals(archive, entry.Path, StringComparison.OrdinalIgnoreCase)
-                    && extraction.ExtractedPathOf(archiveEntry) is { } extracted
-                    && tab.ImageIterator is { } iterator
-                    && SideBySidePair.IndexOf(iterator.Files, new FileInfo(extracted)) is { } index)
+                if (tab.IndexOfArchivePage(entry) is { } index && tab.ImageIterator is { } iterator)
                 {
                     // The tab is still in the archive and the page is extracted, so it moves to the page in its list
                     await iterator.SkipToIndexAsync(index, tab.GetTabCancellation()).ConfigureAwait(false);

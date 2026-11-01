@@ -252,12 +252,11 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
             // An empty model, as when the tab becomes fresh again
             return;
         }
-        else if (ArchiveExtractionService is { TempZipDirectory: { } folder, LastOpenedArchive: { } archive } extraction
-                 && IsInFolder(file.FullName, folder))
+        else if (ArchiveExtractionService?.ArchivePageOf(file.FullName) is { } archivePage)
         {
-            // Leaving an archive shows the next file before its extraction is cleaned up, so only a file in the
-            // extraction folder is an archive page
-            entry = ViewHistoryEntry.ForArchivePage(archive, extraction.EntryOf(file.FullName));
+            // Leaving an archive shows the next file before its extraction is cleaned up, so only a file in an
+            // extraction folder is an archive page. Its folder tells whose, as another archive may be opening meanwhile
+            entry = ViewHistoryEntry.ForArchivePage(archivePage.Archive, archivePage.Entry);
         }
         else
         {
@@ -273,13 +272,24 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
         }
     }
 
-    // Compares spans, so a file recorded in every held-key view allocates nothing
-    private static bool IsInFolder(string path, string folder)
+    /// <summary>
+    /// Where the archive page <paramref name="entry"/> is in the tab's files, so a step Back or Forward moves to it
+    /// there: the tab is still in that archive, and the page is extracted and listed. Null when the archive has to open
+    /// again at the page. For an archive that local software extracted whole it checks the disk, so call it off the UI
+    /// thread.
+    /// </summary>
+    public int? IndexOfArchivePage(in ViewHistoryEntry entry)
     {
-        var trimmed = Path.TrimEndingDirectorySeparator(folder.AsSpan());
-        return path.Length > trimmed.Length + 1
-               && path.AsSpan().StartsWith(trimmed, StringComparison.OrdinalIgnoreCase)
-               && path[trimmed.Length] is '\\' or '/';
+        if (entry is not { Kind: ViewHistoryKind.ArchivePage, Path: { } archive, ArchiveEntry: { } archiveEntry }
+            || ArchiveExtractionService is not { LastOpenedArchive: { } openArchive } extraction
+            || !string.Equals(openArchive, archive, StringComparison.OrdinalIgnoreCase)
+            || extraction.ExtractedPathOf(archiveEntry) is not { } extracted
+            || ImageIterator is not { } iterator)
+        {
+            return null;
+        }
+
+        return SideBySidePair.IndexOf(iterator.Files, new FileInfo(extracted));
     }
 
     /// <summary>

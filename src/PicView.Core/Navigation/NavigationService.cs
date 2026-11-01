@@ -25,14 +25,16 @@ public class NavigationService(
     
     private FileAndDirectoryNavigator? _navigator;
 
-    public ValueTask RepopulateIterator(FileInfo fileInfo, TabViewModel tab, CancellationTokenSource ct, List<FileInfo>? files = null) =>
-        RepopulateIterator(fileInfo, tab, ct, files, tab.BeginLoad());
+    public async ValueTask RepopulateIterator(FileInfo fileInfo, TabViewModel tab, CancellationTokenSource ct, List<FileInfo>? files = null) =>
+        await RepopulateIterator(fileInfo, tab, ct, files, tab.BeginLoad()).ConfigureAwait(false);
 
     /// <param name="load">The version of the load this is part of. Once a newer load begins, this one stops before
     /// changing the tab's image, files or gallery, so a slow load that finishes last cannot overwrite a newer one.</param>
-    private async ValueTask RepopulateIterator(FileInfo fileInfo, TabViewModel tab, CancellationTokenSource ct,
+    /// <returns>Whether the tab showed the file.</returns>
+    private async ValueTask<bool> RepopulateIterator(FileInfo fileInfo, TabViewModel tab, CancellationTokenSource ct,
         IReadOnlyList<FileInfo>? files, int load)
     {
+        var isShown = false;
         try
         {
             fileWatcherService.Unwatch(tab);
@@ -43,19 +45,20 @@ public class NavigationService(
             var model = await cache.GetAsync(tab.Id, fileInfo, ct.Token).ConfigureAwait(false);
             if (model is null || !tab.IsLatestLoad(load))
             {
-                return;
+                return false;
             }
 
             if (!Settings.ImageScaling.ShowImageSideBySide)
             {
                 tab.Display(model);
+                isShown = true;
             }
 
             await Task.Yield();
             var retrieved = files ?? FileListRetriever.RetrieveFiles(fileInfo, stringComparer);
             if (!tab.IsLatestLoad(load))
             {
-                return;
+                return isShown;
             }
             var index = SideBySidePair.IndexOf(retrieved, fileInfo) ?? 0;
             tab.ImageIterator.Initialize(retrieved, index);
@@ -68,17 +71,18 @@ public class NavigationService(
                     secondaryModel = await cache.GetAsync(tab.Id, secondaryFileInfo, ct.Token).ConfigureAwait(false);
                     if (secondaryModel is null || !tab.IsLatestLoad(load))
                     {
-                        return;
+                        return false;
                     }
                     secondaryIndex = nextIteration;
                 }
                 tab.Display(model, secondaryModel);
+                isShown = true;
             }
 
             // A newer load that begins after this sets its own files after these
             if (!tab.IsLatestLoad(load))
             {
-                return;
+                return true;
             }
             tab.UpdateTabTitle();
             fileWatcherService.Watch(tab, fileInfo.DirectoryName);
@@ -93,10 +97,13 @@ public class NavigationService(
                 }
                 cache.Preload(tab.Id, currentFile, false, tab.GetTabCancellation().Token);
             }
+
+            return true;
         }
         catch (Exception e)
         {
             DebugHelper.LogDebug(nameof(NavigationService), nameof(RepopulateIterator), e);
+            return isShown;
         }
     }
 
@@ -248,39 +255,48 @@ public class NavigationService(
     public async ValueTask<bool> LoadFromArchiveAsync(string archivePath, TabViewModel tab, CancellationTokenSource ct,
         string? startEntry = null)
     {
-        if (string.IsNullOrEmpty(archivePath) || !File.Exists(archivePath))
+        if (string.IsNullOrEmpty(archivePath) || !File.Exists(archivePath) ||
+            tab.ArchiveExtractionService is not { } extraction)
         {
             return false;
         }
 
+        // Taken first, so a load that a newer one overtakes while its archive opens shows nothing
+        var load = tab.BeginLoad();
         tab.SetLoading();
         // Show progress spinner while extracting archive
         if (tab.ParentWindowContext is not null)
         {
             tab.ParentWindowContext.IsLoadingIndicatorShown.Value = true;
         }
-        
+
         // Retrieve the temporary directory for the possible previous archive extraction
-        var tempZipDir = tab.ArchiveExtractionService.TempZipDirectory;
+        var tempZipDir = extraction.TempZipDirectory;
+        // The folder this load's archive opens to. Unless a page from it shows, it goes again, and the tab's archive stays
+        // the one it shows
+        string? folder = null;
+        var isShown = false;
 
         try
         {
-            var preparation = await tab.ArchiveExtractionService.PrepareArchiveAsync(
+            var preparation = await extraction.PrepareArchiveAsync(
                 archivePath,
                 platformService.ExtractWithLocalSoftwareAsync,
                 stringComparer).ConfigureAwait(false);
 
-            if (preparation is null || string.IsNullOrEmpty(tab.ArchiveExtractionService.TempZipDirectory))
+            if (preparation is not { } prep)
             {
                 return false;
             }
 
-            if (ct.IsCancellationRequested)
+            folder = prep.TempDirectory;
+            if (IsOvertaken())
             {
                 return false;
             }
 
-            var prep = preparation.Value;
+            // The archive the tab leaves stops extracting, so this one's pages come sooner
+            extraction.StopExtraction();
 
             if (prep.IsFullyExtracted)
             {
@@ -295,11 +311,15 @@ public class NavigationService(
 
                 var startFile = startEntry is null
                     ? null
-                    : allFiles.Find(f => string.Equals(tab.ArchiveExtractionService.EntryOf(f.FullName), startEntry,
+                    : allFiles.Find(f => string.Equals(extraction.EntryOf(f.FullName), startEntry,
                         StringComparison.Ordinal));
-                await RepopulateIterator(startFile ?? allFiles[0], tab, ct, allFiles).ConfigureAwait(false);
+                isShown = await RepopulateIterator(startFile ?? allFiles[0], tab, ct, allFiles, load).ConfigureAwait(false);
+                if (!isShown)
+                {
+                    return false;
+                }
 
-                tab.ArchiveExtractionService.Cleanup(tempZipDir);
+                extraction.Cleanup(tempZipDir);
                 return true;
             }
 
@@ -312,9 +332,9 @@ public class NavigationService(
                 // Staged extraction: extract the start entry (and its partner if side-by-side), navigate to it, then
                 // extract the rest in the background one by one while FileWatcherService inserts each new file into the
                 // iterator.
-                var startPath = await tab.ArchiveExtractionService.ExtractEntryAsync(archivePath, keys[start], ct.Token).ConfigureAwait(false);
+                var startPath = await extraction.ExtractEntryAsync(archivePath, keys[start], ct.Token, folder).ConfigureAwait(false);
 
-                if (string.IsNullOrEmpty(startPath) || ct.IsCancellationRequested)
+                if (string.IsNullOrEmpty(startPath) || IsOvertaken())
                 {
                     return false;
                 }
@@ -322,20 +342,33 @@ public class NavigationService(
                 var startFile = new FileInfo(startPath);
                 List<FileInfo> seedFiles = [startFile];
                 var partner = SideBySidePair.PartnerOf(start, keys.Length);
-                if (partner is { } partnerIndex)
+                // A partner that fails to extract, such as a corrupt entry, is left out, so the start page shows alone
+                if (partner is { } partnerIndex &&
+                    await extraction.ExtractEntryAsync(archivePath, keys[partnerIndex], ct.Token, folder)
+                        .ConfigureAwait(false) is { } partnerPath)
                 {
-                    var partnerPath = await tab.ArchiveExtractionService.ExtractEntryAsync(archivePath, keys[partnerIndex], ct.Token).ConfigureAwait(false);
                     // In the entries' order, which FileWatcherService inserts the others by. The partner of the last
                     // entry is the first, when looping
                     seedFiles.Insert(partnerIndex < start ? 0 : 1, new FileInfo(partnerPath));
                 }
-                await RepopulateIterator(startFile, tab, ct, seedFiles).ConfigureAwait(false);
 
-                // Extract the others in the background, one by one, with no batches or progress indicator.
+                if (IsOvertaken())
+                {
+                    return false;
+                }
+
+                isShown = await RepopulateIterator(startFile, tab, ct, seedFiles, load).ConfigureAwait(false);
+                if (!isShown)
+                {
+                    return false;
+                }
+
+                // Extract the others in the background, one by one, with no batches or progress indicator. A partner
+                // that failed is not tried again, as one bad entry would end the extraction of the rest
                 var (afterKeys, beforeKeys) = RemainingKeys(keys, start, start + 1, partner);
                 if (afterKeys.Length + beforeKeys.Length > 0)
                 {
-                    var backgroundToken = tab.ArchiveExtractionService.ResetExtractionCts();
+                    var backgroundToken = extraction.ResetExtractionCts();
                     tab.IsArchiveExtracting.Value = true;
                     tab.ArchiveExtractionProgressText.Value = null;
                     tab.ImageIterator?.UpdateNavigationProperties();
@@ -344,8 +377,8 @@ public class NavigationService(
                     {
                         try
                         {
-                            await tab.ArchiveExtractionService.ExtractRemainingAsync(archivePath, afterKeys, beforeKeys,
-                                ct: backgroundToken).ConfigureAwait(false);
+                            await extraction.ExtractRemainingAsync(archivePath, afterKeys, beforeKeys,
+                                ct: backgroundToken, folder: folder).ConfigureAwait(false);
                         }
                         finally
                         {
@@ -362,7 +395,7 @@ public class NavigationService(
                     tab.ArchiveExtractionProgressText.Value = null;
                 }
 
-                tab.ArchiveExtractionService.Cleanup(tempZipDir);
+                extraction.Cleanup(tempZipDir);
                 return true;
             }
 
@@ -371,16 +404,20 @@ public class NavigationService(
             // progress with the bottom-right indicator.
             const int initialExtractCount = 10;
             var initialKeys = keys.Skip(start).Take(initialExtractCount).ToArray();
-            var extractedPaths = await tab.ArchiveExtractionService.ExtractEntriesAsync(archivePath, initialKeys, ct.Token).ConfigureAwait(false);
+            var extractedPaths = await extraction.ExtractEntriesAsync(archivePath, initialKeys, ct.Token, folder).ConfigureAwait(false);
 
-            if (extractedPaths.Count == 0 || ct.IsCancellationRequested)
+            if (extractedPaths.Count == 0 || IsOvertaken())
             {
                 return false;
             }
 
             // Seed iterator with initial extracted pages for immediate viewing and preloading
             var seedFilesList = extractedPaths.Select(p => new FileInfo(p)).ToList();
-            await RepopulateIterator(seedFilesList[0], tab, ct, seedFilesList).ConfigureAwait(false);
+            isShown = await RepopulateIterator(seedFilesList[0], tab, ct, seedFilesList, load).ConfigureAwait(false);
+            if (!isShown)
+            {
+                return false;
+            }
 
             // Extract the rest in the background, in batches of 10. FileWatcherService picks them up.
             if (keys.Length > initialKeys.Length)
@@ -388,7 +425,7 @@ public class NavigationService(
                 var totalCount = keys.Length;
                 var initialExtractedCount = extractedPaths.Count;
                 var (afterKeys, beforeKeys) = RemainingKeys(keys, start, start + initialKeys.Length);
-                var backgroundToken = tab.ArchiveExtractionService.ResetExtractionCts();
+                var backgroundToken = extraction.ResetExtractionCts();
 
                 tab.IsArchiveExtracting.Value = true;
                 tab.ArchiveExtractionProgressText.Value = $"{initialExtractedCount}/{totalCount}";
@@ -402,7 +439,7 @@ public class NavigationService(
                 {
                     try
                     {
-                        await tab.ArchiveExtractionService.ExtractRemainingAsync(
+                        await extraction.ExtractRemainingAsync(
                             archivePath,
                             afterKeys,
                             beforeKeys,
@@ -410,7 +447,8 @@ public class NavigationService(
                             totalCount: totalCount,
                             progress: progress,
                             batchSize: 10,
-                            ct: backgroundToken).ConfigureAwait(false);
+                            ct: backgroundToken,
+                            folder: folder).ConfigureAwait(false);
                     }
                     finally
                     {
@@ -427,7 +465,7 @@ public class NavigationService(
                 tab.ArchiveExtractionProgressText.Value = null;
             }
 
-            tab.ArchiveExtractionService.Cleanup(tempZipDir);
+            extraction.Cleanup(tempZipDir);
             return true;
         }
         catch (OperationCanceledException)
@@ -441,12 +479,20 @@ public class NavigationService(
         }
         finally
         {
+            if (!isShown)
+            {
+                extraction.Cleanup(folder);
+            }
+
             // Hide progress spinner when initial extraction and display complete
             if (tab.ParentWindowContext is not null)
             {
                 tab.ParentWindowContext.IsLoadingIndicatorShown.Value = false;
             }
         }
+
+        // A newer load began, which shows what the tab shows next, or the load was cancelled
+        bool IsOvertaken() => ct.IsCancellationRequested || !tab.IsLatestLoad(load);
     }
 
     /// <summary>

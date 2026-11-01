@@ -21,36 +21,81 @@ namespace PicView.Core.ArchiveHandling;
 public class ArchiveExtractionService
 {
     /// <summary>
-    ///     Gets the path of the temporary directory where the archive contents are extracted.
+    ///     The folder the open archive is extracted to: the folder of the archive that opened last, of those whose
+    ///     folders are not cleaned up yet.
     /// </summary>
-    public string? TempZipDirectory { get; private set; }
+    public string? TempZipDirectory => Open?.Folder;
 
-    public string? LastOpenedArchive { get; private set; }
+    /// <summary>
+    ///     The open archive, whose folder is <see cref="TempZipDirectory" />.
+    /// </summary>
+    public string? LastOpenedArchive => Open?.Archive;
 
     public bool IsArchived => TempZipDirectory != null;
 
-    // Which entry each extracted file came from, and the reverse. Load and display threads read them while a background
-    // extraction fills them
-    private readonly ConcurrentDictionary<string, string> _entryByFile = new(StringComparer.OrdinalIgnoreCase);
-    private readonly ConcurrentDictionary<string, string> _fileByEntry = new(StringComparer.Ordinal);
-
-    // Local software extracted the whole archive, keeping its folders, so its files are not in the maps
-    private bool _isFullyExtracted;
-
     /// <summary>
-    ///     The entry of the open archive that <paramref name="extractedPath" /> was extracted from, or <c>null</c> for a
-    ///     file it did not extract. It reads no disk, since a tab records each page it shows with it.
+    ///     One extraction folder: the archive extracted to it, and which entry each file in it came from.
     /// </summary>
-    public string? EntryOf(string extractedPath)
+    /// <param name="IsFullyExtracted">
+    ///     Local software extracted the whole archive, keeping its folders, so the files are not in the maps: a file's path
+    ///     in the folder is its entry.
+    /// </param>
+    private sealed record Extraction(
+        string Folder,
+        string Archive,
+        bool IsFullyExtracted,
+        ConcurrentDictionary<string, string> EntryByFile,
+        ConcurrentDictionary<string, string> FileByEntry)
     {
-        if (_entryByFile.TryGetValue(extractedPath, out var entry))
+        public Extraction(string folder, string archive, bool isFullyExtracted)
+            : this(folder, archive, isFullyExtracted, new ConcurrentDictionary<string, string>(StringComparer.OrdinalIgnoreCase),
+                new ConcurrentDictionary<string, string>(StringComparer.Ordinal))
         {
-            return entry;
         }
 
-        // Local software keeps a fully extracted archive's folders, so a file's path in the folder is its entry
-        return _isFullyExtracted && TempZipDirectory is { } folder ? PathInFolder(extractedPath, folder) : null;
+        public string? EntryOf(string extractedPath) =>
+            EntryByFile.TryGetValue(extractedPath, out var entry)
+                ? entry
+                : IsFullyExtracted ? PathInFolder(extractedPath, Folder) : null;
     }
+
+    // Held for a few in-memory operations only, never across disk access or an await
+    private readonly Lock _lock = new();
+
+    // Every extraction folder that is not cleaned up yet, the one published last at the end. A page shows from its folder
+    // after another archive started opening, or after one failed to open, so each folder keeps its own archive and maps
+    // until it is cleaned up. Replaced, never changed, so a display thread reads it without the lock
+    private Extraction[] _extractions = [];
+
+    private Extraction? Open => Volatile.Read(ref _extractions) is { Length: > 0 } extractions ? extractions[^1] : null;
+
+    /// <summary>
+    ///     The archive, and the entry of it, that <paramref name="extractedPath" /> was extracted from, found by the
+    ///     extraction folder it is in, or null for a file outside them. Every folder counts until it is cleaned up, so a page
+    ///     shown after another archive started opening, or failed to open, still counts as its own archive's. A tab asks
+    ///     this for each image it shows, so it reads no disk, and allocates nothing for a file outside the folders.
+    /// </summary>
+    /// <returns>The archive, and its entry, which is null for a file in the folder that the service did not extract.</returns>
+    public (string Archive, string? Entry)? ArchivePageOf(string extractedPath)
+    {
+        var extractions = Volatile.Read(ref _extractions);
+        for (var i = 0; i < extractions.Length; i++)
+        {
+            var extraction = extractions[i];
+            if (IsInFolder(extractedPath, extraction.Folder))
+            {
+                return (extraction.Archive, extraction.EntryOf(extractedPath));
+            }
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    ///     The entry that <paramref name="extractedPath" /> was extracted from, or <c>null</c> for a file the service did
+    ///     not extract, as <see cref="ArchivePageOf" /> finds it.
+    /// </summary>
+    public string? EntryOf(string extractedPath) => ArchivePageOf(extractedPath)?.Entry;
 
     /// <summary>
     ///     The file that <paramref name="entry" /> of the open archive was extracted to, or <c>null</c> when it is not
@@ -58,17 +103,22 @@ public class ArchiveExtractionService
     /// </summary>
     public string? ExtractedPathOf(string entry)
     {
-        if (_fileByEntry.TryGetValue(entry, out var file))
-        {
-            return file;
-        }
-
-        if (!_isFullyExtracted || TempZipDirectory is not { } folder)
+        if (Open is not { } open)
         {
             return null;
         }
 
-        var path = Path.Combine(folder, entry);
+        if (open.FileByEntry.TryGetValue(entry, out var file))
+        {
+            return file;
+        }
+
+        if (!open.IsFullyExtracted)
+        {
+            return null;
+        }
+
+        var path = Path.Combine(open.Folder, entry);
         return File.Exists(path) ? path : null;
     }
 
@@ -94,87 +144,93 @@ public class ArchiveExtractionService
     /// <summary>
     /// Prepares an archive for staged extraction: creates a temporary directory, lists all
     /// supported entries (or fully extracts the archive when local software is required) and
-    /// returns a sorted entry list.
+    /// returns a sorted entry list. Only an archive that opens becomes the open one, with its folder as
+    /// <see cref="TempZipDirectory" />. One that fails to open, such as a corrupt archive or one with no images, deletes
+    /// its folder and leaves the open archive as it was, extracting as it did, since the tab still shows it.
     /// </summary>
     public async Task<ArchivePreparation?> PrepareArchiveAsync(
         string archivePath,
         Func<string, string, Task<bool>> extractWithLocalSoftwareAsync,
         Func<string, string, int> stringComparer)
     {
+        if (string.IsNullOrEmpty(archivePath) || !File.Exists(archivePath))
+        {
+#if DEBUG
+            DebugHelper.LogDebug(nameof(ArchiveExtractionService), nameof(PrepareArchiveAsync),
+                "The archive path is invalid or the file does not exist.");
+#endif
+            return null;
+        }
+
+        var tempDirectory = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
         try
         {
-            if (string.IsNullOrEmpty(archivePath) || !File.Exists(archivePath))
-            {
-#if DEBUG
-                DebugHelper.LogDebug(nameof(ArchiveExtractionService), nameof(PrepareArchiveAsync),
-                    "The archive path is invalid or the file does not exist.");
-#endif
-                return null;
-            }
-
-            _extractionCts?.Cancel();
-            _extractionCts?.Dispose();
-            _extractionCts = null;
-
-            var tempDirectory = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
             Directory.CreateDirectory(tempDirectory);
-            TempZipDirectory = tempDirectory;
-            // The maps hold the files of the current folder only
-            ForgetEntries();
-
-            var ext = Path.GetExtension(archivePath);
-            if (ext.Equals(".7z", StringComparison.OrdinalIgnoreCase) ||
-                ext.Equals(".cb7", StringComparison.OrdinalIgnoreCase))
+            if (await OpenAsync(archivePath, tempDirectory, extractWithLocalSoftwareAsync, stringComparer)
+                    .ConfigureAwait(false) is { } preparation)
             {
-                if (!await extractWithLocalSoftwareAsync(archivePath, tempDirectory).ConfigureAwait(false))
-                {
-                    return null;
-                }
-
-                // Enumerate the (potentially nested) directory tree for any supported files.
-                var files = await Task.Run(() => new DirectoryInfo(tempDirectory)
-                    .EnumerateFiles("*", SearchOption.AllDirectories)
-                    .Where(f => f.FullName.IsSupported())
-                    .Select(f => f.FullName)
-                    .AsValueEnumerable()
-                    .ToArray()).ConfigureAwait(false);
-
-                if (files.Length is 0)
-                {
-                    return null;
-                }
-
-                SortByFileName(files, stringComparer);
-
-                _isFullyExtracted = true;
-                LastOpenedArchive = archivePath;
-                return new ArchivePreparation(tempDirectory, files, IsFullyExtracted: true);
-            }
-
-            var archive = await ArchiveFactory.OpenAsyncArchive(archivePath).ConfigureAwait(false);
-            await using (archive.ConfigureAwait(false))
-            {
-                var entries = await archive.EntriesAsync
-                    .Where(e => !e.IsDirectory
-                                && !string.IsNullOrEmpty(e.Key)
-                                && e.Key!.IsSupported())
-                    .Select(e => e.Key!).ToArrayAsync().ConfigureAwait(false);
-
-                if (entries.Length is 0)
-                {
-                    return null;
-                }
-
-                SortByFileName(entries, stringComparer);
-
-                LastOpenedArchive = archivePath;
-                return new ArchivePreparation(tempDirectory, entries, IsFullyExtracted: false);
+                Publish(new Extraction(tempDirectory, archivePath, preparation.IsFullyExtracted));
+                return preparation;
             }
         }
         catch (Exception ex)
         {
             DebugHelper.LogDebug(nameof(ArchiveExtractionService), nameof(PrepareArchiveAsync), ex);
-            return null;
+        }
+
+        DeleteFolder(tempDirectory);
+        return null;
+    }
+
+    // Lists the archive's entries, or has local software extract it to the folder. Null when it does not open
+    private static async Task<ArchivePreparation?> OpenAsync(
+        string archivePath,
+        string tempDirectory,
+        Func<string, string, Task<bool>> extractWithLocalSoftwareAsync,
+        Func<string, string, int> stringComparer)
+    {
+        var ext = Path.GetExtension(archivePath);
+        if (ext.Equals(".7z", StringComparison.OrdinalIgnoreCase) ||
+            ext.Equals(".cb7", StringComparison.OrdinalIgnoreCase))
+        {
+            if (!await extractWithLocalSoftwareAsync(archivePath, tempDirectory).ConfigureAwait(false))
+            {
+                return null;
+            }
+
+            // Enumerate the (potentially nested) directory tree for any supported files.
+            var files = await Task.Run(() => new DirectoryInfo(tempDirectory)
+                .EnumerateFiles("*", SearchOption.AllDirectories)
+                .Where(f => f.FullName.IsSupported())
+                .Select(f => f.FullName)
+                .AsValueEnumerable()
+                .ToArray()).ConfigureAwait(false);
+
+            if (files.Length is 0)
+            {
+                return null;
+            }
+
+            SortByFileName(files, stringComparer);
+            return new ArchivePreparation(tempDirectory, files, IsFullyExtracted: true);
+        }
+
+        var archive = await ArchiveFactory.OpenAsyncArchive(archivePath).ConfigureAwait(false);
+        await using (archive.ConfigureAwait(false))
+        {
+            var entries = await archive.EntriesAsync
+                .Where(e => !e.IsDirectory
+                            && !string.IsNullOrEmpty(e.Key)
+                            && e.Key!.IsSupported())
+                .Select(e => e.Key!).ToArrayAsync().ConfigureAwait(false);
+
+            if (entries.Length is 0)
+            {
+                return null;
+            }
+
+            SortByFileName(entries, stringComparer);
+            return new ArchivePreparation(tempDirectory, entries, IsFullyExtracted: false);
         }
     }
 
@@ -184,13 +240,18 @@ public class ArchiveExtractionService
     ///     standard, non-recursive file listing/sorting works on the result.
     ///     The archive is opened once and entries are extracted in order.
     /// </summary>
+    /// <param name="folder">
+    ///     The folder to extract to, which <see cref="PrepareArchiveAsync" /> made for the archive, else the open archive's.
+    ///     A load passes its own, as another archive may open meanwhile.
+    /// </param>
     /// <returns>List of absolute paths of successfully extracted files in the requested order.</returns>
     public async Task<IReadOnlyList<string>> ExtractEntriesAsync(
         string archivePath,
         IReadOnlyList<string> entryKeys,
-        CancellationToken ct = default)
+        CancellationToken ct = default,
+        string? folder = null)
     {
-        var tempDirectory = TempZipDirectory;
+        var tempDirectory = folder ?? TempZipDirectory;
         if (string.IsNullOrEmpty(tempDirectory) || entryKeys is null || entryKeys.Count == 0)
         {
             return [];
@@ -259,18 +320,20 @@ public class ArchiveExtractionService
     ///     Entries are written flat (without preserving the entry's directory structure) so the
     ///     standard, non-recursive file listing/sorting works on the result.
     /// </summary>
+    /// <param name="folder">The folder to extract to, as <see cref="ExtractEntriesAsync" /> takes it.</param>
     /// <returns>The absolute path of the extracted file, or <c>null</c> on failure.</returns>
     public async Task<string?> ExtractEntryAsync(
         string archivePath,
         string entryKey,
-        CancellationToken ct = default)
+        CancellationToken ct = default,
+        string? folder = null)
     {
         if (string.IsNullOrEmpty(entryKey))
         {
             return null;
         }
 
-        var results = await ExtractEntriesAsync(archivePath, [entryKey], ct).ConfigureAwait(false);
+        var results = await ExtractEntriesAsync(archivePath, [entryKey], ct, folder).ConfigureAwait(false);
         return results.Count > 0 ? results[0] : null;
     }
 
@@ -280,7 +343,9 @@ public class ArchiveExtractionService
     ///     count progress after each batch. The archive is opened once, and its entries are extracted in the order of the
     ///     keys. A solid archive is the exception: its entries are compressed as one stream, so reading them out of order
     ///     would decompress it again for each entry. It is walked in its own order instead, once for each set of keys.
+    ///     It stops once its folder is cleaned up, as the tab has left the archive.
     /// </summary>
+    /// <param name="folder">The folder to extract to, as <see cref="ExtractEntriesAsync" /> takes it.</param>
     public void ExtractRemaining(
         string archivePath,
         IReadOnlyList<string> remainingKeys,
@@ -289,9 +354,10 @@ public class ArchiveExtractionService
         int totalCount = 0,
         IProgress<int>? progress = null,
         int batchSize = 10,
-        CancellationToken ct = default)
+        CancellationToken ct = default,
+        string? folder = null)
     {
-        var tempDirectory = TempZipDirectory;
+        var tempDirectory = folder ?? TempZipDirectory;
         laterKeys ??= [];
         if (string.IsNullOrEmpty(tempDirectory) || remainingKeys is null || remainingKeys.Count + laterKeys.Count == 0)
         {
@@ -363,10 +429,10 @@ public class ArchiveExtractionService
                 return true;
             }
 
-            // Whether to go on, as the extraction may be cancelled
+            // Whether to go on, as the extraction may be cancelled, or its folder cleaned up
             bool Extract(IArchiveEntry entry)
             {
-                if (ct.IsCancellationRequested)
+                if (ct.IsCancellationRequested || FindExtraction(tempDirectory) is null)
                 {
                     return false;
                 }
@@ -413,14 +479,18 @@ public class ArchiveExtractionService
         int totalCount = 0,
         IProgress<int>? progress = null,
         int batchSize = 10,
-        CancellationToken ct = default)
+        CancellationToken ct = default,
+        string? folder = null)
     {
+        // Read here, so the folder is the open archive's when this starts, not when the thread does
+        folder ??= TempZipDirectory;
         var tcs = new TaskCompletionSource();
         var thread = new Thread(() =>
         {
             try
             {
-                ExtractRemaining(archivePath, remainingKeys, laterKeys, initialCount, totalCount, progress, batchSize, ct);
+                ExtractRemaining(archivePath, remainingKeys, laterKeys, initialCount, totalCount, progress, batchSize, ct,
+                    folder);
                 tcs.TrySetResult();
             }
             catch (Exception ex)
@@ -444,39 +514,56 @@ public class ArchiveExtractionService
     /// </summary>
     public CancellationToken ResetExtractionCts()
     {
-        _extractionCts?.Cancel();
-        _extractionCts?.Dispose();
-        _extractionCts = new CancellationTokenSource();
-        return _extractionCts.Token;
+        var cts = new CancellationTokenSource();
+        CancellationTokenSource? previous;
+        lock (_lock)
+        {
+            previous = _extractionCts;
+            _extractionCts = cts;
+        }
+
+        Cancel(previous);
+        return cts.Token;
     }
 
     /// <summary>
-    ///     Deletes the temporary directory created during extraction, if it exists.
+    ///     Stops the background extraction, as the tab opens another archive, whose pages then come sooner.
+    /// </summary>
+    public void StopExtraction()
+    {
+        CancellationTokenSource? cts;
+        lock (_lock)
+        {
+            cts = _extractionCts;
+            _extractionCts = null;
+        }
+
+        Cancel(cts);
+    }
+
+    /// <summary>
+    ///     Stops the background extraction, and deletes every extraction folder and forgets it.
     /// </summary>
     public void Cleanup()
     {
-        _extractionCts?.Cancel();
-        _extractionCts?.Dispose();
-        _extractionCts = null;
-
-        var tempDirectory = TempZipDirectory;
-        if (!string.IsNullOrEmpty(tempDirectory) && Directory.Exists(tempDirectory))
+        Extraction[] extractions;
+        lock (_lock)
         {
-            try
-            {
-                Directory.Delete(tempDirectory, true);
-            }
-            catch (Exception ex)
-            {
-                DebugHelper.LogDebug(nameof(ArchiveExtractionService), nameof(Cleanup), ex);
-            }
+            extractions = _extractions;
+            Volatile.Write(ref _extractions, []);
         }
 
-        TempZipDirectory = null;
-        LastOpenedArchive = null;
-        ForgetEntries();
+        StopExtraction();
+        foreach (var extraction in extractions)
+        {
+            DeleteFolder(extraction.Folder);
+        }
     }
-    
+
+    /// <summary>
+    ///     Deletes the extraction folder <paramref name="tempZipDirectory" />, and forgets the archive extracted to it and
+    ///     which entry each file came from. An extraction to it stops by itself, so a newer archive's goes on.
+    /// </summary>
     public void Cleanup(string? tempZipDirectory)
     {
         if (string.IsNullOrEmpty(tempZipDirectory))
@@ -484,17 +571,79 @@ public class ArchiveExtractionService
             return;
         }
 
-        if (string.Equals(tempZipDirectory, TempZipDirectory, StringComparison.OrdinalIgnoreCase))
+        lock (_lock)
         {
-            Cleanup();
+            var index = IndexOfFolder(_extractions, tempZipDirectory);
+            if (index >= 0)
+            {
+                Volatile.Write(ref _extractions, [.. _extractions[..index], .. _extractions[(index + 1)..]]);
+            }
+        }
+
+        DeleteFolder(tempZipDirectory);
+    }
+
+    // Makes an archive that opened the open one, last in the folders
+    private void Publish(Extraction extraction)
+    {
+        lock (_lock)
+        {
+            Volatile.Write(ref _extractions, [.. _extractions, extraction]);
+        }
+    }
+
+    private Extraction? FindExtraction(string folder)
+    {
+        var extractions = Volatile.Read(ref _extractions);
+        var index = IndexOfFolder(extractions, folder);
+        return index >= 0 ? extractions[index] : null;
+    }
+
+    private static int IndexOfFolder(Extraction[] extractions, string folder)
+    {
+        for (var i = 0; i < extractions.Length; i++)
+        {
+            if (string.Equals(extractions[i].Folder, folder, StringComparison.OrdinalIgnoreCase))
+            {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    // A cancelled extraction can still finish a file after its folder was cleaned up, so only a file in a folder that is
+    // still there is remembered
+    private void Remember(string entryKey, string extractedPath, string folder)
+    {
+        if (FindExtraction(folder) is not { } extraction)
+        {
             return;
         }
 
+        extraction.EntryByFile[extractedPath] = entryKey;
+        extraction.FileByEntry[entryKey] = extractedPath;
+    }
+
+    // Outside the lock, since cancelling runs the token's callbacks
+    private static void Cancel(CancellationTokenSource? cts)
+    {
+        if (cts is null)
+        {
+            return;
+        }
+
+        cts.Cancel();
+        cts.Dispose();
+    }
+
+    private static void DeleteFolder(string folder)
+    {
         try
         {
-            if (Directory.Exists(tempZipDirectory))
+            if (Directory.Exists(folder))
             {
-                Directory.Delete(tempZipDirectory, true);
+                Directory.Delete(folder, true);
             }
         }
         catch (Exception ex)
@@ -503,36 +652,18 @@ public class ArchiveExtractionService
         }
     }
 
-    // A cancelled extraction of the archive before can still finish a file after the next archive cleared the maps, so
-    // only a file in the current folder is remembered
-    private void Remember(string entryKey, string extractedPath, string folder)
-    {
-        if (!string.Equals(folder, TempZipDirectory, StringComparison.Ordinal))
-        {
-            return;
-        }
-
-        _entryByFile[extractedPath] = entryKey;
-        _fileByEntry[entryKey] = extractedPath;
-    }
-
-    private void ForgetEntries()
-    {
-        _entryByFile.Clear();
-        _fileByEntry.Clear();
-        _isFullyExtracted = false;
-    }
-
-    // The path of a file in the folder relative to it, or null for a file outside it
-    private static string? PathInFolder(string path, string folder)
+    // Compares spans, so a file recorded in every held-key view allocates nothing
+    private static bool IsInFolder(string path, string folder)
     {
         var trimmed = Path.TrimEndingDirectorySeparator(folder.AsSpan());
         return path.Length > trimmed.Length + 1
                && path.AsSpan().StartsWith(trimmed, StringComparison.OrdinalIgnoreCase)
-               && path[trimmed.Length] is '\\' or '/'
-            ? path[(trimmed.Length + 1)..]
-            : null;
+               && path[trimmed.Length] is '\\' or '/';
     }
+
+    // The path of a file in the folder relative to it, or null for a file outside it
+    private static string? PathInFolder(string path, string folder) =>
+        IsInFolder(path, folder) ? path[(Path.TrimEndingDirectorySeparator(folder.AsSpan()).Length + 1)..] : null;
 
     private static string WriteEntryFlat(IArchiveEntry entry, string destinationDirectory)
     {

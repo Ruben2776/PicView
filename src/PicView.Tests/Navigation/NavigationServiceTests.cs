@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Text;
 using ImageMagick;
 using PicView.Core.FileHandling.Interfaces;
 using PicView.Core.FileHistory;
@@ -296,15 +297,48 @@ public class NavigationServiceTests : IDisposable
         }
     }
 
-    private TabViewModel CreateTab(string directory, MainWindowViewModel? parentVm = null)
+    private TabViewModel CreateTab(string directory, MainWindowViewModel? parentVm = null, SharedImageCache? cache = null)
     {
         var dummyParent = parentVm ?? new MainWindowViewModel(null!, null!, null!, null!, null!);
         var tab = new TabViewModel(dummyParent);
         // Initialize with mocks to avoid null refs
         var thumbCache = new MockThumbnailCache();
-        tab.Initialize(_cache, thumbCache, _mockThumbnailLoader, null, thumbCache);
+        tab.Initialize(cache ?? _cache, thumbCache, _mockThumbnailLoader, null, thumbCache);
         tab.ImageIterator.Initialize([]);
         return tab;
+    }
+
+    private async Task<string> WriteImageAsync(string name)
+    {
+        var path = Path.Combine(_testDirectory, name);
+        await File.WriteAllBytesAsync(path, [0xFF, 0xD8, 0xFF], TestContext.Current.CancellationToken);
+        return path;
+    }
+
+    // Gives an entry a compression method no reader knows, as a corrupt entry is: the archive still lists it, but
+    // extracting it fails
+    private static void CorruptEntry(string zip, string entry)
+    {
+        var bytes = File.ReadAllBytes(zip);
+        var name = Encoding.UTF8.GetBytes(entry);
+        for (var i = 0; i + name.Length <= bytes.Length; i++)
+        {
+            if (!bytes.AsSpan(i, name.Length).SequenceEqual(name))
+            {
+                continue;
+            }
+
+            // A local file header has the name 30 bytes in and the method 8 bytes in; a central directory header, 46 and 10
+            if (i >= 30 && BitConverter.ToUInt32(bytes, i - 30) == 0x04034b50)
+            {
+                BitConverter.TryWriteBytes(bytes.AsSpan(i - 30 + 8), (ushort)77);
+            }
+            else if (i >= 46 && BitConverter.ToUInt32(bytes, i - 46) == 0x02014b50)
+            {
+                BitConverter.TryWriteBytes(bytes.AsSpan(i - 46 + 10), (ushort)77);
+            }
+        }
+        File.WriteAllBytes(zip, bytes);
     }
 
     // A tab, and a file in a folder it is not browsing. With tabHasFiles the tab browses a file in its own folder,
@@ -530,6 +564,129 @@ public class NavigationServiceTests : IDisposable
     }
 
     [Fact]
+    public async Task LoadFromArchiveAsync_TwoQuickBacksIntoAnArchiveTheTabLeft_KeepTheEntriesAfterThem()
+    {
+        Settings.Navigation.IsFileHistoryEnabled = true;
+        FileHistoryManager.Initialize(Path.Combine(_testDirectory, "history.json"));
+        // Local software opens a .7z: it writes the pages into the archive's folder, and the second opening waits for the
+        // test to let it finish
+        var archive = Path.Combine(_testDirectory, "pages.7z");
+        await File.WriteAllBytesAsync(archive, [0x37, 0x7A], TestContext.Current.CancellationToken);
+        var folders = new ConcurrentQueue<string>();
+        var secondOpening = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var secondOpens = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var platform = new MockPlatformSpecificService
+        {
+            LocalSoftware = async (_, folder) =>
+            {
+                folders.Enqueue(folder);
+                File.WriteAllBytes(Path.Combine(folder, "1.jpg"), [0xFF, 0xD8, 0xFF]);
+                File.WriteAllBytes(Path.Combine(folder, "2.jpg"), [0xFF, 0xD8, 0xFF]);
+                if (folders.Count == 2)
+                {
+                    secondOpening.SetResult();
+                    await secondOpens.Task;
+                }
+                return true;
+            }
+        };
+        // The page the first Back opens the archive at loads until the test lets it
+        var firstPage = new TaskCompletionSource<ImageModel>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var firstPageAsked = new TaskCompletionSource<FileInfo>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var isFirstPageAsked = 0;
+        var cache = new SharedImageCache(file =>
+        {
+            if (file.Name != "2.jpg" || Interlocked.Exchange(ref isFirstPageAsked, 1) == 1)
+            {
+                return ValueTask.FromResult(new ImageModel { FileInfo = file });
+            }
+
+            firstPageAsked.SetResult(file);
+            return new ValueTask<ImageModel>(firstPage.Task);
+        });
+        var navigation = new NavigationService(_mockImageModelLoader, cache, _mockFileWatcherService, platform,
+            string.CompareOrdinal);
+        var tab = CreateTab(_testDirectory, cache: cache);
+        var x = await WriteImageAsync("x.jpg");
+        var y = await WriteImageAsync("y.jpg");
+        // The tab showed two pages of the archive and two files, then went back to the first file
+        ViewHistoryEntry[] shown =
+        [
+            ViewHistoryEntry.ForArchivePage(archive, "1.jpg"), ViewHistoryEntry.ForArchivePage(archive, "2.jpg"),
+            ViewHistoryEntry.ForFile(x), ViewHistoryEntry.ForFile(y)
+        ];
+        foreach (var entry in shown)
+        {
+            tab.ViewHistory.Record(entry);
+        }
+        var backToX = tab.ViewHistory.BeginStep(forwards: false)!.Value;
+        tab.ViewHistory.Record(ViewHistoryEntry.ForFile(x));
+        tab.ViewHistory.EndStep(backToX);
+
+        try
+        {
+            // Two quick Backs, which open the archive again at their pages, the second before the first one's page shows
+            var toSecondPage = tab.ViewHistory.BeginStep(forwards: false)!.Value;
+            var first = navigation.LoadFromArchiveAsync(archive, tab, new CancellationTokenSource(),
+                toSecondPage.Target.ArchiveEntry).AsTask();
+            var firstPageFile = await firstPageAsked.Task.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+            var toFirstPage = tab.ViewHistory.BeginStep(forwards: false)!.Value;
+            var second = navigation.LoadFromArchiveAsync(archive, tab, new CancellationTokenSource(),
+                toFirstPage.Target.ArchiveEntry).AsTask();
+            await secondOpening.Task.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+            firstPage.SetResult(new ImageModel { FileInfo = firstPageFile });
+            await first.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+            tab.ViewHistory.EndStep(toSecondPage);
+            secondOpens.SetResult();
+            await second.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+            tab.ViewHistory.EndStep(toFirstPage);
+
+            Assert.Equal(shown, tab.ViewHistory.Entries);
+            Assert.Equal(0, tab.ViewHistory.Cursor);
+            Assert.Equal([archive], FileHistoryManager.AllEntries.Select(e => e.Path));
+            // The first opening showed nothing, so its folder goes
+            Assert.False(Directory.Exists(folders.First()), "The first opening's folder was left behind");
+            Assert.Equal(folders.Last(), tab.ArchiveExtractionService.TempZipDirectory);
+        }
+        finally
+        {
+            secondOpens.TrySetResult();
+            firstPage.TrySetResult(new ImageModel());
+            tab.ArchiveExtractionService.Cleanup();
+            foreach (var folder in folders)
+            {
+                tab.ArchiveExtractionService.Cleanup(folder);
+            }
+        }
+    }
+
+    [Fact]
+    public async Task LoadFromArchiveAsync_SideBySidePartnerThatFailsToExtract_ShowsTheStartPageAlone()
+    {
+        // Staged, so the start page and its partner are extracted on their own
+        Settings.Navigation.AlwaysUncompressEntireArchive = false;
+        Settings.ImageScaling.ShowImageSideBySide = true;
+        var zip = await CreateZipAsync("corrupt_partner.zip", 3);
+        CorruptEntry(zip, "img_02.jpg");
+        var tab = CreateTab(_testDirectory);
+
+        try
+        {
+            var loaded = await _navigationService.LoadFromArchiveAsync(zip, tab, new CancellationTokenSource());
+
+            Assert.True(loaded);
+            Assert.Equal("img_01.jpg", tab.Model.FileInfo?.Name);
+            Assert.Null(tab.SecondaryModel);
+        }
+        finally
+        {
+            tab.ArchiveExtractionService.Cleanup();
+            Settings.ImageScaling.ShowImageSideBySide = false;
+            Settings.Navigation.AlwaysUncompressEntireArchive = true;
+        }
+    }
+
+    [Fact]
     public async Task LoadFromArchiveAsync_StartEntryThenNext_ShowsThePageAfterIt()
     {
         var zip = await CreateZipAsync("next.zip", 5);
@@ -678,6 +835,9 @@ public class NavigationServiceTests : IDisposable
 
     private class MockPlatformSpecificService : IPlatformSpecificService
     {
+        // Opens a .7z as local software does: with the archive and the folder to extract it to, and whether it did
+        public Func<string, string, Task<bool>>? LocalSoftware { get; init; }
+
         public void SetTaskbarProgress(ulong progress, ulong maximum) { }
         public void StopTaskbarProgress() { }
         public void SetCursorPos(int x, int y) { }
@@ -694,7 +854,8 @@ public class NavigationServiceTests : IDisposable
         public Task<bool> CutFile(string path) => throw new NotImplementedException();
         public Task CopyImageToClipboard(object bitmap) => Task.CompletedTask;
         public Task<object?> GetImageFromClipboard() => Task.FromResult<object?>(null);
-        public Task<bool> ExtractWithLocalSoftwareAsync(string path, string tempDirectory) => Task.FromResult(false);
+        public Task<bool> ExtractWithLocalSoftwareAsync(string path, string tempDirectory) =>
+            LocalSoftware?.Invoke(path, tempDirectory) ?? Task.FromResult(false);
         public string DefaultJsonKeyMap() => "{}";
         public void InitiateFileAssociationService() { }
         public Task<bool> DeleteFile(string path, bool recycle) => Task.FromResult(false);
