@@ -23,6 +23,13 @@ public static class FileHistoryManager
     private static List<Entry>? _entries;
     private static FileHistoryConfiguration? _fileHistoryConfiguration;
 
+    // The paths Add was given before the first load finished, the newest last. App Start shows the launch file before the
+    // history file is read, so without these it would never reach the history. They are added when the load finishes.
+    private static readonly List<string> _earlyPaths = [];
+
+    // The list holds this many entries at most, so an older early path would be evicted by the load anyway
+    private const int MaxEarlyPaths = FileHistoryConfiguration.MaxHistoryEntries + FileHistoryConfiguration.MaxPinnedEntries;
+
     /// <summary>
     ///     Gets the number of entries in the file history.
     /// </summary>
@@ -124,7 +131,8 @@ public static class FileHistoryManager
             : _fileHistoryConfiguration?.CorrectPath ?? string.Empty).Replace("/", "\\");
 
     /// <summary>
-    ///     Initializes the file history by loading entries from the history file.
+    ///     Initializes the file history by loading entries from the history file. Paths added before the load finished go
+    ///     after the loaded entries.
     /// </summary>
     public static void Initialize()
     {
@@ -146,7 +154,22 @@ public static class FileHistoryManager
     }
 
     /// <summary>
-    ///     Replaces the entries with those loaded from the file. The file is read before this, so the lock is not held for it.
+    ///     Returns to the state before the first load: nothing is loaded and no path waits for it (local-substitutable
+    ///     seam for testing).
+    /// </summary>
+    internal static void Unload()
+    {
+        lock (_lock)
+        {
+            _entries = null;
+            _earlyPaths.Clear();
+            CurrentIndex = -1;
+        }
+    }
+
+    /// <summary>
+    ///     Replaces the entries with those loaded from the file, then adds the paths that were added before the load
+    ///     finished. The file is read before this, so the lock is not held for it.
     /// </summary>
     private static void ReplaceEntries(List<Entry>? loaded)
     {
@@ -162,6 +185,14 @@ public static class FileHistoryManager
 
             // Set the current index to the most recent entry.
             CurrentIndex = entries.Count > 0 ? entries.Count - 1 : -1;
+
+            // They were viewed after everything in the file, so they go last, by the same rules as any other path
+            foreach (var path in _earlyPaths)
+            {
+                AddTo(entries, path);
+            }
+
+            _earlyPaths.Clear();
         }
     }
 
@@ -208,7 +239,8 @@ public static class FileHistoryManager
     }
 
     /// <summary>
-    ///     Adds an entry to the history. One that is already listed moves to the newest end, unless it is pinned.
+    ///     Adds an entry to the history. One that is already listed moves to the newest end, unless it is pinned. Before
+    ///     the first load has finished there is no list yet, so the path waits and is added when the load finishes.
     /// </summary>
     public static void Add(string path)
     {
@@ -221,51 +253,80 @@ public static class FileHistoryManager
         {
             if (_entries is null)
             {
+                KeepUntilLoaded(path);
                 return;
             }
 
-            // A tab calls this for every image it shows, so a path that is already listed must not allocate:
-            // no LINQ or lambdas here. While looking for the path, count the unpinned entries and note the oldest.
-            var unpinnedCount = 0;
-            var oldestUnpinned = -1;
-            for (var i = 0; i < _entries.Count; i++)
+            AddTo(_entries, path);
+        }
+    }
+
+    // Callers hold the lock
+    private static void AddTo(List<Entry> entries, string path)
+    {
+        // A tab calls this for every image it shows, so a path that is already listed must not allocate:
+        // no LINQ or lambdas here. While looking for the path, count the unpinned entries and note the oldest.
+        var unpinnedCount = 0;
+        var oldestUnpinned = -1;
+        for (var i = 0; i < entries.Count; i++)
+        {
+            var entry = entries[i];
+            if (string.Equals(entry.Path, path, StringComparison.OrdinalIgnoreCase))
             {
-                var entry = _entries[i];
-                if (string.Equals(entry.Path, path, StringComparison.OrdinalIgnoreCase))
+                var index = i;
+                if (!entry.IsPinned)
                 {
-                    var index = i;
-                    if (!entry.IsPinned)
-                    {
-                        // Entries are ordered by when each was last viewed, so this one goes last
-                        _entries.RemoveAt(i);
-                        _entries.Add(entry);
-                        index = _entries.Count - 1;
-                    }
-
-                    CurrentIndex = index;
-                    return;
+                    // Entries are ordered by when each was last viewed, so this one goes last
+                    entries.RemoveAt(i);
+                    entries.Add(entry);
+                    index = entries.Count - 1;
                 }
 
-                if (entry.IsPinned)
-                {
-                    continue;
-                }
-
-                unpinnedCount++;
-                if (oldestUnpinned < 0)
-                {
-                    oldestUnpinned = i;
-                }
+                CurrentIndex = index;
+                return;
             }
 
-            // If we'll exceed the maximum unpinned entries, remove the oldest unpinned entry
-            if (unpinnedCount >= FileHistoryConfiguration.MaxHistoryEntries)
+            if (entry.IsPinned)
             {
-                _entries.RemoveAt(oldestUnpinned);
+                continue;
             }
 
-            _entries.Add(new Entry { Path = path, IsPinned = false });
-            CurrentIndex = _entries.Count - 1;
+            unpinnedCount++;
+            if (oldestUnpinned < 0)
+            {
+                oldestUnpinned = i;
+            }
+        }
+
+        // If we'll exceed the maximum unpinned entries, remove the oldest unpinned entry
+        if (unpinnedCount >= FileHistoryConfiguration.MaxHistoryEntries)
+        {
+            entries.RemoveAt(oldestUnpinned);
+        }
+
+        entries.Add(new Entry { Path = path, IsPinned = false });
+        CurrentIndex = entries.Count - 1;
+    }
+
+    // Callers hold the lock. Only runs before the first load, so it may allocate
+    private static void KeepUntilLoaded(string path)
+    {
+        // A path seen again moves to the newest end and keeps the spelling it had first, as an entry in the list does
+        var kept = path;
+        for (var i = 0; i < _earlyPaths.Count; i++)
+        {
+            if (string.Equals(_earlyPaths[i], path, StringComparison.OrdinalIgnoreCase))
+            {
+                kept = _earlyPaths[i];
+                _earlyPaths.RemoveAt(i);
+                break;
+            }
+        }
+
+        _earlyPaths.Add(kept);
+        if (_earlyPaths.Count > MaxEarlyPaths)
+        {
+            _earlyPaths.RemoveAt(0);
         }
     }
 

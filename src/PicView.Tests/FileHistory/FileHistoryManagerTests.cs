@@ -198,4 +198,145 @@ public class FileHistoryManagerTests : IDisposable
         await Task.WhenAll(adding);
         Assert.Equal(50, FileHistoryManager.Count);
     }
+
+    // App Start shows the launch file before the history file has loaded, so the next tests add before Initialize
+
+    [Fact]
+    public async Task Initialize_AfterPathsWereAddedBeforeTheLoad_ListsThemLast()
+    {
+        await SaveFileListingAsync("/path/one.jpg", "/path/two.jpg");
+        FileHistoryManager.Add("/path/early1.jpg");
+        FileHistoryManager.Add("/path/early2.jpg");
+
+        FileHistoryManager.Initialize(_configPath);
+
+        Assert.Equal(["/path/one.jpg", "/path/two.jpg", "/path/early1.jpg", "/path/early2.jpg"],
+            FileHistoryManager.AllEntries.Select(e => e.Path));
+    }
+
+    [Fact]
+    public async Task Initialize_EarlyPathTheFileAlreadyLists_MovesItToTheNewestEnd()
+    {
+        await SaveFileListingAsync("/path/a.jpg", "/path/b.jpg", "/path/c.jpg");
+        FileHistoryManager.Add("/PATH/A.JPG");
+
+        FileHistoryManager.Initialize(_configPath);
+
+        Assert.Equal(["/path/b.jpg", "/path/c.jpg", "/path/a.jpg"], FileHistoryManager.AllEntries.Select(e => e.Path));
+    }
+
+    [Fact]
+    public async Task Initialize_EarlyPathThatIsPinned_KeepsItsPlace()
+    {
+        FileHistoryManager.Add("/path/a.jpg");
+        FileHistoryManager.Add("/path/b.jpg");
+        FileHistoryManager.Pin("/path/a.jpg");
+        await FileHistoryManager.SaveToFileAsync();
+        FileHistoryManager.Unload();
+        FileHistoryManager.Add("/path/a.jpg");
+        FileHistoryManager.Add("/path/early.jpg");
+
+        FileHistoryManager.Initialize(_configPath);
+
+        Assert.Equal(["/path/a.jpg", "/path/b.jpg", "/path/early.jpg"], FileHistoryManager.AllEntries.Select(e => e.Path));
+        Assert.Equal("/path/a.jpg", Assert.Single(FileHistoryManager.PinnedEntries).Path);
+    }
+
+    [Fact]
+    public async Task Initialize_EarlyPathWhenTheFileListsTheMost_EvictsTheOldestEntry()
+    {
+        await SaveFileListingAsync(Enumerable.Range(1, 50).Select(i => $"/path/{i}.jpg").ToArray());
+        FileHistoryManager.Add("/path/early.jpg");
+
+        FileHistoryManager.Initialize(_configPath);
+
+        var paths = FileHistoryManager.AllEntries.Select(e => e.Path).ToArray();
+        Assert.Equal(50, paths.Length);
+        Assert.Equal("/path/2.jpg", paths[0]);
+        Assert.Equal("/path/early.jpg", paths[^1]);
+    }
+
+    [Fact]
+    public void Initialize_EarlyPathAddedAgain_ListsItOnceAtItsNewestPlace()
+    {
+        FileHistoryManager.Unload();
+        FileHistoryManager.Add("/path/a.jpg");
+        FileHistoryManager.Add("/path/b.jpg");
+        FileHistoryManager.Add("/PATH/A.JPG");
+
+        FileHistoryManager.Initialize(_configPath);
+
+        Assert.Equal(["/path/b.jpg", "/path/a.jpg"], FileHistoryManager.AllEntries.Select(e => e.Path));
+    }
+
+    [Fact]
+    public void Initialize_MoreEarlyPathsThanTheCap_ListsTheNewest()
+    {
+        FileHistoryManager.Unload();
+        for (var i = 1; i <= 120; i++)
+        {
+            FileHistoryManager.Add($"/path/{i}.jpg");
+        }
+
+        FileHistoryManager.Initialize(_configPath);
+
+        var paths = FileHistoryManager.AllEntries.Select(e => e.Path).ToArray();
+        Assert.Equal(50, paths.Length);
+        Assert.Equal("/path/71.jpg", paths[0]);
+        Assert.Equal("/path/120.jpg", paths[^1]);
+    }
+
+    [Fact]
+    public void Initialize_ASecondTime_DoesNotCarryOverTheFirstOnesEntries()
+    {
+        FileHistoryManager.Unload();
+        FileHistoryManager.Add("/path/early.jpg");
+        FileHistoryManager.Initialize(_configPath);
+        Assert.Equal(["/path/early.jpg"], FileHistoryManager.AllEntries.Select(e => e.Path));
+        FileHistoryManager.Add("/path/later.jpg");
+
+        FileHistoryManager.Initialize(_configPath);
+
+        Assert.Empty(FileHistoryManager.AllEntries);
+    }
+
+    [Fact]
+    public void Initialize_PathAddedBeforeTheLoadWithFileHistoryOff_ListsNothing()
+    {
+        FileHistoryManager.Unload();
+        Settings.Navigation.IsFileHistoryEnabled = false;
+        FileHistoryManager.Add("/path/early.jpg");
+        Settings.Navigation.IsFileHistoryEnabled = true;
+
+        FileHistoryManager.Initialize(_configPath);
+
+        Assert.Empty(FileHistoryManager.AllEntries);
+    }
+
+    [Fact]
+    public async Task SaveToFileAsync_BeforeTheLoad_DoesNotSaveThePathsWaitingForIt()
+    {
+        FileHistoryManager.Unload();
+        FileHistoryManager.Add("/path/early.jpg");
+
+        await FileHistoryManager.SaveToFileAsync();
+
+        FileHistoryManager.Unload();
+        FileHistoryManager.Initialize(_configPath);
+        Assert.Empty(FileHistoryManager.AllEntries);
+    }
+
+    /// <summary>
+    /// Saves a file that lists <paramref name="paths"/>, then goes back to before the first load.
+    /// </summary>
+    private static async Task SaveFileListingAsync(params string[] paths)
+    {
+        foreach (var path in paths)
+        {
+            FileHistoryManager.Add(path);
+        }
+
+        await FileHistoryManager.SaveToFileAsync();
+        FileHistoryManager.Unload();
+    }
 }
