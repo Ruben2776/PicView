@@ -241,13 +241,17 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
     /// </summary>
     private void RecordShown()
     {
+        // Read once, as a load on another thread can show another model meanwhile, and its page must not be recorded
+        // with this one's path
+        var model = Model;
+        var type = SingleImageType;
         ViewHistoryEntry entry;
-        if (SingleImageType is not SingleImageType.None)
+        if (type is not SingleImageType.None)
         {
-            entry = ViewHistoryEntry.ForSingleImage(Model, SingleImageType, _singleImageTitle,
-                SingleImageType is SingleImageType.Url ? SourceURL : null);
+            entry = ViewHistoryEntry.ForSingleImage(model, type, _singleImageTitle,
+                type is SingleImageType.Url ? SourceURL : null);
         }
-        else if (Model.FileInfo is not { } file)
+        else if (model.FileInfo is not { } file)
         {
             // An empty model, as when the tab becomes fresh again
             return;
@@ -261,7 +265,7 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
         else
         {
             // Only a multi-page TIFF has pages of its own
-            var page = Model.TiffNavigation is { PageCount: > 1 } tiff ? tiff.CurrentPage : -1;
+            var page = model.TiffNavigation is { PageCount: > 1 } tiff ? tiff.CurrentPage : -1;
             entry = ViewHistoryEntry.ForFile(file.FullName, page);
         }
 

@@ -302,6 +302,29 @@ public class ViewHistoryRecordingTests : IDisposable
     }
 
     [Fact]
+    public async Task Display_OnTwoThreadsAtOnce_RecordsEachModelsPathWithItsOwnPage()
+    {
+        // Loads finish on whichever thread they run on, so two can show their models at once
+        var file = Model(PathOf("a.jpg"));
+        var tiff = TiffModel(PathOf("t.tif"), pageCount: 3);
+        tiff.TiffNavigation!.CurrentPage = 2;
+
+        for (var round = 0; round < 20; round++)
+        {
+            var tab = new TabViewModel(null!);
+            await Task.WhenAll(new[] { file, tiff }.Select(model => Task.Run(() =>
+            {
+                for (var i = 0; i < 500; i++)
+                {
+                    tab.Display(model);
+                }
+            })));
+
+            Assert.All(tab.ViewHistory.Entries, entry => Assert.Equal(entry.Path == PathOf("t.tif") ? 2 : -1, entry.Page));
+        }
+    }
+
+    [Fact]
     public async Task RepeatNavigation_RecordsEachImageItShows_AndNoneItPassedBeforeItLoaded()
     {
         var files = new[] { "a.jpg", "b.jpg", "c.jpg", "d.jpg" }.Select(name => new FileInfo(PathOf(name))).ToList();
