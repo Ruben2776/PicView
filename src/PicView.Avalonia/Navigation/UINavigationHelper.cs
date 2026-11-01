@@ -55,7 +55,7 @@ public static class UINavigationHelper
 
     private static async ValueTask StepAsync(MainWindow mainWindow, MainWindowViewModel vm, bool forwards)
     {
-        // The same tab for the whole step, even if the user switches tabs meanwhile
+        // The tab this step belongs to, for the whole step
         var tab = vm.WindowTabs.ActiveTab.CurrentValue;
 
         // BeginStep checks files on disk, so it stays off the UI thread
@@ -67,7 +67,12 @@ public static class UINavigationHelper
 
         try
         {
-            await ShowAgainAsync(mainWindow, vm, tab, begun.Target).ConfigureAwait(false);
+            // Opening and showing read the active tab themselves, so a step for a tab the user has left is dropped. The
+            // tab they went to would otherwise show this tab's entry and record it
+            if (ReferenceEquals(vm.WindowTabs.ActiveTab.CurrentValue, tab))
+            {
+                await ShowAgainAsync(mainWindow, vm, tab, begun.Target).ConfigureAwait(false);
+            }
         }
         catch (Exception e)
         {

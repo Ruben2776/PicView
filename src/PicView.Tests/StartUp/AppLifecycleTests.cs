@@ -1,3 +1,4 @@
+using System.Reflection;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media.Imaging;
@@ -559,8 +560,65 @@ public class AppLifecycleTests : IAsyncDisposable
         Assert.Equal(2, tab.ViewHistory.Count);
     }
 
+    [AvaloniaFact]
+    public async Task FileHistoryPrev_WhenTheUserSwitchesTabsMidStep_ShowsNothingInTheOtherTab()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var window = app.MainWindows.Open[0];
+        var vm = ViewModelOf(window);
+        var first = Path.Combine(_folder, "first.png");
+        var second = Path.Combine(_folder, "second.png");
+        await File.WriteAllBytesAsync(first, [0x89, 0x50, 0x4E, 0x47], TestContext.Current.CancellationToken);
+        await File.WriteAllBytesAsync(second, [0x89, 0x50, 0x4E, 0x47], TestContext.Current.CancellationToken);
+        var tabA = vm.WindowTabs.ActiveTab.CurrentValue;
+        tabA.Display(new ImageModel { FileInfo = new FileInfo(first) });
+        tabA.Display(new ImageModel { FileInfo = new FileInfo(second) });
+        var tabB = vm.WindowTabs.CreateTab();
+        vm.WindowTabs.SelectTab(tabA);
+        Application.Current!.DataContext = _core;
+        try
+        {
+            ValueTask stepping;
+            // BeginStep waits for this lock on its pool thread, after the step has taken tab A and before it can show
+            var gate = LockOf(tabA);
+            gate.Enter();
+            try
+            {
+                stepping = vm.ActionRunner!.Run(Actions.FileHistoryPrev);
+                Assert.False(stepping.IsCompleted);
+                vm.WindowTabs.SelectTab(tabB);
+            }
+            finally
+            {
+                gate.Exit();
+            }
+
+            await stepping;
+
+            Assert.Null(tabB.Model.FileInfo);
+            Assert.Equal(0, tabB.ViewHistory.Count);
+            Assert.Equal(second, tabA.Model.FileInfo?.FullName);
+            Assert.Equal(1, tabA.ViewHistory.Cursor);
+            // The dropped step ended, so the next one counts from the cursor again
+            Assert.Equal(first, tabA.ViewHistory.BeginStep(forwards: false)?.Target.Path);
+        }
+        finally
+        {
+            Application.Current.DataContext = null;
+        }
+    }
+
     private static WriteableBitmap NewBitmap() =>
         new(new PixelSize(4, 4), new Vector(96, 96), PixelFormat.Bgra8888, AlphaFormat.Premul);
+
+    /// <summary>
+    /// The lock a tab's View History takes for each of its operations. A test holds it to stop <c>BeginStep</c> on its
+    /// pool thread at a known point, which nothing else in the View History allows.
+    /// </summary>
+    private static Lock LockOf(TabViewModel tab) =>
+        (Lock)tab.ViewHistory.GetType().GetField("_lock", BindingFlags.Instance | BindingFlags.NonPublic)!
+            .GetValue(tab.ViewHistory)!;
 
     /// <summary>
     /// Makes <paramref name="window"/> the Active Main Window. The headless app has no core to set it from when a
