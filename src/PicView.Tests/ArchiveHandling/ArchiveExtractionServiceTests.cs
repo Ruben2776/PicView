@@ -956,6 +956,33 @@ public class ArchiveExtractionServiceTests
         }
     }
 
+    [Fact]
+    public async Task ExtractEntriesAsync_ArchiveThatAnotherOpenedAfter_NamesItsFilesAsItsOwnPreparationDid()
+    {
+        // Every entry of the first shares its Comic folder, which its names leave out. A second archive can open before
+        // the first one's pages are extracted, as two quick Backs do, and must not change how they are named
+        var first = CreateZipWithEntries(TwoVolumeEntries.Select(e => "Comic/" + e).ToArray());
+        var second = CreateZipWithEntries("001.jpg");
+        var service = new ArchiveExtractionService();
+        try
+        {
+            var prep = await service.PrepareArchiveAsync(first, (_, _) => Task.FromResult(false), NaturalCompare);
+            var firstFolder = service.TempZipDirectory;
+            await service.PrepareArchiveAsync(second, (_, _) => Task.FromResult(false), NaturalCompare);
+
+            var extracted = await service.ExtractEntriesAsync(first, prep!.Value.EntryKeys,
+                TestContext.Current.CancellationToken, firstFolder);
+
+            Assert.Equal(TwoVolumeFileNames, extracted.Select(Path.GetFileName));
+        }
+        finally
+        {
+            service.Cleanup();
+            File.Delete(first);
+            File.Delete(second);
+        }
+    }
+
     #endregion
 
     #region Cleanup
