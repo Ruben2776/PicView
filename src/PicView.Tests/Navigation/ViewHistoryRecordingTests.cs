@@ -161,6 +161,61 @@ public class ViewHistoryRecordingTests : IDisposable
     }
 
     [Fact]
+    public async Task Display_PageInAFolderOfAnArchive_RecordsTheArchiveAndThePagesEntry()
+    {
+        // Its file is named after its folder, but the entry is the page's path in the archive
+        var tab = ActiveTabOfTheActiveMainWindow();
+        var zip = CreateZip(Path.Combine("Volume 01", "001.jpg"), Path.Combine("Volume 02", "001.jpg"));
+        var extraction = tab.ArchiveExtractionService!;
+        try
+        {
+            await extraction.PrepareArchiveAsync(zip, NoLocalSoftware, string.CompareOrdinal);
+            var page = await extraction.ExtractEntryAsync(zip, "Volume 02/001.jpg", TestContext.Current.CancellationToken);
+
+            tab.Display(Model(page!));
+
+            Assert.Equal("Volume 02 - 001.jpg", Path.GetFileName(page));
+            Assert.Equal(ViewHistoryEntry.ForArchivePage(zip, "Volume 02/001.jpg"), Assert.Single(tab.ViewHistory.Entries));
+            Assert.Equal([zip], FileHistoryManager.AllEntries.Select(e => e.Path));
+            Assert.Equal(zip, Settings.StartUp.LastFile);
+        }
+        finally
+        {
+            extraction.Cleanup();
+        }
+    }
+
+    [Fact]
+    public async Task Display_PageThatLocalSoftwareExtractedIntoAFolder_RecordsTheArchiveAndThePagesPath()
+    {
+        // Local software extracts a .7z whole, keeping its folders, so the page's path in the folder is its entry
+        var tab = ActiveTabOfTheActiveMainWindow();
+        var archive = PathOf("volumes.7z");
+        await File.WriteAllBytesAsync(archive, [0x37, 0x7A], TestContext.Current.CancellationToken);
+        var entry = Path.Combine("Volume 02", "001.jpg");
+        var extraction = tab.ArchiveExtractionService!;
+        try
+        {
+            var preparation = await extraction.PrepareArchiveAsync(archive, (_, folder) =>
+            {
+                WriteImage(Path.Combine(folder, "Volume 01", "001.jpg"));
+                WriteImage(Path.Combine(folder, entry));
+                return Task.FromResult(true);
+            }, string.CompareOrdinal);
+
+            tab.Display(Model(Path.Combine(preparation!.Value.TempDirectory, entry)));
+
+            Assert.Equal(ViewHistoryEntry.ForArchivePage(archive, entry), Assert.Single(tab.ViewHistory.Entries));
+            Assert.Equal([archive], FileHistoryManager.AllEntries.Select(e => e.Path));
+            Assert.Equal(archive, Settings.StartUp.LastFile);
+        }
+        finally
+        {
+            extraction.Cleanup();
+        }
+    }
+
+    [Fact]
     public async Task Display_PageOfAnArchive_AfterAnotherArchiveStartedOpening_RecordsItAsThatArchivesPage()
     {
         var zip = CreateZip("a.jpg", "b.jpg");
@@ -430,16 +485,23 @@ public class ViewHistoryRecordingTests : IDisposable
         }
     };
 
+    // A zip of the images given, which may sit in folders
     private string CreateZip(params string[] images)
     {
         var source = Directory.CreateDirectory(Path.Combine(_folder, "zip_" + Guid.NewGuid().ToString("N"))).FullName;
         foreach (var image in images)
         {
-            File.WriteAllBytes(Path.Combine(source, image), [0xFF, 0xD8, 0xFF]);
+            WriteImage(Path.Combine(source, image));
         }
         var zip = Path.Combine(_folder, Guid.NewGuid().ToString("N") + ".zip");
         ZipFile.CreateFromDirectory(source, zip);
         return zip;
+    }
+
+    private static void WriteImage(string path)
+    {
+        Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+        File.WriteAllBytes(path, [0xFF, 0xD8, 0xFF]);
     }
 
     private Task<ArchiveExtractionService.ArchivePreparation?> PrepareArchiveAsync(string zip) =>

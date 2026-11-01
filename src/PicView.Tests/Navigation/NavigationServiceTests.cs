@@ -848,6 +848,123 @@ public class NavigationServiceTests : IDisposable
         }
     }
 
+    private static readonly string[] TwoVolumes =
+    [
+        "Volume 01/001.jpg", "Volume 01/002.jpg", "Volume 01/003.jpg",
+        "Volume 02/001.jpg", "Volume 02/002.jpg", "Volume 02/003.jpg"
+    ];
+
+    [Theory]
+    [InlineData(false, true)]
+    [InlineData(true, true)]
+    // With the folders left out of the names, the pages of both volumes share names
+    [InlineData(false, false)]
+    [InlineData(true, false)]
+    public async Task LoadFromArchiveAsync_BackToAPageInAFolderAfterTheTabLeft_OpensTheArchiveAtThatPage(
+        bool alwaysUncompressEntireArchive, bool isRespectingArchiveStructure)
+    {
+        Settings.Navigation.AlwaysUncompressEntireArchive = alwaysUncompressEntireArchive;
+        Settings.Navigation.IsRespectingArchiveStructure = isRespectingArchiveStructure;
+        var zip = await CreateZipWithEntriesAsync($"back_{alwaysUncompressEntireArchive}_{isRespectingArchiveStructure}.zip",
+            TwoVolumes);
+        var tab = CreateTab(_testDirectory);
+        var page = ViewHistoryEntry.ForArchivePage(zip, "Volume 02/002.jpg");
+        var left = ViewHistoryEntry.ForFile(await WriteImageAsync("left.jpg"));
+        // The tab showed the page, then left the archive for a file
+        tab.ViewHistory.Record(page);
+        tab.ViewHistory.Record(left);
+
+        try
+        {
+            var back = tab.ViewHistory.BeginStep(forwards: false)!.Value;
+            await _navigationService.LoadFromArchiveAsync(zip, tab, new CancellationTokenSource(), back.Target.ArchiveEntry);
+            tab.ViewHistory.EndStep(back);
+
+            Assert.Equal("Volume 02/002.jpg", tab.ArchiveExtractionService.EntryOf(tab.Model.FileInfo!.FullName));
+            Assert.Equal([page, left], tab.ViewHistory.Entries);
+            Assert.Equal(0, tab.ViewHistory.Cursor);
+        }
+        finally
+        {
+            tab.ArchiveExtractionService.Cleanup();
+            Settings.Navigation.AlwaysUncompressEntireArchive = true;
+            Settings.Navigation.IsRespectingArchiveStructure = true;
+        }
+    }
+
+    [Fact]
+    public async Task LoadFromArchiveAsync_BackToAPageLocalSoftwareExtractedIntoAFolder_OpensTheArchiveAtThatPage()
+    {
+        // Local software extracts a .7z whole, keeping its folders, so the page's path in the folder is its entry
+        var archive = Path.Combine(_testDirectory, "volumes.7z");
+        await File.WriteAllBytesAsync(archive, [0x37, 0x7A], TestContext.Current.CancellationToken);
+        var platform = new MockPlatformSpecificService
+        {
+            LocalSoftware = (_, folder) =>
+            {
+                foreach (var entry in TwoVolumes)
+                {
+                    var path = Path.Combine(folder, entry);
+                    Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+                    File.WriteAllBytes(path, [0xFF, 0xD8, 0xFF]);
+                }
+                return Task.FromResult(true);
+            }
+        };
+        var navigation = new NavigationService(_mockImageModelLoader, _cache, _mockFileWatcherService, platform,
+            string.CompareOrdinal);
+        var tab = CreateTab(_testDirectory);
+        var page = ViewHistoryEntry.ForArchivePage(archive, Path.Combine("Volume 02", "002.jpg"));
+        var left = ViewHistoryEntry.ForFile(await WriteImageAsync("left.jpg"));
+        tab.ViewHistory.Record(page);
+        tab.ViewHistory.Record(left);
+
+        try
+        {
+            var back = tab.ViewHistory.BeginStep(forwards: false)!.Value;
+            await navigation.LoadFromArchiveAsync(archive, tab, new CancellationTokenSource(), back.Target.ArchiveEntry);
+            tab.ViewHistory.EndStep(back);
+
+            Assert.Equal(Path.Combine(tab.ArchiveExtractionService.TempZipDirectory!, "Volume 02", "002.jpg"),
+                tab.Model.FileInfo?.FullName);
+            Assert.Equal([page, left], tab.ViewHistory.Entries);
+            Assert.Equal(0, tab.ViewHistory.Cursor);
+        }
+        finally
+        {
+            tab.ArchiveExtractionService.Cleanup();
+        }
+    }
+
+    [Fact]
+    public async Task LoadFromArchiveAsync_StartEntryAtTheEndOfAFolderThenNext_ShowsTheNextFoldersFirstPage()
+    {
+        // One by one, with the app's watcher, which adds each page to the tab's files as it is extracted, flat in the
+        // extraction folder with its folder in its name
+        Settings.Navigation.AlwaysUncompressEntireArchive = false;
+        var zip = await CreateZipWithEntriesAsync("next_folder.zip", TwoVolumes);
+        var tab = CreateTab(_testDirectory);
+        var folderWatcher = new FileWatcherService(string.CompareOrdinal, _cache);
+        var navigation = new NavigationService(_mockImageModelLoader, _cache, folderWatcher,
+            new MockPlatformSpecificService(), string.CompareOrdinal);
+
+        try
+        {
+            await navigation.LoadFromArchiveAsync(zip, tab, new CancellationTokenSource(), startEntry: "Volume 01/003.jpg");
+            await tab.ImageIterator.NavigateAsync(NavigateTo.Next, SkipAmount.One, new CancellationTokenSource())
+                .AsTask().WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+
+            Assert.Equal("Volume 02 - 001.jpg", tab.Model.FileInfo!.Name);
+            Assert.Equal(ViewHistoryEntry.ForArchivePage(zip, "Volume 02/001.jpg"), tab.ViewHistory.Current);
+        }
+        finally
+        {
+            folderWatcher.Dispose();
+            tab.ArchiveExtractionService.Cleanup();
+            Settings.Navigation.AlwaysUncompressEntireArchive = true;
+        }
+    }
+
     [Fact]
     public async Task LoadFromArchiveAsync_StartEntryThenNext_ShowsThePageAfterIt()
     {
