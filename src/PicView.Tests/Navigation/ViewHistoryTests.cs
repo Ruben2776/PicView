@@ -89,6 +89,22 @@ public class ViewHistoryTests
     }
 
     [Fact]
+    public void Record_11thSingleImage_DroppedBetweenTwoViewsOfTheSameFile_MergesThoseViews()
+    {
+        _history.Record(FileEntry("a.jpg"));
+        _history.Record(Clipboard());
+        _history.Record(FileEntry("a.jpg"));
+        for (var i = 1; i <= ViewHistory.MaxSingleImages; i++)
+        {
+            _history.Record(Clipboard());
+        }
+
+        Assert.Equal(1, _history.Entries.Count(e => e.Kind is ViewHistoryKind.File));
+        Assert.Equal(ViewHistory.MaxSingleImages, _history.Entries.Count(e => e.Kind is ViewHistoryKind.SingleImage));
+        Assert.Equal(_history.Count - 1, _history.Cursor);
+    }
+
+    [Fact]
     public void Record_SameUrlAgain_IsARepeat_AndAnotherClipboardImageIsNot()
     {
         const string url = "https://example.com/a.png";
@@ -170,6 +186,47 @@ public class ViewHistoryTests
     }
 
     [Fact]
+    public void Record_StepsTargetIsAnotherViewOfTheShownEntry_TwoBacks_MovesTheCursorToIt()
+    {
+        RecordAll("a.jpg", "b.jpg", "a.jpg");
+        _history.BeginStep(forwards: false);
+        _history.BeginStep(forwards: false);
+
+        // The load for b.jpg was overtaken, so only a.jpg shows
+        Assert.True(_history.Record(FileEntry("a.jpg")));
+        Assert.Equal(0, _history.Cursor);
+        Assert.Equal(3, _history.Count);
+    }
+
+    [Fact]
+    public void Record_StepsTargetIsAnotherViewOfTheShownEntry_TwoForwards_MovesTheCursorToIt()
+    {
+        RecordAll("a.jpg", "b.jpg", "a.jpg");
+        _history.Record(_history.BeginStep(forwards: false)!.Value.Target);
+        _history.Record(_history.BeginStep(forwards: false)!.Value.Target);
+        _history.BeginStep(forwards: true);
+        _history.BeginStep(forwards: true);
+
+        // The load for b.jpg was overtaken, so only a.jpg shows
+        Assert.True(_history.Record(FileEntry("a.jpg")));
+        Assert.Equal(2, _history.Cursor);
+        Assert.Equal(3, _history.Count);
+    }
+
+    [Fact]
+    public void Record_ShownEntryAgainDuringAStep_IsARepeat_AndTheStepStaysPending()
+    {
+        RecordAll("a.jpg", "b.jpg", "c.jpg");
+        _history.BeginStep(forwards: false);
+
+        Assert.False(_history.Record(FileEntry("c.jpg")));
+        // The step is still under way, so its target showing moves the cursor instead of adding an entry
+        Assert.True(_history.Record(FileEntry("b.jpg")));
+        Assert.Equal(1, _history.Cursor);
+        Assert.Equal(3, _history.Count);
+    }
+
+    [Fact]
     public void BeginStep_MissingFileBehind_SkipsAndRemovesIt()
     {
         RecordAll("a.jpg", "b.jpg", "c.jpg");
@@ -191,6 +248,32 @@ public class ViewHistoryTests
         Assert.Equal("c.jpg", TargetName(forwards: true));
         Assert.Equal(["a.jpg", "c.jpg"], Names());
         Assert.Equal(0, _history.Cursor);
+    }
+
+    [Fact]
+    public void BeginStep_MissingFileBetweenTwoViewsOfTheSameFile_MergesThemSoBackGoesOn()
+    {
+        RecordAll("a.jpg", "b.jpg", "c.jpg");
+        // c.jpg was deleted, so the tab showed b.jpg again
+        _history.Record(FileEntry("b.jpg"));
+        _missing.Add(PathOf("c.jpg"));
+
+        Assert.Equal("a.jpg", TargetName(forwards: false));
+        Assert.Equal(["a.jpg", "b.jpg"], Names());
+        Assert.Equal(1, _history.Cursor);
+    }
+
+    [Fact]
+    public void BeginStep_MissingFileMergesTheEntryAStepIsGoingTo_CountsOnFromTheMergedEntry()
+    {
+        RecordAll("a.jpg", "b.jpg", "c.jpg", "b.jpg", "d.jpg");
+        // The step is going to the second b.jpg, and c.jpg before it is gone
+        _history.BeginStep(forwards: false);
+        _missing.Add(PathOf("c.jpg"));
+
+        Assert.Equal("a.jpg", TargetName(forwards: false));
+        Assert.Equal(["a.jpg", "b.jpg", "d.jpg"], Names());
+        Assert.Equal(2, _history.Cursor);
     }
 
     [Fact]
@@ -229,6 +312,28 @@ public class ViewHistoryTests
         Assert.Equal("c.jpg", Path.GetFileName(forward.Target.Path));
         Assert.False(_history.Record(forward.Target));
         Assert.Equal(2, _history.Cursor);
+    }
+
+    [Fact]
+    public void BeginStep_CursorBeforeTheFirstEntry_ForwardTargetsTheFirstEntry()
+    {
+        LeaveTheCursorBeforeTheFirstEntry();
+
+        Assert.Equal(-1, _history.Cursor);
+        Assert.Equal("b.jpg", TargetName(forwards: true));
+        Assert.True(_history.Record(FileEntry("b.jpg")));
+        Assert.Equal(0, _history.Cursor);
+        Assert.Equal(["b.jpg"], Names());
+    }
+
+    [Fact]
+    public void Record_CursorBeforeTheFirstEntry_SomethingNew_StartsTheHistoryOver()
+    {
+        LeaveTheCursorBeforeTheFirstEntry();
+
+        Assert.True(_history.Record(FileEntry("x.jpg")));
+        Assert.Equal(["x.jpg"], Names());
+        Assert.Equal(0, _history.Cursor);
     }
 
     [Fact]
@@ -275,4 +380,16 @@ public class ViewHistoryTests
         _history.Entries.Select(e => e.Path is null ? "(image)" : Path.GetFileName(e.Path)).ToArray();
 
     private string TargetName(bool forwards) => Path.GetFileName(_history.BeginStep(forwards)!.Value.Target.Path)!;
+
+    // A step to b.jpg is under way when a Back finds a.jpg gone and removes it, and b.jpg never shows.
+    // That leaves the cursor before the first entry, with b.jpg the only one
+    private void LeaveTheCursorBeforeTheFirstEntry()
+    {
+        RecordAll("a.jpg", "b.jpg");
+        _history.Record(_history.BeginStep(forwards: false)!.Value.Target);
+        var forward = _history.BeginStep(forwards: true)!.Value;
+        _missing.Add(PathOf("a.jpg"));
+        _history.BeginStep(forwards: false);
+        _history.EndStep(forward);
+    }
 }

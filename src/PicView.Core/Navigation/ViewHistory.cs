@@ -16,7 +16,8 @@ public readonly record struct ViewHistoryStep(ViewHistoryEntry Target, int Id);
 /// <remarks>
 /// A step only marks a target. The cursor moves when the tab shows that entry and records it, so the cursor follows what
 /// the tab shows, never what was asked for. Every member takes the lock, since a load records from whichever thread it
-/// finishes on.
+/// finishes on. Neighbors are never the same entry: a repeat is not recorded, and a removal that would leave two merges
+/// them.
 /// </remarks>
 /// <param name="fileExists">
 /// Whether a file is still on disk, which a step asks to skip the entries whose file is gone. Defaults to
@@ -28,6 +29,7 @@ public sealed class ViewHistory(Func<string, bool>? fileExists = null)
     /// The most entries kept. Recording one more drops the oldest.
     /// </summary>
     public const int MaxEntries = 100;
+
     /// <summary>
     /// The most Single Images among them, since each keeps its image in memory. Recording one more drops the oldest
     /// Single Image, wherever it sits.
@@ -110,21 +112,16 @@ public sealed class ViewHistory(Func<string, bool>? fileExists = null)
     /// allocates nothing.
     /// </summary>
     /// <returns>
-    /// False for a repeat, when the cursor is already on the entry. True when the entry was added, or the cursor moved to it.
+    /// False for a repeat: the cursor's entry shown again. True when the entry was added, or the cursor moved to it.
     /// </returns>
     public bool Record(in ViewHistoryEntry entry)
     {
         lock (_lock)
         {
-            // A reload, a crop or a file changed on disk shows the same entry again. A pending step stays pending
-            if (_cursor >= 0 && _entries[_cursor].Matches(entry))
-            {
-                return false;
-            }
-
             if (_target >= 0)
             {
-                // The entry may be one on the way to the target
+                // A step is under way, so the entry may be one on the way to its target. This comes before the repeat
+                // check, since the target can be another view of the entry the cursor is on, as in A, B, A
                 var onTheWay = IndexTowardsTarget(entry);
                 if (onTheWay >= 0)
                 {
@@ -135,6 +132,12 @@ public sealed class ViewHistory(Func<string, bool>? fileExists = null)
                     }
                     return true;
                 }
+            }
+
+            // A reload, a crop or a file changed on disk shows the same entry again. A pending step stays pending
+            if (_cursor >= 0 && _entries[_cursor].Matches(entry))
+            {
+                return false;
             }
 
             // Something else shows, so the step ends. As in a browser, what is new drops the entries after the cursor
@@ -172,7 +175,8 @@ public sealed class ViewHistory(Func<string, bool>? fileExists = null)
             {
                 var origin = _target >= 0 ? _target : _cursor;
                 index = forwards ? origin + 1 : origin - 1;
-                if (origin < 0 || index < 0 || index >= _entries.Count)
+                // The cursor is -1 with entries left when the first was removed, so the first is still ahead of it
+                if (index < 0 || index >= _entries.Count)
                 {
                     return null;
                 }
@@ -232,7 +236,7 @@ public sealed class ViewHistory(Func<string, bool>? fileExists = null)
 
     /// <summary>
     /// Removes an entry. The cursor and the target move down when they were at it or after it, so a cursor on the removed
-    /// entry lands on the one before it.
+    /// entry lands on the one before it. If that leaves two neighbors for the same thing, they merge.
     /// </summary>
     private void RemoveAt(int index)
     {
@@ -252,6 +256,13 @@ public sealed class ViewHistory(Func<string, bool>? fileExists = null)
         if (_target < 0 || _target == _cursor)
         {
             EndPendingStep();
+        }
+
+        // Two neighbors for the same thing would leave Back stuck on the one the tab shows. The later one goes, so a
+        // cursor or a target on either lands on the merged entry
+        if (index > 0 && index < _entries.Count && _entries[index - 1].Matches(_entries[index]))
+        {
+            RemoveAt(index);
         }
     }
 
