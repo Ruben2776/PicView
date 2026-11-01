@@ -37,30 +37,6 @@ public class FileHistoryManagerTests : IDisposable
     }
 
     [Fact]
-    public void Add_AndNavigatePreviousAndNext_MovesCursorAndDeduplicates()
-    {
-        FileHistoryManager.Add("/path/one.jpg");
-        FileHistoryManager.Add("/path/two.jpg");
-        FileHistoryManager.Add("https://example.com/three.png");
-
-        Assert.Equal(3, FileHistoryManager.Count);
-        Assert.Equal("https://example.com/three.png", FileHistoryManager.CurrentEntry);
-        Assert.True(FileHistoryManager.HasPrevious);
-        Assert.False(FileHistoryManager.HasNext);
-
-        Assert.Equal("/path/two.jpg", FileHistoryManager.GetPreviousEntry());
-        Assert.Equal("/path/one.jpg", FileHistoryManager.GetPreviousEntry());
-        Assert.Null(FileHistoryManager.GetPreviousEntry());
-
-        Assert.Equal("/path/two.jpg", FileHistoryManager.GetNextEntry());
-
-        // Re-adding an existing entry moves the cursor without duplicating
-        FileHistoryManager.Add("/path/one.jpg");
-        Assert.Equal(3, FileHistoryManager.Count);
-        Assert.Equal("/path/one.jpg", FileHistoryManager.CurrentEntry);
-    }
-
-    [Fact]
     public void Pin_ExceedingMaxPinnedEntries_UnpinsOldestPinnedEntry()
     {
         for (var i = 1; i <= 6; i++)
@@ -97,18 +73,16 @@ public class FileHistoryManagerTests : IDisposable
     }
 
     [Fact]
-    public void Rename_AndRemove_UpdatesEntriesAndClampsCursor()
+    public void Rename_AndRemove_UpdateTheEntries()
     {
         FileHistoryManager.Add("/path/old.jpg");
         FileHistoryManager.Add("/path/second.jpg");
 
         FileHistoryManager.Rename("/path/old.jpg", "/path/new.jpg");
-        Assert.Equal("/path/new.jpg", FileHistoryManager.GetFirstEntry());
-
         var removed = FileHistoryManager.Remove("/path/second.jpg");
+
         Assert.True(removed);
-        Assert.Equal(1, FileHistoryManager.Count);
-        Assert.Equal("/path/new.jpg", FileHistoryManager.CurrentEntry);
+        Assert.Equal(["/path/new.jpg"], FileHistoryManager.AllEntries.Select(e => e.Path));
     }
 
     [Fact]

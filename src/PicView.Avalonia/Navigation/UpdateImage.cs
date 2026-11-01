@@ -158,22 +158,31 @@ public static class UpdateImage
 
     public static void SetSingleImage(MainWindowViewModel vm, MainWindow mainWindow, Bitmap image, SingleImageType type, string name)
     {
+        // Its own model, so the previous file's cached model keeps its own size
+        SetSingleImage(vm, mainWindow, new ImageModel
+        {
+            Image = image,
+            PixelWidth = (uint)image.PixelSize.Width,
+            PixelHeight = (uint)image.PixelSize.Height,
+            ImageType = ImageType.Bitmap
+        }, type, name);
+    }
+
+    /// <summary>
+    /// Shows <paramref name="model"/> as the active tab's Single Image. Showing a kept Single Image again passes back the
+    /// model it kept, never a copy, since View History finds the entry by that instance.
+    /// </summary>
+    public static void SetSingleImage(MainWindowViewModel vm, MainWindow mainWindow, ImageModel model, SingleImageType type, string title)
+    {
         var tabViewModel = vm.WindowTabs.ActiveTab.CurrentValue;
 
-        var width = (uint)image.PixelSize.Width;
-        var height = (uint)image.PixelSize.Height;
+        var width = model.PixelWidth;
+        var height = model.PixelHeight;
 
         // Upright before fitting, since the new image is shown unturned and unflipped
         tabViewModel.Orientation.Reset();
-        // Its own model, so the previous file's cached model keeps its own size
-        tabViewModel.DisplaySingleImage(new ImageModel
-        {
-            Image = image,
-            PixelWidth = width,
-            PixelHeight = height,
-            ImageType = ImageType.Bitmap
-        }, type);
-        
+        tabViewModel.DisplaySingleImage(model, type, title);
+
         // Fitted once its view is ready, with AutoFit or without, as a file is
         Dispatcher.UIThread.Invoke(() =>
         {
@@ -199,11 +208,11 @@ public static class UpdateImage
         });
         
         var zoom = tabViewModel.ZoomLevel.CurrentValue;
-        var windowTitles = ImageTitleFormatter.GenerateTitleForSingleImage(width, height, name, zoom);
+        var windowTitles = ImageTitleFormatter.GenerateTitleForSingleImage(width, height, title, zoom);
         tabViewModel.WindowTitle.Value = windowTitles.TitleWithAppName;
         tabViewModel.Title.Value = windowTitles.BaseTitle;
         tabViewModel.TitleTooltip.Value = windowTitles.FilePathTitle;
-        tabViewModel.TabTitle.Value = name;
+        tabViewModel.TabTitle.Value = title;
         tabViewModel.DisposeImageIterator(); // SourceOpener creates a new one when browsing files again
     }
 

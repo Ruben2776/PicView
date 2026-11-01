@@ -1,5 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Media.Imaging;
+using Avalonia.Platform;
 using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Interfaces;
@@ -12,6 +14,7 @@ using PicView.Core.Favorites;
 using PicView.Core.FileHandling;
 using PicView.Core.FileHistory;
 using PicView.Core.IPlatform;
+using PicView.Core.Keybindings;
 using PicView.Core.Localization;
 using PicView.Core.Models;
 using PicView.Core.Sizing;
@@ -464,6 +467,100 @@ public class AppLifecycleTests : IAsyncDisposable
             Application.Current.DataContext = null;
         }
     }
+
+    [AvaloniaFact]
+    public async Task FileHistoryPrev_AfterAClipboardImage_ShowsTheFile_AndFileHistoryNextTheSameImageAgain()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var window = app.MainWindows.Open[0];
+        var vm = ViewModelOf(window);
+        var tab = vm.WindowTabs.ActiveTab.CurrentValue;
+        var file = Path.Combine(_folder, "viewed.png");
+        await File.WriteAllBytesAsync(file, [0x89, 0x50, 0x4E, 0x47], TestContext.Current.CancellationToken);
+        Application.Current!.DataContext = _core;
+        try
+        {
+            await SourceOpener.OpenAsync(window, _core, file);
+            var bitmap = new WriteableBitmap(new PixelSize(4, 4), new Vector(96, 96), PixelFormat.Bgra8888, AlphaFormat.Premul);
+            UpdateImage.SetSingleImage(vm, window, bitmap, SingleImageType.Clipboard, "Clipboard image");
+            var pasted = tab.Model;
+
+            await vm.ActionRunner!.Run(Actions.FileHistoryPrev);
+            var shownAfterBack = tab.Model.FileInfo?.FullName;
+            await vm.ActionRunner.Run(Actions.FileHistoryNext);
+
+            Assert.Equal(file, shownAfterBack);
+            Assert.Same(pasted, tab.Model);
+            Assert.Equal(SingleImageType.Clipboard, tab.SingleImageType);
+            Assert.Equal(2, tab.ViewHistory.Count);
+        }
+        finally
+        {
+            Application.Current.DataContext = null;
+        }
+    }
+
+    [AvaloniaFact]
+    public async Task FileHistoryPrevAndNext_AtTheEndsOfTheViewHistory_DoNotOpenTheLastFile()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var window = app.MainWindows.Open[0];
+        var vm = ViewModelOf(window);
+        var tab = vm.WindowTabs.ActiveTab.CurrentValue;
+        var file = Path.Combine(_folder, "viewed.png");
+        var lastFile = Path.Combine(_folder, "last.png");
+        await File.WriteAllBytesAsync(file, [0x89, 0x50, 0x4E, 0x47], TestContext.Current.CancellationToken);
+        await File.WriteAllBytesAsync(lastFile, [0x89, 0x50, 0x4E, 0x47], TestContext.Current.CancellationToken);
+        Application.Current!.DataContext = _core;
+        try
+        {
+            await SourceOpener.OpenAsync(window, _core, file);
+            Settings.StartUp.LastFile = lastFile;
+
+            // The only entry is both the oldest and the newest
+            await vm.ActionRunner!.Run(Actions.FileHistoryPrev);
+            await vm.ActionRunner.Run(Actions.FileHistoryNext);
+
+            Assert.Equal(file, tab.Model.FileInfo?.FullName);
+            Assert.Equal(1, tab.ViewHistory.Count);
+        }
+        finally
+        {
+            Application.Current.DataContext = null;
+        }
+    }
+
+    [AvaloniaFact]
+    public async Task FileHistoryPrev_AfterTwoDownloads_ShowsTheFirstAgainWithItsUrl()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var window = app.MainWindows.Open[0];
+        var vm = ViewModelOf(window);
+        var tab = vm.WindowTabs.ActiveTab.CurrentValue;
+        const string firstUrl = "https://example.com/first.png";
+        const string secondUrl = "https://example.com/second.png";
+        // A download sets its URL before it shows the image
+        tab.SourceURL = firstUrl;
+        UpdateImage.SetSingleImage(vm, window, NewBitmap(), SingleImageType.Url, firstUrl);
+        var first = tab.Model;
+        tab.SourceURL = secondUrl;
+        UpdateImage.SetSingleImage(vm, window, NewBitmap(), SingleImageType.Url, secondUrl);
+
+        await vm.ActionRunner!.Run(Actions.FileHistoryPrev);
+        // The Fit that start-up queued runs now, since nothing here lets the dispatcher idle before the window closes
+        await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Background);
+
+        Assert.Same(first, tab.Model);
+        Assert.Equal(firstUrl, tab.SourceURL);
+        Assert.Equal(0, tab.ViewHistory.Cursor);
+        Assert.Equal(2, tab.ViewHistory.Count);
+    }
+
+    private static WriteableBitmap NewBitmap() =>
+        new(new PixelSize(4, 4), new Vector(96, 96), PixelFormat.Bgra8888, AlphaFormat.Premul);
 
     /// <summary>
     /// Makes <paramref name="window"/> the Active Main Window. The headless app has no core to set it from when a

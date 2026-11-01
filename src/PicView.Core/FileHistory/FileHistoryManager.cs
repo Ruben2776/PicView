@@ -78,51 +78,6 @@ public static class FileHistoryManager
     }
 
     /// <summary>
-    /// Gets or sets the index of the current file entry in the history.
-    /// The setter clamps the value between -1 and the total count of entries minus one.
-    /// A value of -1 indicates no valid current entry.
-    /// </summary>
-    public static int CurrentIndex
-    {
-        get;
-        // Its callers hold the lock, so it reads _entries rather than taking the lock again through Count
-        private set => field = Math.Clamp(value, -1, (_entries?.Count ?? 0) - 1);
-    } = -1;
-
-    /// <summary>
-    ///     Indicates whether there is a previous entry available in history (older entry).
-    /// </summary>
-    public static bool HasPrevious => CurrentIndex > 0;
-
-    /// <summary>
-    ///     Indicates whether there is a next entry available in history (newer entry).
-    /// </summary>
-    public static bool HasNext
-    {
-        get
-        {
-            lock (_lock)
-            {
-                return CurrentIndex < Count - 1 && Count > 0;
-            }
-        }
-    }
-
-    /// <summary>
-    ///     Gets the current entry at the current index.
-    /// </summary>
-    public static string? CurrentEntry
-    {
-        get
-        {
-            lock (_lock)
-            {
-                return _entries is not null && CurrentIndex >= 0 && CurrentIndex < Count ? _entries[CurrentIndex].Path : null;
-            }
-        }
-    }
-
-    /// <summary>
     ///     Gets the file history file path with normalized slashes.
     /// </summary>
     public static string CurrentFileHistoryFile =>
@@ -163,7 +118,6 @@ public static class FileHistoryManager
         {
             _entries = null;
             _earlyPaths.Clear();
-            CurrentIndex = -1;
         }
     }
 
@@ -182,9 +136,6 @@ public static class FileHistoryManager
         lock (_lock)
         {
             _entries = entries;
-
-            // Set the current index to the most recent entry.
-            CurrentIndex = entries.Count > 0 ? entries.Count - 1 : -1;
 
             // They were viewed after everything in the file, so they go last, by the same rules as any other path
             foreach (var path in _earlyPaths)
@@ -273,16 +224,13 @@ public static class FileHistoryManager
             var entry = entries[i];
             if (string.Equals(entry.Path, path, StringComparison.OrdinalIgnoreCase))
             {
-                var index = i;
                 if (!entry.IsPinned)
                 {
                     // Entries are ordered by when each was last viewed, so this one goes last
                     entries.RemoveAt(i);
                     entries.Add(entry);
-                    index = entries.Count - 1;
                 }
 
-                CurrentIndex = index;
                 return;
             }
 
@@ -305,7 +253,6 @@ public static class FileHistoryManager
         }
 
         entries.Add(new Entry { Path = path, IsPinned = false });
-        CurrentIndex = entries.Count - 1;
     }
 
     // Callers hold the lock. Only runs before the first load, so it may allocate
@@ -327,78 +274,6 @@ public static class FileHistoryManager
         if (_earlyPaths.Count > MaxEarlyPaths)
         {
             _earlyPaths.RemoveAt(0);
-        }
-    }
-
-    /// <summary>
-    ///     Gets the next entry in history (newer entry).
-    /// </summary>
-    public static string? GetNextEntry()
-    {
-        lock (_lock)
-        {
-            if (!HasNext)
-            {
-                return null;
-            }
-
-            CurrentIndex++;
-            return CurrentEntry;
-        }
-    }
-
-    /// <summary>
-    ///     Gets the previous entry in history (older entry).
-    /// </summary>
-    public static string? GetPreviousEntry()
-    {
-        lock (_lock)
-        {
-            if (!HasPrevious)
-            {
-                return null;
-            }
-
-            CurrentIndex--;
-            return CurrentEntry;
-        }
-    }
-
-    /// <summary>
-    ///     Gets an entry at the specified index.
-    /// </summary>
-    public static Entry? GetEntry(int index)
-    {
-        lock (_lock)
-        {
-            if (_entries is null || index < 0 || index >= _entries.Count)
-            {
-                return null;
-            }
-
-            return _entries[index];
-        }
-    }
-
-    /// <summary>
-    ///     Gets the first entry in history (oldest).
-    /// </summary>
-    public static string? GetFirstEntry()
-    {
-        lock (_lock)
-        {
-            return _entries is { Count: > 0 } ? _entries[0].Path : null;
-        }
-    }
-
-    /// <summary>
-    ///     Gets the last entry in history (newest).
-    /// </summary>
-    public static string? GetLastEntry()
-    {
-        lock (_lock)
-        {
-            return _entries is { Count: > 0 } ? _entries[^1].Path : null;
         }
     }
 
@@ -436,7 +311,6 @@ public static class FileHistoryManager
         lock (_lock)
         {
             _entries?.Clear();
-            CurrentIndex = -1;
         }
     }
 
@@ -459,13 +333,6 @@ public static class FileHistoryManager
             }
 
             _entries.RemoveAt(index);
-
-            // Adjust current index if necessary.
-            if (index <= CurrentIndex)
-            {
-                CurrentIndex = Math.Max(-1, CurrentIndex - 1);
-            }
-
             return true;
         }
     }
