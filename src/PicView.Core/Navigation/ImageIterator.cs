@@ -46,23 +46,97 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
         int index;
         lock (_filesLock)
         {
-            var list = new List<FileInfo>(_files);
-            index = FileSortOrder.InsertSorted(list, file, compareNames);
-            if (CurrentIndex >= 0 && index <= CurrentIndex)
+            // Listed once, as the end of an archive's extraction may list a page between the watcher's look for it and
+            // this insert
+            index = IndexOf(_files, file.FullName);
+            if (index >= 0)
             {
-                CurrentIndex++;
+                ReplaceAt(index, file, details);
+                return index;
             }
-            // The file beside it stays the same too, as an archive's extraction inserts pages before the shown pair
-            if (SecondaryCurrentIndex >= 0 && index <= SecondaryCurrentIndex)
-            {
-                SecondaryCurrentIndex++;
-            }
-            var files = list.ToArray();
-            Publish(files, new FileListChange(FileListChangeKind.Inserted, files, index, file, details));
+
+            index = InsertInOrder(file, compareNames, details);
         }
         UpdateNavigationProperties();
         return index;
     }
+
+    /// <inheritdoc />
+    public int InsertMissing(IReadOnlyCollection<string> paths, string folder, Func<string, string, int> compareNames)
+    {
+        // Looked up before the lock, as it reads the disk: whether each file is there, which also reads its size and
+        // dates, so a sort by those compares them under the lock without reading the disk
+        var listed = Volatile.Read(ref _files);
+        List<FileInfo>? missing = null;
+        foreach (var path in paths)
+        {
+            if (IndexOf(listed, path) < 0 && new FileInfo(path) is { Exists: true } file)
+            {
+                (missing ??= []).Add(file);
+            }
+        }
+
+        if (missing is null)
+        {
+            return 0;
+        }
+
+        var inserted = 0;
+        lock (_filesLock)
+        {
+            if (_files.Length is 0 || !IsInFolder(_files[0].FullName, folder))
+            {
+                return 0;
+            }
+
+            foreach (var file in missing)
+            {
+                if (IndexOf(_files, file.FullName) < 0)
+                {
+                    InsertInOrder(file, compareNames, details: null);
+                    inserted++;
+                }
+            }
+        }
+
+        if (inserted > 0)
+        {
+            UpdateNavigationProperties();
+        }
+        return inserted;
+    }
+
+    // Inserts a file the list does not have at its sorted position. Callers hold _filesLock
+    private int InsertInOrder(FileInfo file, Func<string, string, int> compareNames, FileDetailsSource? details)
+    {
+        var list = new List<FileInfo>(_files);
+        var index = FileSortOrder.InsertSorted(list, file, compareNames);
+        if (CurrentIndex >= 0 && index <= CurrentIndex)
+        {
+            CurrentIndex++;
+        }
+        // The file beside it stays the same too, as an archive's extraction inserts pages before the shown pair
+        if (SecondaryCurrentIndex >= 0 && index <= SecondaryCurrentIndex)
+        {
+            SecondaryCurrentIndex++;
+        }
+        var files = list.ToArray();
+        Publish(files, new FileListChange(FileListChangeKind.Inserted, files, index, file, details));
+        return index;
+    }
+
+    // Callers hold _filesLock
+    private void ReplaceAt(int index, FileInfo file, FileDetailsSource? details)
+    {
+        var files = (FileInfo[])_files.Clone();
+        files[index] = file;
+        Publish(files, new FileListChange(FileListChangeKind.Replaced, files, index, file, details));
+    }
+
+    // A file right in the folder, not in a subfolder of it
+    private static bool IsInFolder(string path, string folder) =>
+        Path.GetDirectoryName(path.AsSpan())
+            .Equals(Path.TrimEndingDirectorySeparator(folder.AsSpan()), StringComparison.OrdinalIgnoreCase);
 
     /// <inheritdoc />
     public int Remove(string path)
@@ -112,9 +186,7 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
                 return -1;
             }
 
-            var files = (FileInfo[])_files.Clone();
-            files[index] = file;
-            Publish(files, new FileListChange(FileListChangeKind.Replaced, files, index, file, details));
+            ReplaceAt(index, file, details);
             return index;
         }
     }

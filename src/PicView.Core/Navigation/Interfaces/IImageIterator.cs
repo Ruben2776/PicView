@@ -12,9 +12,9 @@ public interface IImageIterator : IDisposable
 
     /// <summary>
     /// The files being iterated. The iterator is the only writer: change the list through <see cref="Initialize"/>,
-    /// <see cref="Insert"/>, <see cref="Remove"/>, <see cref="Replace"/> and <see cref="Move"/>, which keep
-    /// <see cref="CurrentIndex"/> on the same file and tell the cache and the gallery. Each change publishes a new
-    /// snapshot.
+    /// <see cref="Insert"/>, <see cref="InsertMissing"/>, <see cref="Remove"/>, <see cref="Replace"/> and
+    /// <see cref="Move"/>, which keep <see cref="CurrentIndex"/> on the same file and tell the cache and the gallery.
+    /// Each change publishes a new snapshot.
     /// </summary>
     IReadOnlyList<FileInfo> Files { get; }
 
@@ -41,11 +41,23 @@ public interface IImageIterator : IDisposable
     void Initialize(IReadOnlyList<FileInfo> files, int initialIndex = 0);
 
     /// <summary>
-    /// Inserts <paramref name="file"/> at its sorted position, keeping <see cref="CurrentIndex"/> on the same file.
+    /// Inserts <paramref name="file"/> at its sorted position, keeping <see cref="CurrentIndex"/> on the same file. A
+    /// file the list has already is listed once: its entry is replaced instead, as when the end of an archive's
+    /// extraction listed a page between the watcher's look for it and the watcher's insert.
     /// </summary>
     /// <param name="details">The file's details, for the gallery, when the caller has them.</param>
-    /// <returns>The position the file was inserted at.</returns>
+    /// <returns>The position of the file.</returns>
     int Insert(FileInfo file, Func<string, string, int> compareNames, FileDetailsSource? details = null);
+
+    /// <summary>
+    /// Inserts the files at <paramref name="paths"/> that the list does not have yet, each at its sorted position as
+    /// <see cref="Insert"/> does. It inserts them all under one lock, so a Next waiting for the list to change finds
+    /// them together, and steps to the file right after the shown one. Only while the list is the files of
+    /// <paramref name="folder"/>: a tab that browses another folder by then keeps its list. A file that is gone is left
+    /// out. The end of an archive's extraction lists through it the pages the watcher has not listed yet.
+    /// </summary>
+    /// <returns>How many files it inserted.</returns>
+    int InsertMissing(IReadOnlyCollection<string> paths, string folder, Func<string, string, int> compareNames);
 
     /// <summary>
     /// Removes the file at <paramref name="path"/>, keeping <see cref="CurrentIndex"/> on the same file. When the

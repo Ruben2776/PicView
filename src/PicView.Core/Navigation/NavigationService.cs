@@ -398,7 +398,7 @@ public class NavigationService(
                         }
                         finally
                         {
-                            EndExtraction(tab, backgroundToken);
+                            EndExtraction(tab, backgroundToken, folder, stringComparer);
                         }
                     }, backgroundToken);
                 }
@@ -465,7 +465,7 @@ public class NavigationService(
                     }
                     finally
                     {
-                        EndExtraction(tab, backgroundToken);
+                        EndExtraction(tab, backgroundToken, folder, stringComparer);
                     }
                 }, backgroundToken);
             }
@@ -510,10 +510,24 @@ public class NavigationService(
     /// extracting, and a Next waiting for a page looks at the list again. Unless a newer archive's extraction has started
     /// since, as when Back opens an archive again: Next waits for that one's pages, and would step without them.
     /// </summary>
-    internal static void EndExtraction(TabViewModel tab, CancellationToken extraction)
+    /// <param name="folder">
+    /// The folder the extraction wrote to. Once it finished, the pages it wrote there that the tab does not list yet are
+    /// listed first: the watcher handles a folder's events one at a time and can be behind, and a waiting Next would
+    /// count the list without them as final. The watcher then finds them listed. Null to list none.
+    /// </param>
+    /// <param name="compareNames">How the tab's files are sorted, which the watcher inserts by too.</param>
+    internal static void EndExtraction(TabViewModel tab, CancellationToken extraction, string? folder = null,
+        Func<string, string, int>? compareNames = null)
     {
         if (tab.ArchiveExtractionService?.IsLatestExtraction(extraction) ?? true)
         {
+            if (!extraction.IsCancellationRequested && folder is not null && compareNames is not null
+                && tab.ArchiveExtractionService?.ExtractedFilesOf(folder) is { Length: > 0 } extracted
+                && tab.ImageIterator?.InsertMissing(extracted, folder, compareNames) > 0)
+            {
+                tab.UpdateTabTitle();
+            }
+
             tab.IsArchiveExtracting.Value = false;
             tab.ArchiveExtractionProgressText.Value = null;
         }

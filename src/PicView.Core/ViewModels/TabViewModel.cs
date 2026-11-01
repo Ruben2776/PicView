@@ -312,7 +312,8 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
     
     /// <inheritdoc cref="Core.Navigation.Interfaces.IImageIterator"/>>
     public IImageIterator? ImageIterator { get; private set; }
-    public ArchiveExtractionService? ArchiveExtractionService { get; } = new();
+    // A test gives the tab one that holds a page's write, to end the extraction when it is ready
+    public ArchiveExtractionService? ArchiveExtractionService { get; internal init; } = new();
     public BindableReactiveProperty<bool> IsArchiveExtracting { get; } = new(false);
     public BindableReactiveProperty<string?> ArchiveExtractionProgressText { get; } = new(null, StringComparer.OrdinalIgnoreCase);
     public IThumbnailCache? ThumbnailCache { get; private set; }

@@ -155,6 +155,13 @@ public class ArchiveExtractionService
     }
 
     /// <summary>
+    ///     The files extracted to <paramref name="folder" /> so far, each written in full, or none once the folder is
+    ///     cleaned up. None for an archive that local software extracted whole, which the tab lists from the start.
+    /// </summary>
+    public string[] ExtractedFilesOf(string folder) =>
+        FindExtraction(folder) is { } extraction ? [.. extraction.FileByEntry.Values] : [];
+
+    /// <summary>
     ///     The file that <paramref name="entry" /> of the open archive was extracted to, or <c>null</c> when it is not
     ///     extracted. For a fully extracted archive it checks the disk.
     /// </summary>

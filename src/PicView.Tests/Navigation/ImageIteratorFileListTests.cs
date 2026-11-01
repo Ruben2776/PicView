@@ -141,6 +141,86 @@ public class ImageIteratorFileListTests
     }
 
     [Fact]
+    public void Insert_FileListedAlready_ListsItOnce()
+    {
+        // The watcher looked for a new page before the end of its archive's extraction listed it, and inserts it after
+        _iterator.Initialize([File("a.jpg"), File("b.jpg"), File("c.jpg")], 2);
+        var again = File("b.jpg");
+
+        var index = _iterator.Insert(again, string.CompareOrdinal);
+
+        Assert.Equal(1, index);
+        Assert.Equal(["a.jpg", "b.jpg", "c.jpg"], Names());
+        Assert.Same(again, _iterator.Files[1]);
+        Assert.Equal("c.jpg", CurrentName());
+    }
+
+    [Fact]
+    public void InsertMissing_PagesTheListLacks_ListsThemInTheirPlaces()
+    {
+        var folder = CreatePages("a.jpg", "b.jpg", "c.jpg", "d.jpg");
+        try
+        {
+            var listed = new FileInfo(Path.Combine(folder, "b.jpg"));
+            _iterator.Initialize([listed], 0);
+
+            var inserted = _iterator.InsertMissing(PathsIn(folder, "d.jpg", "b.jpg", "a.jpg", "c.jpg"), folder,
+                string.CompareOrdinal);
+
+            Assert.Equal(3, inserted);
+            Assert.Equal(["a.jpg", "b.jpg", "c.jpg", "d.jpg"], Names());
+            // The page listed already keeps its entry, and stays the current one
+            Assert.Same(listed, _iterator.Files[1]);
+            Assert.Equal("b.jpg", CurrentName());
+        }
+        finally
+        {
+            Directory.Delete(folder, true);
+        }
+    }
+
+    [Fact]
+    public void InsertMissing_ListOfAnotherFolder_LeavesItAsItIs()
+    {
+        // The tab left the archive for a file in another folder before the archive's extraction ended
+        var folder = CreatePages("a.jpg");
+        var other = CreatePages("x.jpg");
+        try
+        {
+            _iterator.Initialize([new FileInfo(Path.Combine(other, "x.jpg"))], 0);
+
+            var inserted = _iterator.InsertMissing(PathsIn(folder, "a.jpg"), folder, string.CompareOrdinal);
+
+            Assert.Equal(0, inserted);
+            Assert.Equal(["x.jpg"], Names());
+        }
+        finally
+        {
+            Directory.Delete(folder, true);
+            Directory.Delete(other, true);
+        }
+    }
+
+    [Fact]
+    public void InsertMissing_FileThatIsGone_LeavesItOut()
+    {
+        var folder = CreatePages("a.jpg", "b.jpg");
+        try
+        {
+            _iterator.Initialize([new FileInfo(Path.Combine(folder, "a.jpg"))], 0);
+
+            var inserted = _iterator.InsertMissing(PathsIn(folder, "b.jpg", "gone.jpg"), folder, string.CompareOrdinal);
+
+            Assert.Equal(1, inserted);
+            Assert.Equal(["a.jpg", "b.jpg"], Names());
+        }
+        finally
+        {
+            Directory.Delete(folder, true);
+        }
+    }
+
+    [Fact]
     public async Task Remove_FileWhoseImageTheTabHeld_CacheReleasesIt()
     {
         var removed = File("a.jpg");
@@ -483,6 +563,20 @@ public class ImageIteratorFileListTests
         : _iterator.NavigateAsync(NavigateTo.Next, SkipAmount.One, new CancellationTokenSource()).AsTask();
 
     private static FileInfo File(string name) => new(Path.Combine(TestDirectory, name));
+
+    // A folder of its own with these pages in it, as an archive's extraction writes them
+    private static string CreatePages(params string[] names)
+    {
+        var folder = Directory.CreateDirectory(Path.Combine(TestDirectory, Guid.NewGuid().ToString("N"))).FullName;
+        foreach (var name in names)
+        {
+            System.IO.File.WriteAllBytes(Path.Combine(folder, name), [0xFF, 0xD8, 0xFF]);
+        }
+        return folder;
+    }
+
+    private static string[] PathsIn(string folder, params string[] names) =>
+        names.Select(name => Path.Combine(folder, name)).ToArray();
 
     private string CurrentName() => _iterator.Files[_iterator.CurrentIndex].Name;
 
