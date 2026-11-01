@@ -458,6 +458,33 @@ public class NavigationServiceTests : IDisposable
         }
     }
 
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task LoadFromArchiveAsync_StartEntry_ShowsThatPageFirst(bool alwaysUncompressEntireArchive)
+    {
+        Settings.Navigation.AlwaysUncompressEntireArchive = alwaysUncompressEntireArchive;
+        var zip = await CreateZipAsync($"start_{alwaysUncompressEntireArchive}.zip", 5);
+        var tab = CreateTab(_testDirectory);
+
+        try
+        {
+            var loaded = await _navigationService.LoadFromArchiveAsync(zip, tab, new CancellationTokenSource(),
+                startEntry: "img_03.jpg");
+
+            Assert.True(loaded);
+            Assert.Equal("img_03.jpg", tab.Model.FileInfo!.Name);
+            var entry = Assert.Single(tab.ViewHistory.Entries);
+            Assert.Equal(ViewHistoryKind.ArchivePage, entry.Kind);
+            Assert.Equal("img_03.jpg", entry.ArchiveEntry);
+        }
+        finally
+        {
+            tab.ArchiveExtractionService.Cleanup();
+            Settings.Navigation.AlwaysUncompressEntireArchive = false;
+        }
+    }
+
     [Fact]
     public async Task SortAsync_Descending_SortsTheFilesAndKeepsTheShownOne()
     {

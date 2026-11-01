@@ -668,7 +668,7 @@ public class FunctionsMapper : IActionRunner
 
     #region File funnctions
 
-    /// <inheritdoc cref="UINavigationHelper.OpenPathAsync(MainWindow, MainWindowViewModel, string?)" />
+    /// <inheritdoc cref="UINavigationHelper.OpenPathAsync(MainWindow, MainWindowViewModel, string?, string?)" />
     public virtual async ValueTask OpenPathAsync(string path) =>
         await UINavigationHelper.OpenPathAsync(_mainWindow, _vm, path).ConfigureAwait(false);
 

@@ -235,9 +235,9 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
 
     /// <summary>
     /// Records what the tab shows now in its <see cref="ViewHistory"/>, and a file, an archive or a URL in File History
-    /// and <see cref="LastFile"/>. Each page of a multi-page TIFF is its own entry in the View History. It runs after the
-    /// image is shown, so recording never delays it: it reads no disk, never waits for the UI thread and allocates
-    /// nothing for a file.
+    /// and <see cref="LastFile"/>. Each page of a multi-page TIFF or of an archive is its own entry in the View History.
+    /// It runs after the image is shown, so recording never delays it: it reads no disk, never waits for the UI thread
+    /// and allocates nothing for a file.
     /// </summary>
     private void RecordShown()
     {
@@ -252,12 +252,12 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
             // An empty model, as when the tab becomes fresh again
             return;
         }
-        else if (ArchiveExtractionService is { TempZipDirectory: { } folder, LastOpenedArchive: { } archive }
+        else if (ArchiveExtractionService is { TempZipDirectory: { } folder, LastOpenedArchive: { } archive } extraction
                  && IsInFolder(file.FullName, folder))
         {
             // Leaving an archive shows the next file before its extraction is cleaned up, so only a file in the
             // extraction folder is an archive page
-            entry = ViewHistoryEntry.ForArchivePage(archive, entry: null);
+            entry = ViewHistoryEntry.ForArchivePage(archive, extraction.EntryOf(file.FullName));
         }
         else
         {

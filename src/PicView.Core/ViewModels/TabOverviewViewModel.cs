@@ -432,7 +432,8 @@ public class TabOverviewViewModel
 
 
     /// <inheritdoc cref="INavigationService.LoadFromStringAsync"/>
-    public async ValueTask<LoadResult> LoadFromStringAsync(string source, TabViewModel? senderTab = null, string? rootDirectory = null)
+    public async ValueTask<LoadResult> LoadFromStringAsync(string source, TabViewModel? senderTab = null,
+        string? rootDirectory = null, string? archiveEntry = null)
     {
         if (SharedNavigation is null)
         {
@@ -443,7 +444,7 @@ public class TabOverviewViewModel
         var tab = senderTab ?? ActiveTab.Value;
         var ct = tab.GetTabCancellation();
         
-        var result = await SharedNavigation.LoadFromStringAsync(source, tab, ct, rootDirectory)
+        var result = await SharedNavigation.LoadFromStringAsync(source, tab, ct, rootDirectory, archiveEntry)
             .ConfigureAwait(false);
         if (result.IsLoaded)
         {

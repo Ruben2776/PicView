@@ -22,11 +22,20 @@ public interface INavigationService
     /// For a file, the directory to list files from instead of the file's own, e.g., the remembered start-up directory
     /// when browsing subdirectories.
     /// </param>
-    ValueTask<LoadResult> LoadFromStringAsync(string source, TabViewModel tab, CancellationTokenSource ct, string? rootDirectory = null);
+    /// <param name="archiveEntry">
+    /// For an archive, the entry to open it at, as <see cref="LoadFromArchiveAsync"/> takes it.
+    /// </param>
+    ValueTask<LoadResult> LoadFromStringAsync(string source, TabViewModel tab, CancellationTokenSource ct,
+        string? rootDirectory = null, string? archiveEntry = null);
     
     ValueTask<LoadResult> LoadFromUrlAsync(string source, TabViewModel tab, CancellationTokenSource ct);
 
-    ValueTask<bool> LoadFromArchiveAsync(string archivePath, TabViewModel tab, CancellationTokenSource ct);
+    /// <param name="startEntry">
+    /// The entry to open the archive at, which is extracted and shown before the rest. Null, or an entry the archive
+    /// doesn't have, opens it at its first entry.
+    /// </param>
+    ValueTask<bool> LoadFromArchiveAsync(string archivePath, TabViewModel tab, CancellationTokenSource ct,
+        string? startEntry = null);
 
     ValueTask NavigateAsync(TabViewModel tab, NavigateTo to, CancellationTokenSource ct);
 

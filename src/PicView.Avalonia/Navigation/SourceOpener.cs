@@ -16,7 +16,9 @@ namespace PicView.Avalonia.Navigation;
 /// <param name="ContinueFromLeftOff">
 /// List files from the remembered start-up directory when browsing subdirectories, and remember it again.
 /// </param>
-public readonly record struct OpenOptions(bool IsStartup = false, bool ContinueFromLeftOff = false);
+/// <param name="ArchiveEntry">For an archive, the entry to open it at instead of its first.</param>
+public readonly record struct OpenOptions(bool IsStartup = false, bool ContinueFromLeftOff = false,
+    string? ArchiveEntry = null);
 
 /// <summary>
 /// The one way the UI opens a file, directory, archive or URL in the active tab of a window: at startup, into a tab
@@ -67,7 +69,8 @@ public static class SourceOpener
         LoadResult result;
         try
         {
-            result = await tabs.LoadFromStringAsync(source, rootDirectory: rootDirectory).ConfigureAwait(false);
+            result = await tabs.LoadFromStringAsync(source, rootDirectory: rootDirectory,
+                archiveEntry: options.ArchiveEntry).ConfigureAwait(false);
             if (Settings.WindowProperties.AutoFit)
             {
                 await Dispatcher.UIThread.InvokeAsync(() =>

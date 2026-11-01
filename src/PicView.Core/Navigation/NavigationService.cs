@@ -199,7 +199,7 @@ public class NavigationService(
     }
 
     public async ValueTask<LoadResult> LoadFromStringAsync(string source, TabViewModel tab, CancellationTokenSource ct,
-        string? rootDirectory = null)
+        string? rootDirectory = null, string? archiveEntry = null)
     {
         if (string.IsNullOrWhiteSpace(source))
         {
@@ -237,7 +237,7 @@ public class NavigationService(
             case FileTypeResolver.LoadAbleFileType.Web:
                 return await LoadFromUrlAsync(check.Value.Data, tab, ct).ConfigureAwait(false);
             case FileTypeResolver.LoadAbleFileType.Zip:
-                return await LoadFromArchiveAsync(check.Value.Data, tab, ct).ConfigureAwait(false)
+                return await LoadFromArchiveAsync(check.Value.Data, tab, ct, archiveEntry).ConfigureAwait(false)
                     ? LoadResult.Loaded
                     : LoadResult.Failed();
             default:
@@ -245,7 +245,8 @@ public class NavigationService(
         }
     }
 
-    public async ValueTask<bool> LoadFromArchiveAsync(string archivePath, TabViewModel tab, CancellationTokenSource ct)
+    public async ValueTask<bool> LoadFromArchiveAsync(string archivePath, TabViewModel tab, CancellationTokenSource ct,
+        string? startEntry = null)
     {
         if (string.IsNullOrEmpty(archivePath) || !File.Exists(archivePath))
         {
@@ -292,46 +293,48 @@ public class NavigationService(
                     return false;
                 }
 
-                await RepopulateIterator(allFiles[0], tab, ct, allFiles).ConfigureAwait(false);
+                var startFile = startEntry is null
+                    ? null
+                    : allFiles.Find(f => string.Equals(tab.ArchiveExtractionService.EntryOf(f.FullName), startEntry,
+                        StringComparison.Ordinal));
+                await RepopulateIterator(startFile ?? allFiles[0], tab, ct, allFiles).ConfigureAwait(false);
 
                 tab.ArchiveExtractionService.Cleanup(tempZipDir);
                 return true;
             }
 
+            // The entry to open the archive at, else its first
+            var keys = prep.EntryKeys;
+            var start = Math.Max(Array.FindIndex(keys, key => string.Equals(key, startEntry, StringComparison.Ordinal)), 0);
+
             if (!Settings.Navigation.AlwaysUncompressEntireArchive)
             {
-                // Staged extraction: extract the first entry (or 2 if side-by-side), navigate to it, then extract the rest in
-                // the background one by one while FileWatcherService inserts each new file into the iterator.
-                var firstKey = prep.EntryKeys[0];
-                var firstPath = await tab.ArchiveExtractionService.ExtractEntryAsync(archivePath, firstKey, ct.Token).ConfigureAwait(false);
+                // Staged extraction: extract the start entry (and its partner if side-by-side), navigate to it, then
+                // extract the rest in the background one by one while FileWatcherService inserts each new file into the
+                // iterator.
+                var startPath = await tab.ArchiveExtractionService.ExtractEntryAsync(archivePath, keys[start], ct.Token).ConfigureAwait(false);
 
-                if (string.IsNullOrEmpty(firstPath) || ct.IsCancellationRequested)
+                if (string.IsNullOrEmpty(startPath) || ct.IsCancellationRequested)
                 {
                     return false;
                 }
 
-                if (SideBySidePair.ShownCount(prep.EntryKeys.Length) > 1)
+                var startFile = new FileInfo(startPath);
+                List<FileInfo> seedFiles = [startFile];
+                var partner = SideBySidePair.PartnerOf(start, keys.Length);
+                if (partner is { } partnerIndex)
                 {
-                    var secondKey = prep.EntryKeys[1];
-                    var secondPath = await tab.ArchiveExtractionService.ExtractEntryAsync(archivePath, secondKey, ct.Token).ConfigureAwait(false);
-                    var seedFiles = new List<FileInfo>
-                    {
-                        new(firstPath),
-                        new(secondPath)
-                    };
-                    await RepopulateIterator(seedFiles[0], tab, ct, seedFiles).ConfigureAwait(false);
+                    var partnerPath = await tab.ArchiveExtractionService.ExtractEntryAsync(archivePath, keys[partnerIndex], ct.Token).ConfigureAwait(false);
+                    // In the entries' order, which FileWatcherService inserts the others by. The partner of the last
+                    // entry is the first, when looping
+                    seedFiles.Insert(partnerIndex < start ? 0 : 1, new FileInfo(partnerPath));
                 }
-                else
-                {
-                    var seedFiles = new List<FileInfo> { new(firstPath) };
-                    await RepopulateIterator(seedFiles[0], tab, ct, seedFiles).ConfigureAwait(false);
-                }
+                await RepopulateIterator(startFile, tab, ct, seedFiles).ConfigureAwait(false);
 
-                // Kick off background extraction of remaining entries one by one without batching or progress indicator.
-                var initialCount = SideBySidePair.ShownCount(prep.EntryKeys.Length);
-                if (prep.EntryKeys.Length > initialCount)
+                // Extract the others in order in the background, one by one, with no batches or progress indicator.
+                var remainingKeys = keys.Where((_, i) => i != start && i != partner).ToArray();
+                if (remainingKeys.Length > 0)
                 {
-                    var remainingKeys = prep.EntryKeys.Skip(initialCount).ToArray();
                     var backgroundToken = tab.ArchiveExtractionService.ResetExtractionCts();
                     tab.IsArchiveExtracting.Value = true;
                     tab.ArchiveExtractionProgressText.Value = null;
@@ -362,10 +365,11 @@ public class NavigationService(
                 return true;
             }
 
-            // Staged extraction (AlwaysUncompressEntireArchive = true): extract up to the first 10 entries immediately and navigate to them,
-            // then extract the rest in batches of 10 in the background while reporting progress with the bottom-right indicator.
+            // Staged extraction (AlwaysUncompressEntireArchive = true): extract the start entry and up to 9 after it
+            // immediately and navigate to it, then extract the rest in batches of 10 in the background while reporting
+            // progress with the bottom-right indicator.
             const int initialExtractCount = 10;
-            var initialKeys = prep.EntryKeys.Take(initialExtractCount).ToArray();
+            var initialKeys = keys.Skip(start).Take(initialExtractCount).ToArray();
             var extractedPaths = await tab.ArchiveExtractionService.ExtractEntriesAsync(archivePath, initialKeys, ct.Token).ConfigureAwait(false);
 
             if (extractedPaths.Count == 0 || ct.IsCancellationRequested)
@@ -377,12 +381,12 @@ public class NavigationService(
             var seedFilesList = extractedPaths.Select(p => new FileInfo(p)).ToList();
             await RepopulateIterator(seedFilesList[0], tab, ct, seedFilesList).ConfigureAwait(false);
 
-            // Kick off background extraction of remaining entries in batches of 10. FileWatcherService picks them up.
-            if (prep.EntryKeys.Length > initialKeys.Length)
+            // Extract the rest in order in the background, in batches of 10. FileWatcherService picks them up.
+            if (keys.Length > initialKeys.Length)
             {
-                var totalCount = prep.EntryKeys.Length;
+                var totalCount = keys.Length;
                 var initialExtractedCount = extractedPaths.Count;
-                var remainingKeys = prep.EntryKeys.Skip(initialKeys.Length).ToArray();
+                var remainingKeys = keys.Where((_, i) => i < start || i >= start + initialKeys.Length).ToArray();
                 var backgroundToken = tab.ArchiveExtractionService.ResetExtractionCts();
 
                 tab.IsArchiveExtracting.Value = true;

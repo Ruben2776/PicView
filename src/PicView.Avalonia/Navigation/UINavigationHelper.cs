@@ -10,7 +10,9 @@ namespace PicView.Avalonia.Navigation;
 
 public static class UINavigationHelper
 {
-    public static async ValueTask OpenPathAsync(MainWindow mainWindow, MainWindowViewModel vm, string? path)
+    /// <param name="archiveEntry">For an archive, the entry to open it at instead of its first.</param>
+    public static async ValueTask OpenPathAsync(MainWindow mainWindow, MainWindowViewModel vm, string? path,
+        string? archiveEntry = null)
     {
         if (string.IsNullOrWhiteSpace(path))
         {
@@ -27,7 +29,8 @@ public static class UINavigationHelper
 
         // Continue from the remembered start-up directory only when opening into a fresh tab
         var isFreshTab = vm.WindowTabs.ActiveTab.CurrentValue.IsFresh;
-        await SourceOpener.OpenAsync(mainWindow, core, path, new OpenOptions(ContinueFromLeftOff: isFreshTab)).ConfigureAwait(false);
+        await SourceOpener.OpenAsync(mainWindow, core, path,
+            new OpenOptions(ContinueFromLeftOff: isFreshTab, ArchiveEntry: archiveEntry)).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -118,8 +121,20 @@ public static class UINavigationHelper
                 await OpenPathAsync(mainWindow, vm, entry.Path).ConfigureAwait(false);
                 break;
             case ViewHistoryKind.ArchivePage:
-                // The archive opens at its first page, until a page can be shown on its own
-                await OpenPathAsync(mainWindow, vm, entry.Path).ConfigureAwait(false);
+                if (entry.ArchiveEntry is { } archiveEntry
+                    && tab.ArchiveExtractionService is { LastOpenedArchive: { } archive } extraction
+                    && string.Equals(archive, entry.Path, StringComparison.OrdinalIgnoreCase)
+                    && extraction.ExtractedPathOf(archiveEntry) is { } extracted
+                    && tab.ImageIterator is { } iterator
+                    && SideBySidePair.IndexOf(iterator.Files, new FileInfo(extracted)) is { } index)
+                {
+                    // The tab is still in the archive and the page is extracted, so it moves to the page in its list
+                    await iterator.SkipToIndexAsync(index, tab.GetTabCancellation()).ConfigureAwait(false);
+                    break;
+                }
+
+                // The archive opens again, with the page extracted and shown first
+                await OpenPathAsync(mainWindow, vm, entry.Path, entry.ArchiveEntry).ConfigureAwait(false);
                 break;
         }
     }

@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using PicView.Core.DebugTools;
 using PicView.Core.FileHandling;
 using SharpCompress.Archives;
@@ -12,7 +13,7 @@ namespace PicView.Core.ArchiveHandling;
 ///     <list type="number">
 ///         <item>List all supported entries via <see cref="PrepareArchiveAsync" />.</item>
 ///         <item>Sort the returned entry keys.</item>
-///         <item>Extract the first entry via <see cref="ExtractEntryAsync" /> and navigate to it.</item>
+///         <item>Extract the entry to start at via <see cref="ExtractEntryAsync" /> and navigate to it.</item>
 ///         <item>Extract the remaining entries via <see cref="ExtractRemainingAsync" /> while the
 ///               <c>FileWatcherService</c> picks up created files and updates the UI.</item>
 ///     </list>
@@ -27,6 +28,49 @@ public class ArchiveExtractionService
     public string? LastOpenedArchive { get; private set; }
 
     public bool IsArchived => TempZipDirectory != null;
+
+    // Which entry each extracted file came from, and the reverse. Load and display threads read them while a background
+    // extraction fills them
+    private readonly ConcurrentDictionary<string, string> _entryByFile = new(StringComparer.OrdinalIgnoreCase);
+    private readonly ConcurrentDictionary<string, string> _fileByEntry = new(StringComparer.Ordinal);
+
+    // Local software extracted the whole archive, keeping its folders, so its files are not in the maps
+    private bool _isFullyExtracted;
+
+    /// <summary>
+    ///     The entry of the open archive that <paramref name="extractedPath" /> was extracted from, or <c>null</c> for a
+    ///     file it did not extract. It reads no disk, since a tab records each page it shows with it.
+    /// </summary>
+    public string? EntryOf(string extractedPath)
+    {
+        if (_entryByFile.TryGetValue(extractedPath, out var entry))
+        {
+            return entry;
+        }
+
+        // Local software keeps a fully extracted archive's folders, so a file's path in the folder is its entry
+        return _isFullyExtracted && TempZipDirectory is { } folder ? PathInFolder(extractedPath, folder) : null;
+    }
+
+    /// <summary>
+    ///     The file that <paramref name="entry" /> of the open archive was extracted to, or <c>null</c> when it is not
+    ///     extracted. For a fully extracted archive it checks the disk.
+    /// </summary>
+    public string? ExtractedPathOf(string entry)
+    {
+        if (_fileByEntry.TryGetValue(entry, out var file))
+        {
+            return file;
+        }
+
+        if (!_isFullyExtracted || TempZipDirectory is not { } folder)
+        {
+            return null;
+        }
+
+        var path = Path.Combine(folder, entry);
+        return File.Exists(path) ? path : null;
+    }
 
     /// <summary>
     ///     Represents the result of preparing an archive for staged extraction.
@@ -75,6 +119,8 @@ public class ArchiveExtractionService
             var tempDirectory = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
             Directory.CreateDirectory(tempDirectory);
             TempZipDirectory = tempDirectory;
+            // The maps hold the files of the current folder only
+            ForgetEntries();
 
             var ext = Path.GetExtension(archivePath);
             if (ext.Equals(".7z", StringComparison.OrdinalIgnoreCase) ||
@@ -100,6 +146,7 @@ public class ArchiveExtractionService
 
                 SortByFileName(files, stringComparer);
 
+                _isFullyExtracted = true;
                 LastOpenedArchive = archivePath;
                 return new ArchivePreparation(tempDirectory, files, IsFullyExtracted: true);
             }
@@ -174,6 +221,7 @@ public class ArchiveExtractionService
                     if (!string.IsNullOrEmpty(extractedPath))
                     {
                         extractedMap[entry.Key] = extractedPath;
+                        Remember(entry.Key, extractedPath, tempDirectory);
                     }
 
                     // Stop early once all requested keys have been extracted
@@ -271,7 +319,8 @@ public class ArchiveExtractionService
                     continue;
                 }
 
-                WriteEntryFlat(entry, tempDirectory);
+                var extractedPath = WriteEntryFlat(entry, tempDirectory);
+                Remember(entry.Key, extractedPath, tempDirectory);
                 extractedCount++;
                 batchCounter++;
 
@@ -375,6 +424,7 @@ public class ArchiveExtractionService
 
         TempZipDirectory = null;
         LastOpenedArchive = null;
+        ForgetEntries();
     }
     
     public void Cleanup(string? tempZipDirectory)
@@ -401,6 +451,37 @@ public class ArchiveExtractionService
         {
             DebugHelper.LogDebug(nameof(ArchiveExtractionService), nameof(Cleanup), ex);
         }
+    }
+
+    // A cancelled extraction of the archive before can still finish a file after the next archive cleared the maps, so
+    // only a file in the current folder is remembered
+    private void Remember(string entryKey, string extractedPath, string folder)
+    {
+        if (!string.Equals(folder, TempZipDirectory, StringComparison.Ordinal))
+        {
+            return;
+        }
+
+        _entryByFile[extractedPath] = entryKey;
+        _fileByEntry[entryKey] = extractedPath;
+    }
+
+    private void ForgetEntries()
+    {
+        _entryByFile.Clear();
+        _fileByEntry.Clear();
+        _isFullyExtracted = false;
+    }
+
+    // The path of a file in the folder relative to it, or null for a file outside it
+    private static string? PathInFolder(string path, string folder)
+    {
+        var trimmed = Path.TrimEndingDirectorySeparator(folder.AsSpan());
+        return path.Length > trimmed.Length + 1
+               && path.AsSpan().StartsWith(trimmed, StringComparison.OrdinalIgnoreCase)
+               && path[trimmed.Length] is '\\' or '/'
+            ? path[(trimmed.Length + 1)..]
+            : null;
     }
 
     private static string WriteEntryFlat(IArchiveEntry entry, string destinationDirectory)

@@ -1,3 +1,4 @@
+using System.IO.Compression;
 using PicView.Core.ArchiveHandling;
 using PicView.Core.Localization;
 using PicView.Core.ViewModels;
@@ -169,6 +170,36 @@ public class ArchiveExtractionServiceTests
         }
     }
 
+    [Fact]
+    public async Task EntryOf_FileOfAFullyExtractedArchive_IsItsPathInTheFolder()
+    {
+        var archive = Path.Combine(Path.GetTempPath(), "PicViewEntries_" + Guid.NewGuid().ToString("N") + ".7z");
+        await File.WriteAllBytesAsync(archive, [0x37, 0x7A], TestContext.Current.CancellationToken);
+        var service = new ArchiveExtractionService();
+
+        try
+        {
+            // Local software extracts a .7z whole, keeping its folders
+            var files = (await service.PrepareArchiveAsync(archive, (_, folder) =>
+            {
+                var sub = Directory.CreateDirectory(Path.Combine(folder, "sub")).FullName;
+                File.WriteAllBytes(Path.Combine(sub, "1.jpg"), [0xFF, 0xD8, 0xFF]);
+                return Task.FromResult(true);
+            }, string.CompareOrdinal))!.Value.EntryKeys;
+
+            var entry = service.EntryOf(files[0]);
+
+            Assert.Equal(Path.Combine("sub", "1.jpg"), entry);
+            Assert.Equal(files[0], service.ExtractedPathOf(entry!));
+            Assert.Null(service.EntryOf(archive));
+        }
+        finally
+        {
+            service.Cleanup();
+            File.Delete(archive);
+        }
+    }
+
     #endregion
 
     #region ExtractEntriesAsync
@@ -336,6 +367,38 @@ public class ArchiveExtractionServiceTests
         }
     }
 
+    [Fact]
+    public async Task ExtractEntriesAsync_SameFileNameInTwoFolders_RemembersEachFilesEntry()
+    {
+        var folder = Path.Combine(Path.GetTempPath(), "PicViewEntries_" + Guid.NewGuid().ToString("N"));
+        var source = Path.Combine(folder, "source");
+        Directory.CreateDirectory(Path.Combine(source, "a"));
+        Directory.CreateDirectory(Path.Combine(source, "b"));
+        await File.WriteAllBytesAsync(Path.Combine(source, "a", "1.jpg"), [0xFF, 0xD8, 0xFF], TestContext.Current.CancellationToken);
+        await File.WriteAllBytesAsync(Path.Combine(source, "b", "1.jpg"), [0xFF, 0xD8, 0xFF], TestContext.Current.CancellationToken);
+        var zip = Path.Combine(folder, "nested.zip");
+        ZipFile.CreateFromDirectory(source, zip);
+        var service = new ArchiveExtractionService();
+
+        try
+        {
+            var keys = (await service.PrepareArchiveAsync(zip, (_, _) => Task.FromResult(false), string.CompareOrdinal))!
+                .Value.EntryKeys;
+            var files = await service.ExtractEntriesAsync(zip, keys, TestContext.Current.CancellationToken);
+
+            Assert.Equal(2, files.Count);
+            Assert.NotEqual(files[0], files[1]);
+            Assert.Equal(keys[0], service.EntryOf(files[0]));
+            Assert.Equal(keys[1], service.EntryOf(files[1]));
+            Assert.Equal(files[1], service.ExtractedPathOf(keys[1]));
+        }
+        finally
+        {
+            service.Cleanup();
+            Directory.Delete(folder, true);
+        }
+    }
+
     #endregion
 
     #region ExtractEntryAsync
@@ -454,6 +517,25 @@ public class ArchiveExtractionServiceTests
         var exception = Record.Exception(() => service.Cleanup());
 
         Assert.Null(exception);
+    }
+
+    [Fact]
+    public async Task Cleanup_ForgetsWhichEntryEachFileCameFrom()
+    {
+        var folder = Path.Combine(Path.GetTempPath(), "PicViewEntries_" + Guid.NewGuid().ToString("N"));
+        var source = Directory.CreateDirectory(Path.Combine(folder, "source")).FullName;
+        await File.WriteAllBytesAsync(Path.Combine(source, "1.jpg"), [0xFF, 0xD8, 0xFF], TestContext.Current.CancellationToken);
+        var zip = Path.Combine(folder, "flat.zip");
+        ZipFile.CreateFromDirectory(source, zip);
+        var service = new ArchiveExtractionService();
+        await service.PrepareArchiveAsync(zip, (_, _) => Task.FromResult(false), string.CompareOrdinal);
+        var file = await service.ExtractEntryAsync(zip, "1.jpg", TestContext.Current.CancellationToken);
+
+        service.Cleanup();
+
+        Assert.Null(service.EntryOf(file!));
+        Assert.Null(service.ExtractedPathOf("1.jpg"));
+        Directory.Delete(folder, true);
     }
 
     #endregion

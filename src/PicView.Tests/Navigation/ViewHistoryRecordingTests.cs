@@ -104,17 +104,18 @@ public class ViewHistoryRecordingTests : IDisposable
     }
 
     [Fact]
-    public async Task Display_FileInTheArchiveExtractionFolder_RecordsTheArchive()
+    public async Task Display_ExtractedArchivePage_RecordsTheArchiveAndItsEntry()
     {
         var zip = CreateZip("a.jpg", "b.jpg");
         await PrepareArchiveAsync(zip);
+        var page = await _tab.ArchiveExtractionService!.ExtractEntryAsync(zip, "b.jpg", TestContext.Current.CancellationToken);
 
-        _tab.Display(Model(Path.Combine(_tab.ArchiveExtractionService!.TempZipDirectory!, "a.jpg")));
+        _tab.Display(Model(page!));
 
         var entry = Assert.Single(_tab.ViewHistory.Entries);
         Assert.Equal(ViewHistoryKind.ArchivePage, entry.Kind);
         Assert.Equal(zip, entry.Path);
-        Assert.Equal(zip, Assert.Single(FileHistoryManager.AllEntries).Path);
+        Assert.Equal("b.jpg", entry.ArchiveEntry);
     }
 
     [Fact]
