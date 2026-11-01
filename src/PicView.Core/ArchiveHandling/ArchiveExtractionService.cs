@@ -565,7 +565,9 @@ public class ArchiveExtractionService
     {
         // Read here, so the folder is the open archive's when this starts, not when the thread does
         folder ??= TempZipDirectory;
-        var tcs = new TaskCompletionSource();
+        // What awaits the extraction runs on a pool thread, not on this one of the lowest priority: the end of the
+        // extraction lists pages under the lock a key press reads the list under
+        var tcs = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var thread = new Thread(() =>
         {
             try

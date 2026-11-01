@@ -1153,6 +1153,45 @@ public class NavigationServiceTests : IDisposable
     }
 
     [Fact]
+    public async Task LoadFromArchiveAsync_BackgroundExtractionEnds_ListsItsPagesOffTheLowPriorityWorker()
+    {
+        // The end lists the pages the watcher has not, under the lock a key press reads the list under. The extraction's
+        // own thread has the lowest priority, so on a busy machine it could keep the lock from a key press. The test's
+        // watcher lists nothing, so the end lists every page it wrote
+        Settings.Navigation.AlwaysUncompressEntireArchive = false;
+        var zip = await CreateZipAsync("end_priority.zip", 3);
+        var extraction = new HeldWriteExtraction("img_03.jpg");
+        var tab = CreateTab(_testDirectory, extraction: extraction);
+        var endedOn = new TaskCompletionSource<ThreadPriority>(TaskCreationOptions.RunContinuationsAsynchronously);
+        // The end lowers the flag right after it lists the pages, on the same thread
+        using var ending = tab.IsArchiveExtracting.Subscribe(isExtracting =>
+        {
+            if (!isExtracting && extraction.Holding.Task.IsCompleted)
+            {
+                endedOn.TrySetResult(Thread.CurrentThread.Priority);
+            }
+        });
+
+        try
+        {
+            await _navigationService.LoadFromArchiveAsync(zip, tab, new CancellationTokenSource(), startEntry: "img_01.jpg");
+            // Holding the last page's write keeps the extraction from ending before the load awaits it
+            await extraction.Holding.Task.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+            extraction.Release();
+            var priority = await endedOn.Task.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+
+            Assert.Equal(ThreadPriority.Normal, priority);
+            Assert.Equal(["img_01.jpg", "img_02.jpg", "img_03.jpg"], tab.ImageIterator.Files.Select(f => f.Name));
+        }
+        finally
+        {
+            extraction.Release();
+            tab.ArchiveExtractionService.Cleanup();
+            Settings.Navigation.AlwaysUncompressEntireArchive = true;
+        }
+    }
+
+    [Fact]
     public async Task SortAsync_Descending_SortsTheFilesAndKeepsTheShownOne()
     {
         // Arrange
