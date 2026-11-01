@@ -285,6 +285,33 @@ public class FileWatcherServiceTests : IDisposable
     }
 
     [Fact]
+    public async Task OnArchiveRenamed_RenamesItsEntriesInTheHistory()
+    {
+        // An archive is not an image, so the watcher takes its rename for a folder's, which it hands on as both
+        var files = Files("a.jpg");
+        var tab = CreateTab(_testDirectory, files, files[0]);
+        var oldPath = Path.Combine(_testDirectory, "old.zip");
+        var newPath = Path.Combine(_testDirectory, "new.zip");
+        tab.ViewHistory.Record(ViewHistoryEntry.ForArchivePage(oldPath, "1.jpg"));
+        tab.ViewHistory.Record(ViewHistoryEntry.ForArchivePage(oldPath, "2.jpg"));
+        (string Old, string New)? renamedFile = null;
+        (string Old, string New)? renamedFolder = null;
+        _fileRenamed = (oldFile, newFile) =>
+        {
+            renamedFile = (oldFile, newFile);
+            tab.ViewHistory.Rename(oldFile, newFile);
+        };
+        _folderRenamed = (oldFolder, newFolder) => renamedFolder = (oldFolder, newFolder);
+
+        Watch(tab).RaiseRenamed("old.zip", "new.zip");
+
+        await WaitUntilAsync(() => renamedFolder is not null);
+        Assert.Equal((oldPath, newPath), renamedFile);
+        Assert.Equal((oldPath, newPath), renamedFolder);
+        Assert.All(tab.ViewHistory.Entries, entry => Assert.Equal(newPath, entry.Path));
+    }
+
+    [Fact]
     public async Task OnFileReplacedThroughTempFile_KeepsTheFileOnceInItsPlace()
     {
         // Arrange: how Windows Explorer saves an edited property, with ReplaceFile
@@ -492,6 +519,31 @@ public class FileWatcherServiceTests : IDisposable
         Watch(tab).RaiseRenamed("sub", "renamed");
 
         await WaitUntilAsync(() => tab.Model.FileInfo?.DirectoryName == renamed);
+        Assert.Equal(files[1].FullName, shownWhenRenamed);
+    }
+
+    [Fact]
+    public async Task OnSubfolderRenamed_AlsoRenamesItAsAFileBeforeTheTabsFollow()
+    {
+        // A folder named like an archive: the watcher cannot tell it from one, so the folder is handed on as a file too
+        Settings.Sorting.IncludeSubDirectories = true;
+        var files = Files("a.jpg", Path.Combine("old.zip", "b.jpg"));
+        var tab = CreateTab(_testDirectory, files, files[1]);
+        (string Old, string New)? renamedFile = null;
+        string? shownWhenRenamed = null;
+        _fileRenamed = (oldFile, newFile) =>
+        {
+            shownWhenRenamed = tab.Model.FileInfo?.FullName;
+            renamedFile = (oldFile, newFile);
+        };
+        var oldFolder = Path.Combine(_testDirectory, "old.zip");
+        var renamed = Path.Combine(_testDirectory, "new.zip");
+
+        Watch(tab).RaiseRenamed("old.zip", "new.zip");
+
+        // The tab still follows the folder, and the file rename came first
+        await WaitUntilAsync(() => tab.Model.FileInfo?.DirectoryName == renamed);
+        Assert.Equal((oldFolder, renamed), renamedFile);
         Assert.Equal(files[1].FullName, shownWhenRenamed);
     }
 

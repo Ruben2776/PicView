@@ -65,6 +65,23 @@ public class FileRenamesTests : IDisposable
     }
 
     [Fact]
+    public void Follow_Archive_ReachesItsFileHistoryEntryItsPagesInTheTabAndTheLastFile()
+    {
+        var tab = OpenWindow().WindowTabs.ActiveTab.Value;
+        tab.ViewHistory.Record(ViewHistoryEntry.ForArchivePage(PathOf("a.zip"), "1.jpg"));
+        tab.ViewHistory.Record(ViewHistoryEntry.ForArchivePage(PathOf("a.zip"), "2.jpg"));
+        FileHistoryManager.Add(PathOf("a.zip"));
+        Settings.StartUp.LastFile = PathOf("a.zip");
+
+        FileRenames.Follow(_core, PathOf("a.zip"), PathOf("b.zip"));
+
+        Assert.Equal(["1.jpg", "2.jpg"], tab.ViewHistory.Entries.Select(e => e.ArchiveEntry));
+        Assert.All(tab.ViewHistory.Entries, e => Assert.Equal(PathOf("b.zip"), e.Path));
+        Assert.Equal(PathOf("b.zip"), Assert.Single(FileHistoryManager.AllEntries).Path);
+        Assert.Equal(PathOf("b.zip"), Settings.StartUp.LastFile);
+    }
+
+    [Fact]
     public void FollowFolder_ReachesFileHistoryTheTabsAndTheLastFile()
     {
         var tab = OpenWindow().WindowTabs.ActiveTab.Value;

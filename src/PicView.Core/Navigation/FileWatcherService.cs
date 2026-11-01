@@ -13,10 +13,12 @@ namespace PicView.Core.Navigation;
 /// </summary>
 /// <param name="fileRenamed">
 /// Gets a renamed file's old and new path before any tab follows the rename. A tab that shows the renamed file records
-/// it, which would count as a new view if the histories did not know the new name yet.
+/// it, which would count as a new view if the histories did not know the new name yet. It also gets every renamed path
+/// that is not an image, since that may be an archive.
 /// </param>
 /// <param name="folderRenamed">
-/// The same for a renamed folder, with its old and new path: the watched folder, or one of its subfolders.
+/// The same for a renamed folder, with its old and new path: the watched folder, or one of its subfolders. Every renamed
+/// path that is not an image goes here too, since that may be a folder.
 /// </param>
 public class FileWatcherService(
     Func<string, string, int> stringComparer,
@@ -248,6 +250,9 @@ public class FileWatcherService(
                     fileRenamed?.Invoke(oldPath, fullPath);
                     break;
                 case FolderChangeKind.FolderRenamed:
+                    // A path that is not an image is a folder, or an archive, which the histories list by its own path.
+                    // Each call finds only its own: the exact path, or the paths under a folder. So both go
+                    fileRenamed?.Invoke(oldPath, fullPath);
                     folderRenamed?.Invoke(oldPath, fullPath);
                     break;
             }
