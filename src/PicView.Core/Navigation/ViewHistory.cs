@@ -173,8 +173,7 @@ public sealed class ViewHistory(Func<string, bool>? fileExists = null)
             ViewHistoryEntry candidate;
             lock (_lock)
             {
-                var origin = _target >= 0 ? _target : _cursor;
-                index = forwards ? origin + 1 : origin - 1;
+                index = StepIndex(forwards);
                 // The cursor is -1 with entries left when the first was removed, so the first is still ahead of it
                 if (index < 0 || index >= _entries.Count)
                 {
@@ -188,9 +187,11 @@ public sealed class ViewHistory(Func<string, bool>? fileExists = null)
 
             lock (_lock)
             {
-                if (index >= _entries.Count || !_entries[index].Matches(candidate))
+                // An overlapping BeginStep may have marked a target meanwhile, or a record may have moved the cursor.
+                // The entry must still be a step from where a step counts now, or both steps would mark it
+                if (index >= _entries.Count || index != StepIndex(forwards) || !_entries[index].Matches(candidate))
                 {
-                    // The list changed meanwhile; look again
+                    // The list or the step under way changed meanwhile; look again
                     continue;
                 }
                 if (!exists)
@@ -227,6 +228,13 @@ public sealed class ViewHistory(Func<string, bool>? fileExists = null)
     }
 
     // The members below run with the lock held
+
+    // Where a step this way goes: one entry from the target of the step under way, else from the cursor
+    private int StepIndex(bool forwards)
+    {
+        var origin = _target >= 0 ? _target : _cursor;
+        return forwards ? origin + 1 : origin - 1;
+    }
 
     private void EndPendingStep()
     {

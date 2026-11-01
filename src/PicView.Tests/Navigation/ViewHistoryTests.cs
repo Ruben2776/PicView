@@ -337,6 +337,48 @@ public class ViewHistoryTests
     }
 
     [Fact]
+    public async Task BeginStep_WhileAnotherStepChecksItsFile_CountsFromThatStepsTarget()
+    {
+        var gate = new FileCheckGate();
+        var history = GatedHistory(gate, "a.jpg", "b.jpg", "c.jpg", "d.jpg");
+
+        // The first Back is held while it checks its file, and a second Back runs meanwhile
+        gate.HoldNextCheck();
+        var first = Task.Run(() => history.BeginStep(forwards: false));
+        gate.WaitUntilHeld();
+        var second = history.BeginStep(forwards: false)!.Value;
+        gate.Release();
+        var firstStep = (await first.WaitAsync(FileCheckGate.WaitLimit, TestContext.Current.CancellationToken))!.Value;
+
+        Assert.Equal("c.jpg", Path.GetFileName(second.Target.Path));
+        Assert.Equal("b.jpg", Path.GetFileName(firstStep.Target.Path));
+        Assert.True(history.Record(firstStep.Target));
+        Assert.Equal(1, history.Cursor);
+    }
+
+    [Fact]
+    public async Task BeginStep_ForwardOverlappingAQuickBack_TargetsTheShownEntryWithNoStepLeft()
+    {
+        var gate = new FileCheckGate();
+        var history = GatedHistory(gate, "a.jpg", "b.jpg", "c.jpg", "d.jpg");
+        // The tab shows c.jpg, with b.jpg behind it and d.jpg ahead
+        history.Record(history.BeginStep(forwards: false)!.Value.Target);
+
+        // The Forward is held while it checks its file, and the Back before it runs meanwhile
+        gate.HoldNextCheck();
+        var forward = Task.Run(() => history.BeginStep(forwards: true));
+        gate.WaitUntilHeld();
+        var back = history.BeginStep(forwards: false)!.Value;
+        gate.Release();
+        var forwardStep = (await forward.WaitAsync(FileCheckGate.WaitLimit, TestContext.Current.CancellationToken))!.Value;
+
+        Assert.Equal("b.jpg", Path.GetFileName(back.Target.Path));
+        Assert.Equal("c.jpg", Path.GetFileName(forwardStep.Target.Path));
+        Assert.Equal(0, forwardStep.Id);
+        Assert.Equal(2, history.Cursor);
+    }
+
+    [Fact]
     public async Task Record_FromSeveralThreads_WhileAnotherReadsAndSteps_NeverThrows()
     {
         var recording = Enumerable.Range(0, 4).Select(thread => Task.Run(() =>
@@ -391,5 +433,44 @@ public class ViewHistoryTests
         _missing.Add(PathOf("a.jpg"));
         _history.BeginStep(forwards: false);
         _history.EndStep(forward);
+    }
+
+    // A history that checks its files through the gate, with the files recorded in order
+    private static ViewHistory GatedHistory(FileCheckGate gate, params string[] names)
+    {
+        var history = new ViewHistory(gate.Exists);
+        foreach (var name in names)
+        {
+            history.Record(FileEntry(name));
+        }
+
+        return history;
+    }
+
+    // Holds the first file check made after HoldNextCheck() until Release(), so a test can run one BeginStep while
+    // another is checking its file. Every wait times out, so a failing test fails instead of hanging
+    private sealed class FileCheckGate
+    {
+        public static readonly TimeSpan WaitLimit = TimeSpan.FromSeconds(30);
+        private readonly ManualResetEventSlim _held = new();
+        private readonly ManualResetEventSlim _released = new();
+        private int _armed;
+
+        public bool Exists(string path)
+        {
+            if (Interlocked.Exchange(ref _armed, 0) == 1)
+            {
+                _held.Set();
+                _released.Wait(WaitLimit);
+            }
+
+            return true;
+        }
+
+        public void HoldNextCheck() => Volatile.Write(ref _armed, 1);
+
+        public void WaitUntilHeld() => Assert.True(_held.Wait(WaitLimit), "The step never reached its file check");
+
+        public void Release() => _released.Set();
     }
 }
