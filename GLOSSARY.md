@@ -81,6 +81,18 @@ _Avoid_: New tab, uninitialized tab, empty tab
 An image a tab shows on its own, without the files around it to browse: a clipboard image, a base64 image, a temporary file or a URL download. It has its own model, and showing a file again ends it.
 _Avoid_: Standalone image, loose image
 
+**View History**:
+What a tab has shown, oldest to newest, with a cursor on what it shows now: each file, each page of a multi-page TIFF or an archive, and each Single Image. Back and Forward move through it and show that entry again in the same tab. Showing something new after going back drops the entries after the cursor. Images the tab never showed, such as those Next 10 jumps over, are not in it, and renaming a file or folder renames its entries. It lives only in memory and holds up to 100 entries, at most 10 of them Single Images. It moves with its tab and ends when the tab closes.
+_Avoid_: Navigation history, back stack, file history (for Back and Forward)
+
+**File History**:
+The files, archives and URLs viewed most recently in any tab, listed in the dropdown menu by when each was last viewed: up to 50, plus up to 5 pinned ones. It is remembered between runs, renaming a file or folder renames its entries, and turning file history off stops it recording. Back and Forward don't use it.
+_Avoid_: Recent files, history list
+
+**Last File**:
+The file, archive or URL that the active tab of the Active Main Window showed most recently. "Open last file" opens it, and so does App Start when it opens the last file. Closing a Main Window, and App Shutdown, make that window's active tab's file the Last File. A Single Image without a path never becomes it, and renaming its file, or the folder it's in, renames it.
+_Avoid_: Last entry, current entry
+
 ## Images
 
 **Side-by-Side Pair**:
