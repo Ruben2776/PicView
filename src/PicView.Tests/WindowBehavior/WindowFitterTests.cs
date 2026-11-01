@@ -171,6 +171,35 @@ public class WindowFitterTests
     }
 
     [AvaloniaFact]
+    public void FitStartUpMenu_AutoFitWindowNotShownYet_OpensAtTheStartUpMenusSize()
+    {
+        Settings.WindowProperties.AutoFit = true;
+        var (fitter, vm, _) = CreateWindow(() => Screen(1920, 1040));
+        var menu = new StartUpMenu();
+
+        fitter.FitStartUpMenu(menu);
+
+        var reserved = ReservedSpace.For(1, vm.TitlebarHeight.Value, vm.IsTopToolbarShown.Value,
+            vm.IsBottomToolbarShown.Value, 0, 0);
+        Assert.Equal(1000, menu.Width);
+        Assert.Equal(470 - reserved.Top - reserved.Bottom, menu.Height);
+    }
+
+    [AvaloniaFact]
+    public void FitStartUpMenu_AutoFitWindowAfterAnImage_KeepsTheImagesSize()
+    {
+        Settings.WindowProperties.AutoFit = true;
+        var (fitter, vm, _) = CreateWindow(() => Screen(1920, 1040));
+        vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 400, 300));
+        fitter.Refit();
+        var menu = new StartUpMenu();
+
+        fitter.FitStartUpMenu(menu);
+
+        Assert.Equal(400, menu.Width);
+    }
+
+    [AvaloniaFact]
     public void FollowFitInputs_BlankTabWithoutAutoFit_StretchesToTheWindow()
     {
         var (fitter, vm, window) = CreateShownWindow(800, 600);

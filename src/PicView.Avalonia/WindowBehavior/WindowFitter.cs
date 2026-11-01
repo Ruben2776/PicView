@@ -35,7 +35,7 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
     private int _isFitBeforeFramePending;
     private int _isFitAfterLayoutPending;
 
-    // The window size the last image's Fit gave, which a tab without an image keeps
+    // The window size the last image's Fit gave, or the start-up menu's before any, which a tab without an image keeps
     private Size? _fittedWindowSize;
 
     /// <summary>
@@ -175,7 +175,8 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
     /// <summary>
     /// Sizes a tab's start-up menu so the window keeps its size: in an AutoFit window it fills the size the last
     /// image gave the window, less the Reserved Space as it is now, so the tab strip it shows takes room from the
-    /// menu. Otherwise it stretches to fill the window. Call on the UI thread, before the menu is laid out, as when it
+    /// menu. An AutoFit window that is not shown yet and has fitted no image opens at the start-up menu's own size.
+    /// Otherwise it stretches to fill the window. Call on the UI thread, before the menu is laid out, as when it
     /// is created.
     /// </summary>
     public void FitStartUpMenu(StartUpMenu menu)
@@ -189,6 +190,12 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
         {
             menu.Width = menu.Height = double.NaN;
             return;
+        }
+
+        if (_fittedWindowSize is null && !window.IsVisible)
+        {
+            var (startUpWidth, startUpHeight) = ImageFitter.StartUpMenuWindowSize(_readScreen());
+            _fittedWindowSize = new Size(startUpWidth, startUpHeight);
         }
 
         // Not the window's size as it is: it follows its content, so it may already have shrunk to an unsized menu
