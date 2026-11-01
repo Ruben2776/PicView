@@ -687,6 +687,54 @@ public class NavigationServiceTests : IDisposable
     }
 
     [Fact]
+    public void EndExtraction_OfAnExtractionThatANewerOneReplaced_LeavesTheTabExtracting()
+    {
+        var tab = CreateTab(_testDirectory);
+        // A Back opened the archive again, so a newer extraction replaced the first, and Next waits for its pages
+        var replaced = tab.ArchiveExtractionService.ResetExtractionCts();
+        tab.ArchiveExtractionService.ResetExtractionCts();
+        tab.IsArchiveExtracting.Value = true;
+
+        NavigationService.EndExtraction(tab, replaced);
+
+        Assert.True(tab.IsArchiveExtracting.Value);
+    }
+
+    // How an extraction can end, besides running to its end
+    public enum ExtractionStop
+    {
+        None,
+        AnotherArchiveOpens,
+        TabLeavesTheArchive
+    }
+
+    [Theory]
+    [InlineData(ExtractionStop.None)]
+    [InlineData(ExtractionStop.AnotherArchiveOpens)]
+    [InlineData(ExtractionStop.TabLeavesTheArchive)]
+    public void EndExtraction_OfTheExtractionStartedLast_EndsTheTabsExtracting(ExtractionStop stop)
+    {
+        var tab = CreateTab(_testDirectory);
+        var latest = tab.ArchiveExtractionService.ResetExtractionCts();
+        tab.IsArchiveExtracting.Value = true;
+        tab.ArchiveExtractionProgressText.Value = "1/2";
+        switch (stop)
+        {
+            case ExtractionStop.AnotherArchiveOpens:
+                tab.ArchiveExtractionService.StopExtraction();
+                break;
+            case ExtractionStop.TabLeavesTheArchive:
+                tab.ArchiveExtractionService.Cleanup();
+                break;
+        }
+
+        NavigationService.EndExtraction(tab, latest);
+
+        Assert.False(tab.IsArchiveExtracting.Value);
+        Assert.Null(tab.ArchiveExtractionProgressText.Value);
+    }
+
+    [Fact]
     public async Task LoadFromArchiveAsync_StartEntryThenNext_ShowsThePageAfterIt()
     {
         var zip = await CreateZipAsync("next.zip", 5);

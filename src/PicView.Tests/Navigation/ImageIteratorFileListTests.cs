@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using ImageMagick;
 using PicView.Core.Models;
 using PicView.Core.Navigation;
@@ -300,6 +301,104 @@ public class ImageIteratorFileListTests
         await next.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
 
         Assert.Equal("b.jpg", _tab.Model.FileInfo?.Name);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Next_SideBySideWithOnePageLeftWhenTheExtractionEnds_ShowsTheLastPair(bool keyHeldDown)
+    {
+        Settings.ImageScaling.ShowImageSideBySide = true;
+        var a = File("a.jpg");
+        var b = File("b.jpg");
+        _iterator.Initialize([a, b, File("c.jpg")], 0);
+        _tab.Display(new ImageModel { FileInfo = a, Image = new ProbeImage() },
+            new ImageModel { FileInfo = b, Image = new ProbeImage() });
+        _tab.IsArchiveExtracting.Value = true;
+
+        var next = Next(keyHeldDown);
+        // The pair after the shown one never comes, as c is the last page
+        EndExtraction();
+        await next.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+
+        Assert.Equal("b.jpg", _tab.Model.FileInfo?.Name);
+        Assert.Equal("c.jpg", _tab.SecondaryModel?.FileInfo?.Name);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Next_LoopingAtTheLastPageWhenTheExtractionEnds_GoesRoundToTheFirst(bool keyHeldDown)
+    {
+        // As after an archive reopened at a page, whose pages before it come last
+        Settings.UIProperties.Looping = true;
+        var c = File("c.jpg");
+        _iterator.Initialize([File("a.jpg"), File("b.jpg"), c], 2);
+        _tab.Display(new ImageModel { FileInfo = c, Image = new ProbeImage() });
+        _tab.IsArchiveExtracting.Value = true;
+
+        var next = Next(keyHeldDown);
+        EndExtraction();
+        await next.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+
+        Assert.Equal("a.jpg", _tab.Model.FileInfo?.Name);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Next_WaitingWhileExtracting_WhenCancelled_ShowsTheTitleAgain(bool keyHeldDown)
+    {
+        var c = File("c.jpg");
+        _iterator.Initialize([c], 0);
+        _tab.IsSelected = true;
+        _tab.Display(new ImageModel { FileInfo = c, Image = new ProbeImage() });
+        _tab.UpdateTabTitle();
+        var title = _tab.Title!.Value;
+        _tab.IsArchiveExtracting.Value = true;
+        var cts = new CancellationTokenSource();
+
+        var next = keyHeldDown
+            ? _iterator.RepeatNavigateAsync(NavigateTo.Next, TimeSpan.Zero, cts).AsTask()
+            : _iterator.NavigateAsync(NavigateTo.Next, SkipAmount.One, cts).AsTask();
+        var titleWhileWaiting = _tab.Title.Value;
+        await cts.CancelAsync();
+        await next.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+
+        Assert.NotEqual(title, titleWhileWaiting);
+        Assert.Equal(title, _tab.Title.Value);
+    }
+
+    [Fact]
+    public async Task Next_TwoPressesWaitingWhenTheNextFileComes_NeitherGoesRoundToTheFirst()
+    {
+        // With looping, a step that counts from where the other one went goes round to the first file. Both wake on the
+        // same insert at once, so the rounds give them the chance to
+        Settings.UIProperties.Looping = true;
+        var shown = new ConcurrentQueue<string?>();
+        using var subscription = _tab.FileInfo.Subscribe(file => shown.Enqueue(file?.Name));
+        _tab.IsArchiveExtracting.Value = true;
+
+        for (var round = 0; round < 100; round++)
+        {
+            var b = File("b.jpg");
+            _iterator.Initialize([File("a.jpg"), b], 1);
+            _tab.Display(new ImageModel { FileInfo = b, Image = new ProbeImage() });
+            var first = Next(keyHeldDown: false);
+            var second = Next(keyHeldDown: false);
+
+            _iterator.Insert(File("c.jpg"), string.CompareOrdinal);
+            await Task.WhenAll(first, second).WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+        }
+
+        Assert.DoesNotContain("a.jpg", shown);
+    }
+
+    // As the end of an archive's background extraction does
+    private void EndExtraction()
+    {
+        _tab.IsArchiveExtracting.Value = false;
+        _iterator.NotifyFileAdded();
     }
 
     private Task Next(bool keyHeldDown) => keyHeldDown

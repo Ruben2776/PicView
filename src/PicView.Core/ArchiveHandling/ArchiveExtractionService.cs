@@ -509,6 +509,10 @@ public class ArchiveExtractionService
 
     private CancellationTokenSource? _extractionCts;
 
+    // The token of the background extraction started last. Stopping or cleaning up cancels it but keeps it the latest, as
+    // the tab extracts nothing after that
+    private CancellationToken _latestExtraction;
+
     /// <summary>
     ///     Resets and returns a dedicated cancellation token for background extraction operations.
     /// </summary>
@@ -520,10 +524,23 @@ public class ArchiveExtractionService
         {
             previous = _extractionCts;
             _extractionCts = cts;
+            _latestExtraction = cts.Token;
         }
 
         Cancel(previous);
         return cts.Token;
+    }
+
+    /// <summary>
+    ///     Whether the background extraction with <paramref name="extraction" /> is the one started last, so that no newer
+    ///     archive's extraction has replaced it, whether or not it was stopped since.
+    /// </summary>
+    public bool IsLatestExtraction(CancellationToken extraction)
+    {
+        lock (_lock)
+        {
+            return extraction == _latestExtraction;
+        }
     }
 
     /// <summary>

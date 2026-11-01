@@ -382,10 +382,7 @@ public class NavigationService(
                         }
                         finally
                         {
-                            tab.IsArchiveExtracting.Value = false;
-                            tab.ArchiveExtractionProgressText.Value = null;
-                            tab.ImageIterator?.NotifyFileAdded();
-                            tab.ImageIterator?.UpdateNavigationProperties();
+                            EndExtraction(tab, backgroundToken);
                         }
                     }, backgroundToken);
                 }
@@ -452,10 +449,7 @@ public class NavigationService(
                     }
                     finally
                     {
-                        tab.IsArchiveExtracting.Value = false;
-                        tab.ArchiveExtractionProgressText.Value = null;
-                        tab.ImageIterator?.NotifyFileAdded();
-                        tab.ImageIterator?.UpdateNavigationProperties();
+                        EndExtraction(tab, backgroundToken);
                     }
                 }, backgroundToken);
             }
@@ -493,6 +487,23 @@ public class NavigationService(
 
         // A newer load began, which shows what the tab shows next, or the load was cancelled
         bool IsOvertaken() => ct.IsCancellationRequested || !tab.IsLatestLoad(load);
+    }
+
+    /// <summary>
+    /// Ends the background extraction with <paramref name="extraction"/>, extracted or not: the tab no longer counts as
+    /// extracting, and a Next waiting for a page looks at the list again. Unless a newer archive's extraction has started
+    /// since, as when Back opens an archive again: Next waits for that one's pages, and would step without them.
+    /// </summary>
+    internal static void EndExtraction(TabViewModel tab, CancellationToken extraction)
+    {
+        if (tab.ArchiveExtractionService?.IsLatestExtraction(extraction) ?? true)
+        {
+            tab.IsArchiveExtracting.Value = false;
+            tab.ArchiveExtractionProgressText.Value = null;
+        }
+
+        tab.ImageIterator?.NotifyFileAdded();
+        tab.ImageIterator?.UpdateNavigationProperties();
     }
 
     /// <summary>

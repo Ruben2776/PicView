@@ -223,14 +223,14 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
 
     public async ValueTask NavigateAsync(NavigateTo navigateTo, SkipAmount skipAmount, CancellationTokenSource ct)
     {
-        if (!await WaitForNextAsync(navigateTo, skipAmount, ct.Token).ConfigureAwait(false))
+        if (await WaitForNextAsync(navigateTo, skipAmount, ct.Token).ConfigureAwait(false) is not { } from)
         {
             return;
         }
 
         if (Settings.ImageScaling.ShowImageSideBySide)
         {
-            var (currentIndex, secondaryIndex, isReversed) = SideBySidePair.Navigate(CurrentIndex, Files.Count, navigateTo, skipAmount);
+            var (currentIndex, secondaryIndex, isReversed) = SideBySidePair.Navigate(from.Index, from.Count, navigateTo, skipAmount);
             IsReversed = isReversed;
             if (ShouldNavigateTiffEntry(navigateTo, skipAmount))
             {
@@ -248,7 +248,7 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
         }
         else
         {
-            var (iteration, isReversed) = IterationHelper.GetIteration(CurrentIndex, Files.Count, navigateTo, skipAmount);
+            var (iteration, isReversed) = IterationHelper.GetIteration(from.Index, from.Count, navigateTo, skipAmount);
             IsReversed = isReversed;
             if (ShouldNavigateTiffEntry(navigateTo, skipAmount))
             {
@@ -412,7 +412,7 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
 
         _lastRepeatTime = now;
 
-        if (!await WaitForNextAsync(to, SkipAmount.One, ct.Token).ConfigureAwait(false))
+        if (await WaitForNextAsync(to, SkipAmount.One, ct.Token).ConfigureAwait(false) is not { } from)
         {
             return;
         }
@@ -421,7 +421,7 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
         bool isReversed;
         if (Settings.ImageScaling.ShowImageSideBySide)
         {
-            (iteration, var secondary, isReversed) = SideBySidePair.Navigate(CurrentIndex, Files.Count, to, SkipAmount.One);
+            (iteration, var secondary, isReversed) = SideBySidePair.Navigate(from.Index, from.Count, to, SkipAmount.One);
             IsReversed = isReversed;
             if (ShouldNavigateTiffEntry(to, SkipAmount.One))
             {
@@ -434,7 +434,7 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
             }
             return;
         }
-        (iteration, isReversed) = IterationHelper.GetIteration(CurrentIndex, Files.Count, to, SkipAmount.One);
+        (iteration, isReversed) = IterationHelper.GetIteration(from.Index, from.Count, to, SkipAmount.One);
         IsReversed = isReversed;
         if (ShouldNavigateTiffEntry(to, SkipAmount.One))
         {
@@ -483,21 +483,25 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
     /// Next shows the file after the shown one, or the pair after it. While an archive is still being extracted that may
     /// not be there yet, so Next waits for it, unless a multi-page TIFF turns its page instead.
     /// </summary>
-    /// <returns>Whether to go on: false when the file did not come, or another file was shown meanwhile.</returns>
-    private ValueTask<bool> WaitForNextAsync(NavigateTo navigateTo, SkipAmount skipAmount, CancellationToken ct)
+    /// <returns>
+    /// The shown file's index and the number of files, read together, which the step counts from. Null to not step: the
+    /// wait for the file gave up.
+    /// </returns>
+    private ValueTask<(int Index, int Count)?> WaitForNextAsync(NavigateTo navigateTo, SkipAmount skipAmount,
+        CancellationToken ct)
     {
+        var (index, files) = ShownIndexAndFiles();
         if (navigateTo is not NavigateTo.Next || !_tab.IsArchiveExtracting.Value)
         {
-            return ValueTask.FromResult(true);
+            return ValueTask.FromResult<(int, int)?>((index, files.Length));
         }
 
         // How far past the shown file Next goes: to the next file, or to the second of the next pair
         var step = IterationHelper.SkipAmountToInt(skipAmount);
         var reach = Settings.ImageScaling.ShowImageSideBySide ? step * 2 + 1 : step;
-        var (index, files) = ShownIndexAndFiles();
         if (index + reach < files.Length || HasNextTiffPage(skipAmount))
         {
-            return ValueTask.FromResult(true);
+            return ValueTask.FromResult<(int, int)?>((index, files.Length));
         }
 
         return WaitForFileAfterShownAsync(reach, ct);
@@ -506,10 +510,15 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
     /// <summary>
     /// Waits until the file <paramref name="reach"/> places after the shown one is in the list, while the archive is still
     /// being extracted. It counts from the shown file each time the list changes, since a page extracted before it moves it
-    /// along, so only a file after it ends the wait.
+    /// along, so only a file after it ends the wait. The extraction finishing ends it too, and the step then goes over the
+    /// whole list: it stops at the end, or goes round when looping.
     /// </summary>
-    /// <returns>Whether that file came, with the same file still shown.</returns>
-    private async ValueTask<bool> WaitForFileAfterShownAsync(int reach, CancellationToken ct)
+    /// <returns>
+    /// The shown file's index and the number of files as the wait last read them, which the step counts from, so two
+    /// presses that the same file wakes both step from the shown file. Null when the wait gave up: another file was shown
+    /// meanwhile, nothing came for a while, or it was cancelled.
+    /// </returns>
+    private async ValueTask<(int Index, int Count)?> WaitForFileAfterShownAsync(int reach, CancellationToken ct)
     {
         _tab.SetLoading();
         var (shownIndex, shownFiles) = ShownIndexAndFiles();
@@ -528,10 +537,17 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
 
             if (index + reach < files.Length)
             {
-                return true;
+                return (index, files.Length);
             }
 
-            if (timedOut || !_tab.IsArchiveExtracting.Value)
+            if (!_tab.IsArchiveExtracting.Value)
+            {
+                // The step may stop on the shown file, which brings no new title, so the title says what it shows again
+                _tab.UpdateTabTitle();
+                return (index, files.Length);
+            }
+
+            if (timedOut)
             {
                 break;
             }
@@ -551,8 +567,10 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
             }
         }
 
+        // The title says what the tab shows again, instead of loading
+        _tab.UpdateTabTitle();
         UpdateNavigationProperties();
-        return false;
+        return null;
     }
 
     // The shown file's index with the list it is in, read together, as inserting a file before it changes both
