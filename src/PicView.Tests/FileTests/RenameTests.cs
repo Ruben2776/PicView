@@ -2,6 +2,8 @@ using ImageMagick;
 using PicView.Avalonia.UI;
 using PicView.Core.FileHandling;
 using PicView.Core.Models;
+using PicView.Core.Navigation;
+using PicView.Core.Navigation.Interfaces;
 using PicView.Core.ViewModels;
 
 namespace PicView.Tests.FileTests;
@@ -118,32 +120,67 @@ public class RenameTests : IDisposable
     [Fact]
     public async Task RenameAction_SameExtension_KeepsTheTabOnItsEntryUnderTheNewName()
     {
-        var (vm, tab) = CreateTabInCore(WriteImage("a.png", MagickColors.Red));
+        var after = WriteImage("c.png", MagickColors.Blue);
+        var (vm, tab) = CreateTabInCore(WriteImage("a.png", MagickColors.Red), after);
 
         await RenameHelper.RenameAction(vm, "b.png");
 
-        Assert.Equal(Path.Combine(_testDirectory, "b.png"), Assert.Single(tab.ViewHistory.Entries).Path);
+        Assert.Equal([Path.Combine(_testDirectory, "b.png"), after], tab.ViewHistory.Entries.Select(e => e.Path));
+        Assert.Equal(0, tab.ViewHistory.Cursor);
     }
 
     [Fact]
     public async Task RenameAction_NewExtension_KeepsTheTabOnItsEntryUnderTheNewName()
     {
-        var (vm, tab) = CreateTabInCore(WriteImage("a.png", MagickColors.Red));
+        // The converted file loads and shows. Had the history not followed the rename first, that showing would be a new
+        // view, which drops the entry after the cursor
+        var after = WriteImage("c.png", MagickColors.Blue);
+        var (vm, tab) = CreateTabInCore(WriteImage("a.png", MagickColors.Red), after);
 
         await RenameHelper.RenameAction(vm, "b.jpg");
 
-        Assert.Equal(Path.Combine(_testDirectory, "b.jpg"), Assert.Single(tab.ViewHistory.Entries).Path);
+        Assert.Equal([Path.Combine(_testDirectory, "b.jpg"), after], tab.ViewHistory.Entries.Select(e => e.Path));
+        Assert.Equal(0, tab.ViewHistory.Cursor);
+        Assert.Equal(Path.Combine(_testDirectory, "b.jpg"), tab.Model.FileInfo?.FullName);
     }
 
-    private (MainWindowViewModel Vm, TabViewModel Tab) CreateTabInCore(string path)
+    // The active tab of a Main Window in a core whose navigation loads files, as in PicView. The tab showed path, then
+    // after, and went back to path
+    private (MainWindowViewModel Vm, TabViewModel Tab) CreateTabInCore(string path, string after)
     {
-        var core = new CoreViewModel(null, file => ValueTask.FromResult(new ImageModel { FileInfo = file }));
+        var core = new CoreViewModel(null, file => ValueTask.FromResult(new ImageModel { FileInfo = file, Image = new object() }));
+        var thumbnails = new NoThumbnails();
+        var folderWatcher = new NoFolderWatcher();
+        // The navigation needs no image loader or platform for a file in a folder
+        core.InitializeNavigation(new NavigationService(null!, core.SharedCache, folderWatcher, null!, string.CompareOrdinal),
+            thumbnails, folderWatcher);
         var vm = new MainWindowViewModel(core, new TranslationViewModel(), null!, new GlobalSettingsViewModel(),
             new GallerySharedSettingsViewModel()) { ToolTip = new ToolTipViewModel() };
         core.MainWindows.MainWindows.Add(vm);
         var tab = vm.WindowTabs.ActiveTab.Value;
+        tab.Initialize(core.SharedCache, core.SharedThumbnailCache, thumbnails);
         tab.Display(new ImageModel { FileInfo = new FileInfo(path), Image = new object() });
+        tab.Display(new ImageModel { FileInfo = new FileInfo(after), Image = new object() });
+        var back = tab.ViewHistory.BeginStep(forwards: false)!.Value;
+        tab.Display(new ImageModel { FileInfo = new FileInfo(path), Image = new object() });
+        tab.ViewHistory.EndStep(back);
         return (vm, tab);
+    }
+
+    private sealed class NoFolderWatcher : IFileWatcherService
+    {
+        public void Watch(TabViewModel tab, string? directory = null) { }
+        public void Unwatch(TabViewModel tab) { }
+        public void RestartWatches() { }
+    }
+
+    private sealed class NoThumbnails : IThumbnailLoader
+    {
+        public ValueTask<object?> GetThumbnailAsync(FileInfo file, CoreViewModel core) => ValueTask.FromResult<object?>(null);
+        public ValueTask<object?> GetThumbnailAsync(FileInfo file, uint size, CoreViewModel? core = null, MagickImage? magick = null) =>
+            ValueTask.FromResult<object?>(null);
+        public object? GetExifThumbnail(FileInfo file) => null;
+        public object? GetThumbQuick(FileInfo file, CoreViewModel? core = null) => null;
     }
 
     private (MainWindowViewModel Vm, TabViewModel Tab) CreateTab(string path)

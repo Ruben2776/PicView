@@ -441,6 +441,22 @@ public class ViewHistoryTests
     }
 
     [Fact]
+    public void Rename_SameRenameTwice_ChangesNothingTheSecondTime()
+    {
+        // As when the folder watcher reports a rename that PicView applied itself
+        RecordAll("a.jpg", "b.jpg", "c.jpg", "d.jpg");
+        _history.Record(_history.BeginStep(forwards: false)!.Value.Target);
+        _history.Rename(PathOf("b.jpg"), PathOf("c.jpg"));
+        var entries = _history.Entries;
+        var cursor = _history.Cursor;
+
+        _history.Rename(PathOf("b.jpg"), PathOf("c.jpg"));
+
+        Assert.Equal(entries, _history.Entries);
+        Assert.Equal(cursor, _history.Cursor);
+    }
+
+    [Fact]
     public void Rename_IgnoresCase_AndNeverMatchesAPathThatOnlyContainsTheOld()
     {
         _history.Record(ViewHistoryEntry.ForFile(PathOf("A.jpg")));

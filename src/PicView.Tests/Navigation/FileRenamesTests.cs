@@ -177,6 +177,29 @@ public class FileRenamesTests : IDisposable
         Assert.Equal(shown, Assert.Single(tab.ViewHistory.Entries).Path);
     }
 
+    [Fact]
+    public void Follow_SameRenameTwice_ChangesNothingTheSecondTime()
+    {
+        // As when the folder watcher reports a rename that RenameHelper applied already. A rename onto a listed path
+        // merges entries, which a second pass must not undo or repeat
+        var tab = OpenWindow().WindowTabs.ActiveTab.Value;
+        tab.Display(Model(PathOf("a.jpg")));
+        tab.Display(Model(PathOf("b.jpg")));
+        tab.Display(Model(PathOf("c.jpg")));
+        FileHistoryManager.Pin(PathOf("a.jpg"));
+        FileRenames.Follow(_core, PathOf("b.jpg"), PathOf("c.jpg"));
+        var viewHistory = (tab.ViewHistory.Entries, tab.ViewHistory.Cursor);
+        var fileHistory = FileHistoryManager.AllEntries.Select(e => (e.Path, e.IsPinned)).ToArray();
+        var lastFile = Settings.StartUp.LastFile;
+
+        FileRenames.Follow(_core, PathOf("b.jpg"), PathOf("c.jpg"));
+
+        Assert.Equal(viewHistory.Entries, tab.ViewHistory.Entries);
+        Assert.Equal(viewHistory.Cursor, tab.ViewHistory.Cursor);
+        Assert.Equal(fileHistory, FileHistoryManager.AllEntries.Select(e => (e.Path, e.IsPinned)));
+        Assert.Equal(lastFile, Settings.StartUp.LastFile);
+    }
+
     [Theory]
     [InlineData("A.jpg", "b.jpg")]
     [InlineData("a.jpg.bak", "a.jpg.bak")]
