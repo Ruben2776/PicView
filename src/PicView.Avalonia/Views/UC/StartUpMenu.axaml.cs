@@ -186,7 +186,8 @@ public partial class StartUpMenu : UserControl
         {
             ShowFullLogo();
         }
-        else if (state.AutoFit)
+        // An AutoFit window follows the menu, so an unsized menu would grow to the full logo's size
+        else if (state.AutoFit && double.IsNaN(Width))
         {
             ShowIcon();
             return;

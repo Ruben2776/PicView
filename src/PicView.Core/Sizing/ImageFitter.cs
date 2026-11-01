@@ -99,6 +99,22 @@ public static class ImageFitter
         (Math.Max(0, windowWidth - reserved.GalleryWidth),
             Math.Max(0, windowHeight - reserved.Top - reserved.Bottom - reserved.GalleryHeight));
 
+    /// <summary>
+    /// The size an AutoFit window opens at when it shows the start-up menu: 1000 by 470, scaled down to fit in 60% of
+    /// the screen, but never below the window's minimum size.
+    /// </summary>
+    public static (double Width, double Height) StartUpMenuWindowSize(ScreenSize screen)
+    {
+        const double width = 1000;
+        const double height = 470;
+        const double largestScreenShare = 0.6;
+
+        var scale = Math.Min(1, Math.Min(screen.Width * largestScreenShare / width,
+            screen.Height * largestScreenShare / height));
+        return (Math.Max(SizeDefaults.WindowMinSize, width * scale),
+            Math.Max(SizeDefaults.WindowMinSize, height * scale));
+    }
+
     private static (double Width, double Height) GetAvailableArea(FitInput input)
     {
         var reserved = input.ReservedSpace;

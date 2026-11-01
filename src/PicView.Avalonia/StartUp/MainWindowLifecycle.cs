@@ -73,13 +73,7 @@ public sealed class MainWindowLifecycle
         var vm = ViewModelOf(window);
         var settingUp = ApplyWindowSettingsAsync(vm, isAppStart: false);
         WindowFunctions.HandleWindowScalingMode(window, isAppStart: false);
-        vm.WindowTabs.ActiveTab.Value.CurrentView.Value = new StartUpMenu
-        {
-            Buttons =
-            {
-                DataContext = vm.WindowTabs.ActiveTab.CurrentValue
-            }
-        };
+        vm.WindowTabs.ActiveTab.Value.CurrentView.Value = CreateStartUpMenu(window, vm.WindowTabs.ActiveTab.CurrentValue);
         window.Show();
         await Task.WhenAll(settingUp, SetUpShownWindow(window, isAppStart: false)).ConfigureAwait(true);
         return window;
@@ -160,13 +154,7 @@ public sealed class MainWindowLifecycle
         {
             var vm = ViewModelOf(window);
             var tab = vm.WindowTabs.ActiveTab.CurrentValue;
-            tab.CurrentView.Value = new StartUpMenu
-            {
-                Buttons =
-                {
-                    DataContext = tab
-                }
-            };
+            tab.CurrentView.Value = CreateStartUpMenu(window, tab);
             window.Show();
             if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
@@ -178,6 +166,23 @@ public sealed class MainWindowLifecycle
         {
             WindowFunctions.CenterWindowOnScreen(window);
         }
+    }
+
+    /// <summary>
+    /// Creates the start-up menu a window opens with, sized before it is shown so an AutoFit window opens at the
+    /// menu's size instead of shrinking to its minimum.
+    /// </summary>
+    private static StartUpMenu CreateStartUpMenu(MainWindow window, TabViewModel tab)
+    {
+        var menu = new StartUpMenu
+        {
+            Buttons =
+            {
+                DataContext = tab
+            }
+        };
+        window.WindowFitter.FitStartUpMenu(menu);
+        return menu;
     }
 
     /// <summary>

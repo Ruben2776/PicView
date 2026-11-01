@@ -318,4 +318,32 @@ public class ImageFitterTests
         Assert.Equal(700, width);
         Assert.Equal(600 - 32 - 26, height);
     }
+
+    [Fact]
+    public void StartUpMenuWindowSize_LargeScreen_IsItsOwnSize()
+    {
+        var (width, height) = ImageFitter.StartUpMenuWindowSize(new ScreenSize { Width = 1920, Height = 1080 });
+
+        Assert.Equal(1000, width);
+        Assert.Equal(470, height);
+    }
+
+    [Fact]
+    public void StartUpMenuWindowSize_SmallScreen_ShrinksToSixtyPercentOfIt()
+    {
+        // 60% of 1280 is 768, which sets the scale
+        var (width, height) = ImageFitter.StartUpMenuWindowSize(new ScreenSize { Width = 1280, Height = 1024 });
+
+        Assert.Equal(768, width, 6);
+        Assert.Equal(470 * 768 / 1000d, height, 6);
+    }
+
+    [Fact]
+    public void StartUpMenuWindowSize_TinyScreen_KeepsTheMinimumSize()
+    {
+        var (width, height) = ImageFitter.StartUpMenuWindowSize(new ScreenSize { Width = 640, Height = 480 });
+
+        Assert.Equal(384, width, 6);
+        Assert.Equal(SizeDefaults.WindowMinSize, height);
+    }
 }
