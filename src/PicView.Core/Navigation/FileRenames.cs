@@ -5,9 +5,9 @@ using PicView.Core.ViewModels;
 namespace PicView.Core.Navigation;
 
 /// <summary>
-/// The one entry point that applies a rename everywhere: in File History, in the Last File, and in the View History of
-/// every tab in every Main Window. Call it before a tab shows the renamed file, or the tab would record the file under
-/// its new name as a new view, and drop its entries after the cursor.
+/// The one entry point that applies a rename everywhere: in File History, in the Last File, and in the View History and
+/// the open archive of every tab in every Main Window. Call it before a tab shows the renamed file, or the tab would
+/// record the file under its new name as a new view, and drop its entries after the cursor.
 /// </summary>
 /// <remarks>
 /// File History, the Last File and the tabs follow on their own: a part that fails is logged, and stops neither the others
@@ -45,6 +45,8 @@ public static class FileRenames
             foreach (var tab in TabsOf(core))
             {
                 tab.ViewHistory.Rename(oldPath, newPath);
+                // A tab reading the archive records its next page under the new name too
+                tab.ArchiveExtractionService?.RenameArchive(oldPath, newPath);
             }
         }
         catch (Exception e)
@@ -83,6 +85,7 @@ public static class FileRenames
             foreach (var tab in TabsOf(core))
             {
                 tab.ViewHistory.RenameFolder(oldFolder, newFolder);
+                tab.ArchiveExtractionService?.RenameArchiveFolder(oldFolder, newFolder);
             }
         }
         catch (Exception e)

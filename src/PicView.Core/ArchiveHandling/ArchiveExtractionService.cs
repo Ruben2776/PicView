@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using PicView.Core.DebugTools;
 using PicView.Core.FileHandling;
+using PicView.Core.Navigation;
 using SharpCompress.Archives;
 using ZLinq;
 
@@ -96,6 +97,44 @@ public class ArchiveExtractionService
     ///     not extract, as <see cref="ArchivePageOf" /> finds it.
     /// </summary>
     public string? EntryOf(string extractedPath) => ArchivePageOf(extractedPath)?.Entry;
+
+    /// <summary>
+    ///     Follows a rename of the archive <paramref name="oldPath" />: the folders extracted from it count as
+    ///     <paramref name="newPath" />'s from now on, so the pages a tab shows from them record under the new name. Paths
+    ///     compare ignoring case.
+    /// </summary>
+    public void RenameArchive(string oldPath, string newPath) =>
+        RenameArchives(archive => string.Equals(archive, oldPath, StringComparison.OrdinalIgnoreCase) ? newPath : null);
+
+    /// <summary>
+    ///     Follows a rename of the folder <paramref name="oldFolder" />, as <see cref="RenameArchive" /> does for each
+    ///     archive in it, subfolders included.
+    /// </summary>
+    public void RenameArchiveFolder(string oldFolder, string newFolder) =>
+        RenameArchives(archive => FolderChange.PathInRenamedFolder(archive, oldFolder, newFolder));
+
+    // newPathOf gives the path an archive moves to, or null for one that stays. A rename never runs on a load, so it may
+    // allocate
+    private void RenameArchives(Func<string, string?> newPathOf)
+    {
+        lock (_lock)
+        {
+            Extraction[]? renamed = null;
+            for (var i = 0; i < _extractions.Length; i++)
+            {
+                if (newPathOf(_extractions[i].Archive) is { } newPath)
+                {
+                    renamed ??= (Extraction[])_extractions.Clone();
+                    renamed[i] = _extractions[i] with { Archive = newPath };
+                }
+            }
+
+            if (renamed is not null)
+            {
+                Volatile.Write(ref _extractions, renamed);
+            }
+        }
+    }
 
     /// <summary>
     ///     The file that <paramref name="entry" /> of the open archive was extracted to, or <c>null</c> when it is not

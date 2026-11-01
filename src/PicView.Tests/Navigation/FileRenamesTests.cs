@@ -1,3 +1,4 @@
+using System.IO.Compression;
 using PicView.Core.FileHistory;
 using PicView.Core.Models;
 using PicView.Core.Navigation;
@@ -79,6 +80,59 @@ public class FileRenamesTests : IDisposable
         Assert.All(tab.ViewHistory.Entries, e => Assert.Equal(PathOf("b.zip"), e.Path));
         Assert.Equal(PathOf("b.zip"), Assert.Single(FileHistoryManager.AllEntries).Path);
         Assert.Equal(PathOf("b.zip"), Settings.StartUp.LastFile);
+    }
+
+    [Fact]
+    public async Task Follow_ArchiveATabIsReading_RecordsItsNextPageUnderTheNewName()
+    {
+        var tab = OpenWindow().WindowTabs.ActiveTab.Value;
+        var oldZip = CreateZip(PathOf("old.zip"), "1.jpg", "2.jpg");
+        var newZip = PathOf("new.zip");
+        var extraction = tab.ArchiveExtractionService!;
+        try
+        {
+            var (first, second) = await ExtractTwoPagesAsync(tab, oldZip);
+            tab.Display(Model(first));
+
+            FileRenames.Follow(_core, oldZip, newZip);
+            tab.Display(Model(second));
+
+            Assert.Equal([ViewHistoryEntry.ForArchivePage(newZip, "1.jpg"), ViewHistoryEntry.ForArchivePage(newZip, "2.jpg")],
+                tab.ViewHistory.Entries);
+            Assert.Equal([newZip], FileHistoryManager.AllEntries.Select(e => e.Path));
+            Assert.Equal(newZip, Settings.StartUp.LastFile);
+            Assert.Equal(newZip, extraction.LastOpenedArchive);
+        }
+        finally
+        {
+            extraction.Cleanup();
+        }
+    }
+
+    [Fact]
+    public async Task FollowFolder_FolderOfAnArchiveATabIsReading_RecordsItsNextPageInTheNewFolder()
+    {
+        var tab = OpenWindow().WindowTabs.ActiveTab.Value;
+        var oldZip = CreateZip(Path.Combine(_folder, "x", "a.zip"), "1.jpg", "2.jpg");
+        var newZip = Path.Combine(_folder, "y", "a.zip");
+        var extraction = tab.ArchiveExtractionService!;
+        try
+        {
+            var (first, second) = await ExtractTwoPagesAsync(tab, oldZip);
+            tab.Display(Model(first));
+
+            FileRenames.FollowFolder(_core, Path.Combine(_folder, "x"), Path.Combine(_folder, "y"));
+            tab.Display(Model(second));
+
+            Assert.Equal([ViewHistoryEntry.ForArchivePage(newZip, "1.jpg"), ViewHistoryEntry.ForArchivePage(newZip, "2.jpg")],
+                tab.ViewHistory.Entries);
+            Assert.Equal([newZip], FileHistoryManager.AllEntries.Select(e => e.Path));
+            Assert.Equal(newZip, extraction.LastOpenedArchive);
+        }
+        finally
+        {
+            extraction.Cleanup();
+        }
     }
 
     [Fact]
@@ -201,6 +255,30 @@ public class FileRenamesTests : IDisposable
     private string PathOf(string name) => Path.Combine(_folder, name);
 
     private static ImageModel Model(string path) => new() { FileInfo = new FileInfo(path), Image = new object() };
+
+    // A zip at the path given that holds the images given, each a few bytes
+    private string CreateZip(string zip, params string[] images)
+    {
+        var source = Directory.CreateDirectory(Path.Combine(_folder, "zip_" + Guid.NewGuid().ToString("N"))).FullName;
+        foreach (var image in images)
+        {
+            File.WriteAllBytes(Path.Combine(source, image), [0xFF, 0xD8, 0xFF]);
+        }
+
+        Directory.CreateDirectory(Path.GetDirectoryName(zip)!);
+        ZipFile.CreateFromDirectory(source, zip);
+        return zip;
+    }
+
+    // Opens the archive in the tab and extracts its pages 1.jpg and 2.jpg, as a tab reading it has
+    private static async Task<(string First, string Second)> ExtractTwoPagesAsync(TabViewModel tab, string zip)
+    {
+        var extraction = tab.ArchiveExtractionService!;
+        await extraction.PrepareArchiveAsync(zip, (_, _) => Task.FromResult(false), string.CompareOrdinal);
+        var first = await extraction.ExtractEntryAsync(zip, "1.jpg", TestContext.Current.CancellationToken);
+        var second = await extraction.ExtractEntryAsync(zip, "2.jpg", TestContext.Current.CancellationToken);
+        return (first!, second!);
+    }
 
     private class MockFrameProvider : FrameProvider
     {
