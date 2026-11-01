@@ -618,47 +618,36 @@ public class ArchiveExtractionServiceTests
     {
         // The watcher lists a page once its file is there, and a tab that waits for it shows and records it at once. A
         // step Back to a page looks for it in that list, so a file still being written must not be found: the archive
-        // opens again at the page instead. A large page takes long enough to write that its file is seen while it is
-        // written
-        var folder = Directory.CreateDirectory(
-            Path.Combine(Path.GetTempPath(), "PicViewEntries_" + Guid.NewGuid().ToString("N"))).FullName;
-        var zip = Path.Combine(folder, "large.zip");
-        using (var archive = ZipFile.Open(zip, ZipArchiveMode.Create))
-        {
-            // Zeros compress to almost nothing, so only the extracted file is large
-            using var stream = archive.CreateEntry("large.jpg").Open();
-            var zeros = new byte[1024 * 1024];
-            for (var i = 0; i < 64; i++)
-            {
-                stream.Write(zeros);
-            }
-        }
-
-        var service = new ArchiveExtractionService();
+        // opens again at the page instead
+        var folder = Path.Combine(Path.GetTempPath(), "PicViewEntries_" + Guid.NewGuid().ToString("N"));
+        var source = Directory.CreateDirectory(Path.Combine(folder, "source")).FullName;
+        await File.WriteAllBytesAsync(Path.Combine(source, "page.jpg"), [0xFF, 0xD8, 0xFF],
+            TestContext.Current.CancellationToken);
+        var zip = Path.Combine(folder, "pages.zip");
+        ZipFile.CreateFromDirectory(source, zip);
+        var service = new HeldWriteExtraction("page.jpg");
         var preparation = await service.PrepareArchiveAsync(zip, (_, _) => Task.FromResult(false), string.CompareOrdinal);
-        var page = Path.Combine(preparation!.Value.TempDirectory, "large.jpg");
+        var page = Path.Combine(preparation!.Value.TempDirectory, "page.jpg");
 
         try
         {
-            var extraction = Task.Run(() => service.ExtractRemaining(zip, ["large.jpg"],
+            var extraction = Task.Run(() => service.ExtractRemaining(zip, ["page.jpg"],
                 ct: TestContext.Current.CancellationToken), TestContext.Current.CancellationToken);
-            // Looks as often as it can, so it sees the file within the write
-            var deadline = DateTime.UtcNow + TimeSpan.FromSeconds(10);
-            while (!File.Exists(page) && !extraction.IsCompleted && DateTime.UtcNow < deadline)
-            {
-                Thread.SpinWait(10);
-            }
-
-            var entryWhenThere = service.EntryOf(page);
-            var fileWhenThere = service.ExtractedPathOf("large.jpg");
+            await service.Holding.Task.WaitAsync(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken);
+            var isThereWhileWritten = File.Exists(page);
+            var entryWhileWritten = service.EntryOf(page);
+            var fileWhileWritten = service.ExtractedPathOf("page.jpg");
+            service.Release();
             await extraction.WaitAsync(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken);
 
-            Assert.Equal("large.jpg", entryWhenThere);
-            Assert.Null(fileWhenThere);
-            Assert.Equal(page, service.ExtractedPathOf("large.jpg"));
+            Assert.True(isThereWhileWritten);
+            Assert.Equal("page.jpg", entryWhileWritten);
+            Assert.Null(fileWhileWritten);
+            Assert.Equal(page, service.ExtractedPathOf("page.jpg"));
         }
         finally
         {
+            service.Release();
             service.Cleanup();
             Directory.Delete(folder, true);
         }

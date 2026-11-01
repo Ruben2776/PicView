@@ -819,7 +819,7 @@ public class ArchiveExtractionService
         using (var entryStream = entry.OpenEntryStream())
         using (var fileStream = File.Create(destinationPath))
         {
-            entryStream.CopyTo(fileStream);
+            CopyEntry(entryStream, fileStream);
         }
 
 #if DEBUG
@@ -829,6 +829,12 @@ public class ArchiveExtractionService
         extraction?.FileByEntry[entry.Key!] = destinationPath;
         return destinationPath;
     }
+
+    /// <summary>
+    ///     Writes an entry into its file, which is already there, as <paramref name="file" /> holds it open. A test holds
+    ///     the write open through it, to see the page while it is written.
+    /// </summary>
+    internal virtual void CopyEntry(Stream entry, FileStream file) => entry.CopyTo(file);
 
     /// <summary>
     ///     Gets the name an entry is extracted under. When respecting the archive structure, the entry's folders
