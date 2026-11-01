@@ -220,6 +220,45 @@ public class FileHistoryManagerTests : IDisposable
     }
 
     [Fact]
+    public async Task Add_NewPathAfterUnpinningAtTheCap_KeepsTheNewestViewsAtTheCapOnceSavedAndLoaded()
+    {
+        FileHistoryManager.Add("/path/pinned.jpg");
+        FileHistoryManager.Pin("/path/pinned.jpg");
+        for (var i = 1; i <= 50; i++)
+        {
+            FileHistoryManager.Add($"/path/{i}.jpg");
+        }
+        // Unpinning one leaves one more unpinned entry than the cap
+        FileHistoryManager.UnPin("/path/pinned.jpg");
+
+        FileHistoryManager.Add("/path/newest.jpg");
+        await FileHistoryManager.SaveToFileAsync();
+        FileHistoryManager.Initialize(_configPath);
+
+        var paths = FileHistoryManager.AllEntries.Select(e => e.Path).ToArray();
+        Assert.Equal(50, paths.Length);
+        Assert.Equal("/path/2.jpg", paths[0]);
+        Assert.Equal("/path/newest.jpg", paths[^1]);
+    }
+
+    [Fact]
+    public async Task SaveToFileAsync_MoreUnpinnedEntriesThanTheCap_KeepsTheNewestInTheirOrder()
+    {
+        FileHistoryManager.Add("/path/pinned.jpg");
+        FileHistoryManager.Pin("/path/pinned.jpg");
+        for (var i = 1; i <= 50; i++)
+        {
+            FileHistoryManager.Add($"/path/{i}.jpg");
+        }
+        FileHistoryManager.UnPin("/path/pinned.jpg");
+
+        await FileHistoryManager.SaveToFileAsync();
+        FileHistoryManager.Initialize(_configPath);
+
+        Assert.Equal(Enumerable.Range(1, 50).Select(i => $"/path/{i}.jpg"), FileHistoryManager.AllEntries.Select(e => e.Path));
+    }
+
+    [Fact]
     public void AllEntries_IsACopy_ThatLaterAddsLeaveAlone()
     {
         FileHistoryManager.Add("/path/a.jpg");

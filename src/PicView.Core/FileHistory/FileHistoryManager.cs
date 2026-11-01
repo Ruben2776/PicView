@@ -247,13 +247,30 @@ public static class FileHistoryManager
             }
         }
 
-        // If we'll exceed the maximum unpinned entries, remove the oldest unpinned entry
-        if (unpinnedCount >= FileHistoryConfiguration.MaxHistoryEntries)
+        // The oldest unpinned entries go until the new one fits under the cap. That can be more than one, since unpinning
+        // an entry at the cap leaves one more unpinned entry than the cap
+        while (unpinnedCount >= FileHistoryConfiguration.MaxHistoryEntries)
         {
             entries.RemoveAt(oldestUnpinned);
+            unpinnedCount--;
+            oldestUnpinned = IndexOfUnpinned(entries, oldestUnpinned);
         }
 
         entries.Add(new Entry { Path = path, IsPinned = false });
+    }
+
+    // Callers hold the lock. The index of the first unpinned entry from start on, else -1
+    private static int IndexOfUnpinned(List<Entry> entries, int start)
+    {
+        for (var i = start; i < entries.Count; i++)
+        {
+            if (!entries[i].IsPinned)
+            {
+                return i;
+            }
+        }
+
+        return -1;
     }
 
     // Callers hold the lock. Only runs before the first load, so it may allocate
@@ -433,9 +450,10 @@ public static class FileHistoryManager
 
                 // Add pinned entries (max 5)
                 sortedEntries.AddRange(entries.Where(e => e.IsPinned).Take(FileHistoryConfiguration.MaxPinnedEntries));
-                // Add unpinned entries (max MaxHistoryEntries)
+                // Add the newest unpinned entries (max MaxHistoryEntries), in their order. The list holds one more after
+                // an entry at the cap is unpinned
                 sortedEntries.AddRange(entries.Where(e => !e.IsPinned)
-                    .Take(FileHistoryConfiguration.MaxHistoryEntries));
+                    .TakeLast(FileHistoryConfiguration.MaxHistoryEntries));
             }
 
             var historyEntries = new FileHistoryEntries
