@@ -289,9 +289,8 @@ public class ArchiveExtractionService
             var sharedFolderCount = NotRespectingStructure;
             if (IsRespectingStructure)
             {
-                var segments = SplitPaths(entries);
-                SortByPath(entries, segments, stringComparer);
-                sharedFolderCount = CountSharedFolders(segments);
+                sharedFolderCount = CountSharedFolders(SplitPaths(entries));
+                SortByFlatFileName(entries, sharedFolderCount, stringComparer);
             }
             else
             {
@@ -835,6 +834,25 @@ public class ArchiveExtractionService
         var ascending = Settings.Sorting.Ascending;
         Array.Sort(segments, paths, Comparer<string[]>.Create((a, b) =>
             ascending ? CompareSegments(a, b, stringComparer) : CompareSegments(b, a, stringComparer)));
+    }
+
+    /// <summary>
+    ///     Sorts the keys by the names their files are extracted under, as the tab sorts the extracted files by name, so
+    ///     the keys are in the order the tab lists the pages in. Since the names keep the folders, that is the folder order,
+    ///     but sorting by path instead would differ wherever a folder sorts unlike its name in the file name, as
+    ///     <c>Vol 1 (color)</c> does before <c>Vol 1 -</c>. Then the pages extracted nearest the start would not be the
+    ///     pages nearest it on screen.
+    /// </summary>
+    private static void SortByFlatFileName(string[] keys, int sharedFolderCount, Func<string, string, int> stringComparer)
+    {
+        var names = new string[keys.Length];
+        for (var i = 0; i < keys.Length; i++)
+        {
+            names[i] = GetFlatFileName(keys[i], sharedFolderCount);
+        }
+
+        var ascending = Settings.Sorting.Ascending;
+        Array.Sort(names, keys, Comparer<string>.Create((a, b) => ascending ? stringComparer(a, b) : stringComparer(b, a)));
     }
 
     private static int CompareSegments(string[] a, string[] b, Func<string, string, int> stringComparer)

@@ -308,6 +308,22 @@ public class NavigationServiceTests : IDisposable
         return tab;
     }
 
+    // A zip of images at the paths given, with their folders, as a comic archive with a folder per volume is built
+    private async Task<string> CreateZipWithEntriesAsync(string name, params string[] entries)
+    {
+        var source = Directory.CreateDirectory(
+            Path.Combine(_testDirectory, Path.GetFileNameWithoutExtension(name) + "_source")).FullName;
+        foreach (var entry in entries)
+        {
+            var path = Path.Combine(source, entry);
+            Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+            await File.WriteAllBytesAsync(path, [0xFF, 0xD8, 0xFF], TestContext.Current.CancellationToken);
+        }
+        var zip = Path.Combine(_testDirectory, name);
+        System.IO.Compression.ZipFile.CreateFromDirectory(source, zip);
+        return zip;
+    }
+
     private async Task<string> WriteImageAsync(string name)
     {
         var path = Path.Combine(_testDirectory, name);
@@ -780,6 +796,56 @@ public class NavigationServiceTests : IDisposable
 
         Assert.False(tab.IsArchiveExtracting.Value);
         Assert.Null(tab.ArchiveExtractionProgressText.Value);
+    }
+
+    [Theory]
+    // One by one, the pages either side of the start on screen take turns
+    [InlineData(false, new[] { "Vol 1 - 001.jpg", "Vol 1 (color) - 001.jpg", "Vol 1 - 002.jpg" })]
+    // In batches, the ten from the start on screen come first
+    [InlineData(true, new[] { "Vol 1 - 001.jpg", "Vol 1 - 002.jpg", "Vol 1 (color) - 001.jpg" })]
+    public async Task LoadFromArchiveAsync_StartEntryInAnArchiveWithFolders_ExtractsThePagesNearestOnScreenFirst(
+        bool alwaysUncompressEntireArchive, string[] expected)
+    {
+        // The tab lists the extracted files by name, and "(" sorts before "-", so the color volume's files come first,
+        // although its folder's name comes after the other one's
+        Settings.Navigation.AlwaysUncompressEntireArchive = alwaysUncompressEntireArchive;
+        var zip = await CreateZipWithEntriesAsync($"folders_{alwaysUncompressEntireArchive}.zip",
+            "Vol 1/001.jpg", "Vol 1/002.jpg", "Vol 1 (color)/001.jpg", "Vol 1 (color)/002.jpg");
+        var tab = CreateTab(_testDirectory);
+        var extracted = new ConcurrentQueue<string>();
+        FileSystemWatcher? folderWatcher = null;
+        // The tab watches the extraction folder before the rest are extracted, so this sees them in the order they come
+        _mockFileWatcherService.OnWatch = directory =>
+        {
+            if (folderWatcher is not null)
+            {
+                return;
+            }
+
+            folderWatcher = new FileSystemWatcher(directory!);
+            folderWatcher.Created += (_, e) => extracted.Enqueue(e.Name!);
+            folderWatcher.EnableRaisingEvents = true;
+        };
+
+        try
+        {
+            await _navigationService.LoadFromArchiveAsync(zip, tab, new CancellationTokenSource(),
+                startEntry: "Vol 1 (color)/002.jpg");
+            // The pages extracted together with the start entry, after it
+            var withTheStart = tab.ImageIterator.Files.Select(f => f.Name)
+                .Where(name => name != "Vol 1 (color) - 002.jpg").ToArray();
+            await WaitUntil(() => !tab.IsArchiveExtracting.Value && withTheStart.Length + extracted.Count >= 3,
+                () => string.Join(", ", extracted));
+
+            Assert.Equal("Vol 1 (color) - 002.jpg", tab.Model.FileInfo?.Name);
+            Assert.Equal(expected, withTheStart.Concat(extracted));
+        }
+        finally
+        {
+            folderWatcher?.Dispose();
+            tab.ArchiveExtractionService.Cleanup();
+            Settings.Navigation.AlwaysUncompressEntireArchive = true;
+        }
     }
 
     [Fact]
