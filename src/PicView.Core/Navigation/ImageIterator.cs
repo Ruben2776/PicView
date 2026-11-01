@@ -292,12 +292,11 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
 
         var targetFile = files[index];
         // A single image has no secondary, and a pair that is still loading is no longer the current one
-        if (MakeCurrent(files, index, -1) is not { } current)
+        if (MakeCurrent(files, index, -1) is null)
         {
             return;
         }
 
-        index = current.Index;
         var request = Cache.GetAsync(_tab.Id, targetFile, ct.Token);
         if (!request.IsCompleted)
         {
@@ -306,12 +305,12 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
             await Task.Run(async () =>
             {
                 var thumb = GetThumbnail(targetFile);
-                if (IsTargetActive(targetFile, index))
+                if (IsTargetActive(targetFile))
                 {
                     _tab.Image.Value = thumb;
                 }
                 var model = await request.ConfigureAwait(false);
-                if (model is not null && IsTargetActive(targetFile, index))
+                if (model is not null && IsTargetActive(targetFile))
                 {
                     UpdateModel(model);
                 }
@@ -711,17 +710,12 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
         return false;
     }
 
-    private bool IsTargetActive(FileInfo targetFile, int targetIndex)
+    // Told by the file, as the pair's IsCurrent is: a page inserted before the target while it loads moves it along, and
+    // another step can then land on its old index
+    private bool IsTargetActive(FileInfo targetFile)
     {
-        if (CurrentIndex == targetIndex)
-        {
-            return true;
-        }
-        if (CurrentIndex >= 0 && CurrentIndex < Files.Count)
-        {
-            return string.Equals(Files[CurrentIndex].FullName, targetFile.FullName, StringComparison.Ordinal);
-        }
-        return false;
+        var (index, files) = ShownIndexAndFiles();
+        return IsSameFile(FileAt(files, index), targetFile);
     }
 
     #endregion

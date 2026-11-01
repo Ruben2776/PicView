@@ -197,6 +197,31 @@ public class ImageIteratorFileListTests
     }
 
     [Fact]
+    public async Task IterateToIndex_AnotherStepLandsOnItsOldIndexWhileItLoads_ShowsTheOtherStep()
+    {
+        var held = new TaskCompletionSource<ImageModel>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var cache = new SharedImageCache(file => file.Name == "c.jpg"
+            ? new ValueTask<ImageModel>(held.Task)
+            : ValueTask.FromResult(new ImageModel { FileInfo = file, Image = new ProbeImage() }));
+        var iterator = new ImageIterator(cache, new ThumbnailCache(), new MockThumbnailLoader(), _tab);
+        var b = File("b.jpg");
+        var c = File("c.jpg");
+        iterator.Initialize([b, c, File("d.jpg")], 0);
+        _tab.Display(new ImageModel { FileInfo = b, Image = new ProbeImage() });
+
+        // A slow Next to c, then an archive's extraction inserts a page before it, so a Previous lands on c's old index
+        var next = iterator.IterateToIndexAsync(1, new CancellationTokenSource()).AsTask();
+        iterator.Insert(File("a.jpg"), string.CompareOrdinal);
+        await iterator.NavigateAsync(NavigateTo.Previous, SkipAmount.One, new CancellationTokenSource())
+            .AsTask().WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+        held.SetResult(new ImageModel { FileInfo = c, Image = new ProbeImage() });
+        await next.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+
+        Assert.Equal("b.jpg", _tab.Model.FileInfo?.Name);
+        Assert.Equal(1, iterator.CurrentIndex);
+    }
+
+    [Fact]
     public async Task NavigateAsync_SideBySide_UsesIterateToIndicesNotIterateToIndex()
     {
         Settings.ImageScaling.ShowImageSideBySide = true;
