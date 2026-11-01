@@ -27,6 +27,8 @@ public class FileRenamesTests : IDisposable
 
     public void Dispose()
     {
+        // So the hand-edited history file of one test is not what a test of another class finds loaded
+        FileHistoryManager.Unload();
         Directory.Delete(_folder, true);
         _fileHistoryBackup.Dispose();
     }
@@ -125,6 +127,50 @@ public class FileRenamesTests : IDisposable
         FileRenames.FollowFolder(_core, Path.Combine(_folder, "x"), Path.Combine(_folder, "y"));
 
         Assert.Equal(lastFile, Settings.StartUp.LastFile);
+    }
+
+    [Fact]
+    public void FollowFolder_FileHistoryCannotMoveAnEntry_StillReachesTheTabsAndTheLastFile()
+    {
+        // A hand-edited FileHistory.json can list an entry with no path, which File History can't move to a folder
+        var edited = Path.Combine(_folder, "edited.json");
+        File.WriteAllText(edited, """{"Entries":[{"Path":null}]}""");
+        FileHistoryManager.Initialize(edited);
+        var tab = OpenWindow().WindowTabs.ActiveTab.Value;
+        tab.Display(Model(Path.Combine(_folder, "x", "a.jpg")));
+
+        FileRenames.FollowFolder(_core, Path.Combine(_folder, "x"), Path.Combine(_folder, "y"));
+
+        var moved = Path.Combine(_folder, "y", "a.jpg");
+        Assert.Equal(moved, Assert.Single(tab.ViewHistory.Entries).Path);
+        Assert.Equal(moved, Settings.StartUp.LastFile);
+    }
+
+    [Fact]
+    public void Follow_AWindowThatFails_StillRenamesFileHistoryAndTheLastFile()
+    {
+        // The lists of windows and tabs are copied while tabs open and close, and the copy can fail; a window that is
+        // null stands in for that
+        OpenWindow().WindowTabs.ActiveTab.Value.Display(Model(PathOf("a.jpg")));
+        _core.MainWindows.MainWindows.Add(null!);
+
+        FileRenames.Follow(_core, PathOf("a.jpg"), PathOf("b.jpg"));
+
+        Assert.Equal(PathOf("b.jpg"), Assert.Single(FileHistoryManager.AllEntries).Path);
+        Assert.Equal(PathOf("b.jpg"), Settings.StartUp.LastFile);
+    }
+
+    [Fact]
+    public void FollowFolder_AWindowThatFails_StillRenamesFileHistoryAndTheLastFile()
+    {
+        OpenWindow().WindowTabs.ActiveTab.Value.Display(Model(Path.Combine(_folder, "x", "a.jpg")));
+        _core.MainWindows.MainWindows.Add(null!);
+
+        FileRenames.FollowFolder(_core, Path.Combine(_folder, "x"), Path.Combine(_folder, "y"));
+
+        var moved = Path.Combine(_folder, "y", "a.jpg");
+        Assert.Equal(moved, Assert.Single(FileHistoryManager.AllEntries).Path);
+        Assert.Equal(moved, Settings.StartUp.LastFile);
     }
 
     private MainWindowViewModel OpenWindow()

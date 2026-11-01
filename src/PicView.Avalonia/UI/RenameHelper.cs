@@ -3,8 +3,8 @@ using ImageMagick;
 using PicView.Avalonia.CustomControls;
 using PicView.Core.DebugTools;
 using PicView.Core.FileHandling;
-using PicView.Core.FileHistory;
 using PicView.Core.Localization;
+using PicView.Core.Navigation;
 using PicView.Core.ViewModels;
 
 namespace PicView.Avalonia.UI;
@@ -46,11 +46,6 @@ public static class RenameHelper
             vm.IsLoadingIndicatorShown.Value = false;
         }
 
-        if (isRenamed)
-        {
-            FileHistoryManager.Rename(oldPath, newPath);
-        }
-
         if (mainWindow is not null)
         {
             await Dispatcher.UIThread.InvokeAsync(() => mainWindow.UIHelper.GetMainView.Focus());
@@ -83,7 +78,8 @@ public static class RenameHelper
 
     /// <summary>
     /// Renames the file, or converts it when the extension changes. The folder watcher moves it to its sorted place in
-    /// the tab's files and gallery.
+    /// the tab's files and gallery. Every history follows the new name before the tab shows the file under it, or the
+    /// tab would record it as a new view.
     /// </summary>
     private static async Task<bool> RenameFileAsync(MainWindowViewModel vm, TabViewModel tab, string oldPath,
         string newPath)
@@ -97,6 +93,8 @@ public static class RenameHelper
                 return false;
             }
 
+            FileRenames.Follow(vm.Core, oldPath, newPath);
+
             var newFileInfo = new FileInfo(newPath);
             tab.FileInfo.Value = newFileInfo;
             tab.Model.FileInfo = newFileInfo;
@@ -108,6 +106,8 @@ public static class RenameHelper
         {
             await magick.WriteAsync(newPath).ConfigureAwait(false);
         }
+
+        FileRenames.Follow(vm.Core, oldPath, newPath);
 
         // Show the converted file before deleting the original, so the watcher removes a file that is no longer shown
         // instead of navigating away from it

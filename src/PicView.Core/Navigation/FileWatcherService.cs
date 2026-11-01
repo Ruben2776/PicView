@@ -1,7 +1,6 @@
 using System.Collections.Concurrent;
 using PicView.Core.DebugTools;
 using PicView.Core.FileHandling;
-using PicView.Core.FileHistory;
 using PicView.Core.Models;
 using PicView.Core.Navigation.Interfaces;
 using PicView.Core.ViewModels;
@@ -9,11 +8,23 @@ using R3;
 
 namespace PicView.Core.Navigation;
 
+/// <summary>
+/// Watches the folders the tabs browse, and lets every tab watching a folder follow what happens to its files.
+/// </summary>
+/// <param name="fileRenamed">
+/// Gets a renamed file's old and new path before any tab follows the rename. A tab that shows the renamed file records
+/// it, which would count as a new view if the histories did not know the new name yet.
+/// </param>
+/// <param name="folderRenamed">
+/// The same for a renamed folder, with its old and new path: the watched folder, or one of its subfolders.
+/// </param>
 public class FileWatcherService(
     Func<string, string, int> stringComparer,
     SharedImageCache cache,
     IThumbnailCache? thumbnailCache = null,
-    IFolderEvents? folderEvents = null)
+    IFolderEvents? folderEvents = null,
+    Action<string, string>? fileRenamed = null,
+    Action<string, string>? folderRenamed = null)
     : IFileWatcherService, IDisposable
 {
     private readonly IFolderEvents _folderEvents = folderEvents ?? new FileSystemFolderEvents();
@@ -147,6 +158,9 @@ public class FileWatcherService(
             }
         }
 
+        // Before any tab follows, as for a file. Outside the lock, so renaming in every history holds up no Watch or Unwatch
+        folderRenamed?.Invoke(directory, newDirectory);
+
         var change = new FolderChange(FolderChangeKind.FolderRenamed, new FileInfo(newDirectory), directory,
             new FileDetailsSource(new FileInfo(newDirectory), waitUntilReady: false), _stringComparer);
         foreach (var tab in SubscribersOf(newDirectory))
@@ -197,9 +211,9 @@ public class FileWatcherService(
     }
 
     /// <summary>
-    /// Handles one file event: forgets the file's stale image and thumbnail, then lets each tab still watching
-    /// <paramref name="directory"/> follow it, one tab at a time, so a failure in one tab does not keep it from the
-    /// others. The file's details are read at most once, for whichever tabs need them.
+    /// Handles one file event: forgets the file's stale image and thumbnail, hands a rename to the histories, then lets
+    /// each tab still watching <paramref name="directory"/> follow it, one tab at a time, so a failure in one tab does not
+    /// keep it from the others. The file's details are read at most once, for whichever tabs need them.
     /// </summary>
     private async ValueTask HandleAsync(string directory, FolderChangeKind kind, string fullPath, string? oldFullPath,
         CancellationToken ct)
@@ -224,6 +238,21 @@ public class FileWatcherService(
         thumbnailCache?.Remove(stalePath);
         _cache.Invalidate(stalePath);
 
+        // A rename reaches every history before any tab follows it. The tab that shows the file records it under its new
+        // name, which a history that doesn't know the name yet takes for a new view, dropping its entries after the cursor
+        if (oldFullPath is { } oldPath)
+        {
+            switch (kind)
+            {
+                case FolderChangeKind.Renamed:
+                    fileRenamed?.Invoke(oldPath, fullPath);
+                    break;
+                case FolderChangeKind.FolderRenamed:
+                    folderRenamed?.Invoke(oldPath, fullPath);
+                    break;
+            }
+        }
+
         var file = new FileInfo(fullPath);
         var change = new FolderChange(kind, file, oldFullPath,
             new FileDetailsSource(file, waitUntilReady: kind is not FolderChangeKind.Deleted), _stringComparer);
@@ -238,11 +267,6 @@ public class FileWatcherService(
             {
                 DebugHelper.LogDebug(nameof(FileWatcherService), kind.ToString(), exception);
             }
-        }
-
-        if (kind is FolderChangeKind.Renamed && oldFullPath is not null)
-        {
-            FileHistoryManager.Rename(oldFullPath, fullPath);
         }
     }
 

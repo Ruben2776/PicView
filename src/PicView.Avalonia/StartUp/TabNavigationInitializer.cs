@@ -65,8 +65,11 @@ public static class TabNavigationInitializer
         Debug.Assert(core.PlatformService != null);
         // The shared image cache loads through the same logic as AvaloniaImageLoader (via GetImageModel)
         var thumbnailLoader = ServiceHelper.ThumbLoader;
+        // A rename the watcher reports reaches the history of every tab of every window before any tab follows it
         var fileWatcher = new FileWatcherService(core.PlatformService.CompareStrings, core.SharedCache,
-            core.SharedThumbnailCache);
+            core.SharedThumbnailCache,
+            fileRenamed: (oldPath, newPath) => FileRenames.Follow(core, oldPath, newPath),
+            folderRenamed: (oldFolder, newFolder) => FileRenames.FollowFolder(core, oldFolder, newFolder));
         var navigation = new NavigationService(ServiceHelper.ImageLoader, core.SharedCache, fileWatcher,
             core.PlatformService, core.PlatformService.CompareStrings);
         core.InitializeNavigation(navigation, thumbnailLoader, fileWatcher);

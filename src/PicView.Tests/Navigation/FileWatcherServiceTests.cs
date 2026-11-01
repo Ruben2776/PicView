@@ -4,6 +4,7 @@ using PicView.Core.Localization;
 using PicView.Core.Models;
 using PicView.Core.Navigation;
 using PicView.Core.Navigation.Interfaces;
+using PicView.Core.Navigation.Tiff;
 using PicView.Core.ViewModels;
 using R3;
 
@@ -22,6 +23,10 @@ public class FileWatcherServiceTests : IDisposable
     private readonly MockThumbnailCache _mockThumbnailCache;
     private readonly string _testDirectory;
 
+    // A test sets these to see the renames the watcher hands on before any tab follows them
+    private Action<string, string>? _fileRenamed;
+    private Action<string, string>? _folderRenamed;
+
     public FileWatcherServiceTests()
     {
         ObservableSystem.DefaultFrameProvider = new MockFrameProvider();
@@ -37,7 +42,9 @@ public class FileWatcherServiceTests : IDisposable
         _mockThumbnailCache = new MockThumbnailCache();
         // Use default ordinal comparison for tests
         _service = new FileWatcherService((s1, s2) => string.CompareOrdinal(s1, s2), _cache, _mockThumbnailCache,
-            _folderEvents);
+            _folderEvents,
+            fileRenamed: (oldPath, newPath) => _fileRenamed?.Invoke(oldPath, newPath),
+            folderRenamed: (oldFolder, newFolder) => _folderRenamed?.Invoke(oldFolder, newFolder));
     }
 
     [Fact]
@@ -232,10 +239,50 @@ public class FileWatcherServiceTests : IDisposable
         Assert.Contains(files[0].FullName, _mockThumbnailCache.RemovedPaths);
     }
 
+    [Fact]
+    public async Task OnFileRenamed_RenamesTheHistoryBeforeTheTabsFollow()
+    {
+        var files = Files("old.jpg");
+        var tab = CreateTab(_testDirectory, files, files[0]);
+        tab.Display(new ImageModel { FileInfo = files[0], Image = new object() });
+        string? shownWhenRenamed = null;
+        _fileRenamed = (oldPath, newPath) =>
+        {
+            shownWhenRenamed = tab.Model.FileInfo?.FullName;
+            tab.ViewHistory.Rename(oldPath, newPath);
+        };
+        var newPath = Path.Combine(_testDirectory, "new.jpg");
 
+        Watch(tab).RaiseRenamed("old.jpg", "new.jpg");
 
+        await WaitUntilAsync(() => tab.Model.FileInfo?.FullName == newPath);
+        Assert.Equal(files[0].FullName, shownWhenRenamed);
+        Assert.Equal(newPath, Assert.Single(tab.ViewHistory.Entries).Path);
+    }
 
+    [Fact]
+    public async Task OnFileRenamed_MultiPageTiff_KeepsTheTabOnTheEntryOfItsPage()
+    {
+        var files = Files("old.tif");
+        var tab = CreateTab(_testDirectory, files, files[0]);
+        object[] pages = [new(), new(), new()];
+        tab.Display(new ImageModel
+        {
+            FileInfo = files[0],
+            Image = pages[1],
+            TiffNavigation = new TiffNavigationInfo { PageCount = pages.Length, CurrentPage = 1, Pages = pages }
+        });
+        _fileRenamed = (oldPath, newPath) => tab.ViewHistory.Rename(oldPath, newPath);
+        var newPath = Path.Combine(_testDirectory, "new.tif");
 
+        Watch(tab).RaiseRenamed("old.tif", "new.tif");
+
+        // The tab shows the file again under its new name, at the same page, which is the entry it already has
+        await WaitUntilAsync(() => tab.Model.FileInfo?.FullName == newPath);
+        var entry = Assert.Single(tab.ViewHistory.Entries);
+        Assert.Equal(newPath, entry.Path);
+        Assert.Equal(1, entry.Page);
+    }
 
     [Fact]
     public async Task OnFileReplacedThroughTempFile_KeepsTheFileOnceInItsPlace()
@@ -431,6 +478,22 @@ public class FileWatcherServiceTests : IDisposable
         Assert.Equal(Path.Combine(renamed, "b.jpg"), tab.FileInfo.Value?.FullName);
     }
 
+    [Fact]
+    public async Task OnSubfolderRenamed_RenamesTheHistoryBeforeTheTabsFollow()
+    {
+        Settings.Sorting.IncludeSubDirectories = true;
+        // A file in the watched folder first, as the tab watches the folder of its first file
+        var files = Files("a.jpg", Path.Combine("sub", "b.jpg"));
+        var tab = CreateTab(_testDirectory, files, files[1]);
+        string? shownWhenRenamed = null;
+        _folderRenamed = (_, _) => shownWhenRenamed = tab.Model.FileInfo?.FullName;
+        var renamed = Path.Combine(_testDirectory, "renamed");
+
+        Watch(tab).RaiseRenamed("sub", "renamed");
+
+        await WaitUntilAsync(() => tab.Model.FileInfo?.DirectoryName == renamed);
+        Assert.Equal(files[1].FullName, shownWhenRenamed);
+    }
 
     [Fact]
     public async Task OnFolderRenamed_EveryTabOfTheFolderFollowsIt()
@@ -451,6 +514,27 @@ public class FileWatcherServiceTests : IDisposable
                                    second.ImageIterator!.Files[0].DirectoryName == renamed);
         Assert.Equal(Path.Combine(renamed, "b.jpg"), first.Model.FileInfo?.FullName);
         Assert.Equal(Path.Combine(renamed, "a.jpg"), second.Model.FileInfo?.FullName);
+    }
+
+    [Fact]
+    public async Task OnFolderRenamed_RenamesTheHistoryBeforeTheTabsFollow()
+    {
+        var files = Files("a.jpg");
+        var tab = CreateTab(_testDirectory, files, files[0]);
+        string? shownWhenRenamed = null;
+        (string Old, string New)? renamedFolder = null;
+        _folderRenamed = (oldFolder, newFolder) =>
+        {
+            shownWhenRenamed = tab.Model.FileInfo?.FullName;
+            renamedFolder = (oldFolder, newFolder);
+        };
+        var moved = _testDirectory + "_renamed";
+
+        Watch(tab).RaiseMoved(moved);
+
+        await WaitUntilAsync(() => tab.Model.FileInfo?.DirectoryName == moved);
+        Assert.Equal((_testDirectory, moved), renamedFolder);
+        Assert.Equal(files[0].FullName, shownWhenRenamed);
     }
 
     [Fact]

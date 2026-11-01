@@ -3,9 +3,9 @@ using ImageMagick;
 using PicView.Core.DebugTools;
 using PicView.Core.Extensions;
 using PicView.Core.FileHandling;
-using PicView.Core.FileHistory;
 using PicView.Core.ImageDecoding;
 using PicView.Core.Models;
+using PicView.Core.Navigation;
 using R3;
 
 namespace PicView.Core.ViewModels;
@@ -251,11 +251,13 @@ public class ResizeImageViewModel : IDisposable
     {
         try
         {
+            // The histories follow before the tab shows the converted file, or it would record it as a new view
+            FileRenames.Follow(_mainVm?.Core, originalPath, convertedPath);
+
             // Show the converted file before deleting the original, so the folder watcher removes a file that is no
             // longer shown instead of navigating away from it
             await _mainVm.WindowTabs.LoadFromFileAsync(convertedPath, tab).ConfigureAwait(false);
             File.Delete(originalPath);
-            FileHistoryManager.Rename(originalPath, convertedPath);
         }
         catch (Exception e)
         {

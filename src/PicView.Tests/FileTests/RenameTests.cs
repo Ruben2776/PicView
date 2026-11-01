@@ -1,6 +1,7 @@
 using ImageMagick;
 using PicView.Avalonia.UI;
 using PicView.Core.FileHandling;
+using PicView.Core.Models;
 using PicView.Core.ViewModels;
 
 namespace PicView.Tests.FileTests;
@@ -112,6 +113,37 @@ public class RenameTests : IDisposable
         Assert.Equal(targetBytes, await File.ReadAllBytesAsync(target, TestContext.Current.CancellationToken));
         Assert.Equal(source, tab.FileInfo.CurrentValue!.FullName);
         Assert.Contains("b.", vm.ToolTip!.ToolTipMessageSource.CurrentValue);
+    }
+
+    [Fact]
+    public async Task RenameAction_SameExtension_KeepsTheTabOnItsEntryUnderTheNewName()
+    {
+        var (vm, tab) = CreateTabInCore(WriteImage("a.png", MagickColors.Red));
+
+        await RenameHelper.RenameAction(vm, "b.png");
+
+        Assert.Equal(Path.Combine(_testDirectory, "b.png"), Assert.Single(tab.ViewHistory.Entries).Path);
+    }
+
+    [Fact]
+    public async Task RenameAction_NewExtension_KeepsTheTabOnItsEntryUnderTheNewName()
+    {
+        var (vm, tab) = CreateTabInCore(WriteImage("a.png", MagickColors.Red));
+
+        await RenameHelper.RenameAction(vm, "b.jpg");
+
+        Assert.Equal(Path.Combine(_testDirectory, "b.jpg"), Assert.Single(tab.ViewHistory.Entries).Path);
+    }
+
+    private (MainWindowViewModel Vm, TabViewModel Tab) CreateTabInCore(string path)
+    {
+        var core = new CoreViewModel(null, file => ValueTask.FromResult(new ImageModel { FileInfo = file }));
+        var vm = new MainWindowViewModel(core, new TranslationViewModel(), null!, new GlobalSettingsViewModel(),
+            new GallerySharedSettingsViewModel()) { ToolTip = new ToolTipViewModel() };
+        core.MainWindows.MainWindows.Add(vm);
+        var tab = vm.WindowTabs.ActiveTab.Value;
+        tab.Display(new ImageModel { FileInfo = new FileInfo(path), Image = new object() });
+        return (vm, tab);
     }
 
     private (MainWindowViewModel Vm, TabViewModel Tab) CreateTab(string path)
