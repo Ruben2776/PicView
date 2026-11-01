@@ -614,10 +614,12 @@ public class ArchiveExtractionServiceTests
     }
 
     [Fact]
-    public async Task ExtractRemaining_PageFileIsThere_ItsEntryIsKnownAlready()
+    public async Task ExtractRemaining_PageFileBeingWritten_ItsEntryIsKnownButItIsNotFoundForTheEntryYet()
     {
-        // The watcher can list a page once its file is there, and a tab that waits for it shows and records it at once. A
-        // large page takes long enough to write that its file is seen while it is written
+        // The watcher lists a page once its file is there, and a tab that waits for it shows and records it at once. A
+        // step Back to a page looks for it in that list, so a file still being written must not be found: the archive
+        // opens again at the page instead. A large page takes long enough to write that its file is seen while it is
+        // written
         var folder = Directory.CreateDirectory(
             Path.Combine(Path.GetTempPath(), "PicViewEntries_" + Guid.NewGuid().ToString("N"))).FullName;
         var zip = Path.Combine(folder, "large.zip");
@@ -648,9 +650,12 @@ public class ArchiveExtractionServiceTests
             }
 
             var entryWhenThere = service.EntryOf(page);
+            var fileWhenThere = service.ExtractedPathOf("large.jpg");
             await extraction.WaitAsync(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken);
 
             Assert.Equal("large.jpg", entryWhenThere);
+            Assert.Null(fileWhenThere);
+            Assert.Equal(page, service.ExtractedPathOf("large.jpg"));
         }
         finally
         {

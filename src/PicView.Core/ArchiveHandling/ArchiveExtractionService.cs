@@ -156,8 +156,7 @@ public class ArchiveExtractionService
 
     /// <summary>
     ///     The file that <paramref name="entry" /> of the open archive was extracted to, or <c>null</c> when it is not
-    ///     extracted. A file still being written counts already, so look for it in the files a tab lists, which are
-    ///     written. For a fully extracted archive it checks the disk.
+    ///     extracted. For a fully extracted archive it checks the disk.
     /// </summary>
     public string? ExtractedPathOf(string entry)
     {
@@ -751,19 +750,6 @@ public class ArchiveExtractionService
         return -1;
     }
 
-    // A cancelled extraction can still start a file after its folder was cleaned up, so only a file in a folder that is
-    // still there is remembered
-    private void Remember(string entryKey, string extractedPath, string folder)
-    {
-        if (FindExtraction(folder) is not { } extraction)
-        {
-            return;
-        }
-
-        extraction.EntryByFile[extractedPath] = entryKey;
-        extraction.FileByEntry[entryKey] = extractedPath;
-    }
-
     // Outside the lock, since cancelling runs the token's callbacks
     private static void Cancel(CancellationTokenSource? cts)
     {
@@ -804,8 +790,10 @@ public class ArchiveExtractionService
     private static string? PathInFolder(string path, string folder) =>
         IsInFolder(path, folder) ? path[(Path.TrimEndingDirectorySeparator(folder.AsSpan()).Length + 1)..] : null;
 
-    // Remembers the entry before its file is there: the watcher can list a page once it is, and a tab that waits for the
-    // page shows and records it at once
+    // Remembers the file's entry before the file is there, as the watcher lists a page once it is, and a tab that waits
+    // for the page shows and records it at once. It remembers the entry's file once the file is written, as a step to
+    // the entry looks for the file in the tab's list, which already holds a file being written. A cancelled extraction
+    // can still write a file after its folder was cleaned up, so only a file in a folder that is still there is remembered
     private string WriteEntryFlat(IArchiveEntry entry, string destinationDirectory, int sharedFolderCount)
     {
         // Flatten so the temp directory ends up with a flat layout that the rest of the navigation
@@ -826,15 +814,19 @@ public class ArchiveExtractionService
             } while (File.Exists(destinationPath));
         }
 
-        Remember(entry.Key!, destinationPath, destinationDirectory);
-        using var entryStream = entry.OpenEntryStream();
-        using var fileStream = File.Create(destinationPath);
-        entryStream.CopyTo(fileStream);
+        var extraction = FindExtraction(destinationDirectory);
+        extraction?.EntryByFile[destinationPath] = entry.Key!;
+        using (var entryStream = entry.OpenEntryStream())
+        using (var fileStream = File.Create(destinationPath))
+        {
+            entryStream.CopyTo(fileStream);
+        }
 
 #if DEBUG
         Console.WriteLine($"Extracted: {entry.Key} -> {destinationPath}");
 #endif
 
+        extraction?.FileByEntry[entry.Key!] = destinationPath;
         return destinationPath;
     }
 
