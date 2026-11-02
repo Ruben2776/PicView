@@ -7,7 +7,6 @@ using PicView.Core.Gallery;
 using PicView.Core.ImageDecoding;
 using PicView.Core.Localization;
 using PicView.Core.Models;
-using PicView.Core.Titles;
 using PicView.Core.ViewModels;
 
 namespace PicView.Avalonia.Navigation;
@@ -56,45 +55,6 @@ public static class UpdateImage
         {
             platform.SetTaskbarProgress((ulong)iterator.CurrentIndex, (ulong)iterator.Files.Count);
         }
-    }
-
-    /// <summary>
-    /// The startup path's hand-written reaction to the first image, until it hooks the tab up before that image shows.
-    /// </summary>
-    public static void ChangeImage(MainWindow mainWindow, TabViewModel tabViewModel, MainWindowViewModel vm) =>
-        ReactToShown(mainWindow, tabViewModel, vm, ShownChange.Image);
-
-    public static void UpdateTabSideBySideTitles(TabViewModel tabViewModel,
-        int index,
-        int secondaryIndex,
-        FileInfo firstFile,
-        FileInfo secondFile,
-        List<FileInfo> files)
-    {
-        var count = tabViewModel.ImageIterator.Files.Count;
-        var zoom = tabViewModel.ZoomLevel.CurrentValue;
-        var firstInfo = new ImageTitleInfo(firstFile,
-            tabViewModel.Model.PixelWidth,
-            tabViewModel.Model.PixelHeight,
-            index,
-            count);
-        var secondInfo = new ImageTitleInfo(secondFile,
-            tabViewModel.SecondaryModel.PixelWidth,
-            tabViewModel.SecondaryModel.PixelHeight,
-            secondaryIndex,
-            count);
-        var titles = ImageTitleFormatter.GenerateTitleForSideBySide(firstInfo, secondInfo,
-            zoom,
-            files);
-        tabViewModel.WindowTitle.Value = titles.TitleWithAppName;
-        tabViewModel.Title.Value = titles.BaseTitle;
-        tabViewModel.TitleTooltip.Value = titles.FilePathTitle;
-    }
-
-    public static void ChangeTabTitleToNewImage(TabViewModel tabViewModel)
-    {
-        tabViewModel.ZoomLevel.Value = Convert.ToInt32(tabViewModel.InitialZoom.CurrentValue * 100);
-        tabViewModel.UpdateTabTitle();
     }
 
     public static void SetSingleImage(MainWindowViewModel vm, MainWindow mainWindow, Bitmap image, SingleImageType type, string name)

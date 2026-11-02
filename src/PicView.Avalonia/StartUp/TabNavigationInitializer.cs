@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using PicView.Avalonia.Navigation.Services;
-using PicView.Core.DebugTools;
 using PicView.Core.Navigation;
 using PicView.Core.ViewModels;
 
@@ -88,11 +87,9 @@ public static class TabNavigationInitializer
         {
             return;
         }
+        // The startup path hooks the tab up before its first image shows
         if (newTab.IsInitialized)
         {
-#if DEBUG
-            DebugHelper.LogDebug(nameof(TabNavigationInitializer), nameof(InitializeNewTab), $"Tab {newTab.Id} {newTab.Model?.FileInfo?.Name} is already initialized");
-#endif
             return;
         }
 

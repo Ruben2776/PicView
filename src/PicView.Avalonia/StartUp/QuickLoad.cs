@@ -149,9 +149,8 @@ public static class QuickLoad
         }
 
         vm.IsLoadingIndicatorShown.Value = false;
-        UpdateImage.ChangeTabTitleToNewImage(tab);
-
-
+        // Navigation is initialized now, so the title gets its index
+        tab.UpdateTabTitle();
 
         SourceOpener.ShowHoverBarIfNeeded(tab);
         if (Settings.UIProperties.IsTaskbarProgressEnabled)
@@ -210,11 +209,12 @@ public static class QuickLoad
             DebugHelper.LogDebug(nameof(QuickLoad), nameof(LoadSingleAsync), e);
         }
 
-        var imageModel = await GetImageModel.GetImageModelAsync(fileInfo, isPinged ? magickImage : null).ConfigureAwait(false);
-        tab.Display(imageModel);
-        await ShowImageViewerAsync(tab).ConfigureAwait(false);
+        // Decoded while the viewer is set up and the tab hooked up, so the first image's reaction comes from the same
+        // subscription as every later one's
+        var decoding = GetImageModel.GetImageModelAsync(fileInfo, isPinged ? magickImage : null);
+        await ShowImageViewerAndHookUpAsync(tab).ConfigureAwait(false);
+        tab.Display(await decoding.ConfigureAwait(false));
 
-        UpdateImage.ChangeImage(mainWindow, tab, vm);
         if (files is null)
         {
             TabNavigationInitializer.Initialize(core, listFrom, vm);
@@ -281,14 +281,12 @@ public static class QuickLoad
             }
         }
 
-        var firstModel = await GetImageModel.GetImageModelAsync(fileInfo, isPinged ? firstMagick : null).ConfigureAwait(false);
-        var secondModel = await GetImageModel.GetImageModelAsync(nextFileInfo, isPinged ? secondMagick : null).ConfigureAwait(false);
-        tab.Display(firstModel, secondModel);
-        await ShowImageViewerAsync(tab).ConfigureAwait(false);
+        var decodingFirst = GetImageModel.GetImageModelAsync(fileInfo, isPinged ? firstMagick : null);
+        var decodingSecond = GetImageModel.GetImageModelAsync(nextFileInfo, isPinged ? secondMagick : null);
+        await ShowImageViewerAndHookUpAsync(tab).ConfigureAwait(false);
+        tab.Display(await decodingFirst.ConfigureAwait(false), await decodingSecond.ConfigureAwait(false));
 
         TabNavigationInitializer.Initialize(core, files, vm);
-        UpdateImage.ChangeImage(mainWindow, tab, vm);
-        UpdateImage.UpdateTabSideBySideTitles(tab, index, nextIndex, fileInfo, nextFileInfo, files);
         Dispatcher.UIThread.Post(() =>
         {
             mainWindow.Show();
@@ -322,9 +320,14 @@ public static class QuickLoad
             mainWindow.SetLayoutSizeAndVisibility(mainWindow.Bounds.Width);
         });
 
-    private static async ValueTask ShowImageViewerAsync(TabViewModel tab) =>
+    /// <summary>
+    /// Gives the tab its image viewer and hooks it up to its window before its first image shows, so the window reacts
+    /// to that image as it does to every later one. The window's hookups exist since the lifecycle created it.
+    /// </summary>
+    private static async ValueTask ShowImageViewerAndHookUpAsync(TabViewModel tab) =>
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
             tab.CurrentView.Value = new ImageViewer(tab);
+            tab.ParentWindowContext.WindowTabs.HookUp(tab);
         }, DispatcherPriority.Send);
 }
