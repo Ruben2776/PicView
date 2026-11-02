@@ -248,7 +248,8 @@ public class WindowInitializer(IWindowProvider provider, MainWindow mainWindow) 
         var windows = BatchResizeWindows;
         if (windows.IsOpen(SecondaryWindowKind.BatchResize))
         {
-            // Brought to the front, keeping the files and settings it is editing
+            // Brought to the front, keeping the files and settings it is editing. This spec never creates a window, so
+            // its title and placement are not used.
             await windows.OpenAsync(SecondaryWindowKind.BatchResize, new SecondaryWindowSpec(_ => null)
             {
                 Title = "",

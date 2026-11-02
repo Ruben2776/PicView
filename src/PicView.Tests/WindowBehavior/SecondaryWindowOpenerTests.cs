@@ -231,11 +231,7 @@ public class SecondaryWindowOpenerTests
         WindowStartupLocation? recorded = null;
         var spec = Spec() with
         {
-            OnOpened = window =>
-            {
-                recorded = window.WindowStartupLocation;
-                return Task.CompletedTask;
-            }
+            Create = RecordingOnShow(window => recorded = window.WindowStartupLocation)
         };
 
         await opener.OpenAsync(SecondaryWindowKind.About, spec);
@@ -244,14 +240,19 @@ public class SecondaryWindowOpenerTests
     }
 
     [AvaloniaFact]
-    public async Task OpenAsync_CenterOwner_SetsTheStartupLocation()
+    public async Task OpenAsync_CenterOwner_SetsTheStartupLocationBeforeShowing()
     {
         var opener = CreateOpener();
-        var spec = Spec(WindowOwner.MainWindow) with { Placement = new SecondaryWindowPlacement.CenterOwner() };
+        WindowStartupLocation? recorded = null;
+        var spec = Spec(WindowOwner.MainWindow) with
+        {
+            Create = RecordingOnShow(window => recorded = window.WindowStartupLocation),
+            Placement = new SecondaryWindowPlacement.CenterOwner()
+        };
 
-        var window = await opener.OpenAsync(SecondaryWindowKind.About, spec);
+        await opener.OpenAsync(SecondaryWindowKind.About, spec);
 
-        Assert.Equal(WindowStartupLocation.CenterOwner, window!.WindowStartupLocation);
+        Assert.Equal(WindowStartupLocation.CenterOwner, recorded);
     }
 
     [AvaloniaFact]
@@ -261,11 +262,7 @@ public class SecondaryWindowOpenerTests
         PixelPoint? recorded = null;
         var spec = RememberedSpec(new Properties { Left = 120, Top = 80 }) with
         {
-            OnOpened = window =>
-            {
-                recorded = window.Position;
-                return Task.CompletedTask;
-            }
+            Create = RecordingOnShow(window => recorded = window.Position)
         };
 
         var window = await opener.OpenAsync(SecondaryWindowKind.Settings, spec);
@@ -498,8 +495,20 @@ public class SecondaryWindowOpenerTests
             return provider.CreateFileAssociationsWindow();
         }, WindowOwner.MainWindow)
         {
-            Title = "About - PicView",
+            Title = "File associations - PicView",
             Placement = new SecondaryWindowPlacement.CenterScreen()
+        };
+
+    /// <summary>
+    /// Creates an About window that runs <paramref name="record"/> as it is shown, from its Opened event, which
+    /// <see cref="Window.Show()"/> raises.
+    /// </summary>
+    private static Func<IWindowProvider, Window?> RecordingOnShow(Action<Window> record) =>
+        provider =>
+        {
+            var window = provider.CreateAboutWindow();
+            window.Opened += (_, _) => record(window);
+            return window;
         };
 
     private static void PressEscape(Interactive source) =>
