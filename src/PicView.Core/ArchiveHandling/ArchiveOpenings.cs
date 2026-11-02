@@ -53,9 +53,13 @@ public sealed class ArchiveOpenings
     /// <summary>
     ///     Where the latest extraction stands. <see cref="ExtractionState.Finished" /> when nothing is extracting. It
     ///     leaves <see cref="ExtractionState.Extracting" /> only once every page the extraction wrote is listed, so a
-    ///     list read after it has them all.
+    ///     list read after it has them all. Publishes each change, so the tab derives whether Next runs from it.
     /// </summary>
-    public ExtractionState State => Volatile.Read(ref _extracting)?.State ?? ExtractionState.Finished;
+    public IReadOnlyBindableReactiveProperty<ExtractionState> State => _state;
+
+    private readonly BindableReactiveProperty<ExtractionState> _state = new(ExtractionState.Finished);
+
+    internal void SetStateForTest(ExtractionState state) => _state.Value = state;
 
     /// <summary>
     ///     How far the latest extraction has come, as "extracted/total" for the UI, and null when nothing is extracting.
@@ -199,24 +203,26 @@ public sealed class ArchiveOpenings
     {
         // The state and progress follow this opening from here, also when it has nothing left: it is then finished, not
         // still extracting or stopped as the opening the tab leaves may be
+        // The state and progress are published under the lock that EndAsync keys its publish to, so two openings whose
+        // ExtractRest calls interleave cannot leave the published state behind the opening the tab follows
+        var firstCount = opening.Files.Count;
+        var totalCount = opening.TotalCount;
         lock (_lock)
         {
             _extracting?.Stop();
             _extracting = opening;
-        }
 
-        if (opening.AfterKeys.Length + opening.BeforeKeys.Length is 0)
-        {
-            _progressText.Value = null;
-            _tab.ImageIterator?.UpdateNavigationProperties();
-            return;
-        }
+            if (opening.AfterKeys.Length + opening.BeforeKeys.Length is 0)
+            {
+                _progressText.Value = null;
+                _state.Value = ExtractionState.Finished;
+                return;
+            }
 
-        var firstCount = opening.Files.Count;
-        var totalCount = opening.TotalCount;
-        opening.SetState(ExtractionState.Extracting);
-        _progressText.Value = $"{firstCount}/{totalCount}";
-        _tab.ImageIterator?.UpdateNavigationProperties();
+            opening.SetState(ExtractionState.Extracting);
+            _state.Value = ExtractionState.Extracting;
+            _progressText.Value = $"{firstCount}/{totalCount}";
+        }
 
         // Under the lock, so a report of the last pages lands before the end clears the text, not after it
         var progress = new Progress<int>(current =>
@@ -287,9 +293,12 @@ public sealed class ArchiveOpenings
         var stopped = opening.IsStopped;
         lock (_lock)
         {
-            opening.SetState(stopped ? ExtractionState.Stopped : ExtractionState.Finished);
+            var state = stopped ? ExtractionState.Stopped : ExtractionState.Finished;
+            opening.SetState(state);
+            // Only the latest opening's state is published: an older one ending leaves the newer one's as it is
             if (ReferenceEquals(_extracting, opening))
             {
+                _state.Value = state;
                 _progressText.Value = null;
             }
         }
@@ -298,7 +307,6 @@ public sealed class ArchiveOpenings
         _extraction.DeleteIfForgotten(opening.Folder);
         opening.End();
         _tab.ImageIterator?.NotifyFileAdded();
-        _tab.ImageIterator?.UpdateNavigationProperties();
     }
 
     private void StopExtracting()

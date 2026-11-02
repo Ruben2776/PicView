@@ -1,0 +1,25 @@
+# A Tab Derives Whether Next and Prev Run
+
+Whether a **Tab**'s Next and Prev run, the two flags every navigation button binds, is derived by one private method on `TabViewModel` from the tab's own state: its position in its files (`NavigationIndex` and `MaxIndex`), its **Archive Openings** state, its Crop, whether it has an iterator, and the Looping and side-by-side settings. The flags are published as read-only bindables, so a write outside the tab does not compile. The rule is one: no iterator or a crop means neither runs; a list of one with nothing extracting means neither; otherwise Next needs an image ahead (a pair when side-by-side is on), or looping, or an extraction still listing pages, through `SideBySidePair.CanNavigateForwards`, and Prev needs an image behind, or looping.
+
+The inputs reach the derivation from inside the tab. The iterator tells the tab its index and count together through one internal `SetPosition`, which sets both bindables and derives once, so a file inserted before the shown one never leaves a moment where the index is new and the count old. `ArchiveOpenings` publishes its `State` as a bindable and the tab subscribes to it when it first creates its Archive Openings. The tab's `Crop` setter, `Initialize`, `InitializeImageIterator` and `DisposeImageIterator` derive. One public `RefreshCanNavigate()` remains for the two settings that have no change notification, Looping and side-by-side, called by their toggles for the active tab, next to `Titles.Refresh()`.
+
+Before this, the flags had five writers in five files. The iterator's `UpdateNavigationProperties` held the rule and was poked from outside by `ArchiveOpenings` at three points, by `MainWindow` after a tab moved and by `MainView` when a tab was selected, since nothing followed the inputs. `SettingsUpdater.ToggleLooping` held a second copy of the rule without the extracting case, and `ToggleSideBySide` recomputed nothing, so Next could stay enabled at the second-to-last image until the next navigation. `NavigationService.LoadFromUrlAsync` wrote false twice after a dispose that had already written false. `CropService` saved both flags, wrote false and restored them when the crop closed, so a list that changed during the crop got stale flags back, the save-and-restore pattern ADR-0011 removed from the gallery. `SetCurrentIndex` had no callers outside the tests and leaves `IImageIterator` with `UpdateNavigationProperties`.
+
+## Considered Options
+
+- **The settings publish their changes now**, so neither this nor the Titles needs a `Refresh()`: the right end state, but it widens a slice about deleting writers into settings plumbing. It is the follow-up that removes both refreshes.
+- **`ArchiveOpenings` marks the tab** at its three points, as the iterator marks the Titles when it lists new files: smaller, but it keeps a module telling the tab when to recompute, which is the pattern this slice removes. Publishing the state costs one bindable and one subscription, and the module knows nothing about navigation.
+- **A compute-on-read module**, as `TabTitles` is: that shape pays off for four strings most tabs never bind. Two bools cost nothing to compute, and it would have changed some fifty binding sites from `.Value` to a plain property.
+- **A reactive combine** over the observable inputs: Looping, side-by-side, Crop and the iterator's presence are not observables, so it needs the manual trigger anyway, and allocates a tuple per emit.
+- **Subscriptions on `NavigationIndex` and `MaxIndex`** instead of `SetPosition`: fires twice per position change, the first time with the old count, a transient a Next on another thread could read.
+
+## Consequences
+
+- A new input to whether Next and Prev run is a derive call inside the tab or a bindable the tab subscribes to, never a write or a poke from another module. `RefreshCanNavigate()` is the one call allowed from outside, and it goes with `Titles.Refresh()` when the settings publish their changes.
+- The derivation runs on whatever thread changed an input, as the iterator's writes did; it allocates nothing and reads no disk, so showing an image is never delayed. `Next` and `Prev` keep reading the flag before navigating.
+- `ArchiveOpenings.State` is read as `.Value` and subscribed through `AsObservable()`. Only the latest opening's state is published: an older opening ending leaves the newer one's as it is, as the volatile read did. ADR-0013 holds; the state only changed its shape.
+- Crop still blocks the keybinds itself (ADR-0004); this decides only what the buttons show.
+- A tab derives its flags whether or not it is the active tab; the window binds the active tab's. The moved-tab and selected-tab pokes are deleted.
+- The derive inside the Archive Openings' lazy creation reads the field, not the property: R3 replays the current value on subscribe, and reading the property there would create the openings twice.
+- ADR-0014's second parked slice, the Next/Prev flags, is done. ADR-0015 holds as written.

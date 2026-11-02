@@ -123,7 +123,6 @@ public partial class MainView : UserControl
         }
 
         vm.WindowTabs.SelectTab(tab);
-        tab.ImageIterator?.UpdateNavigationProperties();
     }
 
     private void PointerPressedBehavior(object? sender, PointerPressedEventArgs e)

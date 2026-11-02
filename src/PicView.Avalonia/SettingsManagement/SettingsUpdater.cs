@@ -258,6 +258,7 @@ public static class SettingsUpdater
         
         mainWindow.WindowFitter.Refit();
         tab.Titles.Refresh();
+        tab.RefreshCanNavigate();
         await SaveSettingsAsync().ConfigureAwait(false);
     }
     
@@ -320,23 +321,8 @@ public static class SettingsUpdater
 
         var windowTabs = vm.WindowTabs;
         var tab = windowTabs.ActiveTab.CurrentValue;
-        if (tab.ImageIterator?.Files.Count > 0)
-        {
-            var isLooping = Settings.UIProperties.Looping;
-            var index = tab.ImageIterator.CurrentIndex;
-            var count = tab.ImageIterator.Files.Count;
-            if (Settings.ImageScaling.ShowImageSideBySide)
-            {
-                tab.CanNavigateForwards.Value = isLooping || index < count - 2;
-            }
-            else
-            {
-                tab.CanNavigateForwards.Value = isLooping || index < count - 1;
-            }
+        tab.RefreshCanNavigate();
 
-            tab.CanNavigateBackwards.Value = isLooping || index > 0;
-        }
-        
         await SaveSettingsAsync().ConfigureAwait(false);
     }
     

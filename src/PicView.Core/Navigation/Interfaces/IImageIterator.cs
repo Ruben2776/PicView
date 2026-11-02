@@ -19,7 +19,8 @@ public interface IImageIterator : IDisposable
     IReadOnlyList<FileInfo> Files { get; }
 
     /// <summary>
-    /// Gets the current position in the file list.
+    /// Gets the current position in the file list. The iterator tells its tab this position and the count of its
+    /// files whenever either changes, and the tab derives whether Next and Prev run from them (ADR-0017).
     /// </summary>
     int CurrentIndex { get; }
     
@@ -29,11 +30,6 @@ public interface IImageIterator : IDisposable
     /// Gets a value indicating if the last navigation action was backwards.
     /// </summary>
     bool IsReversed { get; }
-
-    /// <summary>
-    /// Manually forces the current index to a specific value.
-    /// </summary>
-    void SetCurrentIndex(int index);
 
     /// <summary>
     /// Initializes the iterator with a new list of files and a starting position.
@@ -130,11 +126,6 @@ public interface IImageIterator : IDisposable
     /// Stops the continuous navigation started by <see cref="RepeatNavigateAsync"/>.
     /// </summary>
     void StopRepeatedNavigation();
-
-    /// <summary>
-    /// Updates the forward/backward navigation permissions based on the current index and list bounds.
-    /// </summary>
-    void UpdateNavigationProperties();
 
     /// <summary>
     /// Notifies the iterator that a new file has been added to the file list.
