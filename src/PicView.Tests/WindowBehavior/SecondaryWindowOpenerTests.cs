@@ -350,7 +350,7 @@ public class SecondaryWindowOpenerTests
     }
 
     [AvaloniaFact]
-    public async Task Escape_ClosesTheWindow()
+    public async Task Escape_ClosesTheWindowAndMarksIt()
     {
         var opener = CreateOpener();
         var window = await opener.OpenAsync(SecondaryWindowKind.About, Spec());
@@ -358,6 +358,19 @@ public class SecondaryWindowOpenerTests
         PressEscape(window!);
 
         Assert.False(opener.IsOpen(SecondaryWindowKind.About));
+        Assert.True(_mainWindow.KeybindRouter.IsIgnoredUntilReleased(Key.Escape));
+    }
+
+    [AvaloniaFact]
+    public async Task Close_NotByEscape_DoesNotMark()
+    {
+        var opener = CreateOpener();
+        var window = await opener.OpenAsync(SecondaryWindowKind.About, Spec());
+
+        window!.Close();
+
+        Assert.False(opener.IsOpen(SecondaryWindowKind.About));
+        Assert.False(_mainWindow.KeybindRouter.IsIgnoredUntilReleased(Key.Escape));
     }
 
     [AvaloniaFact]
