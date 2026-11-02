@@ -125,6 +125,38 @@ public class ArrowKeyNavigationTests
         Assert.Equal(["rotate left"], _calls);
     }
 
+    [Fact]
+    public void Decide_GalleryExpandedAndCanScroll_Navigates()
+    {
+        Settings.Zoom.ScrollEnabled = true;
+
+        Assert.Equal(ArrowKeyAction.Navigate, ArrowKeyNavigation.Decide(isGalleryExpanded: true, canScroll: true));
+    }
+
+    [Fact]
+    public void Decide_ScrollEnabledAndCanScroll_Scrolls()
+    {
+        Settings.Zoom.ScrollEnabled = true;
+
+        Assert.Equal(ArrowKeyAction.Scroll, ArrowKeyNavigation.Decide(isGalleryExpanded: false, canScroll: true));
+    }
+
+    [Fact]
+    public void Decide_ScrollDisabledAndCanScroll_Rotates()
+    {
+        Settings.Zoom.ScrollEnabled = false;
+
+        Assert.Equal(ArrowKeyAction.Rotate, ArrowKeyNavigation.Decide(isGalleryExpanded: false, canScroll: true));
+    }
+
+    [Fact]
+    public void Decide_NotExpandedAndCannotScroll_Rotates()
+    {
+        Settings.Zoom.ScrollEnabled = true;
+
+        Assert.Equal(ArrowKeyAction.Rotate, ArrowKeyNavigation.Decide(isGalleryExpanded: false, canScroll: false));
+    }
+
     private ValueTask Navigate(NavigateTo direction)
     {
         _calls.Add($"navigate {direction}");
