@@ -10,6 +10,7 @@ public class GalleryViewModel : IDisposable
 {
     private DisposableBag _disposables;
     private readonly Subject<Unit> _sizesChanged = new();
+    private readonly BindableReactiveProperty<GalleryAppearance> _appearance;
 
     /// <param name="saveSettings">Saves the settings once the remembered docked choice changed; the settings file by default.</param>
     public GalleryViewModel(Func<ValueTask<bool>>? saveSettings = null)
@@ -18,6 +19,10 @@ public class GalleryViewModel : IDisposable
         Mode = Switcher.Mode.ToReadOnlyBindableReactiveProperty();
         ShownMode = Switcher.ShownMode.ToReadOnlyBindableReactiveProperty();
         IsDocked = Switcher.IsDocked.ToReadOnlyBindableReactiveProperty();
+        _appearance = new BindableReactiveProperty<GalleryAppearance>(ComputeAppearance(
+            ShownMode.Value, Settings.Gallery.DockedGalleryItemSize, Settings.Gallery.ExpandedGalleryItemSize,
+            Settings.Gallery.DockedGalleryStretchMode, Settings.Gallery.ExpandedGalleryStretchMode));
+        Appearance = _appearance;
 
         // Derived from the switcher before Initialize, so a tab started docked shows it from the start
         Switcher.ShownMode.Subscribe(OnShownModeChanged).AddTo(ref _disposables);
@@ -48,6 +53,11 @@ public class GalleryViewModel : IDisposable
     public IReadOnlyBindableReactiveProperty<bool> IsDocked { get; }
 
     /// <summary>
+    /// How this tab's gallery looks, derived from its shown mode, the dock position and the gallery settings.
+    /// </summary>
+    public IReadOnlyBindableReactiveProperty<GalleryAppearance> Appearance { get; }
+
+    /// <summary>
     /// Whether the Expanded Gallery is shown. Only this view model writes it.
     /// </summary>
     public BindableReactiveProperty<bool> IsGalleryExpanded { get; } = new();
@@ -76,12 +86,28 @@ public class GalleryViewModel : IDisposable
 
     internal void RaiseSizesChanged() => _sizesChanged.OnNext(Unit.Default);
 
-    public void Initialize()
+    public void Initialize(GallerySharedSettingsViewModel shared)
     {
         if (Settings.Gallery is not { } gallery)
         {
             return;
         }
+
+        // The hover bar inputs are read when the record is computed; the others push their changes
+        Observable.CombineLatest(
+                Switcher.ShownMode,
+                shared.DockedGalleryItemSize,
+                shared.ExpandedGalleryItemSize,
+                shared.DockedGalleryStretchMode,
+                shared.ExpandedGalleryStretchMode,
+                Observable.EveryValueChanged(gallery, g => g.DockPosition).Prepend(gallery.DockPosition),
+                Observable.EveryValueChanged(gallery, g => g.ItemSpacing).Prepend(gallery.ItemSpacing),
+                static (mode, dockedSize, expandedSize, dockedStretch, expandedStretch, dock, spacing) =>
+                    GalleryAppearance.For(mode, dock, new GalleryAppearanceInputs(dockedSize, expandedSize,
+                        dockedStretch, expandedStretch, spacing, Settings.UIProperties.ShowBottomNavBar,
+                        Settings.UIProperties.ShowHoverNavigationBar)))
+            .Subscribe(x => _appearance.Value = x, DebugHelper.LogError(nameof(GalleryViewModel), nameof(Initialize)))
+            .AddTo(ref _disposables);
 
         Observable.EveryValueChanged(gallery, g => g.DockPosition)
             .Subscribe(_ => UpdateDockFlags(), DebugHelper.LogError(nameof(GalleryViewModel), nameof(UpdateDockFlags)))
@@ -120,6 +146,14 @@ public class GalleryViewModel : IDisposable
         DockAtCommand.SubscribeAwait(async (position, _) => await Switcher.DockAt(position).ConfigureAwait(false),
                 DebugHelper.LogError(nameof(GalleryViewModel), nameof(DockAtCommand)))
             .AddTo(ref _disposables);
+    }
+
+    private static GalleryAppearance ComputeAppearance(GalleryMode mode, double dockedSize, double expandedSize,
+        GalleryStretchMode dockedStretch, GalleryStretchMode expandedStretch)
+    {
+        return GalleryAppearance.For(mode, Settings.Gallery.DockPosition, new GalleryAppearanceInputs(dockedSize,
+            expandedSize, dockedStretch, expandedStretch, Settings.Gallery.ItemSpacing,
+            Settings.UIProperties.ShowBottomNavBar, Settings.UIProperties.ShowHoverNavigationBar));
     }
 
     public void Navigate(NavigateTo direction)
@@ -163,6 +197,7 @@ public class GalleryViewModel : IDisposable
             Mode,
             ShownMode,
             IsDocked,
+            Appearance,
             IsGalleryExpanded,
             IsDockedGalleryVisible,
             ItemSpacing,

@@ -32,7 +32,7 @@ public static class TabNavigationInitializer
         var tab = tabOverView.ActiveTab.CurrentValue;
         tabOverView.InitializeActiveTab(files);
         InitializeNewTab(tab);
-        tab.Gallery.Initialize();
+        tab.Gallery.Initialize(core.GallerySettings);
         core.GallerySettings.Initialize();
     }
     
@@ -78,7 +78,7 @@ public static class TabNavigationInitializer
     public static void InitializeConsecutiveTab(CoreViewModel core, TabViewModel tab)
     {
         InitializeNewTab(tab);
-        tab.Gallery.Initialize();
+        tab.Gallery.Initialize(core.GallerySettings);
         core.GallerySettings.Initialize();
     }
     

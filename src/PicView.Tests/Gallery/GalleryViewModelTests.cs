@@ -22,7 +22,7 @@ public class GalleryViewModelTests
     public void ShownMode_WhenChangedFromExpandedToDocked_ResetsSelectedGalleryItemIndex()
     {
         using var gallery = new GalleryViewModel(NoSave);
-        gallery.Initialize();
+        gallery.Initialize(new GallerySharedSettingsViewModel());
         gallery.Switcher.Start(true);
 
         gallery.Switcher.ToggleExpanded();
@@ -37,7 +37,7 @@ public class GalleryViewModelTests
     public async Task ShownMode_WhenChangedFromExpandedToClosed_ResetsSelectedGalleryItemIndex()
     {
         using var gallery = new GalleryViewModel(NoSave);
-        gallery.Initialize();
+        gallery.Initialize(new GallerySharedSettingsViewModel());
 
         gallery.Switcher.ToggleExpanded();
         gallery.SelectedGalleryItemIndex.Value = 3;
@@ -51,7 +51,7 @@ public class GalleryViewModelTests
     public void ContractCommand_WhenExpanded_ResetsSelectedGalleryItemIndex()
     {
         using var gallery = new GalleryViewModel(NoSave);
-        gallery.Initialize();
+        gallery.Initialize(new GallerySharedSettingsViewModel());
 
         gallery.Switcher.ToggleExpanded();
         gallery.SelectedGalleryItemIndex.Value = 4;
@@ -87,6 +87,77 @@ public class GalleryViewModelTests
         Assert.False(gallery.IsTopDocked.Value);
         Assert.False(gallery.IsBottomDocked.Value);
         Assert.False(gallery.IsDockedGalleryVisible.Value);
+    }
+
+    [Fact]
+    public async Task Appearance_FollowsTheShownMode()
+    {
+        using var gallery = new GalleryViewModel(NoSave);
+        gallery.Initialize(new GallerySharedSettingsViewModel());
+
+        gallery.Switcher.Start(true);
+        Assert.Equal(GalleryMode.Docked, gallery.Appearance.Value.Mode);
+
+        gallery.Switcher.ToggleExpanded();
+        Assert.Equal(GalleryMode.Expanded, gallery.Appearance.Value.Mode);
+
+        await gallery.Switcher.Close();
+        Assert.Equal(GalleryMode.Closed, gallery.Appearance.Value.Mode);
+    }
+
+    [Fact]
+    public void Appearance_HiddenGallery_IsClosed()
+    {
+        using var gallery = new GalleryViewModel(NoSave);
+        gallery.Initialize(new GallerySharedSettingsViewModel());
+        gallery.Switcher.Start(true);
+
+        gallery.Switcher.SetHidden(true);
+        Assert.Equal(GalleryMode.Closed, gallery.Appearance.Value.Mode);
+
+        gallery.Switcher.SetHidden(false);
+        Assert.Equal(GalleryMode.Docked, gallery.Appearance.Value.Mode);
+    }
+
+    [Fact]
+    public void Appearance_DockPositionChanged_FollowsIt()
+    {
+        using var gallery = new GalleryViewModel(NoSave);
+        gallery.Initialize(new GallerySharedSettingsViewModel());
+        gallery.Switcher.Start(true);
+
+        Settings.Gallery.DockPosition = GalleryDockPosition.Left;
+        _frameProvider.Tick();
+
+        Assert.Equal(GalleryDockPosition.Left, gallery.Appearance.Value.Dock);
+        Assert.Equal(GalleryOrientation.Vertical, gallery.Appearance.Value.Orientation);
+    }
+
+    [Fact]
+    public void Appearance_DockedItemSizeChanged_FollowsIt()
+    {
+        var shared = new GallerySharedSettingsViewModel();
+        using var gallery = new GalleryViewModel(NoSave);
+        gallery.Initialize(shared);
+        gallery.Switcher.Start(true);
+
+        shared.DockedGalleryItemSize.Value = 120;
+
+        Assert.Equal(120, gallery.Appearance.Value.ItemHeight);
+    }
+
+    [Fact]
+    public void Appearance_ExpandedStretchChanged_WhileDocked_KeepsDockedStretch()
+    {
+        var shared = new GallerySharedSettingsViewModel();
+        shared.DockedGalleryStretchMode.Value = GalleryStretchMode.Uniform;
+        using var gallery = new GalleryViewModel(NoSave);
+        gallery.Initialize(shared);
+        gallery.Switcher.Start(true);
+
+        shared.ExpandedGalleryStretchMode.Value = GalleryStretchMode.FillSquare;
+
+        Assert.Equal(GalleryStretchMode.Uniform, gallery.Appearance.Value.Stretch);
     }
 
     private class ManualFrameProvider : FrameProvider

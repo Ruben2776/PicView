@@ -74,7 +74,7 @@ public class DockedGalleryWindowFitTests
         {
             FileInfo = new FileInfo("a.jpg"), PixelWidth = ImageWidth, PixelHeight = ImageHeight
         });
-        tab.Gallery.Initialize();
+        tab.Gallery.Initialize(core.GallerySettings);
         tab.Gallery.Switcher.Start(docked: true);
 
         var application = Application.Current!;
