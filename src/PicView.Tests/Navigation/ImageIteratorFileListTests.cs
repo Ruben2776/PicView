@@ -30,6 +30,9 @@ public class ImageIteratorFileListTests : IDisposable
     // An extraction on the tab, which a test begins to have the tab count as extracting
     private readonly HeldExtraction _extraction = new();
 
+    // The files the cache loaded, shown or ahead of the shown one
+    private readonly ConcurrentQueue<string> _loaded = new();
+
     public ImageIteratorFileListTests()
     {
         ObservableSystem.DefaultFrameProvider = new MockFrameProvider();
@@ -37,8 +40,11 @@ public class ImageIteratorFileListTests : IDisposable
         Settings.Sorting.SortPreference = 0; // Name
         Settings.Sorting.Ascending = true;
 
-        _cache = new SharedImageCache(static f =>
-            ValueTask.FromResult(new ImageModel { FileInfo = f, Image = new ProbeImage() }));
+        _cache = new SharedImageCache(f =>
+        {
+            _loaded.Enqueue(f.Name);
+            return ValueTask.FromResult(new ImageModel { FileInfo = f, Image = new ProbeImage() });
+        });
         _tab = new TabViewModel(null!, null, _extraction.Writer);
         _tab.Initialize(_cache, new ThumbnailCache(), new MockThumbnailLoader(), null, new ThumbnailCache());
         _iterator = (ImageIterator)_tab.ImageIterator!;
@@ -370,6 +376,21 @@ public class ImageIteratorFileListTests : IDisposable
         Assert.Null(_tab.SecondaryModel);
     }
 
+    [Fact]
+    public async Task InsertMissing_PageAfterTheShownOne_LoadsItAhead()
+    {
+        // An archive's pages are listed as they are extracted, after the start page showed, and a Next right after
+        // should find the page after the shown one loaded already
+        var folder = CreatePages("a.jpg", "b.jpg");
+        var a = new FileInfo(Path.Combine(folder, "a.jpg"));
+        _iterator.Initialize([a], 0);
+        await _iterator.IterateToIndexAsync(0, new CancellationTokenSource());
+
+        _iterator.InsertMissing([Path.Combine(folder, "b.jpg")], folder, string.CompareOrdinal);
+
+        await WaitUntil(() => _loaded.Contains("b.jpg"));
+    }
+
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
@@ -603,6 +624,16 @@ public class ImageIteratorFileListTests : IDisposable
         }
 
         Assert.DoesNotContain("a.jpg", shown);
+    }
+
+    private static async Task WaitUntil(Func<bool> condition)
+    {
+        var deadline = DateTime.UtcNow + WaitLimit;
+        while (!condition())
+        {
+            Assert.True(DateTime.UtcNow < deadline, "Timed out waiting");
+            await Task.Delay(20, TestContext.Current.CancellationToken);
+        }
     }
 
     private Task Next(bool keyHeldDown) => keyHeldDown

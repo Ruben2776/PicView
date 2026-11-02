@@ -109,6 +109,8 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
         if (inserted > 0)
         {
             UpdateNavigationProperties();
+            // The pages after the shown one are loaded ahead as they are listed, so a Next finds them loaded
+            TriggerPreload();
         }
         return inserted;
     }

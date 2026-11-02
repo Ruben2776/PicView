@@ -7,22 +7,47 @@ namespace PicView.Core.Preloading;
 /// Background worker of <see cref="PicView.Core.Navigation.SharedImageCache"/>.
 /// <para>
 /// Responsible for calculating predictive indices (look-ahead) and loading them, ahead in the direction of travel
-/// first, while at most one preload per owner runs.
+/// first, while at most one preload per owner runs. A preload asked for while one runs follows it, with the list and
+/// position as they were asked for last: an archive's pages are listed as they are extracted, and the page after the
+/// shown one should be loaded by the time Next asks for it.
 /// </para>
 /// </summary>
-/// <param name="load">Loads a file for an owner and completes when the image is loaded.</param>
 internal sealed class Preloader(Func<uint, FileInfo, Task> load)
 {
     private readonly ConcurrentDictionary<uint, byte> _running = new();
 
+    // The preload each owner asked for last and has not run yet
+    private readonly ConcurrentDictionary<uint, Request> _next = new();
+
     /// <summary>
-    /// Loads the files around <paramref name="currentIndex"/> in the background.
-    /// Does nothing while a preload for the same owner is still running.
+    /// Loads the files around <paramref name="currentIndex"/> in the background, after the preload running for the
+    /// owner, if any.
     /// </summary>
     public void Preload(uint ownerId, FileInfo[] files, int currentIndex, bool reversed, CancellationToken ct)
     {
+        _next[ownerId] = new Request(files, currentIndex, reversed, ct);
+        RunNext(ownerId);
+    }
+
+    /// <summary>
+    /// Runs the preload the owner asked for last, unless one is running: that one runs it when it ends.
+    /// </summary>
+    private void RunNext(uint ownerId)
+    {
         if (!_running.TryAdd(ownerId, 0))
         {
+            return;
+        }
+
+        if (!_next.TryRemove(ownerId, out var request))
+        {
+            _running.TryRemove(ownerId, out _);
+            // A request made between the two reads saw the preload as running, so it falls to this one
+            if (_next.ContainsKey(ownerId))
+            {
+                RunNext(ownerId);
+            }
+
             return;
         }
 
@@ -31,7 +56,8 @@ internal sealed class Preloader(Func<uint, FileInfo, Task> load)
         {
             try
             {
-                await PreloadAroundAsync(ownerId, files, currentIndex, reversed, ct).ConfigureAwait(false);
+                await PreloadAroundAsync(ownerId, request.Files, request.CurrentIndex, request.Reversed, request.Ct)
+                    .ConfigureAwait(false);
             }
             catch (OperationCanceledException)
             {
@@ -44,6 +70,7 @@ internal sealed class Preloader(Func<uint, FileInfo, Task> load)
             finally
             {
                 _running.TryRemove(ownerId, out _);
+                RunNext(ownerId);
             }
         }, CancellationToken.None);
     }
@@ -88,4 +115,6 @@ internal sealed class Preloader(Func<uint, FileInfo, Task> load)
             }).ConfigureAwait(false);
         }
     }
+
+    private readonly record struct Request(FileInfo[] Files, int CurrentIndex, bool Reversed, CancellationToken Ct);
 }
