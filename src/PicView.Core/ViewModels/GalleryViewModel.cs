@@ -67,7 +67,6 @@ public class GalleryViewModel : IDisposable
     /// </summary>
     public BindableReactiveProperty<bool> IsDockedGalleryVisible { get; } = new();
 
-    public BindableReactiveProperty<double> ItemSpacing { get; } = new(Settings.Gallery.ItemSpacing);
     public BindableReactiveProperty<double> LineSpacing { get; } = new(Settings.Gallery.LineSpacing);
     public BindableReactiveProperty<int> SelectedGalleryItemIndex { get; } = new(-1);
 
@@ -93,6 +92,13 @@ public class GalleryViewModel : IDisposable
             return;
         }
 
+        // One poll of the dock position for the dock flags and the appearance. The flags subscribe first, so they still
+        // take the first value as the poll starts, and the appearance takes it from the Prepend
+        var dockPositions = Observable.EveryValueChanged(gallery, g => g.DockPosition).Share();
+        dockPositions
+            .Subscribe(_ => UpdateDockFlags(), DebugHelper.LogError(nameof(GalleryViewModel), nameof(UpdateDockFlags)))
+            .AddTo(ref _disposables);
+
         // The hover bar inputs are read when the record is computed; the others push their changes
         Observable.CombineLatest(
                 Switcher.ShownMode,
@@ -100,24 +106,13 @@ public class GalleryViewModel : IDisposable
                 shared.ExpandedGalleryItemSize,
                 shared.DockedGalleryStretchMode,
                 shared.ExpandedGalleryStretchMode,
-                Observable.EveryValueChanged(gallery, g => g.DockPosition).Prepend(gallery.DockPosition),
+                dockPositions.Prepend(gallery.DockPosition),
                 Observable.EveryValueChanged(gallery, g => g.ItemSpacing).Prepend(gallery.ItemSpacing),
                 static (mode, dockedSize, expandedSize, dockedStretch, expandedStretch, dock, spacing) =>
                     GalleryAppearance.For(mode, dock, new GalleryAppearanceInputs(dockedSize, expandedSize,
                         dockedStretch, expandedStretch, spacing, Settings.UIProperties.ShowBottomNavBar,
                         Settings.UIProperties.ShowHoverNavigationBar)))
             .Subscribe(x => _appearance.Value = x, DebugHelper.LogError(nameof(GalleryViewModel), nameof(Initialize)))
-            .AddTo(ref _disposables);
-
-        Observable.EveryValueChanged(gallery, g => g.DockPosition)
-            .Subscribe(_ => UpdateDockFlags(), DebugHelper.LogError(nameof(GalleryViewModel), nameof(UpdateDockFlags)))
-            .AddTo(ref _disposables);
-
-        Observable.EveryValueChanged(gallery, g => g.ItemSpacing)
-            .Subscribe(x =>
-            {
-                ItemSpacing.Value = x;
-            }, DebugHelper.LogError(nameof(GalleryViewModel), nameof(Initialize)))
             .AddTo(ref _disposables);
 
         Observable.EveryValueChanged(gallery, g => g.LineSpacing)
@@ -200,7 +195,6 @@ public class GalleryViewModel : IDisposable
             Appearance,
             IsGalleryExpanded,
             IsDockedGalleryVisible,
-            ItemSpacing,
             LineSpacing,
             SelectedGalleryItemIndex,
             IsTopDocked,

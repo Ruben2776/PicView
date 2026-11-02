@@ -548,7 +548,7 @@ public class VirtualizingGalleryTests
             strip.ScrollViewer.SetCurrentValue(ScrollViewer.OffsetProperty, new Vector(0, 0));
             Dispatcher.UIThread.RunJobs();
 
-            // Expanded as GalleryAnimationControl does it, which keeps the vertical orientation and adds the margin
+            // Expanded as `Apply` does for an Expanded appearance, which keeps the vertical orientation and adds the margin
             strip.Viewer.SetHorizontalScrolling();
             strip.Gallery.IsExpanded = true;
             strip.Gallery.Margin = new Thickness(15, 40, 15, 5);
@@ -574,7 +574,7 @@ public class VirtualizingGalleryTests
         {
             strip.ScrollTo(0);
 
-            // Docked as GalleryAnimationControl does it, which keeps the vertical orientation and drops the margin
+            // Docked as `Apply` does for a Docked appearance, which keeps the vertical orientation and drops the margin
             strip.Viewer.SetVerticalScrolling();
             strip.Gallery.IsExpanded = false;
             strip.Gallery.Margin = default;

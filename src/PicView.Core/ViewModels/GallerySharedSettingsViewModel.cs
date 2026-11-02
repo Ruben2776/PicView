@@ -9,15 +9,6 @@ public class GallerySharedSettingsViewModel
 {
     private bool _isInitialized;
 
-    // TODO: ItemHeight, ItemWidth and ThumbnailStretch are shared by every Main Window, but whether a gallery is docked
-    // or expanded belongs to its tab, so two windows with their galleries in different states take each other's.
-    public BindableReactiveProperty<double> ItemHeight { get; } = new(0);
-    public BindableReactiveProperty<double> ItemWidth { get; } = new(0);
-
-    /// <summary>
-    /// The Thumbnail Stretch of the gallery that is shown, docked or expanded. Its thumbnails follow it.
-    /// </summary>
-    public BindableReactiveProperty<GalleryStretchMode> ThumbnailStretch { get; } = new(GalleryStretchMode.Uniform);
     public ReactiveCommand<GalleryStretchMode> SetDockedStretchModeCommand { get; } = new();
     public ReactiveCommand<GalleryStretchMode> SetExpandedStretchModeCommand { get; } = new();
     

@@ -5,9 +5,9 @@
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
     xmlns:gallerySettings="clr-namespace:PicView.Core.Gallery;assembly=PicView.Core"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
-    Width="{CompiledBinding $parent[customControls:VirtualizingGallery].ItemWidth,
+    Width="{CompiledBinding ItemWidth, RelativeSource={RelativeSource FindAncestor, AncestorType=customControls:VirtualizingGallery, Tree=Visual},
                             Mode=OneWay}"
-    Height="{CompiledBinding $parent[customControls:VirtualizingGallery].ItemHeight,
+    Height="{CompiledBinding ItemHeight, RelativeSource={RelativeSource FindAncestor, AncestorType=customControls:VirtualizingGallery, Tree=Visual},
                              Mode=OneWay}"
     Margin="1"
     x:DataType="viewModels:GalleryItemViewModel"
@@ -306,7 +306,7 @@
         <customControls:ThumbImage
             x:Name="GalleryImage"
             Source="{Binding Image.Value}"
-            Stretch="{CompiledBinding $parent[customControls:VirtualizingGallery].ThumbnailStretch,
+            Stretch="{CompiledBinding ThumbnailStretch, RelativeSource={RelativeSource FindAncestor, AncestorType=customControls:VirtualizingGallery, Tree=Visual},
                                       Mode=OneWay}" />
         <!--  Motion photo badge  -->
         <Border

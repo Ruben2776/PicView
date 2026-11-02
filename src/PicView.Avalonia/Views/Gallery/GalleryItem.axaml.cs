@@ -5,7 +5,6 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.LogicalTree;
 using Avalonia.Media;
-using Avalonia.Media.Imaging;
 using Avalonia.Styling;
 using Avalonia.Threading;
 using PicView.Avalonia.Clipboard;
@@ -14,24 +13,20 @@ using PicView.Avalonia.FileSystem;
 using PicView.Avalonia.Gallery;
 using PicView.Avalonia.ImageHandling;
 using PicView.Core.DebugTools;
-using PicView.Core.Gallery;
 using PicView.Core.Navigation;
 using PicView.Core.ViewModels;
-using R3;
 
 namespace PicView.Avalonia.Views.Gallery;
 
 public partial class GalleryItem : NavigateAbleItem
 {
     private CancellationTokenSource? _loadCts;
-    private DisposableBag _disposables;
     private ContextMenu? _contextMenu;
 
     public GalleryItem()
     {
         InitializeComponent();
     }
-
 
     private void InitContextMenu()
     {
@@ -321,6 +316,5 @@ public partial class GalleryItem : NavigateAbleItem
         base.OnDetachedFromLogicalTree(e);
         _contextMenu?.Opened -= GalleryContextMenuOnOpened;
         _contextMenu?.Closed -= GalleryContextMenuOnClosed;
-        _disposables.Dispose();
     }
 }

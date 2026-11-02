@@ -70,11 +70,6 @@ public partial class GalleryView : GalleryAnimationControl, IDisposable
         }, DebugHelper.LogError(nameof(GalleryView), nameof(gallery.NavigateGalleryCommand)))
             .AddTo(ref _disposables);
 
-        gallery.ItemSpacing.Subscribe(_ =>
-        {
-            RecalculateGalleryIfNeeded(gallery);
-        }, DebugHelper.LogError(nameof(GalleryView), nameof(gallery.ItemSpacing)))
-        .AddTo(ref _disposables);
         gallery.LineSpacing.Subscribe(_ =>
         {
             RecalculateGalleryIfNeeded(gallery);

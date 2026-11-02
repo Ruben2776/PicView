@@ -1,6 +1,5 @@
 using System.Globalization;
 using System.Text.Json;
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media;
 using PicView.Avalonia.Gallery;

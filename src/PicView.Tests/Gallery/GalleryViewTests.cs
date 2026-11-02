@@ -1,11 +1,15 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Presenters;
+using Avalonia.Headless;
 using Avalonia.Threading;
 using ImageMagick;
 using PicView.Avalonia.CustomControls;
+using PicView.Avalonia.Gallery;
 using PicView.Avalonia.Interfaces;
 using PicView.Avalonia.Views.Gallery;
 using PicView.Avalonia.Views.UC;
+using PicView.Core.Gallery;
 using PicView.Core.Localization;
 using PicView.Core.Models;
 using PicView.Core.Navigation;
@@ -14,6 +18,7 @@ using PicView.Core.Sizing;
 using PicView.Core.ViewModels;
 using PicView.Tests.WindowBehavior;
 using R3;
+using Orientation = Avalonia.Layout.Orientation;
 
 namespace PicView.Tests.Gallery;
 
@@ -151,6 +156,104 @@ public class GalleryViewTests
 
             Assert.Equal([a, b], viewer.Items.Cast<GalleryItemViewModel>());
         });
+    }
+
+    [AvaloniaFact]
+    public void StartedDocked_ShowsDockedLook()
+    {
+        WithShownDockedGallery((_, _, view, panel) =>
+        {
+            var size = Settings.Gallery.DockedGalleryItemSize;
+            Assert.Equal(size, panel.ItemHeight);
+            Assert.Equal(GalleryDefaults.GetDockedGalleryHeight(size), view.Height);
+            Assert.Equal(Orientation.Horizontal, panel.Orientation);
+
+            Assert.NotEmpty(panel.RealizedItems);
+            var container = Assert.IsType<ContentPresenter>(panel.RealizedItems[0].Element);
+            var item = Assert.IsType<GalleryItem>(container.Child);
+            Assert.Equal(panel.ItemHeight, item.Height);
+            Assert.Equal(GalleryThumbnailStretch.ToStretch(Settings.Gallery.DockedGalleryStretchMode),
+                item.FindControl<ThumbImage>("GalleryImage")!.Stretch);
+        });
+    }
+
+    [AvaloniaFact]
+    public void DockedItemSizeChanged_WhileDocked_ResizesByTheDefaultsFormula()
+    {
+        WithShownDockedGallery((core, window, view, panel) =>
+        {
+            core.GallerySettings.DockedGalleryItemSize.Value = 120;
+            RenderFrame(window);
+
+            Assert.Equal(GalleryDefaults.GetDockedGalleryHeight(120), view.Height);
+            Assert.Equal(120, panel.ItemHeight);
+        });
+    }
+
+    [AvaloniaFact]
+    public void DockedToClosed_KeepsHoverBarAndItemHeight()
+    {
+        WithShownDockedGallery((_, window, view, panel) =>
+        {
+            var tab = (TabViewModel)view.DataContext!;
+            var hoverBar = tab.Hoverbar.IsHoverbarVisible.Value;
+            var itemHeight = panel.ItemHeight;
+
+            // Crop hides the gallery without animation
+            tab.Crop = new CropViewModel();
+            RenderFrame(window);
+
+            Assert.False(view.IsVisible);
+            Assert.Equal(hoverBar, tab.Hoverbar.IsHoverbarVisible.Value);
+            Assert.Equal(itemHeight, panel.ItemHeight);
+            Assert.True(panel.ItemHeight > 0);
+        });
+    }
+
+    // Shown in a window, so the view loads, with a tab started docked at the bottom and a few items
+    private static void WithShownDockedGallery(Action<CoreViewModel, Window, GalleryView, VirtualizingGallery> test)
+    {
+        Settings.Gallery.DockPosition = GalleryDockPosition.Bottom;
+        var core = new CoreViewModel(null, _ => ValueTask.FromResult(new ImageModel()));
+        var window = new TestMainWindow(new NoOpModeAdapter());
+        var vm = new MainWindowViewModel(core, core.Translation, window, core.GlobalSettings!, core.GallerySettings);
+        window.DataContext = vm;
+        var tab = vm.WindowTabs.ActiveTab.Value;
+        tab.Gallery.Initialize(core.GallerySettings);
+        tab.Gallery.Switcher.Start(docked: true);
+
+        var application = Application.Current!;
+        var previous = application.DataContext;
+        application.DataContext = core;
+        try
+        {
+            var view = new GalleryView { DataContext = tab };
+            view.Initialize(tab);
+            tab.Gallery.GalleryItems.AddRange([
+                new GalleryItemViewModel { FileInfo = new FileInfo("a.jpg") },
+                new GalleryItemViewModel { FileInfo = new FileInfo("b.jpg") }
+            ]);
+            window.Content = new DockPanel { Children = { view } };
+            window.Show();
+            Dispatcher.UIThread.RunJobs();
+            RenderFrame(window);
+
+            var panel = (VirtualizingGallery)view.FindControl<NavigateAbleItemsViewer>("GalleryItemsControl")!
+                .ItemsPanelRoot!;
+            test(core, window, view, panel);
+        }
+        finally
+        {
+            window.Close();
+            application.DataContext = previous;
+        }
+    }
+
+    private static void RenderFrame(Window window)
+    {
+        window.InvalidateVisual();
+        AvaloniaHeadlessPlatform.ForceRenderTimerTick();
+        Dispatcher.UIThread.RunJobs();
     }
 
     private static void WithGalleryView(Action<TabViewModel, NavigateAbleItemsViewer> test) =>

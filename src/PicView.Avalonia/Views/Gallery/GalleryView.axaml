@@ -157,9 +157,6 @@
                     <customControls:VirtualizingGallery
                         x:Name="GalleryItemsPanel"
                         VerticalAlignment="Center"
-                        ItemHeight="{Binding ParentWindowContext.GallerySettings.ItemHeight.Value}"
-                        ItemSpacing="{CompiledBinding Gallery.ItemSpacing.Value}"
-                        ItemWidth="{Binding ParentWindowContext.GallerySettings.ItemWidth.Value}"
                         LineSpacing="{CompiledBinding Gallery.LineSpacing.Value}" />
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>

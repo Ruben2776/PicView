@@ -26,11 +26,14 @@ public class DockedGalleryWindowFitTests
     private const uint ImageWidth = 800;
     private const uint ImageHeight = 600;
 
+    // Static, as the helpers are, and set again for each test; the tests run one at a time
+    private static ManualFrameProvider _frameProvider = new();
+
     public DockedGalleryWindowFitTests()
     {
-        // The tab's dock flags follow the setting on a frame of their own, which never comes here: as when the
-        // gallery moves before they catch up
-        ObservableSystem.DefaultFrameProvider = new OneFrameProvider();
+        // The tab's appearance and dock flags follow the setting on the app's frames, which RenderFrame ticks
+        _frameProvider = new ManualFrameProvider();
+        ObservableSystem.DefaultFrameProvider = _frameProvider;
         SetDefaults();
         TranslationManager.Init();
         Settings.WindowProperties.AutoFit = true;
@@ -98,10 +101,12 @@ public class DockedGalleryWindowFitTests
         }
     }
 
-    // The gallery follows the dock setting on the window's frames. Headless frames come on a timer, and a tick renders
-    // one only when something on screen changed
+    // An app frame, then a render frame: headless ones come on a timer, and a tick renders one only when something on
+    // screen changed
     private static void RenderFrame(Window window)
     {
+        _frameProvider.Tick();
+        Dispatcher.UIThread.RunJobs();
         window.InvalidateVisual();
         AvaloniaHeadlessPlatform.ForceRenderTimerTick();
         Dispatcher.UIThread.RunJobs();
@@ -128,9 +133,23 @@ public class DockedGalleryWindowFitTests
         }
     }
 
-    private sealed class OneFrameProvider : FrameProvider
+    private sealed class ManualFrameProvider : FrameProvider
     {
+        private readonly List<IFrameRunnerWorkItem> _items = [];
+
         public override long GetFrameCount() => 0;
-        public override void Register(IFrameRunnerWorkItem callback) => callback.MoveNext(0);
+
+        public override void Register(IFrameRunnerWorkItem callback) => _items.Add(callback);
+
+        public void Tick()
+        {
+            for (var i = _items.Count - 1; i >= 0; i--)
+            {
+                if (!_items[i].MoveNext(0))
+                {
+                    _items.RemoveAt(i);
+                }
+            }
+        }
     }
 }

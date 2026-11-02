@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
@@ -14,12 +13,13 @@ using R3;
 
 namespace PicView.Avalonia.CustomControls;
 
+/// <summary>
+/// Shows the Gallery Appearance of its tab's gallery, and animates from one to the next when the tab's switcher says
+/// to. It works out nothing about the look itself: <see cref="GalleryViewModel.Appearance"/> does.
+/// </summary>
 public class GalleryAnimationControl : UserControl
 {
     #region Fields and Properties
-    
-    private const int ZeroSize = 0;
-
 
     private TabViewModel? TabViewModel => DataContext as TabViewModel;
     private Control? _parentControl;
@@ -29,26 +29,17 @@ public class GalleryAnimationControl : UserControl
     private VirtualizingGallery? _itemsPanel;
 
     /// <summary>
-    /// The mode this control shows, which follows the tab's <see cref="GalleryModeSwitcher.ShownMode"/>.
+    /// The appearance this control shows. It starts closed, which is all a default record says.
     /// </summary>
-    private GalleryMode _shownMode = GalleryMode.Closed;
+    private GalleryAppearance _applied;
 
     public bool IsInAnimation { get; private set; }
 
-    private static Thickness GetDockedMargin => new(0);
-    private static Thickness GetExpandedMargin => new(15, 40, 15, 5);
-
-    private static double GetDockedSize(GalleryDockPosition dock)
-    {
-        return dock switch
-        {
-            GalleryDockPosition.Bottom or GalleryDockPosition.Top => GalleryDefaults.GetDockedGalleryHeight(Settings.Gallery.DockedGalleryItemSize),
-            GalleryDockPosition.Left or GalleryDockPosition.Right => GalleryDefaults.GetDockedGalleryWidth(Settings.Gallery.DockedGalleryItemSize),
-            _ => 0
-        };
-    } 
-
-    private double GetExpandedWrapHeight()
+    /// <summary>
+    /// The height the Expanded Gallery wraps its items in once it fills the parent, for locking the wrap while the
+    /// gallery grows or shrinks.
+    /// </summary>
+    private double GetExpandedWrapHeight(GalleryAppearance expanded)
     {
         if (_parentControl is null)
         {
@@ -56,16 +47,14 @@ public class GalleryAnimationControl : UserControl
         }
 
         var availableHeight = _parentControl.Bounds.Height
-            - GetExpandedMargin.Top
-            - GetExpandedMargin.Bottom
+            - expanded.Margin.Top
+            - expanded.Margin.Bottom
             - SizeDefaults.HorizontalScrollbarSize
-            - BorderThickness.Top
-            - BorderThickness.Bottom;
+            - expanded.Border.Top
+            - expanded.Border.Bottom;
 
         return Math.Max(0, availableHeight);
     }
-
-    private static bool IsHorizontalDock(GalleryDockPosition dock) => dock is GalleryDockPosition.Top or GalleryDockPosition.Bottom;
 
     #endregion
 
@@ -99,18 +88,6 @@ public class GalleryAnimationControl : UserControl
 
     private void SetupSubscriptions()
     {
-        Debug.Assert(Settings.Gallery is not null);
-
-        if (Application.Current.DataContext is not CoreViewModel core)
-        {
-            return;
-        }
-        
-        if (TopLevel.GetTopLevel(this) is not MainWindow mainWindow)
-        {
-            return;
-        }
-
         if (TabViewModel is not { } tab)
         {
             return;
@@ -130,146 +107,52 @@ public class GalleryAnimationControl : UserControl
                 AwaitOperation.Drop)
             .AddTo(ref _disposables);
 
-        // Change layout corresponding to DockPositions; a gallery that is not docked takes it when it docks
-        Observable.EveryValueChanged(Settings.Gallery, gallery => gallery.DockPosition, mainWindow.FrameProvider)
+        // The size sliders, the stretch combos, the dock edge and the item spacing, in the mode already shown
+        tab.Gallery.Appearance.AsObservable()
             .Skip(1)
-            .Subscribe(position =>
-            {
-                if (_shownMode is not GalleryMode.Docked)
-                {
-                    return;
-                }
-
-                // Size directly when already docked, collapsing to 0x0 first causes an extra, expensive layout pass
-                SetDockedLayout(position, !IsInAnimation);
-
-                // The Reserved Space moves with the gallery; an animation fits the window once it ends
-                if (!IsInAnimation && TopLevel.GetTopLevel(this) is MainWindow window)
-                {
-                    window.WindowFitter.Refit();
-                }
-            }, DebugHelper.LogError(nameof(GalleryAnimationControl), nameof(SetDockedLayout)))
+            .ObserveOnUIThreadDispatcher()
+            .Subscribe(OnAppearanceChanged, DebugHelper.LogError(nameof(GalleryAnimationControl), nameof(OnAppearanceChanged)))
             .AddTo(ref _disposables);
-        
-        // Update expanded item sizes
-        Observable.EveryValueChanged(core.GallerySettings, gallery => gallery.ExpandedGalleryItemSize.CurrentValue, mainWindow.FrameProvider)
-            .Skip(1)
-            .Subscribe(UpdateExpandedItemHeight, DebugHelper.LogError(nameof(GalleryAnimationControl), nameof(UpdateExpandedItemHeight)))
-            .AddTo(ref _disposables);
-
-        // Update docked item sizes
-        Observable.EveryValueChanged(core.GallerySettings, gallery => gallery.DockedGalleryItemSize.CurrentValue, mainWindow.FrameProvider)
-            .Skip(1)
-            .Subscribe(UpdateDockedItemHeight, DebugHelper.LogError(nameof(GalleryAnimationControl), nameof(UpdateDockedItemHeight)))
-            .AddTo(ref _disposables);
-        
-        // The Settings window can change either gallery's stretch, whichever one is shown. The other one takes it when
-        // it is shown next, from SetExpandedThumbs or SetDockedThumbPosition
-        core.GallerySettings.ExpandedGalleryStretchMode.Skip(1).Subscribe(mode =>
-            {
-                if (_shownMode is not GalleryMode.Expanded)
-                {
-                    return;
-                }
-
-                SetExpandedThumbs(mode);
-                _itemsPanel.InvalidateMeasure();
-                Dispatcher.UIThread.Invoke(() =>
-                {
-                    _viewer.ScrollToCenterOfCurrentItem();
-                }, DispatcherPriority.Render);
-            }, DebugHelper.LogError(nameof(GalleryAnimationControl), nameof(UpdateExpandedItemHeight)))
-        .AddTo(ref _disposables);
-        
-        core.GallerySettings.DockedGalleryStretchMode.Skip(1).Subscribe(mode =>
-            {
-                if (_shownMode is not GalleryMode.Docked)
-                {
-                    return;
-                }
-
-                SetDockedThumbs(mode);
-                _itemsPanel.InvalidateMeasure();
-                _viewer.ScrollToCenterOfCurrentItem();
-            }, DebugHelper.LogError(nameof(GalleryAnimationControl), nameof(core.GallerySettings.DockedGalleryStretchMode)))
-        .AddTo(ref _disposables);
     }
 
     #endregion
 
     #region Logic & Layout
 
-    protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
-    {
-        base.OnPropertyChanged(change);
-
-        if (change.Property != DockPanel.DockProperty || change.NewValue is not Dock)
-        {
-            return;
-        }
-
-        _itemsPanel.WrapHeightOverride = GetDockedSize(Settings.Gallery.DockPosition);
-        Dispatcher.UIThread.Post(() =>
-        {
-            SetDockedLayout(Settings.Gallery.DockPosition, true);
-            _itemsPanel.WrapHeightOverride = double.NaN;
-        }, DispatcherPriority.Render);
-    }
-
     /// <summary>
     /// Shows a change the tab's switcher published, animated or not as it says. A change that arrives during an
-    /// animation is caught up without animation once the animation ends.
+    /// animation is caught up without animation once the animation ends, as is any other change to the appearance.
     /// </summary>
     private async ValueTask OnGalleryModeChanged(GalleryModeChange change)
     {
         while (true)
         {
-            if (IsInAnimation)
+            if (IsInAnimation || TabViewModel is not { } tab)
             {
                 return;
             }
 
+            var from = _applied;
+            var to = tab.Gallery.Appearance.Value;
             try
             {
                 IsInAnimation = true;
-                var from = _shownMode;
-                _shownMode = change.To;
-
-                switch (from, change.To)
+                var autoFit = tab.ParentWindowContext?.WindowModeState.CurrentValue.AutoFit is true;
+                if (change.Animate && GalleryTransition.For(from.Mode, to.Mode, to.Dock, autoFit) is { } transition)
                 {
-                    case var _ when !change.Animate:
-                        ShowWithoutAnimation();
-                        break;
-
-                    case (GalleryMode.Closed, GalleryMode.Docked):
-                        await ClosedToDocked().ConfigureAwait(true);
-                        break;
-                    case (GalleryMode.Closed, GalleryMode.Expanded):
-                        await ClosedToExpanded().ConfigureAwait(true);
-                        break;
-
-                    case (GalleryMode.Docked, GalleryMode.Expanded):
-                        await DockedToExpanded().ConfigureAwait(true);
-                        break;
-                    case (GalleryMode.Docked, GalleryMode.Closed):
-                        await DockedToClosed().ConfigureAwait(true);
-                        break;
-
-                    case (GalleryMode.Expanded, GalleryMode.Docked):
-                        await ExpandedToDocked().ConfigureAwait(true);
-                        break;
-                    case (GalleryMode.Expanded, GalleryMode.Closed):
-                        await ExpandedToClosed().ConfigureAwait(true);
-                        break;
-
-                    default:
-                        UpdateLayoutForCurrentState();
-                        break;
+                    await Animate(from, to, transition).ConfigureAwait(true);
+                }
+                else
+                {
+                    ShowWithoutAnimation(to);
                 }
             }
             catch (Exception ex)
             {
-                UpdateLayoutForCurrentState(); // Fallback
+                // Fallback
+                _itemsPanel?.WrapHeightOverride = double.NaN;
+                Apply(to);
+                SetExtent(to);
                 DebugHelper.LogDebug(nameof(GalleryAnimationControl), nameof(OnGalleryModeChanged), ex);
             }
             finally
@@ -277,9 +160,9 @@ public class GalleryAnimationControl : UserControl
                 IsInAnimation = false;
             }
 
-            if (TabViewModel is { } tab && _shownMode != tab.Gallery.ShownMode.Value)
+            if (_applied != tab.Gallery.Appearance.Value)
             {
-                change = new GalleryModeChange(_shownMode, tab.Gallery.ShownMode.Value, false);
+                change = new GalleryModeChange(_applied.Mode, tab.Gallery.Appearance.Value.Mode, false);
                 continue;
             }
 
@@ -287,10 +170,41 @@ public class GalleryAnimationControl : UserControl
         }
     }
 
-    private void ShowWithoutAnimation()
+    /// <summary>
+    /// Shows a new appearance in the mode already shown. One in another mode waits for its mode change, and one during
+    /// an animation is caught up once it ends.
+    /// </summary>
+    private void OnAppearanceChanged(GalleryAppearance appearance)
     {
-        UpdateLayoutForCurrentState();
-        if (_shownMode is GalleryMode.Docked)
+        if (IsInAnimation || appearance.Mode != _applied.Mode || appearance == _applied)
+        {
+            return;
+        }
+
+        if (!appearance.IsShown)
+        {
+            Apply(appearance);
+            return;
+        }
+
+        var dockChanged = appearance.Dock != _applied.Dock;
+        Apply(appearance);
+        SetExtent(appearance);
+        _itemsPanel?.InvalidateMeasure();
+        _viewer?.ScrollToCenterOfCurrentItem();
+
+        // The Reserved Space moves with the Docked Gallery
+        if (dockChanged && appearance.Mode is GalleryMode.Docked && TopLevel.GetTopLevel(this) is MainWindow window)
+        {
+            window.WindowFitter.Refit();
+        }
+    }
+
+    private void ShowWithoutAnimation(GalleryAppearance appearance)
+    {
+        Apply(appearance);
+        SetExtent(appearance);
+        if (appearance.Mode is GalleryMode.Docked)
         {
             Dispatcher.UIThread.Post(() =>
             {
@@ -304,497 +218,266 @@ public class GalleryAnimationControl : UserControl
         }
     }
 
-    private void UpdateLayoutForCurrentState()
+    /// <summary>
+    /// Shows <paramref name="appearance"/>, apart from its extent. A closed one only hides the gallery, and leaves the
+    /// rest as it was.
+    /// </summary>
+    private void Apply(GalleryAppearance appearance)
     {
-        var dock = Settings.Gallery.DockPosition;
-        IsVisible = _shownMode != GalleryMode.Closed;
-
-        switch (_shownMode)
+        if (!appearance.IsShown)
         {
-            case GalleryMode.Closed:
-                Width = Height = ZeroSize;
-                break;
-            case GalleryMode.Expanded:
-                SetExpandedLayout(dock);
-                break;
-            case GalleryMode.Docked:
-            default:
-                SetDockedLayout(dock, true);
-                break;
-        }
-    }
-
-    #endregion
-
-    #region Expanded Configuration
-
-    private void SetExpandedLayout(GalleryDockPosition dock)
-    {
-        SetExpandedLayoutCore(dock);
-        SetExpandedThumbs();
-    }
-
-    private void SetExpandedLayoutCore(GalleryDockPosition dock)
-    {
-        _itemsPanel.IsExpanded = true;
-        _itemsPanel.WrapHeightOverride = double.NaN;
-        
-        if (_parentControl != null)
-        {
-            if (IsHorizontalDock(dock))
-            {
-                Width = double.NaN;
-                Height = _parentControl.Bounds.Height;
-            }
-            else
-            {
-                Width = _parentControl.Bounds.Width;
-                Height = double.NaN;
-            }
-        }
-
-        _itemsPanel?.Orientation = Orientation.Vertical;
-        TabViewModel?.Gallery.ItemSpacing.Value = Settings.Gallery.ItemSpacing;
-        _viewer?.SetHorizontalScrolling();
-        TabViewModel.Hoverbar.IsHoverbarVisible.Value = false;
-    }
-
-    private void SetExpandedThumbs()
-    {
-        ApplyThumbSettings(
-            Settings.Gallery.ExpandedGalleryItemSize,
-            Settings.Gallery.ExpandedGalleryStretchMode,
-            GetExpandedMargin);
-    }
-    
-    private void SetExpandedThumbs(GalleryStretchMode mode)
-    {
-        ApplyThumbSettings(
-            Settings.Gallery.ExpandedGalleryItemSize,
-            mode,
-            GetExpandedMargin);
-        _viewer.ScrollToCenterOfCurrentItem();
-    }
-
-    private void UpdateExpandedItemHeight(double itemHeight)
-    {
-        if (!TabViewModel.Gallery.IsGalleryExpanded.CurrentValue)
-        {
+            IsVisible = false;
+            _applied = appearance;
             return;
         }
-        if (Application.Current.DataContext is not CoreViewModel core)
+
+        var dockChanged = _applied.Mode is GalleryMode.Docked && appearance.Mode is GalleryMode.Docked &&
+                          _applied.Dock != appearance.Dock;
+
+        if (_itemsPanel is { } panel)
         {
-            return;
+            panel.ItemHeight = appearance.ItemHeight;
+            panel.ItemWidth = appearance.ItemWidth;
+            panel.ItemSpacing = appearance.ItemSpacing;
+            panel.Orientation = appearance.Orientation is GalleryOrientation.Horizontal
+                ? Orientation.Horizontal
+                : Orientation.Vertical;
+            panel.IsExpanded = appearance.Wraps;
+            panel.Margin = ToThickness(appearance.Margin);
+            panel.ThumbnailStretch = GalleryThumbnailStretch.ToStretch(appearance.Stretch);
         }
-        
-        core.GallerySettings.ItemHeight.Value = itemHeight;
-        _itemsPanel.InvalidateMeasure();
-        _viewer.ScrollToCenterOfCurrentItem();
-    }
-    
-    private void ParentSizeChanged(object? sender, SizeChangedEventArgs e)
-    {
-        // Keep the layout correct when the view is resized
-        if (_shownMode == GalleryMode.Expanded)
+
+        BorderThickness = ToThickness(appearance.Border);
+        DockPanel.SetDock(this, appearance.Dock switch
         {
-            UpdateLayoutForCurrentState();
-        }
-    }
+            GalleryDockPosition.Top => Dock.Top,
+            GalleryDockPosition.Left => Dock.Left,
+            GalleryDockPosition.Right => Dock.Right,
+            _ => Dock.Bottom
+        });
 
-    #endregion
-
-    #region Docked Configuration
-
-    /// <summary>
-    /// Configures the gallery layout based on the specified dock position and whether to adjust the size.
-    /// </summary>
-    /// <param name="dock">
-    /// The dock position of the gallery. Possible values are defined in the <see cref="GalleryDockPosition"/> enum.
-    /// </param>
-    /// <param name="setSize">
-    /// Whether the gallery dimensions should be adjusted according to the dock position.
-    /// Should be true if the layout needs immediate resizing (skip animation).
-    /// </param>
-    private void SetDockedLayout(GalleryDockPosition dock, bool setSize)
-    {
-        SetDockedLayoutCore(dock, setSize);
-        SetDockedThumbPosition(dock);
-    }
-
-    /// <summary>
-    /// Adjusts the gallery layout based on the specified dock position and size configuration.
-    /// </summary>
-    /// <param name="dock">
-    /// The desired dock position for the gallery, as defined in the <see cref="GalleryDockPosition"/> enum.
-    /// </param>
-    /// <param name="setSize">
-    /// Whether the gallery dimensions should be adjusted according to the dock position.
-    /// Should be true if the layout needs immediate resizing (skip animation).
-    /// </param>
-    private void SetDockedLayoutCore(GalleryDockPosition dock, bool setSize)
-    {
-        _itemsPanel.IsExpanded = false;
-        TabViewModel?.Gallery?.ItemSpacing.Value = 0;
-        
-        if (IsHorizontalDock(dock))
+        if (appearance.ScrollsHorizontally)
         {
-            if (setSize)
-            {
-                Width = double.NaN;
-                Height = GetDockedSize(dock);
-            }
-            else
-            {
-                Width = Height = 0;
-            }
-
-
-            _itemsPanel?.Orientation = Orientation.Horizontal;
-            BorderThickness = dock == GalleryDockPosition.Top ? new Thickness(0, 0, 0, 1) : new Thickness(0, 1, 0, 0);
-
             _viewer?.SetHorizontalScrolling();
-        }
-        else // Left or Right
-        {
-            if (setSize)
-            {
-                Width = GetDockedSize(dock);
-                Height = double.NaN;
-            }
-            else
-            {
-                Width = Height = 0;
-            }
-
-            _itemsPanel?.Orientation = Orientation.Vertical;
-            BorderThickness = dock == GalleryDockPosition.Right ? new Thickness(1, 0, 0, 0) : new Thickness(0, 0, 1, 0);
-
-            _viewer?.SetVerticalScrolling();
-        }
-        TabViewModel?.Hoverbar?.IsHoverbarVisible?.Value = !Settings.UIProperties.ShowBottomNavBar && Settings.UIProperties.ShowHoverNavigationBar;
-    }
-
-    private void SetDockedThumbPosition(GalleryDockPosition dock)
-    {
-        // The tab's dock flags follow its switcher; this only places the control
-        switch (dock)
-        {
-            case GalleryDockPosition.Top:
-                DockPanel.SetDock(this, Dock.Top);
-                break;
-            case GalleryDockPosition.Left:
-                DockPanel.SetDock(this, Dock.Left);
-                break;
-            case GalleryDockPosition.Right:
-                DockPanel.SetDock(this, Dock.Right);
-                break;
-            default:
-                DockPanel.SetDock(this, Dock.Bottom);
-                break;
-        }
-
-        IsVisible = true;
-        ApplyThumbSettings(
-            Settings.Gallery.DockedGalleryItemSize,
-            Settings.Gallery.DockedGalleryStretchMode,
-            GetDockedMargin);
-    }
-
-    private void UpdateDockedItemHeight(double itemHeight)
-    {
-        if (TabViewModel.Gallery.IsGalleryExpanded.CurrentValue || Application.Current.DataContext is not CoreViewModel core)
-        {
-            return;
-        }
-        core.GallerySettings.ItemHeight.Value = itemHeight;
-
-        // Resize control bounds
-        var size = itemHeight + GalleryDefaults.BorderTopAndBottomThickness + SizeDefaults.HorizontalScrollbarSize;
-        if (IsHorizontalDock(Settings.Gallery.DockPosition))
-        {
-            Width = double.NaN;
-            Height = size;
         }
         else
         {
-            Width = size;
-            Height = double.NaN;
+            _viewer?.SetVerticalScrolling();
         }
-        _viewer.ScrollToCenterOfCurrentItem();
-    }
-    
-    private void SetDockedThumbs(GalleryStretchMode mode)
-    {
-        ApplyThumbSettings(
-            Settings.Gallery.DockedGalleryItemSize,
-            mode,
-            GetDockedMargin);
-    }
-    
-    private void ApplyThumbSettings(double size, GalleryStretchMode mode, Thickness margin, double spacing = 0)
-    {
-        if (Application.Current.DataContext is not CoreViewModel core)
-        {
-            return;
-        }
-        var settings = core.GallerySettings;
-        settings.ItemHeight.Value = size;
-        settings.ItemWidth.Value = mode is GalleryStretchMode.Square or GalleryStretchMode.FillSquare
-            ? size
-            : double.NaN;
-        settings.ThumbnailStretch.Value = mode;
-        _itemsPanel.ThumbnailStretch = GalleryThumbnailStretch.ToStretch(mode);
 
-        if (spacing > 0)
+        IsVisible = true;
+        TabViewModel?.Hoverbar.IsHoverbarVisible.Value = appearance.ShowsHoverBar;
+
+        // Moving to another edge wraps at the docked extent for one render pass
+        if (dockChanged && _itemsPanel is { } movedPanel)
         {
-            TabViewModel.Gallery.ItemSpacing.Value = spacing;
+            movedPanel.WrapHeightOverride = appearance.Extent;
+            Dispatcher.UIThread.Post(() =>
+            {
+                movedPanel.WrapHeightOverride = double.NaN;
+            }, DispatcherPriority.Render);
         }
-        
-        _itemsPanel.Margin = margin;
+
+        _applied = appearance;
+    }
+
+    /// <summary>
+    /// Sizes the control for <paramref name="appearance"/>: its extent along the dock axis when docked, the parent's
+    /// bounds on the axis that doesn't stretch when expanded, and nothing when closed.
+    /// </summary>
+    private void SetExtent(GalleryAppearance appearance)
+    {
+        var horizontalDock = appearance.Dock is GalleryDockPosition.Top or GalleryDockPosition.Bottom;
+        switch (appearance.Mode)
+        {
+            case GalleryMode.Docked when horizontalDock:
+                Width = double.NaN;
+                Height = appearance.Extent;
+                break;
+            case GalleryMode.Docked:
+                Width = appearance.Extent;
+                Height = double.NaN;
+                break;
+            case GalleryMode.Expanded when _parentControl is null:
+                break;
+            case GalleryMode.Expanded when horizontalDock:
+                Width = double.NaN;
+                Height = _parentControl.Bounds.Height;
+                break;
+            case GalleryMode.Expanded:
+                Width = _parentControl.Bounds.Width;
+                Height = double.NaN;
+                break;
+            default:
+                Width = Height = 0;
+                break;
+        }
+    }
+
+    private static Thickness ToThickness(GalleryInsets insets) =>
+        new(insets.Left, insets.Top, insets.Right, insets.Bottom);
+
+    private void ParentSizeChanged(object? sender, SizeChangedEventArgs e)
+    {
+        // Keep the layout correct when the view is resized
+        if (_applied.Mode is GalleryMode.Expanded)
+        {
+            SetExtent(_applied);
+        }
     }
 
     #endregion
 
     #region Animations
 
-    private async Task ClosedToDocked()
+    /// <summary>
+    /// Animates from <paramref name="from"/> to <paramref name="to"/> as <paramref name="transition"/> says.
+    /// </summary>
+    private async Task Animate(GalleryAppearance from, GalleryAppearance to, GalleryTransition transition)
     {
-        var dock = Settings.Gallery.DockPosition;
-        IsVisible = true;
-        SetDockedLayoutCore(dock, false);
-        SetDockedThumbPosition(dock);
-        
-        await Dispatcher.UIThread.InvokeAsync(() =>
+        // 1. The new look, unless it comes at the end
+        if (to.IsShown && !transition.AppliesLookAtEnd)
         {
-            _viewer.ScrollToCenterOfCurrentItem();
-        }, DispatcherPriority.Background);
-        
-        var targetSize = GetDockedSize(dock);
-
-        if (IsHorizontalDock(dock))
-        {
-            Height = ZeroSize;
-            Width = double.NaN;
-            var heightAnim = AnimationsHelper.HeightAnimation(ZeroSize, targetSize, GalleryDefaults.FastAnimationSpeed);
-            await heightAnim.RunAsync(this).ConfigureAwait(true);
-            Height = targetSize;
-        }
-        else
-        {
-            Width = ZeroSize;
-            Height = double.NaN;
-            var widthAnim = AnimationsHelper.WidthAnimation(ZeroSize, targetSize, GalleryDefaults.FastAnimationSpeed);
-            await widthAnim.RunAsync(this).ConfigureAwait(true);
-            Width = targetSize;
-        }
-        
-        await Dispatcher.UIThread.InvokeAsync(() =>
-        {
-            _viewer.ScrollToCenterOfCurrentItem();
-        }, DispatcherPriority.Render);
-
-        if (TopLevel.GetTopLevel(this) is MainWindow mainWindow)
-        {
-            mainWindow.WindowFitter.Refit();
-        }
-    }
-
-    private async Task DockedToClosed()
-    {
-        var isHorizontal = IsHorizontalDock(Settings.Gallery.DockPosition);
-        var currentSize = GetDockedSize(Settings.Gallery.DockPosition);
-
-        if (isHorizontal)
-        {
-            await AnimationsHelper.HeightAnimation(currentSize, ZeroSize, GalleryDefaults.MediumAnimationSpeed).RunAsync(this).ConfigureAwait(true);
-            Height = ZeroSize;
-        }
-        else
-        {
-            await AnimationsHelper.WidthAnimation(currentSize, ZeroSize, GalleryDefaults.MediumAnimationSpeed).RunAsync(this).ConfigureAwait(true);
-            Width = ZeroSize;
+            Apply(to);
         }
 
-        IsVisible = false;
-    }
-
-    private async Task DockedToExpanded()
-    {
-        var dock = Settings.Gallery.DockPosition;
-        var targetHeight = _parentControl!.Bounds.Height;
-
-        SetExpandedLayoutCore(dock);
-        SetExpandedThumbs();
-
-        // LOCK the layout wrap constraint to the final calculated available size before animating
-        _itemsPanel.WrapHeightOverride = GetExpandedWrapHeight();
-
-        var startSize = GetDockedSize(dock);
-        Dispatcher.UIThread.Post(() =>
+        // 2. Wrap as the Expanded Gallery does once it fills the parent, so it doesn't rewrap while it grows or shrinks
+        if (transition.LocksWrap && _itemsPanel is not null)
         {
-            _viewer.ScrollToCenterOfCurrentItem();
-        }, DispatcherPriority.Render);
-
-        if (IsHorizontalDock(dock))
-        {
-            var heightAnim =
-                AnimationsHelper.HeightAnimation(startSize, targetHeight, GalleryDefaults.MediumAnimationSpeed);
-            await heightAnim.RunAsync(this).ConfigureAwait(true);
-            Height = targetHeight;
+            _itemsPanel.WrapHeightOverride = GetExpandedWrapHeight(to.Mode is GalleryMode.Expanded ? to : from);
         }
-        else
+
+        // The current item, in the new look
+        if (to.IsShown && !transition.AppliesLookAtEnd)
         {
-            var targetWidth = _parentControl.Bounds.Width;
-            var widthAnim = AnimationsHelper.WidthAnimation(startSize, targetWidth, GalleryDefaults.MediumAnimationSpeed);
-            await widthAnim.RunAsync(this).ConfigureAwait(true);
-            Width = targetWidth;
-            if (OperatingSystem.IsMacOS())
+            if (from.Mode is GalleryMode.Closed && to.Mode is GalleryMode.Docked)
             {
                 await Dispatcher.UIThread.InvokeAsync(() =>
                 {
-                    // Fixes rendering bug
-                    Width = _parentControl.Bounds.Width;
-                }, DispatcherPriority.Send);
-            }
-        }
-        
-        // Unlock the layout and trigger remeasure to match exact final bounds
-        _itemsPanel.WrapHeightOverride = double.NaN;
-        _itemsPanel.InvalidateMeasure();
-
-        await Dispatcher.UIThread.InvokeAsync(() =>
-        {
-            _viewer.ScrollToCenterOfCurrentItem();
-        }, DispatcherPriority.Render);
-    }
-
-    private async Task ExpandedToDocked()
-    {
-        var dock = Settings.Gallery.DockPosition;
-        var startHeight = _parentControl.Bounds.Height;
-
-        // LOCK the layout wrap constraint so it doesn't wrap tighter as the window shrinks
-        _itemsPanel.WrapHeightOverride = GetExpandedWrapHeight();
-        
-        if (IsHorizontalDock(dock))
-        {
-            var targetHeight = GetDockedSize(dock);
-            if (TabViewModel?.ParentWindowContext.WindowModeState.CurrentValue.AutoFit is true)
-            {
-                Height = startHeight;
-                var heightAnim = AnimationsHelper.HeightAnimation(startHeight, targetHeight, GalleryDefaults.SlowAnimationSpeed);
-                await heightAnim.RunAsync(this).ConfigureAwait(true);
+                    _viewer?.ScrollToCenterOfCurrentItem();
+                }, DispatcherPriority.Background);
             }
             else
             {
-                // Need to continuously update the image size while animating if auto-fit is off
-                if (TopLevel.GetTopLevel(this) is not MainWindow mainWindow)
+                Dispatcher.UIThread.Post(() =>
                 {
-                    return;
-                }
-                var cts = new CancellationTokenSource();
-                var ct = cts.Token;
-                Observable.EveryUpdate(mainWindow.FrameProvider, ct).Subscribe(_ =>
-                {
-                    mainWindow.WindowFitter.Refit();
-                }, DebugHelper.LogError(nameof(GalleryAnimationControl), nameof(ExpandedToDocked)));
-                var heightAnim =
-                    AnimationsHelper.HeightAnimation(startHeight, targetHeight, GalleryDefaults.SlowAnimationSpeed);
-                await heightAnim.RunAsync(this, ct).ConfigureAwait(true);
-                await cts.CancelAsync().ConfigureAwait(true);
+                    _viewer?.ScrollToCenterOfCurrentItem();
+                }, DispatcherPriority.Render);
             }
-            Height = targetHeight;
         }
-        else
+
+        // 3. The tween, from the current extent to the target's
+        var startWidth = from.IsShown ? Bounds.Width : 0;
+        var startHeight = from.IsShown ? Bounds.Height : 0;
+        var endWidth = TweenTarget(to, horizontal: false);
+        var endHeight = TweenTarget(to, horizontal: true);
+        Task tween;
+        if (transition.TweensBothAxes)
         {
-            var startWidth = _parentControl.Bounds.Width;
-            var targetWidth = GetDockedSize(dock);
             Width = startWidth;
-            var widthAnim =
-                AnimationsHelper.WidthAnimation(startWidth, targetWidth, GalleryDefaults.SlowAnimationSpeed);
-            await widthAnim.RunAsync(this).ConfigureAwait(true);
-            Width = targetWidth;
-        }
-
-        SetDockedLayout(dock, true);
-
-        // Unlock the layout before scrolling so measurements match docked mode
-        _itemsPanel.WrapHeightOverride = double.NaN;
-        _itemsPanel.InvalidateMeasure();
-
-        await Dispatcher.UIThread.InvokeAsync(() =>
-        {
-            _viewer?.ScrollToCenterOfCurrentItem();
-        }, DispatcherPriority.Render);
-
-        // A fit while expanded reserved no space for the gallery, which is docked again now
-        if (TopLevel.GetTopLevel(this) is MainWindow window)
-        {
-            window.WindowFitter.Refit();
-        }
-    }
-
-    private async Task ClosedToExpanded()
-    {
-        IsVisible = true;
-        Width = Height = ZeroSize;
-
-        var targetHeight = _parentControl!.Bounds.Height;
-        var targetWidth = _parentControl.Bounds.Width;
-
-        SetExpandedLayoutCore(Settings.Gallery.DockPosition);
-        SetExpandedThumbs();
-
-        // Lock constraint and set expanded layout BEFORE animation for a smooth reveal
-        _itemsPanel.WrapHeightOverride = GetExpandedWrapHeight();
-        
-        Dispatcher.UIThread.Post(() =>
-        {
-            _viewer.ScrollToCenterOfCurrentItem();
-        }, DispatcherPriority.Render);
-
-        await Task.WhenAll(
-            AnimationsHelper.WidthAnimation(ZeroSize, targetWidth, GalleryDefaults.MediumAnimationSpeed).RunAsync(this),
-            AnimationsHelper.HeightAnimation(ZeroSize, targetHeight, GalleryDefaults.MediumAnimationSpeed).RunAsync(this)
-        ).ConfigureAwait(true);
-        
-        if (IsHorizontalDock(Settings.Gallery.DockPosition))
-        {
-            Width = double.NaN;
-            Height = targetHeight;
+            Height = startHeight;
+            tween = Task.WhenAll(
+                AnimationsHelper.WidthAnimation(startWidth, endWidth, transition.Speed).RunAsync(this),
+                AnimationsHelper.HeightAnimation(startHeight, endHeight, transition.Speed).RunAsync(this));
         }
         else
         {
-            Width = targetWidth;
-            Height = double.NaN;
+            var tweensHeight = to.Dock is GalleryDockPosition.Top or GalleryDockPosition.Bottom;
+            if (tweensHeight)
+            {
+                Width = to.IsShown ? double.NaN : Width;
+                Height = startHeight;
+            }
+            else
+            {
+                Width = startWidth;
+                Height = to.IsShown ? double.NaN : Height;
+            }
+
+            tween = transition.RefitsEveryFrame
+                ? TweenWhileRefitting(startHeight, endHeight, transition.Speed)
+                : tweensHeight
+                    ? AnimationsHelper.HeightAnimation(startHeight, endHeight, transition.Speed).RunAsync(this)
+                    : AnimationsHelper.WidthAnimation(startWidth, endWidth, transition.Speed).RunAsync(this);
         }
 
-        _itemsPanel.WrapHeightOverride = double.NaN;
-        _itemsPanel.InvalidateMeasure();
+        await tween.ConfigureAwait(true);
 
-        await Dispatcher.UIThread.InvokeAsync(() =>
+        // 4. The final extent
+        SetExtent(to);
+        if (OperatingSystem.IsMacOS() && from.Mode is GalleryMode.Docked && to.Mode is GalleryMode.Expanded &&
+            to.Dock is GalleryDockPosition.Left or GalleryDockPosition.Right)
         {
-            _viewer?.ScrollToCenterOfCurrentItem();
-        }, DispatcherPriority.Render);
-    }
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                // Fixes rendering bug
+                Width = _parentControl!.Bounds.Width;
+            }, DispatcherPriority.Send);
+        }
 
-    private async Task ExpandedToClosed()
-    {
-        _itemsPanel.WrapHeightOverride = GetExpandedWrapHeight();
+        // 5. The new look when it comes at the end, or hidden
+        if (!to.IsShown || transition.AppliesLookAtEnd)
+        {
+            Apply(to);
+        }
 
-        await Task.WhenAll(
-            AnimationsHelper.WidthAnimation(Bounds.Width, ZeroSize, GalleryDefaults.FastAnimationSpeed).RunAsync(this),
-            AnimationsHelper.HeightAnimation(Bounds.Height, ZeroSize, GalleryDefaults.FastAnimationSpeed).RunAsync(this)
-        ).ConfigureAwait(true);
+        // 6. Unlock the wrap and remeasure to match the final bounds
+        if (transition.LocksWrap && _itemsPanel is not null)
+        {
+            _itemsPanel.WrapHeightOverride = double.NaN;
+            _itemsPanel.InvalidateMeasure();
+        }
 
-        IsVisible = false;
-        _itemsPanel.WrapHeightOverride = double.NaN;
-        _itemsPanel.InvalidateMeasure();
+        // 7. The current item, where the gallery ended up
+        if (to.IsShown)
+        {
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                _viewer?.ScrollToCenterOfCurrentItem();
+            }, DispatcherPriority.Render);
+        }
 
-        if (TopLevel.GetTopLevel(this) is MainWindow mainWindow)
+        // 8. A fit for the gallery that docked or closed
+        if (transition.RefitsAtEnd && TopLevel.GetTopLevel(this) is MainWindow mainWindow)
         {
             mainWindow.WindowFitter.Refit();
         }
+    }
+
+    /// <summary>
+    /// Where the tween ends on one axis: the parent's bounds when expanded, the extent when docked, and 0 when closed.
+    /// </summary>
+    private double TweenTarget(GalleryAppearance to, bool horizontal)
+    {
+        return to.Mode switch
+        {
+            GalleryMode.Expanded when horizontal => _parentControl?.Bounds.Height ?? 0,
+            GalleryMode.Expanded => _parentControl?.Bounds.Width ?? 0,
+            GalleryMode.Docked => to.Extent,
+            _ => 0
+        };
+    }
+
+    /// <summary>
+    /// Tweens the height while refitting the window on every frame, since a window that doesn't AutoFit has to keep
+    /// fitting its image to the space the gallery gives back.
+    /// </summary>
+    private async Task TweenWhileRefitting(double from, double to, double speed)
+    {
+        if (TopLevel.GetTopLevel(this) is not MainWindow mainWindow)
+        {
+            await AnimationsHelper.HeightAnimation(from, to, speed).RunAsync(this).ConfigureAwait(true);
+            return;
+        }
+
+        using var cts = new CancellationTokenSource();
+        var ct = cts.Token;
+        Observable.EveryUpdate(mainWindow.FrameProvider, ct).Subscribe(_ =>
+        {
+            mainWindow.WindowFitter.Refit();
+        }, DebugHelper.LogError(nameof(GalleryAnimationControl), nameof(TweenWhileRefitting)));
+        await AnimationsHelper.HeightAnimation(from, to, speed).RunAsync(this, ct).ConfigureAwait(true);
+        await cts.CancelAsync().ConfigureAwait(true);
     }
 
     #endregion
