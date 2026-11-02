@@ -45,7 +45,9 @@ public class ImageInfoViewController(ImageInfoView view) : IDisposable
             view.ColorRepresentationBox.DropDownClosed += OnColorRepresentationBoxDropDownClosed;
             view.CompressionBox.DropDownClosed += OnCompressionBoxDropDownClosed;
 
-            vm.WindowTabs.ActiveTab.CurrentValue.FileInfo.SubscribeAwait(async (fileInfo, ct) => 
+            // The file of whichever tab is active, so switching tabs shows the new tab's image, also when the window
+            // was opened from a blank tab
+            vm.WindowTabs.ActiveTab.Select(static tab => tab.FileInfo.AsObservable()).Switch().SubscribeAwait(async (fileInfo, ct) =>
             {
                 if (fileInfo != null) 
                 {
