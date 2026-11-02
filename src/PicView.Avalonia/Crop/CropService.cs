@@ -25,8 +25,6 @@ public class CropService(TabViewModel tabViewModel, MainWindow mainWindow) : ICr
     public bool IsCropping { get; private set; }
     
     private object? _backUpView;
-    private bool _couldNavigateBackwards;
-    private bool _couldNavigateForwards;
 
     public async Task StartCropControlAsync()
     {
@@ -55,13 +53,7 @@ public class CropService(TabViewModel tabViewModel, MainWindow mainWindow) : ICr
         });
 
         IsCropping = true;
-        
 
-        _couldNavigateBackwards = tabViewModel.CanNavigateBackwards.CurrentValue;
-        _couldNavigateForwards = tabViewModel.CanNavigateForwards.CurrentValue;
-        tabViewModel.CanNavigateBackwards.Value = false;
-        tabViewModel.CanNavigateForwards.Value = false;
-        
         vm.TopTitlebarViewModel.CloseDropDownMenu();
 
         if (tabViewModel.Crop is not null)
@@ -117,9 +109,6 @@ public class CropService(TabViewModel tabViewModel, MainWindow mainWindow) : ICr
         IsCropping = false;
         
         tabViewModel.Crop = null;
-        
-        tabViewModel.CanNavigateBackwards.Value = _couldNavigateBackwards;
-        tabViewModel.CanNavigateForwards.Value = _couldNavigateForwards;
 
         // Leaving crop shows the gallery again, if the tab has one
         mainWindow.WindowFitter.Refit();

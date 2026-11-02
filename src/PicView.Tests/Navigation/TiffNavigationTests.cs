@@ -67,7 +67,7 @@ public class TiffNavigationTests : IDisposable
     public async Task Previous_EntersTiff_AtLastPage()
     {
         // Arrange: Start at file2 (Index 2).
-        _iterator.SetCurrentIndex(2);
+        _iterator.Initialize(_files, 2);
         _tab.Model = new ImageModel { FileInfo = _files[2] };
 
         // Target: file1 (Index 1) is a TIFF.
@@ -90,7 +90,7 @@ public class TiffNavigationTests : IDisposable
         var tiffModel = CreateTiffModel(_files[1], 3);
         tiffModel.TiffNavigation!.CurrentPage = 0;
         
-        _iterator.SetCurrentIndex(1);
+        _iterator.Initialize(_files, 1);
         _tab.Model = tiffModel;
         SetModel(1, tiffModel); // Cache should return same model
 
@@ -109,7 +109,7 @@ public class TiffNavigationTests : IDisposable
         var tiffModel = CreateTiffModel(_files[1], 3);
         tiffModel.TiffNavigation!.CurrentPage = 2;
         
-        _iterator.SetCurrentIndex(1);
+        _iterator.Initialize(_files, 1);
         _tab.Model = tiffModel;
         
         var nextModel = new ImageModel { FileInfo = _files[2] };
@@ -130,7 +130,7 @@ public class TiffNavigationTests : IDisposable
         var tiffModel = CreateTiffModel(_files[1], 3);
         tiffModel.TiffNavigation!.CurrentPage = 1;
         
-        _iterator.SetCurrentIndex(1);
+        _iterator.Initialize(_files, 1);
         _tab.Model = tiffModel;
         SetModel(1, tiffModel);
 
@@ -149,7 +149,7 @@ public class TiffNavigationTests : IDisposable
         var tiffModel = CreateTiffModel(_files[1], 3);
         tiffModel.TiffNavigation!.CurrentPage = 0;
         
-        _iterator.SetCurrentIndex(1);
+        _iterator.Initialize(_files, 1);
         _tab.Model = tiffModel;
         
         var prevModel = new ImageModel { FileInfo = _files[0] };
@@ -189,7 +189,7 @@ public class TiffNavigationTests : IDisposable
     public async Task IterateToIndexAsync_FromATiffPage_GoesToTheFileInsteadOfTurningThePage()
     {
         var tiffModel = CreateTiffModel(_files[1], 3);
-        _iterator.SetCurrentIndex(1);
+        _iterator.Initialize(_files, 1);
         _tab.Model = tiffModel;
         var target = new ImageModel { FileInfo = _files[0] };
         SetModel(0, target);
@@ -212,7 +212,7 @@ public class TiffNavigationTests : IDisposable
         // On the middle page, so a page could turn either way
         var tiffModel = CreateTiffModel(_files[1], 3);
         tiffModel.TiffNavigation!.CurrentPage = 1;
-        _iterator.SetCurrentIndex(1);
+        _iterator.Initialize(_files, 1);
         _tab.Model = tiffModel;
 
         await _iterator.NavigateAsync(navigateTo, skipAmount, new CancellationTokenSource());
@@ -226,7 +226,7 @@ public class TiffNavigationTests : IDisposable
     public async Task RepeatNavigateAsync_InsideTiff_TurnsPages_ThenGoesToTheNextFile()
     {
         var tiffModel = CreateTiffModel(_files[1], 2);
-        _iterator.SetCurrentIndex(1);
+        _iterator.Initialize(_files, 1);
         _tab.Model = tiffModel;
         var cts = new CancellationTokenSource();
 
@@ -245,7 +245,7 @@ public class TiffNavigationTests : IDisposable
     {
         Settings.ImageScaling.ShowImageSideBySide = true;
         var tiffModel = CreateTiffModel(_files[1], 3);
-        _iterator.SetCurrentIndex(1);
+        _iterator.Initialize(_files, 1);
         _tab.Model = tiffModel;
 
         await _iterator.NavigateAsync(NavigateTo.Next, SkipAmount.One, new CancellationTokenSource());
@@ -295,7 +295,7 @@ public class TiffNavigationTests : IDisposable
     {
         Settings.ImageScaling.ShowImageSideBySide = true;
         var tiffModel = CreateTiffModel(_files[1], 3);
-        _iterator.SetCurrentIndex(1);
+        _iterator.Initialize(_files, 1);
         _tab.Model = tiffModel;
 
         await _iterator.RepeatNavigateAsync(NavigateTo.Next, TimeSpan.Zero, new CancellationTokenSource());

@@ -376,8 +376,6 @@ public class NavigationService(
             tab.SourceURL = url;
             tab.DisplaySingleImage(model, SingleImageType.Url, url);
 
-            tab.CanNavigateBackwards.Value = false;
-            tab.CanNavigateForwards.Value = false;
 
             tab.Archives.Cleanup();
             return LoadResult.Loaded;

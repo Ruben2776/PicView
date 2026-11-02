@@ -43,8 +43,8 @@ public class TabCanNavigateTests
         return files;
     }
 
-    private bool Forwards => _tab.CanNavigateForwards.CurrentValue;
-    private bool Backwards => _tab.CanNavigateBackwards.CurrentValue;
+    private bool Forwards => _tab.CanNavigateForwards.Value;
+    private bool Backwards => _tab.CanNavigateBackwards.Value;
 
     [Fact]
     public void FreshTab_BothFalse()
@@ -214,6 +214,16 @@ public class TabCanNavigateTests
         _tab.Dispose();
 
         archives.SetStateForTest(ExtractionState.Extracting);
+    }
+
+    [Fact]
+    public void Flags_ArePublishedReadOnly()
+    {
+        var forwards = typeof(TabViewModel).GetProperty(nameof(TabViewModel.CanNavigateForwards))!.PropertyType;
+        var backwards = typeof(TabViewModel).GetProperty(nameof(TabViewModel.CanNavigateBackwards))!.PropertyType;
+
+        Assert.Equal(typeof(IReadOnlyBindableReactiveProperty<bool>), forwards);
+        Assert.Equal(typeof(IReadOnlyBindableReactiveProperty<bool>), backwards);
     }
 
     private sealed class MockThumbnailLoader : IThumbnailLoader

@@ -36,7 +36,7 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
             var list = files?.ToArray() ?? [];
             Publish(list, new FileListChange(FileListChangeKind.Listed, list, CurrentIndex));
         }
-        UpdateNavigationProperties();
+        PublishPosition();
         // A new listing at the same index and count changes nothing the titles subscribe to, yet the shown file's
         // place in it is new, so the titles are told here (ADR-0015)
         _tab.Titles.Mark();
@@ -60,7 +60,7 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
 
             index = InsertInOrder(file, compareNames, details);
         }
-        UpdateNavigationProperties();
+        PublishPosition();
         return index;
     }
 
@@ -111,7 +111,7 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
 
         if (inserted > 0)
         {
-            UpdateNavigationProperties();
+            PublishPosition();
             // The pages after the shown one are loaded ahead as they are listed, so a Next finds them loaded
             TriggerPreload();
         }
@@ -183,7 +183,7 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
             }
             Publish(remaining, new FileListChange(FileListChangeKind.Removed, remaining, index));
         }
-        UpdateNavigationProperties();
+        PublishPosition();
         return index;
     }
 
@@ -246,7 +246,7 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
                 return found >= 0 ? found : index;
             }
         }
-        UpdateNavigationProperties();
+        PublishPosition();
         return (removed, inserted);
     }
 
@@ -302,11 +302,10 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
     
     #region Core Navigation Logic
     
-    public void UpdateNavigationProperties()
-        => UpdateNavigationProperties(CurrentIndex, Files.Count);
+    // Where the iterator is, told to the tab, which derives whether Next and Prev run from it (ADR-0016)
+    private void PublishPosition() => PublishPosition(CurrentIndex, Files.Count);
 
-    // The tab derives whether Next and Prev run from the position it is given (ADR-0016)
-    private void UpdateNavigationProperties(int index, int count) => _tab.SetPosition(index, count);
+    private void PublishPosition(int index, int count) => _tab.SetPosition(index, count);
 
     public async ValueTask NavigateAsync(NavigateTo navigateTo, SkipAmount skipAmount, CancellationTokenSource ct)
     {
@@ -433,7 +432,7 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
             }
 
             _tab.Display(firstModel, secondModel);
-            UpdateNavigationProperties();
+            PublishPosition();
             TriggerPreload();
         }
 
@@ -504,12 +503,6 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
         var (iteration, isReversed) = IterationHelper.GetIteration(CurrentIndex, Files.Count, forwards ? NavigateTo.Next : NavigateTo.Previous, skipAmount);
         IsReversed = isReversed;
         await SkipToIndexAsync(iteration, ct).ConfigureAwait(false);
-    }
-
-    public void SetCurrentIndex(int index)
-    {
-        CurrentIndex = index;
-        UpdateNavigationProperties();
     }
 
     public async ValueTask ReloadAsync(bool clearCache = true)
@@ -717,7 +710,7 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
 
         // The wait gave up, so the titles say what the tab shows again, instead of Loading
         _tab.EndLoading();
-        UpdateNavigationProperties();
+        PublishPosition();
         return null;
     }
 
@@ -793,7 +786,7 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
 
         // Only single images reach here, so no secondary is shown; a pair goes through UpdateModels
         _tab.Display(newModel);
-        UpdateNavigationProperties();
+        PublishPosition();
         TriggerPreload();
     }
 

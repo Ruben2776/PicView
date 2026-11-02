@@ -452,8 +452,14 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
     
     public BindableReactiveProperty<int> NavigationIndex { get; } = new(0);
     public BindableReactiveProperty<int> MaxIndex { get; } = new(0);
-    public BindableReactiveProperty<bool> CanNavigateForwards { get; } = new();
-    public BindableReactiveProperty<bool> CanNavigateBackwards { get; } = new();
+    /// <summary>Whether Next runs, derived by the tab (ADR-0016). Nothing outside the tab writes it.</summary>
+    public IReadOnlyBindableReactiveProperty<bool> CanNavigateForwards => _canNavigateForwards;
+
+    /// <summary>Whether Prev runs, derived by the tab (ADR-0016). Nothing outside the tab writes it.</summary>
+    public IReadOnlyBindableReactiveProperty<bool> CanNavigateBackwards => _canNavigateBackwards;
+
+    private readonly BindableReactiveProperty<bool> _canNavigateForwards = new();
+    private readonly BindableReactiveProperty<bool> _canNavigateBackwards = new();
 
     /// <summary>
     /// The iterator's publication of where it is: the shown file's index and the count of the tab's files, set
@@ -503,8 +509,8 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
             }
         }
 
-        CanNavigateForwards.Value = forwards;
-        CanNavigateBackwards.Value = backwards;
+        _canNavigateForwards.Value = forwards;
+        _canNavigateBackwards.Value = backwards;
     }
     
     /// <summary>
@@ -618,7 +624,7 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
 
     public async Task Next()
     {
-        if (!CanNavigateForwards.CurrentValue)
+        if (!CanNavigateForwards.Value)
         {
             return;
         }
@@ -627,7 +633,7 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
 
     public async Task Prev()
     {
-        if (!CanNavigateBackwards.CurrentValue)
+        if (!CanNavigateBackwards.Value)
         {
             return;
         }

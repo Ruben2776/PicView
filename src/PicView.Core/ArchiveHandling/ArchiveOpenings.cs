@@ -213,7 +213,6 @@ public sealed class ArchiveOpenings
         {
             _progressText.Value = null;
             _state.Value = ExtractionState.Finished;
-            _tab.ImageIterator?.UpdateNavigationProperties();
             return;
         }
 
@@ -222,7 +221,6 @@ public sealed class ArchiveOpenings
         opening.SetState(ExtractionState.Extracting);
         _state.Value = ExtractionState.Extracting;
         _progressText.Value = $"{firstCount}/{totalCount}";
-        _tab.ImageIterator?.UpdateNavigationProperties();
 
         // Under the lock, so a report of the last pages lands before the end clears the text, not after it
         var progress = new Progress<int>(current =>
@@ -307,7 +305,6 @@ public sealed class ArchiveOpenings
         _extraction.DeleteIfForgotten(opening.Folder);
         opening.End();
         _tab.ImageIterator?.NotifyFileAdded();
-        _tab.ImageIterator?.UpdateNavigationProperties();
     }
 
     private void StopExtracting()
