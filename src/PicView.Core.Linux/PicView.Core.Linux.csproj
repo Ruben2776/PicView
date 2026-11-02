@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>$(DotNetTargetFramework)</TargetFramework>
+    <TargetFramework>net11.0</TargetFramework>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>

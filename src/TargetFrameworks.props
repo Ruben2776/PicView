@@ -1,7 +1,0 @@
-<Project>
-    <!-- The .NET version every project targets. Change it here to move the whole solution to a new .NET. -->
-    <PropertyGroup>
-        <DotNetTargetFramework>net11.0</DotNetTargetFramework>
-        <WindowsTargetFramework>$(DotNetTargetFramework)-windows10.0.22621.0</WindowsTargetFramework>
-    </PropertyGroup>
-</Project>
