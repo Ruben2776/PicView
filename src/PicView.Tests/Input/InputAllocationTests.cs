@@ -185,6 +185,22 @@ public class InputAllocationTests
         {
         }
 
+        public void ScrollToHome()
+        {
+        }
+
+        public void ScrollToEnd()
+        {
+        }
+
+        public void ZoomIn()
+        {
+        }
+
+        public void ZoomOut()
+        {
+        }
+
         public void ZoomAt(bool zoomIn, Point pointer) => Zooms++;
     }
 }

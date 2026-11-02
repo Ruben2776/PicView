@@ -14,6 +14,14 @@ public interface IZoomScrollTarget
 
     void ScrollLine(bool down);
 
+    void ScrollToHome();
+
+    void ScrollToEnd();
+
+    void ZoomIn();
+
+    void ZoomOut();
+
     /// <summary>
     /// Zooms in or out towards <paramref name="pointer"/>, in the viewer's zoom control's coordinates.
     /// </summary>

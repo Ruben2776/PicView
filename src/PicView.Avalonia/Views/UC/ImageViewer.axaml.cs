@@ -308,6 +308,10 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
         }
     }
 
+    void IZoomScrollTarget.ScrollToHome() => ImageScrollViewer.ScrollToHome();
+
+    void IZoomScrollTarget.ScrollToEnd() => ImageScrollViewer.ScrollToEnd();
+
     void IZoomScrollTarget.ZoomAt(bool zoomIn, Point pointer) =>
         ZoomPanControl.ZoomWithPointerWheelCore(zoomIn, pointer);
 

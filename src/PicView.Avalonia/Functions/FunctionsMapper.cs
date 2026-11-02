@@ -8,6 +8,7 @@ using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.FileSystem;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.ImageTransformations;
+using PicView.Avalonia.Input;
 using PicView.Avalonia.SettingsManagement;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.Views.UC;
@@ -382,72 +383,18 @@ public class FunctionsMapper : IActionRunner
     private ValueTask NavigateDirectional(NavigateTo direction) =>
         _vm.WindowTabs.NavigateDirectionalAsync(_mainWindow.KeybindRouter.IsKeyHeldDown, direction);
     
-    private async ValueTask ScrollDown()
-    {
-        if (_vm.WindowTabs.ActiveTab.Value.CurrentView.CurrentValue is not ImageViewer imageViewer)
-        {
-            return;
-        }
-        await Dispatcher.UIThread.InvokeAsync(() =>
-        {
-            imageViewer.ImageScrollViewer.LineDown();
-        });
-    }
-    
-    private async ValueTask ScrollUp()
-    {
-        if (_vm.WindowTabs.ActiveTab.Value.CurrentView.CurrentValue is not ImageViewer imageViewer)
-        {
-            return;
-        }
-        await Dispatcher.UIThread.InvokeAsync(() =>
-        {
-            imageViewer.ImageScrollViewer.LineUp();
-        });
-    }
+    private ValueTask ScrollDown() => ViewerActions.ScrollLine(_vm, down: true);
 
-    private async ValueTask ScrollToTop()
-    {
-        if (_vm.WindowTabs.ActiveTab.Value.CurrentView.CurrentValue is not ImageViewer imageViewer)
-        {
-            return;
-        }
-        await Dispatcher.UIThread.InvokeAsync(() =>
-        {
-            imageViewer.ImageScrollViewer.ScrollToHome();
-        });
-    }
+    private ValueTask ScrollUp() => ViewerActions.ScrollLine(_vm, down: false);
 
-    private async ValueTask ScrollToBottom()
-    {
-        if (_vm.WindowTabs.ActiveTab.Value.CurrentView.CurrentValue is not ImageViewer imageViewer)
-        {
-            return;
-        }
-        await Dispatcher.UIThread.InvokeAsync(() =>
-        {
-            imageViewer.ImageScrollViewer.ScrollToEnd();
-        });
-    }
+    private ValueTask ScrollToTop() => ViewerActions.ScrollToTop(_vm);
 
-    private ValueTask ZoomIn()
-    {
-        if (_vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.CurrentValue is ImageViewer imageViewer)
-        {
-            imageViewer.ZoomIn();
-        }
-        return ValueTask.CompletedTask;
-    }
+    private ValueTask ScrollToBottom() => ViewerActions.ScrollToBottom(_vm);
 
-    private ValueTask ZoomOut()
-    {
-        if (_vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.CurrentValue is ImageViewer imageViewer)
-        {
-            imageViewer.ZoomOut();
-        }
-        return ValueTask.CompletedTask;
-    }
-    
+    private ValueTask ZoomIn() => ViewerActions.ZoomIn(_vm);
+
+    private ValueTask ZoomOut() => ViewerActions.ZoomOut(_vm);
+
     private ValueTask ResetZoomAndRotations()
     {
         RotationManager.ResetZoomAndRotations(_vm, _mainWindow);
