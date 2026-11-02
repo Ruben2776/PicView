@@ -89,6 +89,14 @@ _Avoid_: Current file, active file
 An image a tab shows in place of its model's image without changing what it shows: a thumbnail while the next image loads, or an Effects Render. It is never recorded, and the tab publishes no change for it.
 _Avoid_: Placeholder, preview image
 
+**Titles**:
+The four strings a tab derives from what it shows: the titlebar text, its tooltip, the window title and the tab's name. They follow the Shown File, its place in the tab's files, the zoom level, the Title Phase and the title settings, and they are worked out when something reads them, so a tab nobody looks at works out nothing. The tab derives them; nothing sets them.
+_Avoid_: Set the title, update the title, tab title (for the whole set)
+
+**Title Phase**:
+A state a tab is told it is in, which stands in for its derived Titles until it ends: Loading, until the next image shows; Downloading, with its progress, until the image shows or fails; Error, until the next load; and Cropping, which replaces only the titlebar text and its tooltip and ends when the crop closes. No image is not a phase: a tab that shows nothing derives it.
+_Avoid_: Loading title, temporary title, title override
+
 **View History**:
 What a tab has shown, oldest to newest, with a cursor on what it shows now: each file, each page of a multi-page TIFF or an archive, and each Single Image. Back and Forward move through it and show that entry again in the same tab. Showing something new after going back drops the entries after the cursor. Images the tab never showed, such as those Next 10 jumps over, are not in it, and renaming a file or folder renames its entries. It lives only in memory and holds up to 100 entries, at most 10 of them Single Images. It moves with its tab and ends when the tab closes.
 _Avoid_: Navigation history, back stack, file history (for Back and Forward)

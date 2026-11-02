@@ -20,3 +20,4 @@ Before this, the shown-state bindables had writers in five other files. `UpdateI
 - A file's title waits for navigation: `UpdateTabTitle` leaves the title alone while a file is shown and the tab has no iterator yet, so startup goes from Loading to the indexed title without showing a bare path first. A Single Image is titled by the name `DisplaySingleImage` was given.
 - `PicView.Core` stays free of Avalonia types: the SVG wrap is a converter in `PicView.Avalonia`.
 - The startup order of ADR-0005 holds: window, image, navigation. ADR-0010 and ADR-0012 hold as written.
+- The tab's titles are the next slice: ADR-0015 makes the tab derive them, so the reaction stops calling `UpdateTabTitle`.
