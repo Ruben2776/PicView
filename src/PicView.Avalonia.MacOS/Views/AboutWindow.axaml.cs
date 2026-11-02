@@ -1,7 +1,6 @@
 using Avalonia.Media;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.MacOS.PlatformUpdate;
-using PicView.Avalonia.UI;
 using PicView.Core.IPlatform;
 using PicView.Core.Update;
 
@@ -16,7 +15,6 @@ public partial class AboutWindow : GenericWindow, IPlatformSpecificUpdate
         {
             XAboutView.Background = Brushes.Transparent;
         }
-        GenericWindowHelper.AboutWindowInitialize(this);
     }
     
     public async Task HandlePlatformUpdate(UpdateInfo updateInfo, string tempPath)

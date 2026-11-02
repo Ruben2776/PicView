@@ -1,20 +1,13 @@
-using Avalonia;
-using Avalonia.Media;
 using PicView.Avalonia.CustomControls;
-using PicView.Avalonia.UI;
-using PicView.Avalonia.WindowBehavior;
-using PicView.Core.Config;
-using PicView.Core.Extensions;
-using PicView.Core.Localization;
-using R3;
+using PicView.Core.ViewModels;
 
 namespace PicView.Avalonia.Linux.Views;
 
 public partial class ImageInfoWindow : GenericWindow
 {
-    public ImageInfoWindow(ImageInfoWindowConfig config)
+    public ImageInfoWindow(MainWindowViewModel viewModel)
     {
+        DataContext = viewModel;
         InitializeComponent();
-        GenericWindowHelper.GenericWindowInitialize(this, StringExtensions.CombineWithAppName(TranslationManager.Translation.ImageInfo), false, config.WindowProperties);
     }
 }

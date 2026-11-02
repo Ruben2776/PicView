@@ -20,15 +20,15 @@ public interface IWindowProvider
     /// </summary>
     IWindowModeAdapter CreateWindowModeAdapter();
     Window CreateAboutWindow();
-    Window CreateBatchResizeWindow(BatchResizeWindowConfig config);
+    Window CreateBatchResizeWindow();
     Window CreateFileAssociationsWindow();
     Window CreateConvertWindow();
-    Window CreateEffectsWindow(EffectsWindowConfig config);
+    Window CreateEffectsWindow();
     Window CreateImageInfoWindow(MainWindowViewModel vm);
-    Window CreateKeybindingsWindow(KeybindingWindowConfig config);
+    Window CreateKeybindingsWindow();
     Window CreateSettingsWindow(SettingsWindowConfig config);
     Window CreateSingleImageResizeWindow(MainWindowViewModel vm);
-    Window CreatePrintPreviewWindow(PrintWindowConfig config);
+    Window CreatePrintPreviewWindow();
 
     /// <summary>
     /// Creates the adapter to this platform's printers, which Print Jobs are sent to.

@@ -194,8 +194,14 @@ public abstract class MainWindow : Window, IMainWindow, IPlatformWindowService
         await MainWindowInitializer.ShowSettingsWindow().ConfigureAwait(true);
     }
 
-    public void ShowSingleImageResizeWindow() =>
-        MainWindowInitializer?.ShowSingleImageResizeWindow();
+    public async ValueTask ShowSingleImageResizeWindow()
+    {
+        if (MainWindowInitializer is null)
+        {
+            return;
+        }
+        await MainWindowInitializer.ShowSingleImageResizeWindow().ConfigureAwait(true);
+    }
 
     public async ValueTask ShowBatchResizeWindow()
     {
@@ -212,8 +218,14 @@ public abstract class MainWindow : Window, IMainWindow, IPlatformWindowService
     public void ShowEffectsWindow() =>
         _ = MainWindowInitializer?.ShowEffectsWindow();
 
-    public void ShowConvertWindow() =>
-        MainWindowInitializer?.ShowConvertWindow();
+    public async ValueTask ShowConvertWindow()
+    {
+        if (MainWindowInitializer is null)
+        {
+            return;
+        }
+        await MainWindowInitializer.ShowConvertWindow().ConfigureAwait(true);
+    }
 
     #endregion
 

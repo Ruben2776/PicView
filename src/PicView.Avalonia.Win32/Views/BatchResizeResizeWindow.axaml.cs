@@ -1,11 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Media;
 using PicView.Avalonia.CustomControls;
-using PicView.Avalonia.UI;
-using PicView.Core.Config;
 using PicView.Core.DebugTools;
-using PicView.Core.Extensions;
-using PicView.Core.Localization;
 using PicView.Core.ViewModels;
 using PicView.Core.WindowsNT.Taskbar;
 using R3;
@@ -15,13 +11,13 @@ namespace PicView.Avalonia.Win32.Views;
 public partial class BatchResizeWindow : GenericWindow, IDisposable
 {
     private DisposableBag _disposables;
-    public BatchResizeWindow(BatchResizeWindowConfig config)
+    public BatchResizeWindow()
     {
         InitializeComponent();
-        StartUp(config);
+        StartUp();
     }
 
-    private void StartUp(BatchResizeWindowConfig config)
+    private void StartUp()
     {
         if (Settings.Theme.GlassTheme)
         {
@@ -50,7 +46,6 @@ public partial class BatchResizeWindow : GenericWindow, IDisposable
             CloseButton.Foreground = new SolidColorBrush(color);
         }
 
-        GenericWindowHelper.GenericWindowInitialize(this, StringExtensions.CombineWithAppName(TranslationManager.Translation.BatchResize), false, config.WindowProperties);
         Loaded += delegate
         {
             if (DataContext is not CoreViewModel core)

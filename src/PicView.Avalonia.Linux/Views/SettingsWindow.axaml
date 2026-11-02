@@ -2,7 +2,6 @@
     Height="785"
     MinWidth="600"
     Width="985"
-    WindowStartupLocation="CenterOwner"
     x:Class="PicView.Avalonia.Linux.Views.SettingsWindow"
     x:DataType="viewModels:CoreViewModel"
     xmlns="https://github.com/avaloniaui"

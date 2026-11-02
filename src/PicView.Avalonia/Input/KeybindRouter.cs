@@ -187,6 +187,11 @@ public sealed class KeybindRouter
     public void IgnoreUntilReleased(Key key) => _ignoredUntilReleased.Add(key);
 
     /// <summary>
+    /// Whether <paramref name="key"/> is ignored until it is released.
+    /// </summary>
+    internal bool IsIgnoredUntilReleased(Key key) => _ignoredUntilReleased.Contains(key);
+
+    /// <summary>
     /// The window's Contextual Actions, with Escape's last meaning. They are built on the first Keybind and kept,
     /// since a main window keeps its view model.
     /// </summary>

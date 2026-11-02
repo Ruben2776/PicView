@@ -13,8 +13,7 @@
     MinWidth="400"
     MinHeight="320"
     x:DataType="coreVm:MainWindowViewModel"
-    ExtendClientAreaTitleBarHeightHint="-1"
-    WindowStartupLocation="CenterOwner">
+    ExtendClientAreaTitleBarHeightHint="-1">
 
     <Border
         x:Name="ParentBorder"

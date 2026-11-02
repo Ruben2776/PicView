@@ -36,6 +36,7 @@ public class AppLifecycleTests : IAsyncDisposable
     private readonly FileHistoryFileBackup _fileHistoryBackup = new();
     private readonly ConfigFileBackup _batchResizeConfigBackup = new(new BatchResizeWindowConfig());
     private readonly ConfigFileBackup _effectsConfigBackup = new(new EffectsWindowConfig());
+    private readonly ConfigFileBackup _convertConfigBackup = new(new ConvertWindowConfig());
     private readonly List<AppLifecycle> _apps = [];
     private readonly string _folder;
     private readonly CoreViewModel _core;
@@ -100,6 +101,7 @@ public class AppLifecycleTests : IAsyncDisposable
         _fileHistoryBackup.Dispose();
         _batchResizeConfigBackup.Dispose();
         _effectsConfigBackup.Dispose();
+        _convertConfigBackup.Dispose();
     }
 
     [AvaloniaFact]
@@ -249,7 +251,7 @@ public class AppLifecycleTests : IAsyncDisposable
         var app = CreateApp();
         await app.StartAsync(settingsExists: true, []);
         var second = await app.MainWindows.OpenNewAsync();
-        second.ShowConvertWindow();
+        await second.ShowConvertWindow();
         await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Background);
         var convert = Assert.Single(_provider.ConvertWindows);
         var closed = false;
@@ -879,7 +881,7 @@ public class AppLifecycleTests : IAsyncDisposable
             return window;
         }
 
-        public Window CreateBatchResizeWindow(BatchResizeWindowConfig config)
+        public Window CreateBatchResizeWindow()
         {
             var window = Track(new Window());
             BatchResizeWindows.Add(window);
@@ -893,17 +895,17 @@ public class AppLifecycleTests : IAsyncDisposable
             return window;
         }
 
-        public Window CreateEffectsWindow(EffectsWindowConfig config)
+        public Window CreateEffectsWindow()
         {
             var window = Track(new Window());
             EffectsWindows.Add(window);
             return window;
         }
         public Window CreateImageInfoWindow(MainWindowViewModel vm) => Track(new Window());
-        public Window CreateKeybindingsWindow(KeybindingWindowConfig config) => Track(new Window());
+        public Window CreateKeybindingsWindow() => Track(new Window());
         public Window CreateSettingsWindow(SettingsWindowConfig config) => Track(new Window());
         public Window CreateSingleImageResizeWindow(MainWindowViewModel vm) => Track(new Window());
-        public Window CreatePrintPreviewWindow(PrintWindowConfig config) => Track(new Window());
+        public Window CreatePrintPreviewWindow() => Track(new Window());
 
         public ISystemPrinters CreateSystemPrinters() => throw new NotSupportedException();
 

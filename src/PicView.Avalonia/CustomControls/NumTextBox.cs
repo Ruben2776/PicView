@@ -57,9 +57,9 @@ public class NumTextBox : FuncTextBox
             case Key.Oem5: // Key for `%` symbol (may vary based on layout)
                 break; // Allow the percentage symbol (%)
 
-            case Key.Escape: // Handle Escape key
+            case Key.Escape:
+                // Left unhandled, so it bubbles to the window, which closes on Escape
                 Focus();
-                e.Handled = true;
                 return;
 
             case Key.Enter: 

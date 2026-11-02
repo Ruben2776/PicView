@@ -3,13 +3,10 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
 using PicView.Avalonia.CustomControls;
-using PicView.Avalonia.UI;
 using PicView.Avalonia.WindowBehavior;
 using PicView.Core.Config;
-using PicView.Core.Extensions;
 using PicView.Core.ViewModels;
 using PicView.Core.FileAssociations;
-using PicView.Core.Localization;
 using PicView.Core.WindowsNT.FileAssociation;
 using R3;
 
@@ -21,7 +18,6 @@ public partial class SettingsWindow : GenericWindow
     public SettingsWindow(SettingsWindowConfig config)
     {
         InitializeComponent();
-        GenericWindowHelper.GenericWindowInitialize(this, TranslationManager.Translation.Settings, false, config.WindowProperties);
         if (Settings.Theme.GlassTheme)
         {
             SettingsView.Background = Brushes.Transparent;
@@ -109,9 +105,6 @@ public partial class SettingsWindow : GenericWindow
             var ctrl = e.KeyModifiers.HasFlag(KeyModifiers.Control) || e.KeyModifiers.HasFlag(KeyModifiers.Meta);
             switch (e.Key)
             {
-                case Key.Escape:
-                    GenericWindowHelper.CloseOnEscapePress(this);
-                    break;
                 case Key.F when ctrl:
                     FocusFilterBox();
                     break;

@@ -6,7 +6,6 @@
     MinWidth="400"
     Title="Loading..."
     Width="900"
-    WindowStartupLocation="Manual"
     x:Class="PicView.Avalonia.MacOS.Views.ImageInfoWindow"
     x:DataType="viewModels:MainWindowViewModel"
     xmlns="https://github.com/avaloniaui"

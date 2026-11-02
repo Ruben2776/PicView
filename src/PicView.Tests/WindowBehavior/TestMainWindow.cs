@@ -21,15 +21,15 @@ internal sealed class TestMainWindow(IWindowModeAdapter adapter, IWindowProvider
         public MainWindow CreateMainWindow(TabViewModel? firstTab = null) => throw new NotSupportedException();
         public IWindowModeAdapter CreateWindowModeAdapter() => adapter;
         public Window CreateAboutWindow() => throw new NotSupportedException();
-        public Window CreateBatchResizeWindow(BatchResizeWindowConfig config) => throw new NotSupportedException();
+        public Window CreateBatchResizeWindow() => throw new NotSupportedException();
         public Window CreateFileAssociationsWindow() => throw new NotSupportedException();
         public Window CreateConvertWindow() => throw new NotSupportedException();
-        public Window CreateEffectsWindow(EffectsWindowConfig config) => throw new NotSupportedException();
+        public Window CreateEffectsWindow() => throw new NotSupportedException();
         public Window CreateImageInfoWindow(MainWindowViewModel vm) => throw new NotSupportedException();
-        public Window CreateKeybindingsWindow(KeybindingWindowConfig config) => throw new NotSupportedException();
+        public Window CreateKeybindingsWindow() => throw new NotSupportedException();
         public Window CreateSettingsWindow(SettingsWindowConfig config) => throw new NotSupportedException();
         public Window CreateSingleImageResizeWindow(MainWindowViewModel vm) => throw new NotSupportedException();
-        public Window CreatePrintPreviewWindow(PrintWindowConfig config) => throw new NotSupportedException();
+        public Window CreatePrintPreviewWindow() => throw new NotSupportedException();
 
         public ISystemPrinters CreateSystemPrinters() => throw new NotSupportedException();
 

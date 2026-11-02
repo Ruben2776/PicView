@@ -4,8 +4,6 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
 using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
-using PicView.Core.Config;
-using PicView.Core.DebugTools;
 using PicView.Core.Sizing;
 using PicView.Core.ViewModels;
 
@@ -177,34 +175,6 @@ public static class WindowFunctions
         }
     }
 
-    public static void InitializeWindowPosition(Window window, IWindowProperties properties)
-    {
-        if (Dispatcher.UIThread.CheckAccess())
-        {
-            Set();
-        }
-        else
-        {
-            Dispatcher.UIThread.Post(Set);
-        }
-
-        return;
-
-        void Set()
-        {
-            if (properties is { Left: not null, Top: not null })
-            {
-                window.WindowStartupLocation = WindowStartupLocation.Manual;
-                window.Position = new PixelPoint(properties.Left.GetValueOrDefault(),
-                    properties.Top.GetValueOrDefault());
-            }
-            else
-            {
-                window.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-            }
-        }
-    }
-    
     public static void InitializeWindowPosition(MainWindow window)
     {
         if (Dispatcher.UIThread.CheckAccess())
@@ -223,57 +193,6 @@ public static class WindowFunctions
             window.WindowStartupLocation = WindowStartupLocation.Manual;
             window.Position = new PixelPoint((int)Settings.WindowProperties.Left,
                 (int)Settings.WindowProperties.Top);
-        }
-    }
-
-    public static void InitializeWindowSizeAndPosition(Window window, IWindowProperties properties)
-    {
-        if (Dispatcher.UIThread.CheckAccess())
-        {
-            Set();
-        }
-        else
-        {
-            Dispatcher.UIThread.Post(Set);
-        }
-
-        return;
-
-        void Set()
-        {
-            if (properties.Maximized)
-            {
-                window.WindowState = WindowState.Maximized;
-            }
-            else if (properties is { Left: not null, Top: not null })
-            {
-                window.WindowStartupLocation = WindowStartupLocation.Manual;
-                // If the values are negative, they can be outside the screen
-                var left = properties.Left < 0 ? 0 : properties.Left.Value;
-                var top = properties.Top < 0 ? 0 : properties.Top.Value;
-                window.Position = new PixelPoint(left, top);
-            }
-            else
-            {
-                window.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-            }
-
-            if (properties is not { Width: not null, Height: not null })
-            {
-                return;
-            }
-
-            if (properties.Width > window.MinWidth && properties.Width < window.MaxWidth &&
-                properties.Height > window.MinHeight && properties.Height < window.MaxHeight)
-            {
-                window.Width = properties.Width.Value;
-                window.Height = properties.Height.Value;
-            }
-            else
-            {
-                DebugHelper.LogDebug(nameof(WindowFunctions), nameof(InitializeWindowSizeAndPosition),
-                    "Invalid width and height values");
-            }
         }
     }
 

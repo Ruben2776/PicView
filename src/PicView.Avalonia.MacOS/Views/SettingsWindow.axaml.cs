@@ -1,9 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Input;
 using PicView.Avalonia.CustomControls;
-using PicView.Avalonia.UI;
 using PicView.Core.Config;
-using PicView.Core.Localization;
 using PicView.Core.ViewModels;
 using R3;
 
@@ -15,7 +13,6 @@ public partial class SettingsWindow : GenericWindow
     {
         InitializeComponent();
 
-        GenericWindowHelper.GenericWindowInitialize(this, TranslationManager.Translation.Settings, false, config.WindowProperties);
         Loaded += delegate
         {
             SettingsView.Focus();
@@ -35,9 +32,6 @@ public partial class SettingsWindow : GenericWindow
             var ctrl = e.KeyModifiers.HasFlag(KeyModifiers.Control) || e.KeyModifiers.HasFlag(KeyModifiers.Meta);
             switch (e.Key)
             {
-                case Key.Escape:
-                    GenericWindowHelper.CloseOnEscapePress(this);
-                    break;
                 case Key.F when ctrl:
                     FocusFilterBox();
                     break;
