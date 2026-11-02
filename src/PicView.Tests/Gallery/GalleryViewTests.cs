@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Presenters;
 using Avalonia.Headless;
+using Avalonia.Layout;
 using Avalonia.Threading;
 using ImageMagick;
 using PicView.Avalonia.CustomControls;
@@ -248,9 +249,35 @@ public class GalleryViewTests
         }, initializeFirst: false);
     }
 
-    // Shown in a window, so the view loads, with a tab started docked at the bottom and a few items
+    [AvaloniaFact]
+    public void HiddenWhileLoading_StartedDocked_EndsHidden()
+    {
+        // A Single Image hides the gallery while the view loads
+        WithShownDockedGallery((_, _, view, _) =>
+        {
+            var tab = (TabViewModel)view.DataContext!;
+            Assert.Equal(GalleryMode.Closed, tab.Gallery.ShownMode.Value);
+            Assert.False(view.IsVisible);
+        }, duringLoad: tab => tab.Gallery.Switcher.SetHidden(true));
+    }
+
+    [AvaloniaFact]
+    public void ShownWhileLoading_StartedHidden_EndsDocked()
+    {
+        WithShownDockedGallery((_, _, view, panel) =>
+        {
+            var tab = (TabViewModel)view.DataContext!;
+            Assert.Equal(GalleryMode.Docked, tab.Gallery.ShownMode.Value);
+            Assert.True(view.IsVisible);
+            Assert.Equal(GalleryDefaults.GetDockedGalleryHeight(Settings.Gallery.DockedGalleryItemSize), view.Height);
+            Assert.Equal(Settings.Gallery.DockedGalleryItemSize, panel.ItemHeight);
+        }, startHidden: true, duringLoad: tab => tab.Gallery.Switcher.SetHidden(false));
+    }
+
+    // Shown in a window, so the view loads, with a tab started docked at the bottom and a few items. duringLoad runs
+    // as the view loads, when it sizes itself to nothing before it follows the switcher
     private static void WithShownDockedGallery(Action<CoreViewModel, Window, GalleryView, VirtualizingGallery> test,
-        bool initializeFirst = true)
+        bool initializeFirst = true, bool startHidden = false, Action<TabViewModel>? duringLoad = null)
     {
         Settings.Gallery.DockPosition = GalleryDockPosition.Bottom;
         var core = new CoreViewModel(null, _ => ValueTask.FromResult(new ImageModel()));
@@ -263,6 +290,10 @@ public class GalleryViewTests
             tab.Gallery.Initialize(core.GallerySettings);
         }
         tab.Gallery.Switcher.Start(docked: true);
+        if (startHidden)
+        {
+            tab.Gallery.Switcher.SetHidden(true);
+        }
 
         var application = Application.Current!;
         var previous = application.DataContext;
@@ -275,6 +306,18 @@ public class GalleryViewTests
                 new GalleryItemViewModel { FileInfo = new FileInfo("a.jpg") },
                 new GalleryItemViewModel { FileInfo = new FileInfo("b.jpg") }
             ]);
+            if (duringLoad is not null)
+            {
+                var ran = false;
+                view.PropertyChanged += (_, e) =>
+                {
+                    if (!ran && view.IsLoaded && e.Property == Layoutable.WidthProperty)
+                    {
+                        ran = true;
+                        duringLoad(tab);
+                    }
+                };
+            }
             window.Content = new DockPanel { Children = { view } };
             window.Show();
             Dispatcher.UIThread.RunJobs();

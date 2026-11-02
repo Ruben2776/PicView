@@ -93,15 +93,10 @@ public class GalleryAnimationControl : UserControl
             return;
         }
 
-        // Follow the tab's switcher, and show what it already shows, such as a gallery started docked (ADR-0005).
-        // A Single Image can hide the gallery from a background thread, and a change during an animation is dropped,
-        // since the animation catches up when it ends
-        var changes = tab.Gallery.Switcher.Changes.ObserveOnUIThreadDispatcher();
-        if (tab.Gallery.ShownMode.Value is not GalleryMode.Closed)
-        {
-            changes = changes.Prepend(new GalleryModeChange(GalleryMode.Closed, tab.Gallery.ShownMode.Value, false));
-        }
-        changes
+        // Follow the tab's switcher. A Single Image can hide the gallery from a background thread, and a change during
+        // an animation is dropped, since the animation catches up when it ends
+        tab.Gallery.Switcher.Changes
+            .ObserveOnUIThreadDispatcher()
             .SubscribeAwait(async (change, _) => await OnGalleryModeChanged(change).ConfigureAwait(true),
                 DebugHelper.LogError(nameof(GalleryAnimationControl), nameof(OnGalleryModeChanged)),
                 AwaitOperation.Drop)
@@ -113,6 +108,13 @@ public class GalleryAnimationControl : UserControl
             .ObserveOnUIThreadDispatcher()
             .Subscribe(OnAppearanceChanged, DebugHelper.LogError(nameof(GalleryAnimationControl), nameof(OnAppearanceChanged)))
             .AddTo(ref _disposables);
+
+        // Show what the switcher already shows, such as a gallery started docked (ADR-0005), without animation. It is
+        // read after subscribing, so a change made from a background thread meanwhile is either read here or followed
+        if (tab.Gallery.Appearance.Value is { IsShown: true } shown)
+        {
+            ShowWithoutAnimation(shown);
+        }
     }
 
     #endregion
