@@ -44,16 +44,6 @@ public partial class StartUpMenu : UserControl
         PasteButton.PointerEntered += PasteButtonOnPointerEntered;
         PasteButton.PointerExited += PasteButtonOnPointerExited;
         PasteButton.AddHandler(PointerPressedEvent, PasteClick, RoutingStrategies.Tunnel);
-
-        if (DataContext is not TabViewModel tab)
-        {
-            return;
-        }
-
-        var noImage = TranslationManager.Translation.NoImage ?? "No image";
-        tab.Title.Value = noImage;
-        tab.WindowTitle.Value = StringExtensions.CombineWithAppName(noImage);
-        tab.TitleTooltip.Value = noImage;
     }
 
     private async ValueTask PasteClick(object? sender, RoutedEventArgs e)

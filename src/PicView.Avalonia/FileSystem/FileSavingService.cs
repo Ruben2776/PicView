@@ -134,7 +134,7 @@ public class FileSavingService(ISavePathPicker pathPicker, Func<EffectsViewModel
             return file.Name;
         }
 
-        var title = string.Concat((tab.TabTitle.CurrentValue ?? string.Empty)
+        var title = string.Concat(tab.Titles.TabTitle
             .Where(c => !char.IsControl(c) && Array.IndexOf(InvalidFileNameChars, c) < 0)).Trim();
         if (string.IsNullOrEmpty(title))
         {

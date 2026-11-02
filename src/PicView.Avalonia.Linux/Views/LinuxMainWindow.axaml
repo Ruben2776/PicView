@@ -8,7 +8,7 @@
     xmlns:uc="clr-namespace:PicView.Avalonia.Views.UC;assembly=PicView.Avalonia"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
     xmlns:views="clr-namespace:PicView.Avalonia.Linux.Views"
-    Title="{Binding WindowTabs.ActiveTab.Value.WindowTitle.Value, FallbackValue=''}"
+    Title="{Binding WindowTabs.ActiveTab.Value.Titles.WindowTitle, FallbackValue=''}"
     MinWidth="{Binding WindowMinWidth}"
     MinHeight="{Binding WindowMinHeight}"
     MaxWidth="{Binding WindowMaxWidth.Value}"

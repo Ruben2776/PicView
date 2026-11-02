@@ -21,6 +21,7 @@ using PicView.Core.Localization;
 using PicView.Core.Models;
 using PicView.Core.Navigation.Tiff;
 using PicView.Core.Sizing;
+using PicView.Core.Titles;
 using PicView.Core.Update;
 using PicView.Core.ViewModels;
 using PicView.Tests.FileHistory;
@@ -99,6 +100,19 @@ public class AppLifecycleTests : IAsyncDisposable
         _fileHistoryBackup.Dispose();
         _batchResizeConfigBackup.Dispose();
         _effectsConfigBackup.Dispose();
+    }
+
+    [AvaloniaFact]
+    public async Task StartAsync_WithoutAFile_ShowsTheNoImageTitle()
+    {
+        TranslationManager.LoadLanguage("en");
+        var app = CreateApp();
+
+        await app.StartAsync(settingsExists: true, []);
+
+        var tab = ViewModelOf(app.MainWindows.Open[0]).WindowTabs.ActiveTab.CurrentValue;
+        Assert.Equal(TitlePhase.None, tab.Titles.Phase);
+        Assert.Equal(TranslationManager.Translation.NoImage, tab.Titles.Title);
     }
 
     [AvaloniaFact]

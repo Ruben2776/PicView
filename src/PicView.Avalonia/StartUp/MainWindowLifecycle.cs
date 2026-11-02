@@ -133,10 +133,12 @@ public sealed class MainWindowLifecycle
     }
 
     /// <summary>
-    /// Opens the source PicView was launched with in the first Main Window, sizing it first with AutoFit.
+    /// Opens the source PicView was launched with in the first Main Window, sizing it first with AutoFit. The tab says
+    /// Loading until the source shows; a start without a source never enters the phase, so its titles say No image.
     /// </summary>
     internal void OpenStartSource(MainWindow window, string source, bool continueFromLeftOff)
     {
+        ViewModelOf(window).WindowTabs.ActiveTab.CurrentValue.SetLoading();
         _ = Task.Run(() => SourceOpener.OpenAsync(window, _core, source,
             new OpenOptions(IsStartup: true, ContinueFromLeftOff: continueFromLeftOff)).AsTask());
     }
@@ -306,10 +308,6 @@ public sealed class MainWindowLifecycle
             vm.IsTopToolbarShown.Value = Settings.UIProperties.ShowInterface;
             vm.IsBottomToolbarShown.Value = Settings.UIProperties.ShowBottomNavBar &&
                                             Settings.UIProperties.ShowInterface;
-            if (isAppStart)
-            {
-                vm.WindowTabs.ActiveTab.CurrentValue.SetLoading();
-            }
         });
     }
 

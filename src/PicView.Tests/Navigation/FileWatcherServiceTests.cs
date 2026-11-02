@@ -213,7 +213,7 @@ public class FileWatcherServiceTests : IDisposable
         Assert.Equal(filePath, tab.FileInfo.Value?.FullName);
         Assert.Equal(2u, tab.Model.PixelWidth);
         Assert.Equal(3u, tab.Model.PixelHeight);
-        Assert.Equal("change.jpg", tab.TabTitle.Value);
+        Assert.Equal("change.jpg", tab.Titles.TabTitle);
     }
 
     [Fact]

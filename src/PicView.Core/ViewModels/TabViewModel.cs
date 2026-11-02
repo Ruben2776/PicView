@@ -1,9 +1,6 @@
-using System.Diagnostics;
 using PicView.Core.ArchiveHandling;
 using PicView.Core.DebugTools;
-using PicView.Core.Extensions;
 using PicView.Core.FileHistory;
-using PicView.Core.Localization;
 using PicView.Core.Models;
 using PicView.Core.Navigation;
 using PicView.Core.Navigation.Interfaces;
@@ -88,6 +85,25 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
     /// </summary>
     public ViewHistory ViewHistory { get; } = new();
 
+    /// <summary>
+    /// The tab's Titles, derived from what it shows when they are read (ADR-0015). Made on first use, since they
+    /// subscribe to the tab's bindables.
+    /// </summary>
+    public TabTitles Titles
+    {
+        get
+        {
+            if (_titles is null)
+            {
+                LazyInitializer.EnsureInitialized(ref _titles, () => new TabTitles(this));
+            }
+
+            return _titles;
+        }
+    }
+
+    private TabTitles? _titles;
+
     #endregion
 
     #region UI view models
@@ -106,6 +122,8 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
         {
             _crop = value;
             UpdateGalleryHidden();
+            // Cropping replaces the titlebar text until the crop closes
+            Titles.Mark();
         }
     }
 
@@ -143,10 +161,14 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
     // A load that ends after the tab closed shows into a disposed tab, which stays harmless
     private void Publish(ShownChange change)
     {
-        if (!_shown.IsDisposed)
+        if (_shown.IsDisposed)
         {
-            _shown.OnNext(change);
+            return;
         }
+
+        // The titles are marked after the image bindable is set and before the UI reacts
+        Titles.OnShown(change);
+        _shown.OnNext(change);
     }
 
     /// <summary>
@@ -185,6 +207,9 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
 
     // The title of the Single Image the tab shows, which its View History entry keeps
     private string? _singleImageTitle;
+
+    /// <summary>The title <see cref="DisplaySingleImage"/> was given, which the Titles name a Single Image by.</summary>
+    internal string? SingleImageTitle => _singleImageTitle;
 
     /// <summary>
     /// Turns the multi-page TIFF the tab shows to <paramref name="page"/>, and records it. Does nothing when the tab shows
@@ -337,7 +362,6 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
             return false;
         }
 
-        UpdateTabTitle();
         Publish(ShownChange.File);
         return true;
 
@@ -394,7 +418,6 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
     
     /// <inheritdoc cref="Core.Navigation.Interfaces.IImageIterator"/>>
     public IImageIterator? ImageIterator { get; private set; }
-    private ArchiveOpenings? _archives;
 
     /// <summary>
     /// The tab's Archive Openings: the archives it has opened, the one it reads, and where their extraction stands
@@ -404,12 +427,12 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
     {
         get
         {
-            if (_archives is null)
+            if (field is null)
             {
-                Interlocked.CompareExchange(ref _archives, new ArchiveOpenings(this, archiveEntryWriter), null);
+                LazyInitializer.EnsureInitialized(ref field, () => new ArchiveOpenings(this, archiveEntryWriter));
             }
 
-            return _archives;
+            return field;
         }
     }
     public IThumbnailCache? ThumbnailCache { get; private set; }
@@ -444,147 +467,17 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
 
     #region Titles
 
-    /// <summary>
-    /// The main title displayed in the window title bar.
-    /// </summary>
-    public BindableReactiveProperty<string?>? Title { get; } = new();
-    /// <summary>
-    /// The tooltip displayed when hovering over the title.
-    /// </summary>
-    public BindableReactiveProperty<string?>? TitleTooltip { get; } = new();
-    /// <summary>
-    /// The title displayed in the taskbar or task manager.
-    /// </summary>
-    public BindableReactiveProperty<string>? WindowTitle { get; } = new();
-    /// <summary>
-    /// The title displayed in the tab.
-    /// </summary>
-    public BindableReactiveProperty<string?> TabTitle { get; } = new(string.Empty, StringComparer.OrdinalIgnoreCase);
-    /// <summary>
-    /// The tooltip displayed when hovering over the tab.
-    /// </summary>
-    public BindableReactiveProperty<string> TabTooltip { get; } = new(string.Empty, StringComparer.OrdinalIgnoreCase);
-    
-    /// <summary>
-    /// Updates the window title and tab title based on the current image model.
-    /// </summary>
-    public void UpdateTabTitle()
-    {
-        if (!IsSelected)
-        {
-            return;
-        }
-        
-        var width = Model.PixelWidth;
-        var height = Model.PixelHeight;
-        
-        if (ImageIterator is null || ImageIterator.CurrentIndex is -1 || SingleImageType is not SingleImageType.None)
-        {
-            if (Image.CurrentValue is null)
-            {
-                SetNewTabTitle();
-            }
-            else if (ImageIterator is not null || SingleImageType is not SingleImageType.None)
-            {
-                SetSingleTitle();
-            }
-            // Else a file whose navigation has not started yet, as at startup: it sets the indexed title when it does
+    /// <summary>Puts the tab in the Loading Title Phase, until the next image shows or <see cref="EndLoading"/>.</summary>
+    public void SetLoading() => Titles.Enter(TitlePhase.Loading);
 
-            return;
-        }
-        
-        var index = ImageIterator.CurrentIndex;
-        var windowTitles = GetTitles();
-        if (Settings.UIProperties.ShowFullPathInTitleBar)
-        {
-            Title.Value = windowTitles.FilePathTitle;
-        }
-        else
-        {
-            Title.Value = windowTitles.BaseTitle;
-        }
-        WindowTitle.Value = windowTitles.TitleWithAppName;
+    /// <summary>Puts the tab in the Downloading Title Phase with <paramref name="text"/>, such as a progress report.</summary>
+    public void SetDownloading(string text) => Titles.Enter(TitlePhase.Downloading, text);
 
-        TitleTooltip.Value = windowTitles.FilePathTitle;
-        if (Settings.ImageScaling.ShowImageSideBySide && SecondaryModel is not null)
-        {
-            TabTitle.Value = StringExtensions.CombineWithSeparator(Model.FileInfo.Name, SecondaryModel.FileInfo.Name);
-            TabTooltip.Value = StringExtensions.CombineWithSeparator(Model.FileInfo.FullName, SecondaryModel.FileInfo.FullName);
-        }
-        else
-        {
-            TabTitle.Value = Model.FileInfo.Name;
-            TabTooltip.Value = Model.FileInfo.FullName;
-        }
-        
-        return;
-        
-        WindowTitles GetTitles()
-        {
-            var zoom = ZoomLevel.CurrentValue;
-            var firstInfo = new ImageTitleInfo(Model.FileInfo, width, height, index, ImageIterator.Files.Count);
-            if (Model.TiffNavigation is { } tiff)
-            {
-                return ImageTitleFormatter.GenerateTiffTitleStrings(firstInfo, zoom, tiff.CurrentPage, tiff.PageCount);
-            }
+    /// <summary>Puts the tab in the Error Title Phase with <paramref name="text"/>, until the next load or shown image.</summary>
+    public void SetError(string text) => Titles.Enter(TitlePhase.Error, text);
 
-            if (Settings.ImageScaling.ShowImageSideBySide && SecondaryModel is not null)
-            {
-                var secondIndex = ImageIterator.SecondaryCurrentIndex;
-                var secondInfo = new ImageTitleInfo(SecondaryModel.FileInfo, SecondaryModel.PixelWidth, SecondaryModel.PixelHeight, secondIndex, ImageIterator.Files.Count);
-                return ImageTitleFormatter.GenerateTitleForSideBySide(firstInfo, secondInfo, zoom, ImageIterator.Files);
-            }
-
-            return ImageTitleFormatter.GenerateTitleStrings(firstInfo, zoom);
-        }
-        
-        void SetSingleTitle()
-        {
-            string nameTitle;
-            switch (SingleImageType)
-            {
-                case SingleImageType.Clipboard:
-                    Debug.Assert(TranslationManager.Translation != null);
-                    Debug.Assert(TranslationManager.Translation.ClipboardImage != null);
-                    nameTitle = TranslationManager.Translation.ClipboardImage;
-                    break;
-                case SingleImageType.Url:
-                    nameTitle = SourceURL ?? string.Empty;
-                    break;
-                default:
-                    nameTitle = _singleImageTitle ?? Model?.FileInfo?.FullName ?? TabTitle.CurrentValue ?? string.Empty;
-                    break;
-            }
-            var zoom = ZoomLevel.CurrentValue;
-            var singleTitles = ImageTitleFormatter.GenerateTitleForSingleImage(width, height, nameTitle, zoom);
-            Title.Value = singleTitles.BaseTitle;
-            WindowTitle.Value = singleTitles.TitleWithAppName;
-            TitleTooltip.Value = singleTitles.FilePathTitle;
-            TabTitle.Value = nameTitle;
-        }
-        
-    }
-    
-    public void SetNewTabTitle()
-    {
-        var title = TranslationManager.Translation.NoImage;
-        if (string.IsNullOrEmpty(title))
-        {
-            return;
-        }
-        WindowTitle.Value = StringExtensions.CombineWithAppName(title);
-        Title.Value = title;
-        TitleTooltip.Value = title;
-        TabTitle.Value = title;
-     }
-    
-    public void SetLoading()
-    {
-        WindowTitle.Value = StringExtensions.CombineWithAppName(TranslationManager.Translation.Loading);
-        Title.Value = TranslationManager.Translation.Loading;
-        TitleTooltip.Value = TranslationManager.Translation.Loading;
-        TabTitle.Value = TranslationManager.Translation.Loading;
-    }
+    /// <summary>Ends Loading or Downloading when the load gave up without showing anything. An Error stays.</summary>
+    public void EndLoading() => Titles.EndLoading();
 
     /// <summary>
     /// Shows <paramref name="image"/> in place of the shown model's image, as a Stand-in: a thumbnail while the next
@@ -695,7 +588,6 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
         ThumbnailCache?.RemoveOwner(Id);
         DisposeImageIterator();
         Display(new ImageModel());
-        SetNewTabTitle();
         _hasLostItsFiles = true;
 
         if (ParentWindowContext?.ActionRunner is { } actionRunner)
@@ -756,6 +648,7 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
         NavigationCts.Dispose();
         Orientation.Dispose();
         Hookups?.Dispose();
+        _titles?.Dispose();
         _shown.Dispose();
         
         GC.SuppressFinalize(this);

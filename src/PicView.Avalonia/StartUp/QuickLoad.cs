@@ -149,8 +149,6 @@ public static class QuickLoad
         }
 
         vm.IsLoadingIndicatorShown.Value = false;
-        // Navigation is initialized now, so the title gets its index
-        tab.UpdateTabTitle();
 
         SourceOpener.ShowHoverBarIfNeeded(tab);
         if (Settings.UIProperties.IsTaskbarProgressEnabled)

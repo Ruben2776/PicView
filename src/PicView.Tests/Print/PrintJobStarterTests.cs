@@ -58,8 +58,7 @@ public class PrintJobStarterTests : IDisposable
         tab.DisplaySingleImage(new ImageModel
         {
             Image = bitmap, PixelWidth = 40, PixelHeight = 20, ImageType = ImageType.Bitmap
-        }, SingleImageType.Clipboard);
-        tab.TabTitle.Value = "Clipboard image";
+        }, SingleImageType.Clipboard, "Clipboard image");
         _vm.WindowTabs.ActiveTab.Value = tab;
     }
 

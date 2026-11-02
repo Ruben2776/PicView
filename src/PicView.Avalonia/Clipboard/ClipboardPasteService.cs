@@ -30,6 +30,7 @@ public class ClipboardPasteService(
         var tab = tabs.ActiveTab.CurrentValue;
         tab.SetLoading();
 
+        var pasted = false;
         try
         {
             // 1. Try to paste files
@@ -43,7 +44,8 @@ public class ClipboardPasteService(
                     file.Dispose();
                 }
 
-                return await PasteFilesAsync(paths, vm).ConfigureAwait(false);
+                pasted = await PasteFilesAsync(paths, vm).ConfigureAwait(false);
+                return pasted;
             }
 
             // 2. Try to paste text (URLs, file paths, base64)
@@ -52,17 +54,27 @@ public class ClipboardPasteService(
             {
                 if (await PasteTextAsync(text, vm).ConfigureAwait(false))
                 {
+                    pasted = true;
                     return true;
                 }
             }
 
             // 3. Try to paste image data
-            return await PasteImageAsync(vm).ConfigureAwait(false);
+            pasted = await PasteImageAsync(vm).ConfigureAwait(false);
+            return pasted;
         }
         catch (Exception ex)
         {
             DebugHelper.LogDebug(nameof(ClipboardPasteService), nameof(PasteAsync), ex);
             return false;
+        }
+        finally
+        {
+            if (!pasted)
+            {
+                // Nothing was shown, so the titles stop saying Loading
+                tab.EndLoading();
+            }
         }
     }
 

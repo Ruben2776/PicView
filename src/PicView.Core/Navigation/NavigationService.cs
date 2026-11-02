@@ -81,7 +81,6 @@ public class NavigationService(
             {
                 return true;
             }
-            tab.UpdateTabTitle();
             fileWatcherService.Watch(tab, fileInfo.DirectoryName);
             cache.ReleaseImages(tab.Id);
             if (tab.ImageIterator.Files.Count > 0)
@@ -322,6 +321,8 @@ public class NavigationService(
             {
                 // Unless a page of it shows, the opening goes again, and the tab's archive stays the one it shows
                 opening?.Abandon();
+                // This load said Loading and showed nothing, so the titles say what the tab shows again
+                tab.EndLoading();
             }
 
             // Hide progress spinner when initial extraction and display complete
@@ -347,25 +348,7 @@ public class NavigationService(
         client.ProgressChanged += (totalFileSize, totalBytesDownloaded, progressPercentage) =>
         {
             var displayProgress = HttpManager.GetProgressDisplay(totalFileSize, totalBytesDownloaded, progressPercentage);
-            var title = $"{safeFileName} {TranslationManager.Translation?.Downloading} {displayProgress}";
-
-            // Update UI properties
-            if (!string.Equals(tab.TabTitle.Value, title, StringComparison.OrdinalIgnoreCase))
-            {
-                tab.TabTitle.Value = title;
-            }
-            if (!string.Equals(tab.Title.Value, title, StringComparison.OrdinalIgnoreCase))
-            {
-                tab.Title.Value = title;
-            }
-            if (!string.Equals(tab.WindowTitle.Value, title, StringComparison.OrdinalIgnoreCase))
-            {
-                tab.WindowTitle.Value = title;
-            }
-            if (!string.Equals(tab.TitleTooltip.Value, title, StringComparison.OrdinalIgnoreCase))
-            {
-                tab.TitleTooltip.Value = title;
-            }
+            tab.SetDownloading($"{safeFileName} {TranslationManager.Translation?.Downloading} {displayProgress}");
 
             if (Settings.UIProperties.IsTaskbarProgressEnabled && totalBytesDownloaded.HasValue && totalFileSize.HasValue)
             {
@@ -381,6 +364,8 @@ public class NavigationService(
 
             if (ct.IsCancellationRequested)
             {
+                // Nothing shows, so the progress text must not stay in the titles
+                tab.EndLoading();
                 return LoadResult.Failed();
             }
 
@@ -391,9 +376,6 @@ public class NavigationService(
             tab.SourceURL = url;
             tab.DisplaySingleImage(model, SingleImageType.Url, url);
 
-            // Set titles to filename after successful load
-            tab.UpdateTabTitle();
-
             tab.CanNavigateBackwards.Value = false;
             tab.CanNavigateForwards.Value = false;
 
@@ -403,18 +385,17 @@ public class NavigationService(
         catch (OperationCanceledException)
         {
             platformService.StopTaskbarProgress();
+            // Nothing shows, so the progress text must not stay in the titles
+            tab.EndLoading();
             return LoadResult.Failed();
         }
         catch (Exception e)
         {
             DebugHelper.LogDebug(nameof(NavigationService), nameof(LoadFromUrlAsync), e);
             platformService.StopTaskbarProgress();
-            tab.TabTitle.Value = TranslationManager.Translation?.ErrorLoadingImage ?? "Error";
+            // Held until the next load, so the user sees that this one failed
+            tab.SetError(TranslationManager.Translation?.ErrorLoadingImage ?? "Error");
             return LoadResult.Failed(e.Message);
-        }
-        finally
-        {
-            tab.UpdateTabTitle();
         }
     }
 
@@ -524,10 +505,8 @@ public class NavigationService(
             }
 
             // Update files in iterator, keeping the position on the current file
+            // The titles and the gallery follow the sorted list by themselves
             tab.ImageIterator.Initialize(newFiles, SideBySidePair.IndexOf(newFiles, currentFile) ?? -1);
-            
-            // Update title; the gallery follows the sorted list by itself
-            tab.UpdateTabTitle();
         }
         catch (Exception e)
         {

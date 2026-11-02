@@ -41,8 +41,8 @@ public static class UpdateImage
 
             mainWindow.WindowFitter.Refit();
             imageViewer.UpdateMotionPhoto(tab);
+            // The zoom level marks the tab's Titles, which derive the title themselves (ADR-0015)
             tab.ZoomLevel.Value = Convert.ToInt32(tab.InitialZoom.CurrentValue * 100);
-            tab.UpdateTabTitle();
         }
 
         SetTaskbarProgress(vm, tab);
@@ -105,7 +105,7 @@ public static class UpdateImage
             }
         });
 
-        // The title follows from the tab's UpdateTabTitle, which the shown image's reaction calls
+        // The title follows from the tab's Titles, which derive it once the Single Image shows (ADR-0015)
         tabViewModel.DisposeImageIterator(); // SourceOpener creates a new one when browsing files again
     }
 

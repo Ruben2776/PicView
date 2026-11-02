@@ -7,7 +7,7 @@
     Height="{CompiledBinding TitlebarHeight.Value,
                              Mode=OneWay}"
     x:DataType="vm:MainWindowViewModel"
-    ToolTip.Tip="{Binding WindowTabs.ActiveTab.Value.TitleTooltip.Value, Mode=OneWay}">
+    ToolTip.Tip="{Binding WindowTabs.ActiveTab.Value.Titles.TitleTooltip, Mode=OneWay}">
     <Panel>
         <TextBlock
             x:Name="TextBlock"
@@ -20,7 +20,7 @@
             IsTabStop="False"
             IsVisible="{CompiledBinding !IsEditableTitlebarOpen.Value}"
             LineHeight="30"
-            Text="{CompiledBinding WindowTabs.ActiveTab.Value.Title.Value,
+            Text="{CompiledBinding WindowTabs.ActiveTab.Value.Titles.Title,
                                    Mode=OneWay}"
             TextAlignment="Center"
             TextTrimming="CharacterEllipsis" />

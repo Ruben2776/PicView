@@ -91,7 +91,6 @@ internal sealed class FolderChanges(TabViewModel tab)
 
         iterator.Insert(file, change.CompareNames, change.Details);
         iterator.NotifyFileAdded();
-        tab.UpdateTabTitle();
         return ValueTask.CompletedTask;
     }
 
@@ -132,10 +131,7 @@ internal sealed class FolderChanges(TabViewModel tab)
 
         // The same image under a new name is not shown anew: its model keeps its image, size and TIFF page, so zoom and
         // orientation survive, and its View History entries were renamed before this (ADR-0012), so nothing is recorded
-        if (!tab.UpdateShownFile(change.OldFullPath, file))
-        {
-            tab.UpdateTabTitle();
-        }
+        tab.UpdateShownFile(change.OldFullPath, file);
     }
 
     private async ValueTask DeletedAsync(FolderChange change)
@@ -185,8 +181,6 @@ internal sealed class FolderChanges(TabViewModel tab)
                     .ConfigureAwait(false);
             }
         }
-
-        tab.UpdateTabTitle();
     }
 
     private static bool Contains(Interfaces.IImageIterator iterator, string path)

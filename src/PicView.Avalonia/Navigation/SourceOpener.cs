@@ -104,7 +104,6 @@ public static class SourceOpener
         ShowHoverBarIfNeeded(tab);
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
-            tab.UpdateTabTitle();
             mainWindow.WindowFitter.Refit();
         });
         return result;

@@ -108,16 +108,6 @@ public partial class MainView : UserControl
                 mainWindow.WindowFitter.FitStartUpMenu(startUpMenu);
             }
             tabViewModel.CurrentView.Value = startUpMenu;
-            tabViewModel.SetNewTabTitle();
-        }
-
-        // Fix blank tab title when creating first new tab
-        if (tabs.Count is 2)
-        {
-            if (tabs[0].CurrentView.CurrentValue is StartUpMenu)
-            {
-                tabs[0].SetNewTabTitle();
-            }
         }
     }
     private void MainTabControlOnSelectionChanged(object? sender, SelectionChangedEventArgs e)
@@ -133,18 +123,6 @@ public partial class MainView : UserControl
         }
 
         vm.WindowTabs.SelectTab(tab);
-        if (string.IsNullOrEmpty(tab.Title.CurrentValue))
-        {
-            if (tab.Model?.FileInfo?.Exists == true)
-            {
-                tab.UpdateTabTitle();
-            }
-            else
-            {
-                tab.SetNewTabTitle();
-            }
-        }
-
         tab.ImageIterator?.UpdateNavigationProperties();
     }
 

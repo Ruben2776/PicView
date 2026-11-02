@@ -37,6 +37,9 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
             Publish(list, new FileListChange(FileListChangeKind.Listed, list, CurrentIndex));
         }
         UpdateNavigationProperties();
+        // A new listing at the same index and count changes nothing the titles subscribe to, yet the shown file's
+        // place in it is new, so the titles are told here (ADR-0015)
+        _tab.Titles.Mark();
     }
 
     #region File list changes
@@ -713,8 +716,8 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
                     break;
                 }
 
-                // The step may stop on the shown file, which brings no new title, so the title says what it shows again
-                _tab.UpdateTabTitle();
+                // The step may stop on the shown file, which shows nothing new, so the Loading phase ends here
+                _tab.EndLoading();
                 return (index, files);
             }
 
@@ -728,8 +731,8 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
             }
         }
 
-        // The title says what the tab shows again, instead of loading
-        _tab.UpdateTabTitle();
+        // The wait gave up, so the titles say what the tab shows again, instead of Loading
+        _tab.EndLoading();
         UpdateNavigationProperties();
         return null;
     }

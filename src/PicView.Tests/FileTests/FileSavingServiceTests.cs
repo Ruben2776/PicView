@@ -66,8 +66,7 @@ public class FileSavingServiceTests : IDisposable
             PixelWidth = (uint)width,
             PixelHeight = (uint)height,
             ImageType = ImageType.Bitmap
-        }, SingleImageType.Clipboard);
-        tab.TabTitle.Value = "Clipboard image";
+        }, SingleImageType.Clipboard, "Clipboard image");
         return tab;
     }
 
@@ -292,7 +291,7 @@ public class FileSavingServiceTests : IDisposable
     public void GetSuggestedFileName_NotAFile_UsesTitleAndDate(string title, string expected)
     {
         var tab = new TabViewModel(null!);
-        tab.TabTitle.Value = title;
+        tab.DisplaySingleImage(new ImageModel { Image = new object(), PixelWidth = 1, PixelHeight = 1 }, SingleImageType.Base64, title);
 
         var name = FileSavingService.GetSuggestedFileName(tab, new DateTime(2026, 10, 17, 23, 0, 47));
 
