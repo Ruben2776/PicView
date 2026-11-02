@@ -39,3 +39,7 @@ _Avoid_: Favorites, folder bookmarks
 **Custom Title Bar**:
 The title bar PicView draws itself (tabs, menus, address bar, window caption buttons) on platforms without a native menu bar. It is identical on Windows and Linux, and Windows is its reference. macOS uses the native menu bar instead.
 _Avoid_: Win title bar, Linux titlebar, platform title bar
+
+**Gallery Appearance**:
+How a tab's gallery looks in its shown Gallery Mode, derived from that mode, the dock position and the gallery settings.
+_Avoid_: Gallery layout, gallery settings, thumb settings
