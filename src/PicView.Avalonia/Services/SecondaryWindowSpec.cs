@@ -47,7 +47,7 @@ public sealed record SecondaryWindowSpec(Func<IWindowProvider, Window?> Create, 
     public required string Title { get; init; }
 
     /// Where the window opens, and whether its bounds are remembered.
-    public required WindowPlacement Placement { get; init; }
+    public required SecondaryWindowPlacement Placement { get; init; }
 
     /// Whether Escape closes the window. Keybindings turns it off, since it records keys.
     public bool CloseOnEscape { get; init; } = true;
@@ -66,14 +66,14 @@ public sealed record SecondaryWindowSpec(Func<IWindowProvider, Window?> Create, 
 /// <summary>
 /// Where a Tool Window or App Window opens.
 /// </summary>
-public abstract record WindowPlacement
+public abstract record SecondaryWindowPlacement
 {
     /// Opens where it was last closed, and remembers where it closes. Falls back to the center of the screen.
-    public sealed record Remembered(IWindowProperties Properties, Func<Task> Save) : WindowPlacement;
+    public sealed record Remembered(IWindowProperties Properties, Func<Task> Save) : SecondaryWindowPlacement;
 
     /// Opens in the center of the screen.
-    public sealed record CenterScreen : WindowPlacement;
+    public sealed record CenterScreen : SecondaryWindowPlacement;
 
     /// Opens in the center of its owner, or of the screen when it has none.
-    public sealed record CenterOwner : WindowPlacement;
+    public sealed record CenterOwner : SecondaryWindowPlacement;
 }

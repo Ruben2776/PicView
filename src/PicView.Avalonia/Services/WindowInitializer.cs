@@ -66,7 +66,7 @@ public class WindowInitializer(IWindowProvider provider, MainWindow mainWindow) 
             factory => factory.CreateAboutWindow())
         {
             Title = AboutTitle(),
-            Placement = new WindowPlacement.CenterScreen(),
+            Placement = new SecondaryWindowPlacement.CenterScreen(),
             Configure = window => window.DataContext = core
         });
     }
@@ -102,7 +102,7 @@ public class WindowInitializer(IWindowProvider provider, MainWindow mainWindow) 
             factory => factory.CreateImageInfoWindow(vm))
         {
             Title = StringExtensions.CombineWithAppName(TranslationManager.Translation.ImageInfo),
-            Placement = new WindowPlacement.Remembered(config.WindowProperties!, config.SaveAsync),
+            Placement = new SecondaryWindowPlacement.Remembered(config.WindowProperties!, config.SaveAsync),
             OnClosing = _ =>
             {
                 vm.Exif?.Dispose();
@@ -137,8 +137,8 @@ public class WindowInitializer(IWindowProvider provider, MainWindow mainWindow) 
         _ = AppWindows.OpenAsync(SecondaryWindowKind.Keybindings, new SecondaryWindowSpec(
             factory => factory.CreateKeybindingsWindow(config))
         {
-            Title = TranslationManager.Translation.ApplicationShortcuts ?? string.Empty,
-            Placement = new WindowPlacement.Remembered(config.WindowProperties!, config.SaveAsync),
+            Title = StringExtensions.CombineWithAppName(TranslationManager.Translation.ApplicationShortcuts),
+            Placement = new SecondaryWindowPlacement.Remembered(config.WindowProperties!, config.SaveAsync),
             // It records keys, Escape among them
             CloseOnEscape = false,
             Configure = window => window.DataContext = core
@@ -175,8 +175,8 @@ public class WindowInitializer(IWindowProvider provider, MainWindow mainWindow) 
         await AppWindows.OpenAsync(SecondaryWindowKind.Settings, new SecondaryWindowSpec(
             factory => factory.CreateSettingsWindow(config))
         {
-            Title = TranslationManager.Translation.Settings ?? string.Empty,
-            Placement = new WindowPlacement.Remembered(config.WindowProperties!, config.SaveAsync),
+            Title = StringExtensions.CombineWithAppName(TranslationManager.Translation.Settings),
+            Placement = new SecondaryWindowPlacement.Remembered(config.WindowProperties!, config.SaveAsync),
             Configure = window => window.DataContext = core,
             OnClosing = async window =>
             {
@@ -213,8 +213,8 @@ public class WindowInitializer(IWindowProvider provider, MainWindow mainWindow) 
         await AppWindows.OpenAsync(SecondaryWindowKind.Effects, new SecondaryWindowSpec(
             factory => factory.CreateEffectsWindow(config))
         {
-            Title = TranslationManager.Translation.Effects ?? string.Empty,
-            Placement = new WindowPlacement.Remembered(config.WindowProperties!, config.SaveAsync),
+            Title = StringExtensions.CombineWithAppName(TranslationManager.Translation.Effects),
+            Placement = new SecondaryWindowPlacement.Remembered(config.WindowProperties!, config.SaveAsync),
             Configure = window => window.DataContext = core
         }).ConfigureAwait(false);
     }
@@ -231,7 +231,7 @@ public class WindowInitializer(IWindowProvider provider, MainWindow mainWindow) 
             factory => factory.CreateSingleImageResizeWindow(vm), WindowOwner.MainWindowExceptMacOS)
         {
             Title = StringExtensions.CombineWithAppName(TranslationManager.Translation.Resize),
-            Placement = new WindowPlacement.CenterOwner()
+            Placement = new SecondaryWindowPlacement.CenterOwner()
         });
     }
 
@@ -249,7 +249,7 @@ public class WindowInitializer(IWindowProvider provider, MainWindow mainWindow) 
             await windows.OpenAsync(SecondaryWindowKind.BatchResize, new SecondaryWindowSpec(_ => null)
             {
                 Title = "",
-                Placement = new WindowPlacement.CenterScreen()
+                Placement = new SecondaryWindowPlacement.CenterScreen()
             }).ConfigureAwait(false);
             return;
         }
@@ -271,7 +271,7 @@ public class WindowInitializer(IWindowProvider provider, MainWindow mainWindow) 
             factory => factory.CreateBatchResizeWindow(config))
         {
             Title = StringExtensions.CombineWithAppName(TranslationManager.Translation.BatchResize),
-            Placement = new WindowPlacement.Remembered(config.WindowProperties!, config.SaveAsync),
+            Placement = new SecondaryWindowPlacement.Remembered(config.WindowProperties!, config.SaveAsync),
             Configure = window =>
             {
                 window.DataContext = core;
@@ -304,7 +304,7 @@ public class WindowInitializer(IWindowProvider provider, MainWindow mainWindow) 
             factory => factory.CreateConvertWindow(), WindowOwner.MainWindowExceptMacOS)
         {
             Title = StringExtensions.CombineWithAppName(TranslationManager.Translation.FileConversion),
-            Placement = new WindowPlacement.CenterOwner(),
+            Placement = new SecondaryWindowPlacement.CenterOwner(),
             Configure = window => window.DataContext = mainWindow.DataContext
         });
     }
@@ -322,7 +322,7 @@ public class WindowInitializer(IWindowProvider provider, MainWindow mainWindow) 
             factory => factory.CreateFileAssociationsWindow())
         {
             Title = StringExtensions.CombineWithAppName(TranslationManager.Translation.FileAssociations),
-            Placement = new WindowPlacement.CenterScreen(),
+            Placement = new SecondaryWindowPlacement.CenterScreen(),
             Configure = window => window.DataContext = core
         });
     }
@@ -342,7 +342,7 @@ public class WindowInitializer(IWindowProvider provider, MainWindow mainWindow) 
             factory => factory.CreatePrintPreviewWindow(config), WindowOwner.MainWindowExceptMacOS)
         {
             Title = StringExtensions.CombineWithAppName(TranslationManager.Translation.Print),
-            Placement = new WindowPlacement.Remembered(config.WindowProperties!, config.SaveAsync),
+            Placement = new SecondaryWindowPlacement.Remembered(config.WindowProperties!, config.SaveAsync),
             Configure = window =>
             {
                 vm.PrintPreview = preview;

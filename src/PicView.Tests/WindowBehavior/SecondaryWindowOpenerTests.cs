@@ -12,7 +12,6 @@ using PicView.Core.Config;
 using PicView.Core.Sizing;
 using PicView.Core.Update;
 using PicView.Core.ViewModels;
-using WindowPlacement = PicView.Avalonia.Services.WindowPlacement;
 
 namespace PicView.Tests.WindowBehavior;
 
@@ -248,7 +247,7 @@ public class SecondaryWindowOpenerTests
     public async Task OpenAsync_CenterOwner_SetsTheStartupLocation()
     {
         var opener = CreateOpener();
-        var spec = Spec(WindowOwner.MainWindow) with { Placement = new WindowPlacement.CenterOwner() };
+        var spec = Spec(WindowOwner.MainWindow) with { Placement = new SecondaryWindowPlacement.CenterOwner() };
 
         var window = await opener.OpenAsync(SecondaryWindowKind.About, spec);
 
@@ -384,13 +383,13 @@ public class SecondaryWindowOpenerTests
         }, owner)
         {
             Title = "About - PicView",
-            Placement = new WindowPlacement.CenterScreen()
+            Placement = new SecondaryWindowPlacement.CenterScreen()
         };
 
     private SecondaryWindowSpec RememberedSpec(Properties properties, List<string>? order = null) =>
         Spec() with
         {
-            Placement = new WindowPlacement.Remembered(properties, () =>
+            Placement = new SecondaryWindowPlacement.Remembered(properties, () =>
             {
                 order?.Add("save");
                 return Task.CompletedTask;
@@ -410,7 +409,7 @@ public class SecondaryWindowOpenerTests
         }, WindowOwner.MainWindow)
         {
             Title = "About - PicView",
-            Placement = new WindowPlacement.CenterScreen()
+            Placement = new SecondaryWindowPlacement.CenterScreen()
         };
 
     private static void PressEscape(Interactive source) =>

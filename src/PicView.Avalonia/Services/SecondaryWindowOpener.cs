@@ -128,7 +128,7 @@ public sealed class SecondaryWindowOpener(
                 _open.Remove(kind);
             }
 
-            var remembered = spec.Placement as WindowPlacement.Remembered;
+            var remembered = spec.Placement as SecondaryWindowPlacement.Remembered;
             if (remembered is not null)
             {
                 Remember(window, remembered.Properties);
@@ -178,17 +178,17 @@ public sealed class SecondaryWindowOpener(
     /// <summary>
     /// Places a window that is about to show.
     /// </summary>
-    private static void Place(Window window, WindowPlacement placement)
+    private static void Place(Window window, SecondaryWindowPlacement placement)
     {
         switch (placement)
         {
-            case WindowPlacement.CenterScreen:
+            case SecondaryWindowPlacement.CenterScreen:
                 window.WindowStartupLocation = WindowStartupLocation.CenterScreen;
                 break;
-            case WindowPlacement.CenterOwner:
+            case SecondaryWindowPlacement.CenterOwner:
                 window.WindowStartupLocation = WindowStartupLocation.CenterOwner;
                 break;
-            case WindowPlacement.Remembered remembered:
+            case SecondaryWindowPlacement.Remembered remembered:
                 Restore(window, remembered.Properties);
                 break;
         }
