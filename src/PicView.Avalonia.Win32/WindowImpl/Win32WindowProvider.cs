@@ -19,23 +19,23 @@ public class Win32WindowProvider : IWindowProvider
 
     public Window CreateAboutWindow() => new AboutWindow();
 
-    public Window CreateBatchResizeWindow(BatchResizeWindowConfig config) => new BatchResizeWindow(config);
+    public Window CreateBatchResizeWindow() => new BatchResizeWindow();
     
     public Window CreateFileAssociationsWindow() => new FileAssociationWindow();
 
     public Window CreateConvertWindow() => new ConvertWindow();
 
-    public Window CreateEffectsWindow(EffectsWindowConfig config) => new EffectsWindow(config);
+    public Window CreateEffectsWindow() => new EffectsWindow();
 
     public Window CreateImageInfoWindow(MainWindowViewModel vm) => new ImageInfoWindow(vm);
 
-    public Window CreateKeybindingsWindow(KeybindingWindowConfig config) => new KeybindingsWindow(config);
+    public Window CreateKeybindingsWindow() => new KeybindingsWindow();
 
     public Window CreateSettingsWindow(SettingsWindowConfig config) => new SettingsWindow(config);
 
     public Window CreateSingleImageResizeWindow(MainWindowViewModel vm) => new SingleImageResizeWindow(vm);
 
-    public Window CreatePrintPreviewWindow(PrintWindowConfig config) => new PrintPreviewWindow(config);
+    public Window CreatePrintPreviewWindow() => new PrintPreviewWindow();
 
     public ISystemPrinters CreateSystemPrinters() => new Win32Printers();
 

@@ -2,9 +2,6 @@ using Avalonia;
 using Avalonia.Interactivity;
 using Avalonia.Media;
 using PicView.Avalonia.CustomControls;
-using PicView.Avalonia.UI;
-using PicView.Core.Extensions;
-using PicView.Core.Localization;
 using PicView.Core.ViewModels;
 
 namespace PicView.Avalonia.Linux.Views;
@@ -15,7 +12,6 @@ public partial class SingleImageResizeWindow : GenericWindow
     {
         DataContext = viewModel;
         InitializeComponent();
-        GenericWindowHelper.GenericWindowInitialize(this, StringExtensions.CombineWithAppName(TranslationManager.Translation.Resize));
         Loaded += OnLoaded;
     }
 
@@ -52,7 +48,5 @@ public partial class SingleImageResizeWindow : GenericWindow
             MinimizeButton.Foreground = new SolidColorBrush(color);
             CloseButton.Foreground = new SolidColorBrush(color);
         }
-
-        GenericWindowHelper.GenericWindowInitialize(this, StringExtensions.CombineWithAppName(TranslationManager.Translation.Resize));
     }
 }

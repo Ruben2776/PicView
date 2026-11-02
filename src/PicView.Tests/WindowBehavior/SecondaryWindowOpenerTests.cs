@@ -454,15 +454,15 @@ public class SecondaryWindowOpenerTests
         public MainWindow CreateMainWindow(TabViewModel? firstTab = null) => throw new NotSupportedException();
         public IWindowModeAdapter CreateWindowModeAdapter() => throw new NotSupportedException();
         public Window CreateAboutWindow() => DisposableAbout ? new DisposableWindow() : new Window();
-        public Window CreateBatchResizeWindow(BatchResizeWindowConfig config) => new();
+        public Window CreateBatchResizeWindow() => new();
         public Window CreateFileAssociationsWindow() => NoFileAssociations ? null! : new Window();
         public Window CreateConvertWindow() => new();
-        public Window CreateEffectsWindow(EffectsWindowConfig config) => new();
+        public Window CreateEffectsWindow() => new();
         public Window CreateImageInfoWindow(MainWindowViewModel vm) => new();
-        public Window CreateKeybindingsWindow(KeybindingWindowConfig config) => new();
+        public Window CreateKeybindingsWindow() => new();
         public Window CreateSettingsWindow(SettingsWindowConfig config) => new();
         public Window CreateSingleImageResizeWindow(MainWindowViewModel vm) => new();
-        public Window CreatePrintPreviewWindow(PrintWindowConfig config) => new();
+        public Window CreatePrintPreviewWindow() => new();
 
         public ISystemPrinters CreateSystemPrinters() => throw new NotSupportedException();
 

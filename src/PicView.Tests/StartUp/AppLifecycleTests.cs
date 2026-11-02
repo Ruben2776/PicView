@@ -879,7 +879,7 @@ public class AppLifecycleTests : IAsyncDisposable
             return window;
         }
 
-        public Window CreateBatchResizeWindow(BatchResizeWindowConfig config)
+        public Window CreateBatchResizeWindow()
         {
             var window = Track(new Window());
             BatchResizeWindows.Add(window);
@@ -893,17 +893,17 @@ public class AppLifecycleTests : IAsyncDisposable
             return window;
         }
 
-        public Window CreateEffectsWindow(EffectsWindowConfig config)
+        public Window CreateEffectsWindow()
         {
             var window = Track(new Window());
             EffectsWindows.Add(window);
             return window;
         }
         public Window CreateImageInfoWindow(MainWindowViewModel vm) => Track(new Window());
-        public Window CreateKeybindingsWindow(KeybindingWindowConfig config) => Track(new Window());
+        public Window CreateKeybindingsWindow() => Track(new Window());
         public Window CreateSettingsWindow(SettingsWindowConfig config) => Track(new Window());
         public Window CreateSingleImageResizeWindow(MainWindowViewModel vm) => Track(new Window());
-        public Window CreatePrintPreviewWindow(PrintWindowConfig config) => Track(new Window());
+        public Window CreatePrintPreviewWindow() => Track(new Window());
 
         public ISystemPrinters CreateSystemPrinters() => throw new NotSupportedException();
 

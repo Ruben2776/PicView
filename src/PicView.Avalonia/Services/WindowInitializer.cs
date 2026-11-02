@@ -135,7 +135,7 @@ public class WindowInitializer(IWindowProvider provider, MainWindow mainWindow) 
 
         var config = core.Keybindings.WindowConfig;
         _ = AppWindows.OpenAsync(SecondaryWindowKind.Keybindings, new SecondaryWindowSpec(
-            factory => factory.CreateKeybindingsWindow(config))
+            factory => factory.CreateKeybindingsWindow())
         {
             Title = StringExtensions.CombineWithAppName(TranslationManager.Translation.ApplicationShortcuts),
             Placement = new SecondaryWindowPlacement.Remembered(config.WindowProperties!, config.SaveAsync),
@@ -211,7 +211,7 @@ public class WindowInitializer(IWindowProvider provider, MainWindow mainWindow) 
         // Effects works on the Active Main Window, so like the App Windows there is one for the whole app, owned by no
         // Main Window, and it closes with the last one
         await AppWindows.OpenAsync(SecondaryWindowKind.Effects, new SecondaryWindowSpec(
-            factory => factory.CreateEffectsWindow(config))
+            factory => factory.CreateEffectsWindow())
         {
             Title = StringExtensions.CombineWithAppName(TranslationManager.Translation.Effects),
             Placement = new SecondaryWindowPlacement.Remembered(config.WindowProperties!, config.SaveAsync),
@@ -268,7 +268,7 @@ public class WindowInitializer(IWindowProvider provider, MainWindow mainWindow) 
 
         core.BatchResize = batch;
         await windows.OpenAsync(SecondaryWindowKind.BatchResize, new SecondaryWindowSpec(
-            factory => factory.CreateBatchResizeWindow(config))
+            factory => factory.CreateBatchResizeWindow())
         {
             Title = StringExtensions.CombineWithAppName(TranslationManager.Translation.BatchResize),
             Placement = new SecondaryWindowPlacement.Remembered(config.WindowProperties!, config.SaveAsync),
@@ -339,7 +339,7 @@ public class WindowInitializer(IWindowProvider provider, MainWindow mainWindow) 
 
         var preview = new PrintPreviewViewModel { PrintWindowConfig = config };
         await _toolWindows.OpenAsync(SecondaryWindowKind.PrintPreview, new SecondaryWindowSpec(
-            factory => factory.CreatePrintPreviewWindow(config), WindowOwner.MainWindowExceptMacOS)
+            factory => factory.CreatePrintPreviewWindow(), WindowOwner.MainWindowExceptMacOS)
         {
             Title = StringExtensions.CombineWithAppName(TranslationManager.Translation.Print),
             Placement = new SecondaryWindowPlacement.Remembered(config.WindowProperties!, config.SaveAsync),

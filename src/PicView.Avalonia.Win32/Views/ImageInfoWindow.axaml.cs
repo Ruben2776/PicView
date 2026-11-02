@@ -4,7 +4,6 @@ using Avalonia.Media;
 using Avalonia.VisualTree;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.UI;
-using PicView.Core.Localization;
 using PicView.Core.ViewModels;
 using R3;
 
@@ -93,7 +92,6 @@ public partial class ImageInfoWindow: GenericWindow, IDisposable
                 btn.Classes.Add("hover");
             }
         }
-        GenericWindowHelper.GenericWindowInitialize(this, TranslationManager.Translation.ImageInfo + " - PicView", false, config.WindowProperties);
     }
     
     public void Dispose()
