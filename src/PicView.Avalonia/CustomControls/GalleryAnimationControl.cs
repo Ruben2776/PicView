@@ -5,6 +5,7 @@ using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.Threading;
 using PicView.Avalonia.Animations;
+using PicView.Avalonia.Gallery;
 using PicView.Core.DebugTools;
 using PicView.Core.Gallery;
 using PicView.Core.Sizing;
@@ -542,6 +543,7 @@ public class GalleryAnimationControl : UserControl
             ? size
             : double.NaN;
         settings.ThumbnailStretch.Value = mode;
+        _itemsPanel.ThumbnailStretch = GalleryThumbnailStretch.ToStretch(mode);
 
         if (spacing > 0)
         {

@@ -5,9 +5,9 @@
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
     xmlns:gallerySettings="clr-namespace:PicView.Core.Gallery;assembly=PicView.Core"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
-    Width="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.ItemWidth.Value,
+    Width="{CompiledBinding $parent[customControls:VirtualizingGallery].ItemWidth,
                             Mode=OneWay}"
-    Height="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.ItemHeight.Value,
+    Height="{CompiledBinding $parent[customControls:VirtualizingGallery].ItemHeight,
                              Mode=OneWay}"
     Margin="1"
     x:DataType="viewModels:GalleryItemViewModel"
@@ -303,7 +303,11 @@
         ToolTip.HorizontalOffset="0"
         ToolTip.Placement="TopEdgeAlignedLeft"
         ToolTip.VerticalOffset="0">
-        <customControls:ThumbImage x:Name="GalleryImage" Source="{Binding Image.Value}" />
+        <customControls:ThumbImage
+            x:Name="GalleryImage"
+            Source="{Binding Image.Value}"
+            Stretch="{CompiledBinding $parent[customControls:VirtualizingGallery].ThumbnailStretch,
+                                      Mode=OneWay}" />
         <!--  Motion photo badge  -->
         <Border
             Margin="3"

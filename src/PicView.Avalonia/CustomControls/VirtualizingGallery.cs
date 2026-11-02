@@ -4,6 +4,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Layout;
+using Avalonia.Media;
 using Avalonia.VisualTree;
 using PicView.Core.Gallery;
 
@@ -42,6 +43,18 @@ public class VirtualizingGallery : VirtualizingPanel
 
     public static readonly StyledProperty<double> WrapHeightOverrideProperty =
         AvaloniaProperty.Register<VirtualizingGallery, double>(nameof(WrapHeightOverride), double.NaN);
+
+    /// <summary>
+    ///     How the thumbnails in this panel fill their items. It doesn't affect measure.
+    /// </summary>
+    public static readonly StyledProperty<Stretch> ThumbnailStretchProperty =
+        AvaloniaProperty.Register<VirtualizingGallery, Stretch>(nameof(ThumbnailStretch), Stretch.Uniform);
+
+    public Stretch ThumbnailStretch
+    {
+        get => GetValue(ThumbnailStretchProperty);
+        set => SetValue(ThumbnailStretchProperty, value);
+    }
 
     static VirtualizingGallery()
     {

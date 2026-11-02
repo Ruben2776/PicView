@@ -3,9 +3,8 @@ using System.Text.Json;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media;
-using PicView.Avalonia.CustomControls;
+using PicView.Avalonia.Gallery;
 using PicView.Avalonia.Views.Config;
-using PicView.Avalonia.Views.Gallery;
 using PicView.Core.Config;
 using PicView.Core.Gallery;
 using PicView.Core.Localization;
@@ -102,28 +101,14 @@ public class ThumbnailStretchTests
         Assert.Same(view.FindControl<ComboBoxItem>(itemName), comboBox.SelectedItem);
     }
 
-    [AvaloniaFact]
-    public void Thumbnail_ShownGalleryChangesStretch_TakesIt()
+    [Theory]
+    [InlineData(GalleryStretchMode.Uniform, Stretch.Uniform)]
+    [InlineData(GalleryStretchMode.Square, Stretch.Uniform)]
+    [InlineData(GalleryStretchMode.UniformToFill, Stretch.UniformToFill)]
+    [InlineData(GalleryStretchMode.FillSquare, Stretch.UniformToFill)]
+    public void ToStretch_MapsEachThumbnailStretch(GalleryStretchMode mode, Stretch expected)
     {
-        WithThumbnail((core, image) =>
-        {
-            core.GallerySettings.ThumbnailStretch.Value = GalleryStretchMode.UniformToFill;
-            Assert.Equal(Stretch.UniformToFill, image.Stretch);
-
-            core.GallerySettings.ThumbnailStretch.Value = GalleryStretchMode.Uniform;
-            Assert.Equal(Stretch.Uniform, image.Stretch);
-        });
-    }
-
-    [AvaloniaFact]
-    public void Thumbnail_FillSquare_Crops()
-    {
-        WithThumbnail((core, image) =>
-        {
-            core.GallerySettings.ThumbnailStretch.Value = GalleryStretchMode.FillSquare;
-
-            Assert.Equal(Stretch.UniformToFill, image.Stretch);
-        });
+        Assert.Equal(expected, GalleryThumbnailStretch.ToStretch(mode));
     }
 
     private static AppSettings LoadGallerySetting(double version, string key, int saved)
@@ -146,23 +131,5 @@ public class ThumbnailStretchTests
         var window = new Window { DataContext = core, Content = view };
         window.Show();
         return (core, view);
-    }
-
-    // A thumbnail finds the shared gallery settings through the application's DataContext
-    private static void WithThumbnail(Action<CoreViewModel, ThumbImage> test)
-    {
-        var core = new CoreViewModel(null, _ => ValueTask.FromResult(new ImageModel()));
-        var application = Application.Current!;
-        var previous = application.DataContext;
-        application.DataContext = core;
-        try
-        {
-            var item = new GalleryItem();
-            test(core, item.FindControl<ThumbImage>("GalleryImage")!);
-        }
-        finally
-        {
-            application.DataContext = previous;
-        }
     }
 }

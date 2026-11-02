@@ -30,24 +30,9 @@ public partial class GalleryItem : NavigateAbleItem
     public GalleryItem()
     {
         InitializeComponent();
-        if (Application.Current.DataContext is not CoreViewModel core)
-        {
-            return;
-        }
-
-        // Follows the gallery that is shown, so switching between docked and expanded restretches the thumbnails too
-        core.GallerySettings.ThumbnailStretch.Subscribe(x =>
-        {
-            GalleryImage.Stretch = x switch
-            {
-                GalleryStretchMode.Uniform or GalleryStretchMode.Square => Stretch.Uniform,
-                GalleryStretchMode.UniformToFill or GalleryStretchMode.FillSquare => Stretch.UniformToFill,
-                _ => GalleryImage.Stretch
-            };
-        }, DebugHelper.LogError(nameof(GalleryItem), nameof(core.GallerySettings.ThumbnailStretch)))
-        .AddTo(ref _disposables);
     }
-    
+
+
     private void InitContextMenu()
     {
         // Snapshot analysis from timeline profiling shows a lot of allocations from ContextMenu bindings,
