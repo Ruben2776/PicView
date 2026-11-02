@@ -1,5 +1,4 @@
 using System.Collections.Frozen;
-using Avalonia;
 using Avalonia.Threading;
 using PicView.Avalonia.Clipboard;
 using PicView.Avalonia.ColorManagement;
@@ -11,7 +10,6 @@ using PicView.Avalonia.ImageTransformations;
 using PicView.Avalonia.Input;
 using PicView.Avalonia.SettingsManagement;
 using PicView.Avalonia.UI;
-using PicView.Avalonia.Views.UC;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.Printing;
 using PicView.Avalonia.Wallpaper;
