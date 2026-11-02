@@ -32,15 +32,22 @@ public static class UpdateImage
 
         if (change is ShownChange.Image)
         {
-            if (Settings.Zoom.ResetZoomOnChange)
+            var resets = Settings.Zoom.ResetZoomOnChange;
+            if (resets)
             {
-                // The tab reset its Zoom Factor when it published; the control's transform follows here (ADR-0016)
-                imageViewer.ResetZoomSlim();
+                // Upright before the Fit, which reads the Quarter Turn
                 tab.Orientation.Reset();
             }
 
             // The Fit writes the tab's Fit Scale, which marks the tab's Titles when the percent changes (ADR-0016)
             mainWindow.WindowFitter.Refit();
+            if (resets)
+            {
+                // The tab reset its Zoom Factor when it published; the control's transform follows here, after the
+                // Fit, so the scale it reports meets the new Fit Scale (ADR-0016)
+                imageViewer.ResetZoomSlim();
+            }
+
             imageViewer.UpdateMotionPhoto(tab);
         }
 
@@ -94,8 +101,9 @@ public static class UpdateImage
                 return;
             }
 
-            imageViewer.ResetZoomSlim();
+            // The Fit first, so the scale the control's reset reports meets the new Fit Scale (ADR-0016)
             mainWindow.WindowFitter.Refit();
+            imageViewer.ResetZoomSlim();
             imageViewer.UpdateMotionPhoto(tabViewModel);
 
             if (Settings.WindowProperties.KeepCentered)

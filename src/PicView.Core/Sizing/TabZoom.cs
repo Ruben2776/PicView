@@ -38,7 +38,7 @@ public sealed class TabZoom : IDisposable
     /// <summary>Back to the Fit, as when the tab shows another image.</summary>
     public void ResetFactor() => SetFactor(1);
 
-    // The same rounding the three writers used
+    // Rounded as the title's percent always was
     private void Recompute() => _level.Value = Convert.ToInt32(FitScale * Factor * 100);
 
     public void Dispose() => _level.Dispose();

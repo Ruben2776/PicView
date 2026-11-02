@@ -1,5 +1,6 @@
 using Avalonia;
 using Avalonia.Media.Imaging;
+using Avalonia.Controls;
 using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Input;
@@ -148,6 +149,35 @@ public class NavigationSubscriptionsTests
         });
     }
 
+    [AvaloniaFact]
+    public void Display_WhileZoomed_ControlResetReportsAfterTheFitWroteTheNewFitScale()
+    {
+        // AutoFit fits against the screen, which a test window has; a fixed window would read no content size
+        Settings.WindowProperties.AutoFit = true;
+        Settings.Zoom.ResetZoomOnChange = true;
+        WithWindow((window, vm, hookups, tab) =>
+        {
+            var viewer = new ImageViewer(tab);
+            tab.CurrentView.Value = viewer;
+            using var attached = hookups.Attach(tab);
+            tab.Display(BitmapModel("a.jpg"));
+            Dispatcher.UIThread.RunJobs();
+            // Zoomed, so the next image makes the reaction reset the control, which reports its scale
+            ((IZoomScrollTarget)viewer).ZoomAt(zoomIn: true, new Point(1, 1));
+            var control = viewer.FindControl<ZoomPanControl>("ZoomPanControl")!;
+            var fitScaleWhenTheControlReset = double.NaN;
+            control.ScaleChanged += _ => fitScaleWhenTheControlReset = tab.Zoom.FitScale;
+
+            // Larger than the screen, so its Fit Scale differs from the first image's
+            tab.Display(BitmapModel("b.jpg", 4000, 4000));
+            Dispatcher.UIThread.RunJobs();
+
+            Assert.InRange(tab.Zoom.FitScale, 0.01, 0.99);
+            // The zoom percentage popup reads the level when the control reports, so the fit must already be the new one
+            Assert.Equal(tab.Zoom.FitScale, fitScaleWhenTheControlReset);
+        });
+    }
+
     private static void WithWindow(Action<TestMainWindow, MainWindowViewModel, NavigationSubscriptions, TabViewModel> test)
     {
         var core = new CoreViewModel(null, _ => ValueTask.FromResult(new ImageModel()));
@@ -172,12 +202,12 @@ public class NavigationSubscriptionsTests
         }
     }
 
-    private static ImageModel BitmapModel(string name) => new()
+    private static ImageModel BitmapModel(string name, uint pixelWidth = 2, uint pixelHeight = 2) => new()
     {
         FileInfo = new FileInfo(name),
         Image = new WriteableBitmap(new PixelSize(2, 2), new Vector(96, 96)),
-        PixelWidth = 2,
-        PixelHeight = 2,
+        PixelWidth = pixelWidth,
+        PixelHeight = pixelHeight,
         ImageType = ImageType.Bitmap
     };
 

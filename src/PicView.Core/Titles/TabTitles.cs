@@ -25,8 +25,8 @@ public enum TitlePhase
 /// Every input only marks them stale and raises one <see cref="PropertyChanged"/>; the four strings are built once
 /// when the next reader asks and kept until the next mark, so a tab nobody binds builds nothing, and a shown image
 /// that resets the zoom builds once, since the tab resets the Zoom Factor before it marks (ADR-0016). The tab is the
-/// only writer: it marks from its own methods and
-/// through three subscriptions on its zoom level and its file list position (ADR-0015).
+/// only writer: it marks from its own methods and through three subscriptions on its zoom level and its file list
+/// position (ADR-0015).
 /// </summary>
 public sealed class TabTitles : INotifyPropertyChanged, IDisposable
 {
