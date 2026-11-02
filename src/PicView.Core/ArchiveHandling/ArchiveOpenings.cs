@@ -1,6 +1,7 @@
 using PicView.Core.DebugTools;
 using PicView.Core.Navigation;
 using PicView.Core.ViewModels;
+using R3;
 
 namespace PicView.Core.ArchiveHandling;
 
@@ -31,8 +32,10 @@ public sealed class ArchiveOpenings
     // How many openings began, so an opening notices a newer one starting
     private int _openings;
 
-    // The opening whose ExtractRest ran last, whose state the tab's extracting flag follows
+    // The opening whose ExtractRest ran last, whose state State and ProgressText follow
     private ArchiveOpening? _extracting;
+
+    private readonly BindableReactiveProperty<string?> _progressText = new(null, StringComparer.OrdinalIgnoreCase);
 
     public ArchiveOpenings(TabViewModel tab, IArchiveEntryWriter? entryWriter = null)
     {
@@ -49,9 +52,16 @@ public sealed class ArchiveOpenings
     public bool HasOpenArchive => _extraction.IsArchived;
 
     /// <summary>
-    ///     Where the latest extraction stands. <see cref="ExtractionState.Finished" /> when nothing is extracting.
+    ///     Where the latest extraction stands. <see cref="ExtractionState.Finished" /> when nothing is extracting. It
+    ///     leaves <see cref="ExtractionState.Extracting" /> only once every page the extraction wrote is listed, so a
+    ///     list read after it has them all.
     /// </summary>
     public ExtractionState State => Volatile.Read(ref _extracting)?.State ?? ExtractionState.Finished;
+
+    /// <summary>
+    ///     How far the latest extraction has come, as "extracted/total" for the UI, and null when nothing is extracting.
+    /// </summary>
+    public IReadOnlyBindableReactiveProperty<string?> ProgressText => _progressText;
 
     /// <summary>
     ///     Whether <paramref name="folder" /> is the extraction folder of one of the tab's archives. The folder watcher
@@ -182,31 +192,36 @@ public sealed class ArchiveOpenings
 
     internal void ExtractRest(ArchiveOpening opening)
     {
-        if (opening.AfterKeys.Length + opening.BeforeKeys.Length is 0)
-        {
-            _tab.IsArchiveExtracting.Value = false;
-            _tab.ArchiveExtractionProgressText.Value = null;
-            return;
-        }
-
+        // The state and progress follow this opening from here, also when it has nothing left: it is then finished, not
+        // still extracting or stopped as the opening the tab leaves may be
         lock (_lock)
         {
             _extracting?.Stop();
             _extracting = opening;
         }
 
+        if (opening.AfterKeys.Length + opening.BeforeKeys.Length is 0)
+        {
+            _progressText.Value = null;
+            _tab.ImageIterator?.UpdateNavigationProperties();
+            return;
+        }
+
         var firstCount = opening.Files.Count;
         var totalCount = opening.TotalCount;
         opening.SetState(ExtractionState.Extracting);
-        _tab.IsArchiveExtracting.Value = true;
-        _tab.ArchiveExtractionProgressText.Value = $"{firstCount}/{totalCount}";
+        _progressText.Value = $"{firstCount}/{totalCount}";
         _tab.ImageIterator?.UpdateNavigationProperties();
 
+        // Under the lock, so a report of the last pages lands before the end clears the text, not after it
         var progress = new Progress<int>(current =>
         {
-            if (ReferenceEquals(Volatile.Read(ref _extracting), opening))
+            lock (_lock)
             {
-                _tab.ArchiveExtractionProgressText.Value = $"{current}/{totalCount}";
+                if (ReferenceEquals(_extracting, opening) && opening.State is ExtractionState.Extracting)
+                {
+                    _progressText.Value = $"{current}/{totalCount}";
+                }
             }
         });
 
@@ -258,26 +273,21 @@ public sealed class ArchiveOpenings
 
     /// <summary>
     ///     Ends the background extraction of <paramref name="opening" />, extracted or not, once every page it wrote is
-    ///     listed: the tab no longer counts as extracting, and a Next waiting for a page looks at the list again. Unless a
-    ///     newer opening's extraction has replaced it since, as when Back opens an archive again: Next waits for that
-    ///     one's pages, and would step without them.
+    ///     listed: the tab no longer counts as extracting, and a Next waiting for a page looks at the list again. The
+    ///     progress goes too, unless a newer opening's extraction has replaced it since, as when Back opens an archive
+    ///     again: the tab shows that one's progress, and Next waits for its pages.
     /// </summary>
     private async Task EndAsync(ArchiveOpening opening)
     {
         await opening.ListingsEnded().ConfigureAwait(false);
         var stopped = opening.IsStopped;
-        bool isLatest;
         lock (_lock)
         {
-            isLatest = ReferenceEquals(_extracting, opening);
-        }
-
-        // The state before the flag: a Next that sees the flag down reads the state after it
-        opening.SetState(stopped ? ExtractionState.Stopped : ExtractionState.Finished);
-        if (isLatest)
-        {
-            _tab.IsArchiveExtracting.Value = false;
-            _tab.ArchiveExtractionProgressText.Value = null;
+            opening.SetState(stopped ? ExtractionState.Stopped : ExtractionState.Finished);
+            if (ReferenceEquals(_extracting, opening))
+            {
+                _progressText.Value = null;
+            }
         }
 
         // A folder cleaned up while a page was being written to it stayed, so it goes now that the write has ended

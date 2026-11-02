@@ -551,7 +551,7 @@ public class NavigationServiceTests : IDisposable
         {
             await _navigationService.LoadFromArchiveAsync(zip, tab, new CancellationTokenSource(),
                 startEntry: "img_03.jpg");
-            await WaitUntil(() => !tab.IsArchiveExtracting.Value && writer.Written.Length >= pages,
+            await WaitUntil(() => tab.Archives.State is not ExtractionState.Extracting && writer.Written.Length >= pages,
                 () => string.Join(", ", writer.Written));
 
             // The pages extracted together with the start entry come in the archive's order, so they are compared sorted
@@ -760,7 +760,7 @@ public class NavigationServiceTests : IDisposable
         {
             await _navigationService.LoadFromArchiveAsync(zip, tab, new CancellationTokenSource(),
                 startEntry: "Vol 1 (color)/002.jpg");
-            await WaitUntil(() => !tab.IsArchiveExtracting.Value && writer.Written.Length >= 4,
+            await WaitUntil(() => tab.Archives.State is not ExtractionState.Extracting && writer.Written.Length >= 4,
                 () => string.Join(", ", writer.Written));
 
             Assert.Equal("Vol 1 (color) - 002.jpg", tab.Model.FileInfo?.Name);
@@ -946,7 +946,7 @@ public class NavigationServiceTests : IDisposable
                 ViewHistoryEntry.ForArchivePage(zip, "img_11.jpg")
             ], tab.ViewHistory.Entries);
 
-            await WaitUntil(() => !tab.IsArchiveExtracting.Value,
+            await WaitUntil(() => tab.Archives.State is not ExtractionState.Extracting,
                 () => string.Join(", ", tab.ImageIterator.Files.Select(f => f.Name)));
             Assert.Equal(Enumerable.Range(1, 15).Select(i => $"img_{i:D2}.jpg"),
                 tab.ImageIterator.Files.Select(f => f.Name));
@@ -962,17 +962,17 @@ public class NavigationServiceTests : IDisposable
     [Fact]
     public async Task LoadFromArchiveAsync_BackgroundExtractionEnds_ListsItsPagesOffTheLowPriorityWorker()
     {
-        // The end lists the pages the watcher has not, under the lock a key press reads the list under. The extraction's
-        // own thread has the lowest priority, so on a busy machine it could keep the lock from a key press. The test's
-        // watcher lists nothing, so the end lists every page it wrote after the first ten
+        // The end waits for the last pages to be listed, then clears the progress and wakes a Next waiting for a page.
+        // The extraction's own thread has the lowest priority, so on a busy machine the end would keep a key press
+        // waiting if it ran there
         var zip = await CreateZipAsync("end_priority.zip", 12);
         var writer = new HeldEntryWriter("img_12.jpg");
         var tab = CreateTab(_testDirectory, writer: writer);
         var endedOn = new TaskCompletionSource<ThreadPriority>(TaskCreationOptions.RunContinuationsAsynchronously);
-        // The end lowers the flag right after it lists the pages, on the same thread
-        using var ending = tab.IsArchiveExtracting.Subscribe(isExtracting =>
+        // The end clears the progress text right after it listed the pages, on the same thread
+        using var ending = tab.Archives.ProgressText.AsObservable().Subscribe(progress =>
         {
-            if (!isExtracting && writer.Holding("img_12.jpg").IsCompleted)
+            if (progress is null && writer.Holding("img_12.jpg").IsCompleted)
             {
                 endedOn.TrySetResult(Thread.CurrentThread.Priority);
             }

@@ -302,7 +302,8 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
 
     private void UpdateNavigationProperties(int index, int count)
     {
-        if (count <= 1 && !_tab.IsArchiveExtracting.Value)
+        var isExtracting = _tab.Archives.State is ExtractionState.Extracting;
+        if (count <= 1 && !isExtracting)
         {
             _tab.CanNavigateForwards.Value = false;
             _tab.CanNavigateBackwards.Value = false;
@@ -310,7 +311,6 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
         else
         {
             var isLooping = Settings.UIProperties.Looping;
-            var isExtracting = _tab.IsArchiveExtracting.Value;
             _tab.CanNavigateForwards.Value = SideBySidePair.CanNavigateForwards(index, count, isExtracting);
 
             _tab.CanNavigateBackwards.Value = isLooping || index > 0;
@@ -649,9 +649,9 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
     private ValueTask<(int Index, FileInfo[] Files)?> WaitForNextAsync(NavigateTo navigateTo, SkipAmount skipAmount,
         CancellationToken ct)
     {
-        // The flag before the list: an extraction's end lists its last pages before it lowers the flag, so a list read
-        // after the flag is down has them all. The wait reads both again, so this one needs no FilesChanged
-        var isExtracting = navigateTo is NavigateTo.Next && _tab.IsArchiveExtracting.Value;
+        // The state before the list: an extraction leaves the extracting state once its last pages are listed, so a list
+        // read after it has them all. The wait reads both again, so this one needs no FilesChanged
+        var isExtracting = navigateTo is NavigateTo.Next && _tab.Archives.State is ExtractionState.Extracting;
         var shown = ShownIndexAndFiles();
         if (!isExtracting)
         {
@@ -688,10 +688,10 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
         var timedOut = false;
         while (!ct.IsCancellationRequested)
         {
-            // Taken before the flag and the list are read, so a change in between is not missed
+            // Taken before the state and the list are read, so a change in between is not missed
             var changed = FilesChanged();
-            // The flag before the list, as in WaitForNextAsync: once the flag is down, the list has every page
-            var isExtracting = _tab.IsArchiveExtracting.Value;
+            // The state before the list, as in WaitForNextAsync: once it is not extracting, the list has every page
+            var state = _tab.Archives.State;
             var (index, files) = ShownIndexAndFiles();
             if (!IsSameFile(FileAt(files, index), shown))
             {
@@ -704,11 +704,11 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
                 return (index, files);
             }
 
-            if (!isExtracting)
+            if (state is not ExtractionState.Extracting)
             {
                 // Stopped, not finished, as when another archive starts opening: the list stays as it is, so stepping
                 // on it would go to the wrong page
-                if (_tab.Archives.State is ExtractionState.Stopped)
+                if (state is ExtractionState.Stopped)
                 {
                     break;
                 }

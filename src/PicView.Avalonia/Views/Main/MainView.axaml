@@ -1155,7 +1155,7 @@
             BorderThickness="1"
             CornerRadius="4"
             IsHitTestVisible="False"
-            IsVisible="{Binding WindowTabs.ActiveTab.Value.ArchiveExtractionProgressText.Value, Mode=OneWay, Converter={x:Static ObjectConverters.IsNotNull}}"
+            IsVisible="{Binding WindowTabs.ActiveTab.Value.Archives.ProgressText.Value, Mode=OneWay, Converter={x:Static ObjectConverters.IsNotNull}}"
             ZIndex="10">
             <StackPanel
                 VerticalAlignment="Center"
@@ -1171,7 +1171,7 @@
                     VerticalAlignment="Center"
                     Classes="txt"
                     FontSize="12"
-                    Text="{Binding WindowTabs.ActiveTab.Value.ArchiveExtractionProgressText.Value, Mode=OneWay}" />
+                    Text="{Binding WindowTabs.ActiveTab.Value.Archives.ProgressText.Value, Mode=OneWay}" />
             </StackPanel>
         </Border>
     </Panel>

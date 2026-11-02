@@ -330,8 +330,6 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
             return _archives;
         }
     }
-    public BindableReactiveProperty<bool> IsArchiveExtracting { get; } = new(false);
-    public BindableReactiveProperty<string?> ArchiveExtractionProgressText { get; } = new(null, StringComparer.OrdinalIgnoreCase);
     public IThumbnailCache? ThumbnailCache { get; private set; }
 
     private IFileWatcherService? _fileWatcherService = fileWatcherService;

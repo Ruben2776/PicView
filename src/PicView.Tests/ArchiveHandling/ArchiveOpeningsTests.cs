@@ -203,7 +203,7 @@ public class ArchiveOpeningsTests : IDisposable
         await opening.Ended.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
 
         Assert.Equal(ExtractionState.Stopped, tab.Archives.State);
-        Assert.False(tab.IsArchiveExtracting.Value);
+        Assert.Null(tab.Archives.ProgressText.Value);
     }
 
     [Fact]
@@ -224,14 +224,57 @@ public class ArchiveOpeningsTests : IDisposable
         writer.Release("img_11.jpg");
         await first.Ended.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
         var stateAfterTheFirstEnded = tab.Archives.State;
-        var extractingAfterTheFirstEnded = tab.IsArchiveExtracting.Value;
+        var progressAfterTheFirstEnded = tab.Archives.ProgressText.Value;
         writer.Release("page_11.jpg");
         await second.Ended.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
 
         Assert.Equal(ExtractionState.Extracting, stateAfterTheFirstEnded);
-        Assert.True(extractingAfterTheFirstEnded);
+        Assert.Equal("10/12", progressAfterTheFirstEnded);
         Assert.Equal(ExtractionState.Finished, tab.Archives.State);
-        Assert.False(tab.IsArchiveExtracting.Value);
+        Assert.Null(tab.Archives.ProgressText.Value);
+    }
+
+    [Fact]
+    public async Task ExtractRest_ShowsHowManyPagesAreExtracted_UntilTheExtractionEnds()
+    {
+        var writer = new HeldEntryWriter("img_11.jpg");
+        var tab = CreateTab(writer);
+        var opening = (await OpenAsync(tab, await CreateZipAsync("progress.zip", 12), null))!;
+        var progressBeforeExtracting = tab.Archives.ProgressText.Value;
+
+        opening.ExtractRest();
+        await writer.Holding("img_11.jpg").WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+        var progressWhileExtracting = tab.Archives.ProgressText.Value;
+        writer.Release("img_11.jpg");
+        await opening.Ended.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+        // A progress report of the last pages written could otherwise land after the end cleared the text
+        await Task.Delay(100, TestContext.Current.CancellationToken);
+
+        Assert.Null(progressBeforeExtracting);
+        Assert.Equal("10/12", progressWhileExtracting);
+        Assert.Null(tab.Archives.ProgressText.Value);
+    }
+
+    [Fact]
+    public async Task ExtractRest_WithNothingLeftWhileAnOlderExtractionStillEnds_IsFinished()
+    {
+        var writer = new HeldEntryWriter("img_11.jpg");
+        var tab = CreateTab(writer);
+        var older = (await OpenAsync(tab, await CreateZipAsync("older_ending.zip", 12), null))!;
+        older.ExtractRest();
+        await writer.Holding("img_11.jpg").WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+
+        // A small archive opens, whose first ten pages are all of it, while the older extraction is still ending
+        var newer = (await OpenAsync(tab, await CreateZipAsync("small.zip", 3, prefix: "page"), null))!;
+        newer.ExtractRest();
+        var stateBeforeTheOlderEnded = tab.Archives.State;
+        var progressBeforeTheOlderEnded = tab.Archives.ProgressText.Value;
+        writer.Release("img_11.jpg");
+        await older.Ended.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+
+        Assert.Equal(ExtractionState.Finished, stateBeforeTheOlderEnded);
+        Assert.Null(progressBeforeTheOlderEnded);
+        Assert.Equal(ExtractionState.Finished, tab.Archives.State);
     }
 
     [Fact]

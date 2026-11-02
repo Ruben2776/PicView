@@ -13,7 +13,7 @@ namespace PicView.Tests.Navigation;
 /// The iterator is the only writer of its file list: each change keeps the current file current and tells the cache.
 /// </summary>
 [Collection("Sequential")]
-public class ImageIteratorFileListTests
+public class ImageIteratorFileListTests : IDisposable
 {
     private static readonly string TestDirectory = Path.Combine(Path.GetTempPath(), "PicViewIteratorFileListTests");
 
@@ -27,6 +27,9 @@ public class ImageIteratorFileListTests
     private readonly TabViewModel _tab;
     private readonly ImageIterator _iterator;
 
+    // An extraction on the tab, which a test begins to have the tab count as extracting
+    private readonly HeldExtraction _extraction = new();
+
     public ImageIteratorFileListTests()
     {
         ObservableSystem.DefaultFrameProvider = new MockFrameProvider();
@@ -36,8 +39,15 @@ public class ImageIteratorFileListTests
 
         _cache = new SharedImageCache(static f =>
             ValueTask.FromResult(new ImageModel { FileInfo = f, Image = new ProbeImage() }));
-        _tab = new TabViewModel(null!);
-        _iterator = new ImageIterator(_cache, new ThumbnailCache(), new MockThumbnailLoader(), _tab);
+        _tab = new TabViewModel(null!, null, _extraction.Writer);
+        _tab.Initialize(_cache, new ThumbnailCache(), new MockThumbnailLoader(), null, new ThumbnailCache());
+        _iterator = (ImageIterator)_tab.ImageIterator!;
+    }
+
+    public void Dispose()
+    {
+        _extraction.Dispose();
+        _tab.Archives.Cleanup();
     }
 
     [Fact]
@@ -369,7 +379,7 @@ public class ImageIteratorFileListTests
         var shown = new ImageModel { FileInfo = c, Image = new ProbeImage() };
         _iterator.Initialize([c], 0);
         _tab.Display(shown);
-        _tab.IsArchiveExtracting.Value = true;
+        await _extraction.BeginAsync(_tab, TestDirectory);
 
         var next = Next(keyHeldDown);
         // An archive reopened at a page extracts pages before it too
@@ -398,7 +408,7 @@ public class ImageIteratorFileListTests
         var shown = new ImageModel { FileInfo = c, Image = new ProbeImage() };
         _iterator.Initialize([c, d], 0);
         _tab.Display(shown, new ImageModel { FileInfo = d, Image = new ProbeImage() });
-        _tab.IsArchiveExtracting.Value = true;
+        await _extraction.BeginAsync(_tab, TestDirectory);
 
         var next = Next(keyHeldDown);
         _iterator.Insert(File("b.jpg"), string.CompareOrdinal);
@@ -422,7 +432,7 @@ public class ImageIteratorFileListTests
         var c = File("c.jpg");
         _iterator.Initialize([c], 0);
         _tab.Display(new ImageModel { FileInfo = c, Image = new ProbeImage() });
-        _tab.IsArchiveExtracting.Value = true;
+        await _extraction.BeginAsync(_tab, TestDirectory);
         var next = Next(keyHeldDown: false);
         _iterator.Insert(File("b.jpg"), string.CompareOrdinal);
 
@@ -445,11 +455,11 @@ public class ImageIteratorFileListTests
         _iterator.Initialize([a, b, File("c.jpg")], 0);
         _tab.Display(new ImageModel { FileInfo = a, Image = new ProbeImage() },
             new ImageModel { FileInfo = b, Image = new ProbeImage() });
-        _tab.IsArchiveExtracting.Value = true;
+        await _extraction.BeginAsync(_tab, TestDirectory);
 
         var next = Next(keyHeldDown);
         // The pair after the shown one never comes, as c is the last page
-        EndExtraction();
+        await _extraction.EndAsync();
         await next.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
 
         Assert.Equal("b.jpg", _tab.Model.FileInfo?.Name);
@@ -466,10 +476,10 @@ public class ImageIteratorFileListTests
         var c = File("c.jpg");
         _iterator.Initialize([File("a.jpg"), File("b.jpg"), c], 2);
         _tab.Display(new ImageModel { FileInfo = c, Image = new ProbeImage() });
-        _tab.IsArchiveExtracting.Value = true;
+        await _extraction.BeginAsync(_tab, TestDirectory);
 
         var next = Next(keyHeldDown);
-        EndExtraction();
+        await _extraction.EndAsync();
         await next.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
 
         Assert.Equal("a.jpg", _tab.Model.FileInfo?.Name);
@@ -482,11 +492,11 @@ public class ImageIteratorFileListTests
     {
         var c = File("c.jpg");
         _iterator.Initialize([c], 0);
+        await _extraction.BeginAsync(_tab, TestDirectory);
         _tab.IsSelected = true;
         _tab.Display(new ImageModel { FileInfo = c, Image = new ProbeImage() });
         _tab.UpdateTabTitle();
         var title = _tab.Title!.Value;
-        _tab.IsArchiveExtracting.Value = true;
         var cts = new CancellationTokenSource();
 
         var next = keyHeldDown
@@ -556,7 +566,7 @@ public class ImageIteratorFileListTests
         Settings.UIProperties.Looping = true;
         var shown = new ConcurrentQueue<string?>();
         using var subscription = _tab.FileInfo.Subscribe(file => shown.Enqueue(file?.Name));
-        _tab.IsArchiveExtracting.Value = true;
+        await _extraction.BeginAsync(_tab, TestDirectory);
 
         for (var round = 0; round < 100; round++)
         {
@@ -571,13 +581,6 @@ public class ImageIteratorFileListTests
         }
 
         Assert.DoesNotContain("a.jpg", shown);
-    }
-
-    // As the end of an archive's background extraction does
-    private void EndExtraction()
-    {
-        _tab.IsArchiveExtracting.Value = false;
-        _iterator.NotifyFileAdded();
     }
 
     private Task Next(bool keyHeldDown) => keyHeldDown
