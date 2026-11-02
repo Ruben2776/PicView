@@ -176,9 +176,6 @@ public static class UpdateImage
     {
         var tabViewModel = vm.WindowTabs.ActiveTab.CurrentValue;
 
-        var width = model.PixelWidth;
-        var height = model.PixelHeight;
-
         // Upright before fitting, since the new image is shown unturned and unflipped
         tabViewModel.Orientation.Reset();
         tabViewModel.DisplaySingleImage(model, type, title);
@@ -206,13 +203,8 @@ public static class UpdateImage
                 mainWindow.WindowFitter.Center();
             }
         });
-        
-        var zoom = tabViewModel.ZoomLevel.CurrentValue;
-        var windowTitles = ImageTitleFormatter.GenerateTitleForSingleImage(width, height, title, zoom);
-        tabViewModel.WindowTitle.Value = windowTitles.TitleWithAppName;
-        tabViewModel.Title.Value = windowTitles.BaseTitle;
-        tabViewModel.TitleTooltip.Value = windowTitles.FilePathTitle;
-        tabViewModel.TabTitle.Value = title;
+
+        // The title follows from the tab's UpdateTabTitle, which the shown image's reaction calls
         tabViewModel.DisposeImageIterator(); // SourceOpener creates a new one when browsing files again
     }
 

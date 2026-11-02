@@ -295,6 +295,61 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
     }
 
     /// <summary>
+    /// Whether <paramref name="path"/> is a Shown File: the file of the shown image, or of the one beside it when
+    /// viewing side by side.
+    /// </summary>
+    public bool IsShownFile(string path) =>
+        IsFileAt(Model, path) || IsFileAt(SecondaryModel, path);
+
+    /// <summary>
+    /// Follows the Shown File at <paramref name="path"/> to <paramref name="file"/>, as when it is renamed, overwritten
+    /// or changed on disk: its model's file and, when given, its pixel size, the bindable that shows the file, and the
+    /// title. The shown images are unchanged, nothing is recorded, and <see cref="Shown"/> fires a
+    /// <see cref="ShownChange.File"/>.
+    /// </summary>
+    /// <returns>Whether <paramref name="path"/> was a Shown File. Nothing changes when it was not.</returns>
+    public bool UpdateShownFile(string path, FileInfo file, uint? pixelWidth = null, uint? pixelHeight = null)
+    {
+        // Read once, as a load on another thread can show other models meanwhile
+        var primary = Model;
+        var secondary = SecondaryModel;
+        if (IsFileAt(primary, path))
+        {
+            Follow(primary);
+            FileInfo.Value = file;
+        }
+        else if (IsFileAt(secondary, path))
+        {
+            Follow(secondary!);
+            SecondaryFileInfo.Value = file;
+        }
+        else
+        {
+            return false;
+        }
+
+        UpdateTabTitle();
+        _shown.OnNext(ShownChange.File);
+        return true;
+
+        void Follow(ImageModel model)
+        {
+            model.FileInfo = file;
+            if (pixelWidth is { } width)
+            {
+                model.PixelWidth = width;
+            }
+            if (pixelHeight is { } height)
+            {
+                model.PixelHeight = height;
+            }
+        }
+    }
+
+    private static bool IsFileAt(ImageModel? model, string path) =>
+        model?.FileInfo is { } file && string.Equals(file.FullName, path, StringComparison.OrdinalIgnoreCase);
+
+    /// <summary>
     /// Where the archive page <paramref name="entry"/> is in the tab's files, so a step Back or Forward moves to it
     /// there: the tab is still in that archive, and the page is extracted and listed. Null when the archive has to open
     /// again at the page. For an archive that local software extracted whole it checks the disk, so call it off the UI
@@ -420,10 +475,11 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
             {
                 SetNewTabTitle();
             }
-            else
+            else if (ImageIterator is not null || SingleImageType is not SingleImageType.None)
             {
                 SetSingleTitle();
             }
+            // Else a file whose navigation has not started yet, as at startup: it sets the indexed title when it does
 
             return;
         }
@@ -487,7 +543,7 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
                     nameTitle = SourceURL ?? string.Empty;
                     break;
                 default:
-                    nameTitle = Model?.FileInfo?.FullName ?? TabTitle.CurrentValue ?? string.Empty;
+                    nameTitle = _singleImageTitle ?? Model?.FileInfo?.FullName ?? TabTitle.CurrentValue ?? string.Empty;
                     break;
             }
             var zoom = ZoomLevel.CurrentValue;
@@ -495,6 +551,7 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
             Title.Value = singleTitles.BaseTitle;
             WindowTitle.Value = singleTitles.TitleWithAppName;
             TitleTooltip.Value = singleTitles.FilePathTitle;
+            TabTitle.Value = nameTitle;
         }
         
     }

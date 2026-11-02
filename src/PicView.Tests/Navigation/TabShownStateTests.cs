@@ -133,6 +133,128 @@ public class TabShownStateTests
         Assert.Equal(TranslationManager.Translation.Loading, _tab.Title!.Value);
     }
 
+    [Fact]
+    public void UpdateShownFile_PrimaryPath_FollowsFileAndSize_FiresFile()
+    {
+        var model = Model("a.jpg");
+        _tab.Display(model);
+        var changes = new List<ShownChange>();
+        using var _ = _tab.Shown.Subscribe(changes.Add);
+        var renamed = new FileInfo("b.jpg");
+
+        var matched = _tab.UpdateShownFile(model.FileInfo!.FullName, renamed, 640, 480);
+
+        Assert.True(matched);
+        Assert.Same(renamed, _tab.Model.FileInfo);
+        Assert.Same(renamed, _tab.FileInfo.Value);
+        Assert.Equal(640u, _tab.Model.PixelWidth);
+        Assert.Equal(480u, _tab.Model.PixelHeight);
+        Assert.Same(model.Image, _tab.Image.Value);
+        Assert.Equal([ShownChange.File], changes);
+        Assert.Single(_tab.ViewHistory.Entries);
+    }
+
+    [Fact]
+    public void UpdateShownFile_SecondaryPath_FollowsSecondary()
+    {
+        var primary = Model("a.jpg");
+        var secondary = Model("b.jpg");
+        _tab.Display(primary, secondary);
+        var changes = new List<ShownChange>();
+        using var _ = _tab.Shown.Subscribe(changes.Add);
+        var renamed = new FileInfo("c.jpg");
+
+        var matched = _tab.UpdateShownFile(secondary.FileInfo!.FullName, renamed);
+
+        Assert.True(matched);
+        Assert.Same(renamed, _tab.SecondaryModel!.FileInfo);
+        Assert.Same(renamed, _tab.SecondaryFileInfo.Value);
+        Assert.Same(primary.FileInfo, _tab.Model.FileInfo);
+        Assert.Equal([ShownChange.File], changes);
+    }
+
+    [Fact]
+    public void UpdateShownFile_WithoutSize_KeepsSize()
+    {
+        var model = Model("a.jpg");
+        model.PixelWidth = 10;
+        model.PixelHeight = 20;
+        _tab.Display(model);
+
+        _tab.UpdateShownFile(model.FileInfo!.FullName, new FileInfo("b.jpg"));
+
+        Assert.Equal(10u, _tab.Model.PixelWidth);
+        Assert.Equal(20u, _tab.Model.PixelHeight);
+    }
+
+    [Fact]
+    public void UpdateShownFile_PathDifferingOnlyInCase_Matches()
+    {
+        var model = Model("a.JPG");
+        _tab.Display(model);
+
+        var matched = _tab.UpdateShownFile(model.FileInfo!.FullName.ToLowerInvariant(), new FileInfo("a.jpg"));
+
+        Assert.True(matched);
+    }
+
+    [Fact]
+    public void UpdateShownFile_UnshownPath_NoSecondary_ReturnsFalseAndChangesNothing()
+    {
+        var model = Model("a.jpg");
+        _tab.Display(model);
+        var changes = new List<ShownChange>();
+        using var _ = _tab.Shown.Subscribe(changes.Add);
+
+        var matched = _tab.UpdateShownFile(new FileInfo("zzz.jpg").FullName, new FileInfo("y.jpg"));
+
+        Assert.False(matched);
+        Assert.Same(model.FileInfo, _tab.Model.FileInfo);
+        Assert.Empty(changes);
+    }
+
+    [Fact]
+    public void IsShownFile_PrimarySecondaryAndOther()
+    {
+        var primary = Model("a.jpg");
+        var secondary = Model("b.jpg");
+        _tab.Display(primary, secondary);
+
+        Assert.True(_tab.IsShownFile(primary.FileInfo!.FullName));
+        Assert.True(_tab.IsShownFile(secondary.FileInfo!.FullName));
+        Assert.False(_tab.IsShownFile(new FileInfo("c.jpg").FullName));
+    }
+
+    [Fact]
+    public void UpdateTabTitle_SingleImage_UsesTheGivenTitle()
+    {
+        TranslationManager.Init();
+        _tab.IsSelected = true;
+        var single = new ImageModel { Image = new object(), PixelWidth = 1, PixelHeight = 1 };
+        _tab.DisplaySingleImage(single, SingleImageType.Base64, "Pasted");
+
+        _tab.UpdateTabTitle();
+
+        Assert.Equal("Pasted", _tab.TabTitle.Value);
+        Assert.StartsWith("Pasted", _tab.Title!.Value, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void UpdateTabTitle_FileWithoutIterator_LeavesTitleAlone()
+    {
+        TranslationManager.Init();
+        _tab.IsSelected = true;
+        _tab.SetLoading();
+        var model = Model("a.jpg");
+        model.PixelWidth = 1;
+        model.PixelHeight = 1;
+        _tab.Display(model);
+
+        _tab.UpdateTabTitle();
+
+        Assert.Equal(TranslationManager.Translation.Loading, _tab.Title!.Value);
+    }
+
     private static ImageModel Model(string name, ImageType type = ImageType.Bitmap) => new()
     {
         FileInfo = new FileInfo(name),
