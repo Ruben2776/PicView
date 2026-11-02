@@ -24,7 +24,7 @@
                 <LayoutTransformControl.LayoutTransform>
                     <RotateTransform Angle="{Binding Orientation.Degrees.Value}" />
                 </LayoutTransformControl.LayoutTransform>
-                <customControls:ZoomPanControl x:Name="ZoomPanControl" FittingScale="{Binding InitialZoom.Value}">
+                <customControls:ZoomPanControl x:Name="ZoomPanControl">
                     <customControls:AutoScrollViewer
                         x:Name="ImageScrollViewer"
                         Width="{Binding ParentWindowContext.ScrollViewerWidth.Value}"

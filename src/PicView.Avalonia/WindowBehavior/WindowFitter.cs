@@ -270,7 +270,7 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
 
         _fittedScreen = screen;
         _fittedWindowSize = new Size(fit.WindowWidth, fit.WindowHeight);
-        vm.WindowTabs.ActiveTab.CurrentValue.InitialZoom.Value = fit.Scale;
+        vm.WindowTabs.ActiveTab.CurrentValue.Zoom.SetFitScale(fit.Scale);
         vm.ScrollViewerWidth.Value = fit.ScrollViewerWidth;
         vm.ScrollViewerHeight.Value = fit.ScrollViewerHeight;
         vm.ImageWidth.Value = fit.Width;

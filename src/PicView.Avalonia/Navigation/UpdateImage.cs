@@ -20,9 +20,8 @@ public static class UpdateImage
 {
     /// <summary>
     /// What the window does once <paramref name="tab"/> shows something new. For a new image: zoom and orientation
-    /// reset when the setting asks, a Fit, the motion photo overlays, the zoom level and the title. For a shown file
-    /// that changed on disk: the taskbar progress. Nothing while the tab's view is not the image viewer. Call on the
-    /// UI thread.
+    /// reset when the setting asks, a Fit and the motion photo overlays. For a shown file that changed on disk: the
+    /// taskbar progress. Nothing while the tab's view is not the image viewer. Call on the UI thread.
     /// </summary>
     public static void ReactToShown(MainWindow mainWindow, TabViewModel tab, MainWindowViewModel vm, ShownChange change)
     {
@@ -35,14 +34,14 @@ public static class UpdateImage
         {
             if (Settings.Zoom.ResetZoomOnChange)
             {
+                // The tab reset its Zoom Factor when it published; the control's transform follows here (ADR-0016)
                 imageViewer.ResetZoomSlim();
                 tab.Orientation.Reset();
             }
 
+            // The Fit writes the tab's Fit Scale, which marks the tab's Titles when the percent changes (ADR-0016)
             mainWindow.WindowFitter.Refit();
             imageViewer.UpdateMotionPhoto(tab);
-            // The zoom level marks the tab's Titles, which derive the title themselves (ADR-0015)
-            tab.ZoomLevel.Value = Convert.ToInt32(tab.InitialZoom.CurrentValue * 100);
         }
 
         SetTaskbarProgress(vm, tab);

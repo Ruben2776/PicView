@@ -24,7 +24,8 @@ public enum TitlePhase
 /// The Titles a tab derives from what it shows: the titlebar text, its tooltip, the window title and the tab's name.
 /// Every input only marks them stale and raises one <see cref="PropertyChanged"/>; the four strings are built once
 /// when the next reader asks and kept until the next mark, so a tab nobody binds builds nothing, and a shown image
-/// followed by the window's zoom reset builds once. The tab is the only writer: it marks from its own methods and
+/// that resets the zoom builds once, since the tab resets the Zoom Factor before it marks (ADR-0016). The tab is the
+/// only writer: it marks from its own methods and
 /// through three subscriptions on its zoom level and its file list position (ADR-0015).
 /// </summary>
 public sealed class TabTitles : INotifyPropertyChanged, IDisposable
@@ -49,7 +50,7 @@ public sealed class TabTitles : INotifyPropertyChanged, IDisposable
     {
         _tab = tab;
         _subscriptions = Disposable.Combine(
-            tab.ZoomLevel.Subscribe(_ => Mark()),
+            tab.Zoom.Level.Subscribe(_ => Mark()),
             tab.NavigationIndex.Subscribe(_ => Mark()),
             tab.MaxIndex.Subscribe(_ => Mark()));
     }
@@ -196,7 +197,7 @@ public sealed class TabTitles : INotifyPropertyChanged, IDisposable
         var secondary = _tab.SecondaryModel;
         var iterator = _tab.ImageIterator;
         var singleImageType = _tab.SingleImageType;
-        var zoom = _tab.ZoomLevel.CurrentValue;
+        var zoom = _tab.Zoom.Level.CurrentValue;
         var width = model.PixelWidth;
         var height = model.PixelHeight;
 

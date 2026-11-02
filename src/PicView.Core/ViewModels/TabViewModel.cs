@@ -166,6 +166,12 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
             return;
         }
 
+        // The factor reset rides the shown mark, so a bound tab builds its titles once per image (ADR-0016)
+        if (change is ShownChange.Image && Settings.Zoom.ResetZoomOnChange)
+        {
+            Zoom.ResetFactor();
+        }
+
         // The titles are marked after the image bindable is set and before the UI reacts
         Titles.OnShown(change);
         _shown.OnNext(change);
@@ -409,8 +415,10 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
     public BindableReactiveProperty<bool> ShouldCropBeEnabled { get; } = new(false);
     public BindableReactiveProperty<bool> ShouldOptimizeImageBeEnabled { get; } = new(false);
     public BindableReactiveProperty<bool> ShouldPrintBeEnabled { get; } = new(true);
-    public BindableReactiveProperty<double> InitialZoom { get; } = new(1);
-    public BindableReactiveProperty<int> ZoomLevel { get; } = new();
+    /// <summary>
+    /// The tab's Zoom Level and its two inputs, the Fit Scale and the Zoom Factor (ADR-0016).
+    /// </summary>
+    public TabZoom Zoom { get; } = new();
 
     #endregion
 
@@ -647,6 +655,7 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
 
         NavigationCts.Dispose();
         Orientation.Dispose();
+        Zoom.Dispose();
         Hookups?.Dispose();
         _titles?.Dispose();
         _shown.Dispose();

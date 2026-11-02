@@ -51,7 +51,7 @@ public class TabTitlesTests
     }
 
     private WindowTitles Expected(FileInfo file, int index, int count) =>
-        ImageTitleFormatter.GenerateTitleStrings(new ImageTitleInfo(file, 1, 1, index, count), _tab.ZoomLevel.CurrentValue);
+        ImageTitleFormatter.GenerateTitleStrings(new ImageTitleInfo(file, 1, 1, index, count), _tab.Zoom.Level.CurrentValue);
 
     [Fact]
     public void FreshTab_AllFour_AreNoImage()
@@ -197,7 +197,7 @@ public class TabTitlesTests
         var files = Browse("a.jpg");
         _tab.Display(Model("a.jpg"));
 
-        _tab.ZoomLevel.Value = 250;
+        _tab.Zoom.SetFactor(2.5);
 
         Assert.Equal(Expected(files[0], 0, 1).BaseTitle, _tab.Titles.Title);
         Assert.Contains("250", _tab.Titles.Title, StringComparison.Ordinal);
@@ -244,7 +244,7 @@ public class TabTitlesTests
     {
         Browse("a.jpg");
         _tab.Display(Model("a.jpg"));
-        _tab.ZoomLevel.Value = 150;
+        _tab.Zoom.SetFactor(1.5);
 
         Assert.Equal(0, _tab.Titles.BuildCount);
 

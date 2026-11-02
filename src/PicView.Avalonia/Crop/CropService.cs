@@ -42,7 +42,7 @@ public class CropService(TabViewModel tabViewModel, MainWindow mainWindow) : ICr
             // Cropping hides the gallery, so fit before reading the size the crop area takes
             tabViewModel.Crop = new CropViewModel();
             mainWindow.WindowFitter.Refit();
-            tabViewModel.Crop.AspectRatio = tabViewModel.InitialZoom.CurrentValue;
+            tabViewModel.Crop.AspectRatio = tabViewModel.Zoom.FitScale;
 
             var cropControl = new CropControl
             {

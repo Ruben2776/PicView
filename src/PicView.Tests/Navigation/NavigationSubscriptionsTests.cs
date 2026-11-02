@@ -7,6 +7,7 @@ using PicView.Avalonia.Navigation;
 using PicView.Avalonia.Views.UC;
 using PicView.Avalonia.WindowBehavior;
 using PicView.Core.ImageDecoding;
+using PicView.Core.ImageTransformations;
 using PicView.Core.Localization;
 using PicView.Core.Models;
 using PicView.Core.ViewModels;
@@ -47,14 +48,13 @@ public class NavigationSubscriptionsTests
         {
             tab.CurrentView.Value = new ImageViewer(tab);
             using var attached = hookups.Attach(tab);
-            tab.ZoomLevel.Value = Untouched;
+            tab.Orientation.TurnRight();
 
             tab.Display(BitmapModel("a.jpg"));
             Dispatcher.UIThread.RunJobs();
 
-            // The reaction sets the zoom level from the fitted zoom
-            Assert.NotEqual(Untouched, tab.ZoomLevel.Value);
-            Assert.Equal(Convert.ToInt32(tab.InitialZoom.Value * 100), tab.ZoomLevel.Value);
+            // The reaction resets the orientation, as zoom resets on image change by default
+            Assert.Equal(Orientation.Upright, tab.Orientation.Current.CurrentValue);
         });
     }
 
@@ -65,12 +65,12 @@ public class NavigationSubscriptionsTests
         {
             tab.Display(BitmapModel("a.jpg"));
             tab.CurrentView.Value = new ImageViewer(tab);
-            tab.ZoomLevel.Value = Untouched;
+            tab.Orientation.TurnRight();
 
             using var attached = hookups.Attach(tab);
             Dispatcher.UIThread.RunJobs();
 
-            Assert.Equal(Untouched, tab.ZoomLevel.Value);
+            Assert.Equal(1, tab.Orientation.Current.CurrentValue.QuarterTurns);
         });
     }
 
@@ -83,12 +83,12 @@ public class NavigationSubscriptionsTests
             using var attached = hookups.Attach(tab);
             tab.Display(BitmapModel("a.jpg"));
             Dispatcher.UIThread.RunJobs();
-            tab.ZoomLevel.Value = Untouched;
+            tab.Orientation.TurnRight();
 
             tab.ShowStandIn(new object());
             Dispatcher.UIThread.RunJobs();
 
-            Assert.Equal(Untouched, tab.ZoomLevel.Value);
+            Assert.Equal(1, tab.Orientation.Current.CurrentValue.QuarterTurns);
         });
     }
 
@@ -98,12 +98,12 @@ public class NavigationSubscriptionsTests
         WithWindow((window, vm, hookups, tab) =>
         {
             using var attached = hookups.Attach(tab);
-            tab.ZoomLevel.Value = Untouched;
+            tab.Orientation.TurnRight();
 
             tab.Display(BitmapModel("a.jpg"));
             Dispatcher.UIThread.RunJobs();
 
-            Assert.Equal(Untouched, tab.ZoomLevel.Value);
+            Assert.Equal(1, tab.Orientation.Current.CurrentValue.QuarterTurns);
         });
     }
 
@@ -114,20 +114,18 @@ public class NavigationSubscriptionsTests
         {
             tab.CurrentView.Value = new ImageViewer(tab);
             using var attached = hookups.Attach(tab);
-            tab.ZoomLevel.Value = Untouched;
-            var zoomWhenLaterWorkRan = Untouched - 1;
+            tab.Orientation.TurnRight();
+            var turnsWhenLaterWorkRan = -1;
 
             // As QuickLoad posts the Center after the first image, at the highest priority
             tab.Display(BitmapModel("a.jpg"));
-            Dispatcher.UIThread.Post(() => zoomWhenLaterWorkRan = tab.ZoomLevel.Value, DispatcherPriority.Send);
+            Dispatcher.UIThread.Post(() => turnsWhenLaterWorkRan = tab.Orientation.Current.CurrentValue.QuarterTurns,
+                DispatcherPriority.Send);
             Dispatcher.UIThread.RunJobs();
 
-            Assert.NotEqual(Untouched, zoomWhenLaterWorkRan);
+            Assert.Equal(0, turnsWhenLaterWorkRan);
         });
     }
-
-    // A zoom level no reaction produces, so a test can tell whether one ran
-    private const int Untouched = -1;
 
     private static void WithWindow(Action<TestMainWindow, MainWindowViewModel, NavigationSubscriptions, TabViewModel> test)
     {

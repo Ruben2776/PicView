@@ -54,6 +54,52 @@ public class WindowFitterTests
     }
 
     [AvaloniaFact]
+    public void Refit_AutoFitOff_LevelIsTheFitScaleInPercent()
+    {
+        var (fitter, vm, _) = CreateWindow();
+        var tab = vm.WindowTabs.ActiveTab.Value;
+        tab.Display(Model("a.jpg", 1600, 600));
+
+        fitter.Refit();
+
+        Assert.Equal(0.5, tab.Zoom.FitScale);
+        Assert.Equal(50, tab.Zoom.Level.CurrentValue);
+    }
+
+    [AvaloniaFact]
+    public void Refit_AutoFitOn_LevelFollowsTheFitAgainstTheScreen()
+    {
+        Settings.WindowProperties.AutoFit = true;
+        var (fitter, vm, _) = CreateWindow(() => Screen(1280, 760));
+        var tab = vm.WindowTabs.ActiveTab.Value;
+        tab.Display(Model("a.jpg", 1600, 2000));
+
+        fitter.Refit();
+
+        Assert.InRange(tab.Zoom.Level.CurrentValue, 1, 99);
+        Assert.Equal(Convert.ToInt32(tab.Zoom.FitScale * 100), tab.Zoom.Level.CurrentValue);
+        Assert.Equal(1600 * tab.Zoom.FitScale, vm.ImageWidth.Value, precision: 6);
+    }
+
+    [AvaloniaFact]
+    public void Refit_AfterZoomToFitTurnsOn_LevelFollowsTheNewFit()
+    {
+        var (fitter, vm, _) = CreateWindow();
+        var tab = vm.WindowTabs.ActiveTab.Value;
+        tab.Display(Model("a.jpg", 400, 300));
+        fitter.Refit();
+        Assert.Equal(100, tab.Zoom.Level.CurrentValue);
+
+        Settings.ImageScaling.ZoomToFit = true;
+        fitter.Refit();
+
+        // Upscaled to fill the 800×600 content less the reserved space, so the exact percent follows the fit
+        Assert.True(tab.Zoom.Level.CurrentValue > 100);
+        Assert.Equal(Convert.ToInt32(tab.Zoom.FitScale * 100), tab.Zoom.Level.CurrentValue);
+        Assert.Equal(400 * tab.Zoom.FitScale, vm.ImageWidth.Value, precision: 6);
+    }
+
+    [AvaloniaFact]
     public void Refit_PairWhoseSecondSizeIsNotKnownYet_WaitsInsteadOfFittingOneImage()
     {
         Settings.ImageScaling.ShowImageSideBySide = true;

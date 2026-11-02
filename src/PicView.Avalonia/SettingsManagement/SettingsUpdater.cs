@@ -68,11 +68,9 @@ public static class SettingsUpdater
             vm.IsZoomedToFit.Value = true;
         }
 
+        // The Fit writes the active tab's Fit Scale, so its Zoom Level follows (ADR-0016)
         mainWindow.WindowFitter.Refit();
 
-        var tabViewModel = vm.WindowTabs.ActiveTab.CurrentValue;
-        tabViewModel.ZoomLevel.Value = Convert.ToInt32(tabViewModel.InitialZoom.CurrentValue * 100);
-        
         await SaveSettingsAsync().ConfigureAwait(false);
     }
     

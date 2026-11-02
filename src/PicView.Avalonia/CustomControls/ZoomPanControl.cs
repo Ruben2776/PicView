@@ -16,9 +16,6 @@ public class ZoomPanControl : Decorator
     public static readonly StyledProperty<double> DeadzoneToleranceProperty =
         AvaloniaProperty.Register<ZoomPanControl, double>(nameof(DeadzoneTolerance), 0.05);
 
-    public static readonly StyledProperty<double> FittingScaleProperty =
-        AvaloniaProperty.Register<ZoomPanControl, double>(nameof(FittingScale), 1.0);
-
     /// <summary>
     /// The tolerance range around 1.0 where zoom will snap to reset (1.0).
     /// For example, 0.05 means zoom values between 0.95 and 1.05 will snap to 1.0.
@@ -29,16 +26,6 @@ public class ZoomPanControl : Decorator
         set => SetValue(DeadzoneToleranceProperty, Math.Max(0, value));
     }
 
-    /// <summary>
-    /// The initial scaling factor used to fit the image.
-    /// Used to calculate ZoomLevel relative to pixel dimensions.
-    /// </summary>
-    public double FittingScale
-    {
-        get => GetValue(FittingScaleProperty);
-        set => SetValue(FittingScaleProperty, value);
-    }
-
     // Transform Properties
 
     public double Scale { get; private set; } = 1.0;
@@ -46,12 +33,6 @@ public class ZoomPanControl : Decorator
     public double TranslateX { get; private set; }
 
     public double TranslateY { get; private set; }
-
-    /// <summary>
-    /// Represents the current zoom level as a percentage.
-    /// A value of 100 corresponds to the default zoom level, while values higher or lower indicate zoomed-in or zoomed-out states, respectively.
-    /// </summary>
-    public double ZoomLevel { get; private set; } = 100;
 
     // Transform Objects (persistent for animations)
     private ScaleTransform? _scaleTransform;
@@ -174,7 +155,6 @@ public class ZoomPanControl : Decorator
         ZoomPreviewer?.IsVisible = false;
 
         SetTransitionsAndScale(1.0, CenterPoint(), animated);
-        UpdateZoomLevel();
     }
 
     /// <summary>
@@ -191,8 +171,6 @@ public class ZoomPanControl : Decorator
         TranslateX = 0;
         TranslateY = 0;
         SetScaleImmediate(1.0, CenterPoint());
-
-        UpdateZoomLevel();
     }
 
     /// <summary>
@@ -212,8 +190,6 @@ public class ZoomPanControl : Decorator
         ApplyScaleAroundPoint(newScale, center);
         ConstrainTranslationToBounds();
         UpdateChildTransform();
-
-        UpdateZoomLevel();
     }
 
     /// <summary>
@@ -360,11 +336,6 @@ public class ZoomPanControl : Decorator
     {
         SetTransitions(animated);
         SetScaleImmediate(targetScale, center);
-    }
-
-    private void UpdateZoomLevel()
-    {
-        ZoomLevel = Scale * FittingScale * 100;
     }
 
     /// <summary>
