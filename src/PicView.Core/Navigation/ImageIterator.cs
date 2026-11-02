@@ -305,24 +305,8 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
     public void UpdateNavigationProperties()
         => UpdateNavigationProperties(CurrentIndex, Files.Count);
 
-    private void UpdateNavigationProperties(int index, int count)
-    {
-        var isExtracting = _tab.Archives.State.Value is ExtractionState.Extracting;
-        if (count <= 1 && !isExtracting)
-        {
-            _tab.CanNavigateForwards.Value = false;
-            _tab.CanNavigateBackwards.Value = false;
-        }
-        else
-        {
-            var isLooping = Settings.UIProperties.Looping;
-            _tab.CanNavigateForwards.Value = SideBySidePair.CanNavigateForwards(index, count, isExtracting);
-
-            _tab.CanNavigateBackwards.Value = isLooping || index > 0;
-        }
-        _tab.NavigationIndex.Value = index;
-        _tab.MaxIndex.Value = count;
-    }
+    // The tab derives whether Next and Prev run from the position it is given (ADR-0016)
+    private void UpdateNavigationProperties(int index, int count) => _tab.SetPosition(index, count);
 
     public async ValueTask NavigateAsync(NavigateTo navigateTo, SkipAmount skipAmount, CancellationTokenSource ct)
     {

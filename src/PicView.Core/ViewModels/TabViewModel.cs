@@ -122,8 +122,9 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
         {
             _crop = value;
             UpdateGalleryHidden();
-            // Cropping replaces the titlebar text until the crop closes
+            // Cropping replaces the titlebar text until the crop closes, and turns Next and Prev off
             Titles.Mark();
+            DeriveCanNavigate();
         }
     }
 
@@ -427,14 +428,24 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
     {
         get
         {
-            if (field is null)
+            if (_archives is null)
             {
-                LazyInitializer.EnsureInitialized(ref field, () => new ArchiveOpenings(this, archiveEntryWriter));
+                LazyInitializer.EnsureInitialized(ref _archives, () =>
+                {
+                    var openings = new ArchiveOpenings(this, archiveEntryWriter);
+                    // Replays the current state at once, while _archives is still null: that first derive reads "not
+                    // extracting", which the initial state is anyway
+                    _archiveStateSubscription = openings.State.AsObservable().Subscribe(_ => DeriveCanNavigate());
+                    return openings;
+                });
             }
 
-            return field;
+            return _archives;
         }
     }
+
+    private ArchiveOpenings? _archives;
+    private IDisposable? _archiveStateSubscription;
     public IThumbnailCache? ThumbnailCache { get; private set; }
 
     private IFileWatcherService? _fileWatcherService = fileWatcherService;
@@ -443,6 +454,58 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
     public BindableReactiveProperty<int> MaxIndex { get; } = new(0);
     public BindableReactiveProperty<bool> CanNavigateForwards { get; } = new();
     public BindableReactiveProperty<bool> CanNavigateBackwards { get; } = new();
+
+    /// <summary>
+    /// The iterator's publication of where it is: the shown file's index and the count of the tab's files, set
+    /// together so the derived flags never see one without the other.
+    /// </summary>
+    internal void SetPosition(int index, int count)
+    {
+        NavigationIndex.Value = index;
+        MaxIndex.Value = count;
+        DeriveCanNavigate();
+    }
+
+    /// <summary>
+    /// The Looping and side-by-side settings have no change notification; their toggles call this for the active tab.
+    /// </summary>
+    public void RefreshCanNavigate() => DeriveCanNavigate();
+
+    /// <summary>
+    /// Whether Next and Prev run, derived from the tab's own state (ADR-0016): no iterator or a crop means neither; a
+    /// list of one and nothing extracting means neither; else forwards needs an image ahead (a pair when side-by-side
+    /// is on), or looping, or an extraction still listing pages; backwards needs an image behind, or looping.
+    /// </summary>
+    private void DeriveCanNavigate()
+    {
+        bool forwards;
+        bool backwards;
+        if (ImageIterator is null || Crop is not null)
+        {
+            forwards = false;
+            backwards = false;
+        }
+        else
+        {
+            var index = NavigationIndex.CurrentValue;
+            var count = MaxIndex.CurrentValue;
+            // The field, not the property: a derive inside the property's factory must not create it twice
+            var extracting = _archives?.State.Value is ExtractionState.Extracting;
+            if (count <= 1 && !extracting)
+            {
+                forwards = false;
+                backwards = false;
+            }
+            else
+            {
+                forwards = SideBySidePair.CanNavigateForwards(index, count, extracting);
+                backwards = Settings.UIProperties.Looping || index > 0;
+            }
+        }
+
+        CanNavigateForwards.Value = forwards;
+        CanNavigateBackwards.Value = backwards;
+    }
     
     /// <summary>
     /// Should be used when changing directory or closing the tab
@@ -514,6 +577,7 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
         GalleryCoordinator?.Dispose();
         GalleryCoordinator = new Gallery.GalleryCoordinator(this, thumbnailLoader, ThumbnailCache ?? thumbCache);
         ImageIterator = new ImageIterator(cache, thumbCache, thumbnailLoader, this, GalleryCoordinator.FilesChanged);
+        DeriveCanNavigate();
     }
 
     public void InitializeImageIterator(IReadOnlyList<FileInfo> files, SharedImageCache cache, IThumbnailCache thumbCache,  IThumbnailLoader thumbnailLoader, IFileWatcherService? fileWatcherService = null, IThumbnailCache? thumbnailCache = null)
@@ -528,6 +592,7 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
         }
         GalleryCoordinator ??= new Gallery.GalleryCoordinator(this, thumbnailLoader, ThumbnailCache ?? thumbCache);
         ImageIterator ??= new ImageIterator(cache, thumbCache, thumbnailLoader, this, GalleryCoordinator.FilesChanged);
+        DeriveCanNavigate();
         // Browsing files again, so it is no longer fresh
         _hasLostItsFiles = false;
         if (Model?.FileInfo is null)
@@ -632,8 +697,7 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
         FileInfo.Value = null;
         SecondaryFileInfo.Value = null;
         SecondaryModel = null;
-        CanNavigateBackwards.Value = false;
-        CanNavigateForwards.Value = false;
+        DeriveCanNavigate();
     }
     
     public void Dispose()
@@ -642,6 +706,7 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
         ThumbnailCache?.RemoveOwner(Id);
 
         ImageIterator?.Dispose();
+        _archiveStateSubscription?.Dispose();
         Archives.Cleanup();
         GalleryCoordinator?.Dispose();
 
