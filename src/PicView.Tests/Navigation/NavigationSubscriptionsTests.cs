@@ -107,6 +107,25 @@ public class NavigationSubscriptionsTests
         });
     }
 
+    [AvaloniaFact]
+    public void Display_Reaction_RunsBeforeWorkPostedAfterIt()
+    {
+        WithWindow((window, vm, hookups, tab) =>
+        {
+            tab.CurrentView.Value = new ImageViewer(tab);
+            using var attached = hookups.Attach(tab);
+            tab.ZoomLevel.Value = Untouched;
+            var zoomWhenLaterWorkRan = Untouched - 1;
+
+            // As QuickLoad posts the Center after the first image, at the highest priority
+            tab.Display(BitmapModel("a.jpg"));
+            Dispatcher.UIThread.Post(() => zoomWhenLaterWorkRan = tab.ZoomLevel.Value, DispatcherPriority.Send);
+            Dispatcher.UIThread.RunJobs();
+
+            Assert.NotEqual(Untouched, zoomWhenLaterWorkRan);
+        });
+    }
+
     // A zoom level no reaction produces, so a test can tell whether one ran
     private const int Untouched = -1;
 

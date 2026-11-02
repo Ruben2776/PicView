@@ -140,6 +140,15 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
 
     private readonly Subject<ShownChange> _shown = new();
 
+    // A load that ends after the tab closed shows into a disposed tab, which stays harmless
+    private void Publish(ShownChange change)
+    {
+        if (!_shown.IsDisposed)
+        {
+            _shown.OnNext(change);
+        }
+    }
+
     /// <summary>
     /// Shows <paramref name="primary"/>, and <paramref name="secondary"/> beside it when viewing side by side.
     /// Without a secondary, any previous one is cleared. This is the one way to change the shown models: it sets
@@ -156,7 +165,7 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
         ApplyRequestedPage(primary);
         ShowModels(primary, secondary);
         RecordShown();
-        _shown.OnNext(ShownChange.Image);
+        Publish(ShownChange.Image);
     }
 
     /// <summary>
@@ -171,7 +180,7 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
         _singleImageTitle = title;
         ShowModels(model, null);
         RecordShown();
-        _shown.OnNext(ShownChange.Image);
+        Publish(ShownChange.Image);
     }
 
     // The title of the Single Image the tab shows, which its View History entry keeps
@@ -197,7 +206,7 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
             Image.Value = model.Image;
         }
         RecordShown();
-        _shown.OnNext(ShownChange.Image);
+        Publish(ShownChange.Image);
     }
 
     /// <summary>
@@ -329,7 +338,7 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
         }
 
         UpdateTabTitle();
-        _shown.OnNext(ShownChange.File);
+        Publish(ShownChange.File);
         return true;
 
         void Follow(ImageModel model)

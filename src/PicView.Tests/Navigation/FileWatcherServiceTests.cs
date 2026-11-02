@@ -335,6 +335,28 @@ public class FileWatcherServiceTests : IDisposable
     }
 
     [Fact]
+    public async Task OnFileRenamed_ShownFile_FiresFileNotImage()
+    {
+        // Arrange: the same image under a new name is not a new image, so zoom and orientation must survive
+        var files = Files("old.jpg");
+        var newPath = Path.Combine(_testDirectory, "new.jpg");
+        var tab = CreateTab(_testDirectory, files, files[0]);
+        var image = new object();
+        tab.Model.Image = image;
+        var changes = new ConcurrentQueue<ShownChange>();
+        using var subscription = tab.Shown.Subscribe(changes.Enqueue);
+
+        // Act
+        Watch(tab).RaiseRenamed("old.jpg", "new.jpg");
+
+        // Assert
+        await WaitUntilAsync(() => tab.Model.FileInfo?.FullName == newPath);
+        Assert.Equal([ShownChange.File], changes);
+        Assert.Same(image, tab.Model.Image);
+        Assert.Equal(newPath, tab.FileInfo.Value?.FullName);
+    }
+
+    [Fact]
     public async Task OnFileRenamed_RenamesTheHistoryBeforeTheTabsFollow()
     {
         var files = Files("old.jpg");

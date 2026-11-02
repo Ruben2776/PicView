@@ -255,6 +255,17 @@ public class TabShownStateTests
         Assert.Equal(TranslationManager.Translation.Loading, _tab.Title!.Value);
     }
 
+    [Fact]
+    public void Display_AfterDispose_DoesNotThrow()
+    {
+        // A load that ends after its tab closed shows into a disposed tab, which must stay harmless
+        _tab.Dispose();
+
+        _tab.Display(Model("a.jpg"));
+
+        Assert.NotNull(_tab.Model.FileInfo);
+    }
+
     private static ImageModel Model(string name, ImageType type = ImageType.Bitmap) => new()
     {
         FileInfo = new FileInfo(name),

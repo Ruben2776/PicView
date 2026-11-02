@@ -19,10 +19,12 @@ public sealed class NavigationSubscriptions(MainWindow mainWindow, MainWindowVie
     public IDisposable Attach(TabViewModel tabViewModel)
     {
         return Dispatcher.UIThread.Invoke(() => Disposable.Combine(
-            // Posted, never invoked: the thread that showed the image does not wait for the window
+            // Posted, never invoked: the thread that showed the image does not wait for the window. At the highest
+            // priority, so the reaction runs before anything posted after the image showed, as the Center at startup
             tabViewModel.Shown
                 .Subscribe(change => Dispatcher.UIThread.Post(() =>
-                        UpdateImage.ReactToShown(mainWindow, tabViewModel, mainWindowViewModel, change)),
+                        UpdateImage.ReactToShown(mainWindow, tabViewModel, mainWindowViewModel, change),
+                    DispatcherPriority.Send),
                     DebugHelper.LogError(nameof(NavigationSubscriptions), nameof(UpdateImage.ReactToShown))),
             tabViewModel.Gallery.OpenSelectedItemCommand
                 .Skip(1)
