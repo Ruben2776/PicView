@@ -75,6 +75,28 @@ public sealed class ArchiveOpening
     /// </summary>
     public void Abandon() => _owner.Abandon(this);
 
+    private readonly List<Task> _listings = [];
+
+    // A page being listed in the tab's files, which the end of the extraction waits for
+    internal void AddListing(Task listing)
+    {
+        lock (_listings)
+        {
+            _listings.Add(listing);
+        }
+    }
+
+    internal Task ListingsEnded()
+    {
+        Task[] listings;
+        lock (_listings)
+        {
+            listings = [.. _listings];
+        }
+
+        return Task.WhenAll(listings);
+    }
+
     internal void Stop()
     {
         try

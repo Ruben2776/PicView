@@ -62,6 +62,12 @@ public class FileWatcherService(
             directory = fileInfo.DirectoryName;
         }
 
+        // The tab's Archive Openings list each page of an extraction folder as it is written (ADR-0013)
+        if (tab.Archives.IsExtractionFolder(directory))
+        {
+            return;
+        }
+
         lock (_lock)
         {
             // If we are already watching this directory, just add the subscriber

@@ -47,8 +47,7 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
         int index;
         lock (_filesLock)
         {
-            // Listed once, as the end of an archive's extraction may list a page between the watcher's look for it and
-            // this insert
+            // Listed once, whichever load, folder event or archive opening lists the file first
             index = IndexOf(_files, file.FullName);
             if (index >= 0)
             {

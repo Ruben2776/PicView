@@ -63,6 +63,30 @@ public class FileWatcherServiceTests : IDisposable
     }
 
     [Fact]
+    public async Task Watch_ExtractionFolderOfTheTabsArchive_StartsNoWatch()
+    {
+        // The tab's Archive Openings list each page as it is written (ADR-0013), so the watcher leaves the folder alone
+        var tab = CreateTab(_testDirectory);
+        var source = Directory.CreateDirectory(Path.Combine(_testDirectory, "zip_source")).FullName;
+        await File.WriteAllBytesAsync(Path.Combine(source, "page.jpg"), [0xFF, 0xD8, 0xFF], TestContext.Current.CancellationToken);
+        var zip = Path.Combine(_testDirectory, "pages.zip");
+        System.IO.Compression.ZipFile.CreateFromDirectory(source, zip);
+        var opening = await tab.Archives.OpenAsync(zip, null, (_, _) => Task.FromResult(false), string.CompareOrdinal,
+            TestContext.Current.CancellationToken);
+
+        try
+        {
+            _service.Watch(tab, opening!.Folder);
+
+            Assert.Empty(_folderEvents.Watches);
+        }
+        finally
+        {
+            tab.Archives.Cleanup();
+        }
+    }
+
+    [Fact]
     public void Unwatch_LastTabOfAFolder_StopsTheWatch()
     {
         var first = CreateTab(_testDirectory);

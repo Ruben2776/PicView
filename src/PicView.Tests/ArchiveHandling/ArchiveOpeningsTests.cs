@@ -4,6 +4,7 @@ using PicView.Core.Models;
 using PicView.Core.Navigation;
 using PicView.Core.Navigation.Interfaces;
 using PicView.Core.ViewModels;
+using R3;
 
 namespace PicView.Tests.ArchiveHandling;
 
@@ -77,6 +78,68 @@ public class ArchiveOpeningsTests : IDisposable
         Assert.Equal(ExtractionState.Finished, tab.Archives.State);
         Assert.Equal(Names(1, 15), Directory.GetFiles(opening.Folder).Select(Path.GetFileName).Order());
         Assert.Equal(Names(1, 15), tab.ImageIterator.Files.Select(f => f.Name));
+    }
+
+    [Fact]
+    public async Task ExtractRest_ListsEachPageInTheTabAsItIsWritten()
+    {
+        // The last page is written until the test lets it, so the extraction is still going once the page before it is
+        // written
+        var writer = new HeldEntryWriter("img_12.jpg");
+        var tab = CreateTab(writer);
+        var zip = await CreateZipAsync("as_written.zip", 12);
+        var opening = (await OpenAsync(tab, zip, null))!;
+        tab.ImageIterator!.Initialize(opening.Files);
+
+        opening.ExtractRest();
+        await writer.Holding("img_12.jpg").WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+        await WaitUntil(() => tab.ImageIterator.Files.Any(f => f.Name == "img_11.jpg"));
+        var stateWhenListed = tab.Archives.State;
+        writer.Release("img_12.jpg");
+        await opening.Ended.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+
+        Assert.Equal(ExtractionState.Extracting, stateWhenListed);
+        Assert.Equal(Names(1, 12), tab.ImageIterator.Files.Select(f => f.Name));
+    }
+
+    [Fact]
+    public async Task ExtractRest_ListsThePagesOffTheLowPriorityExtractionThread()
+    {
+        // A key press reads the list under the lock an insert takes, so no insert holds it on the lowest-priority thread
+        var tab = CreateTab();
+        var zip = await CreateZipAsync("priority.zip", 13);
+        var opening = (await OpenAsync(tab, zip, null))!;
+        tab.ImageIterator!.Initialize(opening.Files);
+        var listedOn = new System.Collections.Concurrent.ConcurrentBag<ThreadPriority>();
+        using var listing = tab.MaxIndex.Skip(1).Subscribe(_ => listedOn.Add(Thread.CurrentThread.Priority));
+
+        opening.ExtractRest();
+        await opening.Ended.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+
+        Assert.Equal(Names(1, 13), tab.ImageIterator.Files.Select(f => f.Name));
+        Assert.NotEmpty(listedOn);
+        Assert.All(listedOn, priority => Assert.Equal(ThreadPriority.Normal, priority));
+    }
+
+    [Fact]
+    public async Task ExtractRest_PageWrittenAfterTheTabListsAnotherFolder_IsNotListed()
+    {
+        var writer = new HeldEntryWriter("img_11.jpg");
+        var tab = CreateTab(writer);
+        var zip = await CreateZipAsync("left_behind.zip", 12);
+        var opening = (await OpenAsync(tab, zip, null))!;
+        tab.ImageIterator!.Initialize(opening.Files);
+        opening.ExtractRest();
+        await writer.Holding("img_11.jpg").WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+
+        // The tab leaves the archive for a folder while the page is still being written
+        var elsewhere = new FileInfo(Path.Combine(Directory.CreateDirectory(Path.Combine(_folder, "elsewhere")).FullName, "x.jpg"));
+        await File.WriteAllBytesAsync(elsewhere.FullName, [0xFF, 0xD8, 0xFF], TestContext.Current.CancellationToken);
+        tab.ImageIterator.Initialize([elsewhere]);
+        writer.Release("img_11.jpg");
+        await opening.Ended.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+
+        Assert.Equal(["x.jpg"], tab.ImageIterator.Files.Select(f => f.Name));
     }
 
     [Fact]
@@ -235,6 +298,16 @@ public class ArchiveOpeningsTests : IDisposable
         Assert.Null(opening);
         Assert.Equal(read.Archive, tab.Archives.OpenArchive);
         Assert.True(Directory.Exists(read.Folder));
+    }
+
+    private static async Task WaitUntil(Func<bool> condition)
+    {
+        var deadline = DateTime.UtcNow + WaitLimit;
+        while (!condition())
+        {
+            Assert.True(DateTime.UtcNow < deadline, "Timed out waiting");
+            await Task.Delay(20, TestContext.Current.CancellationToken);
+        }
     }
 
     private static ValueTask<ArchiveOpening?> OpenAsync(TabViewModel tab, string zip, string? startEntry) =>

@@ -533,46 +533,33 @@ public class NavigationServiceTests : IDisposable
 
     [Theory]
     // The ten from the start come first, then those either side of them take turns
-    [InlineData(5, new[] { "img_04.jpg", "img_05.jpg", "img_02.jpg", "img_01.jpg" })]
+    [InlineData(5, new[] { "img_03.jpg", "img_04.jpg", "img_05.jpg" }, new[] { "img_02.jpg", "img_01.jpg" })]
     [InlineData(15, new[]
     {
-        "img_04.jpg", "img_05.jpg", "img_06.jpg", "img_07.jpg", "img_08.jpg", "img_09.jpg", "img_10.jpg", "img_11.jpg",
-        "img_12.jpg", "img_13.jpg", "img_02.jpg", "img_14.jpg", "img_01.jpg", "img_15.jpg"
-    })]
-    public async Task LoadFromArchiveAsync_StartEntry_ExtractsTheNearestPagesFirst(int pages, string[] expected)
+        "img_03.jpg", "img_04.jpg", "img_05.jpg", "img_06.jpg", "img_07.jpg", "img_08.jpg", "img_09.jpg", "img_10.jpg",
+        "img_11.jpg", "img_12.jpg"
+    }, new[] { "img_13.jpg", "img_02.jpg", "img_14.jpg", "img_01.jpg", "img_15.jpg" })]
+    public async Task LoadFromArchiveAsync_StartEntry_ExtractsTheNearestPagesFirst(int pages, string[] withTheStart,
+        string[] rest)
     {
         var zip = await CreateZipAsync($"order_{pages}.zip", pages);
-        var tab = CreateTab(_testDirectory);
-        var extracted = new ConcurrentQueue<string>();
-        FileSystemWatcher? folderWatcher = null;
-        string[] withTheStart = [];
-        // The tab watches the extraction folder before the rest are extracted, so this sees them in the order they come
-        _mockFileWatcherService.OnWatch = directory =>
-        {
-            if (folderWatcher is not null)
-            {
-                return;
-            }
-
-            // The pages extracted together with the start entry, after it, as the tab lists them before the rest come
-            withTheStart = tab.ImageIterator.Files.Select(f => f.Name).Where(name => name != "img_03.jpg").ToArray();
-            folderWatcher = new FileSystemWatcher(directory!);
-            folderWatcher.Created += (_, e) => extracted.Enqueue(e.Name!);
-            folderWatcher.EnableRaisingEvents = true;
-        };
+        // Records each page as it is written, in order
+        var writer = new RecordingEntryWriter();
+        var tab = CreateTab(_testDirectory, writer: writer);
 
         try
         {
             await _navigationService.LoadFromArchiveAsync(zip, tab, new CancellationTokenSource(),
                 startEntry: "img_03.jpg");
-            await WaitUntil(() => !tab.IsArchiveExtracting.Value && withTheStart.Length + extracted.Count >= pages - 1,
-                () => string.Join(", ", extracted));
+            await WaitUntil(() => !tab.IsArchiveExtracting.Value && writer.Written.Length >= pages,
+                () => string.Join(", ", writer.Written));
 
-            Assert.Equal(expected, withTheStart.Concat(extracted));
+            // The pages extracted together with the start entry come in the archive's order, so they are compared sorted
+            Assert.Equal(withTheStart, writer.Written.Take(withTheStart.Length).Order(StringComparer.Ordinal));
+            Assert.Equal(rest, writer.Written.Skip(withTheStart.Length));
         }
         finally
         {
-            folderWatcher?.Dispose();
             tab.Archives.Cleanup();
         }
     }
@@ -761,42 +748,28 @@ public class NavigationServiceTests : IDisposable
     {
         // The tab lists the extracted files by name, and "(" sorts before "-", so the color volume's files come first,
         // although its folder's name comes after the other one's. The ten from the start on screen come first
-        string[] expected = ["Vol 1 - 001.jpg", "Vol 1 - 002.jpg", "Vol 1 (color) - 001.jpg"];
+        string[] withTheStart = ["Vol 1 (color) - 002.jpg", "Vol 1 - 001.jpg", "Vol 1 - 002.jpg"];
+        string[] rest = ["Vol 1 (color) - 001.jpg"];
         var zip = await CreateZipWithEntriesAsync("folders.zip",
             "Vol 1/001.jpg", "Vol 1/002.jpg", "Vol 1 (color)/001.jpg", "Vol 1 (color)/002.jpg");
-        var tab = CreateTab(_testDirectory);
-        var extracted = new ConcurrentQueue<string>();
-        FileSystemWatcher? folderWatcher = null;
-        string[] withTheStart = [];
-        // The tab watches the extraction folder before the rest are extracted, so this sees them in the order they come
-        _mockFileWatcherService.OnWatch = directory =>
-        {
-            if (folderWatcher is not null)
-            {
-                return;
-            }
-
-            // The pages extracted together with the start entry, after it, as the tab lists them before the rest come
-            withTheStart = tab.ImageIterator.Files.Select(f => f.Name)
-                .Where(name => name != "Vol 1 (color) - 002.jpg").ToArray();
-            folderWatcher = new FileSystemWatcher(directory!);
-            folderWatcher.Created += (_, e) => extracted.Enqueue(e.Name!);
-            folderWatcher.EnableRaisingEvents = true;
-        };
+        // Records each page as it is written, in order
+        var writer = new RecordingEntryWriter();
+        var tab = CreateTab(_testDirectory, writer: writer);
 
         try
         {
             await _navigationService.LoadFromArchiveAsync(zip, tab, new CancellationTokenSource(),
                 startEntry: "Vol 1 (color)/002.jpg");
-            await WaitUntil(() => !tab.IsArchiveExtracting.Value && withTheStart.Length + extracted.Count >= 3,
-                () => string.Join(", ", extracted));
+            await WaitUntil(() => !tab.IsArchiveExtracting.Value && writer.Written.Length >= 4,
+                () => string.Join(", ", writer.Written));
 
             Assert.Equal("Vol 1 (color) - 002.jpg", tab.Model.FileInfo?.Name);
-            Assert.Equal(expected, withTheStart.Concat(extracted));
+            // The pages extracted together with the start entry come in the archive's order, so they are compared sorted
+            Assert.Equal(withTheStart, writer.Written.Take(withTheStart.Length).Order(StringComparer.Ordinal));
+            Assert.Equal(rest, writer.Written.Skip(withTheStart.Length));
         }
         finally
         {
-            folderWatcher?.Dispose();
             tab.Archives.Cleanup();
         }
     }
@@ -939,32 +912,25 @@ public class NavigationServiceTests : IDisposable
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task LoadFromArchiveAsync_NextWaitingWhenTheExtractionEndsBeforeTheWatcherListsThePage_ShowsThatPage(
-        bool looping)
+    public async Task LoadFromArchiveAsync_NextWaitingForAPageStillBeingWritten_ShowsItOnceItIsWritten(bool looping)
     {
-        // The first ten pages come with the start, and img_11 is extracted first of the rest, held by the test. The
-        // watcher has not listed it when the extraction ends, as a watcher that handles a folder's events one at a time
-        // lags behind
+        // The first ten pages come with the start, and img_11 is extracted first of the rest, held by the test while it
+        // is written. The opening lists it the moment it is written, with no folder watcher in between
         Settings.UIProperties.Looping = looping;
-        var zip = await CreateZipAsync($"watcher_behind_{looping}.zip", 15);
+        var zip = await CreateZipAsync($"page_written_{looping}.zip", 15);
         var writer = new HeldEntryWriter("img_11.jpg");
         var tab = CreateTab(_testDirectory, writer: writer);
-        var folderEvents = new ManualFolderEvents();
-        var watcher = new FileWatcherService(string.CompareOrdinal, _cache, folderEvents: folderEvents);
-        var navigation = new NavigationService(_mockImageModelLoader, _cache, watcher, new MockPlatformSpecificService(),
-            string.CompareOrdinal);
 
         try
         {
-            await navigation.LoadFromArchiveAsync(zip, tab, new CancellationTokenSource(), startEntry: "img_01.jpg");
-            var folder = tab.Archives.OpenFolder!;
-            // The extraction writes img_11 until the test lets it end
+            await _navigationService.LoadFromArchiveAsync(zip, tab, new CancellationTokenSource(), startEntry: "img_01.jpg");
+            // The extraction writes img_11 until the test lets it
             await writer.Holding("img_11.jpg").WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
             // The tab shows the last page listed
             await tab.ImageIterator.IterateToIndexAsync(9, new CancellationTokenSource())
                 .AsTask().WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
 
-            // Next at the last page listed waits for img_11, and the extraction ends while it waits
+            // Next at the last page listed waits for img_11
             var next = tab.ImageIterator.NavigateAsync(NavigateTo.Next, SkipAmount.One, new CancellationTokenSource())
                 .AsTask();
             var wasWaiting = !next.IsCompleted;
@@ -980,18 +946,14 @@ public class NavigationServiceTests : IDisposable
                 ViewHistoryEntry.ForArchivePage(zip, "img_11.jpg")
             ], tab.ViewHistory.Entries);
 
-            // The watcher hears of img_11 at last, finds it listed and leaves it listed once
-            var shown = tab.FileInfo.Value;
-            folderEvents.RaiseCreated(folder, "img_11.jpg");
-            await WaitUntil(() => !ReferenceEquals(tab.FileInfo.Value, shown));
-
+            await WaitUntil(() => !tab.IsArchiveExtracting.Value,
+                () => string.Join(", ", tab.ImageIterator.Files.Select(f => f.Name)));
             Assert.Equal(Enumerable.Range(1, 15).Select(i => $"img_{i:D2}.jpg"),
                 tab.ImageIterator.Files.Select(f => f.Name));
         }
         finally
         {
             writer.Release("img_11.jpg");
-            watcher.Dispose();
             tab.Archives.Cleanup();
             Settings.UIProperties.Looping = false;
         }
@@ -1067,34 +1029,6 @@ public class NavigationServiceTests : IDisposable
     }
 
     // Reports only the file events the test raises, so the test decides when the watcher hears of each page
-    private sealed class ManualFolderEvents : IFolderEvents
-    {
-        private readonly ConcurrentDictionary<string, ManualFolderWatch> _watches = new(StringComparer.OrdinalIgnoreCase);
-
-        public IFolderWatch Watch(string directory, bool includeSubdirectories) =>
-            _watches[Path.TrimEndingDirectorySeparator(directory)] = new ManualFolderWatch(directory);
-
-        public void RaiseCreated(string directory, string name) =>
-            _watches[Path.TrimEndingDirectorySeparator(directory)].RaiseCreated(name);
-    }
-
-    private sealed class ManualFolderWatch(string directory) : IFolderWatch
-    {
-        private readonly Subject<FileSystemEventArgs> _created = new();
-
-        public Observable<FileSystemEventArgs> Created => _created;
-        public Observable<FileSystemEventArgs> Changed { get; } = Observable.Never<FileSystemEventArgs>();
-        public Observable<RenamedEventArgs> Renamed { get; } = Observable.Never<RenamedEventArgs>();
-        public Observable<FileSystemEventArgs> Deleted { get; } = Observable.Never<FileSystemEventArgs>();
-        public Observable<Unit> Gone { get; } = Observable.Never<Unit>();
-        public Observable<string> Moved { get; } = Observable.Never<string>();
-
-        public void RaiseCreated(string name) =>
-            _created.OnNext(new FileSystemEventArgs(WatcherChangeTypes.Created, directory, name));
-
-        public void Dispose() => _created.Dispose();
-    }
-
     private class MockFileWatcherService : IFileWatcherService
     {
         public bool WatchCalled { get; private set; }

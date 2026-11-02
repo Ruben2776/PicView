@@ -153,13 +153,6 @@ internal class ArchiveExtractionService(IArchiveEntryWriter? entryWriter = null)
     }
 
     /// <summary>
-    ///     The files extracted to <paramref name="folder" /> so far, each written in full, or none once the folder is
-    ///     cleaned up. None for an archive that local software extracted whole, which the tab lists from the start.
-    /// </summary>
-    public string[] ExtractedFilesOf(string folder) =>
-        FindExtraction(folder) is { } extraction ? [.. extraction.FileByEntry.Values] : [];
-
-    /// <summary>
     ///     The file that <paramref name="entry" /> of the open archive was extracted to, or <c>null</c> when it is not
     ///     extracted. For a fully extracted archive it checks the disk.
     /// </summary>
@@ -434,6 +427,7 @@ internal class ArchiveExtractionService(IArchiveEntryWriter? entryWriter = null)
     ///     cleaned up, as the tab has left the archive.
     /// </summary>
     /// <param name="folder">The folder to extract to, as <see cref="ExtractEntriesAsync" /> takes it.</param>
+    /// <param name="pageWritten">Told the path of each page once its file is written in full.</param>
     public void ExtractRemaining(
         string archivePath,
         IReadOnlyList<string> remainingKeys,
@@ -443,7 +437,8 @@ internal class ArchiveExtractionService(IArchiveEntryWriter? entryWriter = null)
         IProgress<int>? progress = null,
         int batchSize = 10,
         CancellationToken ct = default,
-        string? folder = null)
+        string? folder = null,
+        Action<string>? pageWritten = null)
     {
         var tempDirectory = folder ?? TempZipDirectory;
         laterKeys ??= [];
@@ -522,7 +517,8 @@ internal class ArchiveExtractionService(IArchiveEntryWriter? entryWriter = null)
                     return false;
                 }
 
-                WriteEntryFlat(entry, tempDirectory, sharedFolderCount);
+                var path = WriteEntryFlat(entry, tempDirectory, sharedFolderCount);
+                pageWritten?.Invoke(path);
                 extractedCount++;
                 batchCounter++;
                 left--;
@@ -564,19 +560,19 @@ internal class ArchiveExtractionService(IArchiveEntryWriter? entryWriter = null)
         IProgress<int>? progress = null,
         int batchSize = 10,
         CancellationToken ct = default,
-        string? folder = null)
+        string? folder = null,
+        Action<string>? pageWritten = null)
     {
         // Read here, so the folder is the open archive's when this starts, not when the thread does
         folder ??= TempZipDirectory;
-        // What awaits the extraction runs on a pool thread, not on this one of the lowest priority: the end of the
-        // extraction lists pages under the lock a key press reads the list under
+        // What awaits the extraction runs on a pool thread, not on this one of the lowest priority
         var tcs = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var thread = new Thread(() =>
         {
             try
             {
                 ExtractRemaining(archivePath, remainingKeys, laterKeys, initialCount, totalCount, progress, batchSize, ct,
-                    folder);
+                    folder, pageWritten);
                 tcs.TrySetResult();
             }
             catch (Exception ex)
@@ -660,6 +656,9 @@ internal class ArchiveExtractionService(IArchiveEntryWriter? entryWriter = null)
             }
         }
     }
+
+    /// <summary>Whether <paramref name="folder" /> is an extraction folder that is not cleaned up yet.</summary>
+    public bool HasFolder(string folder) => FindExtraction(folder) is not null;
 
     /// <summary>
     ///     Deletes <paramref name="folder" /> once more when it was cleaned up while a page was still being written to

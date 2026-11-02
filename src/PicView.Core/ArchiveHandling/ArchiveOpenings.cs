@@ -53,6 +53,12 @@ public sealed class ArchiveOpenings
     /// </summary>
     public ExtractionState State => Volatile.Read(ref _extracting)?.State ?? ExtractionState.Finished;
 
+    /// <summary>
+    ///     Whether <paramref name="folder" /> is the extraction folder of one of the tab's archives. The folder watcher
+    ///     leaves such a folder alone, since the opening lists each page as it is written.
+    /// </summary>
+    public bool IsExtractionFolder(string folder) => _extraction.HasFolder(folder);
+
     /// <inheritdoc cref="ArchiveExtractionService.ArchivePageOf" />
     public (string Archive, string? Entry)? ArchivePageOf(string extractedPath) => _extraction.ArchivePageOf(extractedPath);
 
@@ -210,7 +216,8 @@ public sealed class ArchiveOpenings
             try
             {
                 await _extraction.ExtractRemainingAsync(opening.Archive, opening.AfterKeys, opening.BeforeKeys,
-                    firstCount, totalCount, progress, BatchSize, opening.ExtractionToken, opening.Folder)
+                    firstCount, totalCount, progress, BatchSize, opening.ExtractionToken, opening.Folder,
+                    path => opening.AddListing(Task.Run(() => ListPage(opening, path))))
                     .ConfigureAwait(false);
             }
             catch (Exception ex)
@@ -219,7 +226,7 @@ public sealed class ArchiveOpenings
             }
             finally
             {
-                End(opening);
+                await EndAsync(opening).ConfigureAwait(false);
             }
         });
     }
@@ -227,15 +234,37 @@ public sealed class ArchiveOpenings
     internal void Abandon(ArchiveOpening opening) => _extraction.Cleanup(opening.Folder);
 
     /// <summary>
-    ///     Ends the background extraction of <paramref name="opening" />, extracted or not: the tab no longer counts as
-    ///     extracting, and a Next waiting for a page looks at the list again. Unless a newer opening's extraction has
-    ///     replaced it since, as when Back opens an archive again: Next waits for that one's pages, and would step
-    ///     without them. Once it finished, the pages it wrote that the tab does not list yet are listed first: the
-    ///     watcher handles a folder's events one at a time and can be behind, and a waiting Next would count the list
-    ///     without them as final. The watcher then finds them listed.
+    ///     Lists a page of <paramref name="opening" /> in the tab's files as soon as it is written, so a Next waiting for
+    ///     it steps to it. Runs on a pool thread, not the lowest-priority extraction thread, since it takes the lock a key
+    ///     press reads the list under. Only while the tab still lists the opening's pages and the opening is not stopped:
+    ///     a stopped extraction may finish writing one more page, but the tab is leaving the archive, and a Next waiting
+    ///     for the page gives up instead.
     /// </summary>
-    private void End(ArchiveOpening opening)
+    private void ListPage(ArchiveOpening opening, string path)
     {
+        try
+        {
+            if (!opening.IsStopped && _tab.ImageIterator is { } iterator
+                && iterator.InsertMissing([path], opening.Folder, opening.CompareNames) > 0)
+            {
+                _tab.UpdateTabTitle();
+            }
+        }
+        catch (Exception ex)
+        {
+            DebugHelper.LogDebug(nameof(ArchiveOpenings), nameof(ListPage), ex);
+        }
+    }
+
+    /// <summary>
+    ///     Ends the background extraction of <paramref name="opening" />, extracted or not, once every page it wrote is
+    ///     listed: the tab no longer counts as extracting, and a Next waiting for a page looks at the list again. Unless a
+    ///     newer opening's extraction has replaced it since, as when Back opens an archive again: Next waits for that
+    ///     one's pages, and would step without them.
+    /// </summary>
+    private async Task EndAsync(ArchiveOpening opening)
+    {
+        await opening.ListingsEnded().ConfigureAwait(false);
         var stopped = opening.IsStopped;
         bool isLatest;
         lock (_lock)
@@ -243,23 +272,12 @@ public sealed class ArchiveOpenings
             isLatest = ReferenceEquals(_extracting, opening);
         }
 
+        // The state before the flag: a Next that sees the flag down reads the state after it
+        opening.SetState(stopped ? ExtractionState.Stopped : ExtractionState.Finished);
         if (isLatest)
         {
-            if (!stopped && _tab.ImageIterator is { } iterator
-                && _extraction.ExtractedFilesOf(opening.Folder) is { Length: > 0 } extracted
-                && iterator.InsertMissing(extracted, opening.Folder, opening.CompareNames) > 0)
-            {
-                _tab.UpdateTabTitle();
-            }
-
-            // The state before the flag: a Next that sees the flag down reads the state after it
-            opening.SetState(stopped ? ExtractionState.Stopped : ExtractionState.Finished);
             _tab.IsArchiveExtracting.Value = false;
             _tab.ArchiveExtractionProgressText.Value = null;
-        }
-        else
-        {
-            opening.SetState(stopped ? ExtractionState.Stopped : ExtractionState.Finished);
         }
 
         // A folder cleaned up while a page was being written to it stayed, so it goes now that the write has ended
