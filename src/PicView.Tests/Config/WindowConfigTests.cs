@@ -1,4 +1,5 @@
 using PicView.Core.Config;
+using PicView.Core.Config.ConfigFileManagement;
 
 namespace PicView.Tests.Config;
 
@@ -10,6 +11,7 @@ public class WindowConfigTests
     {
         var config = new ResizeWindowConfig();
         using var backup = new ConfigFileBackup(config);
+        DeleteSavedFiles(config);
         await config.LoadAsync();
         Assert.NotNull(config.WindowProperties);
         Assert.Null(config.WindowProperties.Left);
@@ -31,6 +33,7 @@ public class WindowConfigTests
     {
         var config = new ConvertWindowConfig();
         using var backup = new ConfigFileBackup(config);
+        DeleteSavedFiles(config);
         await config.LoadAsync();
         Assert.NotNull(config.WindowProperties);
         Assert.Null(config.WindowProperties.Left);
@@ -64,5 +67,22 @@ public class WindowConfigTests
         Assert.Null(config.WindowProperties.Width);
         Assert.Null(config.WindowProperties.Height);
         Assert.False(config.WindowProperties.Maximized);
+    }
+
+    /// <summary>
+    /// Deletes the user's own copies of the file, so the test starts from nothing remembered. The backup puts them
+    /// back.
+    /// </summary>
+    private static void DeleteSavedFiles(ConfigFile config)
+    {
+        if (File.Exists(config.RoamingConfigPath))
+        {
+            File.Delete(config.RoamingConfigPath);
+        }
+
+        if (File.Exists(config.LocalConfigPath))
+        {
+            File.Delete(config.LocalConfigPath);
+        }
     }
 }
