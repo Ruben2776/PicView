@@ -196,8 +196,16 @@ With scrolling on, the area the image scrolls in. It fills the Available Area, e
 _Avoid_: Scroll viewer size, scrollable area
 
 **Fit Scale**:
-The factor that takes an image from its pixel size to its shown size when it is fitted. It becomes the starting zoom.
+The factor that takes an image from its pixel size to its shown size when it is fitted. With the Zoom Factor it gives the Zoom Level.
 _Avoid_: Aspect ratio, initial zoom
+
+**Zoom Factor**:
+How far the user has zoomed from the Fit: 1 as fitted, 2 at twice the fitted size. A wheel step, a pinch and the zoom Actions change it. It goes back to 1 when the tab shows another image while zoom resets on image change, and when the user resets the zoom.
+_Avoid_: Scale, user zoom, zoom amount
+
+**Zoom Level**:
+The percent of its pixel size an image is shown at: its Fit Scale times its Zoom Factor, times 100, rounded. 100 means one screen pixel per image pixel. The title shows it. The tab derives it; nothing sets it.
+_Avoid_: Zoom percentage, zoom value
 
 **Quarter Turn**:
 A rotation by a multiple of 90°, the only rotation a tab has. One or three quarter turns swap the image's width and height for fitting.

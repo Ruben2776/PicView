@@ -17,7 +17,7 @@ Before this, `UpdateTabTitle()` was called from 13 modules at 22 sites, `SetLoad
 ## Consequences
 
 - A new input to a title is a mark inside the tab or one of its three subscriptions, never a call from another module. `Refresh()` is the one call allowed from outside, and it goes when the settings publish their changes.
-- The window's reaction to a shown image (ADR-0014) no longer sets the title; it still writes `ZoomLevel`, which marks the titles. The zoom level's own three writers are unchanged here and are the next slice.
+- The window's reaction to a shown image (ADR-0014) no longer sets the title; it still writes `ZoomLevel`, which marks the titles. ADR-0016 derives the zoom level on the tab and removes them.
 - A tab derives its titles whether or not it is the active tab; the window binds the active tab's. The selection and moved-tab patches in `MainView` and `MainWindow`, and `StartUpMenu`'s writes, are deleted.
 - Error holds all four strings until the next load, instead of being lost.
 - `TabTooltip` is deleted. The bindings and readers of the other four move to `tab.Titles`.
