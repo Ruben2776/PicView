@@ -22,11 +22,11 @@ public interface IPlatformWindowService
     
     void ShowEffectsWindow();
     
-    void ShowSingleImageResizeWindow();
+    ValueTask ShowSingleImageResizeWindow();
     
     ValueTask ShowBatchResizeWindow();
     
     void ShowFileAssociationsWindow();
 
-    void ShowConvertWindow();
+    ValueTask ShowConvertWindow();
 }

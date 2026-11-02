@@ -36,6 +36,7 @@ public class AppLifecycleTests : IAsyncDisposable
     private readonly FileHistoryFileBackup _fileHistoryBackup = new();
     private readonly ConfigFileBackup _batchResizeConfigBackup = new(new BatchResizeWindowConfig());
     private readonly ConfigFileBackup _effectsConfigBackup = new(new EffectsWindowConfig());
+    private readonly ConfigFileBackup _convertConfigBackup = new(new ConvertWindowConfig());
     private readonly List<AppLifecycle> _apps = [];
     private readonly string _folder;
     private readonly CoreViewModel _core;
@@ -100,6 +101,7 @@ public class AppLifecycleTests : IAsyncDisposable
         _fileHistoryBackup.Dispose();
         _batchResizeConfigBackup.Dispose();
         _effectsConfigBackup.Dispose();
+        _convertConfigBackup.Dispose();
     }
 
     [AvaloniaFact]
@@ -249,7 +251,7 @@ public class AppLifecycleTests : IAsyncDisposable
         var app = CreateApp();
         await app.StartAsync(settingsExists: true, []);
         var second = await app.MainWindows.OpenNewAsync();
-        second.ShowConvertWindow();
+        await second.ShowConvertWindow();
         await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Background);
         var convert = Assert.Single(_provider.ConvertWindows);
         var closed = false;

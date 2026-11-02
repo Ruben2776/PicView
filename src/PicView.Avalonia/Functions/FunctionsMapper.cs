@@ -518,11 +518,8 @@ public class FunctionsMapper : IActionRunner
 
     private ValueTask CheckForUpdates() => PlatformActions.CheckForUpdates(_vm);
 
-    private ValueTask ConvertWindow()
-    {
-        _vm?.PlatformWindowService?.ShowConvertWindow();
-        return ValueTask.CompletedTask;
-    }
+    private ValueTask ConvertWindow() =>
+        _vm.PlatformWindowService.ShowConvertWindow();
 
     private ValueTask KeybindingsWindow()
     {
@@ -542,11 +539,8 @@ public class FunctionsMapper : IActionRunner
         return ValueTask.CompletedTask;
     }
 
-    private ValueTask ResizeWindow()
-    {
-        _vm?.PlatformWindowService?.ShowSingleImageResizeWindow();
-        return ValueTask.CompletedTask;
-    }
+    private ValueTask ResizeWindow() =>
+        _vm.PlatformWindowService.ShowSingleImageResizeWindow();
 
     private async ValueTask BatchResizeWindow()
     {

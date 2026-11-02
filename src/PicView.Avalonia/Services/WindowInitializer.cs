@@ -219,7 +219,7 @@ public class WindowInitializer(IWindowProvider provider, MainWindow mainWindow) 
         }).ConfigureAwait(false);
     }
 
-    public void ShowSingleImageResizeWindow()
+    public async ValueTask ShowSingleImageResizeWindow()
     {
         if (mainWindow.ViewModel is not { } vm)
         {
@@ -227,12 +227,15 @@ public class WindowInitializer(IWindowProvider provider, MainWindow mainWindow) 
         }
 
         vm.ResizeImageViewModel ??= new ResizeImageViewModel();
-        _ = _toolWindows.OpenAsync(SecondaryWindowKind.SingleImageResize, new SecondaryWindowSpec(
+        var config = new ResizeWindowConfig();
+        // Back on the UI thread, which opens the window
+        await config.LoadAsync().ConfigureAwait(true);
+        await _toolWindows.OpenAsync(SecondaryWindowKind.SingleImageResize, new SecondaryWindowSpec(
             factory => factory.CreateSingleImageResizeWindow(vm), WindowOwner.MainWindowExceptMacOS)
         {
             Title = StringExtensions.CombineWithAppName(TranslationManager.Translation.Resize),
-            Placement = new SecondaryWindowPlacement.CenterOwner()
-        });
+            Placement = new SecondaryWindowPlacement.Remembered(config.WindowProperties!, config.SaveAsync)
+        }).ConfigureAwait(false);
     }
 
     public async ValueTask ShowBatchResizeWindow()
@@ -298,15 +301,18 @@ public class WindowInitializer(IWindowProvider provider, MainWindow mainWindow) 
         }).ConfigureAwait(false);
     }
 
-    public void ShowConvertWindow()
+    public async ValueTask ShowConvertWindow()
     {
-        _ = _toolWindows.OpenAsync(SecondaryWindowKind.Convert, new SecondaryWindowSpec(
+        var config = new ConvertWindowConfig();
+        // Back on the UI thread, which opens the window
+        await config.LoadAsync().ConfigureAwait(true);
+        await _toolWindows.OpenAsync(SecondaryWindowKind.Convert, new SecondaryWindowSpec(
             factory => factory.CreateConvertWindow(), WindowOwner.MainWindowExceptMacOS)
         {
             Title = StringExtensions.CombineWithAppName(TranslationManager.Translation.FileConversion),
-            Placement = new SecondaryWindowPlacement.CenterOwner(),
+            Placement = new SecondaryWindowPlacement.Remembered(config.WindowProperties!, config.SaveAsync),
             Configure = window => window.DataContext = mainWindow.DataContext
-        });
+        }).ConfigureAwait(false);
     }
 
     public void ShowFileAssociationsWindow()

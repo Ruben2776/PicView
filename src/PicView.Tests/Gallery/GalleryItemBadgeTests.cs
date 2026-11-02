@@ -107,9 +107,9 @@ public class GalleryItemBadgeTests
         public void ShowKeybindingsWindow() { }
         public ValueTask ShowSettingsWindow() => ValueTask.CompletedTask;
         public void ShowEffectsWindow() { }
-        public void ShowSingleImageResizeWindow() { }
+        public ValueTask ShowSingleImageResizeWindow() => ValueTask.CompletedTask;
         public ValueTask ShowBatchResizeWindow() => ValueTask.CompletedTask;
         public void ShowFileAssociationsWindow() { }
-        public void ShowConvertWindow() { }
+        public ValueTask ShowConvertWindow() => ValueTask.CompletedTask;
     }
 }
