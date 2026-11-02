@@ -27,7 +27,7 @@ public class LinuxWindowProvider : IWindowProvider
 
     public Window CreateEffectsWindow() => new EffectsWindow();
 
-    public Window CreateImageInfoWindow(MainWindowViewModel vm) => new ImageInfoWindow(vm.InfoWindow.ImageInfoWindowConfig!);
+    public Window CreateImageInfoWindow(MainWindowViewModel vm) => new ImageInfoWindow(vm);
 
     public Window CreateKeybindingsWindow() => new KeybindingsWindow();
 

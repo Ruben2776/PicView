@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using Avalonia;
 using Avalonia.Media;
 using Avalonia.VisualTree;
@@ -15,8 +14,6 @@ public partial class ImageInfoWindow: GenericWindow, IDisposable
 
     public ImageInfoWindow(MainWindowViewModel viewModel)
     {
-        Debug.Assert(viewModel.InfoWindow.ImageInfoWindowConfig != null);
-        var config = viewModel.InfoWindow.ImageInfoWindowConfig;
         DataContext = viewModel;
         InitializeComponent();
         

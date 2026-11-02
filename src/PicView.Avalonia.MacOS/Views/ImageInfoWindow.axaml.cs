@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using Avalonia.Media;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.UI;
@@ -10,8 +9,6 @@ public partial class ImageInfoWindow : GenericWindow
 {
     public ImageInfoWindow(MainWindowViewModel viewModel)
     {
-        Debug.Assert(viewModel.InfoWindow.ImageInfoWindowConfig != null);
-        var config = viewModel.InfoWindow.ImageInfoWindowConfig;
         DataContext = viewModel;
         InitializeComponent();
         if (Settings.Theme.GlassTheme)
