@@ -53,9 +53,13 @@ public sealed class ArchiveOpenings
     /// <summary>
     ///     Where the latest extraction stands. <see cref="ExtractionState.Finished" /> when nothing is extracting. It
     ///     leaves <see cref="ExtractionState.Extracting" /> only once every page the extraction wrote is listed, so a
-    ///     list read after it has them all.
+    ///     list read after it has them all. Publishes each change, so the tab derives whether Next runs from it.
     /// </summary>
-    public ExtractionState State => Volatile.Read(ref _extracting)?.State ?? ExtractionState.Finished;
+    public IReadOnlyBindableReactiveProperty<ExtractionState> State => _state;
+
+    private readonly BindableReactiveProperty<ExtractionState> _state = new(ExtractionState.Finished);
+
+    internal void SetStateForTest(ExtractionState state) => _state.Value = state;
 
     /// <summary>
     ///     How far the latest extraction has come, as "extracted/total" for the UI, and null when nothing is extracting.
@@ -208,6 +212,7 @@ public sealed class ArchiveOpenings
         if (opening.AfterKeys.Length + opening.BeforeKeys.Length is 0)
         {
             _progressText.Value = null;
+            _state.Value = ExtractionState.Finished;
             _tab.ImageIterator?.UpdateNavigationProperties();
             return;
         }
@@ -215,6 +220,7 @@ public sealed class ArchiveOpenings
         var firstCount = opening.Files.Count;
         var totalCount = opening.TotalCount;
         opening.SetState(ExtractionState.Extracting);
+        _state.Value = ExtractionState.Extracting;
         _progressText.Value = $"{firstCount}/{totalCount}";
         _tab.ImageIterator?.UpdateNavigationProperties();
 
@@ -287,9 +293,12 @@ public sealed class ArchiveOpenings
         var stopped = opening.IsStopped;
         lock (_lock)
         {
-            opening.SetState(stopped ? ExtractionState.Stopped : ExtractionState.Finished);
+            var state = stopped ? ExtractionState.Stopped : ExtractionState.Finished;
+            opening.SetState(state);
+            // Only the latest opening's state is published: an older one ending leaves the newer one's as it is
             if (ReferenceEquals(_extracting, opening))
             {
+                _state.Value = state;
                 _progressText.Value = null;
             }
         }

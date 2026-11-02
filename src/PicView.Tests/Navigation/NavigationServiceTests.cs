@@ -488,7 +488,7 @@ public class NavigationServiceTests : IDisposable
         {
             var success = await _navigationService.LoadFromArchiveAsync(tempZipPath, tab, cts);
             // The start page shows first, and the rest are listed as they are extracted
-            await WaitUntil(() => tab.Archives.State is not ExtractionState.Extracting,
+            await WaitUntil(() => tab.Archives.State.Value is not ExtractionState.Extracting,
                 () => string.Join(", ", tab.ImageIterator.Files.Select(f => f.Name)));
 
             Assert.True(success);
@@ -569,7 +569,7 @@ public class NavigationServiceTests : IDisposable
         {
             await _navigationService.LoadFromArchiveAsync(zip, tab, new CancellationTokenSource(),
                 startEntry: "img_03.jpg");
-            await WaitUntil(() => tab.Archives.State is not ExtractionState.Extracting && writer.Written.Length >= pages,
+            await WaitUntil(() => tab.Archives.State.Value is not ExtractionState.Extracting && writer.Written.Length >= pages,
                 () => string.Join(", ", writer.Written));
 
             // The pages extracted together with the start entry come in the archive's order, so they are compared sorted
@@ -749,7 +749,7 @@ public class NavigationServiceTests : IDisposable
         try
         {
             var loaded = await _navigationService.LoadFromArchiveAsync(zip, tab, new CancellationTokenSource());
-            await WaitUntil(() => tab.Archives.State is not ExtractionState.Extracting,
+            await WaitUntil(() => tab.Archives.State.Value is not ExtractionState.Extracting,
                 () => string.Join(", ", tab.ImageIterator.Files.Select(f => f.Name)));
 
             Assert.True(loaded);
@@ -781,7 +781,7 @@ public class NavigationServiceTests : IDisposable
         {
             await _navigationService.LoadFromArchiveAsync(zip, tab, new CancellationTokenSource(),
                 startEntry: "Vol 1 (color)/002.jpg");
-            await WaitUntil(() => tab.Archives.State is not ExtractionState.Extracting && writer.Written.Length >= 4,
+            await WaitUntil(() => tab.Archives.State.Value is not ExtractionState.Extracting && writer.Written.Length >= 4,
                 () => string.Join(", ", writer.Written));
 
             Assert.Equal("Vol 1 (color) - 002.jpg", tab.Model.FileInfo?.Name);
@@ -962,7 +962,7 @@ public class NavigationServiceTests : IDisposable
                 [ViewHistoryEntry.ForArchivePage(zip, "img_01.jpg"), ViewHistoryEntry.ForArchivePage(zip, "img_02.jpg")],
                 tab.ViewHistory.Entries);
 
-            await WaitUntil(() => tab.Archives.State is not ExtractionState.Extracting,
+            await WaitUntil(() => tab.Archives.State.Value is not ExtractionState.Extracting,
                 () => string.Join(", ", tab.ImageIterator.Files.Select(f => f.Name)));
             Assert.Equal(Enumerable.Range(1, 15).Select(i => $"img_{i:D2}.jpg"),
                 tab.ImageIterator.Files.Select(f => f.Name));

@@ -58,7 +58,7 @@ public class ArchiveOpeningsTests : IDisposable
         Assert.Equal(zip, tab.Archives.OpenArchive);
         Assert.Equal(opening.Folder, tab.Archives.OpenFolder);
         // Nothing extracts until the seed shows and the rest is asked for
-        Assert.Equal(ExtractionState.Finished, tab.Archives.State);
+        Assert.Equal(ExtractionState.Finished, tab.Archives.State.Value);
     }
 
     [Fact]
@@ -71,13 +71,30 @@ public class ArchiveOpeningsTests : IDisposable
         tab.ImageIterator!.Initialize(opening.Files);
 
         opening.ExtractRest();
-        var stateWhileExtracting = tab.Archives.State;
+        var stateWhileExtracting = tab.Archives.State.Value;
         await opening.Ended.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
 
         Assert.Equal(ExtractionState.Extracting, stateWhileExtracting);
-        Assert.Equal(ExtractionState.Finished, tab.Archives.State);
+        Assert.Equal(ExtractionState.Finished, tab.Archives.State.Value);
         Assert.Equal(Names(1, 15), Directory.GetFiles(opening.Folder).Select(Path.GetFileName).Order());
         Assert.Equal(Names(1, 15), tab.ImageIterator.Files.Select(f => f.Name));
+    }
+
+    [Fact]
+    public async Task State_PublishesExtractingThenFinished()
+    {
+        var tab = CreateTab();
+        var zip = await CreateZipAsync("state_published.zip", 15);
+        var opening = (await OpenAsync(tab, zip, "img_03.jpg"))!;
+        tab.ImageIterator!.Initialize(opening.Files);
+        var seen = new List<ExtractionState>();
+        using var subscription = tab.Archives.State.AsObservable().Subscribe(seen.Add);
+
+        opening.ExtractRest();
+        await opening.Ended.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+
+        // The first Finished is the subscription's replay of the initial value
+        Assert.Equal([ExtractionState.Finished, ExtractionState.Extracting, ExtractionState.Finished], seen);
     }
 
     [Fact]
@@ -94,7 +111,7 @@ public class ArchiveOpeningsTests : IDisposable
         opening.ExtractRest();
         await writer.Holding("img_12.jpg").WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
         await WaitUntil(() => tab.ImageIterator.Files.Any(f => f.Name == "img_11.jpg"));
-        var stateWhenListed = tab.Archives.State;
+        var stateWhenListed = tab.Archives.State.Value;
         writer.Release("img_12.jpg");
         await opening.Ended.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
 
@@ -114,7 +131,7 @@ public class ArchiveOpeningsTests : IDisposable
         opening.ExtractRest();
         await opening.Ended.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
 
-        Assert.Equal(ExtractionState.Finished, tab.Archives.State);
+        Assert.Equal(ExtractionState.Finished, tab.Archives.State.Value);
         Assert.Equal(["img_01.jpg", "img_02.jpg", "img_04.jpg", "img_05.jpg"], tab.ImageIterator.Files.Select(f => f.Name));
     }
 
@@ -218,7 +235,7 @@ public class ArchiveOpeningsTests : IDisposable
         writer.Release("img_11.jpg");
         await opening.Ended.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
 
-        Assert.Equal(ExtractionState.Stopped, tab.Archives.State);
+        Assert.Equal(ExtractionState.Stopped, tab.Archives.State.Value);
         Assert.Null(tab.Archives.ProgressText.Value);
     }
 
@@ -239,14 +256,14 @@ public class ArchiveOpeningsTests : IDisposable
         await writer.Holding("page_11.jpg").WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
         writer.Release("img_11.jpg");
         await first.Ended.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
-        var stateAfterTheFirstEnded = tab.Archives.State;
+        var stateAfterTheFirstEnded = tab.Archives.State.Value;
         var progressAfterTheFirstEnded = tab.Archives.ProgressText.Value;
         writer.Release("page_11.jpg");
         await second.Ended.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
 
         Assert.Equal(ExtractionState.Extracting, stateAfterTheFirstEnded);
         Assert.Equal("1/12", progressAfterTheFirstEnded);
-        Assert.Equal(ExtractionState.Finished, tab.Archives.State);
+        Assert.Equal(ExtractionState.Finished, tab.Archives.State.Value);
         Assert.Null(tab.Archives.ProgressText.Value);
     }
 
@@ -299,14 +316,14 @@ public class ArchiveOpeningsTests : IDisposable
         // An archive of one page opens, whose start page is all of it, while the older extraction is still ending
         var newer = (await OpenAsync(tab, await CreateZipAsync("small.zip", 1, prefix: "page"), null))!;
         newer.ExtractRest();
-        var stateBeforeTheOlderEnded = tab.Archives.State;
+        var stateBeforeTheOlderEnded = tab.Archives.State.Value;
         var progressBeforeTheOlderEnded = tab.Archives.ProgressText.Value;
         writer.Release("img_11.jpg");
         await older.Ended.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
 
         Assert.Equal(ExtractionState.Finished, stateBeforeTheOlderEnded);
         Assert.Null(progressBeforeTheOlderEnded);
-        Assert.Equal(ExtractionState.Finished, tab.Archives.State);
+        Assert.Equal(ExtractionState.Finished, tab.Archives.State.Value);
     }
 
     [Fact]
@@ -353,7 +370,7 @@ public class ArchiveOpeningsTests : IDisposable
         writer.Release("img_11.jpg");
         await opening.Ended.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
 
-        Assert.Equal(ExtractionState.Stopped, tab.Archives.State);
+        Assert.Equal(ExtractionState.Stopped, tab.Archives.State.Value);
         Assert.False(Directory.Exists(opening.Folder), "The folder was kept");
         Assert.False(tab.Archives.HasOpenArchive);
     }
