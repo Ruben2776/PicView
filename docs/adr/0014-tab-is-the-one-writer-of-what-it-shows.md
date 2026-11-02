@@ -1,0 +1,22 @@
+# A Tab Is the One Writer of What It Shows
+
+A **Tab**'s shown state, its shown models and the six bindables the viewer reads (`Image`, `ImageType`, `FileInfo` and their secondary forms), is written only by `TabViewModel`: `Display`, `DisplaySingleImage` and `ShowPage` show something new and record it (ADR-0012), and three narrow methods change the shown state without showing anything new: `ShowStandIn` puts a **Stand-in** image in place of the model's, `ShowLoading` does so with the Loading title while the next image loads, and `UpdateShownFile` follows a **Shown File** that was renamed, overwritten or changed on disk. After each change the tab publishes one `Shown` change, `Image` or `File`, on whatever thread showed the image. The Avalonia layer reacts to that one change on the UI thread: `NavigationSubscriptions` subscribes when a tab is hooked up to its window, and `UpdateImage.ReactToShown` resets zoom and orientation when the setting asks, fits the window, refreshes the motion photo overlays, sets the zoom level and the title, and updates the taskbar progress. It sets no bindable. The one thing the viewer needs that Core cannot make, an `SvgImage` for a decoded `SvgSource`, is made where bindings evaluate: `DisplayableConverter` on the viewer's `Source` bindings.
+
+At startup the tab is hooked up to its window before its first image shows: `QuickLoad` shows the window as before (ADR-0005), then creates the image viewer and hooks the tab up while the first image decodes, and `Display` runs the same reaction as every later image.
+
+Before this, the shown-state bindables had writers in five other files. `UpdateImage` set them again a frame after `Display` had, because `NavigationSubscriptions` polled `Model.FileInfo` and `Model.Image` on every rendered frame and reacted by re-applying them, wrapping an SVG under a blocking `Dispatcher.UIThread.Invoke`. `ImageIterator` wrote the loading thumbnail into `Image`, `FolderChanges` wrote the file and pixel size of a renamed or changed file into the model and the bindable with its own notion of which file was shown, `RenameHelper` did the same for a rename from the UI, and `EffectsView` wrote its render preview into `Image`. `QuickLoad` called `Display` and then `UpdateImage.ChangeImage` by hand, since nothing was subscribed when the first image showed, and wrote side-by-side titles itself.
+
+## Considered Options
+
+- **A Core adapter interface for the displayable**, which `Display` asks before setting `Image`: the literal reading of "a displayable-of-model seam". An `SvgImage` is an `AvaloniaObject` and must be made on the UI thread, so the adapter would either block the thread that shows the image, as the old `Invoke` did, or make `Display` asynchronous. Showing the image comes first, so the wrap moved to the binding, which already runs on the UI thread.
+- **Polling one version counter** instead of two model fields: the smallest change, but the per-frame poll stays, and the UI reacts no sooner than the next rendered frame.
+- **QuickLoad calls the reaction itself** after it shows the viewer, keeping the startup order to the millisecond: one reaction body with two callers. It keeps a hand-written startup path that has to track what the subscription does. Hooking the tab up before the first image makes startup the same path as every later image; the first fit still comes once the image shows, and the window is shown exactly where it was.
+
+## Consequences
+
+- A new way to change what a tab shows must be a method on the tab, or the UI never reacts to it. A search for writes to the shown bindables outside `TabViewModel` finds only the gallery's own items.
+- `ShowPage` sets the `Image` bindable itself when it turns a page; the per-frame re-set that used to do it is gone.
+- `IsInitialized` is true for the few milliseconds between the hookup and the first image at startup. Its only reader outside the tab, `IsFresh`, is read when the user opens a path from the UI.
+- A file's title waits for navigation: `UpdateTabTitle` leaves the title alone while a file is shown and the tab has no iterator yet, so startup goes from Loading to the indexed title without showing a bare path first. A Single Image is titled by the name `DisplaySingleImage` was given.
+- `PicView.Core` stays free of Avalonia types: the SVG wrap is a converter in `PicView.Avalonia`.
+- The startup order of ADR-0005 holds: window, image, navigation. ADR-0010 and ADR-0012 hold as written.

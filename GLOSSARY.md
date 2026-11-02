@@ -81,6 +81,14 @@ _Avoid_: New tab, uninitialized tab, empty tab
 An image a tab shows on its own, without the files around it to browse: a clipboard image, a base64 image, a temporary file or a URL download. It has its own model, and showing a file again ends it.
 _Avoid_: Standalone image, loose image
 
+**Shown File**:
+The file of the image a tab shows, and the file of the one beside it when viewing side by side. The tab answers whether a path is one, and follows it when it is renamed, overwritten or changed on disk, without showing anything new.
+_Avoid_: Current file, active file
+
+**Stand-in**:
+An image a tab shows in place of its model's image without changing what it shows: a thumbnail while the next image loads, or an Effects Render. It is never recorded, and the tab publishes no change for it.
+_Avoid_: Placeholder, preview image
+
 **View History**:
 What a tab has shown, oldest to newest, with a cursor on what it shows now: each file, each page of a multi-page TIFF or an archive, and each Single Image. Back and Forward move through it and show that entry again in the same tab. Showing something new after going back drops the entries after the cursor. Images the tab never showed, such as those Next 10 jumps over, are not in it, and renaming a file or folder renames its entries. It lives only in memory and holds up to 100 entries, at most 10 of them Single Images. It moves with its tab and ends when the tab closes.
 _Avoid_: Navigation history, back stack, file history (for Back and Forward)
