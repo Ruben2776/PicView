@@ -3,11 +3,15 @@
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:buttons="clr-namespace:PicView.Avalonia.Views.UC.Buttons"
+    xmlns:converters="clr-namespace:PicView.Avalonia.Converters"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
     xmlns:gallery="clr-namespace:PicView.Avalonia.Views.Gallery"
     xmlns:uc="clr-namespace:PicView.Avalonia.Views.UC"
     xmlns:vm="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
     x:DataType="vm:TabViewModel">
+    <UserControl.Resources>
+        <converters:DisplayableConverter x:Key="DisplayableConverter" />
+    </UserControl.Resources>
     <DockPanel LastChildFill="True">
         <gallery:GalleryView x:Name="GalleryView" ZIndex="1" />
 
@@ -45,7 +49,7 @@
                                         x:Name="MainImage"
                                         CurrentFileInfo="{Binding FileInfo.Value}"
                                         ImageType="{Binding ImageType.Value}"
-                                        Source="{CompiledBinding Image.Value}" />
+                                        Source="{CompiledBinding Image.Value, Converter={StaticResource DisplayableConverter}}" />
                                     <uc:MotionPhotoView x:Name="MotionPhotoView" />
                                 </Grid>
                                 <Grid DockPanel.Dock="Right" IsVisible="{CompiledBinding ParentWindowContext.IsSideBySide.Value}">
@@ -53,7 +57,7 @@
                                         x:Name="SecondaryImage"
                                         CurrentFileInfo="{Binding SecondaryFileInfo.Value}"
                                         ImageType="{Binding SecondaryImageType.Value}"
-                                        Source="{CompiledBinding SecondaryImage.Value}" />
+                                        Source="{CompiledBinding SecondaryImage.Value, Converter={StaticResource DisplayableConverter}}" />
                                     <uc:MotionPhotoView x:Name="SecondaryMotionPhotoView" AllowAutoPlay="False" />
                                 </Grid>
                             </DockPanel>
