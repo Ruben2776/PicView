@@ -134,18 +134,29 @@ public sealed class SecondaryWindowOpener(
                 Remember(window, remembered.Properties);
             }
 
-            // Back on the UI thread each time, which disposes the window
-            if (spec.OnClosing is not null)
+            // Back on the UI thread each time, which disposes the window. A hook that throws still gets the window
+            // saved and disposed, and its exception goes on after that.
+            try
             {
-                await spec.OnClosing(window).ConfigureAwait(true);
+                if (spec.OnClosing is not null)
+                {
+                    await spec.OnClosing(window).ConfigureAwait(true);
+                }
             }
-
-            if (remembered is not null)
+            finally
             {
-                await remembered.Save().ConfigureAwait(true);
+                try
+                {
+                    if (remembered is not null)
+                    {
+                        await remembered.Save().ConfigureAwait(true);
+                    }
+                }
+                finally
+                {
+                    (window as IDisposable)?.Dispose();
+                }
             }
-
-            (window as IDisposable)?.Dispose();
         };
         CloseMenus();
         return (window, true);

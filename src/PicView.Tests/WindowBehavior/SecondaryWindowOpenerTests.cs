@@ -350,6 +350,41 @@ public class SecondaryWindowOpenerTests
     }
 
     [AvaloniaFact]
+    public async Task Closing_OnClosingThrows_StillSavesAndDisposesAndLetsTheExceptionThrough()
+    {
+        _provider.DisposableAbout = true;
+        var opener = CreateOpener();
+        List<string> order = [];
+        var spec = RememberedSpec(new Properties(), order) with
+        {
+            OnClosing = _ => Task.FromException(new InvalidOperationException("hook"))
+        };
+        var window = await opener.OpenAsync(SecondaryWindowKind.About, spec);
+        Exception? unhandled = null;
+
+        void OnUnhandled(object? sender, DispatcherUnhandledExceptionEventArgs e)
+        {
+            unhandled = e.Exception;
+            e.Handled = true;
+        }
+
+        Dispatcher.UIThread.UnhandledException += OnUnhandled;
+        try
+        {
+            window!.Close();
+            Dispatcher.UIThread.RunJobs();
+        }
+        finally
+        {
+            Dispatcher.UIThread.UnhandledException -= OnUnhandled;
+        }
+
+        Assert.Equal(["save"], order);
+        Assert.Equal(1, Assert.IsType<DisposableWindow>(window).Disposals);
+        Assert.IsType<InvalidOperationException>(unhandled);
+    }
+
+    [AvaloniaFact]
     public async Task Escape_ClosesTheWindowAndMarksIt()
     {
         var opener = CreateOpener();
