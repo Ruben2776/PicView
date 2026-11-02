@@ -134,6 +134,24 @@ public class GalleryViewModelTests
     }
 
     [Fact]
+    public async Task Appearance_DockAtNewEdgeWhileClosed_HasTheNewEdgeWhenTheChangeIsPublished()
+    {
+        using var gallery = new GalleryViewModel(NoSave);
+        gallery.Initialize(new GallerySharedSettingsViewModel());
+        gallery.Switcher.Start(true);
+        await gallery.Switcher.Close();
+
+        GalleryDockPosition? dockWhenPublished = null;
+        using var _ = gallery.Switcher.Changes.Subscribe(_ => dockWhenPublished = gallery.Appearance.Value.Dock);
+
+        // No frame passes, so the dock position poll hasn't seen the new edge yet
+        await gallery.Switcher.DockAt(GalleryDockPosition.Left);
+
+        Assert.Equal(GalleryDockPosition.Left, dockWhenPublished);
+        Assert.Equal(GalleryMode.Docked, gallery.Appearance.Value.Mode);
+    }
+
+    [Fact]
     public void Appearance_DockedItemSizeChanged_FollowsIt()
     {
         var shared = new GallerySharedSettingsViewModel();

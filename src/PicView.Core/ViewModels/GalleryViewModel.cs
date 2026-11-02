@@ -25,7 +25,7 @@ public class GalleryViewModel : IDisposable
         ShownMode = Switcher.ShownMode.ToReadOnlyBindableReactiveProperty();
         IsDocked = Switcher.IsDocked.ToReadOnlyBindableReactiveProperty();
         _appearance = new BindableReactiveProperty<GalleryAppearance>(ComputeAppearance(
-            ShownMode.Value, Settings.Gallery.DockPosition, Settings.Gallery.DockedGalleryItemSize,
+            ShownMode.Value, Settings.Gallery.DockedGalleryItemSize,
             Settings.Gallery.ExpandedGalleryItemSize, Settings.Gallery.DockedGalleryStretchMode,
             Settings.Gallery.ExpandedGalleryStretchMode, Settings.Gallery.ItemSpacing));
         Appearance = _appearance;
@@ -35,7 +35,7 @@ public class GalleryViewModel : IDisposable
 
         // A tab can start docked, and its view can load, before Initialize: the appearance follows the mode anyway
         _appearanceBeforeInitialize = Switcher.ShownMode.Subscribe(mode => _appearance.Value = ComputeAppearance(mode,
-            Settings.Gallery.DockPosition, Settings.Gallery.DockedGalleryItemSize,
+            Settings.Gallery.DockedGalleryItemSize,
             Settings.Gallery.ExpandedGalleryItemSize, Settings.Gallery.DockedGalleryStretchMode,
             Settings.Gallery.ExpandedGalleryStretchMode, Settings.Gallery.ItemSpacing));
     }
@@ -115,7 +115,8 @@ public class GalleryViewModel : IDisposable
             .Subscribe(_ => UpdateDockFlags(), DebugHelper.LogError(nameof(GalleryViewModel), nameof(UpdateDockFlags)))
             .AddTo(ref _disposables);
 
-        // The hover bar inputs are read when the record is computed; the others push their changes
+        // The dock position and the hover bar inputs are read when the record is computed, so a dock move published
+        // before the poll sees it, as DockAt does, already has its edge; the poll only says when to compute again
         Observable.CombineLatest(
                 Switcher.ShownMode,
                 shared.DockedGalleryItemSize,
@@ -124,8 +125,8 @@ public class GalleryViewModel : IDisposable
                 shared.ExpandedGalleryStretchMode,
                 dockPositions.Prepend(gallery.DockPosition),
                 Observable.EveryValueChanged(gallery, g => g.ItemSpacing).Prepend(gallery.ItemSpacing),
-                static (mode, dockedSize, expandedSize, dockedStretch, expandedStretch, dock, spacing) =>
-                    ComputeAppearance(mode, dock, dockedSize, expandedSize, dockedStretch, expandedStretch, spacing))
+                static (mode, dockedSize, expandedSize, dockedStretch, expandedStretch, _, spacing) =>
+                    ComputeAppearance(mode, dockedSize, expandedSize, dockedStretch, expandedStretch, spacing))
             .Subscribe(x => _appearance.Value = x, DebugHelper.LogError(nameof(GalleryViewModel), nameof(Initialize)))
             .AddTo(ref _disposables);
 
@@ -157,12 +158,12 @@ public class GalleryViewModel : IDisposable
             .AddTo(ref _disposables);
     }
 
-    // The hover bar flags are read here, so every caller builds the inputs the same way
-    private static GalleryAppearance ComputeAppearance(GalleryMode mode, GalleryDockPosition dock, double dockedSize,
-        double expandedSize, GalleryStretchMode dockedStretch, GalleryStretchMode expandedStretch, double spacing)
+    // The dock position and the hover bar flags are read here, so every caller builds the inputs the same way
+    private static GalleryAppearance ComputeAppearance(GalleryMode mode, double dockedSize, double expandedSize,
+        GalleryStretchMode dockedStretch, GalleryStretchMode expandedStretch, double spacing)
     {
-        return GalleryAppearance.For(mode, dock, new GalleryAppearanceInputs(dockedSize, expandedSize, dockedStretch,
-            expandedStretch, spacing, Settings.UIProperties.ShowBottomNavBar,
+        return GalleryAppearance.For(mode, Settings.Gallery.DockPosition, new GalleryAppearanceInputs(dockedSize,
+            expandedSize, dockedStretch, expandedStretch, spacing, Settings.UIProperties.ShowBottomNavBar,
             Settings.UIProperties.ShowHoverNavigationBar));
     }
 
