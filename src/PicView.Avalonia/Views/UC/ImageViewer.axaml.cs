@@ -24,13 +24,16 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
     private DisposableBag _disposables;
     private ScaleTransform? _flipTransform;
     private bool _animatesNextFlip;
-    
+    private readonly TabViewModel _tab;
+
     /// <param name="tab">The tab this viewer shows, which is not always the active one: a viewer is also created for a
     /// tab that opens in the background.</param>
     public ImageViewer(TabViewModel tab)
     {
+        _tab = tab;
         DataContext = tab;
         InitializeComponent();
+        ZoomPanControl.ScaleChanged += OnScaleChanged;
         GalleryView.Initialize(tab);
         DisposeGalleryViewWhenReplaced(tab);
         ImageControlHelper.TriggerScalingModeUpdate(MainImage, true);
@@ -327,22 +330,6 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
             return;
         }
 
-        Observable.EveryValueChanged(ZoomPanControl, zoom => zoom.Scale)
-            .Skip(1)
-            .Subscribe(zoomLevel =>
-            {
-                tab.Zoom.SetFactor(zoomLevel);
-                var adjustedZoomLevel = tab.Zoom.Level.CurrentValue;
-                if (Settings.Zoom.IsShowingZoomPercentagePopup)
-                {
-                    var message = StringExtensions.CombineWithPercentage(adjustedZoomLevel);
-                    _ = TooltipHelper.ShowTooltipMessageAsync(message, true,
-                        TopLevel.GetTopLevel(this) as MainWindow, TimeSpan.FromSeconds(1));
-                }
-
-                ZoomPreview.Margin = HoverBar.Opacity > 0 ? new Thickness(0,0,25,HoverBar.Bounds.Height / 2 + 25) : new Thickness(0, 0, 25, 25);
-            }, DebugHelper.LogError(nameof(ImageViewer), nameof(InitializeImageTransformer))).AddTo(ref _disposables);
-        
         if (TopLevel.GetTopLevel(this) is MainWindow { ViewModel: { } vm })
         {
             vm.IsScrollingEnabled.Subscribe(isScrolling =>
@@ -388,6 +375,26 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
     }
 
     #region Zoom
+
+    /// <summary>
+    /// Reports the control's scale to the tab as the Zoom Factor (ADR-0016), shows the zoom percentage popup when that
+    /// setting asks, and keeps the zoom preview above the hover bar.
+    /// </summary>
+    private void OnScaleChanged(double scale)
+    {
+        _tab.Zoom.SetFactor(scale);
+        if (Settings.Zoom.IsShowingZoomPercentagePopup)
+        {
+            var message = StringExtensions.CombineWithPercentage(_tab.Zoom.Level.CurrentValue);
+            _ = TooltipHelper.ShowTooltipMessageAsync(message, true,
+                TopLevel.GetTopLevel(this) as MainWindow, TimeSpan.FromSeconds(1));
+        }
+
+        ZoomPreview.Margin = HoverBar.Opacity > 0
+            ? new Thickness(0, 0, 25, HoverBar.Bounds.Height / 2 + 25)
+            : new Thickness(0, 0, 25, 25);
+    }
+
     /// <inheritdoc cref="ZoomPanControl.ZoomIn"/>
     public void ZoomIn() =>
         ZoomPanControl.ZoomIn();
@@ -451,6 +458,7 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
 
     public void Dispose()
     {
+        ZoomPanControl.ScaleChanged -= OnScaleChanged;
         RemoveHandler(PointerWheelChangedEvent, PreviewOnPointerWheelChanged);
         RemoveHandler(PointerTouchPadGestureMagnifyEvent, TouchMagnifyEvent);
         RemoveHandler(PinchEvent, TouchMagnifyEvent);

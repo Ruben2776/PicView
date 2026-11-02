@@ -30,6 +30,12 @@ public class ZoomPanControl : Decorator
 
     public double Scale { get; private set; } = 1.0;
 
+    /// <summary>
+    /// Raised after <see cref="Scale"/> changed, with the new scale, on the thread that changed it; the viewer
+    /// reports it to its tab as the Zoom Factor (ADR-0016).
+    /// </summary>
+    public event Action<double>? ScaleChanged;
+
     public double TranslateX { get; private set; }
 
     public double TranslateY { get; private set; }
@@ -167,7 +173,7 @@ public class ZoomPanControl : Decorator
             return;
         }
         SetTransitions(false);
-        Scale = 1.0;
+        SetScale(1.0);
         TranslateX = 0;
         TranslateY = 0;
         SetScaleImmediate(1.0, CenterPoint());
@@ -361,9 +367,23 @@ public class ZoomPanControl : Decorator
         var newTx = controlPoint.X - newScale * px;
         var newTy = controlPoint.Y - newScale * py;
 
-        Scale = newScale;
+        SetScale(newScale);
         TranslateX = newTx;
         TranslateY = newTy;
+    }
+
+    /// <summary>
+    /// The one place that sets <see cref="Scale"/>, so every change raises <see cref="ScaleChanged"/> once.
+    /// </summary>
+    private void SetScale(double scale)
+    {
+        if (scale == Scale)
+        {
+            return;
+        }
+
+        Scale = scale;
+        ScaleChanged?.Invoke(scale);
     }
 
     /// <summary>

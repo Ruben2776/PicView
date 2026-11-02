@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
+using PicView.Avalonia.Input;
 using PicView.Avalonia.Interfaces;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.Views.UC;
@@ -124,6 +125,26 @@ public class NavigationSubscriptionsTests
             Dispatcher.UIThread.RunJobs();
 
             Assert.Equal(0, turnsWhenLaterWorkRan);
+        });
+    }
+
+    [AvaloniaFact]
+    public void WheelZoom_OnTheTabsViewer_ChangesTheLevelByTheZoomSpeed()
+    {
+        Settings.Zoom.ZoomSpeed = 0.3;
+        WithWindow((window, vm, hookups, tab) =>
+        {
+            var viewer = new ImageViewer(tab);
+            tab.CurrentView.Value = viewer;
+            using var attached = hookups.Attach(tab);
+            tab.Display(BitmapModel("a.jpg"));
+            Dispatcher.UIThread.RunJobs();
+            tab.Zoom.SetFitScale(0.5);
+
+            ((IZoomScrollTarget)viewer).ZoomAt(zoomIn: true, new Point(1, 1));
+
+            Assert.Equal(1.3, tab.Zoom.Factor);
+            Assert.Equal(65, tab.Zoom.Level.CurrentValue);
         });
     }
 
