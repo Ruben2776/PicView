@@ -1,6 +1,5 @@
 using ImageMagick;
 using PicView.Avalonia.ImageHandling;
-using PicView.Core.Gallery;
 using PicView.Core.Navigation.Interfaces;
 using PicView.Core.ViewModels;
 
@@ -8,12 +7,6 @@ namespace PicView.Avalonia.Navigation.Services;
 
 public class AvaloniaThumbnailLoader : IThumbnailLoader
 {
-    public async ValueTask<object?> GetThumbnailAsync(FileInfo file, CoreViewModel core)
-    {
-        return await GetThumbnails.GetThumbAsync(file, (uint)GalleryDefaults.DefaultExpandedGalleryHeight, core)
-            .ConfigureAwait(false);
-    }
-
     public async ValueTask<object?> GetThumbnailAsync(FileInfo file, uint size, CoreViewModel? core = null, MagickImage? magickImage = null)
     {
         return await GetThumbnails.GetThumbAsync(file, size, core, magickImage).ConfigureAwait(false);

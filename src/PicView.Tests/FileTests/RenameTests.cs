@@ -176,7 +176,6 @@ public class RenameTests : IDisposable
 
     private sealed class NoThumbnails : IThumbnailLoader
     {
-        public ValueTask<object?> GetThumbnailAsync(FileInfo file, CoreViewModel core) => ValueTask.FromResult<object?>(null);
         public ValueTask<object?> GetThumbnailAsync(FileInfo file, uint size, CoreViewModel? core = null, MagickImage? magick = null) =>
             ValueTask.FromResult<object?>(null);
         public object? GetExifThumbnail(FileInfo file) => null;
