@@ -140,6 +140,9 @@ internal sealed class FolderChanges(TabViewModel tab)
                 FileInfo = file,
                 Image = currentModel.Image,
                 ImageType = currentModel.ImageType,
+                // The same image under a new name keeps its size, which the title and the Fit read
+                PixelWidth = currentModel.PixelWidth,
+                PixelHeight = currentModel.PixelHeight,
                 // A multi-page TIFF's entries in the View History are per page, so the renamed file still shows its page
                 TiffNavigation = currentModel.TiffNavigation
             };

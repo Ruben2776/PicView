@@ -316,6 +316,25 @@ public class FileWatcherServiceTests : IDisposable
     }
 
     [Fact]
+    public async Task OnFileRenamed_ShownFile_KeepsItsPixelSize()
+    {
+        // Arrange
+        var files = Files("old.jpg");
+        var newPath = Path.Combine(_testDirectory, "new.jpg");
+        var tab = CreateTab(_testDirectory, files, files[0]);
+        tab.Model.PixelWidth = 400;
+        tab.Model.PixelHeight = 300;
+
+        // Act
+        Watch(tab).RaiseRenamed("old.jpg", "new.jpg");
+
+        // Assert: the same image under a new name keeps its size, which the title shows
+        await WaitUntilAsync(() => tab.Model.FileInfo?.FullName == newPath);
+        Assert.Equal(400u, tab.Model.PixelWidth);
+        Assert.Equal(300u, tab.Model.PixelHeight);
+    }
+
+    [Fact]
     public async Task OnFileRenamed_RenamesTheHistoryBeforeTheTabsFollow()
     {
         var files = Files("old.jpg");
