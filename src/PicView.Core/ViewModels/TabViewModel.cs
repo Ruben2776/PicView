@@ -703,7 +703,8 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
         FileInfo.Value = null;
         SecondaryFileInfo.Value = null;
         SecondaryModel = null;
-        DeriveCanNavigate();
+        // No files, so the position goes too: a new iterator must not light the buttons from the old list's place
+        SetPosition(-1, 0);
     }
     
     public void Dispose()

@@ -203,24 +203,26 @@ public sealed class ArchiveOpenings
     {
         // The state and progress follow this opening from here, also when it has nothing left: it is then finished, not
         // still extracting or stopped as the opening the tab leaves may be
+        // The state and progress are published under the lock that EndAsync keys its publish to, so two openings whose
+        // ExtractRest calls interleave cannot leave the published state behind the opening the tab follows
+        var firstCount = opening.Files.Count;
+        var totalCount = opening.TotalCount;
         lock (_lock)
         {
             _extracting?.Stop();
             _extracting = opening;
-        }
 
-        if (opening.AfterKeys.Length + opening.BeforeKeys.Length is 0)
-        {
-            _progressText.Value = null;
-            _state.Value = ExtractionState.Finished;
-            return;
-        }
+            if (opening.AfterKeys.Length + opening.BeforeKeys.Length is 0)
+            {
+                _progressText.Value = null;
+                _state.Value = ExtractionState.Finished;
+                return;
+            }
 
-        var firstCount = opening.Files.Count;
-        var totalCount = opening.TotalCount;
-        opening.SetState(ExtractionState.Extracting);
-        _state.Value = ExtractionState.Extracting;
-        _progressText.Value = $"{firstCount}/{totalCount}";
+            opening.SetState(ExtractionState.Extracting);
+            _state.Value = ExtractionState.Extracting;
+            _progressText.Value = $"{firstCount}/{totalCount}";
+        }
 
         // Under the lock, so a report of the last pages lands before the end clears the text, not after it
         var progress = new Progress<int>(current =>

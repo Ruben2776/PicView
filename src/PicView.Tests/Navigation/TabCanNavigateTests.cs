@@ -206,7 +206,7 @@ public class TabCanNavigateTests
     }
 
     [Fact]
-    public void Dispose_ThenArchiveStateChanges_DoesNotThrow()
+    public void Dispose_ThenArchiveStateChanges_DerivesNothing()
     {
         Browse("a.jpg");
         var archives = _tab.Archives;
@@ -214,6 +214,25 @@ public class TabCanNavigateTests
         _tab.Dispose();
 
         archives.SetStateForTest(ExtractionState.Extracting);
+
+        // The subscription went with the tab, so nothing derived: a live one would turn forwards on for the extraction
+        Assert.False(Forwards);
+        Assert.False(Backwards);
+    }
+
+    [Fact]
+    public void DisposeThenInitializeImageIterator_NoShownFile_BothFalse()
+    {
+        var files = Browse("a.jpg", "b.jpg", "c.jpg");
+        _tab.ImageIterator!.Initialize(files, 2);
+        _tab.DisposeImageIterator();
+
+        // No file is shown, so the new iterator lists nothing yet; the old list's position must not light the buttons
+        _tab.InitializeImageIterator(files, new SharedImageCache(f => ValueTask.FromResult(Model(f.Name))!), new ThumbnailCache(),
+            new MockThumbnailLoader());
+
+        Assert.False(Forwards);
+        Assert.False(Backwards);
     }
 
     [Fact]
