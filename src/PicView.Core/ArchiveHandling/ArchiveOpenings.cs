@@ -264,10 +264,9 @@ public sealed class ArchiveOpenings
     {
         try
         {
-            if (!opening.IsStopped && _tab.ImageIterator is { } iterator
-                && iterator.InsertMissing([path], opening.Folder, opening.CompareNames) > 0)
+            if (!opening.IsStopped && _tab.ImageIterator is { } iterator)
             {
-                _tab.UpdateTabTitle();
+                iterator.InsertMissing([path], opening.Folder, opening.CompareNames);
             }
         }
         catch (Exception ex)

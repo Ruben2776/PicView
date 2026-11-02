@@ -538,19 +538,18 @@ public class ImageIteratorFileListTests : IDisposable
         await _extraction.BeginAsync(_tab, TestDirectory);
         _tab.IsSelected = true;
         _tab.Display(new ImageModel { FileInfo = c, Image = new ProbeImage() });
-        _tab.UpdateTabTitle();
-        var title = _tab.Title!.Value;
+        var title = _tab.Titles.Title;
         var cts = new CancellationTokenSource();
 
         var next = keyHeldDown
             ? _iterator.RepeatNavigateAsync(NavigateTo.Next, TimeSpan.Zero, cts).AsTask()
             : _iterator.NavigateAsync(NavigateTo.Next, SkipAmount.One, cts).AsTask();
-        var titleWhileWaiting = _tab.Title.Value;
+        var titleWhileWaiting = _tab.Titles.Title;
         await cts.CancelAsync();
         await next.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
 
         Assert.NotEqual(title, titleWhileWaiting);
-        Assert.Equal(title, _tab.Title.Value);
+        Assert.Equal(title, _tab.Titles.Title);
     }
 
     [Theory]
@@ -577,8 +576,7 @@ public class ImageIteratorFileListTests : IDisposable
             iterator.Initialize(opening.Files, opening.Files.Count - 1);
             tab.IsSelected = true;
             tab.Display(new ImageModel { FileInfo = last, Image = new ProbeImage() });
-            tab.UpdateTabTitle();
-            var title = tab.Title!.Value;
+            var title = tab.Titles.Title;
             opening.ExtractRest();
             await writer.Holding("img_02.jpg").WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
 
@@ -592,7 +590,7 @@ public class ImageIteratorFileListTests : IDisposable
             await next.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
 
             Assert.Equal(last.Name, tab.Model.FileInfo?.Name);
-            Assert.Equal(title, tab.Title.Value);
+            Assert.Equal(title, tab.Titles.Title);
         }
         finally
         {

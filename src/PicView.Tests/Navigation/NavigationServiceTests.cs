@@ -143,6 +143,32 @@ public class NavigationServiceTests : IDisposable
     }
 
     [Fact]
+    public async Task LoadFromUrlAsync_Unreachable_LeavesErrorTitle()
+    {
+        var tab = CreateTab(_testDirectory);
+
+        await _navigationService.LoadFromUrlAsync("http://127.0.0.1:9/image.jpg", tab, new CancellationTokenSource());
+
+        // The Error phase holds until the next load, instead of being overwritten by a recompute
+        Assert.Equal(PicView.Core.Titles.TitlePhase.Error, tab.Titles.Phase);
+        Assert.Equal(PicView.Core.Localization.TranslationManager.Translation.ErrorLoadingImage ?? "Error", tab.Titles.Title);
+    }
+
+    [Fact]
+    public async Task LoadFromArchiveAsync_CorruptArchive_EndsLoading()
+    {
+        var tab = CreateTab(_testDirectory);
+        var corrupt = Path.Combine(_testDirectory, "bad.zip");
+        await File.WriteAllTextAsync(corrupt, "not an archive");
+
+        var loaded = await _navigationService.LoadFromArchiveAsync(corrupt, tab, new CancellationTokenSource());
+
+        // The load said Loading and showed nothing, so it ends the phase itself
+        Assert.False(loaded);
+        Assert.Equal(PicView.Core.Titles.TitlePhase.None, tab.Titles.Phase);
+    }
+
+    [Fact]
     public async Task LoadFromStringAsync_Url_DropsImageIterator()
     {
         var tab = CreateTab(_testDirectory);

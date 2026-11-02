@@ -105,7 +105,7 @@ public class TabShownStateTests
     [Fact]
     public void ShowLoading_SetsThumbnailLoadingTitleAndClearsSecondaryImage()
     {
-        TranslationManager.Init();
+        TranslationManager.LoadLanguage("en");
         var secondary = Model("b.jpg");
         _tab.Display(Model("a.jpg"), secondary);
         var thumb = new object();
@@ -116,7 +116,7 @@ public class TabShownStateTests
 
         Assert.Same(thumb, _tab.Image.Value);
         Assert.Null(_tab.SecondaryImage.Value);
-        Assert.Equal(TranslationManager.Translation.Loading, _tab.Title!.Value);
+        Assert.Equal(TranslationManager.Translation.Loading, _tab.Titles.Title);
         Assert.Same(secondary, _tab.SecondaryModel);
         Assert.Single(_tab.ViewHistory.Entries);
         Assert.False(fired);
@@ -125,12 +125,12 @@ public class TabShownStateTests
     [Fact]
     public void ShowLoading_OnTabThatShowedNothing_DoesNotThrow()
     {
-        TranslationManager.Init();
+        TranslationManager.LoadLanguage("en");
 
         _tab.ShowLoading(null);
 
         Assert.Null(_tab.Image.Value);
-        Assert.Equal(TranslationManager.Translation.Loading, _tab.Title!.Value);
+        Assert.Equal(TranslationManager.Translation.Loading, _tab.Titles.Title);
     }
 
     [Fact]
@@ -223,36 +223,6 @@ public class TabShownStateTests
         Assert.True(_tab.IsShownFile(primary.FileInfo!.FullName));
         Assert.True(_tab.IsShownFile(secondary.FileInfo!.FullName));
         Assert.False(_tab.IsShownFile(new FileInfo("c.jpg").FullName));
-    }
-
-    [Fact]
-    public void UpdateTabTitle_SingleImage_UsesTheGivenTitle()
-    {
-        TranslationManager.Init();
-        _tab.IsSelected = true;
-        var single = new ImageModel { Image = new object(), PixelWidth = 1, PixelHeight = 1 };
-        _tab.DisplaySingleImage(single, SingleImageType.Base64, "Pasted");
-
-        _tab.UpdateTabTitle();
-
-        Assert.Equal("Pasted", _tab.TabTitle.Value);
-        Assert.StartsWith("Pasted", _tab.Title!.Value, StringComparison.Ordinal);
-    }
-
-    [Fact]
-    public void UpdateTabTitle_FileWithoutIterator_LeavesTitleAlone()
-    {
-        TranslationManager.Init();
-        _tab.IsSelected = true;
-        _tab.SetLoading();
-        var model = Model("a.jpg");
-        model.PixelWidth = 1;
-        model.PixelHeight = 1;
-        _tab.Display(model);
-
-        _tab.UpdateTabTitle();
-
-        Assert.Equal(TranslationManager.Translation.Loading, _tab.Title!.Value);
     }
 
     [Fact]
