@@ -15,7 +15,7 @@ public static class GalleryHelper
             return (0, 0);
         }
 
-        // From the setting, the single source: the tab's dock flags and Appearance are derived from it
+        // From the setting, the single source: the tab's dock flags follow it one poll later, so reading them could fit the window before they catch up
         return Settings.Gallery.DockPosition switch
         {
             GalleryDockPosition.Left or GalleryDockPosition.Right => (GalleryDefaults.GetDockedGalleryWidth(Settings.Gallery.DockedGalleryItemSize), 0),

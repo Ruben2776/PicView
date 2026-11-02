@@ -25,8 +25,9 @@ public class GalleryViewModel : IDisposable
         ShownMode = Switcher.ShownMode.ToReadOnlyBindableReactiveProperty();
         IsDocked = Switcher.IsDocked.ToReadOnlyBindableReactiveProperty();
         _appearance = new BindableReactiveProperty<GalleryAppearance>(ComputeAppearance(
-            ShownMode.Value, Settings.Gallery.DockedGalleryItemSize, Settings.Gallery.ExpandedGalleryItemSize,
-            Settings.Gallery.DockedGalleryStretchMode, Settings.Gallery.ExpandedGalleryStretchMode));
+            ShownMode.Value, Settings.Gallery.DockPosition, Settings.Gallery.DockedGalleryItemSize,
+            Settings.Gallery.ExpandedGalleryItemSize, Settings.Gallery.DockedGalleryStretchMode,
+            Settings.Gallery.ExpandedGalleryStretchMode, Settings.Gallery.ItemSpacing));
         Appearance = _appearance;
 
         // Derived from the switcher before Initialize, so a tab started docked shows it from the start
@@ -34,8 +35,9 @@ public class GalleryViewModel : IDisposable
 
         // A tab can start docked, and its view can load, before Initialize: the appearance follows the mode anyway
         _appearanceBeforeInitialize = Switcher.ShownMode.Subscribe(mode => _appearance.Value = ComputeAppearance(mode,
-            Settings.Gallery.DockedGalleryItemSize, Settings.Gallery.ExpandedGalleryItemSize,
-            Settings.Gallery.DockedGalleryStretchMode, Settings.Gallery.ExpandedGalleryStretchMode));
+            Settings.Gallery.DockPosition, Settings.Gallery.DockedGalleryItemSize,
+            Settings.Gallery.ExpandedGalleryItemSize, Settings.Gallery.DockedGalleryStretchMode,
+            Settings.Gallery.ExpandedGalleryStretchMode, Settings.Gallery.ItemSpacing));
     }
 
     /// <summary>
@@ -123,9 +125,7 @@ public class GalleryViewModel : IDisposable
                 dockPositions.Prepend(gallery.DockPosition),
                 Observable.EveryValueChanged(gallery, g => g.ItemSpacing).Prepend(gallery.ItemSpacing),
                 static (mode, dockedSize, expandedSize, dockedStretch, expandedStretch, dock, spacing) =>
-                    GalleryAppearance.For(mode, dock, new GalleryAppearanceInputs(dockedSize, expandedSize,
-                        dockedStretch, expandedStretch, spacing, Settings.UIProperties.ShowBottomNavBar,
-                        Settings.UIProperties.ShowHoverNavigationBar)))
+                    ComputeAppearance(mode, dock, dockedSize, expandedSize, dockedStretch, expandedStretch, spacing))
             .Subscribe(x => _appearance.Value = x, DebugHelper.LogError(nameof(GalleryViewModel), nameof(Initialize)))
             .AddTo(ref _disposables);
 
@@ -157,12 +157,13 @@ public class GalleryViewModel : IDisposable
             .AddTo(ref _disposables);
     }
 
-    private static GalleryAppearance ComputeAppearance(GalleryMode mode, double dockedSize, double expandedSize,
-        GalleryStretchMode dockedStretch, GalleryStretchMode expandedStretch)
+    // The hover bar flags are read here, so every caller builds the inputs the same way
+    private static GalleryAppearance ComputeAppearance(GalleryMode mode, GalleryDockPosition dock, double dockedSize,
+        double expandedSize, GalleryStretchMode dockedStretch, GalleryStretchMode expandedStretch, double spacing)
     {
-        return GalleryAppearance.For(mode, Settings.Gallery.DockPosition, new GalleryAppearanceInputs(dockedSize,
-            expandedSize, dockedStretch, expandedStretch, Settings.Gallery.ItemSpacing,
-            Settings.UIProperties.ShowBottomNavBar, Settings.UIProperties.ShowHoverNavigationBar));
+        return GalleryAppearance.For(mode, dock, new GalleryAppearanceInputs(dockedSize, expandedSize, dockedStretch,
+            expandedStretch, spacing, Settings.UIProperties.ShowBottomNavBar,
+            Settings.UIProperties.ShowHoverNavigationBar));
     }
 
     public void Navigate(NavigateTo direction)

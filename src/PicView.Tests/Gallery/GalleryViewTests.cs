@@ -191,7 +191,25 @@ public class GalleryViewTests
     }
 
     [AvaloniaFact]
-    public void DockedToClosed_KeepsHoverBarAndItemHeight()
+    public void DockedItemSizeChanged_WhileDocked_LeavesHoverBarAlone()
+    {
+        WithShownDockedGallery((core, window, view, _) =>
+        {
+            var tab = (TabViewModel)view.DataContext!;
+
+            // Another writer, such as ToggleInterface, sets the hover bar while docked
+            var other = !tab.Hoverbar.IsHoverbarVisible.Value;
+            tab.Hoverbar.IsHoverbarVisible.Value = other;
+
+            core.GallerySettings.DockedGalleryItemSize.Value = 120;
+            RenderFrame(window);
+
+            Assert.Equal(other, tab.Hoverbar.IsHoverbarVisible.Value);
+        });
+    }
+
+    [AvaloniaFact]
+    public void HiddenByCrop_KeepsHoverBarAndItemHeight()
     {
         // The docked look shows the hover bar, and the closed record's says not to
         Settings.UIProperties.ShowBottomNavBar = false;
