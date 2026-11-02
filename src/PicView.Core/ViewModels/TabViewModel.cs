@@ -88,6 +88,25 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
     /// </summary>
     public ViewHistory ViewHistory { get; } = new();
 
+    /// <summary>
+    /// The tab's Titles, derived from what it shows when they are read (ADR-0015). Made on first use, since they
+    /// subscribe to the tab's bindables.
+    /// </summary>
+    public TabTitles Titles
+    {
+        get
+        {
+            if (_titles is null)
+            {
+                Interlocked.CompareExchange(ref _titles, new TabTitles(this), null);
+            }
+
+            return _titles;
+        }
+    }
+
+    private TabTitles? _titles;
+
     #endregion
 
     #region UI view models
@@ -106,6 +125,8 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
         {
             _crop = value;
             UpdateGalleryHidden();
+            // Cropping replaces the titlebar text until the crop closes
+            Titles.Mark();
         }
     }
 
@@ -145,6 +166,8 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
     {
         if (!_shown.IsDisposed)
         {
+            // The titles are marked after the image bindable is set and before the UI reacts
+            Titles.OnShown(change);
             _shown.OnNext(change);
         }
     }
@@ -185,6 +208,9 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
 
     // The title of the Single Image the tab shows, which its View History entry keeps
     private string? _singleImageTitle;
+
+    /// <summary>The title <see cref="DisplaySingleImage"/> was given, which the Titles name a Single Image by.</summary>
+    internal string? SingleImageTitle => _singleImageTitle;
 
     /// <summary>
     /// Turns the multi-page TIFF the tab shows to <paramref name="page"/>, and records it. Does nothing when the tab shows
@@ -337,7 +363,6 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
             return false;
         }
 
-        UpdateTabTitle();
         Publish(ShownChange.File);
         return true;
 
@@ -578,13 +603,17 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
         TabTitle.Value = title;
      }
     
-    public void SetLoading()
-    {
-        WindowTitle.Value = StringExtensions.CombineWithAppName(TranslationManager.Translation.Loading);
-        Title.Value = TranslationManager.Translation.Loading;
-        TitleTooltip.Value = TranslationManager.Translation.Loading;
-        TabTitle.Value = TranslationManager.Translation.Loading;
-    }
+    /// <summary>Puts the tab in the Loading Title Phase, until the next image shows or <see cref="EndLoading"/>.</summary>
+    public void SetLoading() => Titles.Enter(TitlePhase.Loading);
+
+    /// <summary>Puts the tab in the Downloading Title Phase with <paramref name="text"/>, such as a progress report.</summary>
+    public void SetDownloading(string text) => Titles.Enter(TitlePhase.Downloading, text);
+
+    /// <summary>Puts the tab in the Error Title Phase with <paramref name="text"/>, until the next load or shown image.</summary>
+    public void SetError(string text) => Titles.Enter(TitlePhase.Error, text);
+
+    /// <summary>Ends Loading or Downloading when the load gave up without showing anything. An Error stays.</summary>
+    public void EndLoading() => Titles.EndLoading();
 
     /// <summary>
     /// Shows <paramref name="image"/> in place of the shown model's image, as a Stand-in: a thumbnail while the next
@@ -756,6 +785,7 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
         NavigationCts.Dispose();
         Orientation.Dispose();
         Hookups?.Dispose();
+        _titles?.Dispose();
         _shown.Dispose();
         
         GC.SuppressFinalize(this);
