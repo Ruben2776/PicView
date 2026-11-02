@@ -388,6 +388,22 @@ public class SecondaryWindowOpenerTests
     }
 
     [AvaloniaFact]
+    public async Task Escape_FromAFocusedNumTextBox_ClosesTheWindow()
+    {
+        var opener = CreateOpener();
+        var box = new NumTextBox();
+        await opener.OpenAsync(SecondaryWindowKind.ImageInfo, Spec() with { Configure = window => window.Content = box });
+        Dispatcher.UIThread.RunJobs();
+        box.Focus();
+        Dispatcher.UIThread.RunJobs();
+        Assert.True(box.IsFocused);
+
+        PressEscape(box);
+
+        Assert.False(opener.IsOpen(SecondaryWindowKind.ImageInfo));
+    }
+
+    [AvaloniaFact]
     public async Task Escape_WithNoMainWindow_StillCloses()
     {
         var opener = CreateOpener(mainWindow: () => null);
