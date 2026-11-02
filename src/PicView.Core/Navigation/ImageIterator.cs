@@ -671,21 +671,21 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
 
     /// <summary>
     /// Waits until the file <paramref name="reach"/> places after the shown one is in the list, while the archive is still
-    /// being extracted. It counts from the shown file each time the list changes, since a page extracted before it moves it
-    /// along, so only a file after it ends the wait. The extraction finishing ends it too, and the step then goes over the
-    /// whole list: it stops at the end, or goes round when looping.
+    /// being extracted, however long the page takes: the extraction may be starved while the gallery loads thumbnails. It
+    /// counts from the shown file each time the list changes, since a page extracted before it moves it along, so only a
+    /// file after it ends the wait. The extraction finishing ends it too, and the step then goes over the whole list: it
+    /// stops at the end, or goes round when looping.
     /// </summary>
     /// <returns>
     /// The shown file's index and the list as the wait last read them, which the step counts in, so two presses that the
-    /// same file wakes both step from the shown file. Null when the wait gave up: another file was shown meanwhile,
-    /// nothing came for a while, or it was cancelled.
+    /// same file wakes both step from the shown file. Null when the wait gave up: another file was shown meanwhile, the
+    /// extraction was stopped, or it was cancelled.
     /// </returns>
     private async ValueTask<(int Index, FileInfo[] Files)?> WaitForFileAfterShownAsync(int reach, CancellationToken ct)
     {
         _tab.SetLoading();
         var (shownIndex, shownFiles) = ShownIndexAndFiles();
         var shown = FileAt(shownFiles, shownIndex);
-        var timedOut = false;
         while (!ct.IsCancellationRequested)
         {
             // Taken before the state and the list are read, so a change in between is not missed
@@ -718,19 +718,9 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
                 return (index, files);
             }
 
-            if (timedOut)
-            {
-                break;
-            }
-
             try
             {
-                await changed.WaitAsync(TimeSpan.FromSeconds(3), ct).ConfigureAwait(false);
-            }
-            catch (TimeoutException)
-            {
-                // Nothing came for a while: one more look, then give up
-                timedOut = true;
+                await changed.WaitAsync(ct).ConfigureAwait(false);
             }
             catch (OperationCanceledException)
             {

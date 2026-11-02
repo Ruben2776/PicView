@@ -250,7 +250,7 @@ public sealed class ArchiveOpenings
 
     /// <summary>
     ///     Lists a page of <paramref name="opening" /> in the tab's files as soon as it is written, so a Next waiting for
-    ///     it steps to it. Runs on a pool thread, not the lowest-priority extraction thread, since it takes the lock a key
+    ///     it steps to it. Runs on a pool thread, not the low-priority extraction thread, since it takes the lock a key
     ///     press reads the list under. Only while the tab still lists the opening's pages and the opening is not stopped:
     ///     a stopped extraction may finish writing one more page, but the tab is leaving the archive, and a Next waiting
     ///     for the page gives up instead.

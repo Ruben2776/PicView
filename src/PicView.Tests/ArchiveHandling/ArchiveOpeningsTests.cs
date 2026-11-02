@@ -105,7 +105,7 @@ public class ArchiveOpeningsTests : IDisposable
     [Fact]
     public async Task ExtractRest_ListsThePagesOffTheLowPriorityExtractionThread()
     {
-        // A key press reads the list under the lock an insert takes, so no insert holds it on the lowest-priority thread
+        // A key press reads the list under the lock an insert takes, so no insert holds it on the low-priority thread
         var tab = CreateTab();
         var zip = await CreateZipAsync("priority.zip", 13);
         var opening = (await OpenAsync(tab, zip, null))!;
@@ -235,6 +235,22 @@ public class ArchiveOpeningsTests : IDisposable
     }
 
     [Fact]
+    public async Task ExtractRest_WritesThePagesAboveTheLowestPriority()
+    {
+        // The gallery's thumbnails keep every core busy at normal priority, so a lowest-priority extraction starves and a
+        // Next waiting for the next page waits with it
+        var writer = new PriorityRecordingWriter();
+        var tab = CreateTab(writer);
+        var opening = (await OpenAsync(tab, await CreateZipAsync("priority_rest.zip", 12), null))!;
+
+        opening.ExtractRest();
+        await opening.Ended.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+
+        Assert.NotEmpty(writer.Priorities);
+        Assert.All(writer.Priorities, priority => Assert.NotEqual(ThreadPriority.Lowest, priority));
+    }
+
+    [Fact]
     public async Task ExtractRest_ShowsHowManyPagesAreExtracted_UntilTheExtractionEnds()
     {
         var writer = new HeldEntryWriter("img_11.jpg");
@@ -341,6 +357,20 @@ public class ArchiveOpeningsTests : IDisposable
         Assert.Null(opening);
         Assert.Equal(read.Archive, tab.Archives.OpenArchive);
         Assert.True(Directory.Exists(read.Folder));
+    }
+
+    // Records the priority of the thread each page is written on
+    private sealed class PriorityRecordingWriter : IArchiveEntryWriter
+    {
+        private readonly System.Collections.Concurrent.ConcurrentBag<ThreadPriority> _priorities = [];
+
+        public IReadOnlyCollection<ThreadPriority> Priorities => _priorities;
+
+        public void Write(Stream entry, FileStream file)
+        {
+            _priorities.Add(Thread.CurrentThread.Priority);
+            entry.CopyTo(file);
+        }
     }
 
     private static async Task WaitUntil(Func<bool> condition)

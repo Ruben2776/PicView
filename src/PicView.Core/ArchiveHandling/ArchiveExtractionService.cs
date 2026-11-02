@@ -549,7 +549,9 @@ internal class ArchiveExtractionService(IArchiveEntryWriter? entryWriter = null)
     }
 
     /// <summary>
-    ///     Asynchronously extracts remaining archive entries on a lowest-priority background thread.
+    ///     Asynchronously extracts remaining archive entries on a background thread below normal priority: it gives way to
+    ///     showing an image, but is not starved by the gallery's thumbnails keeping every core busy, as a lowest-priority
+    ///     thread was, which kept a Next waiting for the next page waiting with it.
     /// </summary>
     public Task ExtractRemainingAsync(
         string archivePath,
@@ -565,7 +567,7 @@ internal class ArchiveExtractionService(IArchiveEntryWriter? entryWriter = null)
     {
         // Read here, so the folder is the open archive's when this starts, not when the thread does
         folder ??= TempZipDirectory;
-        // What awaits the extraction runs on a pool thread, not on this one of the lowest priority
+        // What awaits the extraction runs on a pool thread, not on this one of lower priority
         var tcs = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var thread = new Thread(() =>
         {
@@ -582,7 +584,7 @@ internal class ArchiveExtractionService(IArchiveEntryWriter? entryWriter = null)
         })
         {
             IsBackground = true,
-            Priority = ThreadPriority.Lowest,
+            Priority = ThreadPriority.BelowNormal,
             Name = "ArchiveExtractionWorker"
         };
         thread.Start();

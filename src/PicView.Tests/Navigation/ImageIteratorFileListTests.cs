@@ -426,6 +426,28 @@ public class ImageIteratorFileListTests : IDisposable
         Assert.Equal("f.jpg", _tab.SecondaryModel?.FileInfo?.Name);
     }
 
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Next_WaitingWhileExtracting_KeepsWaitingHoweverLongThePageTakes(bool keyHeldDown)
+    {
+        // The gallery's thumbnails keep every core busy, so the extraction can take seconds to write the next page
+        var c = File("c.jpg");
+        var shown = new ImageModel { FileInfo = c, Image = new ProbeImage() };
+        _iterator.Initialize([c], 0);
+        _tab.Display(shown);
+        await _extraction.BeginAsync(_tab, TestDirectory);
+
+        var next = Next(keyHeldDown);
+        await Task.Delay(TimeSpan.FromSeconds(3.5), TestContext.Current.CancellationToken);
+        var gaveUp = next.IsCompleted;
+        _iterator.Insert(File("d.jpg"), string.CompareOrdinal);
+        await next.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+
+        Assert.False(gaveUp, "Next gave up before the page came");
+        Assert.Equal("d.jpg", _tab.Model.FileInfo?.Name);
+    }
+
     [Fact]
     public async Task Next_WaitingWhileExtracting_GivesUpWhenAnotherFileIsShown()
     {

@@ -963,7 +963,7 @@ public class NavigationServiceTests : IDisposable
     public async Task LoadFromArchiveAsync_BackgroundExtractionEnds_ListsItsPagesOffTheLowPriorityWorker()
     {
         // The end waits for the last pages to be listed, then clears the progress and wakes a Next waiting for a page.
-        // The extraction's own thread has the lowest priority, so on a busy machine the end would keep a key press
+        // The extraction's own thread has a low priority, so on a busy machine the end would keep a key press
         // waiting if it ran there
         var zip = await CreateZipAsync("end_priority.zip", 12);
         var writer = new HeldEntryWriter("img_12.jpg");
