@@ -12,6 +12,11 @@ public class GalleryViewModel : IDisposable
     private readonly Subject<Unit> _sizesChanged = new();
     private readonly BindableReactiveProperty<GalleryAppearance> _appearance;
 
+    /// <summary>
+    /// Follows the shown mode with the settings' values until <see cref="Initialize"/> brings the shared ones.
+    /// </summary>
+    private IDisposable? _appearanceBeforeInitialize;
+
     /// <param name="saveSettings">Saves the settings once the remembered docked choice changed; the settings file by default.</param>
     public GalleryViewModel(Func<ValueTask<bool>>? saveSettings = null)
     {
@@ -26,6 +31,11 @@ public class GalleryViewModel : IDisposable
 
         // Derived from the switcher before Initialize, so a tab started docked shows it from the start
         Switcher.ShownMode.Subscribe(OnShownModeChanged).AddTo(ref _disposables);
+
+        // A tab can start docked, and its view can load, before Initialize: the appearance follows the mode anyway
+        _appearanceBeforeInitialize = Switcher.ShownMode.Subscribe(mode => _appearance.Value = ComputeAppearance(mode,
+            Settings.Gallery.DockedGalleryItemSize, Settings.Gallery.ExpandedGalleryItemSize,
+            Settings.Gallery.DockedGalleryStretchMode, Settings.Gallery.ExpandedGalleryStretchMode));
     }
 
     /// <summary>
@@ -91,6 +101,10 @@ public class GalleryViewModel : IDisposable
         {
             return;
         }
+
+        // The combine below takes over, with the shared inputs
+        _appearanceBeforeInitialize?.Dispose();
+        _appearanceBeforeInitialize = null;
 
         // One poll of the dock position for the dock flags and the appearance. The flags subscribe first, so they still
         // take the first value as the poll starts, and the appearance takes it from the Prepend
@@ -181,6 +195,7 @@ public class GalleryViewModel : IDisposable
     public void Dispose()
     {
         _disposables.Dispose();
+        _appearanceBeforeInitialize?.Dispose();
         Disposable.Dispose(
             ToggleExpandedCommand,
             ToggleDockedCommand,

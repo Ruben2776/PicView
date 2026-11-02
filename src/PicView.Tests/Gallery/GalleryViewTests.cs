@@ -193,10 +193,14 @@ public class GalleryViewTests
     [AvaloniaFact]
     public void DockedToClosed_KeepsHoverBarAndItemHeight()
     {
+        // The docked look shows the hover bar, and the closed record's says not to
+        Settings.UIProperties.ShowBottomNavBar = false;
+        Settings.UIProperties.ShowHoverNavigationBar = true;
         WithShownDockedGallery((_, window, view, panel) =>
         {
             var tab = (TabViewModel)view.DataContext!;
             var hoverBar = tab.Hoverbar.IsHoverbarVisible.Value;
+            Assert.True(hoverBar);
             var itemHeight = panel.ItemHeight;
 
             // Crop hides the gallery without animation
@@ -210,8 +214,25 @@ public class GalleryViewTests
         });
     }
 
+    [AvaloniaFact]
+    public void StartedDocked_ViewLoadsBeforeInitialize_ShowsDockedGallery()
+    {
+        // As at startup, where the tab starts docked and its viewer loads before the files are read
+        WithShownDockedGallery((core, window, view, panel) =>
+        {
+            var tab = (TabViewModel)view.DataContext!;
+            tab.Gallery.Initialize(core.GallerySettings);
+            RenderFrame(window);
+
+            Assert.True(view.IsVisible);
+            Assert.Equal(GalleryDefaults.GetDockedGalleryHeight(Settings.Gallery.DockedGalleryItemSize), view.Height);
+            Assert.Equal(Settings.Gallery.DockedGalleryItemSize, panel.ItemHeight);
+        }, initializeFirst: false);
+    }
+
     // Shown in a window, so the view loads, with a tab started docked at the bottom and a few items
-    private static void WithShownDockedGallery(Action<CoreViewModel, Window, GalleryView, VirtualizingGallery> test)
+    private static void WithShownDockedGallery(Action<CoreViewModel, Window, GalleryView, VirtualizingGallery> test,
+        bool initializeFirst = true)
     {
         Settings.Gallery.DockPosition = GalleryDockPosition.Bottom;
         var core = new CoreViewModel(null, _ => ValueTask.FromResult(new ImageModel()));
@@ -219,7 +240,10 @@ public class GalleryViewTests
         var vm = new MainWindowViewModel(core, core.Translation, window, core.GlobalSettings!, core.GallerySettings);
         window.DataContext = vm;
         var tab = vm.WindowTabs.ActiveTab.Value;
-        tab.Gallery.Initialize(core.GallerySettings);
+        if (initializeFirst)
+        {
+            tab.Gallery.Initialize(core.GallerySettings);
+        }
         tab.Gallery.Switcher.Start(docked: true);
 
         var application = Application.Current!;
