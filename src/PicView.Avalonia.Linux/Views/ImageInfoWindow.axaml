@@ -15,8 +15,7 @@
     x:DataType="coreVm:MainWindowViewModel"
     BorderBrush="{StaticResource MainBorderColor}"
     BorderThickness="1"
-    ExtendClientAreaTitleBarHeightHint="-1"
-    WindowStartupLocation="CenterOwner">
+    ExtendClientAreaTitleBarHeightHint="-1">
 
     <Border
         x:Name="ParentBorder"

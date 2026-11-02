@@ -1,9 +1,9 @@
 <Window
     BorderThickness="1"
+    CanResize="False"
     ExtendClientAreaTitleBarHeightHint="-1"
     ExtendClientAreaToDecorationsHint="True"
     SizeToContent="WidthAndHeight"
-    WindowStartupLocation="CenterScreen"
     x:Class="PicView.Avalonia.MacOS.Views.SingleImageResizeWindow"
     x:DataType="viewModels:MainWindowViewModel"
     xmlns="https://github.com/avaloniaui"

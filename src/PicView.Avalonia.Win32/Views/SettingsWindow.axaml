@@ -9,8 +9,7 @@
     Width="985"
     Height="785"
     MinWidth="600"
-    x:DataType="viewModels:CoreViewModel"
-    WindowStartupLocation="CenterOwner">
+    x:DataType="viewModels:CoreViewModel">
 
     <Border
         x:Name="ParentBorder"
