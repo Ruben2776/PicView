@@ -19,8 +19,8 @@ public static class GalleryHelper
         // the gallery has moved and asked for a Fit
         return Settings.Gallery.DockPosition switch
         {
-            GalleryDockPosition.Left or GalleryDockPosition.Right => (GalleryDefaults.GetDockedGalleryWidth, 0),
-            GalleryDockPosition.Top or GalleryDockPosition.Bottom => (0, GalleryDefaults.GetDockedGalleryHeight),
+            GalleryDockPosition.Left or GalleryDockPosition.Right => (GalleryDefaults.GetDockedGalleryWidth(Settings.Gallery.DockedGalleryItemSize), 0),
+            GalleryDockPosition.Top or GalleryDockPosition.Bottom => (0, GalleryDefaults.GetDockedGalleryHeight(Settings.Gallery.DockedGalleryItemSize)),
             _ => (0, 0)
         };
     }

@@ -20,6 +20,6 @@ public static class GalleryDefaults
     
     public const int BorderTopAndBottomThickness = 2;
     public const int BorderSideThickness = 1;
-    public static double GetDockedGalleryWidth => Settings.Gallery.DockedGalleryItemSize + BorderTopAndBottomThickness + SizeDefaults.HorizontalScrollbarSize;
-    public static double GetDockedGalleryHeight => Settings.Gallery.DockedGalleryItemSize + BorderSideThickness + SizeDefaults.VerticalScrollbarSize;
+    public static double GetDockedGalleryWidth(double itemSize) => itemSize + BorderTopAndBottomThickness + SizeDefaults.HorizontalScrollbarSize;
+    public static double GetDockedGalleryHeight(double itemSize) => itemSize + BorderSideThickness + SizeDefaults.VerticalScrollbarSize;
 }

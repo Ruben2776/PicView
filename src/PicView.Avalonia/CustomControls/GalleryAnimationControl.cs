@@ -41,8 +41,8 @@ public class GalleryAnimationControl : UserControl
     {
         return dock switch
         {
-            GalleryDockPosition.Bottom or GalleryDockPosition.Top => GalleryDefaults.GetDockedGalleryHeight,
-            GalleryDockPosition.Left or GalleryDockPosition.Right => GalleryDefaults.GetDockedGalleryWidth,
+            GalleryDockPosition.Bottom or GalleryDockPosition.Top => GalleryDefaults.GetDockedGalleryHeight(Settings.Gallery.DockedGalleryItemSize),
+            GalleryDockPosition.Left or GalleryDockPosition.Right => GalleryDefaults.GetDockedGalleryWidth(Settings.Gallery.DockedGalleryItemSize),
             _ => 0
         };
     } 

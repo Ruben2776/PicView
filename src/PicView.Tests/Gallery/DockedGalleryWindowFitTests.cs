@@ -113,8 +113,8 @@ public class DockedGalleryWindowFitTests
     {
         var isSide = dock is GalleryDockPosition.Left or GalleryDockPosition.Right;
         var reserved = ReservedSpace.For(1, vm.TitlebarHeight.Value, vm.IsTopToolbarShown.Value,
-            vm.IsBottomToolbarShown.Value, isSide ? GalleryDefaults.GetDockedGalleryWidth : 0,
-            isSide ? 0 : GalleryDefaults.GetDockedGalleryHeight);
+            vm.IsBottomToolbarShown.Value, isSide ? GalleryDefaults.GetDockedGalleryWidth(Settings.Gallery.DockedGalleryItemSize) : 0,
+            isSide ? 0 : GalleryDefaults.GetDockedGalleryHeight(Settings.Gallery.DockedGalleryItemSize));
         return new Size(ImageWidth + reserved.GalleryWidth,
             ImageHeight + reserved.Top + reserved.Bottom + reserved.GalleryHeight);
     }
