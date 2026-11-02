@@ -46,7 +46,7 @@ public static class FileRenames
             {
                 tab.ViewHistory.Rename(oldPath, newPath);
                 // A tab reading the archive records its next page under the new name too
-                tab.ArchiveExtractionService?.RenameArchive(oldPath, newPath);
+                tab.Archives.RenameArchive(oldPath, newPath);
             }
         }
         catch (Exception e)
@@ -85,7 +85,7 @@ public static class FileRenames
             foreach (var tab in TabsOf(core))
             {
                 tab.ViewHistory.RenameFolder(oldFolder, newFolder);
-                tab.ArchiveExtractionService?.RenameArchiveFolder(oldFolder, newFolder);
+                tab.Archives.RenameArchiveFolder(oldFolder, newFolder);
             }
         }
         catch (Exception e)

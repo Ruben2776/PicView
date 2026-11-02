@@ -9,19 +9,17 @@ using ZLinq;
 namespace PicView.Core.ArchiveHandling;
 
 /// <summary>
-///     Provides instance-based methods for staged extraction of supported files from an archive.
-///     Each instance maintains its own temporary directory and extraction state, allowing
-///     per-tab isolation of archive operations.
-///     <list type="number">
-///         <item>List all supported entries via <see cref="PrepareArchiveAsync" />.</item>
-///         <item>Sort the returned entry keys.</item>
-///         <item>Extract the entry to start at via <see cref="ExtractEntryAsync" /> and navigate to it.</item>
-///         <item>Extract the remaining entries via <see cref="ExtractRemainingAsync" /> while the
-///               <c>FileWatcherService</c> picks up created files and updates the UI.</item>
-///     </list>
+///     The mechanics of extracting a tab's archives, which <see cref="ArchiveOpenings" /> owns (ADR-0013): one folder
+///     per archive opened, kept until the tab leaves it, with how its files are named and which entry each came from;
+///     listing an archive's entries, or having local software extract it whole; and extracting entries into a folder,
+///     at once or in batches on a low-priority thread. Which opening is the latest, when the extraction ends and what
+///     the tab is told are the owner's.
 /// </summary>
-public class ArchiveExtractionService
+/// <param name="entryWriter">Writes each entry into its file; the app's copies the bytes.</param>
+internal class ArchiveExtractionService(IArchiveEntryWriter? entryWriter = null)
 {
+    private readonly IArchiveEntryWriter _entryWriter = entryWriter ?? ArchiveEntryWriter.Instance;
+
     /// <summary>
     ///     The folder the open archive is extracted to: the folder of the archive that opened last, of those whose
     ///     folders are not cleaned up yet.
@@ -595,8 +593,6 @@ public class ArchiveExtractionService
         return tcs.Task;
     }
 
-    private CancellationTokenSource? _extractionCts;
-
     private const int NotRespectingStructure = -1;
 
     /// <summary>
@@ -606,77 +602,8 @@ public class ArchiveExtractionService
     private static bool IsRespectingStructure =>
         Settings.Navigation.IsRespectingArchiveStructure && FileSortOrder.GetSortOrder == SortFilesBy.Name;
 
-    // The token of the background extraction started last. Stopping or cleaning up cancels it but keeps it the latest, as
-    // the tab extracts nothing after that
-    private CancellationToken _latestExtraction;
-
     /// <summary>
-    ///     Resets and returns a dedicated cancellation token for background extraction operations.
-    /// </summary>
-    public CancellationToken ResetExtractionCts()
-    {
-        var cts = new CancellationTokenSource();
-        CancellationTokenSource? previous;
-        lock (_lock)
-        {
-            previous = _extractionCts;
-            _extractionCts = cts;
-            _latestExtraction = cts.Token;
-        }
-
-        Cancel(previous);
-        return cts.Token;
-    }
-
-    /// <summary>
-    ///     Whether the background extraction with <paramref name="extraction" /> is the one started last, so that no newer
-    ///     archive's extraction has replaced it, whether or not it was stopped since.
-    /// </summary>
-    public bool IsLatestExtraction(CancellationToken extraction)
-    {
-        lock (_lock)
-        {
-            return extraction == _latestExtraction;
-        }
-    }
-
-    /// <summary>
-    ///     Whether <see cref="StopExtraction" /> has run since the background extraction started last. Another archive
-    ///     starting to open runs it, and so does <see cref="Cleanup()" />, which a URL load and closing the tab run. The
-    ///     pages it had not extracted by then never come. It is true as well when the stop came after the extraction had
-    ///     finished, as the extraction stays the latest until another one starts. That is harmless where it is read, as
-    ///     the tab is leaving the archive then. Leaving the archive for a file or a folder does not count:
-    ///     <see cref="CleanupOpened" /> and <see cref="Cleanup(string?)" /> delete its folder, and the extraction then
-    ///     ends by itself without counting as stopped.
-    /// </summary>
-    public bool IsLatestExtractionStopped
-    {
-        get
-        {
-            lock (_lock)
-            {
-                return _latestExtraction.IsCancellationRequested;
-            }
-        }
-    }
-
-    /// <summary>
-    ///     Stops the background extraction, as the tab opens another archive, whose pages then come sooner.
-    /// </summary>
-    public void StopExtraction()
-    {
-        CancellationTokenSource? cts;
-        lock (_lock)
-        {
-            cts = _extractionCts;
-            _extractionCts = null;
-        }
-
-        Cancel(cts);
-    }
-
-    /// <summary>
-    ///     Stops the background extraction, and deletes every extraction folder and forgets it.
+    ///     Deletes every extraction folder and forgets it. An extraction to any of them stops by itself.
     /// </summary>
     public void Cleanup()
     {
@@ -687,7 +614,6 @@ public class ArchiveExtractionService
             Volatile.Write(ref _extractions, []);
         }
 
-        StopExtraction();
         foreach (var extraction in extractions)
         {
             DeleteFolder(extraction.Folder);
@@ -735,6 +661,18 @@ public class ArchiveExtractionService
         }
     }
 
+    /// <summary>
+    ///     Deletes <paramref name="folder" /> once more when it was cleaned up while a page was still being written to
+    ///     it, which kept the folder. Nothing happens for a folder that is still an extraction's.
+    /// </summary>
+    public void DeleteIfForgotten(string folder)
+    {
+        if (FindExtraction(folder) is null)
+        {
+            DeleteFolder(folder);
+        }
+    }
+
     // Makes an archive that opened the open one, last in the folders, numbered in the order the archives opened
     private void Publish(string folder, string archive, bool isFullyExtracted, int sharedFolderCount)
     {
@@ -767,18 +705,6 @@ public class ArchiveExtractionService
         }
 
         return -1;
-    }
-
-    // Outside the lock, since cancelling runs the token's callbacks
-    private static void Cancel(CancellationTokenSource? cts)
-    {
-        if (cts is null)
-        {
-            return;
-        }
-
-        cts.Cancel();
-        cts.Dispose();
     }
 
     private static void DeleteFolder(string folder)
@@ -838,7 +764,7 @@ public class ArchiveExtractionService
         using (var entryStream = entry.OpenEntryStream())
         using (var fileStream = File.Create(destinationPath))
         {
-            CopyEntry(entryStream, fileStream);
+            _entryWriter.Write(entryStream, fileStream);
         }
 
 #if DEBUG
@@ -848,12 +774,6 @@ public class ArchiveExtractionService
         extraction?.FileByEntry[entry.Key!] = destinationPath;
         return destinationPath;
     }
-
-    /// <summary>
-    ///     Writes an entry into its file, which is already there, as <paramref name="file" /> holds it open. A test holds
-    ///     the write open through it, to see the page while it is written.
-    /// </summary>
-    internal virtual void CopyEntry(Stream entry, FileStream file) => entry.CopyTo(file);
 
     /// <summary>
     ///     Gets the name an entry is extracted under. When respecting the archive structure, the entry's folders

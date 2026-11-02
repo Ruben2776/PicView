@@ -1,3 +1,4 @@
+using PicView.Core.ArchiveHandling;
 using PicView.Core.DebugTools;
 using PicView.Core.FileHandling;
 using PicView.Core.FileSorting;
@@ -129,7 +130,7 @@ public class NavigationService(
         }
         var load = tab.BeginLoad();
         // The archives the tab opened so far, which it leaves once the file shows. One that opens after survives this load
-        var opened = tab.ArchiveExtractionService?.OpenedArchives ?? 0;
+        var mark = tab.Archives.Mark();
         var iterator = tab.ImageIterator;
 
         if (iterator?.Files is null || iterator.Files.Count is 0)
@@ -157,7 +158,7 @@ public class NavigationService(
         if (index is { } found)
         {
             await tab.ImageIterator.IterateToIndexAsync(found, ct).ConfigureAwait(false);
-            tab.ArchiveExtractionService?.CleanupOpened(opened);
+            tab.Archives.Shown(mark);
         }
         else
         {
@@ -173,7 +174,7 @@ public class NavigationService(
             if (await Task.Run(() => RepopulateIterator(fileInfo, tab, ct, null, load).AsTask(), ct.Token)
                     .ConfigureAwait(false))
             {
-                tab.ArchiveExtractionService?.CleanupOpened(opened);
+                tab.Archives.Shown(mark);
             }
         }
     }
@@ -195,7 +196,7 @@ public class NavigationService(
     {
         var load = tab.BeginLoad();
         // The archives the tab opened so far, which it leaves once the file shows. One that opens after survives this load
-        var opened = tab.ArchiveExtractionService?.OpenedArchives ?? 0;
+        var mark = tab.Archives.Mark();
         var files = await Task.Run(() =>
         {
             var files = FileListRetriever.RetrieveFiles(source, stringComparer);
@@ -207,7 +208,7 @@ public class NavigationService(
         }
         if (await RepopulateIterator(files[0], tab, ct, files, load).ConfigureAwait(false))
         {
-            tab.ArchiveExtractionService?.CleanupOpened(opened);
+            tab.Archives.Shown(mark);
         }
         return true;
     }
@@ -238,13 +239,13 @@ public class NavigationService(
                     var load = tab.BeginLoad();
                     // The archives the tab opened so far, which it leaves once the file shows. One that opens after
                     // survives this load
-                    var opened = tab.ArchiveExtractionService?.OpenedArchives ?? 0;
+                    var mark = tab.Archives.Mark();
                     var files = await Task.Run(() => FileListRetriever.RetrieveFiles(new FileInfo(rootDirectory), stringComparer), ct.Token)
                         .ConfigureAwait(false);
                     if (await RepopulateIterator(new FileInfo(check.Value.Data), tab, ct, files.Count > 0 ? files : null,
                             load).ConfigureAwait(false))
                     {
-                        tab.ArchiveExtractionService?.CleanupOpened(opened);
+                        tab.Archives.Shown(mark);
                     }
                 }
                 return LoadResult.Loaded;
@@ -266,8 +267,7 @@ public class NavigationService(
     public async ValueTask<bool> LoadFromArchiveAsync(string archivePath, TabViewModel tab, CancellationTokenSource ct,
         string? startEntry = null)
     {
-        if (string.IsNullOrEmpty(archivePath) || !File.Exists(archivePath) ||
-            tab.ArchiveExtractionService is not { } extraction)
+        if (string.IsNullOrEmpty(archivePath) || !File.Exists(archivePath))
         {
             return false;
         }
@@ -281,128 +281,30 @@ public class NavigationService(
             tab.ParentWindowContext.IsLoadingIndicatorShown.Value = true;
         }
 
-        // The archives the tab opened so far, which it leaves once a page of this one shows: the one it reads, and those
-        // older loads opened, overtaken or not. This load's own opens after, as does a newer load's
-        var opened = extraction.OpenedArchives;
-        // The folder this load's archive opens to. Unless a page from it shows, it goes again, and the tab's archive stays
-        // the one it shows
-        string? folder = null;
+        // The archives the tab opened so far, which it leaves once a page of this one shows (ADR-0013)
+        var mark = tab.Archives.Mark();
+        ArchiveOpening? opening = null;
         var isShown = false;
 
         try
         {
-            var preparation = await extraction.PrepareArchiveAsync(
-                archivePath,
-                platformService.ExtractWithLocalSoftwareAsync,
-                stringComparer).ConfigureAwait(false);
-
-            if (preparation is not { } prep)
+            opening = await tab.Archives.OpenAsync(archivePath, startEntry, platformService.ExtractWithLocalSoftwareAsync,
+                stringComparer, ct.Token).ConfigureAwait(false);
+            // A newer load of a file overtakes this one too, which the opening cannot see
+            if (opening is null || !tab.IsLatestLoad(load))
             {
                 return false;
             }
 
-            folder = prep.TempDirectory;
-            if (IsOvertaken())
-            {
-                return false;
-            }
-
-            // The archive the tab leaves stops extracting, so this one's pages come sooner
-            extraction.StopExtraction();
-
-            if (prep.IsFullyExtracted)
-            {
-                // Local-software extractor already wrote every file to disk; build the file list
-                // from the already-extracted paths so we don't depend on FileListRetriever's
-                // recursion settings.
-                var allFiles = prep.EntryKeys.Select(p => new FileInfo(p)).ToList();
-                if (allFiles.Count is 0)
-                {
-                    return false;
-                }
-
-                var startFile = startEntry is null
-                    ? null
-                    : allFiles.Find(f => string.Equals(extraction.EntryOf(f.FullName), startEntry,
-                        StringComparison.Ordinal));
-                isShown = await RepopulateIterator(startFile ?? allFiles[0], tab, ct, allFiles, load).ConfigureAwait(false);
-                if (!isShown)
-                {
-                    return false;
-                }
-
-                extraction.CleanupOpened(opened);
-                return true;
-            }
-
-            // The entry to open the archive at, else its first
-            var keys = prep.EntryKeys;
-            var start = Math.Max(Array.FindIndex(keys, key => string.Equals(key, startEntry, StringComparison.Ordinal)), 0);
-
-            // Staged extraction: extract the start entry and up to 9 after it immediately and navigate to it, then
-            // extract the rest in batches of 10 in the background while reporting progress with the bottom-right
-            // indicator. A page that fails to extract, such as a corrupt entry, is left out, so the rest still show
-            const int initialExtractCount = 10;
-            var initialKeys = keys.Skip(start).Take(initialExtractCount).ToArray();
-            var extractedPaths = await extraction.ExtractEntriesAsync(archivePath, initialKeys, ct.Token, folder).ConfigureAwait(false);
-
-            if (extractedPaths.Count == 0 || IsOvertaken())
-            {
-                return false;
-            }
-
-            // Seed iterator with initial extracted pages for immediate viewing and preloading
-            var seedFilesList = extractedPaths.Select(p => new FileInfo(p)).ToList();
-            isShown = await RepopulateIterator(seedFilesList[0], tab, ct, seedFilesList, load).ConfigureAwait(false);
+            isShown = await RepopulateIterator(opening.StartFile, tab, ct, opening.Files, load).ConfigureAwait(false);
             if (!isShown)
             {
                 return false;
             }
 
-            // Extract the rest in the background, in batches of 10. FileWatcherService picks them up.
-            if (keys.Length > initialKeys.Length)
-            {
-                var totalCount = keys.Length;
-                var initialExtractedCount = extractedPaths.Count;
-                var (afterKeys, beforeKeys) = RemainingKeys(keys, start, start + initialKeys.Length);
-                var backgroundToken = extraction.ResetExtractionCts();
-
-                tab.IsArchiveExtracting.Value = true;
-                tab.ArchiveExtractionProgressText.Value = $"{initialExtractedCount}/{totalCount}";
-
-                var progress = new Progress<int>(current =>
-                {
-                    tab.ArchiveExtractionProgressText.Value = $"{current}/{totalCount}";
-                });
-
-                _ = Task.Run(async () =>
-                {
-                    try
-                    {
-                        await extraction.ExtractRemainingAsync(
-                            archivePath,
-                            afterKeys,
-                            beforeKeys,
-                            initialCount: initialExtractedCount,
-                            totalCount: totalCount,
-                            progress: progress,
-                            batchSize: 10,
-                            ct: backgroundToken,
-                            folder: folder).ConfigureAwait(false);
-                    }
-                    finally
-                    {
-                        EndExtraction(tab, backgroundToken, folder, stringComparer);
-                    }
-                }, backgroundToken);
-            }
-            else
-            {
-                tab.IsArchiveExtracting.Value = false;
-                tab.ArchiveExtractionProgressText.Value = null;
-            }
-
-            extraction.CleanupOpened(opened);
+            // The other pages come in the background while the start page shows
+            opening.ExtractRest();
+            tab.Archives.Shown(mark);
             return true;
         }
         catch (OperationCanceledException)
@@ -418,7 +320,8 @@ public class NavigationService(
         {
             if (!isShown)
             {
-                extraction.Cleanup(folder);
+                // Unless a page of it shows, the opening goes again, and the tab's archive stays the one it shows
+                opening?.Abandon();
             }
 
             // Hide progress spinner when initial extraction and display complete
@@ -427,58 +330,6 @@ public class NavigationService(
                 tab.ParentWindowContext.IsLoadingIndicatorShown.Value = false;
             }
         }
-
-        // A newer load began, which shows what the tab shows next, or the load was cancelled
-        bool IsOvertaken() => ct.IsCancellationRequested || !tab.IsLatestLoad(load);
-    }
-
-    /// <summary>
-    /// Ends the background extraction with <paramref name="extraction"/>, extracted or not: the tab no longer counts as
-    /// extracting, and a Next waiting for a page looks at the list again. Unless a newer archive's extraction has started
-    /// since, as when Back opens an archive again: Next waits for that one's pages, and would step without them.
-    /// </summary>
-    /// <param name="folder">
-    /// The folder the extraction wrote to. Once it finished, the pages it wrote there that the tab does not list yet are
-    /// listed first: the watcher handles a folder's events one at a time and can be behind, and a waiting Next would
-    /// count the list without them as final. The watcher then finds them listed. Null to list none.
-    /// </param>
-    /// <param name="compareNames">How the tab's files are sorted, which the watcher inserts by too.</param>
-    internal static void EndExtraction(TabViewModel tab, CancellationToken extraction, string? folder = null,
-        Func<string, string, int>? compareNames = null)
-    {
-        if (tab.ArchiveExtractionService?.IsLatestExtraction(extraction) ?? true)
-        {
-            if (!extraction.IsCancellationRequested && folder is not null && compareNames is not null
-                && tab.ArchiveExtractionService?.ExtractedFilesOf(folder) is { Length: > 0 } extracted
-                && tab.ImageIterator?.InsertMissing(extracted, folder, compareNames) > 0)
-            {
-                tab.UpdateTabTitle();
-            }
-
-            tab.IsArchiveExtracting.Value = false;
-            tab.ArchiveExtractionProgressText.Value = null;
-        }
-
-        tab.ImageIterator?.NotifyFileAdded();
-        tab.ImageIterator?.UpdateNavigationProperties();
-    }
-
-    /// <summary>
-    /// The entries of an archive left to extract once those from <paramref name="start"/> up to <paramref name="end"/>
-    /// are shown: those after them in order, and those before the start, nearest first. The extraction takes turns
-    /// between the two, so that paging either way from the start soon finds its pages.
-    /// </summary>
-    private static (string[] After, string[] Before) RemainingKeys(string[] keys, int start, int end)
-    {
-        var after = keys[end..];
-
-        var before = new string[start];
-        for (var i = 0; i < start; i++)
-        {
-            before[i] = keys[start - 1 - i];
-        }
-
-        return (after, before);
     }
 
     public async ValueTask<LoadResult> LoadFromUrlAsync(string url, TabViewModel tab, CancellationTokenSource ct)
@@ -546,7 +397,7 @@ public class NavigationService(
             tab.CanNavigateBackwards.Value = false;
             tab.CanNavigateForwards.Value = false;
 
-            tab.ArchiveExtractionService.Cleanup();
+            tab.Archives.Cleanup();
             return LoadResult.Loaded;
         }
         catch (OperationCanceledException)
@@ -619,8 +470,8 @@ public class NavigationService(
 
     private async ValueTask NavigateArchiveCoreAsync(TabViewModel tab, bool next, CancellationTokenSource ct)
     {
-        var currentFile = tab.ArchiveExtractionService.IsArchived ?
-            new FileInfo(tab.ArchiveExtractionService.LastOpenedArchive) : tab.Model.FileInfo;
+        var currentFile = tab.Archives.OpenArchive is { } openArchive ?
+            new FileInfo(openArchive) : tab.Model.FileInfo;
            
         var currentDir = currentFile?.DirectoryName;
         if (currentDir == null)

@@ -1,3 +1,4 @@
+using PicView.Core.ArchiveHandling;
 using PicView.Core.FileSorting;
 using PicView.Core.Models;
 using PicView.Core.Navigation.Interfaces;
@@ -708,7 +709,7 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
             {
                 // Stopped, not finished, as when another archive starts opening: the list stays as it is, so stepping
                 // on it would go to the wrong page
-                if (_tab.ArchiveExtractionService?.IsLatestExtractionStopped is true)
+                if (_tab.Archives.State is ExtractionState.Stopped)
                 {
                     break;
                 }

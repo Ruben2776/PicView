@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using ImageMagick;
 using PicView.Core.Models;
+using PicView.Tests.ArchiveHandling;
 using PicView.Core.Navigation;
 using PicView.Core.Navigation.Interfaces;
 using PicView.Core.ViewModels;
@@ -506,24 +507,45 @@ public class ImageIteratorFileListTests
     {
         // Looping, which goes round to the first page when the extraction counts as finished
         Settings.UIProperties.Looping = true;
-        var c = File("c.jpg");
-        _iterator.Initialize([File("a.jpg"), File("b.jpg"), c], 2);
-        _tab.IsSelected = true;
-        _tab.Display(new ImageModel { FileInfo = c, Image = new ProbeImage() });
-        _tab.UpdateTabTitle();
-        var title = _tab.Title!.Value;
-        var extraction = _tab.ArchiveExtractionService!.ResetExtractionCts();
-        _tab.IsArchiveExtracting.Value = true;
+        // The tab reads an archive of twelve pages, whose eleventh is written until the test lets it, so the extraction
+        // of the pages after the first ten runs on
+        var writer = new HeldEntryWriter("img_11.jpg");
+        var tab = new TabViewModel(null!, null, writer);
+        tab.Initialize(_cache, new ThumbnailCache(), new MockThumbnailLoader(), null, new ThumbnailCache());
+        var iterator = tab.ImageIterator!;
+        var zip = CreateZip("stopped.zip", 12);
+        var another = CreateZip("stopper.zip", 2, "page");
 
-        var next = Next(keyHeldDown);
-        // Another archive opens, which stops this one's extraction before its own page shows
-        _tab.ArchiveExtractionService.StopExtraction();
-        NavigationService.EndExtraction(_tab, extraction);
-        _iterator.NotifyFileAdded();
-        await next.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+        try
+        {
+            var opening = (await tab.Archives.OpenAsync(zip, null, (_, _) => Task.FromResult(false), string.CompareOrdinal,
+                TestContext.Current.CancellationToken))!;
+            var last = opening.Files[^1];
+            iterator.Initialize(opening.Files, opening.Files.Count - 1);
+            tab.IsSelected = true;
+            tab.Display(new ImageModel { FileInfo = last, Image = new ProbeImage() });
+            tab.UpdateTabTitle();
+            var title = tab.Title!.Value;
+            opening.ExtractRest();
+            await writer.Holding("img_11.jpg").WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
 
-        Assert.Equal("c.jpg", _tab.Model.FileInfo?.Name);
-        Assert.Equal(title, _tab.Title.Value);
+            var next = keyHeldDown
+                ? iterator.RepeatNavigateAsync(NavigateTo.Next, TimeSpan.Zero, new CancellationTokenSource()).AsTask()
+                : iterator.NavigateAsync(NavigateTo.Next, SkipAmount.One, new CancellationTokenSource()).AsTask();
+            // Another archive opens, which stops this one's extraction before its own page shows
+            await tab.Archives.OpenAsync(another, null, (_, _) => Task.FromResult(false), string.CompareOrdinal,
+                TestContext.Current.CancellationToken);
+            writer.Release("img_11.jpg");
+            await next.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+
+            Assert.Equal(last.Name, tab.Model.FileInfo?.Name);
+            Assert.Equal(title, tab.Title.Value);
+        }
+        finally
+        {
+            writer.ReleaseAll();
+            tab.Archives.Cleanup();
+        }
     }
 
     [Fact]
@@ -573,6 +595,21 @@ public class ImageIteratorFileListTests
             System.IO.File.WriteAllBytes(Path.Combine(folder, name), [0xFF, 0xD8, 0xFF]);
         }
         return folder;
+    }
+
+    // A zip of pages named prefix_01.jpg and on, in its own folder
+    private static string CreateZip(string name, int pages, string prefix = "img")
+    {
+        var folder = Directory.CreateDirectory(Path.Combine(TestDirectory, Guid.NewGuid().ToString("N"))).FullName;
+        var source = Directory.CreateDirectory(Path.Combine(folder, "source")).FullName;
+        for (var i = 1; i <= pages; i++)
+        {
+            System.IO.File.WriteAllBytes(Path.Combine(source, $"{prefix}_{i:D2}.jpg"), [0xFF, 0xD8, 0xFF]);
+        }
+
+        var zip = Path.Combine(folder, name);
+        System.IO.Compression.ZipFile.CreateFromDirectory(source, zip);
+        return zip;
     }
 
     private static string[] PathsIn(string folder, params string[] names) =>

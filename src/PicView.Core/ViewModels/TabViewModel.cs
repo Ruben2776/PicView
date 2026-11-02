@@ -26,7 +26,8 @@ namespace PicView.Core.ViewModels;
 /// lifecycle of resources specific to this tab instance.
 /// </para>
 /// </summary>
-public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherService? fileWatcherService = null) : IDisposable
+public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherService? fileWatcherService = null,
+    IArchiveEntryWriter? archiveEntryWriter = null) : IDisposable
 {
     #region Tab logic
 
@@ -255,7 +256,7 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
             // An empty model, as when the tab becomes fresh again
             return;
         }
-        else if (ArchiveExtractionService?.ArchivePageOf(file.FullName) is { } archivePage)
+        else if (Archives.ArchivePageOf(file.FullName) is { } archivePage)
         {
             // Leaving an archive shows the next file before its extraction is cleaned up, so only a file in an
             // extraction folder is an archive page. Its folder tells whose, as another archive may be opening meanwhile
@@ -284,9 +285,9 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
     public int? IndexOfArchivePage(in ViewHistoryEntry entry)
     {
         if (entry is not { Kind: ViewHistoryKind.ArchivePage, Path: { } archive, ArchiveEntry: { } archiveEntry }
-            || ArchiveExtractionService is not { LastOpenedArchive: { } openArchive } extraction
+            || Archives.OpenArchive is not { } openArchive
             || !string.Equals(openArchive, archive, StringComparison.OrdinalIgnoreCase)
-            || extraction.ExtractedPathOf(archiveEntry) is not { } extracted
+            || Archives.ExtractedPathOf(archiveEntry) is not { } extracted
             || ImageIterator is not { } iterator)
         {
             return null;
@@ -311,8 +312,24 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
     
     /// <inheritdoc cref="Core.Navigation.Interfaces.IImageIterator"/>>
     public IImageIterator? ImageIterator { get; private set; }
-    // A test gives the tab one that holds a page's write, to end the extraction when it is ready
-    public ArchiveExtractionService? ArchiveExtractionService { get; internal init; } = new();
+    private ArchiveOpenings? _archives;
+
+    /// <summary>
+    /// The tab's Archive Openings: the archives it has opened, the one it reads, and where their extraction stands
+    /// (ADR-0013).
+    /// </summary>
+    public ArchiveOpenings Archives
+    {
+        get
+        {
+            if (_archives is null)
+            {
+                Interlocked.CompareExchange(ref _archives, new ArchiveOpenings(this, archiveEntryWriter), null);
+            }
+
+            return _archives;
+        }
+    }
     public BindableReactiveProperty<bool> IsArchiveExtracting { get; } = new(false);
     public BindableReactiveProperty<string?> ArchiveExtractionProgressText { get; } = new(null, StringComparer.OrdinalIgnoreCase);
     public IThumbnailCache? ThumbnailCache { get; private set; }
@@ -633,7 +650,7 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
         ThumbnailCache?.RemoveOwner(Id);
 
         ImageIterator?.Dispose();
-        ArchiveExtractionService.Cleanup();
+        Archives.Cleanup();
         GalleryCoordinator?.Dispose();
 
         NavigationCts.Dispose();

@@ -183,7 +183,6 @@ public class ArchiveExtractionServiceTests
             await service.PrepareArchiveAsync(zip, (_, _) => Task.FromResult(false), string.CompareOrdinal);
             var openFolder = service.TempZipDirectory;
             var page = await service.ExtractEntryAsync(zip, "1.jpg", TestContext.Current.CancellationToken);
-            var extracting = service.ResetExtractionCts();
             string? brokenFolder = null;
 
             var preparation = await service.PrepareArchiveAsync(broken, (_, created) =>
@@ -196,7 +195,6 @@ public class ArchiveExtractionServiceTests
             Assert.Equal(openFolder, service.TempZipDirectory);
             Assert.Equal(zip, service.LastOpenedArchive);
             Assert.Equal("1.jpg", service.EntryOf(page!));
-            Assert.False(extracting.IsCancellationRequested, "The open archive stopped extracting");
             Assert.False(Directory.Exists(brokenFolder), "The folder of the archive that failed to open was left behind");
         }
         finally
@@ -623,7 +621,8 @@ public class ArchiveExtractionServiceTests
             TestContext.Current.CancellationToken);
         var zip = Path.Combine(folder, "pages.zip");
         ZipFile.CreateFromDirectory(source, zip);
-        var service = new HeldWriteExtraction("page.jpg");
+        var writer = new HeldEntryWriter("page.jpg");
+        var service = new ArchiveExtractionService(writer);
         var preparation = await service.PrepareArchiveAsync(zip, (_, _) => Task.FromResult(false), string.CompareOrdinal);
         var page = Path.Combine(preparation!.Value.TempDirectory, "page.jpg");
 
@@ -631,11 +630,11 @@ public class ArchiveExtractionServiceTests
         {
             var extraction = Task.Run(() => service.ExtractRemaining(zip, ["page.jpg"],
                 ct: TestContext.Current.CancellationToken), TestContext.Current.CancellationToken);
-            await service.Holding.Task.WaitAsync(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken);
+            await writer.Holding("page.jpg").WaitAsync(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken);
             var isThereWhileWritten = File.Exists(page);
             var entryWhileWritten = service.EntryOf(page);
             var fileWhileWritten = service.ExtractedPathOf("page.jpg");
-            service.Release();
+            writer.Release("page.jpg");
             await extraction.WaitAsync(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken);
 
             Assert.True(isThereWhileWritten);
@@ -645,7 +644,7 @@ public class ArchiveExtractionServiceTests
         }
         finally
         {
-            service.Release();
+            writer.Release("page.jpg");
             service.Cleanup();
             Directory.Delete(folder, true);
         }
@@ -1146,33 +1145,33 @@ public class ArchiveExtractionServiceTests
     #region TabViewModel Integration
 
     [Fact]
-    public void TabViewModel_ArchiveExtractionService_IsNotNull()
+    public void TabViewModel_Archives_IsNotNull()
     {
         TranslationManager.Init();
         var tab = new TabViewModel(null!);
 
-        Assert.NotNull(tab.ArchiveExtractionService);
+        Assert.NotNull(tab.Archives);
     }
 
     [Fact]
-    public void TabViewModel_TwoTabs_HaveIndependentServices()
+    public void TabViewModel_TwoTabs_HaveIndependentArchives()
     {
         TranslationManager.Init();
         var tab1 = new TabViewModel(null!);
         var tab2 = new TabViewModel(null!);
 
-        Assert.NotSame(tab1.ArchiveExtractionService, tab2.ArchiveExtractionService);
+        Assert.NotSame(tab1.Archives, tab2.Archives);
     }
 
     [Fact]
-    public void TabViewModel_Dispose_CleansUpArchiveService()
+    public void TabViewModel_Dispose_CleansUpItsArchives()
     {
         TranslationManager.Init();
         var tab = new TabViewModel(null!);
-        var service = tab.ArchiveExtractionService;
+        var service = tab.Archives;
 
         // Verify initial state
-        Assert.False(service.IsArchived);
+        Assert.False(service.HasOpenArchive);
 
         // Dispose should not throw
         var exception = Record.Exception(() => tab.Dispose());
@@ -1180,35 +1179,9 @@ public class ArchiveExtractionServiceTests
     }
 
     [Fact]
-    public void ResetExtractionCts_ReturnsActiveToken_AndCancelsOnCleanup()
+    public void Cleanup_PreviousTempDir_DeletesIt()
     {
         var service = new ArchiveExtractionService();
-        var token = service.ResetExtractionCts();
-
-        Assert.False(token.IsCancellationRequested);
-
-        service.Cleanup();
-
-        Assert.True(token.IsCancellationRequested);
-    }
-
-    [Fact]
-    public void ResetExtractionCts_CancelsPreviousToken()
-    {
-        var service = new ArchiveExtractionService();
-        var token1 = service.ResetExtractionCts();
-        Assert.False(token1.IsCancellationRequested);
-
-        var token2 = service.ResetExtractionCts();
-        Assert.True(token1.IsCancellationRequested);
-        Assert.False(token2.IsCancellationRequested);
-    }
-
-    [Fact]
-    public void Cleanup_PreviousTempDir_DoesNotCancelCurrentExtractionToken()
-    {
-        var service = new ArchiveExtractionService();
-        var token = service.ResetExtractionCts();
 
         var previousDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
         Directory.CreateDirectory(previousDir);
@@ -1217,8 +1190,6 @@ public class ArchiveExtractionServiceTests
         {
             service.Cleanup(previousDir);
 
-            // Token for current extraction should NOT be cancelled
-            Assert.False(token.IsCancellationRequested);
             Assert.False(Directory.Exists(previousDir));
         }
         finally

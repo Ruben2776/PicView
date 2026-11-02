@@ -31,7 +31,7 @@ public class ViewHistoryRecordingTests : IDisposable
 
     public void Dispose()
     {
-        _tab.ArchiveExtractionService!.Cleanup();
+        _tab.Archives.Cleanup();
         Directory.Delete(_folder, true);
         _fileHistoryBackup.Dispose();
     }
@@ -108,10 +108,9 @@ public class ViewHistoryRecordingTests : IDisposable
     public async Task Display_ExtractedArchivePage_RecordsTheArchiveAndItsEntry()
     {
         var zip = CreateZip("a.jpg", "b.jpg");
-        await PrepareArchiveAsync(zip);
-        var page = await _tab.ArchiveExtractionService!.ExtractEntryAsync(zip, "b.jpg", TestContext.Current.CancellationToken);
+        var page = PageOf(await OpenAsync(zip), "b.jpg");
 
-        _tab.Display(Model(page!));
+        _tab.Display(Model(page));
 
         var entry = Assert.Single(_tab.ViewHistory.Entries);
         Assert.Equal(ViewHistoryKind.ArchivePage, entry.Kind);
@@ -123,7 +122,7 @@ public class ViewHistoryRecordingTests : IDisposable
     public async Task Display_FirstFileAfterLeavingTheArchive_RecordsTheFile()
     {
         // Leaving an archive shows the next file before the extraction is cleaned up
-        await PrepareArchiveAsync(CreateZip("a.jpg"));
+        await OpenAsync(CreateZip("a.jpg"));
 
         _tab.Display(Model(PathOf("outside.jpg")));
 
@@ -137,17 +136,14 @@ public class ViewHistoryRecordingTests : IDisposable
     {
         var tab = ActiveTabOfTheActiveMainWindow();
         var zip = CreateZip("a.jpg", "b.jpg");
-        var extraction = tab.ArchiveExtractionService!;
         try
         {
-            await extraction.PrepareArchiveAsync(zip, NoLocalSoftware, string.CompareOrdinal);
-            var a = await extraction.ExtractEntryAsync(zip, "a.jpg", TestContext.Current.CancellationToken);
-            var b = await extraction.ExtractEntryAsync(zip, "b.jpg", TestContext.Current.CancellationToken);
-            tab.Display(Model(a!));
+            var opening = await OpenAsync(tab, zip);
+            tab.Display(Model(PageOf(opening, "a.jpg")));
             // An archive with no images fails to open, so the tab still shows the first one
-            Assert.Null(await extraction.PrepareArchiveAsync(CreateZip("readme.txt"), NoLocalSoftware, string.CompareOrdinal));
+            Assert.Null(await OpenAsync(tab, CreateZip("readme.txt")));
 
-            tab.Display(Model(b!));
+            tab.Display(Model(PageOf(opening, "b.jpg")));
 
             Assert.Equal([ViewHistoryEntry.ForArchivePage(zip, "a.jpg"), ViewHistoryEntry.ForArchivePage(zip, "b.jpg")],
                 tab.ViewHistory.Entries);
@@ -156,7 +152,7 @@ public class ViewHistoryRecordingTests : IDisposable
         }
         finally
         {
-            extraction.Cleanup();
+            tab.Archives.Cleanup();
         }
     }
 
@@ -166,13 +162,11 @@ public class ViewHistoryRecordingTests : IDisposable
         // Its file is named after its folder, but the entry is the page's path in the archive
         var tab = ActiveTabOfTheActiveMainWindow();
         var zip = CreateZip(Path.Combine("Volume 01", "001.jpg"), Path.Combine("Volume 02", "001.jpg"));
-        var extraction = tab.ArchiveExtractionService!;
         try
         {
-            await extraction.PrepareArchiveAsync(zip, NoLocalSoftware, string.CompareOrdinal);
-            var page = await extraction.ExtractEntryAsync(zip, "Volume 02/001.jpg", TestContext.Current.CancellationToken);
+            var page = PageOf(await OpenAsync(tab, zip), "Volume 02/001.jpg");
 
-            tab.Display(Model(page!));
+            tab.Display(Model(page));
 
             Assert.Equal("Volume 02 - 001.jpg", Path.GetFileName(page));
             Assert.Equal(ViewHistoryEntry.ForArchivePage(zip, "Volume 02/001.jpg"), Assert.Single(tab.ViewHistory.Entries));
@@ -181,7 +175,7 @@ public class ViewHistoryRecordingTests : IDisposable
         }
         finally
         {
-            extraction.Cleanup();
+            tab.Archives.Cleanup();
         }
     }
 
@@ -193,17 +187,16 @@ public class ViewHistoryRecordingTests : IDisposable
         var archive = PathOf("volumes.7z");
         await File.WriteAllBytesAsync(archive, [0x37, 0x7A], TestContext.Current.CancellationToken);
         var entry = Path.Combine("Volume 02", "001.jpg");
-        var extraction = tab.ArchiveExtractionService!;
         try
         {
-            var preparation = await extraction.PrepareArchiveAsync(archive, (_, folder) =>
+            var opening = await tab.Archives.OpenAsync(archive, null, (_, folder) =>
             {
                 WriteImage(Path.Combine(folder, "Volume 01", "001.jpg"));
                 WriteImage(Path.Combine(folder, entry));
                 return Task.FromResult(true);
-            }, string.CompareOrdinal);
+            }, string.CompareOrdinal, TestContext.Current.CancellationToken);
 
-            tab.Display(Model(Path.Combine(preparation!.Value.TempDirectory, entry)));
+            tab.Display(Model(Path.Combine(opening!.Folder, entry)));
 
             Assert.Equal(ViewHistoryEntry.ForArchivePage(archive, entry), Assert.Single(tab.ViewHistory.Entries));
             Assert.Equal([archive], FileHistoryManager.AllEntries.Select(e => e.Path));
@@ -211,7 +204,7 @@ public class ViewHistoryRecordingTests : IDisposable
         }
         finally
         {
-            extraction.Cleanup();
+            tab.Archives.Cleanup();
         }
     }
 
@@ -219,12 +212,11 @@ public class ViewHistoryRecordingTests : IDisposable
     public async Task Display_PageOfAnArchive_AfterAnotherArchiveStartedOpening_RecordsItAsThatArchivesPage()
     {
         var zip = CreateZip("a.jpg", "b.jpg");
-        await PrepareArchiveAsync(zip);
-        var page = await _tab.ArchiveExtractionService!.ExtractEntryAsync(zip, "b.jpg", TestContext.Current.CancellationToken);
+        var page = PageOf(await OpenAsync(zip), "b.jpg");
         // A quick second step opens an archive before this page shows
-        await PrepareArchiveAsync(CreateZip("c.jpg"));
+        await OpenAsync(CreateZip("c.jpg"));
 
-        _tab.Display(Model(page!));
+        _tab.Display(Model(page));
 
         Assert.Equal(ViewHistoryEntry.ForArchivePage(zip, "b.jpg"), Assert.Single(_tab.ViewHistory.Entries));
         Assert.Equal([zip], FileHistoryManager.AllEntries.Select(e => e.Path));
@@ -234,7 +226,7 @@ public class ViewHistoryRecordingTests : IDisposable
     public async Task IndexOfArchivePage_PageExtractedAndListed_IsItsIndexInTheTabsFiles()
     {
         var zip = CreateZip("a.jpg", "b.jpg");
-        await OpenArchiveAsync(zip, extracted: ["a.jpg", "b.jpg"], listed: ["a.jpg", "b.jpg"]);
+        await OpenArchiveAsync(zip, listed: ["a.jpg", "b.jpg"]);
 
         Assert.Equal(1, _tab.IndexOfArchivePage(ViewHistoryEntry.ForArchivePage(zip, "b.jpg")));
     }
@@ -244,7 +236,7 @@ public class ViewHistoryRecordingTests : IDisposable
     {
         // The folder watcher adds an extracted page to the tab's files a moment later
         var zip = CreateZip("a.jpg", "b.jpg");
-        await OpenArchiveAsync(zip, extracted: ["a.jpg", "b.jpg"], listed: ["a.jpg"]);
+        await OpenArchiveAsync(zip, listed: ["a.jpg"]);
 
         Assert.Null(_tab.IndexOfArchivePage(ViewHistoryEntry.ForArchivePage(zip, "b.jpg")));
     }
@@ -252,17 +244,18 @@ public class ViewHistoryRecordingTests : IDisposable
     [Fact]
     public async Task IndexOfArchivePage_PageNotExtracted_IsNull()
     {
-        var zip = CreateZip("a.jpg", "b.jpg");
-        await OpenArchiveAsync(zip, extracted: ["a.jpg"], listed: ["a.jpg"]);
+        // The first ten pages come with the start, and the rest once the start page shows
+        var zip = CreateZip(Enumerable.Range(0, 12).Select(i => $"{(char)('a' + i)}.jpg").ToArray());
+        await OpenArchiveAsync(zip, listed: ["a.jpg"]);
 
-        Assert.Null(_tab.IndexOfArchivePage(ViewHistoryEntry.ForArchivePage(zip, "b.jpg")));
+        Assert.Null(_tab.IndexOfArchivePage(ViewHistoryEntry.ForArchivePage(zip, "l.jpg")));
     }
 
     [Fact]
     public async Task IndexOfArchivePage_PageOfAnotherArchive_IsNull()
     {
         var zip = CreateZip("a.jpg");
-        await OpenArchiveAsync(zip, extracted: ["a.jpg"], listed: ["a.jpg"]);
+        await OpenArchiveAsync(zip, listed: ["a.jpg"]);
 
         Assert.Null(_tab.IndexOfArchivePage(ViewHistoryEntry.ForArchivePage(PathOf("other.zip"), "a.jpg")));
     }
@@ -271,9 +264,9 @@ public class ViewHistoryRecordingTests : IDisposable
     public async Task IndexOfArchivePage_AfterTheTabLeftTheArchive_IsNull()
     {
         var zip = CreateZip("a.jpg");
-        await OpenArchiveAsync(zip, extracted: ["a.jpg"], listed: ["a.jpg"]);
+        await OpenArchiveAsync(zip, listed: ["a.jpg"]);
 
-        _tab.ArchiveExtractionService!.Cleanup();
+        _tab.Archives.Cleanup();
 
         Assert.Null(_tab.IndexOfArchivePage(ViewHistoryEntry.ForArchivePage(zip, "a.jpg")));
     }
@@ -282,9 +275,9 @@ public class ViewHistoryRecordingTests : IDisposable
     public async Task IndexOfArchivePage_AfterAnotherArchiveFailedToOpen_IsStillThePagesIndex()
     {
         var zip = CreateZip("a.jpg", "b.jpg");
-        await OpenArchiveAsync(zip, extracted: ["a.jpg", "b.jpg"], listed: ["a.jpg", "b.jpg"]);
+        await OpenArchiveAsync(zip, listed: ["a.jpg", "b.jpg"]);
 
-        Assert.Null(await PrepareArchiveAsync(CreateZip("readme.txt")));
+        Assert.Null(await OpenAsync(CreateZip("readme.txt")));
 
         Assert.Equal(1, _tab.IndexOfArchivePage(ViewHistoryEntry.ForArchivePage(zip, "b.jpg")));
     }
@@ -454,8 +447,8 @@ public class ViewHistoryRecordingTests : IDisposable
 
         try
         {
-            await tab.ArchiveExtractionService!.PrepareArchiveAsync(zip, (_, _) => Task.FromResult(false), string.CompareOrdinal);
-            tab.Display(Model(Path.Combine(tab.ArchiveExtractionService.TempZipDirectory!, "a.jpg")));
+            var opening = await OpenAsync(tab, zip);
+            tab.Display(Model(Path.Combine(opening!.Folder, "a.jpg")));
 
             history.UpdateHistory();
 
@@ -463,7 +456,7 @@ public class ViewHistoryRecordingTests : IDisposable
         }
         finally
         {
-            tab.ArchiveExtractionService!.Cleanup();
+            tab.Archives.Cleanup();
         }
     }
 
@@ -504,28 +497,33 @@ public class ViewHistoryRecordingTests : IDisposable
         File.WriteAllBytes(path, [0xFF, 0xD8, 0xFF]);
     }
 
-    private Task<ArchiveExtractionService.ArchivePreparation?> PrepareArchiveAsync(string zip) =>
-        _tab.ArchiveExtractionService!.PrepareArchiveAsync(zip, NoLocalSoftware, string.CompareOrdinal);
+    private ValueTask<ArchiveOpening?> OpenAsync(string zip) => OpenAsync(_tab, zip);
+
+    // Opens the archive in the tab, which extracts its first ten pages
+    private static ValueTask<ArchiveOpening?> OpenAsync(TabViewModel tab, string zip) =>
+        tab.Archives.OpenAsync(zip, null, NoLocalSoftware, string.CompareOrdinal, TestContext.Current.CancellationToken);
+
+    // The file that the page with the entry given was extracted to
+    private static string PageOf(ArchiveOpening? opening, string entry) =>
+        opening!.Files.Single(file => string.Equals(file.Name, Path.GetFileName(entry).Length == entry.Length
+            ? entry
+            : entry.Replace('/', ' ').Replace("  ", " - ").Replace(" ", " - ", StringComparison.Ordinal), StringComparison.Ordinal)
+            || string.Equals(file.Name, FlatName(entry), StringComparison.Ordinal)).FullName;
+
+    // The name a page in a folder of the archive is extracted under: its folders joined to its name with " - "
+    private static string FlatName(string entry) => string.Join(" - ", entry.Split('/'));
 
     // A zip opens without local software
     private static Task<bool> NoLocalSoftware(string archive, string folder) => Task.FromResult(false);
 
-    // Opens the archive in the tab, extracts the entries given, and lists the files of some of them, as the folder
-    // watcher does once it sees them
-    private async Task OpenArchiveAsync(string zip, string[] extracted, string[] listed)
+    // Opens the archive in the tab, and lists the files of some of its pages, as the folder watcher does once it sees them
+    private async Task OpenArchiveAsync(string zip, string[] listed)
     {
-        await PrepareArchiveAsync(zip);
-        var files = new Dictionary<string, FileInfo>();
-        foreach (var entry in extracted)
-        {
-            var file = await _tab.ArchiveExtractionService!.ExtractEntryAsync(zip, entry, TestContext.Current.CancellationToken);
-            files[entry] = new FileInfo(file!);
-        }
-
+        var opening = await OpenAsync(zip);
         var thumbnails = new MockThumbnailCache();
         _tab.Initialize(new SharedImageCache(file => ValueTask.FromResult(new ImageModel { FileInfo = file })), thumbnails,
             new MockThumbnailLoader(), null, thumbnails);
-        _tab.ImageIterator!.Initialize(listed.Select(entry => files[entry]).ToList());
+        _tab.ImageIterator!.Initialize(listed.Select(entry => new FileInfo(PageOf(opening, entry))).ToList());
     }
 
     // The active tab of the Active Main Window, which is the tab that writes the Last File

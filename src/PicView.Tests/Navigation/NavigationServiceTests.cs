@@ -253,7 +253,7 @@ public class NavigationServiceTests : IDisposable
             await load.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
 
             Assert.True(Directory.Exists(newer), "The load deleted the extraction of the archive that opened meanwhile");
-            Assert.Equal(newer, tab.ArchiveExtractionService.TempZipDirectory);
+            Assert.Equal(newer, tab.Archives.OpenFolder);
             if (left is not null)
             {
                 Assert.False(Directory.Exists(left), "The load left the extraction of the archive it left behind");
@@ -261,8 +261,7 @@ public class NavigationServiceTests : IDisposable
         }
         finally
         {
-            tab.ArchiveExtractionService.Cleanup();
-            tab.ArchiveExtractionService.Cleanup(left);
+            tab.Archives.Cleanup();
         }
     }
 
@@ -279,11 +278,11 @@ public class NavigationServiceTests : IDisposable
             await StartLoad(site, tab, elsewhere).WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
 
             Assert.False(Directory.Exists(left), "The load left the archive's extraction behind");
-            Assert.False(tab.ArchiveExtractionService.IsArchived);
+            Assert.False(tab.Archives.HasOpenArchive);
         }
         finally
         {
-            tab.ArchiveExtractionService.Cleanup(left);
+            tab.Archives.Cleanup();
         }
     }
 
@@ -300,12 +299,10 @@ public class NavigationServiceTests : IDisposable
     }
 
     private TabViewModel CreateTab(string directory, MainWindowViewModel? parentVm = null, SharedImageCache? cache = null,
-        ArchiveExtractionService? extraction = null)
+        IArchiveEntryWriter? writer = null)
     {
         var dummyParent = parentVm ?? new MainWindowViewModel(null!, null!, null!, null!, null!);
-        var tab = extraction is null
-            ? new TabViewModel(dummyParent)
-            : new TabViewModel(dummyParent) { ArchiveExtractionService = extraction };
+        var tab = new TabViewModel(dummyParent, null, writer);
         // Initialize with mocks to avoid null refs
         var thumbCache = new MockThumbnailCache();
         tab.Initialize(cache ?? _cache, thumbCache, _mockThumbnailLoader, null, thumbCache);
@@ -397,8 +394,9 @@ public class NavigationServiceTests : IDisposable
     private async Task<string> PrepareExtractionAsync(TabViewModel tab, string name)
     {
         var zip = await CreateZipAsync(name, 1);
-        await tab.ArchiveExtractionService.PrepareArchiveAsync(zip, (_, _) => Task.FromResult(false), string.CompareOrdinal);
-        return tab.ArchiveExtractionService.TempZipDirectory!;
+        await tab.Archives.OpenAsync(zip, null, (_, _) => Task.FromResult(false), string.CompareOrdinal,
+            TestContext.Current.CancellationToken);
+        return tab.Archives.OpenFolder!;
     }
 
     private async Task<string> CreateZipAsync(string name, int images)
@@ -437,7 +435,7 @@ public class NavigationServiceTests : IDisposable
             var success = await _navigationService.LoadFromArchiveAsync(tempZipPath, tab, cts);
 
             Assert.True(success);
-            Assert.True(tab.ArchiveExtractionService.IsArchived);
+            Assert.True(tab.Archives.HasOpenArchive);
             Assert.NotNull(tab.ImageIterator.Files);
             // Initially populated with 10 seed files
             Assert.True(tab.ImageIterator.Files.Count >= 10);
@@ -447,7 +445,7 @@ public class NavigationServiceTests : IDisposable
         }
         finally
         {
-            tab.ArchiveExtractionService.Cleanup();
+            tab.Archives.Cleanup();
         }
     }
 
@@ -486,7 +484,7 @@ public class NavigationServiceTests : IDisposable
         }
         finally
         {
-            tab.ArchiveExtractionService.Cleanup();
+            tab.Archives.Cleanup();
         }
     }
 
@@ -506,7 +504,7 @@ public class NavigationServiceTests : IDisposable
         }
         finally
         {
-            tab.ArchiveExtractionService.Cleanup();
+            tab.Archives.Cleanup();
         }
     }
 
@@ -529,7 +527,7 @@ public class NavigationServiceTests : IDisposable
         }
         finally
         {
-            tab.ArchiveExtractionService.Cleanup();
+            tab.Archives.Cleanup();
         }
     }
 
@@ -575,7 +573,7 @@ public class NavigationServiceTests : IDisposable
         finally
         {
             folderWatcher?.Dispose();
-            tab.ArchiveExtractionService.Cleanup();
+            tab.Archives.Cleanup();
         }
     }
 
@@ -662,17 +660,13 @@ public class NavigationServiceTests : IDisposable
             Assert.Equal([archive], FileHistoryManager.AllEntries.Select(e => e.Path));
             // The first opening showed nothing, so its folder goes
             Assert.False(Directory.Exists(folders.First()), "The first opening's folder was left behind");
-            Assert.Equal(folders.Last(), tab.ArchiveExtractionService.TempZipDirectory);
+            Assert.Equal(folders.Last(), tab.Archives.OpenFolder);
         }
         finally
         {
             secondOpens.TrySetResult();
             firstPage.TrySetResult(new ImageModel());
-            tab.ArchiveExtractionService.Cleanup();
-            foreach (var folder in folders)
-            {
-                tab.ArchiveExtractionService.Cleanup(folder);
-            }
+            tab.Archives.Cleanup();
         }
     }
 
@@ -711,7 +705,7 @@ public class NavigationServiceTests : IDisposable
         var file = new FileInfo(await WriteImageAsync("x.jpg"));
         // The tab reads archive a
         await navigation.LoadFromArchiveAsync(await CreateZipAsync("a.zip", 2), tab, new CancellationTokenSource());
-        var read = tab.ArchiveExtractionService.TempZipDirectory;
+        var read = tab.Archives.OpenFolder;
 
         try
         {
@@ -727,13 +721,13 @@ public class NavigationServiceTests : IDisposable
             await first.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
 
             Assert.False(Directory.Exists(read), "The folder of the archive the tab was reading was left behind");
-            Assert.Equal(loadsAnArchive ? c : null, tab.ArchiveExtractionService.LastOpenedArchive);
-            Assert.Equal(loadsAnArchive, tab.ArchiveExtractionService.IsArchived);
+            Assert.Equal(loadsAnArchive ? c : null, tab.Archives.OpenArchive);
+            Assert.Equal(loadsAnArchive, tab.Archives.HasOpenArchive);
         }
         finally
         {
             heldPage.TrySetResult(new ImageModel());
-            tab.ArchiveExtractionService.Cleanup();
+            tab.Archives.Cleanup();
         }
     }
 
@@ -757,57 +751,9 @@ public class NavigationServiceTests : IDisposable
         }
         finally
         {
-            tab.ArchiveExtractionService.Cleanup();
+            tab.Archives.Cleanup();
             Settings.ImageScaling.ShowImageSideBySide = false;
         }
-    }
-
-    [Fact]
-    public void EndExtraction_OfAnExtractionThatANewerOneReplaced_LeavesTheTabExtracting()
-    {
-        var tab = CreateTab(_testDirectory);
-        // A Back opened the archive again, so a newer extraction replaced the first, and Next waits for its pages
-        var replaced = tab.ArchiveExtractionService.ResetExtractionCts();
-        tab.ArchiveExtractionService.ResetExtractionCts();
-        tab.IsArchiveExtracting.Value = true;
-
-        NavigationService.EndExtraction(tab, replaced);
-
-        Assert.True(tab.IsArchiveExtracting.Value);
-    }
-
-    // How an extraction can end, besides running to its end
-    public enum ExtractionStop
-    {
-        None,
-        AnotherArchiveOpens,
-        TabLeavesTheArchive
-    }
-
-    [Theory]
-    [InlineData(ExtractionStop.None)]
-    [InlineData(ExtractionStop.AnotherArchiveOpens)]
-    [InlineData(ExtractionStop.TabLeavesTheArchive)]
-    public void EndExtraction_OfTheExtractionStartedLast_EndsTheTabsExtracting(ExtractionStop stop)
-    {
-        var tab = CreateTab(_testDirectory);
-        var latest = tab.ArchiveExtractionService.ResetExtractionCts();
-        tab.IsArchiveExtracting.Value = true;
-        tab.ArchiveExtractionProgressText.Value = "1/2";
-        switch (stop)
-        {
-            case ExtractionStop.AnotherArchiveOpens:
-                tab.ArchiveExtractionService.StopExtraction();
-                break;
-            case ExtractionStop.TabLeavesTheArchive:
-                tab.ArchiveExtractionService.Cleanup();
-                break;
-        }
-
-        NavigationService.EndExtraction(tab, latest);
-
-        Assert.False(tab.IsArchiveExtracting.Value);
-        Assert.Null(tab.ArchiveExtractionProgressText.Value);
     }
 
     [Fact]
@@ -851,7 +797,7 @@ public class NavigationServiceTests : IDisposable
         finally
         {
             folderWatcher?.Dispose();
-            tab.ArchiveExtractionService.Cleanup();
+            tab.Archives.Cleanup();
         }
     }
 
@@ -883,13 +829,13 @@ public class NavigationServiceTests : IDisposable
             await _navigationService.LoadFromArchiveAsync(zip, tab, new CancellationTokenSource(), back.Target.ArchiveEntry);
             tab.ViewHistory.EndStep(back);
 
-            Assert.Equal("Volume 02/002.jpg", tab.ArchiveExtractionService.EntryOf(tab.Model.FileInfo!.FullName));
+            Assert.Equal("Volume 02/002.jpg", tab.Archives.EntryOf(tab.Model.FileInfo!.FullName));
             Assert.Equal([page, left], tab.ViewHistory.Entries);
             Assert.Equal(0, tab.ViewHistory.Cursor);
         }
         finally
         {
-            tab.ArchiveExtractionService.Cleanup();
+            tab.Archives.Cleanup();
             Settings.Navigation.IsRespectingArchiveStructure = true;
         }
     }
@@ -927,14 +873,14 @@ public class NavigationServiceTests : IDisposable
             await navigation.LoadFromArchiveAsync(archive, tab, new CancellationTokenSource(), back.Target.ArchiveEntry);
             tab.ViewHistory.EndStep(back);
 
-            Assert.Equal(Path.Combine(tab.ArchiveExtractionService.TempZipDirectory!, "Volume 02", "002.jpg"),
+            Assert.Equal(Path.Combine(tab.Archives.OpenFolder!, "Volume 02", "002.jpg"),
                 tab.Model.FileInfo?.FullName);
             Assert.Equal([page, left], tab.ViewHistory.Entries);
             Assert.Equal(0, tab.ViewHistory.Cursor);
         }
         finally
         {
-            tab.ArchiveExtractionService.Cleanup();
+            tab.Archives.Cleanup();
         }
     }
 
@@ -961,7 +907,7 @@ public class NavigationServiceTests : IDisposable
         finally
         {
             folderWatcher.Dispose();
-            tab.ArchiveExtractionService.Cleanup();
+            tab.Archives.Cleanup();
         }
     }
 
@@ -986,7 +932,7 @@ public class NavigationServiceTests : IDisposable
         finally
         {
             folderWatcher.Dispose();
-            tab.ArchiveExtractionService.Cleanup();
+            tab.Archives.Cleanup();
         }
     }
 
@@ -1001,8 +947,8 @@ public class NavigationServiceTests : IDisposable
         // lags behind
         Settings.UIProperties.Looping = looping;
         var zip = await CreateZipAsync($"watcher_behind_{looping}.zip", 15);
-        var extraction = new HeldWriteExtraction("img_11.jpg");
-        var tab = CreateTab(_testDirectory, extraction: extraction);
+        var writer = new HeldEntryWriter("img_11.jpg");
+        var tab = CreateTab(_testDirectory, writer: writer);
         var folderEvents = new ManualFolderEvents();
         var watcher = new FileWatcherService(string.CompareOrdinal, _cache, folderEvents: folderEvents);
         var navigation = new NavigationService(_mockImageModelLoader, _cache, watcher, new MockPlatformSpecificService(),
@@ -1011,9 +957,9 @@ public class NavigationServiceTests : IDisposable
         try
         {
             await navigation.LoadFromArchiveAsync(zip, tab, new CancellationTokenSource(), startEntry: "img_01.jpg");
-            var folder = extraction.TempZipDirectory!;
+            var folder = tab.Archives.OpenFolder!;
             // The extraction writes img_11 until the test lets it end
-            await extraction.Holding.Task.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+            await writer.Holding("img_11.jpg").WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
             // The tab shows the last page listed
             await tab.ImageIterator.IterateToIndexAsync(9, new CancellationTokenSource())
                 .AsTask().WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
@@ -1022,7 +968,7 @@ public class NavigationServiceTests : IDisposable
             var next = tab.ImageIterator.NavigateAsync(NavigateTo.Next, SkipAmount.One, new CancellationTokenSource())
                 .AsTask();
             var wasWaiting = !next.IsCompleted;
-            extraction.Release();
+            writer.Release("img_11.jpg");
             await next.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
 
             Assert.True(wasWaiting);
@@ -1044,9 +990,9 @@ public class NavigationServiceTests : IDisposable
         }
         finally
         {
-            extraction.Release();
+            writer.Release("img_11.jpg");
             watcher.Dispose();
-            tab.ArchiveExtractionService.Cleanup();
+            tab.Archives.Cleanup();
             Settings.UIProperties.Looping = false;
         }
     }
@@ -1058,13 +1004,13 @@ public class NavigationServiceTests : IDisposable
         // own thread has the lowest priority, so on a busy machine it could keep the lock from a key press. The test's
         // watcher lists nothing, so the end lists every page it wrote after the first ten
         var zip = await CreateZipAsync("end_priority.zip", 12);
-        var extraction = new HeldWriteExtraction("img_12.jpg");
-        var tab = CreateTab(_testDirectory, extraction: extraction);
+        var writer = new HeldEntryWriter("img_12.jpg");
+        var tab = CreateTab(_testDirectory, writer: writer);
         var endedOn = new TaskCompletionSource<ThreadPriority>(TaskCreationOptions.RunContinuationsAsynchronously);
         // The end lowers the flag right after it lists the pages, on the same thread
         using var ending = tab.IsArchiveExtracting.Subscribe(isExtracting =>
         {
-            if (!isExtracting && extraction.Holding.Task.IsCompleted)
+            if (!isExtracting && writer.Holding("img_12.jpg").IsCompleted)
             {
                 endedOn.TrySetResult(Thread.CurrentThread.Priority);
             }
@@ -1074,8 +1020,8 @@ public class NavigationServiceTests : IDisposable
         {
             await _navigationService.LoadFromArchiveAsync(zip, tab, new CancellationTokenSource(), startEntry: "img_01.jpg");
             // Holding the last page's write keeps the extraction from ending before the load awaits it
-            await extraction.Holding.Task.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
-            extraction.Release();
+            await writer.Holding("img_12.jpg").WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+            writer.Release("img_12.jpg");
             var priority = await endedOn.Task.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
 
             Assert.Equal(ThreadPriority.Normal, priority);
@@ -1084,8 +1030,8 @@ public class NavigationServiceTests : IDisposable
         }
         finally
         {
-            extraction.Release();
-            tab.ArchiveExtractionService.Cleanup();
+            writer.Release("img_12.jpg");
+            tab.Archives.Cleanup();
         }
     }
 
