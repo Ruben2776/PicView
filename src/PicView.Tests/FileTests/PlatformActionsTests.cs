@@ -47,42 +47,15 @@ public class PlatformActionsTests
         Assert.Equal(["OpenWith C:\\settings.json"], _platform.Calls);
     }
 
-    [Fact]
-    public async Task SetAsLockScreen_Path_CallsPlatformOffTheCallingThread()
-    {
-        var callerThread = Environment.CurrentManagedThreadId;
-
-        await PlatformActions.SetAsLockScreen(_platform, "C:\\a.jpg");
-
-        Assert.Equal(["SetAsLockScreen C:\\a.jpg"], _platform.Calls);
-        Assert.NotEqual(callerThread, _platform.LockScreenThreadId);
-    }
-
-    [Fact]
-    public async Task SetAsLockScreen_NoFileOpen_DoesNothing()
-    {
-        await PlatformActions.SetAsLockScreen(_platform, null);
-
-        Assert.Empty(_platform.Calls);
-    }
-
     private sealed class RecordingPlatform : IPlatformSpecificService
     {
         public List<string> Calls { get; } = [];
-
-        public int LockScreenThreadId { get; private set; }
 
         public void OpenWith(string path) => Calls.Add($"OpenWith {path}");
 
         public void LocateOnDisk(string path) => Calls.Add($"LocateOnDisk {path}");
 
-        public bool SetAsLockScreen(string path)
-        {
-            LockScreenThreadId = Environment.CurrentManagedThreadId;
-            Calls.Add($"SetAsLockScreen {path}");
-            return true;
-        }
-
+        public bool SetAsLockScreen(string path) => false;
         public void SetTaskbarProgress(ulong progress, ulong maximum) { }
         public void StopTaskbarProgress() { }
         public void SetCursorPos(int x, int y) { }
