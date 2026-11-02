@@ -8,6 +8,7 @@ using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.UI;
 using PicView.Core.DebugTools;
 using PicView.Core.Sizing;
+using PicView.Core.ViewModels;
 using R3;
 using PicView.Core.Keybindings;
 
@@ -51,7 +52,7 @@ public partial class HoverBar : UserControl, IDisposable
                     h => NextButton.Click -= h)
                 .SubscribeAwait(async (_, c) =>
                 {
-                    vm.WindowTabs.ActiveTab.CurrentValue.Hoverbar.IsHoverNavigationButtonNextClicked = true;
+                    vm.ClickedButton = ClickedButton.HoverbarNext;
                     await vm.ActionRunner.Run(Actions.Next).ConfigureAwait(false);
                 }, static result =>
                 {
@@ -67,7 +68,7 @@ public partial class HoverBar : UserControl, IDisposable
                     h => PreviousButton.Click -= h)
                 .SubscribeAwait(async (_, c) =>
                 {
-                    vm.WindowTabs.ActiveTab.CurrentValue.Hoverbar.IsHoverNavigationButtonPreviousClicked = true;
+                    vm.ClickedButton = ClickedButton.HoverbarPrevious;
                     await vm.ActionRunner.Run(Actions.Prev).ConfigureAwait(false);
                 }, static result =>
                 {
@@ -271,14 +272,14 @@ public partial class HoverBar : UserControl, IDisposable
         {
             if (props.IsLeftButtonPressed)
             {
-                vm.WindowTabs.ActiveTab.CurrentValue.Hoverbar.IsHoverRotateLeftClicked = true;
+                vm.ClickedButton = ClickedButton.HoverbarRotateLeft;
             }
         }
         else if (RotateRightButton.IsPointerOver)
         {
             if (props.IsLeftButtonPressed)
             {
-                vm.WindowTabs.ActiveTab.CurrentValue.Hoverbar.IsHoverRotateRightClicked = true;
+                vm.ClickedButton = ClickedButton.HoverbarRotateRight;
             }
         }
         else if (ProgressBar.IsPointerOver)

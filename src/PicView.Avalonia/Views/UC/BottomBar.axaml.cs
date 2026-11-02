@@ -71,7 +71,7 @@ public partial class BottomBar : UserControl, IDisposable
             return;
         }
 
-        vm.IsNavigationButtonLeftClicked = true;
+        vm.ClickedButton = ClickedButton.BottomBarPrevious;
         vm.TopTitlebarViewModel.CloseDropDownMenu();
         UIHelper.SetButtonInterval((IconButton?)PreviousButton);
     }
@@ -83,7 +83,7 @@ public partial class BottomBar : UserControl, IDisposable
             return;
         }
 
-        vm.IsNavigationButtonRightClicked = true;
+        vm.ClickedButton = ClickedButton.BottomBarNext;
         vm.TopTitlebarViewModel.CloseDropDownMenu();
         UIHelper.SetButtonInterval((IconButton?)NextButton);
     }
@@ -96,7 +96,7 @@ public partial class BottomBar : UserControl, IDisposable
         }
 
         vm.TopTitlebarViewModel.CloseDropDownMenu();
-        vm.IsBottomToolbarRightRotationClicked = true;
+        vm.ClickedButton = ClickedButton.BottomBarRotateRight;
     }
 
     private void OnRotateLeftButtonClick(object? sender, RoutedEventArgs e)
@@ -107,7 +107,7 @@ public partial class BottomBar : UserControl, IDisposable
         }
 
         vm.TopTitlebarViewModel.CloseDropDownMenu();
-        vm.IsBottomToolbarLeftRotationClicked = true;
+        vm.ClickedButton = ClickedButton.BottomBarRotateLeft;
     }
 
     private void OnFileMenuButtonClick(object? sender, RoutedEventArgs e)

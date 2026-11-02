@@ -24,14 +24,8 @@ public class MainWindowViewModel : IDisposable
     public ResizeImageViewModel? ResizeImageViewModel { get; set; }
 
     #region Window state
-    public bool IsNavigationButtonLeftClicked { get; set; }
-    public bool IsNavigationButtonRightClicked { get; set; }
-    
-    public bool IsClickArrowLeftClicked { get; set; }
-    public bool IsClickArrowRightClicked { get; set; }
+    public ClickedButton ClickedButton { get; set; }
 
-    public bool IsBottomToolbarRightRotationClicked { get; set; }
-    public bool IsBottomToolbarLeftRotationClicked { get; set; }
     // Hidden with the interface, as the window applies its settings, so a Fit before that already leaves it out
     public BindableReactiveProperty<bool> IsBottomToolbarShown { get; } =
         new(Settings.UIProperties.ShowBottomNavBar && Settings.UIProperties.ShowInterface);

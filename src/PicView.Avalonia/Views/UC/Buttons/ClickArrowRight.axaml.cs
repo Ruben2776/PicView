@@ -31,7 +31,7 @@ public partial class ClickArrowRight : UserControl
                     return;
                 }
 
-                vm.IsClickArrowRightClicked = true;
+                vm.ClickedButton = ClickedButton.ClickArrowRight;
                 vm.TopTitlebarViewModel.CloseDropDownMenu();
                 UIHelper.SetButtonInterval(PolyButton);
             };
