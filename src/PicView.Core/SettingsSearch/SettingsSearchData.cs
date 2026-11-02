@@ -282,8 +282,6 @@ public class SettingsSearchData
         
         sb.Append(TranslationManager.Translation.Navigation);
         sb.Append(space);
-        sb.Append(TranslationManager.Translation.AlwaysUncompressEntireArchive);
-        sb.Append(space);
         sb.Append(TranslationManager.Translation.RespectArchiveFolderStructure);
         sb.Append(space);
         sb.Append("Archive Extract Zip Uncompress Folder Order");

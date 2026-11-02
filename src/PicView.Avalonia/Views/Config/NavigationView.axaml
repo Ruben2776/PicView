@@ -57,17 +57,6 @@
                 x:Name="TaskBarToggleButton" />
         </Border>
 
-        <!--  Always uncompress entire archive folder  -->
-        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.NavigationArchiveSearchTags}">
-            <customControls:TextToggleButton
-                Classes="MenuItemHover settingsToggleButton"
-                IsChecked="{CompiledBinding SettingsViewModel.IsUncompressingEntireArchive.Value,
-                                            Mode=TwoWay}"
-                Text="{CompiledBinding Translation.AlwaysUncompressEntireArchive.Value,
-                                       Mode=OneWay}"
-                x:Name="AlwaysUncompressEntireArchiveToggleButton" />
-        </Border>
-
         <!--  Respect folder structure inside archives  -->
         <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.NavigationArchiveSearchTags}">
             <customControls:TextToggleButton

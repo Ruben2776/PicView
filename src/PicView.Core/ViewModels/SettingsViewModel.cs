@@ -72,7 +72,6 @@ public class SettingsViewModel : IDisposable
         IsIncludingSubdirectories.Subscribe(x => Settings.Sorting.IncludeSubDirectories = x).AddTo(ref _disposables);
         IsShowingTaskbarProgress.Subscribe(x => Settings.UIProperties.IsTaskbarProgressEnabled = x).AddTo(ref _disposables);
         IsFileHistoryEnabled.Subscribe(x => Settings.Navigation.IsFileHistoryEnabled = x).AddTo(ref _disposables);
-        IsUncompressingEntireArchive.Subscribe(x => Settings.Navigation.AlwaysUncompressEntireArchive = x).AddTo(ref _disposables);
         IsRespectingArchiveStructure.Subscribe(x => Settings.Navigation.IsRespectingArchiveStructure = x).AddTo(ref _disposables);
         
         ToggleUsingTouchpadCommand = new ReactiveCommand(_ =>
@@ -197,7 +196,6 @@ public class SettingsViewModel : IDisposable
     public BindableReactiveProperty<bool> IsIncludingSubdirectories { get; } = new(Settings.Sorting.IncludeSubDirectories);
     public BindableReactiveProperty<bool> IsShowingTaskbarProgress { get; } = new(Settings.UIProperties.IsTaskbarProgressEnabled);
     public BindableReactiveProperty<bool> IsFileHistoryEnabled { get; } = new(Settings.Navigation.IsFileHistoryEnabled);
-    public BindableReactiveProperty<bool> IsUncompressingEntireArchive { get; } = new(Settings.Navigation.AlwaysUncompressEntireArchive);
     public BindableReactiveProperty<bool> IsRespectingArchiveStructure { get; } = new(Settings.Navigation.IsRespectingArchiveStructure);
     public BindableReactiveProperty<bool> IsShowingFullPathInTitleBar { get; } = new(Settings.UIProperties.ShowFullPathInTitleBar);
     public BindableReactiveProperty<bool> IsNavigatingByClicking { get; } =
@@ -310,7 +308,6 @@ public class SettingsViewModel : IDisposable
             IsIncludingSubdirectories,
             IsShowingTaskbarProgress,
             IsFileHistoryEnabled,
-            IsUncompressingEntireArchive,
             IsRespectingArchiveStructure,
             SetColorThemeCommand,
             SetBackgroundCommand,

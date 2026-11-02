@@ -363,10 +363,15 @@ public class ArchiveExtractionService
                         continue;
                     }
 
-                    var extractedPath = WriteEntryFlat(entry, tempDirectory, sharedFolderCount);
-                    if (!string.IsNullOrEmpty(extractedPath))
+                    // A page that fails to extract, such as a corrupt entry, is left out, and the rest are extracted
+                    try
                     {
-                        extractedMap[entry.Key] = extractedPath;
+                        extractedMap[entry.Key] = WriteEntryFlat(entry, tempDirectory, sharedFolderCount);
+                    }
+                    catch (Exception ex) when (ex is not OperationCanceledException)
+                    {
+                        DebugHelper.LogDebug(nameof(ArchiveExtractionService), nameof(ExtractEntriesAsync), ex);
+                        keySet.Remove(entry.Key);
                     }
 
                     // Stop early once all requested keys have been extracted

@@ -339,78 +339,9 @@ public class NavigationService(
             var keys = prep.EntryKeys;
             var start = Math.Max(Array.FindIndex(keys, key => string.Equals(key, startEntry, StringComparison.Ordinal)), 0);
 
-            if (!Settings.Navigation.AlwaysUncompressEntireArchive)
-            {
-                // Staged extraction: extract the start entry (and its partner if side-by-side), navigate to it, then
-                // extract the rest in the background one by one while FileWatcherService inserts each new file into the
-                // iterator.
-                var startPath = await extraction.ExtractEntryAsync(archivePath, keys[start], ct.Token, folder).ConfigureAwait(false);
-
-                if (string.IsNullOrEmpty(startPath) || IsOvertaken())
-                {
-                    return false;
-                }
-
-                var startFile = new FileInfo(startPath);
-                List<FileInfo> seedFiles = [startFile];
-                var partner = SideBySidePair.PartnerOf(start, keys.Length);
-                // A partner that fails to extract, such as a corrupt entry, is left out, so the start page shows alone
-                if (partner is { } partnerIndex &&
-                    await extraction.ExtractEntryAsync(archivePath, keys[partnerIndex], ct.Token, folder)
-                        .ConfigureAwait(false) is { } partnerPath)
-                {
-                    // In the entries' order, which FileWatcherService inserts the others by. The partner of the last
-                    // entry is the first, when looping
-                    seedFiles.Insert(partnerIndex < start ? 0 : 1, new FileInfo(partnerPath));
-                }
-
-                if (IsOvertaken())
-                {
-                    return false;
-                }
-
-                isShown = await RepopulateIterator(startFile, tab, ct, seedFiles, load).ConfigureAwait(false);
-                if (!isShown)
-                {
-                    return false;
-                }
-
-                // Extract the others in the background, one by one, with no batches or progress indicator. A partner
-                // that failed is not tried again, as one bad entry would end the extraction of the rest
-                var (afterKeys, beforeKeys) = RemainingKeys(keys, start, start + 1, partner);
-                if (afterKeys.Length + beforeKeys.Length > 0)
-                {
-                    var backgroundToken = extraction.ResetExtractionCts();
-                    tab.IsArchiveExtracting.Value = true;
-                    tab.ArchiveExtractionProgressText.Value = null;
-                    tab.ImageIterator?.UpdateNavigationProperties();
-
-                    _ = Task.Run(async () =>
-                    {
-                        try
-                        {
-                            await extraction.ExtractRemainingAsync(archivePath, afterKeys, beforeKeys,
-                                ct: backgroundToken, folder: folder).ConfigureAwait(false);
-                        }
-                        finally
-                        {
-                            EndExtraction(tab, backgroundToken, folder, stringComparer);
-                        }
-                    }, backgroundToken);
-                }
-                else
-                {
-                    tab.IsArchiveExtracting.Value = false;
-                    tab.ArchiveExtractionProgressText.Value = null;
-                }
-
-                extraction.CleanupOpened(opened);
-                return true;
-            }
-
-            // Staged extraction (AlwaysUncompressEntireArchive = true): extract the start entry and up to 9 after it
-            // immediately and navigate to it, then extract the rest in batches of 10 in the background while reporting
-            // progress with the bottom-right indicator.
+            // Staged extraction: extract the start entry and up to 9 after it immediately and navigate to it, then
+            // extract the rest in batches of 10 in the background while reporting progress with the bottom-right
+            // indicator. A page that fails to extract, such as a corrupt entry, is left out, so the rest still show
             const int initialExtractCount = 10;
             var initialKeys = keys.Skip(start).Take(initialExtractCount).ToArray();
             var extractedPaths = await extraction.ExtractEntriesAsync(archivePath, initialKeys, ct.Token, folder).ConfigureAwait(false);
@@ -535,31 +466,19 @@ public class NavigationService(
     /// <summary>
     /// The entries of an archive left to extract once those from <paramref name="start"/> up to <paramref name="end"/>
     /// are shown: those after them in order, and those before the start, nearest first. The extraction takes turns
-    /// between the two, so that paging either way from the start soon finds its pages. <paramref name="alsoShown"/> is
-    /// another entry shown with them, as the first one is beside the last when looping.
+    /// between the two, so that paging either way from the start soon finds its pages.
     /// </summary>
-    private static (string[] After, string[] Before) RemainingKeys(string[] keys, int start, int end,
-        int? alsoShown = null)
+    private static (string[] After, string[] Before) RemainingKeys(string[] keys, int start, int end)
     {
-        var after = new List<string>(keys.Length - end);
-        for (var i = end; i < keys.Length; i++)
+        var after = keys[end..];
+
+        var before = new string[start];
+        for (var i = 0; i < start; i++)
         {
-            if (i != alsoShown)
-            {
-                after.Add(keys[i]);
-            }
+            before[i] = keys[start - 1 - i];
         }
 
-        var before = new List<string>(start);
-        for (var i = start - 1; i >= 0; i--)
-        {
-            if (i != alsoShown)
-            {
-                before.Add(keys[i]);
-            }
-        }
-
-        return (after.ToArray(), before.ToArray());
+        return (after, before);
     }
 
     public async ValueTask<LoadResult> LoadFromUrlAsync(string url, TabViewModel tab, CancellationTokenSource ct)

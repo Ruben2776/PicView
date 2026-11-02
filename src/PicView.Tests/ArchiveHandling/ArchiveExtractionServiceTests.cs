@@ -83,7 +83,7 @@ public class ArchiveExtractionServiceTests
     }
 
     [Fact]
-    public async Task PrepareArchiveAsync_AlwaysUncompressEntireArchive_ReturnsEntryKeysForStagedExtraction()
+    public async Task PrepareArchiveAsync_ReturnsEntryKeysForStagedExtraction()
     {
         var tempZipPath = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}.zip");
         var tempDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
@@ -100,7 +100,6 @@ public class ArchiveExtractionServiceTests
 
             var service = new ArchiveExtractionService();
 
-            Settings.Navigation.AlwaysUncompressEntireArchive = true;
             var result = await service.PrepareArchiveAsync(
                 tempZipPath,
                 (_, _) => Task.FromResult(false),
@@ -120,7 +119,6 @@ public class ArchiveExtractionServiceTests
         }
         finally
         {
-            Settings.Navigation.AlwaysUncompressEntireArchive = false;
             if (File.Exists(tempZipPath)) File.Delete(tempZipPath);
             if (Directory.Exists(tempDir)) Directory.Delete(tempDir, true);
         }
