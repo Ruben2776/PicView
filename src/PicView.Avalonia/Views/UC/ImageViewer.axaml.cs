@@ -50,9 +50,6 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
             .Subscribe(_ => GalleryView.Dispose(),
                 DebugHelper.LogError(nameof(ImageViewer), nameof(DisposeGalleryViewWhenReplaced)));
 
-    [Obsolete("For the XAML designer only: pass the tab the viewer shows.", error: true)]
-    public ImageViewer() => InitializeComponent();
-
     private void OnLoaded(object? sender, RoutedEventArgs e)
     {
         AddHandler(PointerWheelChangedEvent, PreviewOnPointerWheelChanged, RoutingStrategies.Tunnel);
@@ -265,8 +262,8 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
     private void TouchMagnifyEvent(object? sender, PointerDeltaEventArgs e) =>
         ZoomPanControl.ZoomWithPointerWheelCore(e.Delta.Y > 0, e.GetPosition(this));
 
-    private void PreviewOnPointerWheelChanged(object? sender, PointerWheelEventArgs e) =>
-        _ = PreviewOnPointerWheelChangedAsync(e);
+    private async ValueTask PreviewOnPointerWheelChanged(object? sender, PointerWheelEventArgs e) =>
+        await PreviewOnPointerWheelChangedAsync(e).ConfigureAwait(false);
 
     private async ValueTask PreviewOnPointerWheelChangedAsync(PointerWheelEventArgs e)
     {
@@ -317,7 +314,7 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
 
     private void InitializeImageTransformer()
     {
-        if (_isInitialized || Application.Current.DataContext is not CoreViewModel core)
+        if (_isInitialized)
         {
             return;
         }
@@ -392,18 +389,19 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
     }
 
     #region Zoom
-    /// <inheritdoc cref="Zoom.ZoomIn(ViewModels.MainViewModel)"/>
+    /// <inheritdoc cref="ZoomPanControl.ZoomIn"/>
     public void ZoomIn() =>
         ZoomPanControl.ZoomIn();
 
-    /// <inheritdoc cref="Zoom.ZoomOut(ViewModels.MainViewModel)"/>
+    /// <inheritdoc cref="ZoomPanControl.ZoomOut"/>
     public void ZoomOut() =>
         ZoomPanControl.ZoomOut();
 
-    /// <inheritdoc cref="Zoom.ResetZoom(bool, ViewModels.MainViewModel)"/>
+    /// <inheritdoc cref="ZoomPanControl.ResetZoom(bool)"/>
     public void ResetZoom(bool enableAnimations = true) =>
         ZoomPanControl.ResetZoom(enableAnimations);
     
+    /// <inheritdoc cref="ZoomPanControl.ResetZoomSlim"/>
     public void ResetZoomSlim() =>
         ZoomPanControl.ResetZoomSlim();
     
@@ -471,5 +469,7 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
         SecondaryMotionPhotoView.Dispose();
         _disposables.Dispose();
         HoverBar.Dispose();
+        
+        GC.SuppressFinalize(this);
     }
 }
