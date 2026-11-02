@@ -1,4 +1,8 @@
+using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
+using Avalonia.Interactivity;
+using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Interfaces;
 using PicView.Avalonia.Printing;
@@ -8,6 +12,7 @@ using PicView.Core.Config;
 using PicView.Core.Sizing;
 using PicView.Core.Update;
 using PicView.Core.ViewModels;
+using WindowPlacement = PicView.Avalonia.Services.WindowPlacement;
 
 namespace PicView.Tests.WindowBehavior;
 
@@ -210,22 +215,227 @@ public class SecondaryWindowOpenerTests
         Assert.Same(about, opener.NewestOpenWindow);
     }
 
-    private SecondaryWindowOpener CreateOpener(Func<Window?>? ownerWindow = null) =>
-        new(() => _mainWindow, _provider, ownerWindow ?? (() => _mainWindow));
+    [AvaloniaFact]
+    public async Task OpenAsync_SetsTheTitle()
+    {
+        var opener = CreateOpener();
+
+        var window = await opener.OpenAsync(SecondaryWindowKind.About, Spec());
+
+        Assert.Equal("About - PicView", window!.Title);
+    }
+
+    [AvaloniaFact]
+    public async Task OpenAsync_CenterScreen_SetsTheStartupLocationBeforeShowing()
+    {
+        var opener = CreateOpener();
+        WindowStartupLocation? recorded = null;
+        var spec = Spec() with
+        {
+            OnOpened = window =>
+            {
+                recorded = window.WindowStartupLocation;
+                return Task.CompletedTask;
+            }
+        };
+
+        await opener.OpenAsync(SecondaryWindowKind.About, spec);
+
+        Assert.Equal(WindowStartupLocation.CenterScreen, recorded);
+    }
+
+    [AvaloniaFact]
+    public async Task OpenAsync_CenterOwner_SetsTheStartupLocation()
+    {
+        var opener = CreateOpener();
+        var spec = Spec(WindowOwner.MainWindow) with { Placement = new WindowPlacement.CenterOwner() };
+
+        var window = await opener.OpenAsync(SecondaryWindowKind.About, spec);
+
+        Assert.Equal(WindowStartupLocation.CenterOwner, window!.WindowStartupLocation);
+    }
+
+    [AvaloniaFact]
+    public async Task OpenAsync_Remembered_AppliesThePositionBeforeShowing()
+    {
+        var opener = CreateOpener();
+        PixelPoint? recorded = null;
+        var spec = RememberedSpec(new Properties { Left = 120, Top = 80 }) with
+        {
+            OnOpened = window =>
+            {
+                recorded = window.Position;
+                return Task.CompletedTask;
+            }
+        };
+
+        var window = await opener.OpenAsync(SecondaryWindowKind.Settings, spec);
+
+        Assert.Equal(new PixelPoint(120, 80), recorded);
+        Assert.Equal(WindowStartupLocation.Manual, window!.WindowStartupLocation);
+    }
+
+    [AvaloniaFact]
+    public async Task OpenAsync_RememberedWithNothingRemembered_CentersOnScreen()
+    {
+        var opener = CreateOpener();
+
+        var window = await opener.OpenAsync(SecondaryWindowKind.Settings, RememberedSpec(new Properties()));
+
+        Assert.Equal(WindowStartupLocation.CenterScreen, window!.WindowStartupLocation);
+    }
+
+    [AvaloniaFact]
+    public async Task Closing_Remembered_WritesTheBoundsThenRunsOnClosingThenSaves()
+    {
+        var opener = CreateOpener();
+        var properties = new Properties();
+        List<string> order = [];
+        (int? Left, int? Top) heldInOnClosing = default;
+        var spec = RememberedSpec(properties, order) with
+        {
+            OnClosing = _ =>
+            {
+                heldInOnClosing = (properties.Left, properties.Top);
+                order.Add("onClosing");
+                return Task.CompletedTask;
+            }
+        };
+        var window = await opener.OpenAsync(SecondaryWindowKind.Settings, spec);
+
+        window!.Position = new PixelPoint(33, 44);
+        window.Close();
+
+        Assert.Equal(33, properties.Left);
+        Assert.Equal(44, properties.Top);
+        Assert.Equal((33, 44), heldInOnClosing);
+        Assert.Equal(["onClosing", "save"], order);
+    }
+
+    [AvaloniaFact]
+    public async Task Closing_DisposesTheWindowOnce()
+    {
+        _provider.DisposableAbout = true;
+        var opener = CreateOpener();
+        var window = await opener.OpenAsync(SecondaryWindowKind.About, RememberedSpec(new Properties()));
+
+        window!.Close();
+
+        Assert.Equal(1, Assert.IsType<DisposableWindow>(window).Disposals);
+    }
+
+    [AvaloniaFact]
+    public async Task Escape_ClosesTheWindow()
+    {
+        var opener = CreateOpener();
+        var window = await opener.OpenAsync(SecondaryWindowKind.About, Spec());
+
+        PressEscape(window!);
+
+        Assert.False(opener.IsOpen(SecondaryWindowKind.About));
+    }
+
+    [AvaloniaFact]
+    public async Task Escape_WhenTurnedOff_DoesNotClose()
+    {
+        var opener = CreateOpener();
+        var window = await opener.OpenAsync(SecondaryWindowKind.Keybindings, Spec() with { CloseOnEscape = false });
+
+        PressEscape(window!);
+
+        Assert.True(opener.IsOpen(SecondaryWindowKind.Keybindings));
+    }
+
+    [AvaloniaFact]
+    public async Task Escape_WhileAKeybindBoxRecords_LeavesTheWindowOpen()
+    {
+        var opener = CreateOpener();
+        var box = new KeybindBox();
+        await opener.OpenAsync(SecondaryWindowKind.Settings, Spec() with { Configure = window => window.Content = box });
+        Dispatcher.UIThread.RunJobs();
+        box.TagBox!.Focus();
+        Dispatcher.UIThread.RunJobs();
+        Assert.True(box.IsRecording);
+
+        PressEscape(box.TagBox);
+
+        Assert.True(opener.IsOpen(SecondaryWindowKind.Settings));
+    }
+
+    [AvaloniaFact]
+    public async Task Escape_WithNoMainWindow_StillCloses()
+    {
+        var opener = CreateOpener(mainWindow: () => null);
+        var window = await opener.OpenAsync(SecondaryWindowKind.About, Spec());
+
+        PressEscape(window!);
+
+        Assert.False(opener.IsOpen(SecondaryWindowKind.About));
+    }
+
+    private SecondaryWindowOpener CreateOpener(Func<Window?>? ownerWindow = null, Func<MainWindow?>? mainWindow = null) =>
+        new(mainWindow ?? (() => _mainWindow), _provider, ownerWindow ?? (() => _mainWindow));
 
     private SecondaryWindowSpec Spec(WindowOwner owner = WindowOwner.None) =>
         new(provider =>
         {
             _creates++;
             return provider.CreateAboutWindow();
-        }, owner);
+        }, owner)
+        {
+            Title = "About - PicView",
+            Placement = new WindowPlacement.CenterScreen()
+        };
+
+    private SecondaryWindowSpec RememberedSpec(Properties properties, List<string>? order = null) =>
+        Spec() with
+        {
+            Placement = new WindowPlacement.Remembered(properties, () =>
+            {
+                order?.Add("save");
+                return Task.CompletedTask;
+            }),
+            OnClosing = _ =>
+            {
+                order?.Add("onClosing");
+                return Task.CompletedTask;
+            }
+        };
 
     private SecondaryWindowSpec FileAssociationsSpec() =>
         new(provider =>
         {
             _fileAssociationCreates++;
             return provider.CreateFileAssociationsWindow();
-        }, WindowOwner.MainWindow);
+        }, WindowOwner.MainWindow)
+        {
+            Title = "About - PicView",
+            Placement = new WindowPlacement.CenterScreen()
+        };
+
+    private static void PressEscape(Interactive source) =>
+        source.RaiseEvent(new KeyEventArgs
+        {
+            RoutedEvent = InputElement.KeyDownEvent,
+            Key = Key.Escape,
+            Source = source
+        });
+
+    private sealed class Properties : IWindowProperties
+    {
+        public int? Top { get; set; }
+        public int? Left { get; set; }
+        public double? Width { get; set; }
+        public double? Height { get; set; }
+        public bool Maximized { get; set; }
+    }
+
+    private sealed class DisposableWindow : Window, IDisposable
+    {
+        public int Disposals { get; private set; }
+
+        public void Dispose() => Disposals++;
+    }
 
     private sealed class NoOpModeAdapter : IWindowModeAdapter
     {
@@ -240,9 +450,11 @@ public class SecondaryWindowOpenerTests
     {
         public bool NoFileAssociations { get; set; }
 
+        public bool DisposableAbout { get; set; }
+
         public MainWindow CreateMainWindow(TabViewModel? firstTab = null) => throw new NotSupportedException();
         public IWindowModeAdapter CreateWindowModeAdapter() => throw new NotSupportedException();
-        public Window CreateAboutWindow() => new();
+        public Window CreateAboutWindow() => DisposableAbout ? new DisposableWindow() : new Window();
         public Window CreateBatchResizeWindow(BatchResizeWindowConfig config) => new();
         public Window CreateFileAssociationsWindow() => NoFileAssociations ? null! : new Window();
         public Window CreateConvertWindow() => new();

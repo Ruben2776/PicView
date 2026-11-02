@@ -1,17 +1,21 @@
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
+using PicView.Avalonia.Input;
 using PicView.Avalonia.Interfaces;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.WindowBehavior;
+using PicView.Core.Config;
 using PicView.Core.ViewModels;
 
 namespace PicView.Avalonia.Services;
 
 /// <summary>
 /// Opens each kind of secondary window at most once per main window. Opening one that is already open brings it to
-/// the front. It creates, tracks, owns and shows the window, and clears its slot when the window closes.
+/// the front. It creates, tracks, titles, places, owns and shows the window, and closes it on Escape. When the window
+/// closes it clears its slot, remembers and saves where the window was, and disposes it.
 /// </summary>
 /// <param name="mainWindow">
 /// The main window focus returns to when one of these windows closes, and whose menus close when one opens.
@@ -90,8 +94,32 @@ public sealed class SecondaryWindowOpener(
         }
 
         _open[kind] = window;
-        Track(window);
+        var closedByEscape = false;
+        Track(window, () => closedByEscape);
         spec.Configure?.Invoke(window);
+        window.Title = spec.Title;
+        Place(window, spec.Placement);
+        if (spec.CloseOnEscape)
+        {
+            window.KeyDown += (_, e) =>
+            {
+                if (e.Key is not Key.Escape)
+                {
+                    return;
+                }
+
+                // A recording Keybind box records Escape instead
+                if (FocusedInput.OwnsKeybind(window.FocusManager?.GetFocusedElement(), InputDispatch.CancelKeybind))
+                {
+                    return;
+                }
+
+                closedByEscape = true;
+                e.Handled = true;
+                window.Close();
+            };
+        }
+
         Show(window, spec.Owner);
         window.Closing += async (_, _) =>
         {
@@ -100,10 +128,24 @@ public sealed class SecondaryWindowOpener(
                 _open.Remove(kind);
             }
 
+            var remembered = spec.Placement as WindowPlacement.Remembered;
+            if (remembered is not null)
+            {
+                Remember(window, remembered.Properties);
+            }
+
+            // Back on the UI thread each time, which disposes the window
             if (spec.OnClosing is not null)
             {
-                await spec.OnClosing(window).ConfigureAwait(false);
+                await spec.OnClosing(window).ConfigureAwait(true);
             }
+
+            if (remembered is not null)
+            {
+                await remembered.Save().ConfigureAwait(true);
+            }
+
+            (window as IDisposable)?.Dispose();
         };
         CloseMenus();
         return (window, true);
@@ -112,7 +154,8 @@ public sealed class SecondaryWindowOpener(
     /// <summary>
     /// Keeps track of a secondary window, and gives the main window focus back when it closes.
     /// </summary>
-    private void Track(Window window)
+    /// <param name="closedByEscape">Whether Escape closed the window, read as it closes.</param>
+    private void Track(Window window, Func<bool> closedByEscape)
     {
         _openWindows.Add(window);
         window.Closed += (_, _) =>
@@ -125,11 +168,71 @@ public sealed class SecondaryWindowOpener(
 
             focused.Focus();
             // Escape is still held as this window takes focus, and would go on to close it too
-            if (GenericWindowHelper.ClosedOnEscapePress(window))
+            if (closedByEscape())
             {
                 focused.KeybindRouter.IgnoreUntilReleased(Key.Escape);
             }
         };
+    }
+
+    /// <summary>
+    /// Places a window that is about to show.
+    /// </summary>
+    private static void Place(Window window, WindowPlacement placement)
+    {
+        switch (placement)
+        {
+            case WindowPlacement.CenterScreen:
+                window.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+                break;
+            case WindowPlacement.CenterOwner:
+                window.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                break;
+            case WindowPlacement.Remembered remembered:
+                Restore(window, remembered.Properties);
+                break;
+        }
+    }
+
+    /// <summary>
+    /// Opens a window where it was last closed, or in the center of the screen when no position is remembered.
+    /// </summary>
+    private static void Restore(Window window, IWindowProperties properties)
+    {
+        var placement = RememberedPlacement.Restore(properties, new WindowLimits(window.CanResize, window.MinWidth,
+            window.MaxWidth, window.MinHeight, window.MaxHeight));
+        if (placement.Maximize)
+        {
+            window.WindowState = WindowState.Maximized;
+            return;
+        }
+
+        if (placement.Size is { } size)
+        {
+            window.Width = size.Width;
+            window.Height = size.Height;
+        }
+
+        if (placement.Position is { } position)
+        {
+            window.WindowStartupLocation = WindowStartupLocation.Manual;
+            window.Position = new PixelPoint(position.Left, position.Top);
+        }
+        else
+        {
+            window.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+        }
+    }
+
+    /// <summary>
+    /// Writes where a closing window is into its properties.
+    /// </summary>
+    private static void Remember(Window window, IWindowProperties properties)
+    {
+        var width = window.Bounds.Width > 0 ? window.Bounds.Width : window.Width;
+        var height = window.Bounds.Height > 0 ? window.Bounds.Height : window.Height;
+        RememberedPlacement.Remember(properties, new WindowBounds(width, height, window.Position.X,
+            window.Position.Y, window.WindowState is WindowState.Maximized), window.CanResize);
     }
 
     private void Show(Window window, WindowOwner owner)

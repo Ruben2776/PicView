@@ -1,5 +1,6 @@
 using Avalonia.Controls;
 using PicView.Avalonia.Interfaces;
+using PicView.Core.Config;
 
 namespace PicView.Avalonia.Services;
 
@@ -42,12 +43,37 @@ public enum WindowOwner
 /// <param name="Owner">Which window owns the new window when it is shown.</param>
 public sealed record SecondaryWindowSpec(Func<IWindowProvider, Window?> Create, WindowOwner Owner = WindowOwner.None)
 {
+    /// The window's title, final: combined with the app name where the caller wants it.
+    public required string Title { get; init; }
+
+    /// Where the window opens, and whether its bounds are remembered.
+    public required WindowPlacement Placement { get; init; }
+
+    /// Whether Escape closes the window. Keybindings turns it off, since it records keys.
+    public bool CloseOnEscape { get; init; } = true;
+
     /// Runs on the UI thread after the window is created, and before it is shown.
     public Action<Window>? Configure { get; init; }
 
     /// Runs after the window is shown, and only when this open created it.
     public Func<Window, Task>? OnOpened { get; init; }
 
-    /// Runs when the window closes, after its slot is cleared. Callers save their config and dispose objects here.
+    /// Runs when the window closes, after its slot is cleared and its bounds are remembered, and before they are
+    /// saved. Callers record their own state and dispose objects here.
     public Func<Window, Task>? OnClosing { get; init; }
+}
+
+/// <summary>
+/// Where a Tool Window or App Window opens.
+/// </summary>
+public abstract record WindowPlacement
+{
+    /// Opens where it was last closed, and remembers where it closes. Falls back to the center of the screen.
+    public sealed record Remembered(IWindowProperties Properties, Func<Task> Save) : WindowPlacement;
+
+    /// Opens in the center of the screen.
+    public sealed record CenterScreen : WindowPlacement;
+
+    /// Opens in the center of its owner, or of the screen when it has none.
+    public sealed record CenterOwner : WindowPlacement;
 }
