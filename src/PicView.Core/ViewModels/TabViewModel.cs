@@ -131,6 +131,16 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
     public BindableReactiveProperty<FileInfo?> SecondaryFileInfo { get; } = new(null);
 
     /// <summary>
+    /// What changed in what the tab shows: once per <see cref="Display"/>, <see cref="DisplaySingleImage"/> and
+    /// <see cref="ShowPage"/>, after the models, their bindables and the View History hold the new values, and once per
+    /// shown file that changed on disk. It fires on the thread that showed the image, so a subscriber that touches the
+    /// UI hops to its thread itself. This is the one change the UI reacts to.
+    /// </summary>
+    public Observable<ShownChange> Shown => _shown;
+
+    private readonly Subject<ShownChange> _shown = new();
+
+    /// <summary>
     /// Shows <paramref name="primary"/>, and <paramref name="secondary"/> beside it when viewing side by side.
     /// Without a secondary, any previous one is cleared. This is the one way to change the shown models: it sets
     /// <see cref="SecondaryModel"/> before <see cref="Model"/>, because the UI reacts to <see cref="Model"/> changing
@@ -146,6 +156,7 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
         ApplyRequestedPage(primary);
         ShowModels(primary, secondary);
         RecordShown();
+        _shown.OnNext(ShownChange.Image);
     }
 
     /// <summary>
@@ -160,6 +171,7 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
         _singleImageTitle = title;
         ShowModels(model, null);
         RecordShown();
+        _shown.OnNext(ShownChange.Image);
     }
 
     // The title of the Single Image the tab shows, which its View History entry keeps
@@ -179,7 +191,13 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
         }
 
         SetPage(model, tiff, page);
+        // The page is shown only while that model is still the shown one
+        if (ReferenceEquals(model, Model))
+        {
+            Image.Value = model.Image;
+        }
         RecordShown();
+        _shown.OnNext(ShownChange.Image);
     }
 
     /// <summary>
@@ -654,6 +672,7 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
         NavigationCts.Dispose();
         Orientation.Dispose();
         Hookups?.Dispose();
+        _shown.Dispose();
         
         GC.SuppressFinalize(this);
     }
