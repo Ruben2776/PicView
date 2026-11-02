@@ -210,12 +210,14 @@ public class TabOverviewViewModel
 
         Tabs.Value.RemoveAt(index);
         Detach(tab);
-        if (ReferenceEquals(tab, ActiveTab.Value) && Tabs.Value.Count > 0)
+        if (!ReferenceEquals(tab, ActiveTab.Value) || Tabs.Value.Count <= 0)
         {
-            // Target the previous tab
-            var targetIndex = Math.Max(0, index - 1);
-            SelectTab(Tabs.Value[Math.Clamp(targetIndex, 0, Tabs.Value.Count - 1)]);
+            return true;
         }
+
+        // Target the previous tab
+        var targetIndex = Math.Max(0, index - 1);
+        SelectTab(Tabs.Value[Math.Clamp(targetIndex, 0, Tabs.Value.Count - 1)]);
 
         return true;
     }

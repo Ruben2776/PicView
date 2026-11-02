@@ -1,9 +1,6 @@
-using System.Diagnostics;
 using PicView.Core.ArchiveHandling;
 using PicView.Core.DebugTools;
-using PicView.Core.Extensions;
 using PicView.Core.FileHistory;
-using PicView.Core.Localization;
 using PicView.Core.Models;
 using PicView.Core.Navigation;
 using PicView.Core.Navigation.Interfaces;
@@ -98,7 +95,7 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
         {
             if (_titles is null)
             {
-                Interlocked.CompareExchange(ref _titles, new TabTitles(this), null);
+                LazyInitializer.EnsureInitialized(ref _titles, () => new TabTitles(this));
             }
 
             return _titles;
@@ -164,12 +161,14 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
     // A load that ends after the tab closed shows into a disposed tab, which stays harmless
     private void Publish(ShownChange change)
     {
-        if (!_shown.IsDisposed)
+        if (_shown.IsDisposed)
         {
-            // The titles are marked after the image bindable is set and before the UI reacts
-            Titles.OnShown(change);
-            _shown.OnNext(change);
+            return;
         }
+
+        // The titles are marked after the image bindable is set and before the UI reacts
+        Titles.OnShown(change);
+        _shown.OnNext(change);
     }
 
     /// <summary>
@@ -419,7 +418,6 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
     
     /// <inheritdoc cref="Core.Navigation.Interfaces.IImageIterator"/>>
     public IImageIterator? ImageIterator { get; private set; }
-    private ArchiveOpenings? _archives;
 
     /// <summary>
     /// The tab's Archive Openings: the archives it has opened, the one it reads, and where their extraction stands
@@ -429,12 +427,12 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
     {
         get
         {
-            if (_archives is null)
+            if (field is null)
             {
-                Interlocked.CompareExchange(ref _archives, new ArchiveOpenings(this, archiveEntryWriter), null);
+                LazyInitializer.EnsureInitialized(ref field, () => new ArchiveOpenings(this, archiveEntryWriter));
             }
 
-            return _archives;
+            return field;
         }
     }
     public IThumbnailCache? ThumbnailCache { get; private set; }

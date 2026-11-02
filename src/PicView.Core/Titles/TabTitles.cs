@@ -253,12 +253,14 @@ public sealed class TabTitles : INotifyPropertyChanged, IDisposable
         }
 
         // Cropping replaces only the titlebar text and its tooltip; the window and the tab keep the file's name
-        if (_tab.Crop is not null)
+        if (_tab.Crop is null)
         {
-            var cropMessage = translation?.CropMessage ?? string.Empty;
-            _title = cropMessage;
-            _titleTooltip = cropMessage;
+            return;
         }
+
+        var cropMessage = translation?.CropMessage ?? string.Empty;
+        _title = cropMessage;
+        _titleTooltip = cropMessage;
     }
 
     private void SetAll(string text)
