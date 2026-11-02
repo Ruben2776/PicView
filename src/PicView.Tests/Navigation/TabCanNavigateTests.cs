@@ -10,7 +10,7 @@ using R3;
 namespace PicView.Tests.Navigation;
 
 /// <summary>
-/// A tab derives whether Next and Prev run from its own state (ADR-0016): its position in its files, its Archive
+/// A tab derives whether Next and Prev run from its own state (ADR-0017): its position in its files, its Archive
 /// Openings state, its Crop, whether it has an iterator, and the two navigation settings. Nothing else writes them.
 /// </summary>
 [Collection("Sequential")]

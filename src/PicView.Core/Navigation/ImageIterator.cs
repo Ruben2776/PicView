@@ -302,7 +302,7 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
     
     #region Core Navigation Logic
     
-    // Where the iterator is, told to the tab, which derives whether Next and Prev run from it (ADR-0016)
+    // Where the iterator is, told to the tab, which derives whether Next and Prev run from it (ADR-0017)
     private void PublishPosition() => PublishPosition(CurrentIndex, Files.Count);
 
     private void PublishPosition(int index, int count) => _tab.SetPosition(index, count);

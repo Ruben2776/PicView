@@ -20,7 +20,7 @@ public interface IImageIterator : IDisposable
 
     /// <summary>
     /// Gets the current position in the file list. The iterator tells its tab this position and the count of its
-    /// files whenever either changes, and the tab derives whether Next and Prev run from them (ADR-0016).
+    /// files whenever either changes, and the tab derives whether Next and Prev run from them (ADR-0017).
     /// </summary>
     int CurrentIndex { get; }
     

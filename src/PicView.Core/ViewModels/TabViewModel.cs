@@ -452,10 +452,10 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
     
     public BindableReactiveProperty<int> NavigationIndex { get; } = new(0);
     public BindableReactiveProperty<int> MaxIndex { get; } = new(0);
-    /// <summary>Whether Next runs, derived by the tab (ADR-0016). Nothing outside the tab writes it.</summary>
+    /// <summary>Whether Next runs, derived by the tab (ADR-0017). Nothing outside the tab writes it.</summary>
     public IReadOnlyBindableReactiveProperty<bool> CanNavigateForwards => _canNavigateForwards;
 
-    /// <summary>Whether Prev runs, derived by the tab (ADR-0016). Nothing outside the tab writes it.</summary>
+    /// <summary>Whether Prev runs, derived by the tab (ADR-0017). Nothing outside the tab writes it.</summary>
     public IReadOnlyBindableReactiveProperty<bool> CanNavigateBackwards => _canNavigateBackwards;
 
     private readonly BindableReactiveProperty<bool> _canNavigateForwards = new();
@@ -478,7 +478,7 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
     public void RefreshCanNavigate() => DeriveCanNavigate();
 
     /// <summary>
-    /// Whether Next and Prev run, derived from the tab's own state (ADR-0016): no iterator or a crop means neither; a
+    /// Whether Next and Prev run, derived from the tab's own state (ADR-0017): no iterator or a crop means neither; a
     /// list of one and nothing extracting means neither; else forwards needs an image ahead (a pair when side-by-side
     /// is on), or looping, or an extraction still listing pages; backwards needs an image behind, or looping.
     /// </summary>
