@@ -37,6 +37,9 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
             Publish(list, new FileListChange(FileListChangeKind.Listed, list, CurrentIndex));
         }
         UpdateNavigationProperties();
+        // A new listing at the same index and count changes nothing the titles subscribe to, yet the shown file's
+        // place in it is new, so the titles are told here (ADR-0015)
+        _tab.Titles.Mark();
     }
 
     #region File list changes

@@ -364,6 +364,8 @@ public class NavigationService(
 
             if (ct.IsCancellationRequested)
             {
+                // Nothing shows, so the progress text must not stay in the titles
+                tab.EndLoading();
                 return LoadResult.Failed();
             }
 
@@ -383,6 +385,8 @@ public class NavigationService(
         catch (OperationCanceledException)
         {
             platformService.StopTaskbarProgress();
+            // Nothing shows, so the progress text must not stay in the titles
+            tab.EndLoading();
             return LoadResult.Failed();
         }
         catch (Exception e)

@@ -281,11 +281,36 @@ public class TabTitlesTests
     }
 
     [Fact]
+    public void Initialize_SameIndexAndCountAfterRecreate_GivesIndexedTitle()
+    {
+        // A clipboard paste disposes the iterator; opening the same file again recreates one at the same index and
+        // count, so the index and count bindables never change and cannot mark the titles themselves
+        var files = Browse("a.jpg");
+        _tab.Display(Model("a.jpg"));
+        _tab.DisposeImageIterator();
+        _tab.DisplaySingleImage(new ImageModel { Image = new object(), PixelWidth = 1, PixelHeight = 1 },
+            SingleImageType.Clipboard, "Pasted");
+        _tab.Initialize(new SharedImageCache(f => ValueTask.FromResult(Model(f.Name))!), new ThumbnailCache(),
+            new MockThumbnailLoader(), null, new ThumbnailCache());
+        _tab.Display(Model("a.jpg"));
+        Assert.Equal(Loading, _tab.Titles.Title);
+
+        _tab.ImageIterator!.Initialize(files, 0);
+
+        Assert.Equal("a.jpg", _tab.Titles.TabTitle);
+    }
+
+    [Fact]
     public void Display_AfterDispose_DoesNotThrow()
     {
+        // The titles exist and were read before the tab is disposed, so the marks below reach a disposed module
+        _ = _tab.Titles.Title;
         _tab.Dispose();
 
         _tab.Display(Model("a.jpg"));
+        _tab.SetLoading();
+        _tab.EndLoading();
+        _tab.Crop = new CropViewModel();
 
         _ = _tab.Titles.Title;
     }

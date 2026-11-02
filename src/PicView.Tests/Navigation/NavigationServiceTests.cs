@@ -169,6 +169,21 @@ public class NavigationServiceTests : IDisposable
     }
 
     [Fact]
+    public async Task LoadFromUrlAsync_Cancelled_EndsDownloading()
+    {
+        var tab = CreateTab(_testDirectory);
+        tab.SetDownloading("image.jpg 40%");
+        var cts = new CancellationTokenSource();
+        await cts.CancelAsync();
+
+        var result = await _navigationService.LoadFromUrlAsync("http://127.0.0.1:9/image.jpg", tab, cts);
+
+        // A cancelled download shows nothing, so its progress text must not stay in the titles
+        Assert.False(result.IsLoaded);
+        Assert.Equal(PicView.Core.Titles.TitlePhase.None, tab.Titles.Phase);
+    }
+
+    [Fact]
     public async Task LoadFromStringAsync_Url_DropsImageIterator()
     {
         var tab = CreateTab(_testDirectory);
