@@ -1,4 +1,6 @@
 <Project>
+    <Import Project="$(MSBuildThisFileDirectory)TargetFrameworks.props" />
+
     <PropertyGroup>
         <Nullable>enable</Nullable>
         <VersionPrefix>5.2.0.1</VersionPrefix>
