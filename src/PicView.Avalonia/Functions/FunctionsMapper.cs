@@ -217,7 +217,7 @@ public class FunctionsMapper : IActionRunner
             
             // Background and lock screen image
             Actions.SetAsLockScreen => SetAsLockScreen,
-            Actions.SetAsLockscreenCentered => SetAsLockscreenCentered,
+            Actions.SetAsLockscreenCentered => SetAsLockScreen,
             Actions.SetAsWallpaper => SetAsWallpaper,
             Actions.SetAsWallpaperFitted => SetAsWallpaperFitted,
             Actions.SetAsWallpaperStretched => SetAsWallpaperStretched,
@@ -518,16 +518,7 @@ public class FunctionsMapper : IActionRunner
         return ValueTask.CompletedTask;
     }
 
-    private async ValueTask CheckForUpdates()
-    {
-        await Dispatcher.UIThread.InvokeAsync(() => _vm.PlatformWindowService?.ShowAboutWindow());
-        if (Application.Current.DataContext is not CoreViewModel core)
-        {
-            return;
-        }
-
-        await core.AboutView.UpdateCurrentVersion().ConfigureAwait(false);
-    }
+    private ValueTask CheckForUpdates() => PlatformActions.CheckForUpdates(_vm);
 
     private ValueTask ConvertWindow()
     {
@@ -628,28 +619,10 @@ public class FunctionsMapper : IActionRunner
         await FilePicker.SelectAndLoadFile(_mainWindow, _vm).ConfigureAwait(false);
 
     /// <inheritdoc cref="FileManager.OpenWith(string)" />
-    private ValueTask OpenWith()
-    {
-        if (Application.Current.DataContext is not CoreViewModel core)
-        {
-            return ValueTask.CompletedTask;
-        }
-
-        core.PlatformService.OpenWith(_vm.WindowTabs.ActiveTab.CurrentValue.Model.FileInfo?.FullName);
-        return ValueTask.CompletedTask;
-    }
+    private ValueTask OpenWith() => PlatformActions.OpenWith(_vm);
 
     /// <inheritdoc cref="FileManager.LocateOnDisk(string)" />
-    private ValueTask OpenInExplorer()
-    {
-        if (Application.Current.DataContext is not CoreViewModel core)
-        {
-            return ValueTask.CompletedTask;
-        }
-
-        core.PlatformService.LocateOnDisk(_vm.WindowTabs.ActiveTab.CurrentValue.Model.FileInfo?.FullName);
-        return ValueTask.CompletedTask;
-    }
+    private ValueTask OpenInExplorer() => PlatformActions.OpenInExplorer(_vm);
 
     /// <inheritdoc cref="FileSavingService.SaveAsync(TabViewModel)" />
     private async ValueTask Save() =>
@@ -660,33 +633,10 @@ public class FunctionsMapper : IActionRunner
         await FileSaver.SaveFileAs(_vm).ConfigureAwait(false);
 
     /// <inheritdoc cref="FileManager.DeleteFileWithOptionalDialog" />
-    private async ValueTask DeleteFile()
-    {
-        if (Application.Current.DataContext is not CoreViewModel core)
-        {
-            return;
-        }
-
-        const bool recycle = true;
-        await FileManager
-            .DeleteFileWithOptionalDialog(recycle, _vm.WindowTabs.ActiveTab.CurrentValue.Model
-                .FileInfo?.FullName, core.PlatformService, _mainWindow)
-            .ConfigureAwait(false);
-    }
+    private ValueTask DeleteFile() => PlatformActions.DeleteFile(_vm, _mainWindow, recycle: true);
     
     /// <inheritdoc cref="FileManager.DeleteFileWithOptionalDialog" />
-    private async ValueTask DeleteFilePermanently()
-    {
-        if (Application.Current.DataContext is not CoreViewModel core)
-        {
-            return;
-        }
-        const bool recycle = false;
-        await FileManager
-            .DeleteFileWithOptionalDialog(recycle, _vm.WindowTabs.ActiveTab.CurrentValue.Model
-                .FileInfo?.FullName, core.PlatformService, _mainWindow)
-            .ConfigureAwait(false);
-    }
+    private ValueTask DeleteFilePermanently() => PlatformActions.DeleteFile(_vm, _mainWindow, recycle: false);
 
     private ValueTask Rename()
     {
@@ -695,12 +645,7 @@ public class FunctionsMapper : IActionRunner
     }
 
     /// <inheritdoc cref="FileManager.ShowFileProperties(string)" />
-    private async ValueTask ShowFileProperties()
-    {
-        await Task.Run(() =>
-            FileManager.ShowFileProperties(_vm.WindowTabs.ActiveTab.CurrentValue.Model
-                .FileInfo?.FullName)).ConfigureAwait(false);
-    }
+    private ValueTask ShowFileProperties() => PlatformActions.ShowFileProperties(_vm);
 
     #endregion
 
@@ -906,26 +851,7 @@ public class FunctionsMapper : IActionRunner
     private async ValueTask SetAsWallpaperFilled() =>
         await WallpaperManager.SetAsWallpaper(WallpaperStyle.Fill, _vm).ConfigureAwait(false);
 
-    private async ValueTask SetAsLockscreenCentered()
-    {
-        if (Application.Current.DataContext is not CoreViewModel core)
-        {
-            return;
-        }
-        await Task.Run(() => core.PlatformService.SetAsLockScreen(_vm.WindowTabs.ActiveTab.CurrentValue.Model.FileInfo.FullName)).ConfigureAwait(false);
-    }
-
-    private async ValueTask SetAsLockScreen()
-    {
-        if (Application.Current.DataContext is not CoreViewModel core)
-        {
-            return;
-        }
-
-        await Task.Run(() =>
-            core.PlatformService.SetAsLockScreen(_vm.WindowTabs.ActiveTab.CurrentValue.Model.FileInfo
-                .FullName)).ConfigureAwait(false);
-    }
+    private ValueTask SetAsLockScreen() => PlatformActions.SetAsLockScreen(_vm);
 
     #endregion
 
@@ -970,45 +896,13 @@ public class FunctionsMapper : IActionRunner
         }
     }
     
-    private ValueTask ShowSettingsFile()
-    {
-        if (Application.Current.DataContext is not CoreViewModel core)
-        {
-            return ValueTask.CompletedTask;
-        }
-        core.PlatformService.OpenWith(CurrentSettingsPath);
-        return ValueTask.CompletedTask;
-    }
-    
-    private ValueTask ShowKeybindingsFile()
-    {
-        if (Application.Current.DataContext is not CoreViewModel core)
-        {
-            return ValueTask.CompletedTask;
-        }
-        core.PlatformService.OpenWith(KeybindingFunctions.CurrentKeybindingsPath);
-        return ValueTask.CompletedTask;
-    }
-    
-    private ValueTask ShowRecentHistoryFile()
-    {
-        if (Application.Current.DataContext is not CoreViewModel core)
-        {
-            return ValueTask.CompletedTask;
-        }
-        core.PlatformService.OpenWith(FileHistoryManager.CurrentFileHistoryFile);
-        return ValueTask.CompletedTask;
-    }
-    
-    private ValueTask ShowFavoritesFile()
-    {
-        if (Application.Current.DataContext is not CoreViewModel core)
-        {
-            return ValueTask.CompletedTask;
-        }
-        core.PlatformService.OpenWith(FavoritesManager.CurrentFavoritesFile);
-        return ValueTask.CompletedTask;
-    }
+    private ValueTask ShowSettingsFile() => PlatformActions.ShowFile(_vm, CurrentSettingsPath);
+
+    private ValueTask ShowKeybindingsFile() => PlatformActions.ShowFile(_vm, KeybindingFunctions.CurrentKeybindingsPath);
+
+    private ValueTask ShowRecentHistoryFile() => PlatformActions.ShowFile(_vm, FileHistoryManager.CurrentFileHistoryFile);
+
+    private ValueTask ShowFavoritesFile() => PlatformActions.ShowFile(_vm, FavoritesManager.CurrentFavoritesFile);
     
     private async ValueTask ToggleOpeningInSameWindow() =>
         await SettingsUpdater.ToggleOpeningInSameWindow().ConfigureAwait(false);
