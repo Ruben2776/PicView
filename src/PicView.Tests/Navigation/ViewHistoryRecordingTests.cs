@@ -242,9 +242,9 @@ public class ViewHistoryRecordingTests : IDisposable
     }
 
     [Fact]
-    public async Task IndexOfArchivePage_PageNotExtracted_IsNull()
+    public async Task IndexOfArchivePage_PageNotListed_IsNull()
     {
-        // The first ten pages come with the start, and the rest once the start page shows
+        // Every page is extracted, but the tab lists only the first
         var zip = CreateZip(Enumerable.Range(0, 12).Select(i => $"{(char)('a' + i)}.jpg").ToArray());
         await OpenArchiveAsync(zip, listed: ["a.jpg"]);
 
@@ -499,16 +499,24 @@ public class ViewHistoryRecordingTests : IDisposable
 
     private ValueTask<ArchiveOpening?> OpenAsync(string zip) => OpenAsync(_tab, zip);
 
-    // Opens the archive in the tab, which extracts its first ten pages
-    private static ValueTask<ArchiveOpening?> OpenAsync(TabViewModel tab, string zip) =>
-        tab.Archives.OpenAsync(zip, null, NoLocalSoftware, string.CompareOrdinal, TestContext.Current.CancellationToken);
+    // Opens the archive in the tab and extracts every page, as once the start page shows
+    private static async ValueTask<ArchiveOpening?> OpenAsync(TabViewModel tab, string zip)
+    {
+        var opening = await tab.Archives.OpenAsync(zip, null, NoLocalSoftware, string.CompareOrdinal,
+            TestContext.Current.CancellationToken);
+        if (opening is not null)
+        {
+            opening.ExtractRest();
+            await opening.Ended.WaitAsync(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken);
+        }
+
+        return opening;
+    }
 
     // The file that the page with the entry given was extracted to
     private static string PageOf(ArchiveOpening? opening, string entry) =>
-        opening!.Files.Single(file => string.Equals(file.Name, Path.GetFileName(entry).Length == entry.Length
-            ? entry
-            : entry.Replace('/', ' ').Replace("  ", " - ").Replace(" ", " - ", StringComparison.Ordinal), StringComparison.Ordinal)
-            || string.Equals(file.Name, FlatName(entry), StringComparison.Ordinal)).FullName;
+        Directory.GetFiles(opening!.Folder).Single(file => string.Equals(Path.GetFileName(file), FlatName(entry),
+            StringComparison.Ordinal));
 
     // The name a page in a folder of the archive is extracted under: its folders joined to its name with " - "
     private static string FlatName(string entry) => string.Join(" - ", entry.Split('/'));
@@ -516,7 +524,7 @@ public class ViewHistoryRecordingTests : IDisposable
     // A zip opens without local software
     private static Task<bool> NoLocalSoftware(string archive, string folder) => Task.FromResult(false);
 
-    // Opens the archive in the tab, and lists the files of some of its pages, as the folder watcher does once it sees them
+    // Opens the archive in the tab, and lists the files of some of its pages, as a tab lists them as they are extracted
     private async Task OpenArchiveAsync(string zip, string[] listed)
     {
         var opening = await OpenAsync(zip);

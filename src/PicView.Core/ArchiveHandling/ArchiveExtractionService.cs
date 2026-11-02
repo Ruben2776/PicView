@@ -517,9 +517,23 @@ internal class ArchiveExtractionService(IArchiveEntryWriter? entryWriter = null)
                     return false;
                 }
 
-                var path = WriteEntryFlat(entry, tempDirectory, sharedFolderCount);
-                pageWritten?.Invoke(path);
-                extractedCount++;
+                // A page that fails to extract, such as a corrupt entry, is left out, and the rest are extracted
+                string? path;
+                try
+                {
+                    path = WriteEntryFlat(entry, tempDirectory, sharedFolderCount);
+                }
+                catch (Exception ex) when (ex is not OperationCanceledException)
+                {
+                    DebugHelper.LogDebug(nameof(ArchiveExtractionService), nameof(ExtractRemaining), ex);
+                    path = null;
+                }
+
+                if (path is not null)
+                {
+                    pageWritten?.Invoke(path);
+                    extractedCount++;
+                }
                 batchCounter++;
                 left--;
 

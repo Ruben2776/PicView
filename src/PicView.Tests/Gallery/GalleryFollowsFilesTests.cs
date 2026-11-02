@@ -196,10 +196,13 @@ public class GalleryFollowsFilesTests : IDisposable
     }
 
     [Fact]
-    public async Task FileInserted_BeforeTheItemsAreAdded_LoadsAgainWithTheFile()
+    public async Task FileInserted_BeforeTheItemsAreAdded_AddsItsItemOnceTheyAreIn_WithoutLoadingAgain()
     {
+        // An archive's pages are inserted one by one as they are extracted; a load that started again for each of them
+        // would never show its thumbnails
         var tab = CreateTab();
         var reader = UseRecordingReader(tab);
+        var changes = RecordChanges(tab);
         reader.Pause(afterReads: 0);
         Show(tab);
         var files = await FilesAsync(Names(0, 30));
@@ -213,6 +216,9 @@ public class GalleryFollowsFilesTests : IDisposable
 
         await WaitUntilLoadedAsync(tab, tab.ImageIterator.Files.Select(file => file.Name).ToArray());
         Assert.Equal(31, tab.Gallery.GalleryItems.Count);
+        // The items the load built went in, and the file's item after them; the load did not start again
+        Assert.Equal<(NotifyCollectionChangedAction, int)>(
+            [(NotifyCollectionChangedAction.Add, 30), (NotifyCollectionChangedAction.Add, 1)], changes);
     }
 
     [Fact]

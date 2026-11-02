@@ -73,10 +73,14 @@ public class GalleryCoordinator : IDisposable
 
     #region Following the file list
 
+    // Changes made while a load builds its items, applied once they are in, so the load need not start again for each
+    private readonly List<FileListChange> _pendingEdits = [];
+
     /// <summary>
     /// Applies one change to the tab's file list. The iterator calls this while it holds its list, so the changes queue
     /// in the order they were made and the items follow the list: a loading gallery edits its items like a loaded one,
-    /// and a load that has not added its items yet starts again from the changed list.
+    /// and a load that has not added its items yet applies the change once they are in, rather than starting again:
+    /// an archive's pages are inserted one by one as they are extracted.
     /// </summary>
     internal void FilesChanged(FileListChange change) => _ = Enqueue(() =>
     {
@@ -90,7 +94,7 @@ public class GalleryCoordinator : IDisposable
         switch (Gallery.LoadingState)
         {
             case GalleryLoadingState.Starting:
-                StartLoad(_tab.NavigationIndex.CurrentValue);
+                _pendingEdits.Add(change);
                 break;
             case GalleryLoadingState.Loading:
             case GalleryLoadingState.Loaded:
@@ -328,6 +332,7 @@ public class GalleryCoordinator : IDisposable
     private void Drop()
     {
         Cancel();
+        _pendingEdits.Clear();
         Gallery.LoadingState = GalleryLoadingState.NotLoaded;
         if (Gallery.GalleryItems.Count > 0)
         {
@@ -343,6 +348,7 @@ public class GalleryCoordinator : IDisposable
     private void StartLoad(int currentIndex)
     {
         Cancel();
+        _pendingEdits.Clear();
         if (Gallery.GalleryItems.Count > 0)
         {
             Gallery.GalleryItems.Clear();
@@ -400,6 +406,12 @@ public class GalleryCoordinator : IDisposable
 
                 Gallery.GalleryItems.AddRange(items);
                 Gallery.LoadingState = GalleryLoadingState.Loading;
+                // The changes made while the items were built, in their order, so the items follow the list
+                foreach (var change in _pendingEdits)
+                {
+                    Edit(change);
+                }
+                _pendingEdits.Clear();
             }).ConfigureAwait(false);
 
             while (true)

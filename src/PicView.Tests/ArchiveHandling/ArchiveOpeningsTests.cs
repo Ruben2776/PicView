@@ -45,16 +45,16 @@ public class ArchiveOpeningsTests : IDisposable
     }
 
     [Fact]
-    public async Task OpenAsync_ExtractsTheStartPageAndTheNineAfterItFirst()
+    public async Task OpenAsync_ExtractsTheStartPageAlone_SoItShowsBeforeTheRest()
     {
         var tab = CreateTab();
-        var zip = await CreateZipAsync("first_ten.zip", 15);
+        var zip = await CreateZipAsync("start_only.zip", 15);
 
         var opening = await OpenAsync(tab, zip, "img_03.jpg");
 
         Assert.NotNull(opening);
         Assert.Equal("img_03.jpg", opening.StartFile.Name);
-        Assert.Equal(Names(3, 12), opening.Files.Select(f => f.Name));
+        Assert.Equal(["img_03.jpg"], opening.Files.Select(f => f.Name));
         Assert.Equal(zip, tab.Archives.OpenArchive);
         Assert.Equal(opening.Folder, tab.Archives.OpenFolder);
         // Nothing extracts until the seed shows and the rest is asked for
@@ -100,6 +100,22 @@ public class ArchiveOpeningsTests : IDisposable
 
         Assert.Equal(ExtractionState.Extracting, stateWhenListed);
         Assert.Equal(Names(1, 12), tab.ImageIterator.Files.Select(f => f.Name));
+    }
+
+    [Fact]
+    public async Task ExtractRest_CorruptPage_IsLeftOut_AndTheRestAreExtracted()
+    {
+        var tab = CreateTab();
+        var zip = await CreateZipAsync("corrupt_rest.zip", 5);
+        TestZips.CorruptEntry(zip, "img_03.jpg");
+        var opening = (await OpenAsync(tab, zip, null))!;
+        tab.ImageIterator!.Initialize(opening.Files);
+
+        opening.ExtractRest();
+        await opening.Ended.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+
+        Assert.Equal(ExtractionState.Finished, tab.Archives.State);
+        Assert.Equal(["img_01.jpg", "img_02.jpg", "img_04.jpg", "img_05.jpg"], tab.ImageIterator.Files.Select(f => f.Name));
     }
 
     [Fact]
@@ -229,7 +245,7 @@ public class ArchiveOpeningsTests : IDisposable
         await second.Ended.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
 
         Assert.Equal(ExtractionState.Extracting, stateAfterTheFirstEnded);
-        Assert.Equal("10/12", progressAfterTheFirstEnded);
+        Assert.Equal("1/12", progressAfterTheFirstEnded);
         Assert.Equal(ExtractionState.Finished, tab.Archives.State);
         Assert.Null(tab.Archives.ProgressText.Value);
     }
@@ -267,7 +283,7 @@ public class ArchiveOpeningsTests : IDisposable
         await Task.Delay(100, TestContext.Current.CancellationToken);
 
         Assert.Null(progressBeforeExtracting);
-        Assert.Equal("10/12", progressWhileExtracting);
+        Assert.Equal("1/12", progressWhileExtracting);
         Assert.Null(tab.Archives.ProgressText.Value);
     }
 
@@ -280,8 +296,8 @@ public class ArchiveOpeningsTests : IDisposable
         older.ExtractRest();
         await writer.Holding("img_11.jpg").WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
 
-        // A small archive opens, whose first ten pages are all of it, while the older extraction is still ending
-        var newer = (await OpenAsync(tab, await CreateZipAsync("small.zip", 3, prefix: "page"), null))!;
+        // An archive of one page opens, whose start page is all of it, while the older extraction is still ending
+        var newer = (await OpenAsync(tab, await CreateZipAsync("small.zip", 1, prefix: "page"), null))!;
         newer.ExtractRest();
         var stateBeforeTheOlderEnded = tab.Archives.State;
         var progressBeforeTheOlderEnded = tab.Archives.ProgressText.Value;

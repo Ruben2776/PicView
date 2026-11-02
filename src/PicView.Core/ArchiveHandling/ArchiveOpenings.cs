@@ -13,7 +13,7 @@ public readonly record struct ArchiveMark(int OpenedBefore);
 
 /// <summary>
 ///     The Archive Openings of one tab (ADR-0013). <see cref="OpenAsync" /> opens an archive at a page: it prepares the
-///     archive, extracts the start page and the nine after it, and hands back an <see cref="ArchiveOpening" /> whose
+///     archive, extracts the start page alone, and hands back an <see cref="ArchiveOpening" /> whose
 ///     <see cref="ArchiveOpening.ExtractRest" /> extracts the others in the background once the start page shows. The
 ///     owner keeps every opening's folder until the tab leaves it, so a page shown from an older opening still counts as
 ///     its archive's, answers which archive and entry a shown file is a page of, follows renames, and tells the iterator
@@ -22,7 +22,6 @@ public readonly record struct ArchiveMark(int OpenedBefore);
 /// </summary>
 public sealed class ArchiveOpenings
 {
-    private const int FirstBatch = 10;
     private const int BatchSize = 10;
 
     private readonly TabViewModel _tab;
@@ -110,8 +109,8 @@ public sealed class ArchiveOpenings
 
     /// <summary>
     ///     Opens <paramref name="archive" /> at <paramref name="startEntry" />, else at its first page: lists its entries,
-    ///     stops the extraction of the archive the tab leaves, and extracts the start page and the nine after it, with
-    ///     its side-by-side partner when that is elsewhere. Null when the archive does not open, has no images, is
+    ///     stops the extraction of the archive the tab leaves, and extracts the start page with its side-by-side partner,
+    ///     so it shows before anything else is extracted. Null when the archive does not open, has no images, is
     ///     cancelled, or a newer opening started on the tab meanwhile; the Open Archive then stays as it was.
     /// </summary>
     /// <param name="extractWithLocalSoftwareAsync">
@@ -155,13 +154,19 @@ public sealed class ArchiveOpenings
 
             var keys = prep.EntryKeys;
             var start = Math.Max(Array.FindIndex(keys, key => string.Equals(key, startEntry, StringComparison.Ordinal)), 0);
-            var end = Math.Min(start + FirstBatch, keys.Length);
-            // The start page's side-by-side partner comes with the first batch when it is not in it, as the first page
-            // is beside the last when looping
-            var partner = SideBySidePair.PartnerOf(start, keys.Length) is { } p && (p < start || p >= end) ? p : (int?)null;
-            var firstKeys = FirstKeys(keys, start, end, partner);
+            // The start page alone, with its side-by-side partner, so it shows before anything else is extracted: with ten
+            // pages first, an archive of ten showed nothing until it was extracted whole. A start page that fails to
+            // extract, such as a corrupt entry, is left out for the page after it
+            var partner = SideBySidePair.PartnerOf(start, keys.Length);
+            var extracted = new List<string>();
+            var end = start;
+            do
+            {
+                string[] batch = end == start ? FirstKeys(keys, start, start + 1, partner) : [keys[end]];
+                extracted.AddRange(await _extraction.ExtractEntriesAsync(archive, batch, ct, folder).ConfigureAwait(false));
+                end++;
+            } while (extracted.Count is 0 && end < keys.Length && !IsOvertaken());
 
-            var extracted = await _extraction.ExtractEntriesAsync(archive, firstKeys, ct, folder).ConfigureAwait(false);
             if (extracted.Count is 0 || IsOvertaken())
             {
                 _extraction.Cleanup(folder);
@@ -305,7 +310,7 @@ public sealed class ArchiveOpenings
         }
     }
 
-    // The entries of the first batch in the archive's order: from start up to end, and the partner when it is elsewhere
+    // The entries of the first batch in the archive's order: from start up to end, and the partner
     private static string[] FirstKeys(string[] keys, int start, int end, int? partner)
     {
         if (partner is not { } p)

@@ -539,9 +539,9 @@ public class ImageIteratorFileListTests : IDisposable
     {
         // Looping, which goes round to the first page when the extraction counts as finished
         Settings.UIProperties.Looping = true;
-        // The tab reads an archive of twelve pages, whose eleventh is written until the test lets it, so the extraction
-        // of the pages after the first ten runs on
-        var writer = new HeldEntryWriter("img_11.jpg");
+        // The tab reads an archive of twelve pages, whose second page is written until the test lets it, so the
+        // extraction of the pages after the start runs on
+        var writer = new HeldEntryWriter("img_02.jpg");
         var tab = new TabViewModel(null!, null, writer);
         tab.Initialize(_cache, new ThumbnailCache(), new MockThumbnailLoader(), null, new ThumbnailCache());
         var iterator = tab.ImageIterator!;
@@ -559,7 +559,7 @@ public class ImageIteratorFileListTests : IDisposable
             tab.UpdateTabTitle();
             var title = tab.Title!.Value;
             opening.ExtractRest();
-            await writer.Holding("img_11.jpg").WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+            await writer.Holding("img_02.jpg").WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
 
             var next = keyHeldDown
                 ? iterator.RepeatNavigateAsync(NavigateTo.Next, TimeSpan.Zero, new CancellationTokenSource()).AsTask()
@@ -567,7 +567,7 @@ public class ImageIteratorFileListTests : IDisposable
             // Another archive opens, which stops this one's extraction before its own page shows
             await tab.Archives.OpenAsync(another, null, (_, _) => Task.FromResult(false), string.CompareOrdinal,
                 TestContext.Current.CancellationToken);
-            writer.Release("img_11.jpg");
+            writer.Release("img_02.jpg");
             await next.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
 
             Assert.Equal(last.Name, tab.Model.FileInfo?.Name);

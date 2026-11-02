@@ -333,32 +333,6 @@ public class NavigationServiceTests : IDisposable
         return path;
     }
 
-    // Gives an entry a compression method no reader knows, as a corrupt entry is: the archive still lists it, but
-    // extracting it fails
-    private static void CorruptEntry(string zip, string entry)
-    {
-        var bytes = File.ReadAllBytes(zip);
-        var name = Encoding.UTF8.GetBytes(entry);
-        for (var i = 0; i + name.Length <= bytes.Length; i++)
-        {
-            if (!bytes.AsSpan(i, name.Length).SequenceEqual(name))
-            {
-                continue;
-            }
-
-            // A local file header has the name 30 bytes in and the method 8 bytes in; a central directory header, 46 and 10
-            if (i >= 30 && BitConverter.ToUInt32(bytes, i - 30) == 0x04034b50)
-            {
-                BitConverter.TryWriteBytes(bytes.AsSpan(i - 30 + 8), (ushort)77);
-            }
-            else if (i >= 46 && BitConverter.ToUInt32(bytes, i - 46) == 0x02014b50)
-            {
-                BitConverter.TryWriteBytes(bytes.AsSpan(i - 46 + 10), (ushort)77);
-            }
-        }
-        File.WriteAllBytes(zip, bytes);
-    }
-
     // A tab, and a file in a folder it is not browsing. With tabHasFiles the tab browses a file in its own folder,
     // else it has no files
     private async Task<(TabViewModel Tab, FileInfo Elsewhere)> CreateTabAndFileElsewhereAsync(bool tabHasFiles)
@@ -414,7 +388,7 @@ public class NavigationServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task LoadFromArchiveAsync_ExtractsTheStartPageAndNineAfterItFirst()
+    public async Task LoadFromArchiveAsync_ShowsTheStartPage_BeforeTheRestIsExtracted()
     {
         var tempZipPath = Path.Combine(_testDirectory, "test_archive.zip");
         var archiveSourceDir = Path.Combine(_testDirectory, "archive_source");
@@ -437,8 +411,8 @@ public class NavigationServiceTests : IDisposable
             Assert.True(success);
             Assert.True(tab.Archives.HasOpenArchive);
             Assert.NotNull(tab.ImageIterator.Files);
-            // Initially populated with 10 seed files
-            Assert.True(tab.ImageIterator.Files.Count >= 10);
+            // The start page is listed before anything else is extracted
+            Assert.True(tab.ImageIterator.Files.Count >= 1);
             Assert.NotNull(tab.Model);
             Assert.NotNull(tab.Model.FileInfo);
             Assert.True(File.Exists(tab.Model.FileInfo.FullName));
@@ -472,6 +446,9 @@ public class NavigationServiceTests : IDisposable
         try
         {
             var success = await _navigationService.LoadFromArchiveAsync(tempZipPath, tab, cts);
+            // The start page shows first, and the rest are listed as they are extracted
+            await WaitUntil(() => tab.Archives.State is not ExtractionState.Extracting,
+                () => string.Join(", ", tab.ImageIterator.Files.Select(f => f.Name)));
 
             Assert.True(success);
             Assert.Equal("Volume 01 - 001.jpg", tab.Model?.FileInfo?.Name);
@@ -532,13 +509,13 @@ public class NavigationServiceTests : IDisposable
     }
 
     [Theory]
-    // The ten from the start come first, then those either side of them take turns
-    [InlineData(5, new[] { "img_03.jpg", "img_04.jpg", "img_05.jpg" }, new[] { "img_02.jpg", "img_01.jpg" })]
-    [InlineData(15, new[]
+    // The start page comes first, then those either side of it take turns, nearest first
+    [InlineData(5, new[] { "img_03.jpg" }, new[] { "img_04.jpg", "img_02.jpg", "img_05.jpg", "img_01.jpg" })]
+    [InlineData(15, new[] { "img_03.jpg" }, new[]
     {
-        "img_03.jpg", "img_04.jpg", "img_05.jpg", "img_06.jpg", "img_07.jpg", "img_08.jpg", "img_09.jpg", "img_10.jpg",
-        "img_11.jpg", "img_12.jpg"
-    }, new[] { "img_13.jpg", "img_02.jpg", "img_14.jpg", "img_01.jpg", "img_15.jpg" })]
+        "img_04.jpg", "img_02.jpg", "img_05.jpg", "img_01.jpg", "img_06.jpg", "img_07.jpg", "img_08.jpg", "img_09.jpg",
+        "img_10.jpg", "img_11.jpg", "img_12.jpg", "img_13.jpg", "img_14.jpg", "img_15.jpg"
+    })]
     public async Task LoadFromArchiveAsync_StartEntry_ExtractsTheNearestPagesFirst(int pages, string[] withTheStart,
         string[] rest)
     {
@@ -719,21 +696,23 @@ public class NavigationServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task LoadFromArchiveAsync_CorruptPageAmongTheFirstTen_LeavesItOutAndShowsTheRest()
+    public async Task LoadFromArchiveAsync_CorruptPage_IsLeftOut_AndTheRestAreListed()
     {
-        // The corrupt page is the start page's side-by-side partner, so the page after it pairs with the start instead
+        // The corrupt page is the start page's side-by-side partner, which is extracted with it: the start shows alone,
+        // and the page after the corrupt one is listed as the rest is extracted
         Settings.ImageScaling.ShowImageSideBySide = true;
         var zip = await CreateZipAsync("corrupt_partner.zip", 3);
-        CorruptEntry(zip, "img_02.jpg");
+        TestZips.CorruptEntry(zip, "img_02.jpg");
         var tab = CreateTab(_testDirectory);
 
         try
         {
             var loaded = await _navigationService.LoadFromArchiveAsync(zip, tab, new CancellationTokenSource());
+            await WaitUntil(() => tab.Archives.State is not ExtractionState.Extracting,
+                () => string.Join(", ", tab.ImageIterator.Files.Select(f => f.Name)));
 
             Assert.True(loaded);
             Assert.Equal("img_01.jpg", tab.Model.FileInfo?.Name);
-            Assert.Equal("img_03.jpg", tab.SecondaryModel?.FileInfo?.Name);
             Assert.Equal(["img_01.jpg", "img_03.jpg"], tab.ImageIterator.Files.Select(f => f.Name));
         }
         finally
@@ -747,9 +726,10 @@ public class NavigationServiceTests : IDisposable
     public async Task LoadFromArchiveAsync_StartEntryInAnArchiveWithFolders_ExtractsThePagesNearestOnScreenFirst()
     {
         // The tab lists the extracted files by name, and "(" sorts before "-", so the color volume's files come first,
-        // although its folder's name comes after the other one's. The ten from the start on screen come first
-        string[] withTheStart = ["Vol 1 (color) - 002.jpg", "Vol 1 - 001.jpg", "Vol 1 - 002.jpg"];
-        string[] rest = ["Vol 1 (color) - 001.jpg"];
+        // although its folder's name comes after the other one's. The start page on screen comes first, then the pages
+        // either side of it take turns
+        string[] withTheStart = ["Vol 1 (color) - 002.jpg"];
+        string[] rest = ["Vol 1 - 001.jpg", "Vol 1 (color) - 001.jpg", "Vol 1 - 002.jpg"];
         var zip = await CreateZipWithEntriesAsync("folders.zip",
             "Vol 1/001.jpg", "Vol 1/002.jpg", "Vol 1 (color)/001.jpg", "Vol 1 (color)/002.jpg");
         // Records each page as it is written, in order
@@ -914,37 +894,32 @@ public class NavigationServiceTests : IDisposable
     [InlineData(true)]
     public async Task LoadFromArchiveAsync_NextWaitingForAPageStillBeingWritten_ShowsItOnceItIsWritten(bool looping)
     {
-        // The first ten pages come with the start, and img_11 is extracted first of the rest, held by the test while it
-        // is written. The opening lists it the moment it is written, with no folder watcher in between
+        // The start page comes first, and img_02 is extracted first of the rest, held by the test while it is written. The
+        // opening lists it the moment it is written, with no folder watcher in between
         Settings.UIProperties.Looping = looping;
         var zip = await CreateZipAsync($"page_written_{looping}.zip", 15);
-        var writer = new HeldEntryWriter("img_11.jpg");
+        var writer = new HeldEntryWriter("img_02.jpg");
         var tab = CreateTab(_testDirectory, writer: writer);
 
         try
         {
             await _navigationService.LoadFromArchiveAsync(zip, tab, new CancellationTokenSource(), startEntry: "img_01.jpg");
-            // The extraction writes img_11 until the test lets it
-            await writer.Holding("img_11.jpg").WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
-            // The tab shows the last page listed
-            await tab.ImageIterator.IterateToIndexAsync(9, new CancellationTokenSource())
-                .AsTask().WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+            // The extraction writes img_02 until the test lets it
+            await writer.Holding("img_02.jpg").WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
 
-            // Next at the last page listed waits for img_11
+            // Next at the start page, the only one listed, waits for img_02
             var next = tab.ImageIterator.NavigateAsync(NavigateTo.Next, SkipAmount.One, new CancellationTokenSource())
                 .AsTask();
             var wasWaiting = !next.IsCompleted;
-            writer.Release("img_11.jpg");
+            writer.Release("img_02.jpg");
             await next.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
 
             Assert.True(wasWaiting);
             // Not the shown page again, nor round to the first one with looping
-            Assert.Equal("img_11.jpg", tab.Model.FileInfo?.Name);
+            Assert.Equal("img_02.jpg", tab.Model.FileInfo?.Name);
             Assert.Equal(
-            [
-                ViewHistoryEntry.ForArchivePage(zip, "img_01.jpg"), ViewHistoryEntry.ForArchivePage(zip, "img_10.jpg"),
-                ViewHistoryEntry.ForArchivePage(zip, "img_11.jpg")
-            ], tab.ViewHistory.Entries);
+                [ViewHistoryEntry.ForArchivePage(zip, "img_01.jpg"), ViewHistoryEntry.ForArchivePage(zip, "img_02.jpg")],
+                tab.ViewHistory.Entries);
 
             await WaitUntil(() => tab.Archives.State is not ExtractionState.Extracting,
                 () => string.Join(", ", tab.ImageIterator.Files.Select(f => f.Name)));
@@ -953,7 +928,7 @@ public class NavigationServiceTests : IDisposable
         }
         finally
         {
-            writer.Release("img_11.jpg");
+            writer.Release("img_02.jpg");
             tab.Archives.Cleanup();
             Settings.UIProperties.Looping = false;
         }

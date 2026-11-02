@@ -37,8 +37,8 @@ public sealed class ArchiveOpening
     public string Folder { get; }
 
     /// <summary>
-    ///     The pages extracted along with the start page, in the archive's order: the start page and up to nine after
-    ///     it, and its side-by-side partner when that is elsewhere. A page that failed to extract is left out. For an
+    ///     The pages extracted before the start page shows, in the archive's order: the start page, and its side-by-side
+    ///     partner when there is one. A start page that failed to extract is left out for the page after it. For an
     ///     archive that local software extracted whole, every page.
     /// </summary>
     public IReadOnlyList<FileInfo> Files { get; }
@@ -63,8 +63,8 @@ public sealed class ArchiveOpening
     internal bool IsStopped => _extracting.IsCancellationRequested;
 
     /// <summary>
-    ///     Extracts the pages the first batch left out, in the background, in batches of ten: those after the batch in
-    ///     order and those before the start page nearest first, taking turns. Call once the start page shows. The
+    ///     Extracts the other pages in the background, in batches of ten: those after the start page in order and those
+    ///     before it nearest first, taking turns. Call once the start page shows. The
     ///     opening's owner lists the pages the tab does not have yet when the extraction ends.
     /// </summary>
     public void ExtractRest() => _owner.ExtractRest(this);

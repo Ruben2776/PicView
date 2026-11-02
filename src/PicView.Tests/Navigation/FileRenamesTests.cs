@@ -291,12 +291,15 @@ public class FileRenamesTests : IDisposable
         return zip;
     }
 
-    // Opens the archive in the tab and extracts its pages 1.jpg and 2.jpg, as a tab reading it has
+    // Opens the archive in the tab and extracts its two pages, as a tab reading it has once the start page shows
     private static async Task<(string First, string Second)> ExtractTwoPagesAsync(TabViewModel tab, string zip)
     {
-        var opening = await tab.Archives.OpenAsync(zip, null, (_, _) => Task.FromResult(false), string.CompareOrdinal,
-            TestContext.Current.CancellationToken);
-        return (opening!.Files[0].FullName, opening.Files[1].FullName);
+        var opening = (await tab.Archives.OpenAsync(zip, null, (_, _) => Task.FromResult(false), string.CompareOrdinal,
+            TestContext.Current.CancellationToken))!;
+        opening.ExtractRest();
+        await opening.Ended.WaitAsync(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken);
+        var pages = Directory.GetFiles(opening.Folder).Order(StringComparer.Ordinal).ToArray();
+        return (pages[0], pages[1]);
     }
 
     private class MockFrameProvider : FrameProvider
