@@ -471,20 +471,17 @@ public class ExifViewModel : IDisposable
         IsMotionPhoto.Value = model.MotionPhoto is not null;
         try
         {
-            if (fileInfo is null || !fileInfo.Exists)
-            {
-                return;
-            }
-
-            if (magick is null)
+            // An image without a file, such as a clipboard or base64 image, has its pixel size and nothing else to
+            // read, so the values of the image shown before are cleared
+            if (magick is null && fileInfo is { Exists: true })
             {
                 magick = new MagickImage();
                 magick.Ping(fileInfo);
             }
 
-            var profile = magick.GetExifProfile();
+            var profile = magick?.GetExifProfile();
 
-            if (profile is null)
+            if (profile is null && magick is not null)
             {
                 // Check both Attributes and Artifacts as RAW metadata can reside in either
                 var metadataNames = magick.AttributeNames.Concat(magick.ArtifactNames).Distinct(StringComparer.OrdinalIgnoreCase);
@@ -698,7 +695,12 @@ public class ExifViewModel : IDisposable
             // profile byte order on first access, which legacy Unicode decoding needs.
             Comment.Value = ExifReader.GetUserComment(profile);
 
-            if (profile != null)
+            if (magick is null)
+            {
+                DpiY.Value = DpiX.Value = 0;
+                BitDepth.Value = string.Empty;
+            }
+            else if (profile != null)
             {
                 DpiY.Value = profile.GetValue(ExifTag.YResolution)?.Value.ToDouble() ?? magick.Density.X;
                 DpiX.Value = profile.GetValue(ExifTag.XResolution)?.Value.ToDouble() ?? magick.Density.Y;
@@ -727,7 +729,7 @@ public class ExifViewModel : IDisposable
                 BitDepth.Value = (magick.Depth * 3).ToString();
             }
 
-            var orientation = ExifOrientationHelper.GetImageOrientation(magick);
+            var orientation = magick is null ? ExifOrientation.None : ExifOrientationHelper.GetImageOrientation(magick);
             Orientation.Value = orientation switch
             {
                 ExifOrientation.Horizontal => 1,
@@ -741,12 +743,12 @@ public class ExifViewModel : IDisposable
                 _ => 0
             };
 
-            ImageFormat.Value = magick.Format;
+            ImageFormat.Value = magick?.Format;
             UpdateImageFormatDisplay();
 
             var meter = TranslationManager.Translation.Meter;
 
-            if (string.IsNullOrEmpty(BitDepth.CurrentValue))
+            if (magick is not null && string.IsNullOrEmpty(BitDepth.CurrentValue))
             {
                 BitDepth.Value = (magick.Depth * 3).ToString();
             }

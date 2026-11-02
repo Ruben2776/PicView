@@ -3,6 +3,7 @@ using Avalonia.Threading;
 using ImageMagick;
 using PicView.Avalonia.Views.Main;
 using PicView.Core.Localization;
+using PicView.Core.ImageDecoding;
 using PicView.Core.Models;
 using PicView.Core.ViewModels;
 
@@ -107,6 +108,59 @@ public class ImageInfoViewTests : IDisposable
             Assert.False(WaitFor(() => vm.Exif!.PixelWidth.Value == 320, TimeSpan.FromMilliseconds(300)),
                 "The Image Info view should not show an image shown in a tab that is not active");
             Assert.Equal(800u, vm.Exif!.PixelWidth.Value);
+        }
+        finally
+        {
+            Close(window, vm);
+        }
+    }
+
+    [AvaloniaFact]
+    public void ShowingAClipboardImage_ShowsItsDimensions()
+    {
+        var vm = CreateViewModel();
+        var tab = vm.WindowTabs.ActiveTab.CurrentValue;
+        tab.Display(Image("a.jpg", 640, 480));
+
+        var window = new Window { Content = new ImageInfoView { DataContext = vm } };
+        try
+        {
+            window.Show();
+            Dispatcher.UIThread.RunJobs();
+            Assert.True(WaitFor(() => vm.Exif!.PixelWidth.Value == 640),
+                "The Image Info view should show the active tab's image when it opens");
+
+            tab.DisplaySingleImage(new ImageModel { PixelWidth = 300, PixelHeight = 200, ImageType = ImageType.Bitmap },
+                SingleImageType.Clipboard, "Clipboard");
+
+            Assert.True(WaitFor(() => vm.Exif!.PixelWidth.Value == 300),
+                "The Image Info view should show the clipboard image's width");
+            Assert.Equal(200u, vm.Exif!.PixelHeight.Value);
+        }
+        finally
+        {
+            Close(window, vm);
+        }
+    }
+
+    [AvaloniaFact]
+    public void SwitchingToABlankTab_ClearsTheValues()
+    {
+        var vm = CreateViewModel();
+        vm.WindowTabs.ActiveTab.CurrentValue.Display(Image("a.jpg", 640, 480));
+
+        var window = new Window { Content = new ImageInfoView { DataContext = vm } };
+        try
+        {
+            window.Show();
+            Dispatcher.UIThread.RunJobs();
+            Assert.True(WaitFor(() => vm.Exif!.PixelWidth.Value == 640),
+                "The Image Info view should show the active tab's image when it opens");
+
+            vm.WindowTabs.CreateTab();
+
+            Assert.True(WaitFor(() => vm.Exif!.PixelWidth.Value == 0),
+                "The Image Info view should show nothing for a blank tab");
         }
         finally
         {

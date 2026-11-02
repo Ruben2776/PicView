@@ -2,6 +2,7 @@ using System.Text;
 using ImageMagick;
 using PicView.Core.Localization;
 using PicView.Core.Models;
+using PicView.Core.Titles;
 using PicView.Core.ViewModels;
 using R3;
 
@@ -126,6 +127,43 @@ public class ExifViewModelTests
         
         Assert.Equal((uint)800, viewModel.PixelWidth.Value);
         Assert.Equal((uint)600, viewModel.PixelHeight.Value);
+    }
+
+    [Fact]
+    public void UpdateExifValues_NoFileAfterAFileWithExif_KeepsThePixelSizeAndClearsTheRest()
+    {
+        var path = Path.Combine(Path.GetTempPath(), $"picview-exif-then-none-{Guid.NewGuid():N}.jpg");
+        try
+        {
+            TranslationManager.LoadLanguage("en");
+            using (var image = new MagickImage(MagickColors.White, 100, 100))
+            {
+                image.Format = MagickFormat.Jpeg;
+                image.Density = new Density(72, 72);
+                var profile = new ExifProfile();
+                profile.SetValue(ExifTag.Make, "TestMake");
+                image.SetProfile(profile);
+                image.Write(path);
+            }
+            using var viewModel = new ExifViewModel();
+            viewModel.UpdateExifValues(new ImageModel { FileInfo = new FileInfo(path), PixelWidth = 100, PixelHeight = 100 });
+            Assert.Equal("TestMake", viewModel.CameraMaker.Value);
+
+            // A clipboard image
+            viewModel.UpdateExifValues(new ImageModel { FileInfo = null, PixelWidth = 800, PixelHeight = 600 });
+
+            Assert.Equal((uint)800, viewModel.PixelWidth.Value);
+            Assert.Equal((uint)600, viewModel.PixelHeight.Value);
+            Assert.Equal(string.Empty, viewModel.CameraMaker.Value);
+            Assert.Null(viewModel.ImageFormat.Value);
+            Assert.Equal(0.0, viewModel.DpiX.Value);
+            Assert.Equal(string.Empty, viewModel.PrintSizeCm.Value);
+            Assert.Equal(AspectRatioFormatter.GetFormattedAspectRatio(200, 800, 600), viewModel.AspectRatio.Value);
+        }
+        finally
+        {
+            File.Delete(path);
+        }
     }
 
     [Fact]

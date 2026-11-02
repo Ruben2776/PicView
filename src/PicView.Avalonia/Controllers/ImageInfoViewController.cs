@@ -6,6 +6,7 @@ using Avalonia.Threading;
 using PicView.Avalonia.Resizing;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.Views.Main;
+using PicView.Core.DebugTools;
 using PicView.Core.Exif;
 using PicView.Core.Extensions;
 using PicView.Core.ViewModels;
@@ -45,26 +46,28 @@ public class ImageInfoViewController(ImageInfoView view) : IDisposable
             view.ColorRepresentationBox.DropDownClosed += OnColorRepresentationBoxDropDownClosed;
             view.CompressionBox.DropDownClosed += OnCompressionBoxDropDownClosed;
 
-            // The file of whichever tab is active, so switching tabs shows the new tab's image, also when the window
-            // was opened from a blank tab
-            vm.WindowTabs.ActiveTab.Select(static tab => tab.FileInfo.AsObservable()).Switch().SubscribeAwait(async (fileInfo, ct) =>
-            {
-                if (fileInfo != null) 
+            // Whatever the active tab shows: a file, a clipboard, base64 or URL image, a renamed file, and the tab
+            // switched to, also when the window was opened from a blank tab, whose empty model clears the values
+            vm.WindowTabs.ActiveTab
+                .Select(static tab => Observable.Merge(Observable.Return(Unit.Default), tab.Shown.AsUnitObservable()))
+                .Switch()
+                .SubscribeAwait(async (_, ct) =>
                 {
                     var model = vm.WindowTabs.ActiveTab.CurrentValue.Model;
                     await vm.InfoWindow.UpdateValuesAsync(model, ct).ConfigureAwait(false);
                     await Dispatcher.UIThread.InvokeAsync(() =>
                     {
-                        if (!string.Equals(view.DirectoryNameTextBox.Text, model.FileInfo.DirectoryName, StringComparison.Ordinal))
+                        var directoryName = model.FileInfo?.DirectoryName;
+                        if (!string.Equals(view.DirectoryNameTextBox.Text, directoryName, StringComparison.Ordinal))
                         {
-                            view.DirectoryNameTextBox.Text = model.FileInfo.DirectoryName;
+                            view.DirectoryNameTextBox.Text = directoryName;
                         }
-                        view.FileSizeBox.Text = model.FileInfo?.Length.GetReadableFileSize();
+                        view.FileSizeBox.Text = model.FileInfo is { Exists: true } file ? file.Length.GetReadableFileSize() : null;
                         view.GoogleLinkButton.IsEnabled = !string.IsNullOrWhiteSpace(vm.Exif?.GoogleLink?.CurrentValue);
                         view.BingLinkButton.IsEnabled = !string.IsNullOrWhiteSpace(vm.Exif?.BingLink?.CurrentValue);
                     });
-                }
-            }).AddTo(ref _disposables);
+                }, DebugHelper.LogError(nameof(ImageInfoViewController), nameof(TabViewModel.Shown)))
+                .AddTo(ref _disposables);
 
             vm.InfoWindow.IsLoading.Value = false;
         }, DispatcherPriority.Background);
