@@ -270,15 +270,7 @@ public abstract class MainWindow : Window, IMainWindow, IPlatformWindowService
                 new PixelPoint(e.ScreenPosition.X - 100, e.ScreenPosition.Y - 50), Width, Height).ConfigureAwait(true);
 
             RefreshViewBinding(tab);
-            // Show the moved tab's title and navigation buttons in the new window
-            if (tab.FileInfo.CurrentValue is not null)
-            {
-                tab.UpdateTabTitle();
-            }
-            else
-            {
-                tab.SetNewTabTitle();
-            }
+            // Show the moved tab's navigation buttons in the new window; its Titles derive themselves
             tab.ImageIterator?.UpdateNavigationProperties();
         }, DispatcherPriority.Send));
     }

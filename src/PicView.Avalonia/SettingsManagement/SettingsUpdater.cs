@@ -72,7 +72,6 @@ public static class SettingsUpdater
 
         var tabViewModel = vm.WindowTabs.ActiveTab.CurrentValue;
         tabViewModel.ZoomLevel.Value = Convert.ToInt32(tabViewModel.InitialZoom.CurrentValue * 100);
-        tabViewModel.UpdateTabTitle();
         
         await SaveSettingsAsync().ConfigureAwait(false);
     }
@@ -101,7 +100,6 @@ public static class SettingsUpdater
                 var ct = tab.GetTabCancellation();
                 await windowTabs.SharedNavigation.RepopulateIterator(tab.FileInfo.CurrentValue, tab, ct)
                     .ConfigureAwait(false);
-                tab.UpdateTabTitle();
             }).ConfigureAwait(false);
         }
         
@@ -221,7 +219,7 @@ public static class SettingsUpdater
         {
             Settings.UIProperties.ShowFullPathInTitleBar = true;
         }
-        vm.WindowTabs.ActiveTab.CurrentValue.UpdateTabTitle();
+        vm.WindowTabs.ActiveTab.CurrentValue.Titles.Refresh();
         await SaveSettingsAsync().ConfigureAwait(false);
     }
     
@@ -261,7 +259,7 @@ public static class SettingsUpdater
         }
         
         mainWindow.WindowFitter.Refit();
-        tab.UpdateTabTitle();
+        tab.Titles.Refresh();
         await SaveSettingsAsync().ConfigureAwait(false);
     }
     

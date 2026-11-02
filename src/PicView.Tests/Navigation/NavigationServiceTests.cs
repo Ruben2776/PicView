@@ -159,7 +159,7 @@ public class NavigationServiceTests : IDisposable
     {
         var tab = CreateTab(_testDirectory);
         var corrupt = Path.Combine(_testDirectory, "bad.zip");
-        await File.WriteAllTextAsync(corrupt, "not an archive");
+        await File.WriteAllTextAsync(corrupt, "not an archive", TestContext.Current.CancellationToken);
 
         var loaded = await _navigationService.LoadFromArchiveAsync(corrupt, tab, new CancellationTokenSource());
 

@@ -64,7 +64,7 @@ internal sealed class PrintSource : IDisposable
         {
             bitmap.CopyPixels(new SkiaFramebuffer(pixels));
             var image = SKImage.FromPixelCopy(pixels.Info, pixels.GetPixels(), pixels.RowBytes);
-            var title = tab.FileInfo.CurrentValue?.Name ?? tab.TabTitle.CurrentValue;
+            var title = tab.FileInfo.CurrentValue?.Name ?? tab.Titles.TabTitle;
             return new PrintSource(image, tab.Orientation.Current.CurrentValue,
                 string.IsNullOrWhiteSpace(title) ? "PicView" : title);
         }

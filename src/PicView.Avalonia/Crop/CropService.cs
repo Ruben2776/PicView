@@ -56,8 +56,6 @@ public class CropService(TabViewModel tabViewModel, MainWindow mainWindow) : ICr
 
         IsCropping = true;
         
-        tabViewModel.Title.Value = TranslationManager.Translation.CropMessage!;
-        tabViewModel.TitleTooltip.Value = TranslationManager.Translation.CropMessage!;
 
         _couldNavigateBackwards = tabViewModel.CanNavigateBackwards.CurrentValue;
         _couldNavigateForwards = tabViewModel.CanNavigateForwards.CurrentValue;
@@ -117,7 +115,6 @@ public class CropService(TabViewModel tabViewModel, MainWindow mainWindow) : ICr
         }
 
         IsCropping = false;
-        tabViewModel.UpdateTabTitle();
         
         tabViewModel.Crop = null;
         

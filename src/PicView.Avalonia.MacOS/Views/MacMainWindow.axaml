@@ -3,7 +3,7 @@
     MaxWidth="{CompiledBinding WindowMaxWidth.Value}"
     MinHeight="{CompiledBinding WindowMinHeight}"
     MinWidth="{CompiledBinding WindowMinWidth}"
-    Title="{CompiledBinding WindowTabs.ActiveTab.Value.WindowTitle.Value,
+    Title="{CompiledBinding WindowTabs.ActiveTab.Value.Titles.WindowTitle,
                             FallbackValue=''}"
     x:Class="PicView.Avalonia.MacOS.Views.MacMainWindow"
     x:DataType="viewModels:MainWindowViewModel"

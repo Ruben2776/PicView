@@ -333,7 +333,6 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
             {
                 var adjustedZoomLevel = Convert.ToInt32(tab.InitialZoom.CurrentValue * (zoomLevel * 100));
                 tab.ZoomLevel.Value = adjustedZoomLevel;
-                tab.UpdateTabTitle();
                 if (Settings.Zoom.IsShowingZoomPercentagePopup)
                 {
                     var message = StringExtensions.CombineWithPercentage(adjustedZoomLevel);

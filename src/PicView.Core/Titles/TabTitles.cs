@@ -202,12 +202,12 @@ public sealed class TabTitles : INotifyPropertyChanged, IDisposable
 
         if (singleImageType is not SingleImageType.None)
         {
-            var name = singleImageType switch
-            {
-                SingleImageType.Clipboard => translation?.ClipboardImage ?? string.Empty,
-                SingleImageType.Url => _tab.SourceURL ?? string.Empty,
-                _ => _tab.SingleImageTitle ?? model.FileInfo?.FullName ?? string.Empty
-            };
+            // A Single Image is titled by the name it was shown with (ADR-0014); a download by its URL
+            var name = singleImageType is SingleImageType.Url
+                ? _tab.SourceURL ?? string.Empty
+                : _tab.SingleImageTitle
+                  ?? (singleImageType is SingleImageType.Clipboard ? translation?.ClipboardImage : model.FileInfo?.FullName)
+                  ?? string.Empty;
             var single = ImageTitleFormatter.GenerateTitleForSingleImage(width, height, name, zoom);
             _title = single.BaseTitle;
             _windowTitle = single.TitleWithAppName;

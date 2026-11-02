@@ -275,7 +275,7 @@ public class TabTitlesTests
     {
         Browse("a.jpg");
 
-        await Task.Run(() => _tab.Display(Model("a.jpg")));
+        await Task.Run(() => _tab.Display(Model("a.jpg")), TestContext.Current.CancellationToken);
 
         Assert.Equal("a.jpg", _tab.Titles.TabTitle);
     }

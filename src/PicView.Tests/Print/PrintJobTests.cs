@@ -55,8 +55,7 @@ public class PrintJobTests : IDisposable
             PixelWidth = 200,
             PixelHeight = 100,
             ImageType = ImageType.Bitmap
-        }, SingleImageType.Clipboard);
-        tab.TabTitle.Value = "Clipboard image";
+        }, SingleImageType.Clipboard, "Clipboard image");
         _vm.WindowTabs.ActiveTab.Value = tab;
         return tab;
     }

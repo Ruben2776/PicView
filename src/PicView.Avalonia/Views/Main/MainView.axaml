@@ -1058,7 +1058,7 @@
                         <TextBlock
                             Margin="7,0,0,0"
                             Classes="txt"
-                            Text="{CompiledBinding TabTitle.Value,
+                            Text="{CompiledBinding Titles.TabTitle,
                                                    Mode=OneWay}"
                             TextWrapping="NoWrap" />
                         <ToolTip.Tip>
@@ -1069,7 +1069,7 @@
                                     Classes="txt bold"
                                     DockPanel.Dock="Top"
                                     FontSize="12"
-                                    Text="{Binding TabTitle.Value, Mode=OneWay}" />
+                                    Text="{Binding Titles.TabTitle, Mode=OneWay}" />
                                 <customControls:ThumbImage
                                     HorizontalAlignment="Center"
                                     DockPanel.Dock="Bottom"
@@ -1132,7 +1132,7 @@
                 PointerPressed="DragMove">
                 <TextBlock
                     Classes="txt"
-                    Text="{Binding WindowTabs.ActiveTab.Value.Title.Value}"
+                    Text="{Binding WindowTabs.ActiveTab.Value.Titles.Title}"
                     TextAlignment="Center" />
             </Border>
         </DockPanel>
