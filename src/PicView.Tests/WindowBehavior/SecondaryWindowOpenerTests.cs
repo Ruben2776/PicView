@@ -275,6 +275,32 @@ public class SecondaryWindowOpenerTests
     }
 
     [AvaloniaFact]
+    public async Task OpenAsync_RememberedMaximized_AppliesTheSizeAndPositionAndMaximizes()
+    {
+        var opener = CreateOpener();
+        var properties = new Properties { Maximized = true, Width = 500, Height = 400, Left = 120, Top = 80 };
+
+        var window = await opener.OpenAsync(SecondaryWindowKind.Settings, RememberedSpec(properties));
+
+        Assert.Equal(WindowState.Maximized, window!.WindowState);
+        Assert.Equal(500d, window.Width);
+        Assert.Equal(400d, window.Height);
+        Assert.Equal(WindowStartupLocation.Manual, window.WindowStartupLocation);
+    }
+
+    [AvaloniaFact]
+    public async Task OpenAsync_RememberedOnNoScreen_CentersOnScreen()
+    {
+        var opener = CreateOpener();
+        // The headless platform reports one screen at (0, 0)
+        var properties = new Properties { Left = -5000, Top = 80 };
+
+        var window = await opener.OpenAsync(SecondaryWindowKind.Settings, RememberedSpec(properties));
+
+        Assert.Equal(WindowStartupLocation.CenterScreen, window!.WindowStartupLocation);
+    }
+
+    [AvaloniaFact]
     public async Task OpenAsync_RememberedWithNothingRemembered_CentersOnScreen()
     {
         var opener = CreateOpener();

@@ -195,17 +195,14 @@ public sealed class SecondaryWindowOpener(
     }
 
     /// <summary>
-    /// Opens a window where it was last closed, or in the center of the screen when no position is remembered.
+    /// Opens a window where it was last closed, or in the center of the screen when no position is remembered or the
+    /// remembered one is on none of the screens. A maximized window gets its normal size and position first, so it
+    /// returns to them when it is restored.
     /// </summary>
     private static void Restore(Window window, IWindowProperties properties)
     {
         var placement = RememberedPlacement.Restore(properties, new WindowLimits(window.CanResize, window.MinWidth,
-            window.MaxWidth, window.MinHeight, window.MaxHeight));
-        if (placement.Maximize)
-        {
-            window.WindowState = WindowState.Maximized;
-            return;
-        }
+            window.MaxWidth, window.MinHeight, window.MaxHeight, window.Width, window.Height), ScreenAreas(window));
 
         if (placement.Size is { } size)
         {
@@ -222,6 +219,28 @@ public sealed class SecondaryWindowOpener(
         {
             window.WindowStartupLocation = WindowStartupLocation.CenterScreen;
         }
+
+        if (placement.Maximize)
+        {
+            window.WindowState = WindowState.Maximized;
+        }
+    }
+
+    /// <summary>
+    /// The screens a window can open on, in the physical pixels its position is in. Empty when the platform reports
+    /// none.
+    /// </summary>
+    private static ScreenArea[] ScreenAreas(Window window)
+    {
+        var screens = window.Screens.All;
+        var areas = new ScreenArea[screens.Count];
+        for (var i = 0; i < areas.Length; i++)
+        {
+            var bounds = screens[i].Bounds;
+            areas[i] = new ScreenArea(bounds.X, bounds.Y, bounds.Width, bounds.Height);
+        }
+
+        return areas;
     }
 
     /// <summary>
@@ -232,7 +251,8 @@ public sealed class SecondaryWindowOpener(
         var width = window.Bounds.Width > 0 ? window.Bounds.Width : window.Width;
         var height = window.Bounds.Height > 0 ? window.Bounds.Height : window.Height;
         RememberedPlacement.Remember(properties, new WindowBounds(width, height, window.Position.X,
-            window.Position.Y, window.WindowState is WindowState.Maximized), window.CanResize);
+            window.Position.Y, window.WindowState is WindowState.Maximized,
+            window.WindowState is WindowState.Minimized), window.CanResize);
     }
 
     private void Show(Window window, WindowOwner owner)
