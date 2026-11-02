@@ -1,11 +1,8 @@
-using Avalonia;
 using Avalonia.Media.Imaging;
-using Avalonia.Svg.Skia;
 using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.Views.UC;
-using PicView.Core.DebugTools;
 using PicView.Core.Gallery;
 using PicView.Core.ImageDecoding;
 using PicView.Core.Localization;
@@ -15,41 +12,58 @@ using PicView.Core.ViewModels;
 
 namespace PicView.Avalonia.Navigation;
 
+/// <summary>
+/// What a Main Window does around what its tab shows: the reaction to a tab's <see cref="TabViewModel.Shown"/> change,
+/// and showing a Single Image in the active tab. It sets none of the tab's shown-state bindables: the tab is their one
+/// writer.
+/// </summary>
 public static class UpdateImage
 {
-    public static void UpdateFileInfo(TabViewModel tabViewModel,  FileInfo? file)
+    /// <summary>
+    /// What the window does once <paramref name="tab"/> shows something new. For a new image: zoom and orientation
+    /// reset when the setting asks, a Fit, the motion photo overlays, the zoom level and the title. For a shown file
+    /// that changed on disk: the taskbar progress. Nothing while the tab's view is not the image viewer. Call on the
+    /// UI thread.
+    /// </summary>
+    public static void ReactToShown(MainWindow mainWindow, TabViewModel tab, MainWindowViewModel vm, ShownChange change)
     {
-        if (tabViewModel.Model?.Image is null || tabViewModel.Model.PixelHeight is 0 ||
-            tabViewModel.Model.PixelWidth is 0 || tabViewModel.SingleImageType is not SingleImageType.None)
+        if (tab.CurrentView.CurrentValue is not ImageViewer imageViewer)
         {
             return;
         }
-        
-        if (file is null || file.Length is 0)
+
+        if (change is ShownChange.Image)
         {
-            var noImage = TranslationManager.Translation?.NoImage;
-            if (string.IsNullOrEmpty(noImage))
+            if (Settings.Zoom.ResetZoomOnChange)
             {
-                return;
+                imageViewer.ResetZoomSlim();
+                tab.Orientation.Reset();
             }
 
-            tabViewModel.TabTitle.Value = noImage;
-            tabViewModel.TabTooltip.Value = noImage;
-            return;
+            mainWindow.WindowFitter.Refit();
+            imageViewer.UpdateMotionPhoto(tab);
+            tab.ZoomLevel.Value = Convert.ToInt32(tab.InitialZoom.CurrentValue * 100);
+            tab.UpdateTabTitle();
         }
-        tabViewModel.FileInfo.Value = file;
 
-        if (Application.Current.DataContext is not CoreViewModel core)
+        SetTaskbarProgress(vm, tab);
+    }
+
+    private static void SetTaskbarProgress(MainWindowViewModel vm, TabViewModel tab)
+    {
+        if (Settings.UIProperties.IsTaskbarProgressEnabled && vm.Core.PlatformService is { } platform &&
+            tab.ImageIterator is { CurrentIndex: > -1 } iterator && iterator.Files.Count > 0)
         {
-            return;
-        }
-        
-        if (Settings.UIProperties.IsTaskbarProgressEnabled && tabViewModel.ImageIterator.CurrentIndex > -1 && tabViewModel.ImageIterator.Files.Count > 0)
-        {
-            core.PlatformService.SetTaskbarProgress((ulong)tabViewModel.ImageIterator.CurrentIndex, (ulong)tabViewModel.ImageIterator.Files.Count);
+            platform.SetTaskbarProgress((ulong)iterator.CurrentIndex, (ulong)iterator.Files.Count);
         }
     }
-    
+
+    /// <summary>
+    /// The startup path's hand-written reaction to the first image, until it hooks the tab up before that image shows.
+    /// </summary>
+    public static void ChangeImage(MainWindow mainWindow, TabViewModel tabViewModel, MainWindowViewModel vm) =>
+        ReactToShown(mainWindow, tabViewModel, vm, ShownChange.Image);
+
     public static void UpdateTabSideBySideTitles(TabViewModel tabViewModel,
         int index,
         int secondaryIndex,
@@ -57,8 +71,6 @@ public static class UpdateImage
         FileInfo secondFile,
         List<FileInfo> files)
     {
-        tabViewModel.FileInfo.Value = firstFile;
-        tabViewModel.SecondaryFileInfo.Value = secondFile;
         var count = tabViewModel.ImageIterator.Files.Count;
         var zoom = tabViewModel.ZoomLevel.CurrentValue;
         var firstInfo = new ImageTitleInfo(firstFile,
@@ -79,81 +91,10 @@ public static class UpdateImage
         tabViewModel.TitleTooltip.Value = titles.FilePathTitle;
     }
 
-    public static void ChangeImage(MainWindow mainWindow, TabViewModel tabViewModel, MainWindowViewModel vm)
-    {
-        if (vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.CurrentValue is not ImageViewer imageViewer)
-        {
-            return;
-        }
-        ChangeImageInternal(mainWindow, tabViewModel, imageViewer);
-    }
-    
-    public static void ChangeImageWithTitle(MainWindow mainWindow, TabViewModel tabViewModel, MainWindowViewModel vm)
-    {
-        if (vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.CurrentValue is not ImageViewer imageViewer)
-        {
-            return;
-        }
-        ChangeImageInternal(mainWindow, tabViewModel, imageViewer);
-        ChangeTabTitleToNewImage(tabViewModel);
-    }
-
     public static void ChangeTabTitleToNewImage(TabViewModel tabViewModel)
     {
         tabViewModel.ZoomLevel.Value = Convert.ToInt32(tabViewModel.InitialZoom.CurrentValue * 100);
         tabViewModel.UpdateTabTitle();
-    }
-
-    private static void ChangeImageInternal(MainWindow mainWindow, TabViewModel tabViewModel, ImageViewer imageViewer)
-    {
-        if (Settings.Zoom.ResetZoomOnChange)
-        {
-            imageViewer.ResetZoomSlim();
-            tabViewModel.Orientation.Reset();
-        }
-        
-        if (tabViewModel.Model.ImageType is ImageType.Svg)
-        {
-            Dispatcher.UIThread.Invoke(() =>
-            {
-                tabViewModel.Image.Value = new SvgImage { Source = tabViewModel.Model.Image as SvgSource };
-            }, DispatcherPriority.Send);
-        }
-        else
-        {
-            tabViewModel.Image.Value = tabViewModel.Model.Image;
-        }
-        tabViewModel.ImageType.Value = tabViewModel.Model.ImageType;
-        
-        SetWindowAndImageSize(mainWindow, tabViewModel);
-
-        imageViewer.UpdateMotionPhoto(tabViewModel);
-    }
-
-    public static void SetWindowAndImageSize(MainWindow mainWindow, TabViewModel tabViewModel)
-    {
-        if (Settings.ImageScaling.ShowImageSideBySide)
-        {
-            if (tabViewModel.SecondaryModel is null)
-            {
-#if DEBUG
-                DebugHelper.LogDebug(nameof(UpdateImage),
-                    nameof(SetWindowAndImageSize),
-                    "SecondaryModel.CurrentValue is null");
-#endif
-                tabViewModel.SecondaryImage.Value = null;
-                tabViewModel.SecondaryFileInfo.Value = null;
-                tabViewModel.SecondaryImageType.Value = null;
-            }
-            else
-            {
-                tabViewModel.SecondaryImage.Value = tabViewModel.SecondaryModel.Image;
-                tabViewModel.SecondaryImageType.Value = tabViewModel.SecondaryModel.ImageType;
-                tabViewModel.SecondaryFileInfo.Value = tabViewModel.SecondaryModel.FileInfo;
-            }
-        }
-
-        mainWindow.WindowFitter.Refit();
     }
 
     public static void SetSingleImage(MainWindowViewModel vm, MainWindow mainWindow, Bitmap image, SingleImageType type, string name)
@@ -218,7 +159,7 @@ public static class UpdateImage
         {
             return;
         }
-        
+
         SetSingleImage(vm, mainWindow, base64Model.Image as Bitmap, SingleImageType.Base64, TranslationManager.Translation.Base64Image);
     }
 }
