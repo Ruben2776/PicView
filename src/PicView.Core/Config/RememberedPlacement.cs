@@ -1,3 +1,5 @@
+using System.Runtime.InteropServices;
+
 namespace PicView.Core.Config;
 
 /// <summary>
@@ -28,6 +30,7 @@ public readonly record struct WindowBounds(
 /// <summary>
 /// A screen's area, in the same pixels as a window's position.
 /// </summary>
+[StructLayout(LayoutKind.Auto)]
 public readonly record struct ScreenArea(int X, int Y, int Width, int Height);
 
 /// <summary>
