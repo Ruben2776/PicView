@@ -25,7 +25,6 @@ public class LanguageModel
     public string? AdvanceBy100Images { get; set; }
     public string? AdvanceBy10Images { get; set; }
     public string? AllowZoomOut { get; set; }
-    public string? AlwaysUncompressEntireArchive { get; set; }
     public string? Alt { get; set; }
     public string? Altitude { get; set; }
     public string? AperturePriority { get; set; }

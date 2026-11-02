@@ -5,6 +5,7 @@ using PicView.Core.Navigation.Interfaces;
 using PicView.Core.Navigation.Tiff;
 using PicView.Core.Localization;
 using PicView.Core.ViewModels;
+using PicView.Tests.ArchiveHandling;
 using R3;
 
 namespace PicView.Tests.Navigation;
@@ -256,17 +257,37 @@ public class TiffNavigationTests : IDisposable
     [Fact]
     public async Task Next_InsideTiffAtTheLastFileWhileExtracting_TurnsThePageWithoutWaiting()
     {
-        // The TIFF is the last page extracted so far, and more are coming
+        // The TIFF is the last page extracted so far, and more are coming: a tab whose archive is still extracting
+        using var extraction = new HeldExtraction();
+        var tab = new TabViewModel(null!, null, extraction.Writer);
+        var iterator = new ImageIterator(_cache, _mockThumbnailCache, new MockThumbnailLoader(), tab);
         var tiffModel = CreateTiffModel(_files[1], 3);
-        _iterator.Initialize([_files[0], _files[1]], 1);
-        _tab.Model = tiffModel;
-        _tab.IsArchiveExtracting.Value = true;
+        iterator.Initialize([_files[0], _files[1]], 1);
+        tab.Model = tiffModel;
+        var folder = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), "PicViewTiffNavigationTests")).FullName;
 
-        await _iterator.NavigateAsync(NavigateTo.Next, SkipAmount.One, new CancellationTokenSource())
-            .AsTask().WaitAsync(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken);
+        try
+        {
+            await extraction.BeginAsync(tab, folder);
 
-        Assert.Equal(1, _iterator.CurrentIndex);
-        Assert.Equal(1, tiffModel.TiffNavigation!.CurrentPage);
+            await iterator.NavigateAsync(NavigateTo.Next, SkipAmount.One, new CancellationTokenSource())
+                .AsTask().WaitAsync(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken);
+
+            Assert.Equal(1, iterator.CurrentIndex);
+            Assert.Equal(1, tiffModel.TiffNavigation!.CurrentPage);
+        }
+        finally
+        {
+            tab.Archives.Cleanup();
+            try
+            {
+                Directory.Delete(folder, true);
+            }
+            catch
+            {
+                // The folder is left for the next run
+            }
+        }
     }
 
     [Fact]

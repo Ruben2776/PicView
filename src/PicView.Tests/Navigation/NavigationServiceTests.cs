@@ -253,7 +253,7 @@ public class NavigationServiceTests : IDisposable
             await load.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
 
             Assert.True(Directory.Exists(newer), "The load deleted the extraction of the archive that opened meanwhile");
-            Assert.Equal(newer, tab.ArchiveExtractionService.TempZipDirectory);
+            Assert.Equal(newer, tab.Archives.OpenFolder);
             if (left is not null)
             {
                 Assert.False(Directory.Exists(left), "The load left the extraction of the archive it left behind");
@@ -261,8 +261,7 @@ public class NavigationServiceTests : IDisposable
         }
         finally
         {
-            tab.ArchiveExtractionService.Cleanup();
-            tab.ArchiveExtractionService.Cleanup(left);
+            tab.Archives.Cleanup();
         }
     }
 
@@ -279,11 +278,11 @@ public class NavigationServiceTests : IDisposable
             await StartLoad(site, tab, elsewhere).WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
 
             Assert.False(Directory.Exists(left), "The load left the archive's extraction behind");
-            Assert.False(tab.ArchiveExtractionService.IsArchived);
+            Assert.False(tab.Archives.HasOpenArchive);
         }
         finally
         {
-            tab.ArchiveExtractionService.Cleanup(left);
+            tab.Archives.Cleanup();
         }
     }
 
@@ -300,12 +299,10 @@ public class NavigationServiceTests : IDisposable
     }
 
     private TabViewModel CreateTab(string directory, MainWindowViewModel? parentVm = null, SharedImageCache? cache = null,
-        ArchiveExtractionService? extraction = null)
+        IArchiveEntryWriter? writer = null)
     {
         var dummyParent = parentVm ?? new MainWindowViewModel(null!, null!, null!, null!, null!);
-        var tab = extraction is null
-            ? new TabViewModel(dummyParent)
-            : new TabViewModel(dummyParent) { ArchiveExtractionService = extraction };
+        var tab = new TabViewModel(dummyParent, null, writer);
         // Initialize with mocks to avoid null refs
         var thumbCache = new MockThumbnailCache();
         tab.Initialize(cache ?? _cache, thumbCache, _mockThumbnailLoader, null, thumbCache);
@@ -334,32 +331,6 @@ public class NavigationServiceTests : IDisposable
         var path = Path.Combine(_testDirectory, name);
         await File.WriteAllBytesAsync(path, [0xFF, 0xD8, 0xFF], TestContext.Current.CancellationToken);
         return path;
-    }
-
-    // Gives an entry a compression method no reader knows, as a corrupt entry is: the archive still lists it, but
-    // extracting it fails
-    private static void CorruptEntry(string zip, string entry)
-    {
-        var bytes = File.ReadAllBytes(zip);
-        var name = Encoding.UTF8.GetBytes(entry);
-        for (var i = 0; i + name.Length <= bytes.Length; i++)
-        {
-            if (!bytes.AsSpan(i, name.Length).SequenceEqual(name))
-            {
-                continue;
-            }
-
-            // A local file header has the name 30 bytes in and the method 8 bytes in; a central directory header, 46 and 10
-            if (i >= 30 && BitConverter.ToUInt32(bytes, i - 30) == 0x04034b50)
-            {
-                BitConverter.TryWriteBytes(bytes.AsSpan(i - 30 + 8), (ushort)77);
-            }
-            else if (i >= 46 && BitConverter.ToUInt32(bytes, i - 46) == 0x02014b50)
-            {
-                BitConverter.TryWriteBytes(bytes.AsSpan(i - 46 + 10), (ushort)77);
-            }
-        }
-        File.WriteAllBytes(zip, bytes);
     }
 
     // A tab, and a file in a folder it is not browsing. With tabHasFiles the tab browses a file in its own folder,
@@ -397,8 +368,9 @@ public class NavigationServiceTests : IDisposable
     private async Task<string> PrepareExtractionAsync(TabViewModel tab, string name)
     {
         var zip = await CreateZipAsync(name, 1);
-        await tab.ArchiveExtractionService.PrepareArchiveAsync(zip, (_, _) => Task.FromResult(false), string.CompareOrdinal);
-        return tab.ArchiveExtractionService.TempZipDirectory!;
+        await tab.Archives.OpenAsync(zip, null, (_, _) => Task.FromResult(false), string.CompareOrdinal,
+            TestContext.Current.CancellationToken);
+        return tab.Archives.OpenFolder!;
     }
 
     private async Task<string> CreateZipAsync(string name, int images)
@@ -416,11 +388,10 @@ public class NavigationServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task LoadFromArchiveAsync_AlwaysUncompressEntireArchiveTrue_ExtractsInitial10SeedFiles()
+    public async Task LoadFromArchiveAsync_ShowsTheStartPage_BeforeTheRestIsExtracted()
     {
-        Settings.Navigation.AlwaysUncompressEntireArchive = true;
-        var tempZipPath = Path.Combine(_testDirectory, "test_archive_true.zip");
-        var archiveSourceDir = Path.Combine(_testDirectory, "archive_source_true");
+        var tempZipPath = Path.Combine(_testDirectory, "test_archive.zip");
+        var archiveSourceDir = Path.Combine(_testDirectory, "archive_source");
         Directory.CreateDirectory(archiveSourceDir);
 
         for (var i = 1; i <= 15; i++)
@@ -438,66 +409,23 @@ public class NavigationServiceTests : IDisposable
             var success = await _navigationService.LoadFromArchiveAsync(tempZipPath, tab, cts);
 
             Assert.True(success);
-            Assert.True(tab.ArchiveExtractionService.IsArchived);
+            Assert.True(tab.Archives.HasOpenArchive);
             Assert.NotNull(tab.ImageIterator.Files);
-            // Initially populated with 10 seed files
-            Assert.True(tab.ImageIterator.Files.Count >= 10);
-            Assert.NotNull(tab.Model);
-            Assert.NotNull(tab.Model.FileInfo);
-            Assert.True(File.Exists(tab.Model.FileInfo.FullName));
-        }
-        finally
-        {
-            tab.ArchiveExtractionService.Cleanup();
-            Settings.Navigation.AlwaysUncompressEntireArchive = false;
-        }
-    }
-
-    [Fact]
-    public async Task LoadFromArchiveAsync_AlwaysUncompressEntireArchiveFalse_ExtractsSingleSeedFile()
-    {
-        Settings.Navigation.AlwaysUncompressEntireArchive = false;
-        var tempZipPath = Path.Combine(_testDirectory, "test_archive_false.zip");
-        var archiveSourceDir = Path.Combine(_testDirectory, "archive_source_false");
-        Directory.CreateDirectory(archiveSourceDir);
-
-        for (var i = 1; i <= 15; i++)
-        {
-            await File.WriteAllBytesAsync(Path.Combine(archiveSourceDir, $"img_{i:D2}.jpg"), [0xFF, 0xD8, 0xFF], TestContext.Current.CancellationToken);
-        }
-
-        System.IO.Compression.ZipFile.CreateFromDirectory(archiveSourceDir, tempZipPath);
-
-        var tab = CreateTab(_testDirectory);
-        var cts = new CancellationTokenSource();
-
-        try
-        {
-            var success = await _navigationService.LoadFromArchiveAsync(tempZipPath, tab, cts);
-
-            Assert.True(success);
-            Assert.True(tab.ArchiveExtractionService.IsArchived);
-            Assert.NotNull(tab.ImageIterator.Files);
-            // Initially seeded with 1 file (or 2 if side-by-side)
+            // The start page is listed before anything else is extracted
             Assert.True(tab.ImageIterator.Files.Count >= 1);
             Assert.NotNull(tab.Model);
             Assert.NotNull(tab.Model.FileInfo);
             Assert.True(File.Exists(tab.Model.FileInfo.FullName));
-            // Enables forward navigation while extracting in background
-            Assert.True(tab.CanNavigateForwards.Value);
-            // Should not show the batched progress text indicator
-            Assert.Null(tab.ArchiveExtractionProgressText.Value);
         }
         finally
         {
-            tab.ArchiveExtractionService.Cleanup();
+            tab.Archives.Cleanup();
         }
     }
 
     [Fact]
     public async Task LoadFromArchiveAsync_ImagesInSeveralFolders_OpensFirstFolderAndKeepsFolderOrder()
     {
-        Settings.Navigation.AlwaysUncompressEntireArchive = true;
         var tempZipPath = Path.Combine(_testDirectory, "volumes.zip");
         var archiveSourceDir = Path.Combine(_testDirectory, "volumes_source");
 
@@ -518,6 +446,9 @@ public class NavigationServiceTests : IDisposable
         try
         {
             var success = await _navigationService.LoadFromArchiveAsync(tempZipPath, tab, cts);
+            // The start page shows first, and the rest are listed as they are extracted
+            await WaitUntil(() => tab.Archives.State is not ExtractionState.Extracting,
+                () => string.Join(", ", tab.ImageIterator.Files.Select(f => f.Name)));
 
             Assert.True(success);
             Assert.Equal("Volume 01 - 001.jpg", tab.Model?.FileInfo?.Name);
@@ -530,8 +461,7 @@ public class NavigationServiceTests : IDisposable
         }
         finally
         {
-            tab.ArchiveExtractionService.Cleanup();
-            Settings.Navigation.AlwaysUncompressEntireArchive = false;
+            tab.Archives.Cleanup();
         }
     }
 
@@ -551,17 +481,14 @@ public class NavigationServiceTests : IDisposable
         }
         finally
         {
-            tab.ArchiveExtractionService.Cleanup();
+            tab.Archives.Cleanup();
         }
     }
 
-    [Theory]
-    [InlineData(false)]
-    [InlineData(true)]
-    public async Task LoadFromArchiveAsync_StartEntry_ShowsThatPageFirst(bool alwaysUncompressEntireArchive)
+    [Fact]
+    public async Task LoadFromArchiveAsync_StartEntry_ShowsThatPageFirst()
     {
-        Settings.Navigation.AlwaysUncompressEntireArchive = alwaysUncompressEntireArchive;
-        var zip = await CreateZipAsync($"start_{alwaysUncompressEntireArchive}.zip", 5);
+        var zip = await CreateZipAsync("start.zip", 5);
         var tab = CreateTab(_testDirectory);
 
         try
@@ -577,59 +504,40 @@ public class NavigationServiceTests : IDisposable
         }
         finally
         {
-            tab.ArchiveExtractionService.Cleanup();
-            Settings.Navigation.AlwaysUncompressEntireArchive = false;
+            tab.Archives.Cleanup();
         }
     }
 
     [Theory]
-    // One by one, the pages either side of the start take turns
-    [InlineData(false, 5, new[] { "img_04.jpg", "img_02.jpg", "img_05.jpg", "img_01.jpg" })]
-    // In batches, the ten from the start come first, then those either side of them take turns
-    [InlineData(true, 5, new[] { "img_04.jpg", "img_05.jpg", "img_02.jpg", "img_01.jpg" })]
-    [InlineData(true, 15, new[]
+    // The start page comes first, then those either side of it take turns, nearest first
+    [InlineData(5, new[] { "img_03.jpg" }, new[] { "img_04.jpg", "img_02.jpg", "img_05.jpg", "img_01.jpg" })]
+    [InlineData(15, new[] { "img_03.jpg" }, new[]
     {
-        "img_04.jpg", "img_05.jpg", "img_06.jpg", "img_07.jpg", "img_08.jpg", "img_09.jpg", "img_10.jpg", "img_11.jpg",
-        "img_12.jpg", "img_13.jpg", "img_02.jpg", "img_14.jpg", "img_01.jpg", "img_15.jpg"
+        "img_04.jpg", "img_02.jpg", "img_05.jpg", "img_01.jpg", "img_06.jpg", "img_07.jpg", "img_08.jpg", "img_09.jpg",
+        "img_10.jpg", "img_11.jpg", "img_12.jpg", "img_13.jpg", "img_14.jpg", "img_15.jpg"
     })]
-    public async Task LoadFromArchiveAsync_StartEntry_ExtractsTheNearestPagesFirst(bool alwaysUncompressEntireArchive,
-        int pages, string[] expected)
+    public async Task LoadFromArchiveAsync_StartEntry_ExtractsTheNearestPagesFirst(int pages, string[] withTheStart,
+        string[] rest)
     {
-        Settings.Navigation.AlwaysUncompressEntireArchive = alwaysUncompressEntireArchive;
-        var zip = await CreateZipAsync($"order_{alwaysUncompressEntireArchive}_{pages}.zip", pages);
-        var tab = CreateTab(_testDirectory);
-        var extracted = new ConcurrentQueue<string>();
-        FileSystemWatcher? folderWatcher = null;
-        string[] withTheStart = [];
-        // The tab watches the extraction folder before the rest are extracted, so this sees them in the order they come
-        _mockFileWatcherService.OnWatch = directory =>
-        {
-            if (folderWatcher is not null)
-            {
-                return;
-            }
-
-            // The pages extracted together with the start entry, after it, as the tab lists them before the rest come
-            withTheStart = tab.ImageIterator.Files.Select(f => f.Name).Where(name => name != "img_03.jpg").ToArray();
-            folderWatcher = new FileSystemWatcher(directory!);
-            folderWatcher.Created += (_, e) => extracted.Enqueue(e.Name!);
-            folderWatcher.EnableRaisingEvents = true;
-        };
+        var zip = await CreateZipAsync($"order_{pages}.zip", pages);
+        // Records each page as it is written, in order
+        var writer = new RecordingEntryWriter();
+        var tab = CreateTab(_testDirectory, writer: writer);
 
         try
         {
             await _navigationService.LoadFromArchiveAsync(zip, tab, new CancellationTokenSource(),
                 startEntry: "img_03.jpg");
-            await WaitUntil(() => !tab.IsArchiveExtracting.Value && withTheStart.Length + extracted.Count >= pages - 1,
-                () => string.Join(", ", extracted));
+            await WaitUntil(() => tab.Archives.State is not ExtractionState.Extracting && writer.Written.Length >= pages,
+                () => string.Join(", ", writer.Written));
 
-            Assert.Equal(expected, withTheStart.Concat(extracted));
+            // The pages extracted together with the start entry come in the archive's order, so they are compared sorted
+            Assert.Equal(withTheStart, writer.Written.Take(withTheStart.Length).Order(StringComparer.Ordinal));
+            Assert.Equal(rest, writer.Written.Skip(withTheStart.Length));
         }
         finally
         {
-            folderWatcher?.Dispose();
-            tab.ArchiveExtractionService.Cleanup();
-            Settings.Navigation.AlwaysUncompressEntireArchive = false;
+            tab.Archives.Cleanup();
         }
     }
 
@@ -716,17 +624,13 @@ public class NavigationServiceTests : IDisposable
             Assert.Equal([archive], FileHistoryManager.AllEntries.Select(e => e.Path));
             // The first opening showed nothing, so its folder goes
             Assert.False(Directory.Exists(folders.First()), "The first opening's folder was left behind");
-            Assert.Equal(folders.Last(), tab.ArchiveExtractionService.TempZipDirectory);
+            Assert.Equal(folders.Last(), tab.Archives.OpenFolder);
         }
         finally
         {
             secondOpens.TrySetResult();
             firstPage.TrySetResult(new ImageModel());
-            tab.ArchiveExtractionService.Cleanup();
-            foreach (var folder in folders)
-            {
-                tab.ArchiveExtractionService.Cleanup(folder);
-            }
+            tab.Archives.Cleanup();
         }
     }
 
@@ -765,7 +669,7 @@ public class NavigationServiceTests : IDisposable
         var file = new FileInfo(await WriteImageAsync("x.jpg"));
         // The tab reads archive a
         await navigation.LoadFromArchiveAsync(await CreateZipAsync("a.zip", 2), tab, new CancellationTokenSource());
-        var read = tab.ArchiveExtractionService.TempZipDirectory;
+        var read = tab.Archives.OpenFolder;
 
         try
         {
@@ -781,138 +685,72 @@ public class NavigationServiceTests : IDisposable
             await first.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
 
             Assert.False(Directory.Exists(read), "The folder of the archive the tab was reading was left behind");
-            Assert.Equal(loadsAnArchive ? c : null, tab.ArchiveExtractionService.LastOpenedArchive);
-            Assert.Equal(loadsAnArchive, tab.ArchiveExtractionService.IsArchived);
+            Assert.Equal(loadsAnArchive ? c : null, tab.Archives.OpenArchive);
+            Assert.Equal(loadsAnArchive, tab.Archives.HasOpenArchive);
         }
         finally
         {
             heldPage.TrySetResult(new ImageModel());
-            tab.ArchiveExtractionService.Cleanup();
+            tab.Archives.Cleanup();
         }
     }
 
     [Fact]
-    public async Task LoadFromArchiveAsync_SideBySidePartnerThatFailsToExtract_ShowsTheStartPageAlone()
+    public async Task LoadFromArchiveAsync_CorruptPage_IsLeftOut_AndTheRestAreListed()
     {
-        // Staged, so the start page and its partner are extracted on their own
-        Settings.Navigation.AlwaysUncompressEntireArchive = false;
+        // The corrupt page is the start page's side-by-side partner, which is extracted with it: the start shows alone,
+        // and the page after the corrupt one is listed as the rest is extracted
         Settings.ImageScaling.ShowImageSideBySide = true;
         var zip = await CreateZipAsync("corrupt_partner.zip", 3);
-        CorruptEntry(zip, "img_02.jpg");
+        TestZips.CorruptEntry(zip, "img_02.jpg");
         var tab = CreateTab(_testDirectory);
 
         try
         {
             var loaded = await _navigationService.LoadFromArchiveAsync(zip, tab, new CancellationTokenSource());
+            await WaitUntil(() => tab.Archives.State is not ExtractionState.Extracting,
+                () => string.Join(", ", tab.ImageIterator.Files.Select(f => f.Name)));
 
             Assert.True(loaded);
             Assert.Equal("img_01.jpg", tab.Model.FileInfo?.Name);
-            Assert.Null(tab.SecondaryModel);
+            Assert.Equal(["img_01.jpg", "img_03.jpg"], tab.ImageIterator.Files.Select(f => f.Name));
         }
         finally
         {
-            tab.ArchiveExtractionService.Cleanup();
+            tab.Archives.Cleanup();
             Settings.ImageScaling.ShowImageSideBySide = false;
-            Settings.Navigation.AlwaysUncompressEntireArchive = true;
         }
     }
 
     [Fact]
-    public void EndExtraction_OfAnExtractionThatANewerOneReplaced_LeavesTheTabExtracting()
-    {
-        var tab = CreateTab(_testDirectory);
-        // A Back opened the archive again, so a newer extraction replaced the first, and Next waits for its pages
-        var replaced = tab.ArchiveExtractionService.ResetExtractionCts();
-        tab.ArchiveExtractionService.ResetExtractionCts();
-        tab.IsArchiveExtracting.Value = true;
-
-        NavigationService.EndExtraction(tab, replaced);
-
-        Assert.True(tab.IsArchiveExtracting.Value);
-    }
-
-    // How an extraction can end, besides running to its end
-    public enum ExtractionStop
-    {
-        None,
-        AnotherArchiveOpens,
-        TabLeavesTheArchive
-    }
-
-    [Theory]
-    [InlineData(ExtractionStop.None)]
-    [InlineData(ExtractionStop.AnotherArchiveOpens)]
-    [InlineData(ExtractionStop.TabLeavesTheArchive)]
-    public void EndExtraction_OfTheExtractionStartedLast_EndsTheTabsExtracting(ExtractionStop stop)
-    {
-        var tab = CreateTab(_testDirectory);
-        var latest = tab.ArchiveExtractionService.ResetExtractionCts();
-        tab.IsArchiveExtracting.Value = true;
-        tab.ArchiveExtractionProgressText.Value = "1/2";
-        switch (stop)
-        {
-            case ExtractionStop.AnotherArchiveOpens:
-                tab.ArchiveExtractionService.StopExtraction();
-                break;
-            case ExtractionStop.TabLeavesTheArchive:
-                tab.ArchiveExtractionService.Cleanup();
-                break;
-        }
-
-        NavigationService.EndExtraction(tab, latest);
-
-        Assert.False(tab.IsArchiveExtracting.Value);
-        Assert.Null(tab.ArchiveExtractionProgressText.Value);
-    }
-
-    [Theory]
-    // One by one, the pages either side of the start on screen take turns
-    [InlineData(false, new[] { "Vol 1 - 001.jpg", "Vol 1 (color) - 001.jpg", "Vol 1 - 002.jpg" })]
-    // In batches, the ten from the start on screen come first
-    [InlineData(true, new[] { "Vol 1 - 001.jpg", "Vol 1 - 002.jpg", "Vol 1 (color) - 001.jpg" })]
-    public async Task LoadFromArchiveAsync_StartEntryInAnArchiveWithFolders_ExtractsThePagesNearestOnScreenFirst(
-        bool alwaysUncompressEntireArchive, string[] expected)
+    public async Task LoadFromArchiveAsync_StartEntryInAnArchiveWithFolders_ExtractsThePagesNearestOnScreenFirst()
     {
         // The tab lists the extracted files by name, and "(" sorts before "-", so the color volume's files come first,
-        // although its folder's name comes after the other one's
-        Settings.Navigation.AlwaysUncompressEntireArchive = alwaysUncompressEntireArchive;
-        var zip = await CreateZipWithEntriesAsync($"folders_{alwaysUncompressEntireArchive}.zip",
+        // although its folder's name comes after the other one's. The start page on screen comes first, then the pages
+        // either side of it take turns
+        string[] withTheStart = ["Vol 1 (color) - 002.jpg"];
+        string[] rest = ["Vol 1 - 001.jpg", "Vol 1 (color) - 001.jpg", "Vol 1 - 002.jpg"];
+        var zip = await CreateZipWithEntriesAsync("folders.zip",
             "Vol 1/001.jpg", "Vol 1/002.jpg", "Vol 1 (color)/001.jpg", "Vol 1 (color)/002.jpg");
-        var tab = CreateTab(_testDirectory);
-        var extracted = new ConcurrentQueue<string>();
-        FileSystemWatcher? folderWatcher = null;
-        string[] withTheStart = [];
-        // The tab watches the extraction folder before the rest are extracted, so this sees them in the order they come
-        _mockFileWatcherService.OnWatch = directory =>
-        {
-            if (folderWatcher is not null)
-            {
-                return;
-            }
-
-            // The pages extracted together with the start entry, after it, as the tab lists them before the rest come
-            withTheStart = tab.ImageIterator.Files.Select(f => f.Name)
-                .Where(name => name != "Vol 1 (color) - 002.jpg").ToArray();
-            folderWatcher = new FileSystemWatcher(directory!);
-            folderWatcher.Created += (_, e) => extracted.Enqueue(e.Name!);
-            folderWatcher.EnableRaisingEvents = true;
-        };
+        // Records each page as it is written, in order
+        var writer = new RecordingEntryWriter();
+        var tab = CreateTab(_testDirectory, writer: writer);
 
         try
         {
             await _navigationService.LoadFromArchiveAsync(zip, tab, new CancellationTokenSource(),
                 startEntry: "Vol 1 (color)/002.jpg");
-            await WaitUntil(() => !tab.IsArchiveExtracting.Value && withTheStart.Length + extracted.Count >= 3,
-                () => string.Join(", ", extracted));
+            await WaitUntil(() => tab.Archives.State is not ExtractionState.Extracting && writer.Written.Length >= 4,
+                () => string.Join(", ", writer.Written));
 
             Assert.Equal("Vol 1 (color) - 002.jpg", tab.Model.FileInfo?.Name);
-            Assert.Equal(expected, withTheStart.Concat(extracted));
+            // The pages extracted together with the start entry come in the archive's order, so they are compared sorted
+            Assert.Equal(withTheStart, writer.Written.Take(withTheStart.Length).Order(StringComparer.Ordinal));
+            Assert.Equal(rest, writer.Written.Skip(withTheStart.Length));
         }
         finally
         {
-            folderWatcher?.Dispose();
-            tab.ArchiveExtractionService.Cleanup();
-            Settings.Navigation.AlwaysUncompressEntireArchive = true;
+            tab.Archives.Cleanup();
         }
     }
 
@@ -923,18 +761,14 @@ public class NavigationServiceTests : IDisposable
     ];
 
     [Theory]
-    [InlineData(false, true)]
-    [InlineData(true, true)]
+    [InlineData(true)]
     // With the folders left out of the names, the pages of both volumes share names
-    [InlineData(false, false)]
-    [InlineData(true, false)]
+    [InlineData(false)]
     public async Task LoadFromArchiveAsync_BackToAPageInAFolderAfterTheTabLeft_OpensTheArchiveAtThatPage(
-        bool alwaysUncompressEntireArchive, bool isRespectingArchiveStructure)
+        bool isRespectingArchiveStructure)
     {
-        Settings.Navigation.AlwaysUncompressEntireArchive = alwaysUncompressEntireArchive;
         Settings.Navigation.IsRespectingArchiveStructure = isRespectingArchiveStructure;
-        var zip = await CreateZipWithEntriesAsync($"back_{alwaysUncompressEntireArchive}_{isRespectingArchiveStructure}.zip",
-            TwoVolumes);
+        var zip = await CreateZipWithEntriesAsync($"back_{isRespectingArchiveStructure}.zip", TwoVolumes);
         var tab = CreateTab(_testDirectory);
         var page = ViewHistoryEntry.ForArchivePage(zip, "Volume 02/002.jpg");
         var left = ViewHistoryEntry.ForFile(await WriteImageAsync("left.jpg"));
@@ -948,14 +782,13 @@ public class NavigationServiceTests : IDisposable
             await _navigationService.LoadFromArchiveAsync(zip, tab, new CancellationTokenSource(), back.Target.ArchiveEntry);
             tab.ViewHistory.EndStep(back);
 
-            Assert.Equal("Volume 02/002.jpg", tab.ArchiveExtractionService.EntryOf(tab.Model.FileInfo!.FullName));
+            Assert.Equal("Volume 02/002.jpg", tab.Archives.EntryOf(tab.Model.FileInfo!.FullName));
             Assert.Equal([page, left], tab.ViewHistory.Entries);
             Assert.Equal(0, tab.ViewHistory.Cursor);
         }
         finally
         {
-            tab.ArchiveExtractionService.Cleanup();
-            Settings.Navigation.AlwaysUncompressEntireArchive = true;
+            tab.Archives.Cleanup();
             Settings.Navigation.IsRespectingArchiveStructure = true;
         }
     }
@@ -993,23 +826,22 @@ public class NavigationServiceTests : IDisposable
             await navigation.LoadFromArchiveAsync(archive, tab, new CancellationTokenSource(), back.Target.ArchiveEntry);
             tab.ViewHistory.EndStep(back);
 
-            Assert.Equal(Path.Combine(tab.ArchiveExtractionService.TempZipDirectory!, "Volume 02", "002.jpg"),
+            Assert.Equal(Path.Combine(tab.Archives.OpenFolder!, "Volume 02", "002.jpg"),
                 tab.Model.FileInfo?.FullName);
             Assert.Equal([page, left], tab.ViewHistory.Entries);
             Assert.Equal(0, tab.ViewHistory.Cursor);
         }
         finally
         {
-            tab.ArchiveExtractionService.Cleanup();
+            tab.Archives.Cleanup();
         }
     }
 
     [Fact]
     public async Task LoadFromArchiveAsync_StartEntryAtTheEndOfAFolderThenNext_ShowsTheNextFoldersFirstPage()
     {
-        // One by one, with the app's watcher, which adds each page to the tab's files as it is extracted, flat in the
-        // extraction folder with its folder in its name
-        Settings.Navigation.AlwaysUncompressEntireArchive = false;
+        // With the app's watcher, which adds each page to the tab's files as it is extracted, flat in the extraction
+        // folder with its folder in its name
         var zip = await CreateZipWithEntriesAsync("next_folder.zip", TwoVolumes);
         var tab = CreateTab(_testDirectory);
         var folderWatcher = new FileWatcherService(string.CompareOrdinal, _cache);
@@ -1028,8 +860,7 @@ public class NavigationServiceTests : IDisposable
         finally
         {
             folderWatcher.Dispose();
-            tab.ArchiveExtractionService.Cleanup();
-            Settings.Navigation.AlwaysUncompressEntireArchive = true;
+            tab.Archives.Cleanup();
         }
     }
 
@@ -1054,100 +885,51 @@ public class NavigationServiceTests : IDisposable
         finally
         {
             folderWatcher.Dispose();
-            tab.ArchiveExtractionService.Cleanup();
-        }
-    }
-
-    [Fact]
-    public async Task LoadFromArchiveAsync_StartEntryThenNextTwiceOneByOne_ShowsThePagesAfterIt()
-    {
-        // One by one, the pages either side of the start take turns, so img_02 comes between img_04 and img_05, before
-        // the shown page
-        Settings.Navigation.AlwaysUncompressEntireArchive = false;
-        var zip = await CreateZipAsync("next_twice.zip", 5);
-        var tab = CreateTab(_testDirectory);
-        var folderWatcher = new FileWatcherService(string.CompareOrdinal, _cache);
-        var navigation = new NavigationService(_mockImageModelLoader, _cache, folderWatcher,
-            new MockPlatformSpecificService(), string.CompareOrdinal);
-
-        try
-        {
-            await navigation.LoadFromArchiveAsync(zip, tab, new CancellationTokenSource(), startEntry: "img_03.jpg");
-            await tab.ImageIterator.NavigateAsync(NavigateTo.Next, SkipAmount.One, new CancellationTokenSource())
-                .AsTask().WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
-            var afterTheFirst = tab.Model.FileInfo!.Name;
-            await tab.ImageIterator.NavigateAsync(NavigateTo.Next, SkipAmount.One, new CancellationTokenSource())
-                .AsTask().WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
-
-            Assert.Equal("img_04.jpg", afterTheFirst);
-            Assert.Equal("img_05.jpg", tab.Model.FileInfo!.Name);
-        }
-        finally
-        {
-            folderWatcher.Dispose();
-            tab.ArchiveExtractionService.Cleanup();
-            Settings.Navigation.AlwaysUncompressEntireArchive = true;
+            tab.Archives.Cleanup();
         }
     }
 
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task LoadFromArchiveAsync_NextWaitingWhenTheExtractionEndsBeforeTheWatcherListsThePage_ShowsThatPage(
-        bool looping)
+    public async Task LoadFromArchiveAsync_NextWaitingForAPageStillBeingWritten_ShowsItOnceItIsWritten(bool looping)
     {
-        // One by one from img_04, so img_05 is extracted first and img_01 last. The watcher has listed the pages before
-        // the shown one, but not img_05 yet when the extraction ends, as a watcher that handles a folder's events one
-        // at a time lags behind
-        Settings.Navigation.AlwaysUncompressEntireArchive = false;
+        // The start page comes first, and img_02 is extracted first of the rest, held by the test while it is written. The
+        // opening lists it the moment it is written, with no folder watcher in between
         Settings.UIProperties.Looping = looping;
-        var zip = await CreateZipAsync($"watcher_behind_{looping}.zip", 5);
-        var extraction = new HeldWriteExtraction("img_01.jpg");
-        var tab = CreateTab(_testDirectory, extraction: extraction);
-        var folderEvents = new ManualFolderEvents();
-        var watcher = new FileWatcherService(string.CompareOrdinal, _cache, folderEvents: folderEvents);
-        var navigation = new NavigationService(_mockImageModelLoader, _cache, watcher, new MockPlatformSpecificService(),
-            string.CompareOrdinal);
+        var zip = await CreateZipAsync($"page_written_{looping}.zip", 15);
+        var writer = new HeldEntryWriter("img_02.jpg");
+        var tab = CreateTab(_testDirectory, writer: writer);
 
         try
         {
-            await navigation.LoadFromArchiveAsync(zip, tab, new CancellationTokenSource(), startEntry: "img_04.jpg");
-            var folder = extraction.TempZipDirectory!;
-            // The extraction writes img_01, the last page it extracts, until the test lets it end
-            await extraction.Holding.Task.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
-            folderEvents.RaiseCreated(folder, "img_03.jpg");
-            folderEvents.RaiseCreated(folder, "img_02.jpg");
-            folderEvents.RaiseCreated(folder, "img_01.jpg");
-            await WaitUntil(() => tab.ImageIterator.Files.Count == 4,
-                () => string.Join(", ", tab.ImageIterator.Files.Select(f => f.Name)));
+            await _navigationService.LoadFromArchiveAsync(zip, tab, new CancellationTokenSource(), startEntry: "img_01.jpg");
+            // The extraction writes img_02 until the test lets it
+            await writer.Holding("img_02.jpg").WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
 
-            // Next at the last page listed waits for img_05, and the extraction ends while it waits
+            // Next at the start page, the only one listed, waits for img_02
             var next = tab.ImageIterator.NavigateAsync(NavigateTo.Next, SkipAmount.One, new CancellationTokenSource())
                 .AsTask();
             var wasWaiting = !next.IsCompleted;
-            extraction.Release();
+            writer.Release("img_02.jpg");
             await next.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
 
             Assert.True(wasWaiting);
             // Not the shown page again, nor round to the first one with looping
-            Assert.Equal("img_05.jpg", tab.Model.FileInfo?.Name);
-            Assert.Equal([ViewHistoryEntry.ForArchivePage(zip, "img_04.jpg"), ViewHistoryEntry.ForArchivePage(zip, "img_05.jpg")],
+            Assert.Equal("img_02.jpg", tab.Model.FileInfo?.Name);
+            Assert.Equal(
+                [ViewHistoryEntry.ForArchivePage(zip, "img_01.jpg"), ViewHistoryEntry.ForArchivePage(zip, "img_02.jpg")],
                 tab.ViewHistory.Entries);
 
-            // The watcher hears of img_05 at last, finds it listed and leaves it listed once
-            var shown = tab.FileInfo.Value;
-            folderEvents.RaiseCreated(folder, "img_05.jpg");
-            await WaitUntil(() => !ReferenceEquals(tab.FileInfo.Value, shown));
-
-            Assert.Equal(["img_01.jpg", "img_02.jpg", "img_03.jpg", "img_04.jpg", "img_05.jpg"],
+            await WaitUntil(() => tab.Archives.State is not ExtractionState.Extracting,
+                () => string.Join(", ", tab.ImageIterator.Files.Select(f => f.Name)));
+            Assert.Equal(Enumerable.Range(1, 15).Select(i => $"img_{i:D2}.jpg"),
                 tab.ImageIterator.Files.Select(f => f.Name));
         }
         finally
         {
-            extraction.Release();
-            watcher.Dispose();
-            tab.ArchiveExtractionService.Cleanup();
-            Settings.Navigation.AlwaysUncompressEntireArchive = true;
+            writer.Release("img_02.jpg");
+            tab.Archives.Cleanup();
             Settings.UIProperties.Looping = false;
         }
     }
@@ -1155,18 +937,17 @@ public class NavigationServiceTests : IDisposable
     [Fact]
     public async Task LoadFromArchiveAsync_BackgroundExtractionEnds_ListsItsPagesOffTheLowPriorityWorker()
     {
-        // The end lists the pages the watcher has not, under the lock a key press reads the list under. The extraction's
-        // own thread has the lowest priority, so on a busy machine it could keep the lock from a key press. The test's
-        // watcher lists nothing, so the end lists every page it wrote
-        Settings.Navigation.AlwaysUncompressEntireArchive = false;
-        var zip = await CreateZipAsync("end_priority.zip", 3);
-        var extraction = new HeldWriteExtraction("img_03.jpg");
-        var tab = CreateTab(_testDirectory, extraction: extraction);
+        // The end waits for the last pages to be listed, then clears the progress and wakes a Next waiting for a page.
+        // The extraction's own thread has a low priority, so on a busy machine the end would keep a key press
+        // waiting if it ran there
+        var zip = await CreateZipAsync("end_priority.zip", 12);
+        var writer = new HeldEntryWriter("img_12.jpg");
+        var tab = CreateTab(_testDirectory, writer: writer);
         var endedOn = new TaskCompletionSource<ThreadPriority>(TaskCreationOptions.RunContinuationsAsynchronously);
-        // The end lowers the flag right after it lists the pages, on the same thread
-        using var ending = tab.IsArchiveExtracting.Subscribe(isExtracting =>
+        // The end clears the progress text right after it listed the pages, on the same thread
+        using var ending = tab.Archives.ProgressText.AsObservable().Subscribe(progress =>
         {
-            if (!isExtracting && extraction.Holding.Task.IsCompleted)
+            if (progress is null && writer.Holding("img_12.jpg").IsCompleted)
             {
                 endedOn.TrySetResult(Thread.CurrentThread.Priority);
             }
@@ -1176,18 +957,18 @@ public class NavigationServiceTests : IDisposable
         {
             await _navigationService.LoadFromArchiveAsync(zip, tab, new CancellationTokenSource(), startEntry: "img_01.jpg");
             // Holding the last page's write keeps the extraction from ending before the load awaits it
-            await extraction.Holding.Task.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
-            extraction.Release();
+            await writer.Holding("img_12.jpg").WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+            writer.Release("img_12.jpg");
             var priority = await endedOn.Task.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
 
             Assert.Equal(ThreadPriority.Normal, priority);
-            Assert.Equal(["img_01.jpg", "img_02.jpg", "img_03.jpg"], tab.ImageIterator.Files.Select(f => f.Name));
+            Assert.Equal(Enumerable.Range(1, 12).Select(i => $"img_{i:D2}.jpg"),
+                tab.ImageIterator.Files.Select(f => f.Name));
         }
         finally
         {
-            extraction.Release();
-            tab.ArchiveExtractionService.Cleanup();
-            Settings.Navigation.AlwaysUncompressEntireArchive = true;
+            writer.Release("img_12.jpg");
+            tab.Archives.Cleanup();
         }
     }
 
@@ -1223,34 +1004,6 @@ public class NavigationServiceTests : IDisposable
     }
 
     // Reports only the file events the test raises, so the test decides when the watcher hears of each page
-    private sealed class ManualFolderEvents : IFolderEvents
-    {
-        private readonly ConcurrentDictionary<string, ManualFolderWatch> _watches = new(StringComparer.OrdinalIgnoreCase);
-
-        public IFolderWatch Watch(string directory, bool includeSubdirectories) =>
-            _watches[Path.TrimEndingDirectorySeparator(directory)] = new ManualFolderWatch(directory);
-
-        public void RaiseCreated(string directory, string name) =>
-            _watches[Path.TrimEndingDirectorySeparator(directory)].RaiseCreated(name);
-    }
-
-    private sealed class ManualFolderWatch(string directory) : IFolderWatch
-    {
-        private readonly Subject<FileSystemEventArgs> _created = new();
-
-        public Observable<FileSystemEventArgs> Created => _created;
-        public Observable<FileSystemEventArgs> Changed { get; } = Observable.Never<FileSystemEventArgs>();
-        public Observable<RenamedEventArgs> Renamed { get; } = Observable.Never<RenamedEventArgs>();
-        public Observable<FileSystemEventArgs> Deleted { get; } = Observable.Never<FileSystemEventArgs>();
-        public Observable<Unit> Gone { get; } = Observable.Never<Unit>();
-        public Observable<string> Moved { get; } = Observable.Never<string>();
-
-        public void RaiseCreated(string name) =>
-            _created.OnNext(new FileSystemEventArgs(WatcherChangeTypes.Created, directory, name));
-
-        public void Dispose() => _created.Dispose();
-    }
-
     private class MockFileWatcherService : IFileWatcherService
     {
         public bool WatchCalled { get; private set; }

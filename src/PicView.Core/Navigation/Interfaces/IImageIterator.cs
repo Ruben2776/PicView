@@ -42,8 +42,8 @@ public interface IImageIterator : IDisposable
 
     /// <summary>
     /// Inserts <paramref name="file"/> at its sorted position, keeping <see cref="CurrentIndex"/> on the same file. A
-    /// file the list has already is listed once: its entry is replaced instead, as when the end of an archive's
-    /// extraction listed a page between the watcher's look for it and the watcher's insert.
+    /// file the list has already is listed once: its entry is replaced instead, as when a file is created over one in
+    /// the list.
     /// </summary>
     /// <param name="details">The file's details, for the gallery, when the caller has them.</param>
     /// <returns>The position of the file.</returns>
@@ -54,7 +54,7 @@ public interface IImageIterator : IDisposable
     /// <see cref="Insert"/> does. It inserts them all under one lock, so a Next waiting for the list to change finds
     /// them together, and steps to the file right after the shown one. Only while the list is the files of
     /// <paramref name="folder"/>: a tab that browses another folder by then keeps its list. A file that is gone is left
-    /// out. The end of an archive's extraction lists through it the pages the watcher has not listed yet.
+    /// out. A tab's Archive Openings list each page through it as it is written (ADR-0013).
     /// </summary>
     /// <returns>How many files it inserted.</returns>
     int InsertMissing(IReadOnlyCollection<string> paths, string folder, Func<string, string, int> compareNames);

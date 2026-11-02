@@ -88,7 +88,6 @@ public class FileRenamesTests : IDisposable
         var tab = OpenWindow().WindowTabs.ActiveTab.Value;
         var oldZip = CreateZip(PathOf("old.zip"), "1.jpg", "2.jpg");
         var newZip = PathOf("new.zip");
-        var extraction = tab.ArchiveExtractionService!;
         try
         {
             var (first, second) = await ExtractTwoPagesAsync(tab, oldZip);
@@ -101,11 +100,11 @@ public class FileRenamesTests : IDisposable
                 tab.ViewHistory.Entries);
             Assert.Equal([newZip], FileHistoryManager.AllEntries.Select(e => e.Path));
             Assert.Equal(newZip, Settings.StartUp.LastFile);
-            Assert.Equal(newZip, extraction.LastOpenedArchive);
+            Assert.Equal(newZip, tab.Archives.OpenArchive);
         }
         finally
         {
-            extraction.Cleanup();
+            tab.Archives.Cleanup();
         }
     }
 
@@ -115,7 +114,6 @@ public class FileRenamesTests : IDisposable
         var tab = OpenWindow().WindowTabs.ActiveTab.Value;
         var oldZip = CreateZip(Path.Combine(_folder, "x", "a.zip"), "1.jpg", "2.jpg");
         var newZip = Path.Combine(_folder, "y", "a.zip");
-        var extraction = tab.ArchiveExtractionService!;
         try
         {
             var (first, second) = await ExtractTwoPagesAsync(tab, oldZip);
@@ -127,11 +125,11 @@ public class FileRenamesTests : IDisposable
             Assert.Equal([ViewHistoryEntry.ForArchivePage(newZip, "1.jpg"), ViewHistoryEntry.ForArchivePage(newZip, "2.jpg")],
                 tab.ViewHistory.Entries);
             Assert.Equal([newZip], FileHistoryManager.AllEntries.Select(e => e.Path));
-            Assert.Equal(newZip, extraction.LastOpenedArchive);
+            Assert.Equal(newZip, tab.Archives.OpenArchive);
         }
         finally
         {
-            extraction.Cleanup();
+            tab.Archives.Cleanup();
         }
     }
 
@@ -293,14 +291,15 @@ public class FileRenamesTests : IDisposable
         return zip;
     }
 
-    // Opens the archive in the tab and extracts its pages 1.jpg and 2.jpg, as a tab reading it has
+    // Opens the archive in the tab and extracts its two pages, as a tab reading it has once the start page shows
     private static async Task<(string First, string Second)> ExtractTwoPagesAsync(TabViewModel tab, string zip)
     {
-        var extraction = tab.ArchiveExtractionService!;
-        await extraction.PrepareArchiveAsync(zip, (_, _) => Task.FromResult(false), string.CompareOrdinal);
-        var first = await extraction.ExtractEntryAsync(zip, "1.jpg", TestContext.Current.CancellationToken);
-        var second = await extraction.ExtractEntryAsync(zip, "2.jpg", TestContext.Current.CancellationToken);
-        return (first!, second!);
+        var opening = (await tab.Archives.OpenAsync(zip, null, (_, _) => Task.FromResult(false), string.CompareOrdinal,
+            TestContext.Current.CancellationToken))!;
+        opening.ExtractRest();
+        await opening.Ended.WaitAsync(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken);
+        var pages = Directory.GetFiles(opening.Folder).Order(StringComparer.Ordinal).ToArray();
+        return (pages[0], pages[1]);
     }
 
     private class MockFrameProvider : FrameProvider

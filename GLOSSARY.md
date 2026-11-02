@@ -99,6 +99,16 @@ _Avoid_: Last entry, current entry
 Two images a tab shows beside each other when Side-by-Side is on: the shown image and its partner, the next image in the list. The last image has no partner unless the list loops, and a file with no partner shows alone. Paired navigation moves by two images at a time.
 _Avoid_: Dual view, two-up, double view
 
+## Archives
+
+**Archive Opening**:
+One open of an archive in a Tab: it prepares the archive, shows the start page, extracts the rest in the background, and ends finished or stopped. A newer Archive Opening in the same tab stops it. Next past the last extracted page waits for the page, and gives up when the opening is stopped rather than finished.
+_Avoid_: Extraction (for the whole open), archive load, archive session
+
+**Open Archive**:
+The archive a Tab reads now: the one whose page it shows, with the folder its pages are extracted to. Leaving it for a file, a folder or another archive deletes that folder once the new image shows.
+_Avoid_: Current archive, last opened archive, temp zip directory
+
 ## Gallery
 
 **Gallery Mode**:
