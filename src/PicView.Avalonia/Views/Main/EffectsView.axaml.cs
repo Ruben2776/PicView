@@ -35,8 +35,8 @@ public partial class EffectsView : UserControl
 
         effects.Rendered
             .Subscribe(magick =>
-                core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.ActiveTab.Value.Image.Value =
-                    magick.ToWriteableBitmap(), DebugHelper.LogError(nameof(EffectsView), nameof(effects.Rendered)))
+                core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.ActiveTab.Value.ShowStandIn(
+                    magick.ToWriteableBitmap()), DebugHelper.LogError(nameof(EffectsView), nameof(effects.Rendered)))
             .AddTo(ref _disposables);
     }
 

@@ -388,7 +388,7 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
                 var thumb = GetThumbnail(targetFile);
                 if (IsTargetActive(targetFile))
                 {
-                    _tab.Image.Value = thumb;
+                    _tab.ShowStandIn(thumb);
                 }
                 var model = await request.ConfigureAwait(false);
                 if (model is not null && IsTargetActive(targetFile))
@@ -424,10 +424,8 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
         var secondRequest = Cache.GetAsync(_tab.Id, secondaryFile, ct.Token);
         if (!firstRequest.IsCompleted || !secondRequest.IsCompleted)
         {
-            _tab.SetLoading();
-            _tab.Image.Value = null;
-            _tab.SecondaryImage.Value = null;
-            
+            _tab.ShowLoading(null);
+
             await Task.Run(async () =>
             {
                 await UpdateModels().ConfigureAwait(false);

@@ -1,4 +1,5 @@
 using PicView.Core.ImageDecoding;
+using PicView.Core.Localization;
 using PicView.Core.Models;
 using PicView.Core.Navigation.Tiff;
 using PicView.Core.ViewModels;
@@ -81,6 +82,55 @@ public class TabShownStateTests
         _tab.ShowPage(1);
 
         Assert.Empty(changes);
+    }
+
+    [Fact]
+    public void ShowStandIn_SetsImageOnly()
+    {
+        var model = Model("a.jpg");
+        _tab.Display(model);
+        var standIn = new object();
+        var fired = false;
+        using var _ = _tab.Shown.Subscribe(_ => fired = true);
+
+        _tab.ShowStandIn(standIn);
+
+        Assert.Same(standIn, _tab.Image.Value);
+        Assert.Same(model, _tab.Model);
+        Assert.Same(model.FileInfo, _tab.FileInfo.Value);
+        Assert.Single(_tab.ViewHistory.Entries);
+        Assert.False(fired);
+    }
+
+    [Fact]
+    public void ShowLoading_SetsThumbnailLoadingTitleAndClearsSecondaryImage()
+    {
+        TranslationManager.Init();
+        var secondary = Model("b.jpg");
+        _tab.Display(Model("a.jpg"), secondary);
+        var thumb = new object();
+        var fired = false;
+        using var _ = _tab.Shown.Subscribe(_ => fired = true);
+
+        _tab.ShowLoading(thumb);
+
+        Assert.Same(thumb, _tab.Image.Value);
+        Assert.Null(_tab.SecondaryImage.Value);
+        Assert.Equal(TranslationManager.Translation.Loading, _tab.Title!.Value);
+        Assert.Same(secondary, _tab.SecondaryModel);
+        Assert.Single(_tab.ViewHistory.Entries);
+        Assert.False(fired);
+    }
+
+    [Fact]
+    public void ShowLoading_OnTabThatShowedNothing_DoesNotThrow()
+    {
+        TranslationManager.Init();
+
+        _tab.ShowLoading(null);
+
+        Assert.Null(_tab.Image.Value);
+        Assert.Equal(TranslationManager.Translation.Loading, _tab.Title!.Value);
     }
 
     private static ImageModel Model(string name, ImageType type = ImageType.Bitmap) => new()

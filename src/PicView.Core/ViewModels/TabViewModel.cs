@@ -519,6 +519,24 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
         TitleTooltip.Value = TranslationManager.Translation.Loading;
         TabTitle.Value = TranslationManager.Translation.Loading;
     }
+
+    /// <summary>
+    /// Shows <paramref name="image"/> in place of the shown model's image, as a Stand-in: a thumbnail while the next
+    /// image loads, or an Effects Render. What the tab shows is unchanged: neither model changes, nothing is recorded
+    /// and <see cref="Shown"/> does not fire.
+    /// </summary>
+    public void ShowStandIn(object? image) => Image.Value = image;
+
+    /// <summary>
+    /// Shows <paramref name="thumbnail"/> as the Stand-in while the next image loads, with the Loading title, and clears
+    /// the secondary image, which is already clear when nothing is shown beside the image.
+    /// </summary>
+    public void ShowLoading(object? thumbnail)
+    {
+        SetLoading();
+        ShowStandIn(thumbnail);
+        SecondaryImage.Value = null;
+    }
     
     #endregion
 
