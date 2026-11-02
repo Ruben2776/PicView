@@ -42,17 +42,14 @@ internal sealed class FolderChanges(TabViewModel tab)
         if (tab.Model.FileInfo is { } shown &&
             FolderChange.PathInRenamedFolder(shown.FullName, oldFolder, newFolder) is { } shownPath)
         {
-            tab.Model.FileInfo = new FileInfo(shownPath);
-            tab.FileInfo.Value = tab.Model.FileInfo;
+            tab.UpdateShownFile(shown.FullName, new FileInfo(shownPath));
         }
         if (tab.SecondaryModel?.FileInfo is { } secondary &&
             FolderChange.PathInRenamedFolder(secondary.FullName, oldFolder, newFolder) is { } secondaryPath)
         {
-            tab.SecondaryModel.FileInfo = new FileInfo(secondaryPath);
-            tab.SecondaryFileInfo.Value = tab.SecondaryModel.FileInfo;
+            tab.UpdateShownFile(secondary.FullName, new FileInfo(secondaryPath));
         }
 
-        tab.UpdateTabTitle();
         return ValueTask.CompletedTask;
     }
 
@@ -88,12 +85,7 @@ internal sealed class FolderChanges(TabViewModel tab)
         // A file created over one in the list, as when overwriting it
         if (iterator.Replace(file, change.Details) >= 0)
         {
-            if (IsShown(file.FullName))
-            {
-                tab.Model.FileInfo = file;
-                tab.FileInfo.Value = file;
-                tab.UpdateTabTitle();
-            }
+            tab.UpdateShownFile(file.FullName, file);
             return ValueTask.CompletedTask;
         }
 
@@ -114,13 +106,9 @@ internal sealed class FolderChanges(TabViewModel tab)
         iterator.Replace(file, change.Details);
 
         // Update the shown file's details to reflect its new size
-        if (IsShown(file.FullName) && await change.Details.GetAsync(ct).ConfigureAwait(false) is { } details)
+        if (tab.IsShownFile(file.FullName) && await change.Details.GetAsync(ct).ConfigureAwait(false) is { } details)
         {
-            tab.Model.PixelWidth = details.PixelWidth;
-            tab.Model.PixelHeight = details.PixelHeight;
-            tab.Model.FileInfo = file;
-            tab.FileInfo.Value = file;
-            tab.UpdateTabTitle();
+            tab.UpdateShownFile(file.FullName, file, details.PixelWidth, details.PixelHeight);
         }
     }
 
@@ -223,7 +211,4 @@ internal sealed class FolderChanges(TabViewModel tab)
         }
         return false;
     }
-
-    private bool IsShown(string path) =>
-        string.Equals(path, tab.FileInfo?.CurrentValue?.FullName, StringComparison.OrdinalIgnoreCase);
 }

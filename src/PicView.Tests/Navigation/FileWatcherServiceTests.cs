@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using ImageMagick;
 using PicView.Core.ImageDecoding;
 using PicView.Core.Localization;
@@ -186,6 +187,57 @@ public class FileWatcherServiceTests : IDisposable
         await WaitUntilAsync(() => _mockThumbnailCache.RemovedPaths.Contains(filePath));
         Assert.Single(tab.ImageIterator.Files);
         Assert.False(_cache.TryGetReady(file, out _), "The stale image should no longer be served");
+    }
+
+    [Fact]
+    public async Task OnFileChanged_ShownFile_FollowsSizeAndTitle_FiresFile()
+    {
+        // Arrange: a real image on disk, so its details can be read
+        var filePath = Path.Combine(_testDirectory, "change.jpg");
+        using (var image = new MagickImage(MagickColors.Red, 2, 3))
+        {
+            await image.WriteAsync(filePath, TestContext.Current.CancellationToken);
+        }
+        var file = new FileInfo(filePath);
+        var tab = CreateTab(_testDirectory, [file], file);
+        tab.ImageIterator!.Initialize([file], 0);
+        tab.IsSelected = true;
+        var changes = new ConcurrentQueue<ShownChange>();
+        using var subscription = tab.Shown.Subscribe(changes.Enqueue);
+
+        // Act
+        Watch(tab).RaiseChanged("change.jpg");
+
+        // Assert: the shown file's model, bindable and title follow, through the tab
+        await WaitUntilAsync(() => changes.Contains(ShownChange.File));
+        Assert.Equal(filePath, tab.FileInfo.Value?.FullName);
+        Assert.Equal(2u, tab.Model.PixelWidth);
+        Assert.Equal(3u, tab.Model.PixelHeight);
+        Assert.Equal("change.jpg", tab.TabTitle.Value);
+    }
+
+    [Fact]
+    public async Task OnFileChanged_UnshownFile_LeavesShownModelAlone()
+    {
+        // Arrange
+        var files = Files("a.jpg", "b.jpg");
+        foreach (var file in files)
+        {
+            await File.WriteAllTextAsync(file.FullName, "dummy content", TestContext.Current.CancellationToken);
+        }
+        var tab = CreateTab(_testDirectory, files, files[0]);
+        var shown = tab.Model.FileInfo;
+        var before = tab.ImageIterator!.Files[1];
+        var changes = new ConcurrentQueue<ShownChange>();
+        using var subscription = tab.Shown.Subscribe(changes.Enqueue);
+
+        // Act
+        Watch(tab).RaiseChanged("b.jpg");
+
+        // Assert: the list has the changed file's new details, the shown model is untouched
+        await WaitUntilAsync(() => !ReferenceEquals(before, tab.ImageIterator!.Files[1]));
+        Assert.Same(shown, tab.Model.FileInfo);
+        Assert.Empty(changes);
     }
 
     [Fact]
@@ -620,6 +672,7 @@ public class FileWatcherServiceTests : IDisposable
                                    second.ImageIterator!.Files[0].DirectoryName == renamed);
         Assert.Equal(Path.Combine(renamed, "b.jpg"), first.Model.FileInfo?.FullName);
         Assert.Equal(Path.Combine(renamed, "a.jpg"), second.Model.FileInfo?.FullName);
+        Assert.Equal(Path.Combine(renamed, "b.jpg"), first.FileInfo.Value?.FullName);
     }
 
     [Fact]

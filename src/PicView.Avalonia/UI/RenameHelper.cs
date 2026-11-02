@@ -95,10 +95,7 @@ public static class RenameHelper
 
             FileRenames.Follow(vm.Core, oldPath, newPath);
 
-            var newFileInfo = new FileInfo(newPath);
-            tab.FileInfo.Value = newFileInfo;
-            tab.Model.FileInfo = newFileInfo;
-            tab.UpdateTabTitle();
+            tab.UpdateShownFile(oldPath, new FileInfo(newPath));
             return true;
         }
 
