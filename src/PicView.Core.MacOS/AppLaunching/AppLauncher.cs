@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace PicView.Core.MacOS.AppLauncher;
+namespace PicView.Core.MacOS.AppLaunching;
 
 public static class AppLauncher
 {

@@ -5,7 +5,7 @@ using PicView.Core.FileHandling;
 using PicView.Core.ImageReading;
 using ZLinq;
 
-namespace PicView.Benchmarks.ImageBenchmarks;
+namespace PicView.Benchmarks.Images;
 
 [MemoryDiagnoser] // track allocations
 public class ImageBenchmarks

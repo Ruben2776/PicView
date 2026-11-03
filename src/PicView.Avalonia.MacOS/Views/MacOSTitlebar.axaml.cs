@@ -36,10 +36,10 @@ public partial class MacOSTitlebar : MainTitleBar
         EditableTitlebar.BorderThickness = new Thickness(0);
 
         CreateTabButton.Background = Brushes.Transparent;
-        CreateTabButton.BorderThickness = new Thickness(0);;
+        CreateTabButton.BorderThickness = new Thickness(0);
                 
         DropDownMenuButton.Background = Brushes.Transparent;
-        DropDownMenuButton.BorderThickness = new Thickness(0);;
+        DropDownMenuButton.BorderThickness = new Thickness(0);
                 
         var brush = UIHelper.GetBrush("SecondaryTextColor");
         EditableTitlebar.Foreground = brush;

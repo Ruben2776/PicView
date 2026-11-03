@@ -2,7 +2,7 @@ using BenchmarkDotNet.Attributes;
 using PicView.Core.Models;
 using PicView.Core.Navigation;
 
-namespace PicView.Benchmarks.ImageBenchmarks;
+namespace PicView.Benchmarks.Images;
 
 [MemoryDiagnoser]
 public class ImageCacheBenchmarks

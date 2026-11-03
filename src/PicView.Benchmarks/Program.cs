@@ -1,6 +1,6 @@
 using BenchmarkDotNet.Running;
 using PicView.Benchmarks;
-using PicView.Benchmarks.ImageBenchmarks;
+using PicView.Benchmarks.Images;
 using PicView.Benchmarks.StartupBenchmarks;
 using PicView.Benchmarks.StringBenchmarks;
 

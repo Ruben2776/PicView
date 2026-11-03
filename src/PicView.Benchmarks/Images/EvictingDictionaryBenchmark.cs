@@ -5,7 +5,7 @@ using PicView.Core.ImageReading;
 using PicView.Core.Preloading;
 using ZLinq;
 
-namespace PicView.Benchmarks.ImageBenchmarks;
+namespace PicView.Benchmarks.Images;
 
 [MemoryDiagnoser] // track allocations
 public class EvictingDictionaryBenchmark

@@ -131,4 +131,11 @@
 	    <Link>plugins\ffmpeg\osx-arm64\libpicviewffmpeg.dylib</Link>
 	  </None>
 	</ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Meziantou.Analyzer" Version="$(MeziantouAnalyzerVersion)">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
 </Project>

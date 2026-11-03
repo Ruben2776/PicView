@@ -6,7 +6,7 @@ using Avalonia.Layout;
 using Avalonia.Threading;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.Views.UC;
-using PicView.Core.MacOS.AppLauncher;
+using PicView.Core.MacOS.AppLaunching;
 using PicView.Core.MacOS.FileAssociation;
 using PicView.Core.ViewModels;
 

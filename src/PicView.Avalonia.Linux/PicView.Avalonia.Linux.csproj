@@ -126,4 +126,11 @@
 	    <Link>plugins\ffmpeg\linux-arm64\libpicviewffmpeg.so</Link>
 	  </None>
 	</ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Meziantou.Analyzer" Version="$(MeziantouAnalyzerVersion)">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
 </Project>

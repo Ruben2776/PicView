@@ -1,4 +1,4 @@
-namespace PicView.Core.Linux.AppLauncher;
+namespace PicView.Core.Linux.AppLaunching;
 
 public static class AppLauncher
 {

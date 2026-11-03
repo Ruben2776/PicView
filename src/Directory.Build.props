@@ -19,6 +19,10 @@
     </PropertyGroup>
 
     <PropertyGroup>
+        <MeziantouAnalyzerVersion>3.0.320</MeziantouAnalyzerVersion>
+    </PropertyGroup>
+
+    <PropertyGroup>
         <NoWarn>$(NoWarn);AVLN3001</NoWarn>
     </PropertyGroup>
 

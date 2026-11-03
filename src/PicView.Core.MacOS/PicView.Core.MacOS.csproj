@@ -31,4 +31,10 @@
     <ProjectReference Include="..\PicView.Core\PicView.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Meziantou.Analyzer" Version="$(MeziantouAnalyzerVersion)">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
 </Project>
