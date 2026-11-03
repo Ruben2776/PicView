@@ -36,7 +36,7 @@ public class CopyButton : Button
             var topLevel = TopLevel.GetTopLevel(this);
             if (topLevel?.Clipboard != null)
             {
-                await topLevel.Clipboard.SetTextAsync(CopyText);
+                await topLevel.Clipboard.SetTextAsync(CopyText).ConfigureAwait(true);
             }
         }
         catch (Exception e)

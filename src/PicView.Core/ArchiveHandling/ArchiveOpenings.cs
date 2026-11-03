@@ -166,7 +166,7 @@ public sealed class ArchiveOpenings
             var end = start;
             do
             {
-                string[] batch = end == start ? FirstKeys(keys, start, start + 1, partner) : [keys[end]];
+                var batch = end == start ? FirstKeys(keys, start, start + 1, partner) : [keys[end]];
                 extracted.AddRange(await _extraction.ExtractEntriesAsync(archive, batch, ct, folder).ConfigureAwait(false));
                 end++;
             } while (extracted.Count is 0 && end < keys.Length && !IsOvertaken());
@@ -179,7 +179,7 @@ public sealed class ArchiveOpenings
 
             var seed = extracted.Select(path => new FileInfo(path)).ToArray();
             var startPath = _extraction.ExtractedPathOf(keys[start]);
-            var shown = startPath is null ? seed[0] : Array.Find(seed, f => f.FullName == startPath) ?? seed[0];
+            var shown = startPath is null ? seed[0] : Array.Find(seed, f => string.Equals(f.FullName, startPath, StringComparison.Ordinal)) ?? seed[0];
             var (afterKeys, beforeKeys) = RemainingKeys(keys, start, end, partner);
             return new ArchiveOpening(this, archive, folder, seed, shown, afterKeys, beforeKeys, keys.Length, compareNames);
         }

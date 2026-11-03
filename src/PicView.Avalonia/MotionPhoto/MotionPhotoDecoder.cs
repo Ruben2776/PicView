@@ -28,15 +28,13 @@ public sealed class MotionPhotoDecoder : IDisposable
 
     private readonly Stream _stream;
     private GCHandle _callbackHandle;
-    private readonly FFmpegService.PvReadCallback _readCallback;
-    private readonly FFmpegService.PvSeekCallback _seekCallback;
     private readonly ConcurrentQueue<int> _freeBuffers = new();
     private readonly ManualResetEventSlim _resumeEvent = new(true);
     private readonly Stopwatch _clock = new();
 
     private IntPtr _session;
     private IntPtr[] _frameBuffers = [];
-    private int _frameBufferSize;
+    private readonly int _frameBufferSize;
     private Thread? _worker;
     private double _startPts = double.NaN;
     private double _pausedAt;
@@ -76,24 +74,25 @@ public sealed class MotionPhotoDecoder : IDisposable
         }
 
         var decoder = new MotionPhotoDecoder(stream);
-        if (decoder._session == IntPtr.Zero)
+        if (decoder._session != IntPtr.Zero)
         {
-            decoder.Dispose();
-            return null;
+            return decoder;
         }
 
-        return decoder;
+        decoder.Dispose();
+        return null;
+
     }
 
     private MotionPhotoDecoder(Stream stream)
     {
         _stream = stream;
-        _readCallback = OnNativeRead;
-        _seekCallback = OnNativeSeek;
+        FFmpegService.PvReadCallback readCallback = OnNativeRead;
+        FFmpegService.PvSeekCallback seekCallback = OnNativeSeek;
         _callbackHandle = GCHandle.Alloc(this);
         var opaque = GCHandle.ToIntPtr(_callbackHandle);
 
-        _session = FFmpegService.PvOpen(opaque, _readCallback, _seekCallback, out var info);
+        _session = FFmpegService.PvOpen(opaque, readCallback, seekCallback, out var info);
         if (_session == IntPtr.Zero)
         {
             return;
@@ -152,7 +151,7 @@ public sealed class MotionPhotoDecoder : IDisposable
     /// <summary>Returns a display buffer to the rotation after its frame has been copied.</summary>
     public void ReleaseBuffer(int index)
     {
-        if (index >= 0 && index < FrameBufferCount)
+        if (index is >= 0 and < FrameBufferCount)
         {
             _freeBuffers.Enqueue(index);
         }
@@ -241,14 +240,13 @@ public sealed class MotionPhotoDecoder : IDisposable
             }
 
             var remaining = deadline - (_clock.Elapsed.TotalSeconds - _pausedTotal);
-            if (remaining <= 0)
+            switch (remaining)
             {
-                return;
-            }
-
-            if (remaining > 0.005)
-            {
-                Thread.Sleep(1);
+                case <= 0:
+                    return;
+                case > 0.005:
+                    Thread.Sleep(1);
+                    break;
             }
         }
     }

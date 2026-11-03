@@ -14,6 +14,6 @@ public partial class AboutWindow : GenericWindow, IPlatformSpecificUpdate
 
     public async Task HandlePlatformUpdate(UpdateInfo updateInfo, string tempPath)
     {
-        await WinUpdateHelper.HandleWindowsUpdate(updateInfo, tempPath);
+        await WinUpdateHelper.HandleWindowsUpdate(updateInfo, tempPath).ConfigureAwait(false);
     }
 }

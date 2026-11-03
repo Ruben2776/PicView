@@ -470,11 +470,15 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
     {
         get
         {
-            if (_load is null)
+            if (_load is not null)
             {
-                var services = Services ?? throw new InvalidOperationException("The tab has no services");
-                LazyInitializer.EnsureInitialized(ref _load, () => new TabLoad(this, services));
+                return _load;
             }
+            if (Services is null)
+            {
+                throw new InvalidOperationException("The tab has no services");
+            }
+            LazyInitializer.EnsureInitialized(ref _load, () => new TabLoad(this, services));
 
             return _load;
         }
@@ -633,10 +637,13 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
     /// <exception cref="InvalidOperationException">The tab has no services.</exception>
     internal void Initialize()
     {
-        var services = RequireServices();
+        if (Services is null)
+        {
+            throw new InvalidOperationException("The tab has no services");
+        }
         GalleryCoordinator?.Dispose();
-        GalleryCoordinator = new Gallery.GalleryCoordinator(this, services.ThumbnailLoader, services.ThumbnailCache);
-        ImageIterator = new ImageIterator(services.Cache, services.ThumbnailCache, services.ThumbnailLoader, this,
+        GalleryCoordinator = new Gallery.GalleryCoordinator(this, Services.ThumbnailLoader, Services.ThumbnailCache);
+        ImageIterator = new ImageIterator(Services.Cache, Services.ThumbnailCache, Services.ThumbnailLoader, this,
             GalleryCoordinator.FilesChanged);
         DeriveCanNavigate();
     }
@@ -648,10 +655,13 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
     /// <exception cref="InvalidOperationException">The tab has no services.</exception>
     internal void InitializeImageIterator(IReadOnlyList<FileInfo> files)
     {
-        var services = RequireServices();
-        var cache = services.Cache;
-        GalleryCoordinator ??= new Gallery.GalleryCoordinator(this, services.ThumbnailLoader, services.ThumbnailCache);
-        ImageIterator ??= new ImageIterator(cache, services.ThumbnailCache, services.ThumbnailLoader, this,
+        if (Services is null)
+        {
+            throw new InvalidOperationException("The tab has no services");
+        }
+        var cache = Services.Cache;
+        GalleryCoordinator ??= new Gallery.GalleryCoordinator(this, Services.ThumbnailLoader, Services.ThumbnailCache);
+        ImageIterator ??= new ImageIterator(cache, Services.ThumbnailCache, Services.ThumbnailLoader, this,
             GalleryCoordinator.FilesChanged);
         DeriveCanNavigate();
         // Browsing files again, so it is no longer fresh
@@ -674,10 +684,6 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
         var directory = files.Count > 0 ? files[0].DirectoryName : null;
         _fileWatcherService?.Watch(this, directory);
     }
-
-    // The services the tab browses files with
-    private TabServices RequireServices() =>
-        Services ?? throw new InvalidOperationException("The tab has no services");
 
     #endregion
 

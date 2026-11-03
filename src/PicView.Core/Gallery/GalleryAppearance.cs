@@ -1,3 +1,5 @@
+using System.Runtime.InteropServices;
+
 namespace PicView.Core.Gallery;
 
 public enum GalleryOrientation
@@ -6,6 +8,7 @@ public enum GalleryOrientation
     Vertical
 }
 
+[StructLayout(LayoutKind.Auto)]
 public readonly record struct GalleryInsets(double Left, double Top, double Right, double Bottom)
 {
     public static GalleryInsets Zero => new(0, 0, 0, 0);
