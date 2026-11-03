@@ -1,6 +1,7 @@
 ﻿using Avalonia.Threading;
 using ImageMagick;
 using PicView.Avalonia.CustomControls;
+using PicView.Avalonia.Navigation;
 using PicView.Core.DebugTools;
 using PicView.Core.FileHandling;
 using PicView.Core.Localization;
@@ -35,7 +36,7 @@ public static class RenameHelper
         var isRenamed = false;
         try
         {
-            isRenamed = await Task.Run(() => RenameFileAsync(vm, tab, oldPath, newPath)).ConfigureAwait(false);
+            isRenamed = await Task.Run(() => RenameFileAsync(vm, tab, oldPath, newPath, mainWindow)).ConfigureAwait(false);
         }
         catch (Exception e)
         {
@@ -81,8 +82,10 @@ public static class RenameHelper
     /// the tab's files and gallery. Every history follows the new name before the tab shows the file under it, or the
     /// tab would record it as a new view.
     /// </summary>
+    /// <param name="mainWindow">The Main Window the tab is in, which opens the converted file; without one, such as
+    /// from the image info window, the tab loads it.</param>
     private static async Task<bool> RenameFileAsync(MainWindowViewModel vm, TabViewModel tab, string oldPath,
-        string newPath)
+        string newPath, MainWindow? mainWindow)
     {
         var currentExtension = Path.GetExtension(oldPath);
         var newExtension = Path.GetExtension(newPath);
@@ -108,7 +111,14 @@ public static class RenameHelper
 
         // Show the converted file before deleting the original, so the watcher removes a file that is no longer shown
         // instead of navigating away from it
-        await vm.WindowTabs.LoadFromFileAsync(newPath, tab).ConfigureAwait(false);
+        if (mainWindow is null)
+        {
+            await tab.Load.LoadAsync(newPath).ConfigureAwait(false);
+        }
+        else
+        {
+            await SourceOpener.OpenAsync(mainWindow, vm.Core, newPath, tab: tab).ConfigureAwait(false);
+        }
         File.Delete(oldPath);
         return true;
     }

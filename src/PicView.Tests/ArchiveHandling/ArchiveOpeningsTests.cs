@@ -4,6 +4,7 @@ using PicView.Core.Models;
 using PicView.Core.Navigation;
 using PicView.Core.Navigation.Interfaces;
 using PicView.Core.ViewModels;
+using PicView.Tests.Navigation;
 using R3;
 
 namespace PicView.Tests.ArchiveHandling;
@@ -425,10 +426,11 @@ public class ArchiveOpeningsTests : IDisposable
 
     private TabViewModel CreateTab(IArchiveEntryWriter? writer = null)
     {
-        var tab = new TabViewModel(new MainWindowViewModel(null!, null!, null!, null!, null!), null, writer);
-        var thumbnails = new MockThumbnailCache();
-        tab.Initialize(new SharedImageCache(file => ValueTask.FromResult(new ImageModel { FileInfo = file })), thumbnails,
-            new MockThumbnailLoader(), null, thumbnails);
+        var services = TestTabServices.For(
+            new SharedImageCache(file => ValueTask.FromResult(new ImageModel { FileInfo = file })),
+            new MockThumbnailCache(), new MockThumbnailLoader());
+        var tab = new TabViewModel(new MainWindowViewModel(null!, null!, null!, null!, null!), services, writer);
+        tab.Initialize();
         tab.ImageIterator!.Initialize([]);
         _tabs.Add(tab);
         return tab;

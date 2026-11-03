@@ -7,6 +7,7 @@ using PicView.Core.Navigation;
 using PicView.Core.Navigation.Interfaces;
 using PicView.Core.Titles;
 using PicView.Core.ViewModels;
+using PicView.Tests.Navigation;
 using R3;
 
 namespace PicView.Tests.Titles;
@@ -25,7 +26,9 @@ public class TabTitlesTests
         ObservableSystem.DefaultFrameProvider = new MockFrameProvider();
         SetDefaults();
         TranslationManager.LoadLanguage("en");
-        _tab = new TabViewModel(null!);
+        _tab = new TabViewModel(null!,
+            TestTabServices.For(new SharedImageCache(f => ValueTask.FromResult(Model(f.Name))!), new ThumbnailCache(),
+                new MockThumbnailLoader()));
     }
 
     private static string Loading => TranslationManager.Translation.Loading!;
@@ -44,8 +47,7 @@ public class TabTitlesTests
     private FileInfo[] Browse(params string[] names)
     {
         var files = names.Select(n => Model(n).FileInfo!).ToArray();
-        _tab.Initialize(new SharedImageCache(f => ValueTask.FromResult(Model(f.Name))!), new ThumbnailCache(),
-            new MockThumbnailLoader(), null, new ThumbnailCache());
+        _tab.Initialize();
         _tab.ImageIterator!.Initialize(files, 0);
         return files;
     }
@@ -120,7 +122,7 @@ public class TabTitlesTests
     public void SetError_HoldsThroughEndLoading_EndsOnSetLoadingAndOnDisplay()
     {
         _tab.SetError("e");
-        _tab.EndLoading();
+        _tab.Titles.EndLoading();
         Assert.Equal("e", _tab.Titles.Title);
         Assert.Equal(TitlePhase.Error, _tab.Titles.Phase);
 
@@ -141,7 +143,7 @@ public class TabTitlesTests
         _tab.Display(Model("a.jpg"));
         _tab.SetLoading();
 
-        _tab.EndLoading();
+        _tab.Titles.EndLoading();
 
         Assert.Equal(TitlePhase.None, _tab.Titles.Phase);
         Assert.Equal("a.jpg", _tab.Titles.TabTitle);
@@ -314,8 +316,7 @@ public class TabTitlesTests
         _tab.DisposeImageIterator();
         _tab.DisplaySingleImage(new ImageModel { Image = new object(), PixelWidth = 1, PixelHeight = 1 },
             SingleImageType.Clipboard, "Pasted");
-        _tab.Initialize(new SharedImageCache(f => ValueTask.FromResult(Model(f.Name))!), new ThumbnailCache(),
-            new MockThumbnailLoader(), null, new ThumbnailCache());
+        _tab.Initialize();
         _tab.Display(Model("a.jpg"));
         Assert.Equal(Loading, _tab.Titles.Title);
 
@@ -333,7 +334,7 @@ public class TabTitlesTests
 
         _tab.Display(Model("a.jpg"));
         _tab.SetLoading();
-        _tab.EndLoading();
+        _tab.Titles.EndLoading();
         _tab.Crop = new CropViewModel();
 
         _ = _tab.Titles.Title;

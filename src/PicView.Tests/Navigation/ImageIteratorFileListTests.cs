@@ -46,8 +46,9 @@ public class ImageIteratorFileListTests : IDisposable
             _loaded.Enqueue(f.Name);
             return ValueTask.FromResult(new ImageModel { FileInfo = f, Image = new ProbeImage() });
         });
-        _tab = new TabViewModel(null!, null, _extraction.Writer);
-        _tab.Initialize(_cache, new ThumbnailCache(), new MockThumbnailLoader(), null, new ThumbnailCache());
+        _tab = new TabViewModel(null!, TestTabServices.For(_cache, new ThumbnailCache(), new MockThumbnailLoader()),
+            _extraction.Writer);
+        _tab.Initialize();
         _iterator = (ImageIterator)_tab.ImageIterator!;
     }
 
@@ -620,8 +621,9 @@ public class ImageIteratorFileListTests : IDisposable
         // The tab reads an archive of twelve pages, whose second page is written until the test lets it, so the
         // extraction of the pages after the start runs on
         var writer = new HeldEntryWriter("img_02.jpg");
-        var tab = new TabViewModel(null!, null, writer);
-        tab.Initialize(_cache, new ThumbnailCache(), new MockThumbnailLoader(), null, new ThumbnailCache());
+        var tab = new TabViewModel(null!, TestTabServices.For(_cache, new ThumbnailCache(), new MockThumbnailLoader()),
+            writer);
+        tab.Initialize();
         var iterator = tab.ImageIterator!;
         var zip = CreateZip("stopped.zip", 12);
         var another = CreateZip("stopper.zip", 2, "page");

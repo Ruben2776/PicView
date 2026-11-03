@@ -252,10 +252,10 @@ public class TabOwnershipTests
     {
         var watcher = new RecordingFileWatcher();
         _core.InitializeNavigation(
-            new TabServices(_core.SharedCache, _core.SharedThumbnailCache, new MockThumbnailLoader(), watcher, null!, null!),
+            TestTabServices.For(_core.SharedCache, _core.SharedThumbnailCache, new MockThumbnailLoader(), watcher),
             navigation: null!);
         var tabs = CreateWindow().WindowTabs;
-        tabs.InitializeActiveTab([]);
+        tabs.ActiveTab.Value.Initialize();
         var first = tabs.ActiveTab.Value;
         var second = tabs.CreateTab();
         _core.SharedThumbnailCache.Add(first.Id, "first.jpg", new object());
@@ -273,14 +273,14 @@ public class TabOwnershipTests
     {
         var watcher = new RecordingFileWatcher();
         _core.InitializeNavigation(
-            new TabServices(_core.SharedCache, _core.SharedThumbnailCache, new MockThumbnailLoader(), watcher, null!, null!),
+            TestTabServices.For(_core.SharedCache, _core.SharedThumbnailCache, new MockThumbnailLoader(), watcher),
             navigation: null!);
 
         var first = CreateWindow().WindowTabs;
         var second = CreateWindow().WindowTabs;
 
-        Assert.Same(watcher, first.SharedFileWatcher);
-        Assert.Same(first.SharedFileWatcher, second.SharedFileWatcher);
+        Assert.Same(watcher, first.ActiveTab.Value.Services?.Watcher);
+        Assert.Same(first.ActiveTab.Value.Services, second.ActiveTab.Value.Services);
         Assert.Same(first.SharedCache, second.SharedCache);
         Assert.Same(first.SharedThumbnailLoader, second.SharedThumbnailLoader);
     }

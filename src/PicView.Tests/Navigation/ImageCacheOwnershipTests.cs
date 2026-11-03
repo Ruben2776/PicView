@@ -30,18 +30,19 @@ public class ImageCacheOwnershipTests
 
         var core = new CoreViewModel(null, LoadProbe);
         core.InitializeNavigation(
-            new TabServices(core.SharedCache, core.SharedThumbnailCache, new MockThumbnailLoader(), null!, null!, null!),
+            TestTabServices.For(core.SharedCache, core.SharedThumbnailCache, new MockThumbnailLoader()),
             navigation: null!);
         _cache = core.SharedCache;
         _tabs = new MainWindowViewModel(core, core.Translation, null!, core.GlobalSettings!, core.GallerySettings)
             .WindowTabs;
-        _tabs.InitializeActiveTab([]);
+        _tabs.ActiveTab.Value.Initialize();
     }
 
     [Fact]
     public async Task CloseTab_TabHeldCachedImage_ImageIsDisposed()
     {
-        var tab = _tabs.CreateTab(_fileA);
+        var tab = _tabs.CreateTab();
+        tab.Initialize();
         tab.ImageIterator.Initialize([_fileA]);
         var image = Assert.IsType<ProbeImage>(await Task.Run(() => _tabs.GetSourceFromFile(_fileA), TestContext.Current.CancellationToken));
 
@@ -54,7 +55,8 @@ public class ImageCacheOwnershipTests
     [Fact]
     public async Task TearDown_TabHeldCachedImage_ImageIsDisposed()
     {
-        var tab = _tabs.CreateTab(_fileA);
+        var tab = _tabs.CreateTab();
+        tab.Initialize();
         tab.ImageIterator.Initialize([_fileA]);
         var image = Assert.IsType<ProbeImage>(await Task.Run(() => _tabs.GetSourceFromFile(_fileA), TestContext.Current.CancellationToken));
 

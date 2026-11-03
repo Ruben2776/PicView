@@ -256,7 +256,7 @@ public class ResizeImageViewModel : IDisposable
 
             // Show the converted file before deleting the original, so the folder watcher removes a file that is no
             // longer shown instead of navigating away from it
-            await _mainVm.WindowTabs.LoadFromFileAsync(convertedPath, tab).ConfigureAwait(false);
+            await tab.Load.LoadAsync(convertedPath).ConfigureAwait(false);
             File.Delete(originalPath);
         }
         catch (Exception e)

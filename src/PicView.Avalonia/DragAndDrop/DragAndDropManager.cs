@@ -30,7 +30,7 @@ public static class DragAndDropManager
         var files = e.DataTransfer.TryGetFiles();
         if (files == null)  
         {
-            await HandleDropFromUrl(e, tabOverview, mainWindow).ConfigureAwait(false);
+            await HandleDropFromUrl(e, mainWindow).ConfigureAwait(false);
             return;
         }
 
@@ -164,7 +164,7 @@ public static class DragAndDropManager
         }
     }
 
-    private static async Task HandleDropFromUrl(DragEventArgs e, TabOverviewViewModel tabOverview, MainWindow mainWindow)
+    private static async Task HandleDropFromUrl(DragEventArgs e, MainWindow mainWindow)
     {
         var item = e.DataTransfer.Items[0].TryGetRaw(DataFormat.CreateBytesPlatformFormat("text/x-moz-url"));
         if (item is not byte[] bytes)
@@ -176,40 +176,26 @@ public static class DragAndDropManager
         var url = dataStr.Split((char)10).FirstOrDefault();
         if (url != null)
         {
-            await LoadFromUrl(url, tabOverview, mainWindow).ConfigureAwait(false);
+            await LoadFromUrl(url, mainWindow).ConfigureAwait(false);
         }
     }
 
-    private static async Task LoadFromUrl(string url, TabOverviewViewModel tabOverview, MainWindow mainWindow)
+    private static async Task LoadFromUrl(string url, MainWindow mainWindow)
     {
         // Remove preview first and show loading
         RemoveDragDropView(mainWindow);
-        
-        var tab = tabOverview.ActiveTab.Value;
-        
+
+        var source = url;
         if (url.StartsWith("file://", StringComparison.OrdinalIgnoreCase))
         {
-            var file = url[7..];
-            if (file.StartsWith('/', StringComparison.Ordinal))
+            source = url[7..];
+            if (source.StartsWith('/', StringComparison.Ordinal))
             {
-                file = file[1..];
+                source = source[1..];
             }
-            
-            if (tab.CurrentView.CurrentValue is not ImageViewer)
-            {
-                tab.CurrentView.Value = new ImageViewer(tab);
-            }
+        }
 
-            await tabOverview.LoadFromFileAsync(file).ConfigureAwait(false);
-        }
-        else
-        {
-            if (tab.CurrentView.CurrentValue is not ImageViewer)
-            {
-                tab.CurrentView.Value = new ImageViewer(tab);
-            }
-            await tabOverview.LoadFromUrlAsync(url).ConfigureAwait(false);
-        }
+        await SourceOpener.OpenAsync(mainWindow, mainWindow.ViewModel!.Core, source).ConfigureAwait(false);
     }
 
     private static async Task HandleDragEnterWithFiles(IEnumerable<IStorageItem> files, MainWindow mainWindow)

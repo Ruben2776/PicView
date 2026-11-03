@@ -486,9 +486,11 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
     }
 
     private TabLoad? _load;
-    public IThumbnailCache? ThumbnailCache { get; private set; }
 
-    private IFileWatcherService? _fileWatcherService = services?.Watcher;
+    // The cache the tab owns thumbnails in, which it leaves when it closes or becomes fresh
+    public IThumbnailCache? ThumbnailCache => Services?.ThumbnailCache;
+
+    private readonly IFileWatcherService? _fileWatcherService = services?.Watcher;
     
     public BindableReactiveProperty<int> NavigationIndex { get; } = new(0);
     public BindableReactiveProperty<int> MaxIndex { get; } = new(0);
@@ -606,12 +608,6 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
     public void EndLoading(int ticket) => Titles.EndLoading(ticket);
 
     /// <summary>
-    /// Ends whatever Loading or Downloading is current, for a tab that becomes fresh. Public only because its one caller
-    /// is in PicView.Avalonia, which Core does not expose its internals to; it goes once the Load module owns the phase.
-    /// </summary>
-    public void EndLoading() => Titles.EndLoading();
-
-    /// <summary>
     /// Shows <paramref name="image"/> in place of the shown model's image, as a Stand-in: a thumbnail while the next
     /// image loads, or an Effects Render. What the tab shows is unchanged: neither model changes, nothing is recorded
     /// and <see cref="Shown"/> does not fire.
@@ -635,34 +631,32 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
 
     #region Initialization
 
-    public void Initialize(SharedImageCache cache, IThumbnailCache thumbCache, IThumbnailLoader thumbnailLoader, IFileWatcherService? fileWatcherService = null, IThumbnailCache? thumbnailCache = null)
+    /// <summary>
+    /// Gives the tab a new iterator and gallery coordinator from its services, with no files.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">The tab has no services.</exception>
+    internal void Initialize()
     {
-        if (fileWatcherService != null)
-        {
-            _fileWatcherService = fileWatcherService;
-        }
-        if (thumbnailCache != null)
-        {
-            ThumbnailCache = thumbnailCache;
-        }
+        var services = RequireServices();
         GalleryCoordinator?.Dispose();
-        GalleryCoordinator = new Gallery.GalleryCoordinator(this, thumbnailLoader, ThumbnailCache ?? thumbCache);
-        ImageIterator = new ImageIterator(cache, thumbCache, thumbnailLoader, this, GalleryCoordinator.FilesChanged);
+        GalleryCoordinator = new Gallery.GalleryCoordinator(this, services.ThumbnailLoader, services.ThumbnailCache);
+        ImageIterator = new ImageIterator(services.Cache, services.ThumbnailCache, services.ThumbnailLoader, this,
+            GalleryCoordinator.FilesChanged);
         DeriveCanNavigate();
     }
 
-    public void InitializeImageIterator(IReadOnlyList<FileInfo> files, SharedImageCache cache, IThumbnailCache thumbCache,  IThumbnailLoader thumbnailLoader, IFileWatcherService? fileWatcherService = null, IThumbnailCache? thumbnailCache = null)
+    /// <summary>
+    /// Makes the tab's iterator and gallery coordinator from its services when it has none, and has it browse
+    /// <paramref name="files"/> at the file it shows, which it then watches the folder of.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">The tab has no services.</exception>
+    internal void InitializeImageIterator(IReadOnlyList<FileInfo> files)
     {
-        if (fileWatcherService != null)
-        {
-            _fileWatcherService = fileWatcherService;
-        }
-        if (thumbnailCache != null)
-        {
-            ThumbnailCache = thumbnailCache;
-        }
-        GalleryCoordinator ??= new Gallery.GalleryCoordinator(this, thumbnailLoader, ThumbnailCache ?? thumbCache);
-        ImageIterator ??= new ImageIterator(cache, thumbCache, thumbnailLoader, this, GalleryCoordinator.FilesChanged);
+        var services = RequireServices();
+        var cache = services.Cache;
+        GalleryCoordinator ??= new Gallery.GalleryCoordinator(this, services.ThumbnailLoader, services.ThumbnailCache);
+        ImageIterator ??= new ImageIterator(cache, services.ThumbnailCache, services.ThumbnailLoader, this,
+            GalleryCoordinator.FilesChanged);
         DeriveCanNavigate();
         // Browsing files again, so it is no longer fresh
         _hasLostItsFiles = false;
@@ -684,7 +678,11 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
         var directory = files.Count > 0 ? files[0].DirectoryName : null;
         _fileWatcherService?.Watch(this, directory);
     }
-    
+
+    // The services the tab browses files with
+    private TabServices RequireServices() =>
+        Services ?? throw new InvalidOperationException("The tab has no services");
+
     #endregion
 
     public async Task Next()

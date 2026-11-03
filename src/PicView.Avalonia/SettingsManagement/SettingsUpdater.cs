@@ -14,6 +14,7 @@ using PicView.Core.ColorHandling;
 using PicView.Core.DebugTools;
 using PicView.Core.Gallery;
 using PicView.Core.Localization;
+using PicView.Core.Navigation;
 using PicView.Core.Sizing;
 using PicView.Core.ViewModels;
 
@@ -87,16 +88,14 @@ public static class SettingsUpdater
         // Every tab's folder watch follows the setting, not only the active tab's
         vm.Core?.SharedFileWatcher?.RestartWatches();
 
-        var windowTabs = vm.WindowTabs;
-        var tab = windowTabs.ActiveTab.CurrentValue;
+        var tab = vm.WindowTabs.ActiveTab.CurrentValue;
         if (tab.ImageIterator?.Files.Count > 0)
         {
             await Task.Run(async () =>
             {
                 // TODO: Make toggling subdirectories skip loading if no subdirectories are included
                 // and if subdirectories exist, don't reload them but progressively add them
-                var ct = tab.GetTabCancellation();
-                await windowTabs.SharedNavigation.RepopulateIterator(tab.FileInfo.CurrentValue, tab, ct)
+                await tab.Load.LoadAsync(tab.FileInfo.CurrentValue.FullName, new LoadOptions(Relist: true))
                     .ConfigureAwait(false);
             }).ConfigureAwait(false);
         }

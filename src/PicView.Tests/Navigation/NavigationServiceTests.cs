@@ -80,10 +80,9 @@ public class NavigationServiceTests : IDisposable
     private TabViewModel CreateTab()
     {
         var dummyParent = new MainWindowViewModel(null!, null!, null!, null!, null!);
-        var tab = new TabViewModel(dummyParent);
+        var tab = new TabViewModel(dummyParent, TestTabServices.For(_cache, new MockThumbnailCache(), _mockThumbnailLoader));
         // Initialize with mocks to avoid null refs
-        var thumbCache = new MockThumbnailCache();
-        tab.Initialize(_cache, thumbCache, _mockThumbnailLoader, null, thumbCache);
+        tab.Initialize();
         tab.ImageIterator.Initialize([]);
         return tab;
     }

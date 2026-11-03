@@ -2,6 +2,7 @@
 using Avalonia.Threading;
 using PicView.Avalonia.Animations;
 using PicView.Avalonia.CustomControls;
+using PicView.Avalonia.Navigation;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.Views.UC.PopUps;
 using PicView.Core.DebugTools;
@@ -162,7 +163,14 @@ public static class FileManager
                 if (!string.IsNullOrWhiteSpace(duplicatedPath) && File.Exists(duplicatedPath))
                 {
                     _ = AnimationsHelper.CopyAnimation(mainWindow);
-                    await vm.WindowTabs.SharedNavigation.LoadFromFileAsync(duplicatedPath, tab, tab.GetTabCancellation()).ConfigureAwait(false);
+                    if (mainWindow is null)
+                    {
+                        await tab.Load.LoadAsync(duplicatedPath).ConfigureAwait(false);
+                    }
+                    else
+                    {
+                        await SourceOpener.OpenAsync(mainWindow, vm.Core, duplicatedPath, tab: tab).ConfigureAwait(false);
+                    }
                 }
             }
             else

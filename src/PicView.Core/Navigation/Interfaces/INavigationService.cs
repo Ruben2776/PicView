@@ -8,45 +8,9 @@ namespace PicView.Core.Navigation.Interfaces;
 
 public interface INavigationService
 {
-    /// <inheritdoc cref="LoadFromFileAsync(FileInfo, TabViewModel, CancellationTokenSource)"/>
-    ValueTask LoadFromFileAsync(string source, TabViewModel tab, CancellationTokenSource ct);
-
-    /// <summary>
-    /// Loads a file into <paramref name="tab"/>, and completes only once the file shows, a newer load supersedes this one,
-    /// or the load fails, since a step Back or Forward ends when its load completes (ADR-0012).
-    /// </summary>
-    ValueTask LoadFromFileAsync(FileInfo fileInfo, TabViewModel tab, CancellationTokenSource ct);
-    
-    /// <returns><see langword="false"/> if the directory has no supported files.</returns>
-    Task<bool> LoadFromDirectoryAsync(FileInfo source, TabViewModel tab, CancellationTokenSource ct);
-
-    /// <summary>
-    /// Loads a file, directory, archive or URL into <paramref name="tab"/>.
-    /// </summary>
-    /// <param name="rootDirectory">
-    /// For a file, the directory to list files from instead of the file's own, e.g., the remembered start-up directory
-    /// when browsing subdirectories.
-    /// </param>
-    /// <param name="archiveEntry">
-    /// For an archive, the entry to open it at, as <see cref="LoadFromArchiveAsync"/> takes it.
-    /// </param>
-    ValueTask<LoadResult> LoadFromStringAsync(string source, TabViewModel tab, CancellationTokenSource ct,
-        string? rootDirectory = null, string? archiveEntry = null);
-    
-    ValueTask<LoadResult> LoadFromUrlAsync(string source, TabViewModel tab, CancellationTokenSource ct);
-
-    /// <param name="startEntry">
-    /// The entry to open the archive at, which is extracted and shown before the rest. Null, or an entry the archive
-    /// doesn't have, opens it at its first entry.
-    /// </param>
-    ValueTask<bool> LoadFromArchiveAsync(string archivePath, TabViewModel tab, CancellationTokenSource ct,
-        string? startEntry = null);
-
     ValueTask NavigateAsync(TabViewModel tab, NavigateTo to, CancellationTokenSource ct);
 
     ValueTask NavigateByIncrementsAsync(TabViewModel tab, SkipAmount skipAmount, bool forwards, CancellationTokenSource ct);
-    
-    ValueTask RepopulateIterator(FileInfo fileInfo, TabViewModel tab, CancellationTokenSource ct, List<FileInfo>? files = null);
 
     /// <summary>
     /// Sorts the files in the current tab according to the specified sort order,

@@ -494,8 +494,7 @@ public sealed class TabLoad
             return iterator;
         }
 
-        _tab.InitializeImageIterator([], _services.Cache, _services.ThumbnailCache, _services.ThumbnailLoader,
-            _services.Watcher, _services.ThumbnailCache);
+        _tab.InitializeImageIterator([]);
         return _tab.ImageIterator!;
     }
 

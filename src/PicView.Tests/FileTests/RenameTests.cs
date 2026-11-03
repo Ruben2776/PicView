@@ -3,8 +3,8 @@ using PicView.Avalonia.UI;
 using PicView.Core.FileHandling;
 using PicView.Core.Models;
 using PicView.Core.Navigation;
-using PicView.Core.Navigation.Interfaces;
 using PicView.Core.ViewModels;
+using PicView.Tests.Navigation;
 
 namespace PicView.Tests.FileTests;
 
@@ -149,39 +149,20 @@ public class RenameTests : IDisposable
     private (MainWindowViewModel Vm, TabViewModel Tab) CreateTabInCore(string path, string after)
     {
         var core = new CoreViewModel(null, file => ValueTask.FromResult(new ImageModel { FileInfo = file, Image = new object() }));
-        var thumbnails = new NoThumbnails();
-        var folderWatcher = new NoFolderWatcher();
-        // The tab's Load needs no image loader for a file in a folder. Without a platform it cannot sort the names it
-        // lists, which these tests leave alone: the converted file shows before the Load lists anything
         core.InitializeNavigation(
-            new TabServices(core.SharedCache, core.SharedThumbnailCache, thumbnails, folderWatcher, null!, null!),
+            TestTabServices.For(core.SharedCache, core.SharedThumbnailCache, new TestTabServices.NoThumbnailLoader()),
             new NavigationService(string.CompareOrdinal));
         var vm = new MainWindowViewModel(core, new TranslationViewModel(), null!, new GlobalSettingsViewModel(),
             new GallerySharedSettingsViewModel()) { ToolTip = new ToolTipViewModel() };
         core.MainWindows.MainWindows.Add(vm);
         var tab = vm.WindowTabs.ActiveTab.Value;
-        tab.Initialize(core.SharedCache, core.SharedThumbnailCache, thumbnails);
+        tab.Initialize();
         tab.Display(new ImageModel { FileInfo = new FileInfo(path), Image = new object() });
         tab.Display(new ImageModel { FileInfo = new FileInfo(after), Image = new object() });
         var back = tab.ViewHistory.BeginStep(forwards: false)!.Value;
         tab.Display(new ImageModel { FileInfo = new FileInfo(path), Image = new object() });
         tab.ViewHistory.EndStep(back);
         return (vm, tab);
-    }
-
-    private sealed class NoFolderWatcher : IFileWatcherService
-    {
-        public void Watch(TabViewModel tab, string? directory = null) { }
-        public void Unwatch(TabViewModel tab) { }
-        public void RestartWatches() { }
-    }
-
-    private sealed class NoThumbnails : IThumbnailLoader
-    {
-        public ValueTask<object?> GetThumbnailAsync(FileInfo file, uint size, CoreViewModel? core = null, MagickImage? magick = null) =>
-            ValueTask.FromResult<object?>(null);
-        public object? GetExifThumbnail(FileInfo file) => null;
-        public object? GetThumbQuick(FileInfo file, CoreViewModel? core = null) => null;
     }
 
     private (MainWindowViewModel Vm, TabViewModel Tab) CreateTab(string path)

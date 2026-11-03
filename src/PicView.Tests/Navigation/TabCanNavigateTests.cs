@@ -22,7 +22,9 @@ public class TabCanNavigateTests
     {
         ObservableSystem.DefaultFrameProvider = new MockFrameProvider();
         SetDefaults();
-        _tab = new TabViewModel(null!);
+        _tab = new TabViewModel(null!,
+            TestTabServices.For(new SharedImageCache(f => ValueTask.FromResult(Model(f.Name))!), new ThumbnailCache(),
+                new MockThumbnailLoader()));
     }
 
     private static ImageModel Model(string name) => new()
@@ -37,8 +39,7 @@ public class TabCanNavigateTests
     private FileInfo[] Browse(params string[] names)
     {
         var files = names.Select(n => Model(n).FileInfo!).ToArray();
-        _tab.Initialize(new SharedImageCache(f => ValueTask.FromResult(Model(f.Name))!), new ThumbnailCache(),
-            new MockThumbnailLoader(), null, new ThumbnailCache());
+        _tab.Initialize();
         _tab.ImageIterator!.Initialize(files, 0);
         return files;
     }
@@ -228,8 +229,7 @@ public class TabCanNavigateTests
         _tab.DisposeImageIterator();
 
         // No file is shown, so the new iterator lists nothing yet; the old list's position must not light the buttons
-        _tab.InitializeImageIterator(files, new SharedImageCache(f => ValueTask.FromResult(Model(f.Name))!), new ThumbnailCache(),
-            new MockThumbnailLoader());
+        _tab.InitializeImageIterator(files);
 
         Assert.False(Forwards);
         Assert.False(Backwards);

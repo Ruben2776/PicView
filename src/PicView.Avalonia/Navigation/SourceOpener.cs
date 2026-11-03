@@ -21,22 +21,22 @@ public readonly record struct OpenOptions(bool IsStartup = false, bool ContinueF
     string? ArchiveEntry = null);
 
 /// <summary>
-/// The one way the UI opens a file, directory, archive or URL in the active tab of a window: at startup, into a tab
-/// that has not been initialized yet, into one showing a single image, or into one already browsing.
+/// The one way the UI opens a file, directory, archive or URL in a tab of a window, its active one unless told which:
+/// at startup, into a tab that has not been opened yet, into one showing a single image, or into one already browsing.
 /// </summary>
 /// <remarks>
-/// Loading itself is Core's (<see cref="TabOverviewViewModel.LoadFromStringAsync"/>); this module owns what the UI
-/// does around it: the startup order, initializing a fresh tab, switching from the start-up menu, and
-/// telling the user when a source could not be opened.
+/// Loading itself is the tab's (<see cref="TabViewModel.Load"/>); this module owns what the UI does around it: the
+/// startup order, hooking a fresh tab up, switching from the start-up menu, and telling the user when a source could
+/// not be opened.
 /// </remarks>
 public static class SourceOpener
 {
+    /// <param name="tab">One of <paramref name="mainWindow"/>'s tabs to open the source in; its active tab when null.</param>
     public static async ValueTask<LoadResult> OpenAsync(MainWindow mainWindow, CoreViewModel core, string source,
-        OpenOptions options = default)
+        OpenOptions options = default, TabViewModel? tab = null)
     {
         var vm = mainWindow.ViewModel!;
-        var tabs = vm.WindowTabs;
-        var tab = tabs.ActiveTab.CurrentValue;
+        tab ??= vm.WindowTabs.ActiveTab.CurrentValue;
         if (options.IsStartup && !tab.IsInitialized)
         {
             return await QuickLoad.StartUpAsync(mainWindow, core, source, options.ContinueFromLeftOff).ConfigureAwait(false);
@@ -44,19 +44,13 @@ public static class SourceOpener
 
         if (!tab.IsInitialized)
         {
-            // A new tab starts in the gallery mode the settings remember, without animation
-            tab.Gallery.Switcher.Start(Settings.Gallery.IsGalleryDocked);
-            TabNavigationInitializer.Initialize(core, [], vm);
-        }
-        else if (tab.ImageIterator is null)
-        {
-            // Showing a single image (clipboard, base64) disposed the iterator, browse files with a new one
-            TabNavigationInitializer.RecreateImageIterator(tabs, tab);
+            TabNavigationInitializer.Initialize(core, vm, tab);
         }
 
         var wasStartUpMenu = await Dispatcher.UIThread.InvokeAsync(() =>
         {
-            if (tab.CurrentView.CurrentValue is not StartUpMenu)
+            // A new tab its window has not laid out yet has no view, and would get the start-up menu once it does
+            if (tab.CurrentView.CurrentValue is not (null or StartUpMenu))
             {
                 return false;
             }
@@ -65,8 +59,14 @@ public static class SourceOpener
         });
 
         var rootDirectory = options.ContinueFromLeftOff ? GetStartUpDirectory(source) : null;
-        var result = await tabs.LoadFromStringAsync(source, rootDirectory: rootDirectory,
-            archiveEntry: options.ArchiveEntry).ConfigureAwait(false);
+        var result = await tab.Load.LoadAsync(source,
+            new LoadOptions(RootDirectory: rootDirectory, ArchiveEntry: options.ArchiveEntry)).ConfigureAwait(false);
+        // A newer load overtook this one and owns the view, so this one changes nothing
+        if (result.Outcome is LoadOutcome.Superseded)
+        {
+            return result;
+        }
+
         if (Settings.WindowProperties.AutoFit)
         {
             await Dispatcher.UIThread.InvokeAsync(() =>
@@ -75,7 +75,7 @@ public static class SourceOpener
             });
         }
 
-        if (!result.IsLoaded)
+        if (result.Outcome is LoadOutcome.Failed)
         {
             await Dispatcher.UIThread.InvokeAsync(() =>
             {

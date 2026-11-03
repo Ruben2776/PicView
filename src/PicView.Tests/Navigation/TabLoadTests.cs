@@ -1226,14 +1226,13 @@ public class TabLoadTests : IDisposable
         bool withIterator = true)
     {
         var dummyParent = parentVm ?? new MainWindowViewModel(null!, null!, null!, null!, null!);
-        var thumbCache = new MockThumbnailCache();
-        var services = new TabServices(cache ?? _cache, thumbCache, _mockThumbnailLoader,
+        var services = new TabServices(cache ?? _cache, new MockThumbnailCache(), _mockThumbnailLoader,
             watcher ?? _mockFileWatcherService, _mockImageModelLoader, platform ?? new MockPlatformSpecificService());
         var tab = new TabViewModel(dummyParent, services, writer);
         if (withIterator)
         {
             // Initialize with mocks to avoid null refs
-            tab.Initialize(services.Cache, thumbCache, _mockThumbnailLoader, null, thumbCache);
+            tab.Initialize();
             tab.ImageIterator.Initialize([]);
         }
         return tab;

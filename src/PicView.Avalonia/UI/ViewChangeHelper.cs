@@ -24,8 +24,6 @@ public static class ViewChangeHelper
             }
             tab.CurrentView.Value = new StartUpMenu();
         });
-        // A load that ended here showed nothing, so the titles stop saying Loading
-        tab.EndLoading();
         vm.IsLoadingIndicatorShown.Value = false;
     }
 }

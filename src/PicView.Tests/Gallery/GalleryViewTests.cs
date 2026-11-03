@@ -17,6 +17,7 @@ using PicView.Core.Navigation;
 using PicView.Core.Navigation.Interfaces;
 using PicView.Core.Sizing;
 using PicView.Core.ViewModels;
+using PicView.Tests.Navigation;
 using PicView.Tests.WindowBehavior;
 using R3;
 using Orientation = Avalonia.Layout.Orientation;
@@ -365,14 +366,16 @@ public class GalleryViewTests
         Action<TabViewModel, MainWindowViewModel> test)
     {
         var core = new CoreViewModel(null, _ => ValueTask.FromResult(new ImageModel()));
+        core.InitializeNavigation(
+            TestTabServices.For(new SharedImageCache(static f => ValueTask.FromResult(new ImageModel { FileInfo = f })),
+                new MockThumbnailCache(), new MockThumbnailLoader()),
+            new NavigationService(string.CompareOrdinal));
         var window = new TestMainWindow(new NoOpModeAdapter());
         var vm = new MainWindowViewModel(core, core.Translation, window, core.GlobalSettings!, core.GallerySettings);
         window.DataContext = vm;
         core.MainWindows.ActiveWindow.Value = vm;
         var tab = tabOf(vm);
-        var thumbCache = new MockThumbnailCache();
-        tab.Initialize(new SharedImageCache(static f => ValueTask.FromResult(new ImageModel { FileInfo = f })),
-            thumbCache, new MockThumbnailLoader());
+        tab.Initialize();
 
         var application = Application.Current!;
         var previous = application.DataContext;

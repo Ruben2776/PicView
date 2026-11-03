@@ -1,9 +1,6 @@
 ﻿using Avalonia.Input.Platform;
-using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Navigation;
-using PicView.Avalonia.StartUp;
-using PicView.Avalonia.Views.UC;
 using PicView.Core.DebugTools;
 using PicView.Core.FileHandling;
 using PicView.Core.ImageDecoding;
@@ -103,22 +100,8 @@ public class ClipboardPasteService(
         // Open consecutive files in new tabs
         foreach (var path in filePaths.Skip(1))
         {
-            var fileInfo = new FileInfo(path);
-            var tab = vm.WindowTabs.CreateTab(fileInfo);
-            TabNavigationInitializer.InitializeConsecutiveTab(activeCore, tab);
-            await Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                tab.CurrentView.Value = new ImageViewer(tab);
-            });
-
-            if (fileInfo.IsArchive())
-            {
-                _ = Task.Run(() => vm.WindowTabs.LoadFromArchiveAsync(path, tab).ConfigureAwait(false));
-            }
-            else
-            {
-                _ = Task.Run(() => vm.WindowTabs.LoadFromFileAsync(fileInfo, tab).ConfigureAwait(false));
-            }
+            var tab = vm.WindowTabs.CreateTab();
+            _ = Task.Run(() => SourceOpener.OpenAsync(mainWindow, activeCore, path, tab: tab).AsTask());
         }
 
         return true;
