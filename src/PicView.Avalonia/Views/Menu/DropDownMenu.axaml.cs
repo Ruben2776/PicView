@@ -136,94 +136,48 @@ public partial class DropDownMenu : AnimatedMenu
     private void SlideShow120SecOnClick(object? sender, RoutedEventArgs e)
     {
         CloseDropDownMenu();
-
-        if (DataContext is not MainWindowViewModel vm)
-        {
-            return;
-        }
-
         _ = Slideshow.StartSlideshow(_mainWindow, 120000);
     }
 
     private void SlideShow90SecOnClick(object? sender, RoutedEventArgs e)
     {
         CloseDropDownMenu();
-
-        if (DataContext is not MainWindowViewModel vm)
-        {
-            return;
-        }
-
         _ = Slideshow.StartSlideshow(_mainWindow, 90000);
     }
 
     private void SlideShow60SecOnClick(object? sender, RoutedEventArgs e)
     {
         CloseDropDownMenu();
-
-        if (DataContext is not MainWindowViewModel vm)
-        {
-            return;
-        }
-
         _ = Slideshow.StartSlideshow(_mainWindow, 60000);
     }
 
     private void SlideShow30SecOnClick(object? sender, RoutedEventArgs e)
     {
         CloseDropDownMenu();
-
-        if (DataContext is not MainWindowViewModel vm)
-        {
-            return;
-        }
-
         _ = Slideshow.StartSlideshow(_mainWindow, 30000);
     }
 
     private void SlideShow20SecOnClick(object? sender, RoutedEventArgs e)
     {
         CloseDropDownMenu();
-
-        if (DataContext is not MainWindowViewModel vm)
-        {
-            return;
-        }
-
         _ = Slideshow.StartSlideshow(_mainWindow, 20000);
     }
 
     private void SlideShow10SecOnClick(object? sender, RoutedEventArgs e)
     {
         CloseDropDownMenu();
-
-        if (DataContext is not MainWindowViewModel vm)
-        {
-            return;
-        }
-
         _ = Slideshow.StartSlideshow(_mainWindow, 10000);
     }
 
     private void SlideShow5SecOnClick(object? sender, RoutedEventArgs e)
     {
-        if (DataContext is not MainWindowViewModel vm)
-        {
-            return;
-        }
-
+        CloseDropDownMenu();
         _ = Slideshow.StartSlideshow(_mainWindow, 5000);
     }
 
     private void SlideShow2SecOnClick(object? sender, RoutedEventArgs e)
     {
         CloseDropDownMenu();
-        
-        if (DataContext is not MainWindowViewModel vm)
-        {
-            return;
-        }
-
         _ = Slideshow.StartSlideshow(_mainWindow, 2000);
     }
 
