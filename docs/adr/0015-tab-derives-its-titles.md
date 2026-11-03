@@ -23,4 +23,4 @@ Before this, `UpdateTabTitle()` was called from 13 modules at 22 sites, `SetLoad
 - `TabTooltip` is deleted. The bindings and readers of the other four move to `tab.Titles`.
 - Core stays free of Avalonia types; the module is plain `INotifyPropertyChanged`, and Avalonia binds it as it binds the R3 bindables.
 - ADR-0012 holds: the module only reads. ADR-0005's startup order holds: the first title is derived when the titlebar first reads it.
-- The Loading phase has an owner now: ADR-0019 gives each Tab a `TabLoad` that enters Loading with its version and leaves only its own, so a load that gives up late never ends a newer one's phase.
+- The Loading phase has an owner now: ADR-0019 gives each Tab a `TabLoad` that enters Loading with a ticket and leaves only its own, so a load that gives up late never ends a newer one's phase.
