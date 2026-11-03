@@ -464,6 +464,68 @@ public class FileHistoryManagerTests : IDisposable
             FileHistoryManager.AllEntries.Select(e => e.Path));
     }
 
+    [Fact]
+    public void Add_TheNewestPathAgain_LeavesTheVersion()
+    {
+        FileHistoryManager.Add("/path/a.jpg");
+        FileHistoryManager.Add("/path/b.jpg");
+        var version = FileHistoryManager.Version;
+
+        FileHistoryManager.Add("/PATH/B.JPG");
+
+        Assert.Equal(version, FileHistoryManager.Version);
+    }
+
+    [Theory]
+    [InlineData("add new")]
+    [InlineData("add older")]
+    [InlineData("pin")]
+    [InlineData("unpin")]
+    [InlineData("remove")]
+    [InlineData("clear")]
+    [InlineData("rename")]
+    [InlineData("rename folder")]
+    [InlineData("sort")]
+    [InlineData("load")]
+    public void Change_ToTheList_RaisesTheVersion(string change)
+    {
+        var x = Path.Combine(_tempRoot, "x");
+        FileHistoryManager.Add(Path.Combine(x, "a.jpg"));
+        FileHistoryManager.Add(Path.Combine(x, "b.jpg"));
+        FileHistoryManager.Pin(Path.Combine(x, "b.jpg"));
+        var version = FileHistoryManager.Version;
+
+        switch (change)
+        {
+            case "add new": FileHistoryManager.Add(Path.Combine(x, "c.jpg")); break;
+            case "add older": FileHistoryManager.Add(Path.Combine(x, "a.jpg")); break;
+            case "pin": FileHistoryManager.Pin(Path.Combine(x, "a.jpg")); break;
+            case "unpin": FileHistoryManager.UnPin(Path.Combine(x, "b.jpg")); break;
+            case "remove": FileHistoryManager.Remove(Path.Combine(x, "a.jpg")); break;
+            case "clear": FileHistoryManager.Clear(); break;
+            case "rename": FileHistoryManager.Rename(Path.Combine(x, "a.jpg"), Path.Combine(x, "z.jpg")); break;
+            case "rename folder": FileHistoryManager.RenameFolder(x, Path.Combine(_tempRoot, "y")); break;
+            case "sort": FileHistoryManager.IsSortingDescending = !FileHistoryManager.IsSortingDescending; break;
+            case "load": FileHistoryManager.Initialize(_configPath); break;
+        }
+
+        Assert.NotEqual(version, FileHistoryManager.Version);
+    }
+
+    [Fact]
+    public void Change_ThatChangesNothing_LeavesTheVersion()
+    {
+        FileHistoryManager.Add("/path/a.jpg");
+        var version = FileHistoryManager.Version;
+
+        FileHistoryManager.Pin("/path/missing.jpg");
+        FileHistoryManager.Remove("/path/missing.jpg");
+        FileHistoryManager.Rename("/path/missing.jpg", "/path/z.jpg");
+        FileHistoryManager.IsSortingDescending = FileHistoryManager.IsSortingDescending;
+
+        Assert.Equal(version, FileHistoryManager.Version);
+    }
+
     /// <summary>
     /// Saves a file that lists <paramref name="paths"/>, then goes back to before the first load.
     /// </summary>

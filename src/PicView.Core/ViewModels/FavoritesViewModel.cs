@@ -48,6 +48,39 @@ public class FavoritesViewModel : IDisposable
         return slot;
     }
     
+    /// <summary>
+    ///     Whether <see cref="Entries" /> lists the favorites as they are. While it is true, <see cref="ShowFavorites" />
+    ///     keeps the entries, so a view of them keeps its layout and scroll position.
+    /// </summary>
+    public bool IsCached { get; private set; }
+
+    /// <summary>
+    ///     Marks the entries as out of date, so the next <see cref="ShowFavorites" /> makes them again.
+    /// </summary>
+    public void Invalidate() => IsCached = false;
+
+    /// <summary>
+    ///     Readies the entries for showing: makes them when they are not cached, otherwise only moves the mark to the
+    ///     active tab's folder.
+    /// </summary>
+    public void ShowFavorites()
+    {
+        if (!IsCached)
+        {
+            UpdateFavorites();
+            return;
+        }
+
+        var currentDir = CurrentDirectory();
+        foreach (var entry in Entries)
+        {
+            entry.IsCurrentItem.Value = IsCurrent(entry.FilePath.CurrentValue, currentDir);
+        }
+    }
+
+    /// <summary>
+    ///     Makes the entries again from the favorites.
+    /// </summary>
     public void UpdateFavorites()
     {
         foreach (var existing in Entries)
@@ -57,10 +90,7 @@ public class FavoritesViewModel : IDisposable
         Entries.Clear();
 
         var entries = FavoritesManager.AllEntries;
-        var currentDirectoryPath = _vm.WindowTabs?.ActiveTab?.Value?.Model?.FileInfo?.DirectoryName;
-        var normalizedCurrentDir = !string.IsNullOrWhiteSpace(currentDirectoryPath)
-            ? Path.TrimEndingDirectorySeparator(currentDirectoryPath)
-            : null;
+        var normalizedCurrentDir = CurrentDirectory();
 
         foreach (var entry in entries)
         {
@@ -71,19 +101,31 @@ public class FavoritesViewModel : IDisposable
                 folderName = normalizedEntryPath;
             }
 
-            var isCurrentItem = normalizedCurrentDir is not null &&
-                                string.Equals(normalizedEntryPath, normalizedCurrentDir, StringComparison.Ordinal);
-
             var entryVm = new FavoritesEntryViewModel();
             entryVm.Initialize(
                 normalizedEntryPath,
                 folderName,
                 entry.Slot,
-                isCurrentItem,
+                IsCurrent(normalizedEntryPath, normalizedCurrentDir),
                 _vm);
             Entries.Add(entryVm);
         }
+
+        IsCached = true;
     }
+
+    // The active tab's folder without a trailing separator, or null when it has none
+    private string? CurrentDirectory()
+    {
+        var currentDirectoryPath = _vm.WindowTabs?.ActiveTab?.Value?.Model?.FileInfo?.DirectoryName;
+        return !string.IsNullOrWhiteSpace(currentDirectoryPath)
+            ? Path.TrimEndingDirectorySeparator(currentDirectoryPath)
+            : null;
+    }
+
+    private static bool IsCurrent(string normalizedEntryPath, string? normalizedCurrentDir) =>
+        normalizedCurrentDir is not null &&
+        string.Equals(normalizedEntryPath, normalizedCurrentDir, StringComparison.Ordinal);
 
     public void Dispose()
     {

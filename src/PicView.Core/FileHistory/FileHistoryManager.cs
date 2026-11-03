@@ -20,13 +20,13 @@ internal partial class FileHistoryGenerationContext : JsonSerializerContext;
 public static class FileHistoryManager
 {
     // Load threads call Add while the UI thread reads the lists. Held for in-memory work only, never across disk access or an await.
-    private static readonly Lock _lock = new();
+    private static readonly Lock Lock = new();
     private static List<Entry>? _entries;
     private static FileHistoryConfiguration? _fileHistoryConfiguration;
 
     // The paths Add was given before the first load finished, the newest last. App Start shows the launch file before the
     // history file is read, so without these it would never reach the history. They are added when the load finishes.
-    private static readonly List<string> _earlyPaths = [];
+    private static readonly List<string> EarlyPaths = [];
 
     // The list holds this many entries at most, so an older early path would be evicted by the load anyway
     private const int MaxEarlyPaths = FileHistoryConfiguration.MaxHistoryEntries + FileHistoryConfiguration.MaxPinnedEntries;
@@ -38,17 +38,41 @@ public static class FileHistoryManager
     {
         get
         {
-            lock (_lock)
+            lock (Lock)
             {
                 return _entries?.Count ?? 0;
             }
         }
     }
 
+    private static int _version;
+
+    /// <summary>
+    ///     Goes up each time the entries, their order, their pins or the sort order change, so a view of the history can
+    ///     tell whether it has to look at them again.
+    /// </summary>
+    public static int Version => Volatile.Read(ref _version);
+
+    // Lock-free, so it needs no lock held and does not allocate on a load thread
+    private static void Changed() => Interlocked.Increment(ref _version);
+
     /// <summary>
     ///     Gets or sets whether the history is sorted in descending order.
     /// </summary>
-    public static bool IsSortingDescending { get; set; }
+    public static bool IsSortingDescending
+    {
+        get;
+        set
+        {
+            if (field == value)
+            {
+                return;
+            }
+
+            field = value;
+            Changed();
+        }
+    }
 
     /// <summary>
     ///     Gets a copy of all history entries, the one viewed longest ago first.
@@ -57,7 +81,7 @@ public static class FileHistoryManager
     {
         get
         {
-            lock (_lock)
+            lock (Lock)
             {
                 return _entries?.ToArray() ?? [];
             }
@@ -71,7 +95,7 @@ public static class FileHistoryManager
     {
         get
         {
-            lock (_lock)
+            lock (Lock)
             {
                 return _entries?.Where(e => e.IsPinned).ToArray() ?? [];
             }
@@ -115,10 +139,10 @@ public static class FileHistoryManager
     /// </summary>
     internal static void Unload()
     {
-        lock (_lock)
+        lock (Lock)
         {
             _entries = null;
-            _earlyPaths.Clear();
+            EarlyPaths.Clear();
         }
     }
 
@@ -134,18 +158,20 @@ public static class FileHistoryManager
             entries.AddRange(loaded);
         }
 
-        lock (_lock)
+        lock (Lock)
         {
             _entries = entries;
 
             // They were viewed after everything in the file, so they go last, by the same rules as any other path
-            foreach (var path in _earlyPaths)
+            foreach (var path in EarlyPaths)
             {
                 AddTo(entries, path);
             }
 
-            _earlyPaths.Clear();
+            EarlyPaths.Clear();
         }
+
+        Changed();
     }
 
     /// <summary>
@@ -162,7 +188,7 @@ public static class FileHistoryManager
 
     private static void SetPinnedState(string path, bool isPinned)
     {
-        lock (_lock)
+        lock (Lock)
         {
             if (_entries is null || string.IsNullOrWhiteSpace(path))
             {
@@ -187,6 +213,7 @@ public static class FileHistoryManager
             }
 
             _entries[entryIndex].IsPinned = isPinned;
+            Changed();
         }
     }
 
@@ -201,7 +228,7 @@ public static class FileHistoryManager
             return;
         }
 
-        lock (_lock)
+        lock (Lock)
         {
             if (_entries is null)
             {
@@ -225,11 +252,13 @@ public static class FileHistoryManager
             var entry = entries[i];
             if (string.Equals(entry.Path, path, StringComparison.OrdinalIgnoreCase))
             {
-                if (!entry.IsPinned)
+                // Entries are ordered by when each was last viewed, so this one goes last. Paging through the newest
+                // one again, as a reload does, changes nothing
+                if (!entry.IsPinned && i != entries.Count - 1)
                 {
-                    // Entries are ordered by when each was last viewed, so this one goes last
                     entries.RemoveAt(i);
                     entries.Add(entry);
+                    Changed();
                 }
 
                 return;
@@ -257,6 +286,7 @@ public static class FileHistoryManager
         }
 
         entries.Add(new Entry { Path = path, IsPinned = false });
+        Changed();
     }
 
     // Callers hold the lock. The index of the first unpinned entry from start on, else -1
@@ -278,20 +308,20 @@ public static class FileHistoryManager
     {
         // A path seen again moves to the newest end and keeps the spelling it had first, as an entry in the list does
         var kept = path;
-        for (var i = 0; i < _earlyPaths.Count; i++)
+        for (var i = 0; i < EarlyPaths.Count; i++)
         {
-            if (string.Equals(_earlyPaths[i], path, StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(EarlyPaths[i], path, StringComparison.OrdinalIgnoreCase))
             {
-                kept = _earlyPaths[i];
-                _earlyPaths.RemoveAt(i);
+                kept = EarlyPaths[i];
+                EarlyPaths.RemoveAt(i);
                 break;
             }
         }
 
-        _earlyPaths.Add(kept);
-        if (_earlyPaths.Count > MaxEarlyPaths)
+        EarlyPaths.Add(kept);
+        if (EarlyPaths.Count > MaxEarlyPaths)
         {
-            _earlyPaths.RemoveAt(0);
+            EarlyPaths.RemoveAt(0);
         }
     }
 
@@ -300,10 +330,12 @@ public static class FileHistoryManager
     /// </summary>
     public static void Clear()
     {
-        lock (_lock)
+        lock (Lock)
         {
             _entries?.Clear();
         }
+
+        Changed();
     }
 
     /// <summary>
@@ -311,7 +343,7 @@ public static class FileHistoryManager
     /// </summary>
     public static bool Remove(string path)
     {
-        lock (_lock)
+        lock (Lock)
         {
             if (_entries is null || string.IsNullOrWhiteSpace(path))
             {
@@ -325,6 +357,7 @@ public static class FileHistoryManager
             }
 
             _entries.RemoveAt(index);
+            Changed();
             return true;
         }
     }
@@ -362,7 +395,7 @@ public static class FileHistoryManager
     // it may allocate
     private static void RenameMatching(Func<string, string?> newPathOf)
     {
-        lock (_lock)
+        lock (Lock)
         {
             // Before the first load the paths added so far wait in their own list, which the load adds to the entries. If
             // they kept their old names, the load would undo the rename
@@ -380,6 +413,7 @@ public static class FileHistoryManager
                     continue;
                 }
 
+                Changed();
                 var listed = IndexOfPath(_entries, newPath, i);
                 if (listed < 0)
                 {
@@ -404,11 +438,11 @@ public static class FileHistoryManager
     // Callers hold the lock. If the new path waits as well, the load lists the two as one, as it does any path added twice
     private static void RenameEarlyPaths(Func<string, string?> newPathOf)
     {
-        for (var i = 0; i < _earlyPaths.Count; i++)
+        for (var i = 0; i < EarlyPaths.Count; i++)
         {
-            if (newPathOf(_earlyPaths[i]) is { } newPath)
+            if (newPathOf(EarlyPaths[i]) is { } newPath)
             {
-                _earlyPaths[i] = newPath;
+                EarlyPaths[i] = newPath;
             }
         }
     }
@@ -444,7 +478,7 @@ public static class FileHistoryManager
             var sortedEntries = new List<Entry>();
 
             // Copy under the lock, so the file is saved without holding it
-            lock (_lock)
+            lock (Lock)
             {
                 var entries = _entries ?? [];
 

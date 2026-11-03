@@ -1,9 +1,8 @@
-using System.Collections.Specialized;
-using Avalonia;
-using Avalonia.Controls;
+using System.Collections.ObjectModel;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
 using ObservableCollections;
+using PicView.Avalonia.UI;
 using PicView.Avalonia.Crop;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Navigation;
@@ -27,20 +26,7 @@ public partial class DropDownMenu : AnimatedMenu
         {
             return;
         }
-
-        vm.FileHistory ??= new FileHistoryViewModel(vm);
-        vm.Favorites ??= new FavoritesViewModel(vm);
-        vm.Favorites.AddFavoritesDialogCommand.Subscribe(
-        _ =>
-        {
-            _mainWindow.AddFavoriteDialog();
-        }, DebugHelper.LogError(nameof(DropDownMenu), nameof(vm.Favorites.AddFavoritesDialogCommand)))
-        .AddTo(ref _disposables);
-        vm.Favorites.EditFavoritesDialogCommand.Subscribe(entry =>
-        {
-            _mainWindow.AddFavoriteDialog(entry.FilePath);
-        }, DebugHelper.LogError(nameof(DropDownMenu), nameof(vm.Favorites.EditFavoritesDialogCommand)))
-        .AddTo(ref _disposables);
+        
         DataContext = vm;
         InitializeComponent();
         Loaded += OnLoaded;
@@ -73,6 +59,30 @@ public partial class DropDownMenu : AnimatedMenu
 
     private void OnLoaded(object? sender, RoutedEventArgs e)
     {
+        Dispatcher.UIThread.Post(Initialize, DispatcherPriority.Background);
+    }
+
+    private void Initialize()
+    {
+        if (_mainWindow.DataContext is not MainWindowViewModel vm)
+        {
+            return;
+        }
+        
+        vm.FileHistory ??= new FileHistoryViewModel(vm);
+        vm.Favorites ??= new FavoritesViewModel(vm);
+        vm.Favorites.AddFavoritesDialogCommand.Subscribe(
+                _ =>
+                {
+                    _mainWindow.AddFavoriteDialog();
+                }, DebugHelper.LogError(nameof(DropDownMenu), nameof(vm.Favorites.AddFavoritesDialogCommand)))
+            .AddTo(ref _disposables);
+        vm.Favorites.EditFavoritesDialogCommand.Subscribe(entry =>
+            {
+                _mainWindow.AddFavoriteDialog(entry.FilePath);
+            }, DebugHelper.LogError(nameof(DropDownMenu), nameof(vm.Favorites.EditFavoritesDialogCommand)))
+            .AddTo(ref _disposables);
+        
         SlideShow2Sec.Text = $"2 {TranslationManager.Translation.SecAbbreviation}";
         SlideShow5Sec.Text = $"5 {TranslationManager.Translation.SecAbbreviation}";
         SlideShow10Sec.Text = $"10 {TranslationManager.Translation.SecAbbreviation}";
@@ -90,44 +100,13 @@ public partial class DropDownMenu : AnimatedMenu
         SlideShow60Sec.Click += SlideShow60SecOnClick;
         SlideShow90Sec.Click += SlideShow90SecOnClick;
         SlideShow120Sec.Click += SlideShow120SecOnClick;
-        
-        if (_mainWindow.DataContext is not MainWindowViewModel vm)
-        {
-            return;
-        }
 
-        vm.FileHistory.PinnedEntries.CollectionChanged += PinnedEntriesOnCollectionChanged;
-        if (vm.FileHistory.PinnedEntries.Count > 0)
-        {
-            PinnedEntriesCollection.Items.Clear();
-            foreach (var item in vm.FileHistory.PinnedEntries)
-            {
-                PinnedEntriesCollection.Items.Add(item);
-            }
-        }
-
-        vm.FileHistory.Entries.CollectionChanged += EntriesOnCollectionChanged;
-        if (vm.FileHistory.Entries.Count > 0)
-        {
-            UnPinnedEntriesCollection.Items.Clear();
-            foreach (var item in vm.FileHistory.Entries)
-            {
-                UnPinnedEntriesCollection.Items.Add(item);
-            }
-        }
-
-        if (vm.Favorites is not null)
-        {
-            vm.Favorites.Entries.CollectionChanged += FavoritesOnCollectionChanged;
-            if (vm.Favorites.Entries.Count > 0)
-            {
-                FavoritesCollection.Items.Clear();
-                foreach (var item in vm.Favorites.Entries)
-                {
-                    FavoritesCollection.Items.Add(item);
-                }
-            }
-        }
+        // The lists are moved, inserted into and removed from in place, so the views follow them change by change and
+        // keep their layout and scroll position. Each change is posted below rendering, so the first fill builds its
+        // rows between frames instead of stalling the menu as it opens
+        PinnedEntriesCollection.ItemsSource = Mirror(vm.FileHistory.PinnedEntries);
+        UnPinnedEntriesCollection.ItemsSource = Mirror(vm.FileHistory.Entries);
+        FavoritesCollection.ItemsSource = Mirror(vm.Favorites.Entries);
 
         Observable.EveryValueChanged(this, x => x.IsVisible)
             .Skip(1)
@@ -141,7 +120,7 @@ public partial class DropDownMenu : AnimatedMenu
                     MaxHeight = _mainWindow.UIHelper.GetMainView.Bounds.Height - 1;
                     tab.ShouldCropBeEnabled.Value = CropManager.SetIfCropEnabled(_mainWindow);
                     vm.FileHistory.UpdateHistory();
-                    vm.Favorites.UpdateFavorites();
+                    vm.Favorites.ShowFavorites();
                     
                     tab.ShouldPrintBeEnabled.Value = ConversionHelper.DetermineIfPrintMenuItemShouldBeEnabled(tab);
                 }
@@ -248,86 +227,18 @@ public partial class DropDownMenu : AnimatedMenu
         _ = Slideshow.StartSlideshow(_mainWindow, 2000);
     }
 
-    private void PinnedEntriesOnCollectionChanged(in NotifyCollectionChangedEventArgs<FileHistoryEntryViewModel> e)
-    {
-        UpdateCollection(e, PinnedEntriesCollection);
-    }
-    
-    private void EntriesOnCollectionChanged(in NotifyCollectionChangedEventArgs<FileHistoryEntryViewModel> e)
-    {
-        UpdateCollection(e, UnPinnedEntriesCollection);
-    }
+    private ObservableCollection<T> Mirror<T>(ObservableList<T> source) =>
+        new DeferredListMirror<T>(source, PostBelowRendering).AddTo(ref _disposables).Items;
 
-    private void FavoritesOnCollectionChanged(in NotifyCollectionChangedEventArgs<FavoritesEntryViewModel> e)
-    {
-        UpdateCollection(e, FavoritesCollection);
-    }
-
-    private static void UpdateCollection<T>(in NotifyCollectionChangedEventArgs<T> e, ItemsControl collection)
-    {
-        switch (e.Action)
-        {
-            case NotifyCollectionChangedAction.Add:
-                if (e.IsSingleItem)
-                {
-                    var newItem = e.NewItem;
-                    Dispatcher.CurrentDispatcher.Post(() => { collection.Items.Add(newItem); },
-                        DispatcherPriority.Background);
-                }
-                else
-                {
-                    foreach (var item in e.NewItems)
-                    {
-                        Dispatcher.CurrentDispatcher.Post(() => { collection.Items.Add(item); },
-                            DispatcherPriority.Background);
-                    }
-                }
-                break;
-            case NotifyCollectionChangedAction.Remove:
-                if (e.IsSingleItem)
-                {
-                    var removedItem = e.OldItem;
-                    Dispatcher.CurrentDispatcher.Post(() => { collection.Items.Remove(removedItem); },
-                        DispatcherPriority.Background);
-                }
-                else
-                {
-                    foreach (var item in e.OldItems)
-                    {
-                        Dispatcher.CurrentDispatcher.Post(() => { collection.Items.Remove(item); },
-                            DispatcherPriority.Background);
-                    }
-                }
-                break;
-            case NotifyCollectionChangedAction.Replace:
-                break;
-            case NotifyCollectionChangedAction.Move:
-                break;
-            case NotifyCollectionChangedAction.Reset:
-                Dispatcher.CurrentDispatcher.Post(() => { collection.Items.Clear(); },
-                    DispatcherPriority.Background);
-                break;
-        }
-    }
+    private static void PostBelowRendering(Action action) =>
+        Dispatcher.UIThread.Post(action, DispatcherPriority.Background);
 
     public override void Dispose()
     {
         base.Dispose();
         Loaded -= OnLoaded;
         _disposables.Dispose();
-        if (_mainWindow.DataContext is not MainWindowViewModel vm)
-        {
-            return;
-        }
 
-        if (vm.Favorites is not null)
-        {
-            vm.Favorites.Entries.CollectionChanged -= FavoritesOnCollectionChanged;
-        }
-        
-        vm.FileHistory.PinnedEntries.CollectionChanged -= PinnedEntriesOnCollectionChanged;
-        vm.FileHistory.Entries.CollectionChanged -= EntriesOnCollectionChanged;
-        
         SlideShow2Sec.Click -= SlideShow2SecOnClick;
         SlideShow5Sec.Click -= SlideShow5SecOnClick;
         SlideShow10Sec.Click -= SlideShow10SecOnClick;
