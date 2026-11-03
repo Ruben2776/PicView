@@ -756,9 +756,9 @@ public class FunctionsMapper : IActionRunner
     private async ValueTask OptimizeImage() =>
         await ImageOptimizer.OptimizeImageAsync(_vm).ConfigureAwait(false);
 
-    /// <inheritdoc cref="Navigation.Slideshow.StartSlideshow(MainWindowViewModel)" />
+    /// <inheritdoc cref="Navigation.Slideshow.StartSlideshow(MainWindow)" />
     private async ValueTask Slideshow() =>   
-        await Navigation.Slideshow.StartSlideshow(_vm).ConfigureAwait(false);
+        await Navigation.Slideshow.StartSlideshow(_mainWindow).ConfigureAwait(false);
 
     private ValueTask ColorPicker()
     {

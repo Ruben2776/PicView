@@ -1,8 +1,6 @@
 using Avalonia;
-using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
-using PicView.Avalonia.Input;
 using PicView.Avalonia.WindowBehavior;
 using PicView.Core.Sizing;
 using PicView.Core.ViewModels;
@@ -14,36 +12,31 @@ namespace PicView.Avalonia.Navigation;
 public static class Slideshow
 {
     public static bool IsRunning { get; private set; }
-    
+
     private static Timer? _timer;
     private static IDisposable? _leavingFullscreen;
-    public static async Task StartSlideshow(MainWindowViewModel vm)
-    {
-        if (!InitiateAndStart(vm))
-        {
-            return;
-        }
-        
-        await Start(vm, TimeSpan.FromSeconds(Settings.UIProperties.SlideShowTimer).TotalMilliseconds).ConfigureAwait(false);
-    }
 
-    public static async Task StartSlideshow(MainWindowViewModel vm, int milliseconds)
+    // The Main Window the running slideshow was started on, which leaving it centers
+    private static MainWindow? _window;
+
+    public static Task StartSlideshow(MainWindow window) => StartSlideshow(window, 0);
+
+    /// <param name="window">The Main Window the slideshow runs in.</param>
+    /// <param name="milliseconds">The time per image; zero or less uses the slideshow timer setting.</param>
+    public static async Task StartSlideshow(MainWindow window, int milliseconds)
     {
-        if (!InitiateAndStart(vm))
+        if (window.ViewModel is not { } vm || !InitiateAndStart(window, vm))
         {
             return;
         }
 
-        if (milliseconds <= 0)
-        {
-            await Start(vm, TimeSpan.FromSeconds(Settings.UIProperties.SlideShowTimer).TotalMilliseconds).ConfigureAwait(false);
-        }
-        else
-        {
-            await Start(vm, milliseconds).ConfigureAwait(false);
-        }
+        _window = window;
+        var interval = milliseconds <= 0
+            ? TimeSpan.FromSeconds(Settings.UIProperties.SlideShowTimer).TotalMilliseconds
+            : milliseconds;
+        await Start(vm, interval).ConfigureAwait(false);
     }
-    
+
     public static void StopSlideshow(MainWindowViewModel vm)
     {
         IsRunning = false;
@@ -55,8 +48,9 @@ public static class Slideshow
             return;
         }
 
-        _ = LeaveSlideshowAsync(vm);
-        
+        _ = LeaveSlideshowAsync(vm, _window);
+        _window = null;
+
         _timer.Stop();
         _timer.Dispose();
         _timer = null;
@@ -66,13 +60,13 @@ public static class Slideshow
         }
     }
 
-    private static bool InitiateAndStart(MainWindowViewModel vm)
+    private static bool InitiateAndStart(MainWindow window, MainWindowViewModel vm)
     {
         if (!vm.WindowTabs.ActiveTab.CurrentValue.CanNavigateForwards.Value)
         {
             return false;
         }
-        
+
         if (_timer is null)
         {
             _timer = new Timer
@@ -92,21 +86,16 @@ public static class Slideshow
         else if (_timer.Enabled)
         {
             // Starting it again while it runs stops it, unless the key is only being held down
-            if (!IsKeyHeldDown(vm))
+            if (!window.KeybindRouter.IsKeyHeldDown)
             {
                 StopSlideshow(vm);
             }
 
             return false;
         }
-        
+
         return true;
     }
-
-    private static bool IsKeyHeldDown(MainWindowViewModel vm) =>
-        Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop &&
-        desktop.Windows.OfType<MainWindow>().FirstOrDefault(window => window.DataContext == vm)?.KeybindRouter
-            .IsKeyHeldDown is true;
 
     private static async Task Start(MainWindowViewModel vm, double seconds)
     {
@@ -131,7 +120,7 @@ public static class Slideshow
             .Subscribe(_ => Dispatcher.UIThread.Post(() => StopSlideshow(vm)));
     }
 
-    private static async Task LeaveSlideshowAsync(MainWindowViewModel vm)
+    private static async Task LeaveSlideshowAsync(MainWindowViewModel vm, MainWindow? window)
     {
         if (vm.WindowModeSwitcher is null)
         {
@@ -140,13 +129,11 @@ public static class Slideshow
 
         var before = vm.WindowModeState.CurrentValue.Mode;
         await vm.WindowModeSwitcher.LeaveSlideshow().ConfigureAwait(false);
-        if (before is not WindowMode.Normal &&
+        // Only the window the slideshow was started on, not one whose view model stopped it from elsewhere
+        if (before is not WindowMode.Normal && window is not null && window.ViewModel == vm &&
             vm.WindowModeState.CurrentValue is { Mode: WindowMode.Normal, AutoFit: true })
         {
-            if (vm.PlatformWindowService is MainWindow window)
-            {
-                WindowFunctions.CenterWindowOnScreen(window);
-            }
+            WindowFunctions.CenterWindowOnScreen(window);
         }
     }
 }
