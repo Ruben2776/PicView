@@ -38,7 +38,7 @@ public abstract class MainWindow : Window, IMainWindow, IPlatformWindowService
     /// <summary>
     /// Opens this window's Tool Windows, and the App Windows from it.
     /// </summary>
-    public WindowInitializer? MainWindowInitializer => field ??= new WindowInitializer(CreateWindowProvider(), this);
+    public WindowInitializer MainWindowInitializer => field ??= new WindowInitializer(CreateWindowProvider(), this);
     
     /// <summary>
     /// Opened and closes this window, along with every other Main Window.
@@ -77,7 +77,7 @@ public abstract class MainWindow : Window, IMainWindow, IPlatformWindowService
     /// </summary>
     public PrintJobStarter Printing => field ??= new PrintJobStarter(CreateWindowProvider().CreateSystemPrinters(),
         () => new PdfSavePathPicker(this), PrintJobStarter.ReadRememberedAsync,
-        vm => MainWindowInitializer?.ShowPrintWindow(vm) ?? Task.CompletedTask);
+        vm => MainWindowInitializer.ShowPrintWindow(vm));
 
     /// <summary>
     /// This window's Window Mode. Read on the UI thread.

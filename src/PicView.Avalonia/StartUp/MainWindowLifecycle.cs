@@ -215,7 +215,7 @@ public sealed class MainWindowLifecycle
             RememberFile(window);
         }
         // On macOS most Tool Windows have no owner, so they would outlive their Main Window
-        window.MainWindowInitializer?.CloseToolWindows();
+        window.MainWindowInitializer.CloseToolWindows();
         vm.WindowTabs.TearDown();
 
         if (vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.CurrentValue is IDisposable disposable)

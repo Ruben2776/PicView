@@ -43,10 +43,13 @@ public static class PlatformActions
             .ConfigureAwait(false);
     }
 
-    public static async ValueTask CheckForUpdates(MainWindowViewModel vm)
+    /// <summary>
+    /// Opens the About window from <paramref name="window"/> and checks for a newer version there.
+    /// </summary>
+    public static async ValueTask CheckForUpdates(MainWindow window)
     {
-        await Dispatcher.UIThread.InvokeAsync(() => vm.PlatformWindowService?.ShowAboutWindow());
-        if (vm.Core.AboutView is not { } aboutView)
+        await Dispatcher.UIThread.InvokeAsync(window.MainWindowInitializer.ShowAboutWindow);
+        if (window.ViewModel?.Core.AboutView is not { } aboutView)
         {
             return;
         }

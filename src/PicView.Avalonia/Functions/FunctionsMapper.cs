@@ -491,7 +491,7 @@ public class FunctionsMapper : IActionRunner
 
     private ValueTask Minimize()
     {
-        _vm.PlatformWindowService.Minimize();
+        _mainWindow.Minimize();
         return ValueTask.CompletedTask;
     }
 
@@ -512,49 +512,49 @@ public class FunctionsMapper : IActionRunner
 
     private ValueTask AboutWindow()
     {
-        _vm?.PlatformWindowService?.ShowAboutWindow();
+        _mainWindow.MainWindowInitializer.ShowAboutWindow();
         return ValueTask.CompletedTask;
     }
 
-    private ValueTask CheckForUpdates() => PlatformActions.CheckForUpdates(_vm);
+    private ValueTask CheckForUpdates() => PlatformActions.CheckForUpdates(_mainWindow);
 
     private ValueTask ConvertWindow() =>
-        _vm.PlatformWindowService.ShowConvertWindow();
+        _mainWindow.MainWindowInitializer.ShowConvertWindow();
 
     private ValueTask KeybindingsWindow()
     {
-        _vm?.PlatformWindowService?.ShowKeybindingsWindow();
+        _mainWindow.MainWindowInitializer.ShowKeybindingsWindow();
         return ValueTask.CompletedTask;
     }
 
     private ValueTask EffectsWindow()
     {
-        _vm?.PlatformWindowService?.ShowEffectsWindow();
+        _ = _mainWindow.MainWindowInitializer.ShowEffectsWindow();
         return ValueTask.CompletedTask;
     }
 
     private ValueTask ImageInfoWindow()
     {
-        _vm?.PlatformWindowService?.ShowImageInfoWindow();
+        _mainWindow.MainWindowInitializer.ShowImageInfoWindow(_vm);
         return ValueTask.CompletedTask;
     }
 
     private ValueTask ResizeWindow() =>
-        _vm.PlatformWindowService.ShowSingleImageResizeWindow();
+        _mainWindow.MainWindowInitializer.ShowSingleImageResizeWindow();
 
     private async ValueTask BatchResizeWindow()
     {
-        await _vm.PlatformWindowService.ShowBatchResizeWindow().ConfigureAwait(false);
+        await _mainWindow.MainWindowInitializer.ShowBatchResizeWindow().ConfigureAwait(false);
     }
 
     private ValueTask FileAssociationsWindow()
     {
-        _vm?.PlatformWindowService?.ShowFileAssociationsWindow();
+        _mainWindow.MainWindowInitializer.ShowFileAssociationsWindow();
         return ValueTask.CompletedTask;
     }
 
     private ValueTask SettingsWindow() =>
-        _vm.PlatformWindowService.ShowSettingsWindow();
+        _mainWindow.MainWindowInitializer.ShowSettingsWindow();
 
     #endregion Windows
 

@@ -31,7 +31,7 @@ public sealed class KeybindRouter
         () => InputModes.StateOf(window),
         () => Keymaps.Current,
         vm => new ContextualActionHandler(window, vm),
-        () => window.MainWindowInitializer?.NewestOpenWindow)
+        () => window.MainWindowInitializer.NewestOpenWindow)
     {
     }
 

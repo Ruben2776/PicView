@@ -247,8 +247,8 @@ public class AppLifecycleTests : IAsyncDisposable
         var first = app.MainWindows.Open[0];
         var second = await app.MainWindows.OpenNewAsync();
 
-        await first.MainWindowInitializer!.ShowEffectsWindow();
-        await second.MainWindowInitializer!.ShowEffectsWindow();
+        await first.MainWindowInitializer.ShowEffectsWindow();
+        await second.MainWindowInitializer.ShowEffectsWindow();
 
         Assert.Single(_provider.EffectsWindows);
     }
@@ -260,7 +260,7 @@ public class AppLifecycleTests : IAsyncDisposable
         await app.StartAsync(settingsExists: true, []);
         var first = app.MainWindows.Open[0];
         await app.MainWindows.OpenNewAsync();
-        await first.MainWindowInitializer!.ShowEffectsWindow();
+        await first.MainWindowInitializer.ShowEffectsWindow();
         var effects = Assert.Single(_provider.EffectsWindows);
 
         await app.MainWindows.CloseAsync(first);
@@ -274,7 +274,7 @@ public class AppLifecycleTests : IAsyncDisposable
         var app = CreateApp();
         await app.StartAsync(settingsExists: true, []);
         var main = app.MainWindows.Open[0];
-        await main.MainWindowInitializer!.ShowEffectsWindow();
+        await main.MainWindowInitializer.ShowEffectsWindow();
         var effects = Assert.Single(_provider.EffectsWindows);
 
         await app.MainWindows.CloseAsync(main);
