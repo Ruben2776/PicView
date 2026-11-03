@@ -544,16 +544,32 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
 
     #region Titles
 
-    /// <summary>Puts the tab in the Loading Title Phase, until the next image shows or <see cref="EndLoading"/>.</summary>
-    public void SetLoading() => Titles.Enter(TitlePhase.Loading);
+    /// <summary>
+    /// Puts the tab in the Loading Title Phase, until the next image shows or <see cref="EndLoading(int)"/>.
+    /// </summary>
+    /// <returns>The ticket that <see cref="EndLoading(int)"/> takes.</returns>
+    public int SetLoading() => Titles.EnterLoading();
 
     /// <summary>Puts the tab in the Downloading Title Phase with <paramref name="text"/>, such as a progress report.</summary>
-    public void SetDownloading(string text) => Titles.Enter(TitlePhase.Downloading, text);
+    /// <returns>The ticket that <see cref="EndLoading(int)"/> takes.</returns>
+    public int SetDownloading(string text) => Titles.Enter(TitlePhase.Downloading, text);
 
-    /// <summary>Puts the tab in the Error Title Phase with <paramref name="text"/>, until the next load or shown image.</summary>
+    /// <summary>
+    /// Puts the tab in the Error Title Phase with <paramref name="text"/>, until the next load or shown image. An Error
+    /// has no end call.
+    /// </summary>
     public void SetError(string text) => Titles.Enter(TitlePhase.Error, text);
 
-    /// <summary>Ends Loading or Downloading when the load gave up without showing anything. An Error stays.</summary>
+    /// <summary>
+    /// Ends Loading or Downloading when the load that entered it with <paramref name="ticket"/> gave up without showing
+    /// anything, unless a newer phase was entered since. An Error stays.
+    /// </summary>
+    public void EndLoading(int ticket) => Titles.EndLoading(ticket);
+
+    /// <summary>
+    /// Ends whatever Loading or Downloading is current, for a tab that becomes fresh. Public only because its one caller
+    /// is in PicView.Avalonia, which Core does not expose its internals to; it goes once the Load module owns the phase.
+    /// </summary>
     public void EndLoading() => Titles.EndLoading();
 
     /// <summary>
@@ -567,11 +583,13 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
     /// Shows <paramref name="thumbnail"/> as the Stand-in while the next image loads, with the Loading title, and clears
     /// the secondary image, which is already clear when nothing is shown beside the image.
     /// </summary>
-    public void ShowLoading(object? thumbnail)
+    /// <returns>The ticket of the Loading it entered, which <see cref="EndLoading(int)"/> takes.</returns>
+    public int ShowLoading(object? thumbnail)
     {
-        SetLoading();
+        var ticket = SetLoading();
         ShowStandIn(thumbnail);
         SecondaryImage.Value = null;
+        return ticket;
     }
     
     #endregion

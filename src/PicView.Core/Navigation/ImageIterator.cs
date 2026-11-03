@@ -663,7 +663,7 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
     /// </returns>
     private async ValueTask<(int Index, FileInfo[] Files)?> WaitForFileAfterShownAsync(int reach, CancellationToken ct)
     {
-        _tab.SetLoading();
+        var ticket = _tab.SetLoading();
         var (shownIndex, shownFiles) = ShownIndexAndFiles();
         var shown = FileAt(shownFiles, shownIndex);
         while (!ct.IsCancellationRequested)
@@ -694,7 +694,7 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
                 }
 
                 // The step may stop on the shown file, which shows nothing new, so the Loading phase ends here
-                _tab.EndLoading();
+                _tab.EndLoading(ticket);
                 return (index, files);
             }
 
@@ -709,7 +709,7 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
         }
 
         // The wait gave up, so the titles say what the tab shows again, instead of Loading
-        _tab.EndLoading();
+        _tab.EndLoading(ticket);
         PublishPosition();
         return null;
     }

@@ -273,7 +273,7 @@ public class NavigationService(
 
         // Taken first, so a load that a newer one overtakes while its archive opens shows nothing
         var load = tab.BeginLoad();
-        tab.SetLoading();
+        var ticket = tab.SetLoading();
         // Show progress spinner while extracting archive
         if (tab.ParentWindowContext is not null)
         {
@@ -322,7 +322,7 @@ public class NavigationService(
                 // Unless a page of it shows, the opening goes again, and the tab's archive stays the one it shows
                 opening?.Abandon();
                 // This load said Loading and showed nothing, so the titles say what the tab shows again
-                tab.EndLoading();
+                tab.EndLoading(ticket);
             }
 
             // Hide progress spinner when initial extraction and display complete
@@ -344,11 +344,15 @@ public class NavigationService(
         var safeFileName = HttpManager.GetSafeFileName(url);
         var destPath = TempFileManager.GetNewTempFilePath(safeFileName);
         
+        // The latest Downloading this download entered, which ends it. Zero until the first progress report, which
+        // ends nothing
+        var ticket = 0;
         using var client = new HttpClientDownloadWithProgress(url, destPath);
         client.ProgressChanged += (totalFileSize, totalBytesDownloaded, progressPercentage) =>
         {
             var displayProgress = HttpManager.GetProgressDisplay(totalFileSize, totalBytesDownloaded, progressPercentage);
-            tab.SetDownloading($"{safeFileName} {TranslationManager.Translation?.Downloading} {displayProgress}");
+            Volatile.Write(ref ticket,
+                tab.SetDownloading($"{safeFileName} {TranslationManager.Translation?.Downloading} {displayProgress}"));
 
             if (Settings.UIProperties.IsTaskbarProgressEnabled && totalBytesDownloaded.HasValue && totalFileSize.HasValue)
             {
@@ -365,7 +369,7 @@ public class NavigationService(
             if (ct.IsCancellationRequested)
             {
                 // Nothing shows, so the progress text must not stay in the titles
-                tab.EndLoading();
+                tab.EndLoading(Volatile.Read(ref ticket));
                 return LoadResult.Failed();
             }
 
@@ -384,7 +388,7 @@ public class NavigationService(
         {
             platformService.StopTaskbarProgress();
             // Nothing shows, so the progress text must not stay in the titles
-            tab.EndLoading();
+            tab.EndLoading(Volatile.Read(ref ticket));
             return LoadResult.Failed();
         }
         catch (Exception e)

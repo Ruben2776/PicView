@@ -148,6 +148,30 @@ public class TabTitlesTests
     }
 
     [Fact]
+    public void EndLoading_WithAnOlderTicket_LeavesTheNewerLoadingInPlace()
+    {
+        var older = _tab.SetLoading();
+        var newer = _tab.SetLoading();
+
+        _tab.EndLoading(older);
+        Assert.Equal(TitlePhase.Loading, _tab.Titles.Phase);
+
+        _tab.EndLoading(newer);
+        Assert.Equal(TitlePhase.None, _tab.Titles.Phase);
+    }
+
+    [Fact]
+    public void Display_EndsLoading_WhateverTheTicket()
+    {
+        Browse("a.jpg");
+        _tab.SetLoading();
+
+        _tab.Display(Model("a.jpg"));
+
+        Assert.Equal(TitlePhase.None, _tab.Titles.Phase);
+    }
+
+    [Fact]
     public void Display_FileWithoutIterator_ShowsLoading_UntilIteratorInitializes()
     {
         _tab.Display(Model("a.jpg"));

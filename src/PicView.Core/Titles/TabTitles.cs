@@ -40,6 +40,7 @@ public sealed class TabTitles : INotifyPropertyChanged, IDisposable
     private bool _stale = true;
     private TitlePhase _phase;
     private string? _phaseText;
+    private int _ticket;
     private string _title = string.Empty;
     private string _titleTooltip = string.Empty;
     private string _windowTitle = string.Empty;
@@ -118,14 +119,24 @@ public sealed class TabTitles : INotifyPropertyChanged, IDisposable
         PropertyChanged?.Invoke(this, AllProperties);
     }
 
-    internal void Enter(TitlePhase phase, string? text = null)
+    /// <summary>Enters Loading and returns its ticket, which <see cref="EndLoading(int)"/> takes.</summary>
+    internal int EnterLoading() => Enter(TitlePhase.Loading);
+
+    /// <summary>
+    /// Enters <paramref name="phase"/> and returns its ticket, a new one each call. Entering replaces whatever phase the
+    /// tab was in, so the ticket of the phase it replaced no longer ends anything.
+    /// </summary>
+    internal int Enter(TitlePhase phase, string? text = null)
     {
+        int ticket;
         lock (_lock)
         {
             _phase = phase;
             _phaseText = text;
+            ticket = ++_ticket;
         }
         Mark();
+        return ticket;
     }
 
     /// <summary>A shown image ends every phase; a shown file that changed on disk only marks.</summary>
@@ -142,18 +153,41 @@ public sealed class TabTitles : INotifyPropertyChanged, IDisposable
         Mark();
     }
 
-    /// <summary>The load that said Loading or Downloading gave up without showing anything. An Error stays.</summary>
+    /// <summary>
+    /// The load that said Loading or Downloading with <paramref name="ticket"/> gave up without showing anything. It ends
+    /// the phase only while the ticket is the latest one handed out, so a load that gives up late leaves a newer one's
+    /// phase in place. An Error stays.
+    /// </summary>
+    internal void EndLoading(int ticket)
+    {
+        lock (_lock)
+        {
+            if (ticket == _ticket)
+            {
+                EndLoadingLocked();
+            }
+        }
+        Mark();
+    }
+
+    /// <summary>Ends whatever Loading or Downloading is current, whichever load said it. An Error stays.</summary>
     internal void EndLoading()
     {
         lock (_lock)
         {
-            if (_phase is TitlePhase.Loading or TitlePhase.Downloading)
-            {
-                _phase = TitlePhase.None;
-                _phaseText = null;
-            }
+            EndLoadingLocked();
         }
         Mark();
+    }
+
+    // Callers hold _lock
+    private void EndLoadingLocked()
+    {
+        if (_phase is TitlePhase.Loading or TitlePhase.Downloading)
+        {
+            _phase = TitlePhase.None;
+            _phaseText = null;
+        }
     }
 
     private void BuildIfStale()

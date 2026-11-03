@@ -28,7 +28,7 @@ public class ClipboardPasteService(
 
         var tabs = vm.WindowTabs;
         var tab = tabs.ActiveTab.CurrentValue;
-        tab.SetLoading();
+        var ticket = tab.SetLoading();
 
         var pasted = false;
         try
@@ -73,7 +73,7 @@ public class ClipboardPasteService(
             if (!pasted)
             {
                 // Nothing was shown, so the titles stop saying Loading
-                tab.EndLoading();
+                tab.EndLoading(ticket);
             }
         }
     }

@@ -169,7 +169,7 @@ public class NavigationServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task LoadFromUrlAsync_Cancelled_EndsDownloading()
+    public async Task LoadFromUrlAsync_CancelledBeforeAnyProgress_LeavesTheDownloadingItDidNotEnter()
     {
         var tab = CreateTab(_testDirectory);
         tab.SetDownloading("image.jpg 40%");
@@ -178,9 +178,9 @@ public class NavigationServiceTests : IDisposable
 
         var result = await _navigationService.LoadFromUrlAsync("http://127.0.0.1:9/image.jpg", tab, cts);
 
-        // A cancelled download shows nothing, so its progress text must not stay in the titles
+        // The download never entered Downloading itself, so it has no ticket to end the phase of whoever did
         Assert.False(result.IsLoaded);
-        Assert.Equal(PicView.Core.Titles.TitlePhase.None, tab.Titles.Phase);
+        Assert.Equal(PicView.Core.Titles.TitlePhase.Downloading, tab.Titles.Phase);
     }
 
     [Fact]
