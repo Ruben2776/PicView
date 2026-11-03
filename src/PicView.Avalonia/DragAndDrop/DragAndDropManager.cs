@@ -200,16 +200,7 @@ public static class DragAndDropManager
                 tab.CurrentView.Value = new ImageViewer(tab);
             }
 
-            var vm = mainWindow.DataContext as MainWindowViewModel;
-            vm.IsLoadingIndicatorShown.Value = true;
-            try
-            {
-                await tabOverview.LoadFromFileAsync(file).ConfigureAwait(false);
-            }
-            finally
-            {
-                vm.IsLoadingIndicatorShown.Value = false;
-            }
+            await tabOverview.LoadFromFileAsync(file).ConfigureAwait(false);
         }
         else
         {

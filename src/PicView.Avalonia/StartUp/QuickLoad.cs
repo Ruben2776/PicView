@@ -89,16 +89,7 @@ public static class QuickLoad
         tab.Gallery.Switcher.Start(Settings.Gallery.IsGalleryDocked);
         TabNavigationInitializer.Initialize(core, [], vm);
 
-        vm.IsLoadingIndicatorShown.Value = true;
-        LoadResult result;
-        try
-        {
-            result = await vm.WindowTabs.LoadFromStringAsync(source).ConfigureAwait(false);
-        }
-        finally
-        {
-            vm.IsLoadingIndicatorShown.Value = false;
-        }
+        var result = await vm.WindowTabs.LoadFromStringAsync(source).ConfigureAwait(false);
 
         if (!result.IsLoaded)
         {
@@ -123,7 +114,6 @@ public static class QuickLoad
     {
         var vm = mainWindow.ViewModel!;
         var tab = vm.WindowTabs.ActiveTab.CurrentValue;
-        vm.IsLoadingIndicatorShown.Value = !vm.IsTopToolbarShown.Value;
         tab.SingleImageType = SingleImageType.None;
 
         var rootDirectory = continueFromLeftOff ? SourceOpener.GetStartUpDirectory(fileInfo.FullName) : null;
@@ -147,8 +137,6 @@ public static class QuickLoad
                 mainWindow.WindowFitter.Center();
             }, DispatcherPriority.Send);
         }
-
-        vm.IsLoadingIndicatorShown.Value = false;
 
         SourceOpener.ShowHoverBarIfNeeded(tab);
         if (Settings.UIProperties.IsTaskbarProgressEnabled)

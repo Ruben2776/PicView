@@ -35,6 +35,11 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
     internal TabServices? Services { get; } = services;
 
     /// <summary>
+    /// Whether the tab was created with services, which its <see cref="Load"/> needs.
+    /// </summary>
+    public bool HasServices => Services is not null;
+
+    /// <summary>
     /// The Main Window that owns this tab. Only that window's <see cref="TabOverviewViewModel"/> changes it, when the
     /// tab moves there.
     /// </summary>

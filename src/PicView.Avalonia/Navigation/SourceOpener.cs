@@ -26,8 +26,8 @@ public readonly record struct OpenOptions(bool IsStartup = false, bool ContinueF
 /// </summary>
 /// <remarks>
 /// Loading itself is Core's (<see cref="TabOverviewViewModel.LoadFromStringAsync"/>); this module owns what the UI
-/// does around it: the startup order, initializing a fresh tab, switching from the start-up menu, the loading
-/// indicator, and telling the user when a source could not be opened.
+/// does around it: the startup order, initializing a fresh tab, switching from the start-up menu, and
+/// telling the user when a source could not be opened.
 /// </remarks>
 public static class SourceOpener
 {
@@ -65,23 +65,14 @@ public static class SourceOpener
         });
 
         var rootDirectory = options.ContinueFromLeftOff ? GetStartUpDirectory(source) : null;
-        vm.IsLoadingIndicatorShown.Value = true;
-        LoadResult result;
-        try
+        var result = await tabs.LoadFromStringAsync(source, rootDirectory: rootDirectory,
+            archiveEntry: options.ArchiveEntry).ConfigureAwait(false);
+        if (Settings.WindowProperties.AutoFit)
         {
-            result = await tabs.LoadFromStringAsync(source, rootDirectory: rootDirectory,
-                archiveEntry: options.ArchiveEntry).ConfigureAwait(false);
-            if (Settings.WindowProperties.AutoFit)
+            await Dispatcher.UIThread.InvokeAsync(() =>
             {
-                await Dispatcher.UIThread.InvokeAsync(() =>
-                {
-                    mainWindow.WindowFitter.Center();
-                });
-            }
-        }
-        finally
-        {
-            vm.IsLoadingIndicatorShown.Value = false;
+                mainWindow.WindowFitter.Center();
+            });
         }
 
         if (!result.IsLoaded)

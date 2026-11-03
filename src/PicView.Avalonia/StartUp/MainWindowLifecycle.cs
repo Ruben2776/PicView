@@ -16,6 +16,7 @@ using PicView.Core.FileSorting;
 using PicView.Core.Navigation;
 using PicView.Core.Sizing;
 using PicView.Core.ViewModels;
+using R3;
 
 namespace PicView.Avalonia.StartUp;
 
@@ -264,6 +265,7 @@ public sealed class MainWindowLifecycle
         window.ViewModel = vm;
         vm.WindowModeSwitcher = window.WindowModeSwitcher;
         vm.WindowTabs.SetHookups(new NavigationSubscriptions(window, vm));
+        window.Disposables.Add(ShowLoadingIndicatorWhileLoading(vm));
         _core.MainWindows.MainWindows.Add(vm);
         _core.MainWindows.ActiveWindow.Value = vm;
         _open.Add(window);
@@ -282,6 +284,21 @@ public sealed class MainWindowLifecycle
         }
 
         return window;
+    }
+
+    /// <summary>
+    /// Shows the window's loading indicator while its active tab loads, when the titlebar is hidden. The titlebar
+    /// already says Loading (the tab derives its Titles), so the indicator earns its place only without it.
+    /// </summary>
+    private static IDisposable ShowLoadingIndicatorWhileLoading(MainWindowViewModel vm)
+    {
+        // A tab without services has no Load to ask
+        var isLoading = vm.WindowTabs.ActiveTab
+            .Select(static tab => tab.HasServices ? tab.Load.IsLoading.AsObservable() : Observable.Return(false))
+            .Switch();
+        return Observable.CombineLatest(isLoading, vm.IsTopToolbarShown,
+                static (loading, titlebarShown) => loading && !titlebarShown)
+            .Subscribe(show => vm.IsLoadingIndicatorShown.Value = show);
     }
 
     private static MainWindowViewModel ViewModelOf(MainWindow window) =>

@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Reflection;
 using Avalonia;
 using Avalonia.Controls;
@@ -56,6 +57,9 @@ public class AppLifecycleTests : IAsyncDisposable
     private readonly TaskCompletionSource<ImageModel> _held = new(TaskCreationOptions.RunContinuationsAsynchronously);
     private readonly TaskCompletionSource _heldRequested = new(TaskCreationOptions.RunContinuationsAsynchronously);
 
+    // More held loads, for a test that holds several files, by path
+    private readonly ConcurrentDictionary<string, HeldLoad> _holds = new(StringComparer.Ordinal);
+
     public AppLifecycleTests()
     {
         SetDefaults();
@@ -65,6 +69,12 @@ public class AppLifecycleTests : IAsyncDisposable
         Directory.CreateDirectory(_folder);
         _core = new CoreViewModel(new NoPlatform(), file =>
         {
+            if (_holds.TryGetValue(file.FullName, out var hold))
+            {
+                hold.Requested.TrySetResult();
+                return new ValueTask<ImageModel>(hold.Model.Task);
+            }
+
             if (file.FullName == _heldPath)
             {
                 _heldRequested.TrySetResult();
@@ -82,6 +92,12 @@ public class AppLifecycleTests : IAsyncDisposable
 
     public async ValueTask DisposeAsync()
     {
+        // Let a load that a test left held end, so shutting down does not wait for it
+        foreach (var hold in _holds.Values)
+        {
+            hold.Model.TrySetResult(new ImageModel());
+        }
+
         // Shut down before deleting the folder, since a late save to a missing folder goes to the user's own
         foreach (var app in _apps)
         {
@@ -789,6 +805,121 @@ public class AppLifecycleTests : IAsyncDisposable
         {
             Application.Current.DataContext = null;
         }
+    }
+
+    [AvaloniaFact]
+    public async Task OpenAsync_WhileTheTitlebarIsHidden_ShowsTheIndicatorOnlyWhileLoading()
+    {
+        Settings.UIProperties.ShowInterface = false;
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var window = app.MainWindows.Open[0];
+        var vm = ViewModelOf(window);
+        var a = await WriteImageAsync("a.jpg");
+        var held = Hold(a);
+        Assert.False(vm.IsTopToolbarShown.CurrentValue);
+
+        var opening = SourceOpener.OpenAsync(window, _core, a).AsTask();
+        await held.Requested.Task.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+        var shownWhileHeld = vm.IsLoadingIndicatorShown.CurrentValue;
+        held.Model.SetResult(new ImageModel { FileInfo = new FileInfo(a) });
+        var result = await opening.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+
+        Assert.True(shownWhileHeld);
+        Assert.True(result.IsLoaded);
+        Assert.False(vm.IsLoadingIndicatorShown.CurrentValue);
+    }
+
+    [AvaloniaFact]
+    public async Task OpenAsync_WhileTheTitlebarShows_NeverShowsTheIndicator()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var window = app.MainWindows.Open[0];
+        var vm = ViewModelOf(window);
+        var a = await WriteImageAsync("a.jpg");
+        var held = Hold(a);
+        Assert.True(vm.IsTopToolbarShown.CurrentValue);
+        var seen = new List<bool>();
+        using var watching = vm.IsLoadingIndicatorShown.AsObservable().Subscribe(seen.Add);
+
+        var opening = SourceOpener.OpenAsync(window, _core, a).AsTask();
+        await held.Requested.Task.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+        var shownWhileHeld = vm.IsLoadingIndicatorShown.CurrentValue;
+        held.Model.SetResult(new ImageModel { FileInfo = new FileInfo(a) });
+        await opening.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+
+        Assert.False(shownWhileHeld);
+        Assert.DoesNotContain(true, seen);
+    }
+
+    [AvaloniaFact]
+    public async Task TwoOverlappingLoads_KeepTheIndicatorUntilTheNewerEnds()
+    {
+        Settings.UIProperties.ShowInterface = false;
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var window = app.MainWindows.Open[0];
+        var vm = ViewModelOf(window);
+        var a = await WriteImageAsync("a.jpg");
+        var b = await WriteImageAsync("b.jpg");
+        // Both held before any load, so a neighbour that is preloaded cannot cache one unheld for the other
+        var heldA = Hold(a);
+        var heldB = Hold(b);
+
+        var openingA = SourceOpener.OpenAsync(window, _core, a).AsTask();
+        await heldA.Requested.Task.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+        var openingB = SourceOpener.OpenAsync(window, _core, b).AsTask();
+        await heldB.Requested.Task.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+
+        // The older load gives up first, and the newer one is still loading
+        heldA.Model.SetResult(new ImageModel { FileInfo = new FileInfo(a) });
+        await openingA.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+        var shownAfterOlderEnded = vm.IsLoadingIndicatorShown.CurrentValue;
+        heldB.Model.SetResult(new ImageModel { FileInfo = new FileInfo(b) });
+        await openingB.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+
+        Assert.True(shownAfterOlderEnded);
+        Assert.False(vm.IsLoadingIndicatorShown.CurrentValue);
+    }
+
+    [AvaloniaFact]
+    public async Task HidingTheTitlebarMidLoad_ShowsTheIndicator()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var window = app.MainWindows.Open[0];
+        var vm = ViewModelOf(window);
+        var a = await WriteImageAsync("a.jpg");
+        var held = Hold(a);
+
+        var opening = SourceOpener.OpenAsync(window, _core, a).AsTask();
+        await held.Requested.Task.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+        var shownWithTitlebar = vm.IsLoadingIndicatorShown.CurrentValue;
+        vm.IsTopToolbarShown.Value = false;
+        var shownWithoutTitlebar = vm.IsLoadingIndicatorShown.CurrentValue;
+        held.Model.SetResult(new ImageModel { FileInfo = new FileInfo(a) });
+        await opening.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+
+        Assert.False(shownWithTitlebar);
+        Assert.True(shownWithoutTitlebar);
+        Assert.False(vm.IsLoadingIndicatorShown.CurrentValue);
+    }
+
+    private async Task<string> WriteImageAsync(string name)
+    {
+        var path = Path.Combine(_folder, name);
+        await File.WriteAllBytesAsync(path, [0xFF, 0xD8, 0xFF], TestContext.Current.CancellationToken);
+        return path;
+    }
+
+    // Holds the load of the file at path until the test sets its model
+    private HeldLoad Hold(string path) => _holds.GetOrAdd(path, static _ => new HeldLoad());
+
+    private sealed class HeldLoad
+    {
+        public TaskCompletionSource<ImageModel> Model { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        public TaskCompletionSource Requested { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
     }
 
     private static WriteableBitmap NewBitmap() =>
