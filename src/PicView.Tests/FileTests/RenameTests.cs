@@ -152,8 +152,9 @@ public class RenameTests : IDisposable
         var thumbnails = new NoThumbnails();
         var folderWatcher = new NoFolderWatcher();
         // The navigation needs no image loader or platform for a file in a folder
-        core.InitializeNavigation(new NavigationService(null!, core.SharedCache, folderWatcher, null!, string.CompareOrdinal),
-            thumbnails, folderWatcher);
+        core.InitializeNavigation(
+            new TabServices(core.SharedCache, core.SharedThumbnailCache, thumbnails, folderWatcher, null!, null!),
+            new NavigationService(null!, core.SharedCache, folderWatcher, null!, string.CompareOrdinal));
         var vm = new MainWindowViewModel(core, new TranslationViewModel(), null!, new GlobalSettingsViewModel(),
             new GallerySharedSettingsViewModel()) { ToolTip = new ToolTipViewModel() };
         core.MainWindows.MainWindows.Add(vm);

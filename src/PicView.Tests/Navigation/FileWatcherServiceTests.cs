@@ -519,7 +519,7 @@ public class FileWatcherServiceTests : IDisposable
         using var service = new FileWatcherService((s1, s2) => string.CompareOrdinal(s1, s2), _cache,
             _mockThumbnailCache);
         var existingFile = new FileInfo(Path.Combine(_testDirectory, "existing.jpg"));
-        var tab = new TabViewModel(null!, service);
+        var tab = new TabViewModel(null!);
         tab.Model = new ImageModel { FileInfo = existingFile };
         tab.Initialize(_cache, _mockThumbnailCache, new MockThumbnailLoader(), service, _mockThumbnailCache);
         tab.InitializeImageIterator([existingFile], _cache, _mockThumbnailCache, new MockThumbnailLoader(), null,
@@ -609,7 +609,7 @@ public class FileWatcherServiceTests : IDisposable
         var files = await FilesOnDiskAsync("a.jpg", Path.Combine("sub", "b.jpg"));
         using var service = new FileWatcherService((s1, s2) => string.CompareOrdinal(s1, s2), _cache,
             _mockThumbnailCache);
-        var tab = new TabViewModel(null!, service);
+        var tab = new TabViewModel(null!);
         tab.Model = new ImageModel { FileInfo = files[0] };
         tab.Initialize(_cache, _mockThumbnailCache, new MockThumbnailLoader(), service, _mockThumbnailCache);
         tab.InitializeImageIterator(files, _cache, _mockThumbnailCache, new MockThumbnailLoader(), null,
@@ -770,7 +770,7 @@ public class FileWatcherServiceTests : IDisposable
         await File.WriteAllTextAsync(file.FullName, "dummy content", TestContext.Current.CancellationToken);
         using var service = new FileWatcherService((s1, s2) => string.CompareOrdinal(s1, s2), _cache,
             _mockThumbnailCache);
-        var tab = new TabViewModel(null!, service);
+        var tab = new TabViewModel(null!);
         tab.Model = new ImageModel { FileInfo = file };
         tab.Initialize(_cache, _mockThumbnailCache, new MockThumbnailLoader(), service, _mockThumbnailCache);
         tab.InitializeImageIterator([file], _cache, _mockThumbnailCache, new MockThumbnailLoader(), null,
@@ -821,7 +821,7 @@ public class FileWatcherServiceTests : IDisposable
         using var service = new FileWatcherService((s1, s2) => string.CompareOrdinal(s1, s2), _cache,
             _mockThumbnailCache);
         var actionRunner = new Input.RecordingActionRunner();
-        var tab = new TabViewModel(WindowWith(actionRunner), service);
+        var tab = new TabViewModel(WindowWith(actionRunner));
         tab.Model = new ImageModel { FileInfo = file };
         tab.Initialize(_cache, _mockThumbnailCache, new MockThumbnailLoader(), service, _mockThumbnailCache);
         tab.InitializeImageIterator([file], _cache, _mockThumbnailCache, new MockThumbnailLoader(), null,
@@ -849,7 +849,7 @@ public class FileWatcherServiceTests : IDisposable
             _mockThumbnailCache);
         var actionRunner = new Input.RecordingActionRunner();
         var files = await FilesOnDiskAsync(Enumerable.Range(1, 30).Select(i => $"{i:D2}.jpg").ToArray());
-        var tab = new TabViewModel(WindowWith(actionRunner), service);
+        var tab = new TabViewModel(WindowWith(actionRunner));
         tab.Model = new ImageModel { FileInfo = files[0] };
         tab.Initialize(cache, _mockThumbnailCache, new MockThumbnailLoader(), service, _mockThumbnailCache);
         tab.InitializeImageIterator(files, cache, _mockThumbnailCache, new MockThumbnailLoader(), null,
@@ -904,7 +904,7 @@ public class FileWatcherServiceTests : IDisposable
     private TabViewModel CreateTab(string directory, List<FileInfo>? files = null, FileInfo? shown = null,
         MainWindowViewModel? window = null)
     {
-        var tab = new TabViewModel(window!, _service);
+        var tab = new TabViewModel(window!);
         // Watch() finds the directory from the model, so give it a file in that directory
         var dummyFile = new FileInfo(Path.Combine(directory, "placeholder.png"));
         tab.Model = new ImageModel { FileInfo = dummyFile };

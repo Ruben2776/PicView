@@ -23,10 +23,16 @@ namespace PicView.Core.ViewModels;
 /// lifecycle of resources specific to this tab instance.
 /// </para>
 /// </summary>
-public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherService? fileWatcherService = null,
+public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? services = null,
     IArchiveEntryWriter? archiveEntryWriter = null) : IDisposable
 {
     #region Tab logic
+
+    /// <summary>
+    /// The services this tab was created with, which are the same for every tab. Null for a tab created before they
+    /// were composed.
+    /// </summary>
+    internal TabServices? Services { get; } = services;
 
     /// <summary>
     /// The Main Window that owns this tab. Only that window's <see cref="TabOverviewViewModel"/> changes it, when the
@@ -456,7 +462,7 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
     private IDisposable? _archiveStateSubscription;
     public IThumbnailCache? ThumbnailCache { get; private set; }
 
-    private IFileWatcherService? _fileWatcherService = fileWatcherService;
+    private IFileWatcherService? _fileWatcherService = services?.Watcher;
     
     public BindableReactiveProperty<int> NavigationIndex { get; } = new(0);
     public BindableReactiveProperty<int> MaxIndex { get; } = new(0);

@@ -22,14 +22,13 @@ public class TabOverviewViewModel
     public BindableReactiveProperty<ObservableCollection<TabViewModel>> Tabs { get; } = new([]);
     public BindableReactiveProperty<TabViewModel> ActiveTab { get; }
     
-    // The services every Main Window shares; navigation, thumbnail loading and file watching exist once the first
-    // tab has opened a source
+    // The services every Main Window shares, composed once at App Start
     private CoreViewModel? Core => _parentVm?.Core;
     public INavigationService? SharedNavigation => Core?.SharedNavigationService;
-    public SharedImageCache? SharedCache => Core?.SharedCache;
-    public IThumbnailCache? SharedThumbnailCache => Core?.SharedThumbnailCache;
-    public IThumbnailLoader? SharedThumbnailLoader => Core?.SharedThumbnailLoader;
-    public IFileWatcherService? SharedFileWatcher => Core?.SharedFileWatcher;
+    public SharedImageCache? SharedCache => Core?.Services?.Cache;
+    public IThumbnailCache? SharedThumbnailCache => Core?.Services?.ThumbnailCache;
+    public IThumbnailLoader? SharedThumbnailLoader => Core?.Services?.ThumbnailLoader;
+    public IFileWatcherService? SharedFileWatcher => Core?.Services?.Watcher;
 
     private readonly ReactiveProperty<bool> _isTabStripShown = new(false);
 
@@ -136,7 +135,7 @@ public class TabOverviewViewModel
     
     private TabViewModel CreateTabInternal(FileInfo? file = null)
     {
-        var tab = new TabViewModel(_parentVm, SharedFileWatcher);
+        var tab = new TabViewModel(_parentVm, Core?.Services);
         if (file is not null)
         {
             tab.Model.FileInfo = file;

@@ -15,27 +15,28 @@ public class CoreViewModel(
     public ThumbnailCache SharedThumbnailCache { get; } = new();
 
     // Set once by InitializeNavigation, for every Main Window
+    /// <summary>
+    /// The services every tab is created with. Null until <see cref="InitializeNavigation"/> has run.
+    /// </summary>
+    public TabServices? Services { get; private set; }
     public INavigationService? SharedNavigationService { get; private set; }
-    public IThumbnailLoader? SharedThumbnailLoader { get; private set; }
-    public IFileWatcherService? SharedFileWatcher { get; private set; }
+    public IThumbnailLoader? SharedThumbnailLoader => Services?.ThumbnailLoader;
+    public IFileWatcherService? SharedFileWatcher => Services?.Watcher;
 
     /// <summary>
-    /// Sets up navigation for every Main Window, once, when the first tab opens a source: after the first window and
-    /// image are shown, so they show sooner. Later calls do nothing.
+    /// Keeps the services every Main Window and tab shares, composed once at App Start. Later calls do nothing.
     /// </summary>
-    public void InitializeNavigation(INavigationService navigation, IThumbnailLoader thumbnailLoader,
-        IFileWatcherService fileWatcher)
+    public void InitializeNavigation(TabServices services, INavigationService navigation)
     {
-        if (SharedNavigationService is not null)
+        if (Services is not null)
         {
             return;
         }
 
-        SharedThumbnailLoader = thumbnailLoader;
-        SharedFileWatcher = fileWatcher;
+        Services = services;
         SharedNavigationService = navigation;
     }
-    
+
     // --- Globally Shared State ---
     public TranslationViewModel Translation { get; } = new();
     public GlobalSettingsViewModel? GlobalSettings { get; } = new();

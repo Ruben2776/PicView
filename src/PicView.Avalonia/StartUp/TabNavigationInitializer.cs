@@ -1,6 +1,4 @@
 using System.Diagnostics;
-using PicView.Avalonia.Navigation.Services;
-using PicView.Core.Navigation;
 using PicView.Core.ViewModels;
 
 namespace PicView.Avalonia.StartUp;
@@ -23,9 +21,7 @@ public static class TabNavigationInitializer
     {
         // --- Initialization Logic ---
         // This is the initialization logic for the navigation system.
-        // It is initialized after initial image load, to make it feel faster by showing the image asap. 
-        
-        InitializeNavigation(core);
+        // It is initialized after initial image load, to make it feel faster by showing the image asap.
 
         var tabOverView = vm.WindowTabs;
         var tab = tabOverView.ActiveTab.CurrentValue;
@@ -49,29 +45,6 @@ public static class TabNavigationInitializer
         }
 
         tab.InitializeImageIterator([], cache, thumbCache, thumbLoader, tabs.SharedFileWatcher, thumbCache);
-    }
-
-    /// <summary>
-    /// Sets up navigation for every Main Window the first time any tab opens a source; does nothing after that.
-    /// </summary>
-    private static void InitializeNavigation(CoreViewModel core)
-    {
-        if (core.SharedNavigationService is not null)
-        {
-            return;
-        }
-
-        Debug.Assert(core.PlatformService != null);
-        // The shared image cache loads through the same logic as AvaloniaImageLoader (via GetImageModel)
-        var thumbnailLoader = ServiceHelper.ThumbLoader;
-        // A rename the watcher reports reaches the history of every tab of every window before any tab follows it
-        var fileWatcher = new FileWatcherService(core.PlatformService.CompareStrings, core.SharedCache,
-            core.SharedThumbnailCache,
-            fileRenamed: (oldPath, newPath) => FileRenames.Follow(core, oldPath, newPath),
-            folderRenamed: (oldFolder, newFolder) => FileRenames.FollowFolder(core, oldFolder, newFolder));
-        var navigation = new NavigationService(ServiceHelper.ImageLoader, core.SharedCache, fileWatcher,
-            core.PlatformService, core.PlatformService.CompareStrings);
-        core.InitializeNavigation(navigation, thumbnailLoader, fileWatcher);
     }
 
     public static void InitializeConsecutiveTab(CoreViewModel core, TabViewModel tab)

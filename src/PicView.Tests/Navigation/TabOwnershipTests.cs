@@ -2,6 +2,7 @@ using ImageMagick;
 using PicView.Core.IPlatform;
 using PicView.Core.Localization;
 using PicView.Core.Models;
+using PicView.Core.Navigation;
 using PicView.Core.Navigation.Interfaces;
 using PicView.Core.ViewModels;
 
@@ -250,7 +251,9 @@ public class TabOwnershipTests
     public void TearDown_CalledTwice_ReleasesEachTabOnce()
     {
         var watcher = new RecordingFileWatcher();
-        _core.InitializeNavigation(null!, new MockThumbnailLoader(), watcher);
+        _core.InitializeNavigation(
+            new TabServices(_core.SharedCache, _core.SharedThumbnailCache, new MockThumbnailLoader(), watcher, null!, null!),
+            navigation: null!);
         var tabs = CreateWindow().WindowTabs;
         tabs.InitializeActiveTab([]);
         var first = tabs.ActiveTab.Value;
@@ -269,7 +272,9 @@ public class TabOwnershipTests
     public void SharedServices_TwoMainWindows_AreTheSameInstances()
     {
         var watcher = new RecordingFileWatcher();
-        _core.InitializeNavigation(null!, new MockThumbnailLoader(), watcher);
+        _core.InitializeNavigation(
+            new TabServices(_core.SharedCache, _core.SharedThumbnailCache, new MockThumbnailLoader(), watcher, null!, null!),
+            navigation: null!);
 
         var first = CreateWindow().WindowTabs;
         var second = CreateWindow().WindowTabs;

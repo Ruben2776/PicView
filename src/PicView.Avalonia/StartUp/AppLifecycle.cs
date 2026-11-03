@@ -15,6 +15,7 @@ using PicView.Avalonia.SettingsManagement;
 using PicView.Core.DebugTools;
 using PicView.Core.FileAssociations;
 using PicView.Core.FileHandling;
+using PicView.Core.Navigation;
 using PicView.Core.ProcessHandling;
 using PicView.Core.ViewModels;
 
@@ -295,8 +296,7 @@ public sealed class AppLifecycle
 
     private void ApplySharedSettings(bool settingsExists)
     {
-        ServiceHelper.SetAvaloniaImageLoader(_core);
-        ServiceHelper.SetGalleryLoader();
+        ComposeServices();
         _ = Task.Run(() =>
         {
             _core.GlobalSettings?.BackgroundChoice.Value = Settings.UIProperties.BgColorChoice;
@@ -306,6 +306,32 @@ public sealed class AppLifecycle
         });
         ThemeManager.DetermineTheme(Application.Current, settingsExists);
         ColorManager.UpdateAccentColors(Settings.Theme.ColorTheme);
+    }
+
+    /// <summary>
+    /// Composes the services every tab loads with, once, for the <see cref="CoreViewModel"/> to hand to each tab it
+    /// creates. Only constructs them: it lists no files and starts no watching, so the first image shows as soon as
+    /// it would without them.
+    /// </summary>
+    private void ComposeServices()
+    {
+        if (_core.PlatformService is not { } platform)
+        {
+            return;
+        }
+
+        var imageLoader = new AvaloniaImageModelLoader(_core);
+        var thumbnailLoader = new AvaloniaThumbnailLoader();
+        // A rename the watcher reports reaches the history of every tab of every window before any tab follows it
+        var fileWatcher = new FileWatcherService(platform.CompareStrings, _core.SharedCache, _core.SharedThumbnailCache,
+            fileRenamed: (oldPath, newPath) => FileRenames.Follow(_core, oldPath, newPath),
+            folderRenamed: (oldFolder, newFolder) => FileRenames.FollowFolder(_core, oldFolder, newFolder));
+        var navigation = new NavigationService(imageLoader, _core.SharedCache, fileWatcher, platform,
+            platform.CompareStrings);
+        _core.InitializeNavigation(
+            new TabServices(_core.SharedCache, _core.SharedThumbnailCache, thumbnailLoader, fileWatcher, imageLoader,
+                platform),
+            navigation);
     }
 
     private Task ProcessFileAssociationAsync(string argument) => Task.Run(async () =>

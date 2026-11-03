@@ -118,6 +118,21 @@ public class AppLifecycleTests : IAsyncDisposable
     }
 
     [AvaloniaFact]
+    public async Task StartAsync_ComposesTheServicesBeforeTheFirstWindowOpens()
+    {
+        var app = CreateApp();
+
+        await app.StartAsync(settingsExists: true, []);
+
+        Assert.NotNull(_core.Services);
+        Assert.NotNull(_core.SharedNavigationService);
+        // The first tab was created with them, before any source was opened
+        var tab = ViewModelOf(app.MainWindows.Open[0]).WindowTabs.ActiveTab.CurrentValue;
+        Assert.False(tab.IsInitialized);
+        Assert.Same(_core.Services, tab.Services);
+    }
+
+    [AvaloniaFact]
     public async Task OpenNewAsync_AfterAppStart_KeepsFileHistoryAddedSinceAppStart()
     {
         var app = CreateApp();

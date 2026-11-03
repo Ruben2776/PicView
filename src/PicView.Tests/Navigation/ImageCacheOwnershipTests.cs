@@ -29,7 +29,9 @@ public class ImageCacheOwnershipTests
         TranslationManager.Init();
 
         var core = new CoreViewModel(null, LoadProbe);
-        core.InitializeNavigation(null!, new MockThumbnailLoader(), null!);
+        core.InitializeNavigation(
+            new TabServices(core.SharedCache, core.SharedThumbnailCache, new MockThumbnailLoader(), null!, null!, null!),
+            navigation: null!);
         _cache = core.SharedCache;
         _tabs = new MainWindowViewModel(core, core.Translation, null!, core.GlobalSettings!, core.GallerySettings)
             .WindowTabs;
