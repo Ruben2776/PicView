@@ -519,11 +519,10 @@ public class FileWatcherServiceTests : IDisposable
         using var service = new FileWatcherService((s1, s2) => string.CompareOrdinal(s1, s2), _cache,
             _mockThumbnailCache);
         var existingFile = new FileInfo(Path.Combine(_testDirectory, "existing.jpg"));
-        var tab = new TabViewModel(null!, service);
+        var tab = new TabViewModel(null!, ServicesWith(_cache, service));
         tab.Model = new ImageModel { FileInfo = existingFile };
-        tab.Initialize(_cache, _mockThumbnailCache, new MockThumbnailLoader(), service, _mockThumbnailCache);
-        tab.InitializeImageIterator([existingFile], _cache, _mockThumbnailCache, new MockThumbnailLoader(), null,
-            _mockThumbnailCache);
+        tab.Initialize();
+        tab.InitializeImageIterator([existingFile]);
 
         // Act
         var filePath = Path.Combine(_testDirectory, "test.jpg");
@@ -609,11 +608,10 @@ public class FileWatcherServiceTests : IDisposable
         var files = await FilesOnDiskAsync("a.jpg", Path.Combine("sub", "b.jpg"));
         using var service = new FileWatcherService((s1, s2) => string.CompareOrdinal(s1, s2), _cache,
             _mockThumbnailCache);
-        var tab = new TabViewModel(null!, service);
+        var tab = new TabViewModel(null!, ServicesWith(_cache, service));
         tab.Model = new ImageModel { FileInfo = files[0] };
-        tab.Initialize(_cache, _mockThumbnailCache, new MockThumbnailLoader(), service, _mockThumbnailCache);
-        tab.InitializeImageIterator(files, _cache, _mockThumbnailCache, new MockThumbnailLoader(), null,
-            _mockThumbnailCache);
+        tab.Initialize();
+        tab.InitializeImageIterator(files);
 
         // Act: moved out of the watched folder, as the Recycle Bin does, so no event comes for its files
         var outside = Path.Combine(Path.GetTempPath(), "PicViewTests_Moved_" + Guid.NewGuid());
@@ -770,11 +768,10 @@ public class FileWatcherServiceTests : IDisposable
         await File.WriteAllTextAsync(file.FullName, "dummy content", TestContext.Current.CancellationToken);
         using var service = new FileWatcherService((s1, s2) => string.CompareOrdinal(s1, s2), _cache,
             _mockThumbnailCache);
-        var tab = new TabViewModel(null!, service);
+        var tab = new TabViewModel(null!, ServicesWith(_cache, service));
         tab.Model = new ImageModel { FileInfo = file };
-        tab.Initialize(_cache, _mockThumbnailCache, new MockThumbnailLoader(), service, _mockThumbnailCache);
-        tab.InitializeImageIterator([file], _cache, _mockThumbnailCache, new MockThumbnailLoader(), null,
-            _mockThumbnailCache);
+        tab.Initialize();
+        tab.InitializeImageIterator([file]);
         var renamed = Path.Combine(_testDirectory, "renamed");
 
         // Act
@@ -821,11 +818,10 @@ public class FileWatcherServiceTests : IDisposable
         using var service = new FileWatcherService((s1, s2) => string.CompareOrdinal(s1, s2), _cache,
             _mockThumbnailCache);
         var actionRunner = new Input.RecordingActionRunner();
-        var tab = new TabViewModel(WindowWith(actionRunner), service);
+        var tab = new TabViewModel(WindowWith(actionRunner), ServicesWith(_cache, service));
         tab.Model = new ImageModel { FileInfo = file };
-        tab.Initialize(_cache, _mockThumbnailCache, new MockThumbnailLoader(), service, _mockThumbnailCache);
-        tab.InitializeImageIterator([file], _cache, _mockThumbnailCache, new MockThumbnailLoader(), null,
-            _mockThumbnailCache);
+        tab.Initialize();
+        tab.InitializeImageIterator([file]);
 
         // Act: into another folder, as the Recycle Bin does
         var otherFolder = Path.Combine(_testDirectory, "other");
@@ -849,11 +845,10 @@ public class FileWatcherServiceTests : IDisposable
             _mockThumbnailCache);
         var actionRunner = new Input.RecordingActionRunner();
         var files = await FilesOnDiskAsync(Enumerable.Range(1, 30).Select(i => $"{i:D2}.jpg").ToArray());
-        var tab = new TabViewModel(WindowWith(actionRunner), service);
+        var tab = new TabViewModel(WindowWith(actionRunner), ServicesWith(cache, service));
         tab.Model = new ImageModel { FileInfo = files[0] };
-        tab.Initialize(cache, _mockThumbnailCache, new MockThumbnailLoader(), service, _mockThumbnailCache);
-        tab.InitializeImageIterator(files, cache, _mockThumbnailCache, new MockThumbnailLoader(), null,
-            _mockThumbnailCache);
+        tab.Initialize();
+        tab.InitializeImageIterator(files);
 
         // Act
         foreach (var file in files)
@@ -866,6 +861,10 @@ public class FileWatcherServiceTests : IDisposable
         Assert.True(tab.IsFresh);
         Assert.Null(tab.ImageIterator);
     }
+
+    // A tab's services with the suite's fakes and the given cache and watcher
+    private TabServices ServicesWith(SharedImageCache cache, IFileWatcherService watcher) =>
+        TestTabServices.For(cache, _mockThumbnailCache, new MockThumbnailLoader(), watcher);
 
     private static MainWindowViewModel WindowWith(Input.RecordingActionRunner actionRunner) =>
         new(null!, null!, null!, null!, null!) { ActionRunner = actionRunner };
@@ -904,17 +903,17 @@ public class FileWatcherServiceTests : IDisposable
     private TabViewModel CreateTab(string directory, List<FileInfo>? files = null, FileInfo? shown = null,
         MainWindowViewModel? window = null)
     {
-        var tab = new TabViewModel(window!, _service);
+        var tab = new TabViewModel(window!, ServicesWith(_cache, _service));
         // Watch() finds the directory from the model, so give it a file in that directory
         var dummyFile = new FileInfo(Path.Combine(directory, "placeholder.png"));
         tab.Model = new ImageModel { FileInfo = dummyFile };
 
-        tab.Initialize(_cache, _mockThumbnailCache, new MockThumbnailLoader(), _service, _mockThumbnailCache);
+        tab.Initialize();
         if (files is not null)
         {
-            // Without the watcher, so a test decides which tab watches first
-            tab.InitializeImageIterator(files, _cache, _mockThumbnailCache, new MockThumbnailLoader(), null,
-                _mockThumbnailCache);
+            // Watches the folder with the tab's own watcher, this service, as a tab that listed its files does. A tab
+            // created without files watches nothing, so a test that needs one tab to watch first creates it first
+            tab.InitializeImageIterator(files);
             tab.Model = new ImageModel { FileInfo = shown ?? files[0] };
         }
         return tab;

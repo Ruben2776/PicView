@@ -26,7 +26,9 @@ public class ViewHistoryRecordingTests : IDisposable
         Settings.Navigation.IsFileHistoryEnabled = true;
         Directory.CreateDirectory(_folder);
         FileHistoryManager.Initialize(Path.Combine(_folder, "history.json"));
-        _tab = new TabViewModel(null!);
+        _tab = new TabViewModel(null!,
+            TestTabServices.For(new SharedImageCache(file => ValueTask.FromResult(new ImageModel { FileInfo = file })),
+                new MockThumbnailCache(), new MockThumbnailLoader()));
     }
 
     public void Dispose()
@@ -528,9 +530,7 @@ public class ViewHistoryRecordingTests : IDisposable
     private async Task OpenArchiveAsync(string zip, string[] listed)
     {
         var opening = await OpenAsync(zip);
-        var thumbnails = new MockThumbnailCache();
-        _tab.Initialize(new SharedImageCache(file => ValueTask.FromResult(new ImageModel { FileInfo = file })), thumbnails,
-            new MockThumbnailLoader(), null, thumbnails);
+        _tab.Initialize();
         _tab.ImageIterator!.Initialize(listed.Select(entry => new FileInfo(PageOf(opening, entry))).ToList());
     }
 

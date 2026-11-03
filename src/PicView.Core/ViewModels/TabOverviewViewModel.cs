@@ -1,6 +1,5 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using PicView.Core.DebugTools;
 using PicView.Core.FileSorting;
 using PicView.Core.IPlatform;
 using PicView.Core.Navigation;
@@ -22,14 +21,11 @@ public class TabOverviewViewModel
     public BindableReactiveProperty<ObservableCollection<TabViewModel>> Tabs { get; } = new([]);
     public BindableReactiveProperty<TabViewModel> ActiveTab { get; }
     
-    // The services every Main Window shares; navigation, thumbnail loading and file watching exist once the first
-    // tab has opened a source
+    // The services every Main Window shares, composed once at App Start
     private CoreViewModel? Core => _parentVm?.Core;
     public INavigationService? SharedNavigation => Core?.SharedNavigationService;
-    public SharedImageCache? SharedCache => Core?.SharedCache;
-    public IThumbnailCache? SharedThumbnailCache => Core?.SharedThumbnailCache;
-    public IThumbnailLoader? SharedThumbnailLoader => Core?.SharedThumbnailLoader;
-    public IFileWatcherService? SharedFileWatcher => Core?.SharedFileWatcher;
+    public SharedImageCache? SharedCache => Core?.Services?.Cache;
+    public IThumbnailLoader? SharedThumbnailLoader => Core?.Services?.ThumbnailLoader;
 
     private readonly ReactiveProperty<bool> _isTabStripShown = new(false);
 
@@ -102,27 +98,6 @@ public class TabOverviewViewModel
     }
 
     /// <summary>
-    /// Gives the active tab, when it first opens a source, its file list from <paramref name="files"/> and starts
-    /// loading its image. Needs the shared navigation set up first.
-    /// </summary>
-    public void InitializeActiveTab(IReadOnlyList<FileInfo> files)
-    {
-        if (SharedCache is not { } cache || SharedThumbnailCache is not { } thumbnails ||
-            SharedThumbnailLoader is not { } thumbnailLoader)
-        {
-            return;
-        }
-
-        var tab = ActiveTab.Value;
-        tab.InitializeImageIterator(files, cache, thumbnails, thumbnailLoader, SharedFileWatcher, thumbnails);
-        var currentIndex = tab.ImageIterator.CurrentIndex;
-        if (currentIndex >= 0 && currentIndex < files.Count)
-        {
-            cache.Preload(tab.Id, files[currentIndex], false, tab.GetTabCancellation().Token);
-        }
-    }
-    
-    /// <summary>
     /// Creates the initial tab and adds it to the tabs collection. Used to show the initial image in the application,
     /// before the Initialize has been called.
     /// </summary>
@@ -134,24 +109,19 @@ public class TabOverviewViewModel
         return tab;
     }
     
-    private TabViewModel CreateTabInternal(FileInfo? file = null)
+    private TabViewModel CreateTabInternal()
     {
-        var tab = new TabViewModel(_parentVm, SharedFileWatcher);
-        if (file is not null)
-        {
-            tab.Model.FileInfo = file;
-        }
+        var tab = new TabViewModel(_parentVm, Core?.Services);
         Tabs.Value.Add(tab);
         return tab;
     }
 
-    public TabViewModel CreateTab(FileInfo? file = null)
+    /// <summary>
+    /// Creates a tab and selects it. Its Load makes its iterator when it first opens a source.
+    /// </summary>
+    public TabViewModel CreateTab()
     {
-        var tab = CreateTabInternal(file);
-        if (SharedCache != null && SharedThumbnailLoader != null && SharedThumbnailCache != null)
-        {
-            tab.Initialize(SharedCache, SharedThumbnailCache, SharedThumbnailLoader, SharedFileWatcher, SharedThumbnailCache);
-        }
+        var tab = CreateTabInternal();
         SelectTab(tab);
         return tab;
     }
@@ -432,75 +402,16 @@ public class TabOverviewViewModel
         await SharedNavigation.NavigateByIncrementsAsync(tab, skipAmount, forwards, ct).ConfigureAwait(false);
     }
 
-
-    /// <inheritdoc cref="INavigationService.LoadFromStringAsync"/>
-    public async ValueTask<LoadResult> LoadFromStringAsync(string source, TabViewModel? senderTab = null,
-        string? rootDirectory = null, string? archiveEntry = null)
-    {
-        if (SharedNavigation is null)
-        {
-            DebugHelper.LogDebug(nameof(TabOverviewViewModel), nameof(LoadFromStringAsync), 
-                $"{nameof(SharedNavigation)} is null, make sure to initialize it before use");
-            return LoadResult.Failed();
-        }
-        var tab = senderTab ?? ActiveTab.Value;
-        var ct = tab.GetTabCancellation();
-        
-        var result = await SharedNavigation.LoadFromStringAsync(source, tab, ct, rootDirectory, archiveEntry)
-            .ConfigureAwait(false);
-        if (result.IsLoaded)
-        {
-            ActiveTab.Value = tab;
-        }
-        return result;
-    }
-    
-    public async ValueTask<LoadResult> LoadFromUrlAsync(string source, TabViewModel? senderTab = null)
-    {
-        if (SharedNavigation is null)
-        {
-            return LoadResult.Failed();
-        }
-        var tab = senderTab ?? ActiveTab.Value;
-        var ct = tab.GetTabCancellation();
-
-        var result = await SharedNavigation.LoadFromUrlAsync(source, tab, ct).ConfigureAwait(false);
-        if (result.IsLoaded)
-        {
-            ActiveTab.Value = tab;
-        }
-        return result;
-    }
-    
-    public async ValueTask LoadFromFileAsync(FileInfo file, TabViewModel? senderTab = null)
-    {
-        if (SharedNavigation is null)
-        {
-            return;
-        }
-        var tab = senderTab ?? ActiveTab.Value;
-        var ct = tab.GetTabCancellation();
-        await SharedNavigation.LoadFromFileAsync(file, tab, ct).ConfigureAwait(false);
-    }
-    
-    public async ValueTask LoadFromFileAsync(string file, TabViewModel? senderTab = null) => 
-        await LoadFromFileAsync(new FileInfo(file), senderTab).ConfigureAwait(false);
-
-    public async ValueTask<bool> LoadFromArchiveAsync(string source, TabViewModel? senderTab = null)
-    {
-        if (SharedNavigation is null)
-        {
-            return false;
-        }
-        var tab = senderTab ?? ActiveTab.Value;
-        var ct = tab.GetTabCancellation();
-        return await SharedNavigation.LoadFromArchiveAsync(source, tab, ct).ConfigureAwait(false);
-    }
-
     public async ValueTask ReloadAsync(TabViewModel? senderTab = null)
     {
         var tab = senderTab ?? ActiveTab.Value;
-        await tab.ImageIterator.ReloadAsync().ConfigureAwait(false);
+        // A tab that never browsed files, such as a New Tab, has nothing to reload
+        if (tab.ImageIterator is not { } iterator)
+        {
+            return;
+        }
+
+        await iterator.ReloadAsync().ConfigureAwait(false);
     }
     #endregion
 

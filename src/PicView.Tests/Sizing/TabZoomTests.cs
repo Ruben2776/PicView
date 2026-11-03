@@ -5,6 +5,7 @@ using PicView.Core.Models;
 using PicView.Core.Navigation;
 using PicView.Core.Navigation.Interfaces;
 using PicView.Core.ViewModels;
+using PicView.Tests.Navigation;
 using R3;
 
 namespace PicView.Tests.Sizing;
@@ -24,7 +25,9 @@ public class TabZoomTests
         ObservableSystem.DefaultFrameProvider = new MockFrameProvider();
         SetDefaults();
         TranslationManager.LoadLanguage("en");
-        _tab = new TabViewModel(null!);
+        _tab = new TabViewModel(null!,
+            TestTabServices.For(new SharedImageCache(f => ValueTask.FromResult(Model(f.Name))!), new ThumbnailCache(),
+                new MockThumbnailLoader()));
     }
 
     private static ImageModel Model(string name) => new()
@@ -39,8 +42,7 @@ public class TabZoomTests
     private void Browse(params string[] names)
     {
         var files = names.Select(n => Model(n).FileInfo!).ToArray();
-        _tab.Initialize(new SharedImageCache(f => ValueTask.FromResult(Model(f.Name))!), new ThumbnailCache(),
-            new MockThumbnailLoader(), null, new ThumbnailCache());
+        _tab.Initialize();
         _tab.ImageIterator!.Initialize(files, 0);
     }
 

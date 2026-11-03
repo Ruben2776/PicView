@@ -368,20 +368,29 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
         if (!request.IsCompleted)
         {
             // Still loading, show thumbnail while waiting
-            _tab.SetLoading();
-            await Task.Run(async () =>
+            var ticket = _tab.SetLoading();
+            try
             {
-                var thumb = GetThumbnail(targetFile);
-                if (IsTargetActive(targetFile))
+                await Task.Run(async () =>
                 {
-                    _tab.ShowStandIn(thumb);
-                }
-                var model = await request.ConfigureAwait(false);
-                if (model is not null && IsTargetActive(targetFile))
-                {
-                    UpdateModel(model);
-                }
-            }, ct.Token).ConfigureAwait(false);
+                    var thumb = GetThumbnail(targetFile);
+                    if (IsTargetActive(targetFile))
+                    {
+                        _tab.ShowStandIn(thumb);
+                    }
+                    var model = await request.ConfigureAwait(false);
+                    if (model is not null && IsTargetActive(targetFile))
+                    {
+                        UpdateModel(model);
+                    }
+                }, ct.Token).ConfigureAwait(false);
+            }
+            finally
+            {
+                // A step that showed nothing, as when it was cancelled or overtaken, leaves its Loading; one that showed
+                // an image already ended every phase, and a newer load's phase has a newer ticket
+                _tab.EndLoading(ticket);
+            }
             return;
         }
         UpdateModel(await request.ConfigureAwait(false));
@@ -410,12 +419,20 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
         var secondRequest = Cache.GetAsync(_tab.Id, secondaryFile, ct.Token);
         if (!firstRequest.IsCompleted || !secondRequest.IsCompleted)
         {
-            _tab.ShowLoading(null);
+            var ticket = _tab.ShowLoading(null);
 
-            await Task.Run(async () =>
+            try
             {
-                await UpdateModels().ConfigureAwait(false);
-            }, ct.Token).ConfigureAwait(false);
+                await Task.Run(async () =>
+                {
+                    await UpdateModels().ConfigureAwait(false);
+                }, ct.Token).ConfigureAwait(false);
+            }
+            finally
+            {
+                // As the single step: a pair that showed nothing leaves its Loading, one that showed already ended it
+                _tab.EndLoading(ticket);
+            }
             return;
         }
         await UpdateModels().ConfigureAwait(false);
@@ -663,7 +680,7 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
     /// </returns>
     private async ValueTask<(int Index, FileInfo[] Files)?> WaitForFileAfterShownAsync(int reach, CancellationToken ct)
     {
-        _tab.SetLoading();
+        var ticket = _tab.SetLoading();
         var (shownIndex, shownFiles) = ShownIndexAndFiles();
         var shown = FileAt(shownFiles, shownIndex);
         while (!ct.IsCancellationRequested)
@@ -694,7 +711,7 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
                 }
 
                 // The step may stop on the shown file, which shows nothing new, so the Loading phase ends here
-                _tab.EndLoading();
+                _tab.EndLoading(ticket);
                 return (index, files);
             }
 
@@ -709,7 +726,7 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
         }
 
         // The wait gave up, so the titles say what the tab shows again, instead of Loading
-        _tab.EndLoading();
+        _tab.EndLoading(ticket);
         PublishPosition();
         return null;
     }

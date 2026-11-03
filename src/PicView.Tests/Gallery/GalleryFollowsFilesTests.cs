@@ -8,6 +8,7 @@ using PicView.Core.Models;
 using PicView.Core.Navigation;
 using PicView.Core.Navigation.Interfaces;
 using PicView.Core.ViewModels;
+using PicView.Tests.Navigation;
 using R3;
 
 namespace PicView.Tests.Gallery;
@@ -537,11 +538,11 @@ public class GalleryFollowsFilesTests : IDisposable
 
     private TabViewModel CreateTab()
     {
-        var tab = new TabViewModel(null!)
+        var tab = new TabViewModel(null!, TestTabServices.For(_cache, _thumbnails, new MockThumbnailLoader()))
         {
             Model = new ImageModel { FileInfo = new FileInfo(Path.Combine(_directory, "shown.jpg")) }
         };
-        tab.Initialize(_cache, _thumbnails, new MockThumbnailLoader(), thumbnailCache: _thumbnails);
+        tab.Initialize();
         return tab;
     }
 
@@ -560,7 +561,7 @@ public class GalleryFollowsFilesTests : IDisposable
     private void BrowseAgain(TabViewModel tab, List<FileInfo> files)
     {
         tab.Model = new ImageModel { FileInfo = files[0] };
-        tab.InitializeImageIterator(files, _cache, _thumbnails, new MockThumbnailLoader(), thumbnailCache: _thumbnails);
+        tab.InitializeImageIterator(files);
     }
 
     private static Task IdleAsync(TabViewModel tab) => tab.GalleryCoordinator!.Idle;

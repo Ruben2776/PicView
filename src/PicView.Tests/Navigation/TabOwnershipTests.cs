@@ -2,6 +2,7 @@ using ImageMagick;
 using PicView.Core.IPlatform;
 using PicView.Core.Localization;
 using PicView.Core.Models;
+using PicView.Core.Navigation;
 using PicView.Core.Navigation.Interfaces;
 using PicView.Core.ViewModels;
 
@@ -250,9 +251,11 @@ public class TabOwnershipTests
     public void TearDown_CalledTwice_ReleasesEachTabOnce()
     {
         var watcher = new RecordingFileWatcher();
-        _core.InitializeNavigation(null!, new MockThumbnailLoader(), watcher);
+        _core.InitializeNavigation(
+            TestTabServices.For(_core.SharedCache, _core.SharedThumbnailCache, new MockThumbnailLoader(), watcher),
+            navigation: null!);
         var tabs = CreateWindow().WindowTabs;
-        tabs.InitializeActiveTab([]);
+        tabs.ActiveTab.Value.Initialize();
         var first = tabs.ActiveTab.Value;
         var second = tabs.CreateTab();
         _core.SharedThumbnailCache.Add(first.Id, "first.jpg", new object());
@@ -269,13 +272,15 @@ public class TabOwnershipTests
     public void SharedServices_TwoMainWindows_AreTheSameInstances()
     {
         var watcher = new RecordingFileWatcher();
-        _core.InitializeNavigation(null!, new MockThumbnailLoader(), watcher);
+        _core.InitializeNavigation(
+            TestTabServices.For(_core.SharedCache, _core.SharedThumbnailCache, new MockThumbnailLoader(), watcher),
+            navigation: null!);
 
         var first = CreateWindow().WindowTabs;
         var second = CreateWindow().WindowTabs;
 
-        Assert.Same(watcher, first.SharedFileWatcher);
-        Assert.Same(first.SharedFileWatcher, second.SharedFileWatcher);
+        Assert.Same(watcher, first.ActiveTab.Value.Services?.Watcher);
+        Assert.Same(first.ActiveTab.Value.Services, second.ActiveTab.Value.Services);
         Assert.Same(first.SharedCache, second.SharedCache);
         Assert.Same(first.SharedThumbnailLoader, second.SharedThumbnailLoader);
     }

@@ -7,6 +7,7 @@ using PicView.Core.Navigation;
 using PicView.Core.Navigation.Interfaces;
 using PicView.Core.Titles;
 using PicView.Core.ViewModels;
+using PicView.Tests.Navigation;
 using R3;
 
 namespace PicView.Tests.Titles;
@@ -25,7 +26,9 @@ public class TabTitlesTests
         ObservableSystem.DefaultFrameProvider = new MockFrameProvider();
         SetDefaults();
         TranslationManager.LoadLanguage("en");
-        _tab = new TabViewModel(null!);
+        _tab = new TabViewModel(null!,
+            TestTabServices.For(new SharedImageCache(f => ValueTask.FromResult(Model(f.Name))!), new ThumbnailCache(),
+                new MockThumbnailLoader()));
     }
 
     private static string Loading => TranslationManager.Translation.Loading!;
@@ -44,8 +47,7 @@ public class TabTitlesTests
     private FileInfo[] Browse(params string[] names)
     {
         var files = names.Select(n => Model(n).FileInfo!).ToArray();
-        _tab.Initialize(new SharedImageCache(f => ValueTask.FromResult(Model(f.Name))!), new ThumbnailCache(),
-            new MockThumbnailLoader(), null, new ThumbnailCache());
+        _tab.Initialize();
         _tab.ImageIterator!.Initialize(files, 0);
         return files;
     }
@@ -119,8 +121,9 @@ public class TabTitlesTests
     [Fact]
     public void SetError_HoldsThroughEndLoading_EndsOnSetLoadingAndOnDisplay()
     {
-        _tab.SetError("e");
-        _tab.EndLoading();
+        // Ended with the Error's own ticket, the latest one, so only the phase being an Error keeps it
+        var errorTicket = _tab.Titles.Enter(TitlePhase.Error, "e");
+        _tab.EndLoading(errorTicket);
         Assert.Equal("e", _tab.Titles.Title);
         Assert.Equal(TitlePhase.Error, _tab.Titles.Phase);
 
@@ -139,12 +142,36 @@ public class TabTitlesTests
     {
         Browse("a.jpg");
         _tab.Display(Model("a.jpg"));
-        _tab.SetLoading();
+        var ticket = _tab.SetLoading();
 
-        _tab.EndLoading();
+        _tab.EndLoading(ticket);
 
         Assert.Equal(TitlePhase.None, _tab.Titles.Phase);
         Assert.Equal("a.jpg", _tab.Titles.TabTitle);
+    }
+
+    [Fact]
+    public void EndLoading_WithAnOlderTicket_LeavesTheNewerLoadingInPlace()
+    {
+        var older = _tab.SetLoading();
+        var newer = _tab.SetLoading();
+
+        _tab.EndLoading(older);
+        Assert.Equal(TitlePhase.Loading, _tab.Titles.Phase);
+
+        _tab.EndLoading(newer);
+        Assert.Equal(TitlePhase.None, _tab.Titles.Phase);
+    }
+
+    [Fact]
+    public void Display_EndsLoading_WhateverTheTicket()
+    {
+        Browse("a.jpg");
+        _tab.SetLoading();
+
+        _tab.Display(Model("a.jpg"));
+
+        Assert.Equal(TitlePhase.None, _tab.Titles.Phase);
     }
 
     [Fact]
@@ -290,8 +317,7 @@ public class TabTitlesTests
         _tab.DisposeImageIterator();
         _tab.DisplaySingleImage(new ImageModel { Image = new object(), PixelWidth = 1, PixelHeight = 1 },
             SingleImageType.Clipboard, "Pasted");
-        _tab.Initialize(new SharedImageCache(f => ValueTask.FromResult(Model(f.Name))!), new ThumbnailCache(),
-            new MockThumbnailLoader(), null, new ThumbnailCache());
+        _tab.Initialize();
         _tab.Display(Model("a.jpg"));
         Assert.Equal(Loading, _tab.Titles.Title);
 
@@ -308,8 +334,8 @@ public class TabTitlesTests
         _tab.Dispose();
 
         _tab.Display(Model("a.jpg"));
-        _tab.SetLoading();
-        _tab.EndLoading();
+        var ticket = _tab.SetLoading();
+        _tab.EndLoading(ticket);
         _tab.Crop = new CropViewModel();
 
         _ = _tab.Titles.Title;

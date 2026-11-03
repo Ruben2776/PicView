@@ -30,32 +30,55 @@ public static class QuickLoad
     public static async ValueTask<LoadResult> StartUpAsync(MainWindow mainWindow, CoreViewModel core, string source,
         bool continueFromLeftOff)
     {
+        // Loading from the start, while the window is sized and the image decoded, before the tab's Load says it. The
+        // shown image ends it; nothing shown ends this ticket, unless a newer phase began since
+        var tab = mainWindow.ViewModel!.WindowTabs.ActiveTab.CurrentValue;
+        var ticket = tab.SetLoading();
+
         var check = FileTypeResolver.CheckIfLoadableString(source);
         LoadResult result;
-        switch (check?.Type)
+        // Ended in the finally, so a load that throws leaves no Loading behind either
+        var loaded = false;
+        try
         {
-            case FileTypeResolver.LoadAbleFileType.File:
-                result = await LoadFileAsync(mainWindow, core, new FileInfo(check.Value.Data), continueFromLeftOff)
-                    .ConfigureAwait(false);
-                break;
-            case FileTypeResolver.LoadAbleFileType.Directory:
-                var files = FileListRetriever.RetrieveFiles(new FileInfo(check.Value.Data), core.PlatformService.CompareStrings);
-                result = files.Count is 0
-                    ? LoadResult.Failed()
-                    : await LoadFileAsync(mainWindow, core, files[0], continueFromLeftOff, files).ConfigureAwait(false);
-                break;
-            case FileTypeResolver.LoadAbleFileType.Zip:
-            case FileTypeResolver.LoadAbleFileType.Web:
-                result = await LoadThroughCoreAsync(mainWindow, core, check.Value.Data).ConfigureAwait(false);
-                break;
-            default:
-                result = LoadResult.Failed();
-                break;
+            switch (check?.Type)
+            {
+                case FileTypeResolver.LoadAbleFileType.File:
+                    result = await LoadFileAsync(mainWindow, core, new FileInfo(check.Value.Data), continueFromLeftOff)
+                        .ConfigureAwait(false);
+                    break;
+                case FileTypeResolver.LoadAbleFileType.Directory:
+                    // Listed once: the tab's Load browses these files instead of listing the folder again
+                    var files = FileListRetriever.RetrieveFiles(new FileInfo(check.Value.Data),
+                        core.PlatformService.CompareStrings);
+                    result = files.Count is 0
+                        ? LoadResult.Failed()
+                        : await LoadFileAsync(mainWindow, core, files[0], continueFromLeftOff, files)
+                            .ConfigureAwait(false);
+                    break;
+                case FileTypeResolver.LoadAbleFileType.Zip:
+                case FileTypeResolver.LoadAbleFileType.Web:
+                    result = await LoadThroughCoreAsync(mainWindow, core, check.Value.Data).ConfigureAwait(false);
+                    break;
+                default:
+                    result = LoadResult.Failed();
+                    break;
+            }
+
+            loaded = result.Outcome is LoadOutcome.Loaded;
+        }
+        finally
+        {
+            if (!loaded)
+            {
+                tab.EndLoading(ticket);
+            }
         }
 
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
-            if (!result.IsLoaded)
+            // A load a newer one overtook leaves the view to it
+            if (result.Outcome is LoadOutcome.Failed)
             {
                 SourceOpener.ShowError(mainWindow.ViewModel!, result);
                 ViewChangeHelper.SwitchToStartUpMenu(mainWindow.ViewModel!);
@@ -70,7 +93,7 @@ public static class QuickLoad
     }
 
     /// <summary>
-    /// Archives and URLs: show the window, initialize navigation, and let Core load them.
+    /// Archives and URLs: show the window, open the tab, and let its Load load them.
     /// </summary>
     private static async ValueTask<LoadResult> LoadThroughCoreAsync(MainWindow mainWindow, CoreViewModel core, string source)
     {
@@ -86,19 +109,9 @@ public static class QuickLoad
             WindowFunctions.CenterWindowOnScreen(mainWindow);
         }
 
-        tab.Gallery.Switcher.Start(Settings.Gallery.IsGalleryDocked);
-        TabNavigationInitializer.Initialize(core, [], vm);
+        TabNavigationInitializer.Initialize(core, vm, tab);
 
-        vm.IsLoadingIndicatorShown.Value = true;
-        LoadResult result;
-        try
-        {
-            result = await vm.WindowTabs.LoadFromStringAsync(source).ConfigureAwait(false);
-        }
-        finally
-        {
-            vm.IsLoadingIndicatorShown.Value = false;
-        }
+        var result = await tab.Load.LoadAsync(source).ConfigureAwait(false);
 
         if (!result.IsLoaded)
         {
@@ -114,8 +127,10 @@ public static class QuickLoad
     }
 
     /// <summary>
-    /// Files and directories: show the image before navigation is initialized.
+    /// Files and directories: show the image before the tab's Load lists the files around it.
     /// </summary>
+    /// <param name="files">The files of the folder opened at startup, which <paramref name="fileInfo"/> is the first of,
+    /// for the tab to browse without listing them again.</param>
     private static async ValueTask<LoadResult> LoadFileAsync(MainWindow mainWindow, CoreViewModel core,
         FileInfo fileInfo,
         bool continueFromLeftOff,
@@ -123,23 +138,24 @@ public static class QuickLoad
     {
         var vm = mainWindow.ViewModel!;
         var tab = vm.WindowTabs.ActiveTab.CurrentValue;
-        vm.IsLoadingIndicatorShown.Value = !vm.IsTopToolbarShown.Value;
-        tab.SingleImageType = SingleImageType.None;
 
         var rootDirectory = continueFromLeftOff ? SourceOpener.GetStartUpDirectory(fileInfo.FullName) : null;
-        var listFrom = rootDirectory is null ? fileInfo : new FileInfo(rootDirectory);
         tab.Gallery.Switcher.Start(Settings.Gallery.IsGalleryDocked);
 
+        LoadResult result;
         if (Settings.ImageScaling.ShowImageSideBySide)
         {
-            await LoadSideBySideAsync(mainWindow, core, vm, tab, fileInfo, files ?? core.PlatformService.GetFiles(listFrom), listFrom)
-                .ConfigureAwait(false);
+            // Listed once, to find the image beside the opened one; the tab's Load browses the same files
+            var listFrom = rootDirectory is null ? fileInfo : new FileInfo(rootDirectory);
+            result = await LoadSideBySideAsync(mainWindow, core, vm, tab, fileInfo,
+                files ?? core.PlatformService.GetFiles(listFrom), rootDirectory).ConfigureAwait(false);
         }
         else
         {
-            await LoadSingleAsync(mainWindow, core, vm, tab, fileInfo, files, listFrom).ConfigureAwait(false);
+            result = await LoadSingleAsync(mainWindow, core, vm, tab, fileInfo, files, rootDirectory)
+                .ConfigureAwait(false);
         }
-        
+
         if (vm.WindowModeState.CurrentValue.AutoFit)
         {
             Dispatcher.UIThread.Post(() =>
@@ -148,23 +164,24 @@ public static class QuickLoad
             }, DispatcherPriority.Send);
         }
 
-        vm.IsLoadingIndicatorShown.Value = false;
-
         SourceOpener.ShowHoverBarIfNeeded(tab);
-        if (Settings.UIProperties.IsTaskbarProgressEnabled)
+        if (Settings.UIProperties.IsTaskbarProgressEnabled && tab.ImageIterator is { } iterator)
         {
-            core.PlatformService.SetTaskbarProgress((ulong)tab.ImageIterator.CurrentIndex, (ulong)tab.ImageIterator.Files.Count);
+            core.PlatformService.SetTaskbarProgress((ulong)iterator.CurrentIndex, (ulong)iterator.Files.Count);
         }
 
         if (rootDirectory is not null)
         {
             Settings.StartUp.StartUpDirectory = rootDirectory;
         }
-        return LoadResult.Loaded;
+        return result;
     }
 
-    private static async ValueTask LoadSingleAsync(MainWindow mainWindow, CoreViewModel core, MainWindowViewModel vm,
-        TabViewModel tab, FileInfo fileInfo, List<FileInfo>? files, FileInfo listFrom)
+    /// <param name="files">The files around <paramref name="fileInfo"/> when they are listed already; the tab's Load
+    /// lists them otherwise, from <paramref name="rootDirectory"/> when given.</param>
+    private static async ValueTask<LoadResult> LoadSingleAsync(MainWindow mainWindow, CoreViewModel core,
+        MainWindowViewModel vm, TabViewModel tab, FileInfo fileInfo, IReadOnlyList<FileInfo>? files,
+        string? rootDirectory)
     {
         using var magickImage = new MagickImage();
         var isPinged = false;
@@ -176,8 +193,7 @@ public static class QuickLoad
             magickImage.Ping(fileInfo);
 #pragma warning restore MA0042
             isPinged = true;
-            tab.Model.PixelWidth = magickImage.Width;
-            tab.Model.PixelHeight = magickImage.Height;
+            var sizes = new PixelSizes(magickImage.Width, magickImage.Height);
 
             // Need to set size for the Maximize or fullscreen functions to work
             // Predict window size and center beforehand for pleasant opening when double-clicking a file
@@ -187,14 +203,14 @@ public static class QuickLoad
                 // after resizing the next image
                 await Dispatcher.UIThread.InvokeAsync(() =>
                 {
-                    ShowSized(mainWindow, new PixelSizes(tab.Model.PixelWidth, tab.Model.PixelHeight));
+                    ShowSized(mainWindow, sizes);
                 }, DispatcherPriority.Render);
             }
             else
             {
                 Dispatcher.UIThread.Post(() =>
                 {
-                    ShowSized(mainWindow, new PixelSizes(tab.Model.PixelWidth, tab.Model.PixelHeight));
+                    ShowSized(mainWindow, sizes);
                 }, DispatcherPriority.Send);
             }
 
@@ -208,35 +224,28 @@ public static class QuickLoad
         }
 
         // Decoded while the viewer is set up and the tab hooked up, so the first image's reaction comes from the same
-        // subscription as every later one's
+        // subscription as every later one's. The pinged size rides on the decoded model
         var decoding = GetImageModel.GetImageModelAsync(fileInfo, isPinged ? magickImage : null);
         await ShowImageViewerAndHookUpAsync(tab).ConfigureAwait(false);
-        tab.Display(await decoding.ConfigureAwait(false));
-
-        if (files is null)
-        {
-            TabNavigationInitializer.Initialize(core, listFrom, vm);
-        }
-        else
-        {
-            TabNavigationInitializer.Initialize(core, files, vm);
-        }
+        var model = await decoding.ConfigureAwait(false);
+        return await ShowThroughTheLoadAsync(core, tab, fileInfo,
+            new LoadOptions(Model: model, Files: files, RootDirectory: rootDirectory)).ConfigureAwait(false);
     }
 
     /// <summary>
     /// Side by side needs the file list first to know which file is beside the opened one. With AutoFit the window
     /// is sized for both images before it is shown; without it, the window shows at once and the images follow.
     /// </summary>
-    private static async ValueTask LoadSideBySideAsync(MainWindow mainWindow, CoreViewModel core, MainWindowViewModel vm,
-        TabViewModel tab, FileInfo fileInfo, List<FileInfo> files, FileInfo listFrom)
+    private static async ValueTask<LoadResult> LoadSideBySideAsync(MainWindow mainWindow, CoreViewModel core,
+        MainWindowViewModel vm, TabViewModel tab, FileInfo fileInfo, List<FileInfo> files, string? rootDirectory)
     {
         var index = SideBySidePair.IndexOf(files, fileInfo) ?? 0;
 
         // Without another image there is no pair to size or show, so the image loads as a single one
         if (SideBySidePair.PartnerOf(index, files.Count) is not { } nextIndex)
         {
-            await LoadSingleAsync(mainWindow, core, vm, tab, fileInfo, files, listFrom).ConfigureAwait(false);
-            return;
+            return await LoadSingleAsync(mainWindow, core, vm, tab, fileInfo, files, rootDirectory)
+                .ConfigureAwait(false);
         }
 
         if (!vm.WindowModeState.CurrentValue.AutoFit)
@@ -279,18 +288,35 @@ public static class QuickLoad
             }
         }
 
+        // Both decode while the viewer is set up, and the tab's Load shows them as the pair with the files listed above
         var decodingFirst = GetImageModel.GetImageModelAsync(fileInfo, isPinged ? firstMagick : null);
         var decodingSecond = GetImageModel.GetImageModelAsync(nextFileInfo, isPinged ? secondMagick : null);
         await ShowImageViewerAndHookUpAsync(tab).ConfigureAwait(false);
-        tab.Display(await decodingFirst.ConfigureAwait(false), await decodingSecond.ConfigureAwait(false));
+        var first = await decodingFirst.ConfigureAwait(false);
+        var second = await decodingSecond.ConfigureAwait(false);
+        var result = await ShowThroughTheLoadAsync(core, tab, fileInfo,
+            new LoadOptions(Model: first, SecondaryModel: second, Files: files, RootDirectory: rootDirectory))
+            .ConfigureAwait(false);
 
-        TabNavigationInitializer.Initialize(core, files, vm);
         Dispatcher.UIThread.Post(() =>
         {
             mainWindow.Show();
             mainWindow.WindowFitter.Refit();
             mainWindow.SetLayoutSizeAndVisibility(mainWindow.Bounds.Width);
         }, DispatcherPriority.Background);
+        return result;
+    }
+
+    /// <summary>
+    /// Shows the decoded models of <paramref name="options"/> through the tab's Load, which then browses the files
+    /// around them, and gives the tab's gallery the shared settings after.
+    /// </summary>
+    private static async ValueTask<LoadResult> ShowThroughTheLoadAsync(CoreViewModel core, TabViewModel tab,
+        FileInfo fileInfo, LoadOptions options)
+    {
+        var result = await tab.Load.LoadAsync(fileInfo.FullName, options).ConfigureAwait(false);
+        TabNavigationInitializer.InitializeGallery(core, tab);
+        return result;
     }
 
     /// <summary>

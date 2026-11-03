@@ -1,14 +1,18 @@
+using System.Collections.Concurrent;
 using System.Reflection;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Avalonia.Threading;
+using ImageMagick;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Interfaces;
 using PicView.Avalonia.Printing;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.StartUp;
+using PicView.Avalonia.Views.Menu;
+using PicView.Avalonia.Views.UC;
 using PicView.Avalonia.Views.UC.PopUps;
 using PicView.Core.Config;
 using PicView.Core.Favorites;
@@ -19,12 +23,15 @@ using PicView.Core.IPlatform;
 using PicView.Core.Keybindings;
 using PicView.Core.Localization;
 using PicView.Core.Models;
+using PicView.Core.Navigation;
+using PicView.Core.Navigation.Interfaces;
 using PicView.Core.Navigation.Tiff;
 using PicView.Core.Sizing;
 using PicView.Core.Titles;
 using PicView.Core.Update;
 using PicView.Core.ViewModels;
 using PicView.Tests.FileHistory;
+using PicView.Tests.Navigation;
 using PicView.Tests.WindowBehavior;
 using R3;
 
@@ -40,6 +47,7 @@ public class AppLifecycleTests : IAsyncDisposable
     private readonly List<AppLifecycle> _apps = [];
     private readonly string _folder;
     private readonly CoreViewModel _core;
+    private readonly NoPlatform _platform = new();
     private readonly FolderSharedFiles _sharedFiles;
     private readonly LifecycleWindowProvider _provider;
     private readonly List<string> _steps = [];
@@ -56,6 +64,9 @@ public class AppLifecycleTests : IAsyncDisposable
     private readonly TaskCompletionSource<ImageModel> _held = new(TaskCreationOptions.RunContinuationsAsynchronously);
     private readonly TaskCompletionSource _heldRequested = new(TaskCreationOptions.RunContinuationsAsynchronously);
 
+    // More held loads, for a test that holds several files, by path
+    private readonly ConcurrentDictionary<string, HeldLoad> _holds = new(StringComparer.Ordinal);
+
     public AppLifecycleTests()
     {
         SetDefaults();
@@ -63,8 +74,14 @@ public class AppLifecycleTests : IAsyncDisposable
         ObservableSystem.DefaultFrameProvider = new MockFrameProvider();
         _folder = Path.Combine(Path.GetTempPath(), "PicViewAppLifecycleTests_" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(_folder);
-        _core = new CoreViewModel(new NoPlatform(), file =>
+        _core = new CoreViewModel(_platform, file =>
         {
+            if (_holds.TryGetValue(file.FullName, out var hold))
+            {
+                hold.Requested.TrySetResult();
+                return new ValueTask<ImageModel>(hold.Model.Task);
+            }
+
             if (file.FullName == _heldPath)
             {
                 _heldRequested.TrySetResult();
@@ -82,6 +99,12 @@ public class AppLifecycleTests : IAsyncDisposable
 
     public async ValueTask DisposeAsync()
     {
+        // Let a load that a test left held end, so shutting down does not wait for it
+        foreach (var hold in _holds.Values)
+        {
+            hold.Model.TrySetResult(new ImageModel());
+        }
+
         // Shut down before deleting the folder, since a late save to a missing folder goes to the user's own
         foreach (var app in _apps)
         {
@@ -115,6 +138,21 @@ public class AppLifecycleTests : IAsyncDisposable
         var tab = ViewModelOf(app.MainWindows.Open[0]).WindowTabs.ActiveTab.CurrentValue;
         Assert.Equal(TitlePhase.None, tab.Titles.Phase);
         Assert.Equal(TranslationManager.Translation.NoImage, tab.Titles.Title);
+    }
+
+    [AvaloniaFact]
+    public async Task StartAsync_ComposesTheServicesBeforeTheFirstWindowOpens()
+    {
+        var app = CreateApp();
+
+        await app.StartAsync(settingsExists: true, []);
+
+        Assert.NotNull(_core.Services);
+        Assert.NotNull(_core.SharedNavigationService);
+        // The first tab was created with them, before any source was opened
+        var tab = ViewModelOf(app.MainWindows.Open[0]).WindowTabs.ActiveTab.CurrentValue;
+        Assert.False(tab.IsInitialized);
+        Assert.Same(_core.Services, tab.Services);
     }
 
     [AvaloniaFact]
@@ -458,8 +496,8 @@ public class AppLifecycleTests : IAsyncDisposable
         var path = Path.Combine(_folder, "found.jpg");
         await File.WriteAllTextAsync(path, "image");
         // The dialog is only shown while browsing
-        TabNavigationInitializer.Initialize(_core, [], ViewModelOf(first));
-        TabNavigationInitializer.Initialize(_core, [], ViewModelOf(second));
+        OpenActiveTab(first);
+        OpenActiveTab(second);
         // The dialog reads the core from the app, as it does in PicView
         Application.Current!.DataContext = _core;
         try
@@ -488,7 +526,7 @@ public class AppLifecycleTests : IAsyncDisposable
         var window = app.MainWindows.Open[0];
         var path = Path.Combine(_folder, "found.jpg");
         await File.WriteAllTextAsync(path, "image");
-        TabNavigationInitializer.Initialize(_core, [], ViewModelOf(window));
+        OpenActiveTab(window);
         var tab = ViewModelOf(window).WindowTabs.ActiveTab.CurrentValue;
         // Showing a single image, such as a clipboard image or a URL, drops the iterator
         tab.DisposeImageIterator();
@@ -776,6 +814,328 @@ public class AppLifecycleTests : IAsyncDisposable
         }
     }
 
+    [AvaloniaFact]
+    public async Task OpenAsync_WhileTheTitlebarIsHidden_ShowsTheIndicatorOnlyWhileLoading()
+    {
+        Settings.UIProperties.ShowInterface = false;
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var window = app.MainWindows.Open[0];
+        var vm = ViewModelOf(window);
+        var a = await WriteImageAsync("a.jpg");
+        var held = Hold(a);
+        Assert.False(vm.IsTopToolbarShown.CurrentValue);
+
+        var opening = SourceOpener.OpenAsync(window, _core, a).AsTask();
+        await held.Requested.Task.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+        var shownWhileHeld = vm.IsLoadingIndicatorShown.CurrentValue;
+        held.Model.SetResult(new ImageModel { FileInfo = new FileInfo(a) });
+        var result = await opening.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+
+        Assert.True(shownWhileHeld);
+        Assert.True(result.IsLoaded);
+        Assert.False(vm.IsLoadingIndicatorShown.CurrentValue);
+    }
+
+    [AvaloniaFact]
+    public async Task OpenAsync_WhileTheTitlebarShows_NeverShowsTheIndicator()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var window = app.MainWindows.Open[0];
+        var vm = ViewModelOf(window);
+        var a = await WriteImageAsync("a.jpg");
+        var held = Hold(a);
+        Assert.True(vm.IsTopToolbarShown.CurrentValue);
+        var seen = new List<bool>();
+        using var watching = vm.IsLoadingIndicatorShown.AsObservable().Subscribe(seen.Add);
+
+        var opening = SourceOpener.OpenAsync(window, _core, a).AsTask();
+        await held.Requested.Task.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+        var shownWhileHeld = vm.IsLoadingIndicatorShown.CurrentValue;
+        held.Model.SetResult(new ImageModel { FileInfo = new FileInfo(a) });
+        await opening.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+
+        Assert.False(shownWhileHeld);
+        Assert.DoesNotContain(true, seen);
+    }
+
+    [AvaloniaFact]
+    public async Task TwoOverlappingLoads_KeepTheIndicatorUntilTheNewerEnds()
+    {
+        Settings.UIProperties.ShowInterface = false;
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var window = app.MainWindows.Open[0];
+        var vm = ViewModelOf(window);
+        var a = await WriteImageAsync("a.jpg");
+        var b = await WriteImageAsync("b.jpg");
+        // Both held before any load, so a neighbour that is preloaded cannot cache one unheld for the other
+        var heldA = Hold(a);
+        var heldB = Hold(b);
+
+        var openingA = SourceOpener.OpenAsync(window, _core, a).AsTask();
+        await heldA.Requested.Task.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+        var openingB = SourceOpener.OpenAsync(window, _core, b).AsTask();
+        await heldB.Requested.Task.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+
+        // The older load gives up first, and the newer one is still loading
+        heldA.Model.SetResult(new ImageModel { FileInfo = new FileInfo(a) });
+        await openingA.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+        var shownAfterOlderEnded = vm.IsLoadingIndicatorShown.CurrentValue;
+        heldB.Model.SetResult(new ImageModel { FileInfo = new FileInfo(b) });
+        await openingB.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+
+        Assert.True(shownAfterOlderEnded);
+        Assert.False(vm.IsLoadingIndicatorShown.CurrentValue);
+    }
+
+    [AvaloniaFact]
+    public async Task HidingTheTitlebarMidLoad_ShowsTheIndicator()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var window = app.MainWindows.Open[0];
+        var vm = ViewModelOf(window);
+        var a = await WriteImageAsync("a.jpg");
+        var held = Hold(a);
+
+        var opening = SourceOpener.OpenAsync(window, _core, a).AsTask();
+        await held.Requested.Task.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+        var shownWithTitlebar = vm.IsLoadingIndicatorShown.CurrentValue;
+        vm.IsTopToolbarShown.Value = false;
+        var shownWithoutTitlebar = vm.IsLoadingIndicatorShown.CurrentValue;
+        held.Model.SetResult(new ImageModel { FileInfo = new FileInfo(a) });
+        await opening.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+
+        Assert.False(shownWithTitlebar);
+        Assert.True(shownWithoutTitlebar);
+        Assert.False(vm.IsLoadingIndicatorShown.CurrentValue);
+    }
+
+    [AvaloniaFact]
+    public async Task SwitchingTabsWhileTheTitlebarIsHidden_ShowsTheIndicatorOfTheActiveTab()
+    {
+        Settings.UIProperties.ShowInterface = false;
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var window = app.MainWindows.Open[0];
+        var vm = ViewModelOf(window);
+        var tabs = vm.WindowTabs;
+        var tabA = tabs.ActiveTab.CurrentValue;
+        var a = await WriteImageAsync("a.jpg");
+        var held = Hold(a);
+
+        var opening = SourceOpener.OpenAsync(window, _core, a).AsTask();
+        await held.Requested.Task.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+        var shownInA = vm.IsLoadingIndicatorShown.CurrentValue;
+        // A new tab is selected, and it is not loading
+        tabs.CreateTab();
+        var shownInB = vm.IsLoadingIndicatorShown.CurrentValue;
+        tabs.SelectTab(tabA);
+        var shownBackInA = vm.IsLoadingIndicatorShown.CurrentValue;
+        held.Model.SetResult(new ImageModel { FileInfo = new FileInfo(a) });
+        await opening.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+
+        Assert.True(shownInA);
+        Assert.False(shownInB);
+        Assert.True(shownBackInA);
+        Assert.False(vm.IsLoadingIndicatorShown.CurrentValue);
+    }
+
+    [AvaloniaFact]
+    public async Task OpenAsync_IntoAConsecutiveTab_LoadsThatTabAndLeavesTheActiveOne()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var window = app.MainWindows.Open[0];
+        var tabs = ViewModelOf(window).WindowTabs;
+        var a = await WriteImageAsync("a.jpg");
+        var b = await WriteImageAsync("b.jpg");
+        await SourceOpener.OpenAsync(window, _core, a);
+        var first = tabs.ActiveTab.CurrentValue;
+        var second = tabs.CreateTab();
+        // The new tab loads in the background while the first is the active one again
+        tabs.SelectTab(first);
+
+        var result = await SourceOpener.OpenAsync(window, _core, b, tab: second);
+        await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Background);
+
+        Assert.True(result.IsLoaded);
+        Assert.Equal(b, second.Model.FileInfo?.FullName);
+        Assert.IsType<ImageViewer>(second.CurrentView.CurrentValue);
+        Assert.True(second.IsInitialized);
+        Assert.NotNull(second.Hookups);
+        Assert.Same(first, tabs.ActiveTab.CurrentValue);
+        Assert.Equal(a, first.Model.FileInfo?.FullName);
+    }
+
+    [AvaloniaFact]
+    public async Task OpenAsync_OvertakenByANewerOpen_LeavesTheViewToIt()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var window = app.MainWindows.Open[0];
+        await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Background);
+        var tab = ViewModelOf(window).WindowTabs.ActiveTab.CurrentValue;
+        var a = await WriteImageAsync("a.jpg");
+        var b = await WriteImageAsync("b.jpg");
+        var heldA = Hold(a);
+        Assert.IsType<StartUpMenu>(tab.CurrentView.CurrentValue);
+
+        // Opened from the start-up menu, then overtaken by a newer open while its image is held
+        var openingA = SourceOpener.OpenAsync(window, _core, a).AsTask();
+        await heldA.Requested.Task.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+        var resultB = await SourceOpener.OpenAsync(window, _core, b).AsTask()
+            .WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+        heldA.Model.SetResult(new ImageModel { FileInfo = new FileInfo(a) });
+        var resultA = await openingA.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+        await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Background);
+
+        Assert.Equal(LoadOutcome.Superseded, resultA.Outcome);
+        Assert.True(resultB.IsLoaded);
+        Assert.IsType<ImageViewer>(tab.CurrentView.CurrentValue);
+        Assert.Equal(b, tab.Model.FileInfo?.FullName);
+    }
+
+    [AvaloniaFact]
+    public async Task StartUp_WithAFile_ListsItsFilesThroughTheTabsLoad()
+    {
+        var watcher = new RecordingWatcher();
+        // Composed before App Start, which keeps them, so the test sees what the startup open watches
+        _core.InitializeNavigation(
+            TestTabServices.For(_core.SharedCache, _core.SharedThumbnailCache, new TestTabServices.NoThumbnailLoader(),
+                watcher, platform: new NoPlatform()),
+            new NavigationService(string.CompareOrdinal));
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var window = app.MainWindows.Open[0];
+        // Showing the window at startup lays out its bars
+        window.SharedTitleBar = new CustomTitleBar();
+        window.SharedBottomBar = new BottomBar();
+        var tab = ViewModelOf(window).WindowTabs.ActiveTab.CurrentValue;
+        var a = WritePng("a.png");
+        var b = WritePng("b.png");
+
+        var result = await SourceOpener.OpenAsync(window, _core, a, new OpenOptions(IsStartup: true)).AsTask()
+            .WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+
+        Assert.True(result.IsLoaded);
+        Assert.Equal(a, tab.Model.FileInfo?.FullName);
+        Assert.Equal([a, b], tab.ImageIterator!.Files.Select(f => f.FullName));
+        Assert.Same(_core.Services, tab.Services);
+        Assert.Same(tab, watcher.WatchedTab);
+    }
+
+    [AvaloniaFact]
+    public async Task StartUp_WhileTheOpenIsHeld_SaysLoading()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var window = app.MainWindows.Open[0];
+        // Showing the window at startup lays out its bars
+        window.SharedTitleBar = new CustomTitleBar();
+        window.SharedBottomBar = new BottomBar();
+        var tab = ViewModelOf(window).WindowTabs.ActiveTab.CurrentValue;
+        WritePng("a.png");
+        WritePng("b.png");
+        // Opening a folder at startup sorts its names before any image shows, which waits while the gate is closed
+        _platform.CompareGate.Reset();
+
+        var opening = Task.Run(() =>
+            SourceOpener.OpenAsync(window, _core, _folder, new OpenOptions(IsStartup: true)).AsTask());
+        await _platform.Comparing.Task.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+        var phaseWhileHeld = tab.Titles.Phase;
+        _platform.CompareGate.Set();
+        var result = await opening.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+
+        Assert.Equal(TitlePhase.Loading, phaseWhileHeld);
+        Assert.True(result.IsLoaded);
+        Assert.Equal(TitlePhase.None, tab.Titles.Phase);
+    }
+
+    [AvaloniaFact]
+    public async Task StartUp_WhileTheInterfaceIsHiddenAndTheOpenIsHeld_ShowsTheIndicator()
+    {
+        Settings.UIProperties.ShowInterface = false;
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var window = app.MainWindows.Open[0];
+        var vm = ViewModelOf(window);
+        window.SharedTitleBar = new CustomTitleBar();
+        window.SharedBottomBar = new BottomBar();
+        var tab = vm.WindowTabs.ActiveTab.CurrentValue;
+        WritePng("a.png");
+        WritePng("b.png");
+        // Held before the startup path decodes and before its Load begins: opening a folder sorts its names first,
+        // which waits while the gate is closed, so only the startup path's own Loading covers this time
+        _platform.CompareGate.Reset();
+
+        var opening = Task.Run(() =>
+            SourceOpener.OpenAsync(window, _core, _folder, new OpenOptions(IsStartup: true)).AsTask());
+        await _platform.Comparing.Task.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+        var shownWhileHeld = vm.IsLoadingIndicatorShown.CurrentValue;
+        var loadingWhileHeld = tab.Load.IsLoading.Value;
+        _platform.CompareGate.Set();
+        var result = await opening.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+
+        Assert.False(vm.IsTopToolbarShown.CurrentValue);
+        Assert.False(loadingWhileHeld);
+        Assert.True(shownWhileHeld);
+        Assert.True(result.IsLoaded);
+        Assert.False(vm.IsLoadingIndicatorShown.CurrentValue);
+    }
+
+    [AvaloniaFact]
+    public async Task StartUp_OfAMissingFile_LeavesNoLoadingPhase()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var window = app.MainWindows.Open[0];
+        var tab = ViewModelOf(window).WindowTabs.ActiveTab.CurrentValue;
+
+        var result = await SourceOpener.OpenAsync(window, _core, Path.Combine(_folder, "missing.jpg"),
+            new OpenOptions(IsStartup: true));
+
+        Assert.False(result.IsLoaded);
+        Assert.Equal(TitlePhase.None, tab.Titles.Phase);
+    }
+
+    private async Task<string> WriteImageAsync(string name)
+    {
+        var path = Path.Combine(_folder, name);
+        await File.WriteAllBytesAsync(path, [0xFF, 0xD8, 0xFF], TestContext.Current.CancellationToken);
+        return path;
+    }
+
+    // A real image, for the startup path, which decodes it itself
+    private string WritePng(string name)
+    {
+        var path = Path.Combine(_folder, name);
+        using var image = new MagickImage(MagickColors.Red, 2, 2);
+        image.Write(path, MagickFormat.Png);
+        return path;
+    }
+
+    // Records the tab it was last asked to watch
+    private sealed class RecordingWatcher : IFileWatcherService
+    {
+        public TabViewModel? WatchedTab { get; private set; }
+
+        public void Watch(TabViewModel tab, string? directory = null) => WatchedTab = tab;
+        public void Unwatch(TabViewModel tab) { }
+        public void RestartWatches() { }
+    }
+
+    // Holds the load of the file at path until the test sets its model
+    private HeldLoad Hold(string path) => _holds.GetOrAdd(path, static _ => new HeldLoad());
+
+    private sealed class HeldLoad
+    {
+        public TaskCompletionSource<ImageModel> Model { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        public TaskCompletionSource Requested { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
+    }
+
     private static WriteableBitmap NewBitmap() =>
         new(new PixelSize(4, 4), new Vector(96, 96), PixelFormat.Bgra8888, AlphaFormat.Premul);
 
@@ -819,6 +1179,13 @@ public class AppLifecycleTests : IAsyncDisposable
         ViewModelOf(window).WindowTabs.ActiveTab.CurrentValue.CurrentView.CurrentValue;
 
     private static MainWindowViewModel ViewModelOf(MainWindow window) => (MainWindowViewModel)window.DataContext!;
+
+    // Opens the active tab of the window for the first time, as its first source does
+    private void OpenActiveTab(MainWindow window)
+    {
+        var vm = ViewModelOf(window);
+        TabNavigationInitializer.Initialize(_core, vm, vm.WindowTabs.ActiveTab.CurrentValue);
+    }
 
     private AppLifecycle CreateApp()
     {
@@ -929,7 +1296,21 @@ public class AppLifecycleTests : IAsyncDisposable
         public void DisableScreensaver() { }
         public void EnableScreensaver() { }
         public List<FileInfo> GetFiles(FileInfo fileInfo) => [];
-        public int CompareStrings(string str1, string str2) => string.CompareOrdinal(str1, str2);
+        // While closed, every name comparison waits for it, so a test can hold a listing while it sorts; Comparing says
+        // when one waits
+        public ManualResetEventSlim CompareGate { get; } = new(initialState: true);
+        public TaskCompletionSource Comparing { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        public int CompareStrings(string str1, string str2)
+        {
+            if (!CompareGate.IsSet)
+            {
+                Comparing.TrySetResult();
+                CompareGate.Wait(WaitLimit);
+            }
+
+            return string.CompareOrdinal(str1, str2);
+        }
         public void OpenWith(string path) { }
         public void LocateOnDisk(string path) { }
         public void ShowFileProperties(string path) { }
