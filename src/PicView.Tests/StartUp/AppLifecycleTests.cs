@@ -47,6 +47,7 @@ public class AppLifecycleTests : IAsyncDisposable
     private readonly List<AppLifecycle> _apps = [];
     private readonly string _folder;
     private readonly CoreViewModel _core;
+    private readonly NoPlatform _platform = new();
     private readonly FolderSharedFiles _sharedFiles;
     private readonly LifecycleWindowProvider _provider;
     private readonly List<string> _steps = [];
@@ -73,7 +74,7 @@ public class AppLifecycleTests : IAsyncDisposable
         ObservableSystem.DefaultFrameProvider = new MockFrameProvider();
         _folder = Path.Combine(Path.GetTempPath(), "PicViewAppLifecycleTests_" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(_folder);
-        _core = new CoreViewModel(new NoPlatform(), file =>
+        _core = new CoreViewModel(_platform, file =>
         {
             if (_holds.TryGetValue(file.FullName, out var hold))
             {
@@ -996,6 +997,48 @@ public class AppLifecycleTests : IAsyncDisposable
         Assert.Same(tab, watcher.WatchedTab);
     }
 
+    [AvaloniaFact]
+    public async Task StartUp_WhileTheOpenIsHeld_SaysLoading()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var window = app.MainWindows.Open[0];
+        // Showing the window at startup lays out its bars
+        window.SharedTitleBar = new CustomTitleBar();
+        window.SharedBottomBar = new BottomBar();
+        var tab = ViewModelOf(window).WindowTabs.ActiveTab.CurrentValue;
+        WritePng("a.png");
+        WritePng("b.png");
+        // Opening a folder at startup sorts its names before any image shows, which waits while the gate is closed
+        _platform.CompareGate.Reset();
+
+        var opening = Task.Run(() =>
+            SourceOpener.OpenAsync(window, _core, _folder, new OpenOptions(IsStartup: true)).AsTask());
+        await _platform.Comparing.Task.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+        var phaseWhileHeld = tab.Titles.Phase;
+        _platform.CompareGate.Set();
+        var result = await opening.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+
+        Assert.Equal(TitlePhase.Loading, phaseWhileHeld);
+        Assert.True(result.IsLoaded);
+        Assert.Equal(TitlePhase.None, tab.Titles.Phase);
+    }
+
+    [AvaloniaFact]
+    public async Task StartUp_OfAMissingFile_LeavesNoLoadingPhase()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var window = app.MainWindows.Open[0];
+        var tab = ViewModelOf(window).WindowTabs.ActiveTab.CurrentValue;
+
+        var result = await SourceOpener.OpenAsync(window, _core, Path.Combine(_folder, "missing.jpg"),
+            new OpenOptions(IsStartup: true));
+
+        Assert.False(result.IsLoaded);
+        Assert.Equal(TitlePhase.None, tab.Titles.Phase);
+    }
+
     private async Task<string> WriteImageAsync(string name)
     {
         var path = Path.Combine(_folder, name);
@@ -1191,7 +1234,21 @@ public class AppLifecycleTests : IAsyncDisposable
         public void DisableScreensaver() { }
         public void EnableScreensaver() { }
         public List<FileInfo> GetFiles(FileInfo fileInfo) => [];
-        public int CompareStrings(string str1, string str2) => string.CompareOrdinal(str1, str2);
+        // While closed, every name comparison waits for it, so a test can hold a listing while it sorts; Comparing says
+        // when one waits
+        public ManualResetEventSlim CompareGate { get; } = new(initialState: true);
+        public TaskCompletionSource Comparing { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        public int CompareStrings(string str1, string str2)
+        {
+            if (!CompareGate.IsSet)
+            {
+                Comparing.TrySetResult();
+                CompareGate.Wait(WaitLimit);
+            }
+
+            return string.CompareOrdinal(str1, str2);
+        }
         public void OpenWith(string path) { }
         public void LocateOnDisk(string path) { }
         public void ShowFileProperties(string path) { }

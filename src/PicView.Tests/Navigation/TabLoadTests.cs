@@ -1201,6 +1201,50 @@ public class TabLoadTests : IDisposable
     }
 
     [Fact]
+    public async Task LoadAsync_WithFiles_UsesThemInsteadOfListing()
+    {
+        var a = await WriteImageAsync("a.jpg");
+        await WriteImageAsync("b.jpg");
+        var c = await WriteImageAsync("c.jpg");
+        // While closed, a listing would sort the folder's names, which the test would see
+        var platform = new MockPlatformSpecificService();
+        platform.CompareGate.Reset();
+        var tab = CreateTab(_testDirectory, platform: platform, withIterator: false);
+        // Not the folder's files, nor in its order
+        List<FileInfo> given = [new(c), new(a)];
+
+        var result = await tab.Load.LoadAsync(a, new LoadOptions(Files: given)).AsTask()
+            .WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+        var listed = platform.Comparing.Task.IsCompleted;
+        platform.CompareGate.Set();
+
+        Assert.Equal(LoadOutcome.Loaded, result.Outcome);
+        Assert.False(listed);
+        Assert.Equal([c, a], tab.ImageIterator!.Files.Select(f => f.FullName));
+        Assert.Equal(1, tab.ImageIterator.CurrentIndex);
+        Assert.Equal(a, tab.Model.FileInfo?.FullName);
+    }
+
+    [Fact]
+    public async Task LoadAsync_WithModelAndSecondaryModel_ShowsThePairWithoutDecoding()
+    {
+        Settings.ImageScaling.ShowImageSideBySide = true;
+        var a = await WriteImageAsync("a.jpg");
+        var b = await WriteImageAsync("b.jpg");
+        var tab = CreateTab(_testDirectory, withIterator: false);
+        var first = new ImageModel { FileInfo = new FileInfo(a) };
+        var second = new ImageModel { FileInfo = new FileInfo(b) };
+
+        var result = await tab.Load.LoadAsync(a, new LoadOptions(Model: first, SecondaryModel: second));
+
+        Assert.Equal(LoadOutcome.Loaded, result.Outcome);
+        Assert.Empty(_decoded);
+        Assert.Same(first, tab.Model);
+        Assert.Same(second, tab.SecondaryModel);
+        Assert.Equal([a, b], tab.ImageIterator!.Files.Select(f => f.FullName));
+    }
+
+    [Fact]
     public void Load_OnATabWithoutServices_Throws()
     {
         var tab = new TabViewModel(new MainWindowViewModel(null!, null!, null!, null!, null!));

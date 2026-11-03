@@ -21,12 +21,22 @@ namespace PicView.Core.Navigation;
 /// <param name="Model">
 /// For a file, its already decoded model, which is shown as it is instead of being decoded again.
 /// </param>
+/// <param name="Files">
+/// For a file, the files around it that the caller already listed, such as the startup path's, which the Load browses
+/// instead of listing them again. <paramref name="RootDirectory"/> is then not listed.
+/// </param>
+/// <param name="SecondaryModel">
+/// Side by side, with <paramref name="Model"/>, the already decoded model of the file beside it, which shows with it
+/// instead of being fetched.
+/// </param>
 [StructLayout(LayoutKind.Auto)]
 public readonly record struct LoadOptions(
     string? RootDirectory = null,
     string? ArchiveEntry = null,
     bool Relist = false,
-    ImageModel? Model = null);
+    ImageModel? Model = null,
+    IReadOnlyList<FileInfo>? Files = null,
+    ImageModel? SecondaryModel = null);
 
 /// <summary>
 /// How a <see cref="TabLoad"/> ended.

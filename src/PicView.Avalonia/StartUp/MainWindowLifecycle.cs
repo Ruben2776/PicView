@@ -134,8 +134,9 @@ public sealed class MainWindowLifecycle
     }
 
     /// <summary>
-    /// Opens the source PicView was launched with in the first Main Window, sizing it first with AutoFit. The tab's Load
-    /// says Loading until the source shows; a start without a source never enters the phase, so its titles say No image.
+    /// Opens the source PicView was launched with in the first Main Window, sizing it first with AutoFit. QuickLoad says
+    /// Loading from the start until the source shows, and the tab's Load from when it begins; a start without a source
+    /// never enters the phase, so its titles say No image.
     /// </summary>
     internal void OpenStartSource(MainWindow window, string source, bool continueFromLeftOff)
     {

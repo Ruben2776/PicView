@@ -141,7 +141,7 @@ public sealed class TabLoad
     private async ValueTask<LoadResult> LoadFileAsync(FileInfo file, LoadOptions options, Run run)
     {
         // A file in the tab's list is stepped to, unless the caller gave its model or its own listing
-        if (options.Model is null && options.RootDirectory is null &&
+        if (options.Model is null && options.RootDirectory is null && options.Files is null &&
             _tab.ImageIterator is { Files.Count: > 0 } iterator)
         {
             var index = SideBySidePair.IndexOf(iterator.Files, file);
@@ -180,7 +180,8 @@ public sealed class TabLoad
 
         // TODO: Figure out way to share file list, if another tab is already in the same directory
         // AsTask, because Task.Run waits for a Task but returns a ValueTask without awaiting it
-        return await Task.Run(() => ShowThenListAsync(file, null, options.Model, options.RootDirectory, run).AsTask(),
+        return await Task.Run(() => ShowThenListAsync(file, options.Files, options.Model, options.SecondaryModel,
+                options.RootDirectory, run).AsTask(),
             run.Token).ConfigureAwait(false);
     }
 
@@ -198,7 +199,7 @@ public sealed class TabLoad
             return LoadResult.Failed();
         }
 
-        return await ShowThenListAsync(files[0], files, null, null, run).ConfigureAwait(false);
+        return await ShowThenListAsync(files[0], files, null, null, null, run).ConfigureAwait(false);
     }
 
     private async ValueTask<LoadResult> LoadArchiveAsync(string archive, string? startEntry, Run run)
@@ -219,7 +220,8 @@ public sealed class TabLoad
                 return LoadResult.Failed();
             }
 
-            var result = await ShowThenListAsync(opening.StartFile, opening.Files, null, null, run).ConfigureAwait(false);
+            var result = await ShowThenListAsync(opening.StartFile, opening.Files, null, null, null, run)
+                .ConfigureAwait(false);
             if (run.IsShown)
             {
                 // The other pages come in the background while the start page shows
@@ -318,12 +320,13 @@ public sealed class TabLoad
     /// <summary>
     /// Shows <paramref name="file"/>, from <paramref name="given"/> or the cache, then lists the files around it:
     /// <paramref name="files"/>, or those of <paramref name="rootDirectory"/> when the file is inside it, or those of
-    /// its own folder. Side by side, the pair shows once the files are listed. Then it watches the folder and primes
-    /// the cache. Once a newer load begins, it stops before changing the tab's image, files or gallery, so a slow load
-    /// that finishes last cannot overwrite a newer one.
+    /// its own folder. Side by side, the pair shows once the files are listed, with <paramref name="givenSecondary"/>
+    /// beside it when that is the partner's model, else the partner from the cache. Then it watches the folder and
+    /// primes the cache. Once a newer load begins, it stops before changing the tab's image, files or gallery, so a slow
+    /// load that finishes last cannot overwrite a newer one.
     /// </summary>
     private async ValueTask<LoadResult> ShowThenListAsync(FileInfo file, IReadOnlyList<FileInfo>? files,
-        ImageModel? given, string? rootDirectory, Run run)
+        ImageModel? given, ImageModel? givenSecondary, string? rootDirectory, Run run)
     {
         var cache = _services.Cache;
         var watcher = _services.Watcher;
@@ -368,7 +371,10 @@ public sealed class TabLoad
             if (SideBySidePair.PartnerOf(index, iterator.Files.Count) is { } nextIteration)
             {
                 var secondaryFileInfo = iterator.Files[nextIteration];
-                secondaryModel = await cache.GetAsync(_tab.Id, secondaryFileInfo, run.Token).ConfigureAwait(false);
+                // The startup path decodes the partner beside the opened file, so it is not decoded again
+                secondaryModel = IsModelOf(givenSecondary, secondaryFileInfo)
+                    ? givenSecondary
+                    : await cache.GetAsync(_tab.Id, secondaryFileInfo, run.Token).ConfigureAwait(false);
                 if (!IsCurrent(run))
                 {
                     return LoadResult.Superseded;
@@ -470,6 +476,9 @@ public sealed class TabLoad
 
         return FileListRetriever.RetrieveFiles(file, _compareNames);
     }
+
+    private static bool IsModelOf(ImageModel? model, FileInfo file) =>
+        string.Equals(model?.FileInfo?.FullName, file.FullName, StringComparison.OrdinalIgnoreCase);
 
     private static bool IsInside(FileInfo file, string directory)
     {
