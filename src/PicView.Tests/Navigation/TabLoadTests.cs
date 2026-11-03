@@ -1229,19 +1229,26 @@ public class TabLoadTests : IDisposable
     public async Task LoadAsync_WithModelAndSecondaryModel_ShowsThePairWithoutDecoding()
     {
         Settings.ImageScaling.ShowImageSideBySide = true;
-        var a = await WriteImageAsync("a.jpg");
-        var b = await WriteImageAsync("b.jpg");
-        var tab = CreateTab(_testDirectory, withIterator: false);
-        var first = new ImageModel { FileInfo = new FileInfo(a) };
-        var second = new ImageModel { FileInfo = new FileInfo(b) };
+        try
+        {
+            var a = await WriteImageAsync("a.jpg");
+            var b = await WriteImageAsync("b.jpg");
+            var tab = CreateTab(_testDirectory, withIterator: false);
+            var first = new ImageModel { FileInfo = new FileInfo(a) };
+            var second = new ImageModel { FileInfo = new FileInfo(b) };
 
-        var result = await tab.Load.LoadAsync(a, new LoadOptions(Model: first, SecondaryModel: second));
+            var result = await tab.Load.LoadAsync(a, new LoadOptions(Model: first, SecondaryModel: second));
 
-        Assert.Equal(LoadOutcome.Loaded, result.Outcome);
-        Assert.Empty(_decoded);
-        Assert.Same(first, tab.Model);
-        Assert.Same(second, tab.SecondaryModel);
-        Assert.Equal([a, b], tab.ImageIterator!.Files.Select(f => f.FullName));
+            Assert.Equal(LoadOutcome.Loaded, result.Outcome);
+            Assert.Empty(_decoded);
+            Assert.Same(first, tab.Model);
+            Assert.Same(second, tab.SecondaryModel);
+            Assert.Equal([a, b], tab.ImageIterator!.Files.Select(f => f.FullName));
+        }
+        finally
+        {
+            Settings.ImageScaling.ShowImageSideBySide = false;
+        }
     }
 
     [Fact]

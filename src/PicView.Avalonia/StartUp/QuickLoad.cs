@@ -37,32 +37,42 @@ public static class QuickLoad
 
         var check = FileTypeResolver.CheckIfLoadableString(source);
         LoadResult result;
-        switch (check?.Type)
+        // Ended in the finally, so a load that throws leaves no Loading behind either
+        var loaded = false;
+        try
         {
-            case FileTypeResolver.LoadAbleFileType.File:
-                result = await LoadFileAsync(mainWindow, core, new FileInfo(check.Value.Data), continueFromLeftOff)
-                    .ConfigureAwait(false);
-                break;
-            case FileTypeResolver.LoadAbleFileType.Directory:
-                // Listed once: the tab's Load browses these files instead of listing the folder again
-                var files = FileListRetriever.RetrieveFiles(new FileInfo(check.Value.Data),
-                    core.PlatformService.CompareStrings);
-                result = files.Count is 0
-                    ? LoadResult.Failed()
-                    : await LoadFileAsync(mainWindow, core, files[0], continueFromLeftOff, files).ConfigureAwait(false);
-                break;
-            case FileTypeResolver.LoadAbleFileType.Zip:
-            case FileTypeResolver.LoadAbleFileType.Web:
-                result = await LoadThroughCoreAsync(mainWindow, core, check.Value.Data).ConfigureAwait(false);
-                break;
-            default:
-                result = LoadResult.Failed();
-                break;
-        }
+            switch (check?.Type)
+            {
+                case FileTypeResolver.LoadAbleFileType.File:
+                    result = await LoadFileAsync(mainWindow, core, new FileInfo(check.Value.Data), continueFromLeftOff)
+                        .ConfigureAwait(false);
+                    break;
+                case FileTypeResolver.LoadAbleFileType.Directory:
+                    // Listed once: the tab's Load browses these files instead of listing the folder again
+                    var files = FileListRetriever.RetrieveFiles(new FileInfo(check.Value.Data),
+                        core.PlatformService.CompareStrings);
+                    result = files.Count is 0
+                        ? LoadResult.Failed()
+                        : await LoadFileAsync(mainWindow, core, files[0], continueFromLeftOff, files)
+                            .ConfigureAwait(false);
+                    break;
+                case FileTypeResolver.LoadAbleFileType.Zip:
+                case FileTypeResolver.LoadAbleFileType.Web:
+                    result = await LoadThroughCoreAsync(mainWindow, core, check.Value.Data).ConfigureAwait(false);
+                    break;
+                default:
+                    result = LoadResult.Failed();
+                    break;
+            }
 
-        if (result.Outcome is not LoadOutcome.Loaded)
+            loaded = result.Outcome is LoadOutcome.Loaded;
+        }
+        finally
         {
-            tab.EndLoading(ticket);
+            if (!loaded)
+            {
+                tab.EndLoading(ticket);
+            }
         }
 
         await Dispatcher.UIThread.InvokeAsync(() =>

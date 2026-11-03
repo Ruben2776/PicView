@@ -914,6 +914,36 @@ public class AppLifecycleTests : IAsyncDisposable
     }
 
     [AvaloniaFact]
+    public async Task SwitchingTabsWhileTheTitlebarIsHidden_ShowsTheIndicatorOfTheActiveTab()
+    {
+        Settings.UIProperties.ShowInterface = false;
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var window = app.MainWindows.Open[0];
+        var vm = ViewModelOf(window);
+        var tabs = vm.WindowTabs;
+        var tabA = tabs.ActiveTab.CurrentValue;
+        var a = await WriteImageAsync("a.jpg");
+        var held = Hold(a);
+
+        var opening = SourceOpener.OpenAsync(window, _core, a).AsTask();
+        await held.Requested.Task.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+        var shownInA = vm.IsLoadingIndicatorShown.CurrentValue;
+        // A new tab is selected, and it is not loading
+        tabs.CreateTab();
+        var shownInB = vm.IsLoadingIndicatorShown.CurrentValue;
+        tabs.SelectTab(tabA);
+        var shownBackInA = vm.IsLoadingIndicatorShown.CurrentValue;
+        held.Model.SetResult(new ImageModel { FileInfo = new FileInfo(a) });
+        await opening.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+
+        Assert.True(shownInA);
+        Assert.False(shownInB);
+        Assert.True(shownBackInA);
+        Assert.False(vm.IsLoadingIndicatorShown.CurrentValue);
+    }
+
+    [AvaloniaFact]
     public async Task OpenAsync_IntoAConsecutiveTab_LoadsThatTabAndLeavesTheActiveOne()
     {
         var app = CreateApp();
@@ -1022,6 +1052,38 @@ public class AppLifecycleTests : IAsyncDisposable
         Assert.Equal(TitlePhase.Loading, phaseWhileHeld);
         Assert.True(result.IsLoaded);
         Assert.Equal(TitlePhase.None, tab.Titles.Phase);
+    }
+
+    [AvaloniaFact]
+    public async Task StartUp_WhileTheInterfaceIsHiddenAndTheOpenIsHeld_ShowsTheIndicator()
+    {
+        Settings.UIProperties.ShowInterface = false;
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var window = app.MainWindows.Open[0];
+        var vm = ViewModelOf(window);
+        window.SharedTitleBar = new CustomTitleBar();
+        window.SharedBottomBar = new BottomBar();
+        var tab = vm.WindowTabs.ActiveTab.CurrentValue;
+        WritePng("a.png");
+        WritePng("b.png");
+        // Held before the startup path decodes and before its Load begins: opening a folder sorts its names first,
+        // which waits while the gate is closed, so only the startup path's own Loading covers this time
+        _platform.CompareGate.Reset();
+
+        var opening = Task.Run(() =>
+            SourceOpener.OpenAsync(window, _core, _folder, new OpenOptions(IsStartup: true)).AsTask());
+        await _platform.Comparing.Task.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+        var shownWhileHeld = vm.IsLoadingIndicatorShown.CurrentValue;
+        var loadingWhileHeld = tab.Load.IsLoading.Value;
+        _platform.CompareGate.Set();
+        var result = await opening.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+
+        Assert.False(vm.IsTopToolbarShown.CurrentValue);
+        Assert.False(loadingWhileHeld);
+        Assert.True(shownWhileHeld);
+        Assert.True(result.IsLoaded);
+        Assert.False(vm.IsLoadingIndicatorShown.CurrentValue);
     }
 
     [AvaloniaFact]

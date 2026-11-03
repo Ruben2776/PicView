@@ -1,4 +1,5 @@
 using ImageMagick;
+using PicView.Core.FileSorting;
 using PicView.Core.IPlatform;
 using PicView.Core.Localization;
 using PicView.Core.Models;
@@ -43,6 +44,30 @@ public class TabServicesTests
         var vm = new MainWindowViewModel(core, null!, null!, null!, null!);
 
         Assert.Same(core.Services, vm.WindowTabs.ActiveTab.Value.Services);
+    }
+
+    [Fact]
+    public async Task NavigationAndSort_OnANewTabWithoutAnIterator_ThrowNothingAndMarkTheSort()
+    {
+        // A New Tab has services from App Start but no iterator until its first load
+        var core = CreateCore();
+        var services = ServicesFor(core);
+        core.InitializeNavigation(services, NavigationFor(core, services));
+        var vm = new MainWindowViewModel(core, null!, null!, null!, null!);
+        var tabs = vm.WindowTabs;
+        var tab = tabs.CreateTab();
+        Assert.Null(tab.ImageIterator);
+        Settings.Sorting.SortPreference = (int)SortFilesBy.FileSize;
+
+        await tabs.FirstFile();
+        await tabs.LastFile();
+        await tabs.SortAsync(SortFilesBy.Name);
+        await tabs.ReloadAsync();
+
+        // The sort setting is app-wide, so a tab with nothing to sort still records it and marks the menu
+        Assert.Equal((int)SortFilesBy.Name, Settings.Sorting.SortPreference);
+        Assert.True(tabs.IsSortedByName.Value);
+        Assert.Null(tab.ImageIterator);
     }
 
     [Fact]

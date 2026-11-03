@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
@@ -15,6 +16,7 @@ using PicView.Avalonia.WindowBehavior;
 using PicView.Core.FileSorting;
 using PicView.Core.Navigation;
 using PicView.Core.Sizing;
+using PicView.Core.Titles;
 using PicView.Core.ViewModels;
 using R3;
 
@@ -287,19 +289,54 @@ public sealed class MainWindowLifecycle
     }
 
     /// <summary>
-    /// Shows the window's loading indicator while its active tab loads, when the titlebar is hidden. The titlebar
-    /// already says Loading (the tab derives its Titles), so the indicator earns its place only without it.
+    /// Shows the window's loading indicator while the titlebar is hidden and its active tab's Title Phase is Loading or
+    /// Downloading. The titlebar already says Loading or Downloading, so the indicator shows that text's state when the
+    /// titlebar is hidden. It follows the phase, not the tab's Load, so a startup open, which says Loading while it
+    /// decodes before its Load begins, shows it too.
     /// </summary>
     private static IDisposable ShowLoadingIndicatorWhileLoading(MainWindowViewModel vm)
     {
-        // A tab without services has no Load to ask
-        var isLoading = vm.WindowTabs.ActiveTab
-            .Select(static tab => tab.HasServices ? tab.Load.IsLoading.AsObservable() : Observable.Return(false))
+        var saysLoading = vm.WindowTabs.ActiveTab
+            .Select(static tab => SaysLoading(tab.Titles))
             .Switch();
-        return Observable.CombineLatest(isLoading, vm.IsTopToolbarShown,
+        return Observable.CombineLatest(saysLoading, vm.IsTopToolbarShown,
                 static (loading, titlebarShown) => loading && !titlebarShown)
             .Subscribe(show => vm.IsLoadingIndicatorShown.Value = show);
     }
+
+    /// <summary>
+    /// Whether <paramref name="titles"/> say Loading or Downloading, now and on each change. A tab that never loads
+    /// stays in no phase, so it says false.
+    /// </summary>
+    private static Observable<bool> SaysLoading(TabTitles titles) =>
+        Observable.Create<bool, TabTitles>(titles, static (observer, titles) =>
+        {
+            PropertyChangedEventHandler onChanged = (_, _) => PublishPhase(observer, titles);
+            titles.PropertyChanged += onChanged;
+            // After subscribing, so a phase entered meanwhile is not missed
+            PublishPhase(observer, titles);
+            return Disposable.Create(() => titles.PropertyChanged -= onChanged);
+        }).DistinctUntilChanged();
+
+    // The Titles change from any thread, so a change published late could leave an older phase last. Reading the phase
+    // again after publishing, and publishing again until it holds, leaves the phase as it is now last
+    private static void PublishPhase(Observer<bool> observer, TabTitles titles)
+    {
+        var says = IsLoadingPhase(titles.Phase);
+        while (true)
+        {
+            observer.OnNext(says);
+            var now = IsLoadingPhase(titles.Phase);
+            if (now == says)
+            {
+                return;
+            }
+
+            says = now;
+        }
+    }
+
+    private static bool IsLoadingPhase(TitlePhase phase) => phase is TitlePhase.Loading or TitlePhase.Downloading;
 
     private static MainWindowViewModel ViewModelOf(MainWindow window) =>
         window.DataContext as MainWindowViewModel

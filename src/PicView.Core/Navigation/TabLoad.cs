@@ -173,8 +173,10 @@ public sealed class TabLoad
                     return LoadResult.Superseded;
                 }
 
-                run.IsShown = true;
-                return LoadResult.Loaded;
+                // The step shows nothing when the file left the list meanwhile, or its image could not be read, so
+                // this load showed its file only when the tab shows it now; otherwise its end ends its Loading
+                run.IsShown = IsModelOf(_tab.Model, file);
+                return run.IsShown ? LoadResult.Loaded : LoadResult.Failed();
             }
         }
 
@@ -254,6 +256,12 @@ public sealed class TabLoad
         using var client = new HttpClientDownloadWithProgress(url, destPath);
         client.ProgressChanged += (totalFileSize, totalBytesDownloaded, progressPercentage) =>
         {
+            // A newer load owns the titles and the taskbar, so an overtaken download reports nothing
+            if (!IsCurrent(run))
+            {
+                return;
+            }
+
             var displayProgress = HttpManager.GetProgressDisplay(totalFileSize, totalBytesDownloaded, progressPercentage);
             // Each report enters Downloading anew, and its ticket is the one this load ends
             run.Ticket = _tab.SetDownloading(
@@ -328,6 +336,12 @@ public sealed class TabLoad
     private async ValueTask<LoadResult> ShowThenListAsync(FileInfo file, IReadOnlyList<FileInfo>? files,
         ImageModel? given, ImageModel? givenSecondary, string? rootDirectory, Run run)
     {
+        // A newer load that began meanwhile watches its own folder, which this one must not stop
+        if (!IsCurrent(run))
+        {
+            return LoadResult.Superseded;
+        }
+
         var cache = _services.Cache;
         var watcher = _services.Watcher;
         // Made before the unwatch, which also ends any watch that making it started

@@ -14,9 +14,9 @@ public class CoreViewModel(
     public SharedImageCache SharedCache { get; } = new(imageLoader);
     public ThumbnailCache SharedThumbnailCache { get; } = new();
 
-    // Set once by InitializeNavigation, for every Main Window
     /// <summary>
-    /// The services every tab is created with. Null until <see cref="InitializeNavigation"/> has run.
+    /// The services every tab of every Main Window is created with, set once. Null until
+    /// <see cref="InitializeNavigation"/> has run.
     /// </summary>
     public TabServices? Services { get; private set; }
     public INavigationService? SharedNavigationService { get; private set; }

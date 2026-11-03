@@ -132,12 +132,14 @@ public static class SettingsUpdater
         else
         {
             Settings.UIProperties.IsTaskbarProgressEnabled = true;
-            await Dispatcher.UIThread.InvokeAsync(() =>
+            // A tab without files, such as a New Tab, has no progress to show; the setting is still saved below
+            if (vm.WindowTabs.ActiveTab.CurrentValue.ImageIterator is { Files.Count: > 0 } iterator)
             {
-                core.PlatformService.SetTaskbarProgress(
-                    (ulong)vm.WindowTabs.ActiveTab.CurrentValue.ImageIterator.CurrentIndex,
-                    (ulong)vm.WindowTabs.ActiveTab.CurrentValue.ImageIterator.Files.Count);
-            });
+                await Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    core.PlatformService.SetTaskbarProgress((ulong)iterator.CurrentIndex, (ulong)iterator.Files.Count);
+                });
+            }
         }
 
         await SaveSettingsAsync().ConfigureAwait(false);

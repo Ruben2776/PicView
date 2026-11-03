@@ -11,8 +11,17 @@ public class NavigationService(Func<string, string, int> stringComparer) : INavi
 {
     private FileAndDirectoryNavigator? _navigator;
 
-    public async ValueTask NavigateAsync(TabViewModel tab, NavigateTo to, CancellationTokenSource ct) =>
-        await tab.ImageIterator.NavigateAsync(to, SkipAmount.One, ct).ConfigureAwait(false);
+    public async ValueTask NavigateAsync(TabViewModel tab, NavigateTo to, CancellationTokenSource ct)
+    {
+        // A tab that never browsed files, such as a New Tab, has nothing to step through
+        var iterator = tab.ImageIterator;
+        if (iterator is null)
+        {
+            return;
+        }
+
+        await iterator.NavigateAsync(to, SkipAmount.One, ct).ConfigureAwait(false);
+    }
 
     public async ValueTask NavigateByIncrementsAsync(TabViewModel tab, SkipAmount skipAmount, bool forwards, CancellationTokenSource ct)
     {
@@ -92,9 +101,12 @@ public class NavigationService(Func<string, string, int> stringComparer) : INavi
         await ApplySortAsync(tab, ct).ConfigureAwait(false);
     }
 
+    // The sort setting is app-wide and saved before this, so a tab without files to sort, such as a New Tab, changes
+    // nothing here
     private async ValueTask ApplySortAsync(TabViewModel tab, CancellationTokenSource ct)
     {
-        if (tab.ImageIterator.Files.Count <= 0)
+        var iterator = tab.ImageIterator;
+        if (iterator is null || iterator.Files.Count <= 0)
         {
             return;
         }
@@ -118,7 +130,7 @@ public class NavigationService(Func<string, string, int> stringComparer) : INavi
 
             // Update files in iterator, keeping the position on the current file
             // The titles and the gallery follow the sorted list by themselves
-            tab.ImageIterator.Initialize(newFiles, SideBySidePair.IndexOf(newFiles, currentFile) ?? -1);
+            iterator.Initialize(newFiles, SideBySidePair.IndexOf(newFiles, currentFile) ?? -1);
         }
         catch (Exception e)
         {

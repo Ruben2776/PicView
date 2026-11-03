@@ -121,8 +121,9 @@ public class TabTitlesTests
     [Fact]
     public void SetError_HoldsThroughEndLoading_EndsOnSetLoadingAndOnDisplay()
     {
-        _tab.SetError("e");
-        _tab.Titles.EndLoading();
+        // Ended with the Error's own ticket, the latest one, so only the phase being an Error keeps it
+        var errorTicket = _tab.Titles.Enter(TitlePhase.Error, "e");
+        _tab.EndLoading(errorTicket);
         Assert.Equal("e", _tab.Titles.Title);
         Assert.Equal(TitlePhase.Error, _tab.Titles.Phase);
 
@@ -141,9 +142,9 @@ public class TabTitlesTests
     {
         Browse("a.jpg");
         _tab.Display(Model("a.jpg"));
-        _tab.SetLoading();
+        var ticket = _tab.SetLoading();
 
-        _tab.Titles.EndLoading();
+        _tab.EndLoading(ticket);
 
         Assert.Equal(TitlePhase.None, _tab.Titles.Phase);
         Assert.Equal("a.jpg", _tab.Titles.TabTitle);
@@ -333,8 +334,8 @@ public class TabTitlesTests
         _tab.Dispose();
 
         _tab.Display(Model("a.jpg"));
-        _tab.SetLoading();
-        _tab.Titles.EndLoading();
+        var ticket = _tab.SetLoading();
+        _tab.EndLoading(ticket);
         _tab.Crop = new CropViewModel();
 
         _ = _tab.Titles.Title;

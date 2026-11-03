@@ -911,7 +911,8 @@ public class FileWatcherServiceTests : IDisposable
         tab.Initialize();
         if (files is not null)
         {
-            // Without the watcher, so a test decides which tab watches first
+            // Watches the folder with the tab's own watcher, this service, as a tab that listed its files does. A tab
+            // created without files watches nothing, so a test that needs one tab to watch first creates it first
             tab.InitializeImageIterator(files);
             tab.Model = new ImageModel { FileInfo = shown ?? files[0] };
         }

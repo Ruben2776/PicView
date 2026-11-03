@@ -736,8 +736,14 @@ public class FunctionsMapper : IActionRunner
         await SettingsUpdater.ToggleSideBySide(_mainWindow).ConfigureAwait(false);
 
     /// <inheritdoc cref="Core.Navigation.Interfaces.IImageIterator.ReloadAsync"/>
-    private async ValueTask Reload() =>
-        await _vm.WindowTabs.ActiveTab.CurrentValue.ImageIterator.ReloadAsync().ConfigureAwait(false);
+    private async ValueTask Reload()
+    {
+        // A tab that never browsed files, such as a New Tab, has nothing to reload
+        if (_vm.WindowTabs.ActiveTab.CurrentValue.ImageIterator is { } iterator)
+        {
+            await iterator.ReloadAsync().ConfigureAwait(false);
+        }
+    }
 
     private async ValueTask ResizeImage() =>
         await ResizeWindow().ConfigureAwait(false);

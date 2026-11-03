@@ -35,11 +35,6 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
     internal TabServices? Services { get; } = services;
 
     /// <summary>
-    /// Whether the tab was created with services, which its <see cref="Load"/> needs.
-    /// </summary>
-    public bool HasServices => Services is not null;
-
-    /// <summary>
     /// The Main Window that owns this tab. Only that window's <see cref="TabOverviewViewModel"/> changes it, when the
     /// tab moves there.
     /// </summary>
@@ -632,7 +627,8 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
     #region Initialization
 
     /// <summary>
-    /// Gives the tab a new iterator and gallery coordinator from its services, with no files.
+    /// Gives the tab a new iterator and gallery coordinator from its services, with no files. A test seam: no
+    /// production code calls it, since the tab's <see cref="Load"/> makes the iterator on its first load.
     /// </summary>
     /// <exception cref="InvalidOperationException">The tab has no services.</exception>
     internal void Initialize()

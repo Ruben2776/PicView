@@ -170,16 +170,6 @@ public sealed class TabTitles : INotifyPropertyChanged, IDisposable
         Mark();
     }
 
-    /// <summary>Ends whatever Loading or Downloading is current, whichever load said it. An Error stays.</summary>
-    internal void EndLoading()
-    {
-        lock (_lock)
-        {
-            EndLoadingLocked();
-        }
-        Mark();
-    }
-
     // Callers hold _lock
     private void EndLoadingLocked()
     {

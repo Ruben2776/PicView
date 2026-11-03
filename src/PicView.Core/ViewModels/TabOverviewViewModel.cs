@@ -405,7 +405,13 @@ public class TabOverviewViewModel
     public async ValueTask ReloadAsync(TabViewModel? senderTab = null)
     {
         var tab = senderTab ?? ActiveTab.Value;
-        await tab.ImageIterator.ReloadAsync().ConfigureAwait(false);
+        // A tab that never browsed files, such as a New Tab, has nothing to reload
+        if (tab.ImageIterator is not { } iterator)
+        {
+            return;
+        }
+
+        await iterator.ReloadAsync().ConfigureAwait(false);
     }
     #endregion
 

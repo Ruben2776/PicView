@@ -315,6 +315,8 @@ public sealed class AppLifecycle
     /// </summary>
     private void ComposeServices()
     {
+        // Every platform's app has a platform service; without one no tab could load, so a missing one is a bug
+        Debug.Assert(_core.PlatformService != null);
         if (_core.PlatformService is not { } platform)
         {
             return;
