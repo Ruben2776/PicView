@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Text.Json;
+using PicView.Avalonia.Services;
 using PicView.Avalonia.SettingsManagement;
 using PicView.Core.Config;
 using PicView.Core.Localization;
@@ -125,6 +126,34 @@ public class LanguageAndSettingsUnitTest
         Assert.NotNull(daModel);
         Assert.Equal("Billede", daModel.Image);
         Assert.Equal("Genvejstast", daModel.Hotkey);
+    }
+
+    [Theory]
+    [InlineData("zh-CN")]
+    [InlineData("tr-TR")]
+    [InlineData("en-US")]
+    public void NativeLanguageName_DoesNotFollowTheSystemLanguage(string systemLanguage)
+    {
+        var previous = CultureInfo.CurrentUICulture;
+        try
+        {
+            CultureInfo.CurrentUICulture = new CultureInfo(systemLanguage);
+            Assert.Equal("English", LanguageService.NativeLanguageName("en"));
+            Assert.Equal("Türkçe", LanguageService.NativeLanguageName("tr"));
+            Assert.Equal("Deutsch", LanguageService.NativeLanguageName("de"));
+            Assert.StartsWith("中文", LanguageService.NativeLanguageName("zh-CN"), StringComparison.Ordinal);
+        }
+        finally
+        {
+            CultureInfo.CurrentUICulture = previous;
+        }
+    }
+
+    [Fact]
+    public void NativeLanguageName_CapitalizesLanguagesThatNameThemselvesInLowerCase()
+    {
+        Assert.Equal("Español", LanguageService.NativeLanguageName("es"));
+        Assert.Equal("Français", LanguageService.NativeLanguageName("fr"));
     }
 
     [Fact]
