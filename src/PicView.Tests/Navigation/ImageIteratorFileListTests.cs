@@ -4,6 +4,7 @@ using PicView.Core.Models;
 using PicView.Tests.ArchiveHandling;
 using PicView.Core.Navigation;
 using PicView.Core.Navigation.Interfaces;
+using PicView.Core.Titles;
 using PicView.Core.ViewModels;
 using R3;
 
@@ -316,6 +317,63 @@ public class ImageIteratorFileListTests : IDisposable
 
         Assert.Equal("b.jpg", _tab.Model.FileInfo?.Name);
         Assert.Equal(1, iterator.CurrentIndex);
+    }
+
+    [Fact]
+    public async Task IterateToIndex_SlowStepGivesUpWithoutAModel_EndsItsLoading()
+    {
+        var (held, next, cts) = StartSlowStep();
+        Assert.Equal(TitlePhase.Loading, _tab.Titles.Phase);
+
+        // The request is cancelled, so the step has no model to show
+        await cts.CancelAsync();
+        await FinishAsync(next, held);
+
+        Assert.Equal(TitlePhase.None, _tab.Titles.Phase);
+    }
+
+    [Fact]
+    public async Task IterateToIndex_SlowStepOvertakenByANewerLoading_LeavesTheNewerLoadingInPlace()
+    {
+        var (held, next, cts) = StartSlowStep();
+        var newer = _tab.SetLoading();
+
+        await cts.CancelAsync();
+        await FinishAsync(next, held);
+
+        Assert.Equal(TitlePhase.Loading, _tab.Titles.Phase);
+        _tab.EndLoading(newer);
+        Assert.Equal(TitlePhase.None, _tab.Titles.Phase);
+    }
+
+    // A step to c.jpg, whose load is held, so the step is slow and says Loading
+    private (TaskCompletionSource<ImageModel> Held, Task Next, CancellationTokenSource Cts) StartSlowStep()
+    {
+        var held = new TaskCompletionSource<ImageModel>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var cache = new SharedImageCache(file => file.Name == "c.jpg"
+            ? new ValueTask<ImageModel>(held.Task)
+            : ValueTask.FromResult(new ImageModel { FileInfo = file, Image = new ProbeImage() }));
+        var iterator = new ImageIterator(cache, new ThumbnailCache(), new MockThumbnailLoader(), _tab);
+        var b = File("b.jpg");
+        iterator.Initialize([b, File("c.jpg")], 0);
+        _tab.Display(new ImageModel { FileInfo = b, Image = new ProbeImage() });
+
+        var cts = new CancellationTokenSource();
+        return (held, iterator.IterateToIndexAsync(1, cts).AsTask(), cts);
+    }
+
+    private async Task FinishAsync(Task next, TaskCompletionSource<ImageModel> held)
+    {
+        try
+        {
+            await next.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+        }
+        catch (OperationCanceledException)
+        {
+            // The step stopped with its token, which is the give-up these tests are about
+        }
+
+        held.TrySetResult(new ImageModel { FileInfo = File("c.jpg"), Image = new ProbeImage() });
     }
 
     [Fact]
