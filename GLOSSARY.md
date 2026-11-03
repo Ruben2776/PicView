@@ -89,6 +89,14 @@ _Avoid_: Current file, active file
 An image a tab shows in place of its model's image without changing what it shows: a thumbnail while the next image loads, or an Effects Render. It is never recorded, and the tab publishes no change for it.
 _Avoid_: Placeholder, preview image
 
+**Source**:
+What a Tab can be asked to show, given as text: a file path, a folder, an archive, or a URL.
+_Avoid_: Path (for the whole set), input, argument
+
+**Load**:
+One load of a Source into a Tab: it says Loading, shows the image, then lists the files around it, watches their folder and primes the cache, and ends once the image shows, a newer Load supersedes it, or it fails. A Tab has at most one current Load; a newer one supersedes the older, which then changes nothing. Showing the image comes before listing.
+_Avoid_: Navigation load, repopulate, initialize navigation, open (for the Core step)
+
 **Titles**:
 The four strings a tab derives from what it shows: the titlebar text, its tooltip, the window title and the tab's name. They follow the Shown File, its place in the tab's files, the zoom level, the Title Phase and the title settings, and they are worked out when something reads them, so a tab nobody looks at works out nothing. The tab derives them; nothing sets them.
 _Avoid_: Set the title, update the title, tab title (for the whole set)
