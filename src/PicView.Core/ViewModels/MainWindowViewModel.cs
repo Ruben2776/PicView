@@ -129,8 +129,8 @@ public class MainWindowViewModel : IDisposable
         // Each tab has its own gallery mode, and every window shares one TranslationViewModel, so the text is per window
         var isDocked = WindowTabs.ActiveTab.Select(static tab => tab.Gallery.Switcher.IsDocked.AsObservable()).Switch();
         DockedGalleryToggleHeader = (translations is null
-                ? isDocked.Select(static _ => (string?)null)
-                : Observable.CombineLatest(isDocked, translations.HideDockedGallery, translations.ShowDockedGallery,
+                ? isDocked.Select(static string? (_) => null)
+                : isDocked.CombineLatest(translations.HideDockedGallery, translations.ShowDockedGallery,
                     static (docked, hide, show) => docked ? hide : show))
             .ToReadOnlyBindableReactiveProperty(StringComparer.Ordinal);
 
