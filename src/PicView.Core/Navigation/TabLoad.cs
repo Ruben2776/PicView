@@ -29,9 +29,11 @@ public sealed class TabLoad
     private readonly Func<string, string, int> _compareNames;
     private readonly BindableReactiveProperty<bool> _isLoading = new();
 
-    // The loads running now, so overlapping loads keep IsLoading true until the last one ends
-    private readonly Lock _runningLock = new();
-    private int _running;
+    // What IsLoading should say, and a stamp of each change to it, so a change published late cannot overwrite a newer
+    // one. Only the newest load's end clears it: an overtaken load still waiting leaves it to the newer one
+    private readonly Lock _loadingLock = new();
+    private bool _loading;
+    private int _loadingStamp;
 
     internal TabLoad(TabViewModel tab, TabServices services)
     {
@@ -42,7 +44,8 @@ public sealed class TabLoad
     }
 
     /// <summary>
-    /// Whether a Load of this tab is running: true from its start until it shows, is superseded or fails.
+    /// Whether a Load of this tab is running: true from its start until the newest Load shows, is superseded or fails.
+    /// An overtaken Load still waiting does not keep it true.
     /// </summary>
     public IReadOnlyBindableReactiveProperty<bool> IsLoading => _isLoading;
 
@@ -131,7 +134,7 @@ public sealed class TabLoad
                 _tab.EndLoading(run.Ticket);
             }
 
-            Ended();
+            Ended(run);
         }
     }
 
@@ -408,8 +411,8 @@ public sealed class TabLoad
 
     /// <summary>
     /// Lists the shown <paramref name="file"/>'s folder again, or <paramref name="rootDirectory"/> when the file is
-    /// inside it, without showing anything, and keeps the file at its place. A file the listing no longer has changes
-    /// nothing.
+    /// inside it, without showing anything, and keeps the file the tab shows once the listing is done at its place. A
+    /// shown file the listing no longer has changes nothing.
     /// </summary>
     private async ValueTask<LoadResult> RelistAsync(FileInfo file, string? rootDirectory, Run run)
     {
@@ -419,7 +422,10 @@ public sealed class TabLoad
             return LoadResult.Superseded;
         }
 
-        if (SideBySidePair.IndexOf(files, file) is not { } index)
+        // A step while the listing ran shows another file, which keeps its place. A tab that shows nothing keeps the
+        // file the relist was asked for
+        var shown = _tab.Model?.FileInfo ?? file;
+        if (SideBySidePair.IndexOf(files, shown) is not { } index)
         {
             return LoadResult.Failed();
         }
@@ -429,7 +435,7 @@ public sealed class TabLoad
         var iterator = EnsureIterator();
         watcher.Unwatch(_tab);
         iterator.Initialize(files, index);
-        watcher.Watch(_tab, file.DirectoryName);
+        watcher.Watch(_tab, shown.DirectoryName);
         cache.ReleaseImages(_tab.Id);
         PutShown(files, _tab.Model);
         PutShown(files, _tab.SecondaryModel);
@@ -500,19 +506,52 @@ public sealed class TabLoad
 
     private void Started()
     {
-        lock (_runningLock)
+        int stamp;
+        lock (_loadingLock)
         {
-            _running++;
-            _isLoading.Value = true;
+            _loading = true;
+            stamp = ++_loadingStamp;
         }
+
+        PublishLoading(true, stamp);
     }
 
-    private void Ended()
+    // Only the newest load's end says the tab is no longer loading. An older load ending leaves it to the newer one,
+    // which began after it and ends after it
+    private void Ended(Run run)
     {
-        lock (_runningLock)
+        int stamp;
+        lock (_loadingLock)
         {
-            _running--;
-            _isLoading.Value = _running > 0;
+            if (!_tab.IsLatestLoad(run.Version))
+            {
+                return;
+            }
+
+            _loading = false;
+            stamp = ++_loadingStamp;
+        }
+
+        PublishLoading(false, stamp);
+    }
+
+    // Published outside the lock, so no subscriber runs under it. A change made while this one was published is
+    // published again after it, so the last value set is always the newest
+    private void PublishLoading(bool loading, int stamp)
+    {
+        while (true)
+        {
+            _isLoading.Value = loading;
+            lock (_loadingLock)
+            {
+                if (_loadingStamp == stamp)
+                {
+                    return;
+                }
+
+                loading = _loading;
+                stamp = _loadingStamp;
+            }
         }
     }
 

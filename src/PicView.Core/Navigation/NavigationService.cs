@@ -31,12 +31,21 @@ public class NavigationService(Func<string, string, int> stringComparer) : INavi
     public async ValueTask LoadFromFileAsync(FileInfo fileInfo, TabViewModel tab, CancellationTokenSource ct) =>
         await tab.Load.LoadAsync(fileInfo.FullName).ConfigureAwait(false);
 
+    // An overtaken load reports success, as the old copy did, so the caller leaves the newer load's view alone. Task 5
+    // deletes this forward and gives its caller the real outcome
     public async Task<bool> LoadFromDirectoryAsync(FileInfo source, TabViewModel tab, CancellationTokenSource ct) =>
-        (await tab.Load.LoadAsync(source.FullName).ConfigureAwait(false)).IsLoaded;
+        (await tab.Load.LoadAsync(source.FullName).ConfigureAwait(false)).Outcome is not LoadOutcome.Failed;
 
-    public ValueTask<LoadResult> LoadFromStringAsync(string source, TabViewModel tab, CancellationTokenSource ct,
-        string? rootDirectory = null, string? archiveEntry = null) =>
-        tab.Load.LoadAsync(source, new LoadOptions(RootDirectory: rootDirectory, ArchiveEntry: archiveEntry));
+    // An overtaken load reports success, as the old copy did, so SourceOpener leaves the newer load's view alone. Task
+    // 5 deletes this forward and gives its caller the real outcome
+    public async ValueTask<LoadResult> LoadFromStringAsync(string source, TabViewModel tab, CancellationTokenSource ct,
+        string? rootDirectory = null, string? archiveEntry = null)
+    {
+        var result = await tab.Load
+            .LoadAsync(source, new LoadOptions(RootDirectory: rootDirectory, ArchiveEntry: archiveEntry))
+            .ConfigureAwait(false);
+        return result.Outcome is LoadOutcome.Superseded ? LoadResult.Loaded : result;
+    }
 
     public async ValueTask<bool> LoadFromArchiveAsync(string archivePath, TabViewModel tab, CancellationTokenSource ct,
         string? startEntry = null) =>

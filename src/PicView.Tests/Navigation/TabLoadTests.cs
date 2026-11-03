@@ -1104,12 +1104,15 @@ public class TabLoadTests : IDisposable
         Assert.Equal(LoadOutcome.Loaded, (await loading.WaitAsync(WaitLimit, TestContext.Current.CancellationToken)).Outcome);
         Assert.False(loadedTab.Load.IsLoading.Value);
 
-        // Superseded: a newer load ending leaves the older one loading, which ends it once it gives up
+        // Superseded: true while it is the newest load. The newer load ends it once its image shows, though the
+        // overtaken one still waits, and the overtaken one giving up later leaves it false
         var supersededTab = CreateTab(_testDirectory);
         var overtaken = supersededTab.Load.LoadAsync(b).AsTask();
         await heldB.Requested.Task.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
-        Assert.Equal(LoadOutcome.Loaded, (await supersededTab.Load.LoadAsync(c)).Outcome);
         Assert.True(supersededTab.Load.IsLoading.Value);
+        Assert.Equal(LoadOutcome.Loaded, (await supersededTab.Load.LoadAsync(c)).Outcome);
+        Assert.False(overtaken.IsCompleted, "The overtaken load should still wait for its image");
+        Assert.False(supersededTab.Load.IsLoading.Value);
         heldB.Model.SetResult(new ImageModel { FileInfo = new FileInfo(b) });
         Assert.Equal(LoadOutcome.Superseded,
             (await overtaken.WaitAsync(WaitLimit, TestContext.Current.CancellationToken)).Outcome);
@@ -1122,6 +1125,79 @@ public class TabLoadTests : IDisposable
         var empty = Directory.CreateDirectory(Path.Combine(_testDirectory, "empty")).FullName;
         Assert.Equal(LoadOutcome.Failed, (await failedTab.Load.LoadAsync(empty)).Outcome);
         Assert.Equal([false, true, false], seen);
+    }
+
+    [Fact]
+    public async Task LoadAsync_RelistWhileTheTabStepsToAnotherFile_KeepsTheFileItShows()
+    {
+        var a = await WriteImageAsync("a.jpg");
+        var b = await WriteImageAsync("b.jpg");
+        var c = await WriteImageAsync("c.jpg");
+        var platform = new MockPlatformSpecificService();
+        var tab = CreateTab(_testDirectory, platform: platform);
+        await tab.Load.LoadAsync(a);
+
+        // The relist's listing sorts until the test lets it, and a Next meanwhile shows b
+        platform.CompareGate.Reset();
+        var relist = tab.Load.LoadAsync(a, new LoadOptions(Relist: true)).AsTask();
+        await platform.Comparing.Task.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+        await tab.ImageIterator!.NavigateAsync(NavigateTo.Next, SkipAmount.One, new CancellationTokenSource())
+            .AsTask().WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+        platform.CompareGate.Set();
+        var result = await relist.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+
+        Assert.Equal(LoadOutcome.Loaded, result.Outcome);
+        Assert.Equal(b, tab.Model.FileInfo?.FullName);
+        Assert.Equal([a, b, c], tab.ImageIterator.Files.Select(f => f.FullName));
+        Assert.Equal(1, tab.ImageIterator.CurrentIndex);
+    }
+
+    [Fact]
+    public async Task LoadAsync_IntoATabThatIsNotTheActiveOne_LoadsThatTabAndLeavesTheActiveOne()
+    {
+        var a = await WriteImageAsync("a.jpg");
+        var platform = new MockPlatformSpecificService();
+        var core = new CoreViewModel(platform, file => ValueTask.FromResult(new ImageModel { FileInfo = file }));
+        core.InitializeNavigation(
+            new TabServices(core.SharedCache, core.SharedThumbnailCache, _mockThumbnailLoader, _mockFileWatcherService,
+                _mockImageModelLoader, platform),
+            new NavigationService(platform.CompareStrings));
+        var vm = new MainWindowViewModel(core, null!, null!, null!, null!);
+        var first = vm.WindowTabs.ActiveTab.Value;
+        // A new tab is selected, so the first is no longer the active one
+        var second = vm.WindowTabs.CreateTab();
+        Assert.Same(second, vm.WindowTabs.ActiveTab.Value);
+
+        var result = await first.Load.LoadAsync(a);
+
+        Assert.Equal(LoadOutcome.Loaded, result.Outcome);
+        Assert.Equal(a, first.Model.FileInfo?.FullName);
+        Assert.Equal([a], first.ImageIterator!.Files.Select(f => f.FullName));
+        Assert.NotEqual(a, second.Model.FileInfo?.FullName);
+        Assert.Same(second, vm.WindowTabs.ActiveTab.Value);
+    }
+
+    [Fact]
+    public async Task LoadAsync_Twice_MakesTheIteratorOnce()
+    {
+        var a = await WriteImageAsync("a.jpg");
+        var other = Directory.CreateDirectory(Path.Combine(_testDirectory, "other")).FullName;
+        var x = Path.Combine(other, "x.jpg");
+        await File.WriteAllBytesAsync(x, [0xFF, 0xD8, 0xFF], TestContext.Current.CancellationToken);
+        // A tab that never opened a source, so the first load makes its iterator
+        var tab = CreateTab(_testDirectory, withIterator: false);
+
+        await tab.Load.LoadAsync(a);
+        var iterator = tab.ImageIterator;
+        var coordinator = tab.GalleryCoordinator;
+        // A file in another folder, which the second load lists anew
+        await tab.Load.LoadAsync(x);
+
+        Assert.NotNull(iterator);
+        Assert.NotNull(coordinator);
+        Assert.Same(iterator, tab.ImageIterator);
+        Assert.Same(coordinator, tab.GalleryCoordinator);
+        Assert.Equal([x], tab.ImageIterator!.Files.Select(f => f.FullName));
     }
 
     [Fact]
@@ -1336,7 +1412,21 @@ public class TabLoadTests : IDisposable
         public void DisableScreensaver() { }
         public void EnableScreensaver() { }
         public List<FileInfo> GetFiles(FileInfo fileInfo) => new();
-        public int CompareStrings(string str1, string str2) => string.CompareOrdinal(str1, str2);
+        // While closed, every name comparison waits for it, so a test can hold a listing while it sorts; Comparing says
+        // when one waits
+        public ManualResetEventSlim CompareGate { get; } = new(initialState: true);
+        public TaskCompletionSource Comparing { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        public int CompareStrings(string str1, string str2)
+        {
+            if (!CompareGate.IsSet)
+            {
+                Comparing.TrySetResult();
+                CompareGate.Wait(WaitLimit);
+            }
+
+            return string.CompareOrdinal(str1, str2);
+        }
         public void OpenWith(string path) { }
         public void LocateOnDisk(string path) { }
         public void ShowFileProperties(string path) { }
