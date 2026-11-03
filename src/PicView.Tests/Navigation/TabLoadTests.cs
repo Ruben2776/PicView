@@ -1162,7 +1162,7 @@ public class TabLoadTests : IDisposable
             new TabServices(core.SharedCache, core.SharedThumbnailCache, _mockThumbnailLoader, _mockFileWatcherService,
                 _mockImageModelLoader, platform),
             new NavigationService(platform.CompareStrings));
-        var vm = new MainWindowViewModel(core, null!, null!, null!, null!);
+        var vm = new MainWindowViewModel(core, null!, null!, null!);
         var first = vm.WindowTabs.ActiveTab.Value;
         // A new tab is selected, so the first is no longer the active one
         var second = vm.WindowTabs.CreateTab();
@@ -1254,7 +1254,7 @@ public class TabLoadTests : IDisposable
     [Fact]
     public void Load_OnATabWithoutServices_Throws()
     {
-        var tab = new TabViewModel(new MainWindowViewModel(null!, null!, null!, null!, null!));
+        var tab = new TabViewModel(new MainWindowViewModel(null!, null!, null!, null!));
 
         var thrown = Assert.Throws<InvalidOperationException>(() => tab.Load);
 
@@ -1276,7 +1276,7 @@ public class TabLoadTests : IDisposable
         IArchiveEntryWriter? writer = null, IPlatformSpecificService? platform = null, IFileWatcherService? watcher = null,
         bool withIterator = true)
     {
-        var dummyParent = parentVm ?? new MainWindowViewModel(null!, null!, null!, null!, null!);
+        var dummyParent = parentVm ?? new MainWindowViewModel(null!, null!, null!, null!);
         var services = new TabServices(cache ?? _cache, new MockThumbnailCache(), _mockThumbnailLoader,
             watcher ?? _mockFileWatcherService, _mockImageModelLoader, platform ?? new MockPlatformSpecificService());
         var tab = new TabViewModel(dummyParent, services, writer);

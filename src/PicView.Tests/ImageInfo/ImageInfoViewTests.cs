@@ -172,7 +172,7 @@ public class ImageInfoViewTests : IDisposable
     private static MainWindowViewModel CreateViewModel()
     {
         var core = new CoreViewModel(null, _ => ValueTask.FromResult(new ImageModel()));
-        var vm = new MainWindowViewModel(core, core.Translation, null!, core.GlobalSettings!, core.GallerySettings)
+        var vm = new MainWindowViewModel(core, core.Translation, core.GlobalSettings!, core.GallerySettings)
         {
             Exif = new ExifViewModel()
         };

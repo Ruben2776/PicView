@@ -287,7 +287,7 @@ public class TabOwnershipTests
 
     private MainWindowViewModel CreateWindow(ITabHookups? hookups = null, TabViewModel? firstTab = null)
     {
-        var vm = new MainWindowViewModel(_core, _core.Translation, null!, _core.GlobalSettings!, _core.GallerySettings,
+        var vm = new MainWindowViewModel(_core, _core.Translation, _core.GlobalSettings!, _core.GallerySettings,
             firstTab);
         if (hookups is not null)
         {

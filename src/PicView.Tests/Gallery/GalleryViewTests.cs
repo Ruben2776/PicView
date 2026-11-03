@@ -283,7 +283,7 @@ public class GalleryViewTests
         Settings.Gallery.DockPosition = GalleryDockPosition.Bottom;
         var core = new CoreViewModel(null, _ => ValueTask.FromResult(new ImageModel()));
         var window = new TestMainWindow(new NoOpModeAdapter());
-        var vm = new MainWindowViewModel(core, core.Translation, window, core.GlobalSettings!, core.GallerySettings);
+        var vm = new MainWindowViewModel(core, core.Translation, core.GlobalSettings!, core.GallerySettings);
         window.DataContext = vm;
         var tab = vm.WindowTabs.ActiveTab.Value;
         if (initializeFirst)
@@ -371,7 +371,7 @@ public class GalleryViewTests
                 new MockThumbnailCache(), new MockThumbnailLoader()),
             new NavigationService(string.CompareOrdinal));
         var window = new TestMainWindow(new NoOpModeAdapter());
-        var vm = new MainWindowViewModel(core, core.Translation, window, core.GlobalSettings!, core.GallerySettings);
+        var vm = new MainWindowViewModel(core, core.Translation, core.GlobalSettings!, core.GallerySettings);
         window.DataContext = vm;
         core.MainWindows.ActiveWindow.Value = vm;
         var tab = tabOf(vm);

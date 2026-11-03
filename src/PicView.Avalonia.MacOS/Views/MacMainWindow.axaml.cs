@@ -23,7 +23,7 @@ public partial class MacMainWindow : MainWindow
         {
             return;
         }
-        var mainWindowViewModel = new MainWindowViewModel(core, core.Translation, this, core.GlobalSettings, core.GallerySettings, firstTab);
+        var mainWindowViewModel = new MainWindowViewModel(core, core.Translation, core.GlobalSettings, core.GallerySettings, firstTab);
         DataContext = mainWindowViewModel;
 
         InitializeComponent();
@@ -65,6 +65,4 @@ public partial class MacMainWindow : MainWindow
     }
 
     protected override IWindowProvider CreateWindowProvider() => new MacWindowProvider();
-
-    public override int CombinedTitleButtonsWidth { get; set; } = 165;
 }

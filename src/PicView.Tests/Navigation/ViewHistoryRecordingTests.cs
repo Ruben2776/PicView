@@ -428,7 +428,7 @@ public class ViewHistoryRecordingTests : IDisposable
     [Fact]
     public void UpdateHistory_MarksTheEntryTheActiveTabsViewHistoryIsOn_IgnoringCase()
     {
-        var window = new MainWindowViewModel(null!, null!, null!, null!, null!);
+        var window = new MainWindowViewModel(null!, null!, null!, null!);
         FileHistoryManager.Add(PathOf("a.jpg"));
         FileHistoryManager.Add(PathOf("b.jpg"));
         window.WindowTabs.ActiveTab.Value.Display(Model(PathOf("A.JPG")));
@@ -442,7 +442,7 @@ public class ViewHistoryRecordingTests : IDisposable
     [Fact]
     public async Task UpdateHistory_WhileTheTabBrowsesAnArchive_MarksTheArchive()
     {
-        var window = new MainWindowViewModel(null!, null!, null!, null!, null!);
+        var window = new MainWindowViewModel(null!, null!, null!, null!);
         var tab = window.WindowTabs.ActiveTab.Value;
         var zip = CreateZip("a.jpg");
         var history = new FileHistoryViewModel(window);
@@ -539,7 +539,7 @@ public class ViewHistoryRecordingTests : IDisposable
     {
         Settings.StartUp.LastFile = null;
         var core = new CoreViewModel(null, file => ValueTask.FromResult(new ImageModel { FileInfo = file }));
-        var window = new MainWindowViewModel(core, null!, null!, null!, null!);
+        var window = new MainWindowViewModel(core, null!, null!, null!);
         core.MainWindows.MainWindows.Add(window);
         core.MainWindows.ActiveWindow.Value = window;
         return window.WindowTabs.ActiveTab.Value;

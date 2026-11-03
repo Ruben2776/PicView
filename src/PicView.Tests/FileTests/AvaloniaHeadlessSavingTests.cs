@@ -42,7 +42,7 @@ public class AvaloniaHeadlessSavingTests
     private static MainWindowViewModel CreateDummyVm()
     {
         // Try creating with null dependencies since they might just be saved to properties
-        return new MainWindowViewModel(null!, null!, null!, null!, null!);
+        return new MainWindowViewModel(null!, null!, null!, null!);
     }
 
     [AvaloniaFact]

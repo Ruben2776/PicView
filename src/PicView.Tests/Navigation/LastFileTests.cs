@@ -114,7 +114,7 @@ public class LastFileTests
 
     private MainWindowViewModel OpenWindow()
     {
-        var window = new MainWindowViewModel(_core, null!, null!, null!, null!);
+        var window = new MainWindowViewModel(_core, null!, null!, null!);
         _core.MainWindows.MainWindows.Add(window);
         _core.MainWindows.ActiveWindow.Value = window;
         return window;

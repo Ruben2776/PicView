@@ -33,7 +33,7 @@ public class ImageCacheOwnershipTests
             TestTabServices.For(core.SharedCache, core.SharedThumbnailCache, new MockThumbnailLoader()),
             navigation: null!);
         _cache = core.SharedCache;
-        _tabs = new MainWindowViewModel(core, core.Translation, null!, core.GlobalSettings!, core.GallerySettings)
+        _tabs = new MainWindowViewModel(core, core.Translation, core.GlobalSettings!, core.GallerySettings)
             .WindowTabs;
         _tabs.ActiveTab.Value.Initialize();
     }

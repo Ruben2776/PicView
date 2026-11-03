@@ -2,7 +2,6 @@ using Avalonia.Controls;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using PicView.Avalonia.Views.Gallery;
-using PicView.Core.IPlatform;
 using PicView.Core.Localization;
 using PicView.Core.ViewModels;
 
@@ -34,7 +33,7 @@ public class GalleryItemBadgeTests
         {
             _gallerySettings = new GallerySharedSettingsViewModel();
             var mainVm = new MainWindowViewModel(null!, new TranslationViewModel(),
-                new StubPlatformWindowService(), new GlobalSettingsViewModel(), _gallerySettings);
+                new GlobalSettingsViewModel(), _gallerySettings);
             _itemVm = new GalleryItemViewModel { IsMotionPhoto = { Value = true } };
 
             var window = new Window { DataContext = mainVm };
@@ -91,25 +90,5 @@ public class GalleryItemBadgeTests
             Thread.Sleep(10);
         }
         operation.GetAwaiter().GetResult();
-    }
-
-    private sealed class StubPlatformWindowService : IPlatformWindowService
-    {
-        public int CombinedTitleButtonsWidth { get; set; }
-        public Task Maximize(bool saveSetting = true) => Task.CompletedTask;
-        public void Minimize() { }
-        public Task MaximizeRestore(bool saveSettings = true) => Task.CompletedTask;
-        public Task Fullscreen(bool saveSetting = true) => Task.CompletedTask;
-        public Task ToggleFullscreen(bool saveSettings = true) => Task.CompletedTask;
-        public Task Restore() => Task.CompletedTask;
-        public void ShowAboutWindow() { }
-        public void ShowImageInfoWindow() { }
-        public void ShowKeybindingsWindow() { }
-        public ValueTask ShowSettingsWindow() => ValueTask.CompletedTask;
-        public void ShowEffectsWindow() { }
-        public ValueTask ShowSingleImageResizeWindow() => ValueTask.CompletedTask;
-        public ValueTask ShowBatchResizeWindow() => ValueTask.CompletedTask;
-        public void ShowFileAssociationsWindow() { }
-        public ValueTask ShowConvertWindow() => ValueTask.CompletedTask;
     }
 }

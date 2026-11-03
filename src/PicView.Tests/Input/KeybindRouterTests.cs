@@ -27,7 +27,7 @@ public class KeybindRouterTests
     public KeybindRouterTests()
     {
         SetDefaults();
-        _vm = new MainWindowViewModel(null!, null!, null!, null!, null!);
+        _vm = new MainWindowViewModel(null!, null!, null!, null!);
         var actionRunner = new RecordingActionRunner();
         _calls = actionRunner.Calls;
         _vm.ActionRunner = actionRunner;

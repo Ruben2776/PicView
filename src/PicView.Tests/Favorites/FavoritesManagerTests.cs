@@ -211,7 +211,7 @@ public class FavoritesManagerTests : IDisposable
         var activeFile = Path.Combine(folderB, "pic.png");
         await File.WriteAllTextAsync(activeFile, "img", TestContext.Current.CancellationToken);
 
-        var vm = new MainWindowViewModel(null!, null!, null!, null!, null!);
+        var vm = new MainWindowViewModel(null!, null!, null!, null!);
         var tab = new TabViewModel(vm);
         tab.Model = new ImageModel { FileInfo = new FileInfo(activeFile) };
         vm.WindowTabs.ActiveTab.Value = tab;
@@ -233,7 +233,7 @@ public class FavoritesManagerTests : IDisposable
     [Fact]
     public void EditCommand_OnFavoritesEntryViewModel_ExecutesEditFavoritesDialogCommandWithEntry()
     {
-        var vm = new MainWindowViewModel(null!, null!, null!, null!, null!);
+        var vm = new MainWindowViewModel(null!, null!, null!, null!);
         var favoritesVm = new FavoritesViewModel(vm);
         vm.Favorites = favoritesVm;
 

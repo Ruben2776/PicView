@@ -30,7 +30,7 @@ public class PrintJobTests : IDisposable
     public PrintJobTests()
     {
         SetDefaults();
-        _vm = new MainWindowViewModel(null!, null!, null!, null!, null!);
+        _vm = new MainWindowViewModel(null!, null!, null!, null!);
         Directory.CreateDirectory(_tempDir);
     }
 

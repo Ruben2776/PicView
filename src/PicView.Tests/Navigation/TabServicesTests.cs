@@ -28,7 +28,7 @@ public class TabServicesTests
     {
         var core = CreateCore();
         core.InitializeNavigation(ServicesFor(core), navigation: null!);
-        var vm = new MainWindowViewModel(core, null!, null!, null!, null!);
+        var vm = new MainWindowViewModel(core, null!, null!, null!);
 
         var tab = vm.WindowTabs.CreateTab();
 
@@ -41,7 +41,7 @@ public class TabServicesTests
     {
         var core = CreateCore();
         core.InitializeNavigation(ServicesFor(core), navigation: null!);
-        var vm = new MainWindowViewModel(core, null!, null!, null!, null!);
+        var vm = new MainWindowViewModel(core, null!, null!, null!);
 
         Assert.Same(core.Services, vm.WindowTabs.ActiveTab.Value.Services);
     }
@@ -53,7 +53,7 @@ public class TabServicesTests
         var core = CreateCore();
         var services = ServicesFor(core);
         core.InitializeNavigation(services, NavigationFor(core, services));
-        var vm = new MainWindowViewModel(core, null!, null!, null!, null!);
+        var vm = new MainWindowViewModel(core, null!, null!, null!);
         var tabs = vm.WindowTabs;
         var tab = tabs.CreateTab();
         Assert.Null(tab.ImageIterator);

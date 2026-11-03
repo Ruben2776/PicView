@@ -77,9 +77,7 @@ public class KeybindingsFavoritesTests : IDisposable
         core.Keybindings = new KeybindingsViewModel();
         mainWindowVm = new MainWindowViewModel(
             core,
-            core.Translation,
-            null!,
-            core.GlobalSettings!,
+            core.Translation, core.GlobalSettings!,
             core.GallerySettings);
         core.MainWindows.MainWindows.Add(mainWindowVm);
         core.MainWindows.ActiveWindow.Value = mainWindowVm;

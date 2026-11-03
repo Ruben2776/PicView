@@ -429,7 +429,7 @@ public class ArchiveOpeningsTests : IDisposable
         var services = TestTabServices.For(
             new SharedImageCache(file => ValueTask.FromResult(new ImageModel { FileInfo = file })),
             new MockThumbnailCache(), new MockThumbnailLoader());
-        var tab = new TabViewModel(new MainWindowViewModel(null!, null!, null!, null!, null!), services, writer);
+        var tab = new TabViewModel(new MainWindowViewModel(null!, null!, null!, null!), services, writer);
         tab.Initialize();
         tab.ImageIterator!.Initialize([]);
         _tabs.Add(tab);

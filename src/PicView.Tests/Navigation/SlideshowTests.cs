@@ -94,7 +94,7 @@ public class SlideshowTests
 
         var adapter = new RecordingAdapter();
         var window = new TestMainWindow(adapter);
-        var vm = new MainWindowViewModel(core, core.Translation, window, core.GlobalSettings!, core.GallerySettings,
+        var vm = new MainWindowViewModel(core, core.Translation, core.GlobalSettings!, core.GallerySettings,
             tab);
         window.DataContext = vm;
         window.ViewModel = vm;

@@ -32,7 +32,7 @@ public class NavigationSubscriptionsTests
     {
         var core = new CoreViewModel(null, _ => ValueTask.FromResult(new ImageModel()));
         var window = new TestMainWindow(new NoOpModeAdapter());
-        var vm = new MainWindowViewModel(core, core.Translation, window, core.GlobalSettings!, core.GallerySettings);
+        var vm = new MainWindowViewModel(core, core.Translation, core.GlobalSettings!, core.GallerySettings);
         window.DataContext = vm;
         var hookups = new NavigationSubscriptions(window, vm);
         var tab = vm.WindowTabs.ActiveTab.CurrentValue;
@@ -182,7 +182,7 @@ public class NavigationSubscriptionsTests
     {
         var core = new CoreViewModel(null, _ => ValueTask.FromResult(new ImageModel()));
         var window = new TestMainWindow(new NoOpModeAdapter());
-        var vm = new MainWindowViewModel(core, core.Translation, window, core.GlobalSettings!, core.GallerySettings);
+        var vm = new MainWindowViewModel(core, core.Translation, core.GlobalSettings!, core.GallerySettings);
         window.DataContext = vm;
         var tab = vm.WindowTabs.ActiveTab.CurrentValue;
         tab.IsSelected = true;

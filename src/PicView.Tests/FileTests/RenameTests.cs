@@ -152,7 +152,7 @@ public class RenameTests : IDisposable
         core.InitializeNavigation(
             TestTabServices.For(core.SharedCache, core.SharedThumbnailCache, new TestTabServices.NoThumbnailLoader()),
             new NavigationService(string.CompareOrdinal));
-        var vm = new MainWindowViewModel(core, new TranslationViewModel(), null!, new GlobalSettingsViewModel(),
+        var vm = new MainWindowViewModel(core, new TranslationViewModel(), new GlobalSettingsViewModel(),
             new GallerySharedSettingsViewModel()) { ToolTip = new ToolTipViewModel() };
         core.MainWindows.MainWindows.Add(vm);
         var tab = vm.WindowTabs.ActiveTab.Value;
@@ -167,7 +167,7 @@ public class RenameTests : IDisposable
 
     private (MainWindowViewModel Vm, TabViewModel Tab) CreateTab(string path)
     {
-        var vm = new MainWindowViewModel(null!, new TranslationViewModel(), null!, new GlobalSettingsViewModel(),
+        var vm = new MainWindowViewModel(null!, new TranslationViewModel(), new GlobalSettingsViewModel(),
             new GallerySharedSettingsViewModel()) { ToolTip = new ToolTipViewModel() };
         var tab = vm.WindowTabs.ActiveTab.Value;
         var fileInfo = new FileInfo(path);

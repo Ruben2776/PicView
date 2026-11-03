@@ -30,10 +30,11 @@ using R3.Avalonia;
 namespace PicView.Avalonia.CustomControls;
 
 /// <summary>
-/// The main window shared by every platform. It owns its Window Mode, tab detaching and opening the secondary
-/// windows; a platform subclass supplies its <see cref="IWindowProvider"/>.
+/// The main window shared by every platform. It handles its native events and holds its per-window modules, such as
+/// its Window Mode, its fitting and its opener of Tool Windows; a platform subclass supplies its
+/// <see cref="IWindowProvider"/>.
 /// </summary>
-public abstract class MainWindow : Window, IMainWindow, IPlatformWindowService
+public abstract class MainWindow : Window, IMainWindow
 {
     /// <summary>
     /// Opens this window's Tool Windows, and the App Windows from it.
@@ -155,15 +156,9 @@ public abstract class MainWindow : Window, IMainWindow, IPlatformWindowService
     /// </summary>
     protected abstract IWindowProvider CreateWindowProvider();
 
-    /// <inheritdoc />
-    public virtual int CombinedTitleButtonsWidth
-    {
-        get => (int)((DataContext as MainWindowViewModel)?.WindowModeState.CurrentValue.Mode is WindowMode.Maximized
-            ? OffScreenMargin.Left + OffScreenMargin.Right + field : field);
-        set;
-    } = 185;
-
-    /// <inheritdoc />
+    /// <summary>
+    /// Minimizes the window, which does not change its Window Mode.
+    /// </summary>
     public void Minimize() => WindowState = WindowState.Minimized;
 
     /// <summary>
@@ -171,61 +166,6 @@ public abstract class MainWindow : Window, IMainWindow, IPlatformWindowService
     /// be read from any thread.
     /// </summary>
     public MainWindowViewModel? ViewModel { get; internal set; }
-
-    #endregion
-
-    #region Secondary windows
-
-    public void ShowAboutWindow() =>
-        MainWindowInitializer?.ShowAboutWindow();
-
-    public void ShowImageInfoWindow() =>
-        MainWindowInitializer?.ShowImageInfoWindow(DataContext as MainWindowViewModel);
-
-    public void ShowKeybindingsWindow() =>
-        MainWindowInitializer?.ShowKeybindingsWindow();
-
-    public async ValueTask ShowSettingsWindow()
-    {
-        if (MainWindowInitializer is null)
-        {
-            return;
-        }
-        await MainWindowInitializer.ShowSettingsWindow().ConfigureAwait(true);
-    }
-
-    public async ValueTask ShowSingleImageResizeWindow()
-    {
-        if (MainWindowInitializer is null)
-        {
-            return;
-        }
-        await MainWindowInitializer.ShowSingleImageResizeWindow().ConfigureAwait(true);
-    }
-
-    public async ValueTask ShowBatchResizeWindow()
-    {
-        if (MainWindowInitializer is null)
-        {
-            return;
-        }
-        await MainWindowInitializer.ShowBatchResizeWindow().ConfigureAwait(true);
-    }
-
-    public void ShowFileAssociationsWindow() =>
-        MainWindowInitializer?.ShowFileAssociationsWindow();
-
-    public void ShowEffectsWindow() =>
-        _ = MainWindowInitializer?.ShowEffectsWindow();
-
-    public async ValueTask ShowConvertWindow()
-    {
-        if (MainWindowInitializer is null)
-        {
-            return;
-        }
-        await MainWindowInitializer.ShowConvertWindow().ConfigureAwait(true);
-    }
 
     #endregion
 

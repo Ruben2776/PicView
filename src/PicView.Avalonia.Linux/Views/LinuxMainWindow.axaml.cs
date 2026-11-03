@@ -22,7 +22,7 @@ public partial class LinuxMainWindow : MainWindow
         }
 
         Debug.Assert(core.GlobalSettings != null);
-        var mainWindowViewModel = new MainWindowViewModel(core, core.Translation, this, core.GlobalSettings, core.GallerySettings, firstTab);
+        var mainWindowViewModel = new MainWindowViewModel(core, core.Translation, core.GlobalSettings, core.GallerySettings, firstTab);
         DataContext = mainWindowViewModel;
 
         InitializeComponent();

@@ -34,7 +34,7 @@ public class ContextualActionHandlerTests
     private static (ContextualActionHandler Handler, FakeCropService Crop) CreateHandler()
     {
         SetDefaults();
-        var vm = new MainWindowViewModel(null!, null!, null!, null!, null!);
+        var vm = new MainWindowViewModel(null!, null!, null!, null!);
         var crop = new FakeCropService();
         var tab = new TabViewModel(vm) { CropService = crop };
         vm.WindowTabs.ActiveTab.Value = tab;

@@ -194,7 +194,7 @@ public class WindowModeSwitcherTests
     {
         var adapter = new RecordingAdapter();
         var window = new TestMainWindow(adapter);
-        var vm = new MainWindowViewModel(_core, _core.Translation, window, _core.GlobalSettings!,
+        var vm = new MainWindowViewModel(_core, _core.Translation, _core.GlobalSettings!,
             _core.GallerySettings);
         window.DataContext = vm;
         var switcher = new WindowModeSwitcher(window, adapter, () =>

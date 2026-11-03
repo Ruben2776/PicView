@@ -48,7 +48,7 @@ public class MainWindowResizeTests
     private (MainWindow Window, MainTitleBar TitleBar, BottomBar BottomBar) CreateShownWindow()
     {
         var window = new TestMainWindow(new NativeStateAdapter());
-        window.DataContext = new MainWindowViewModel(_core, _core.Translation, window, _core.GlobalSettings!,
+        window.DataContext = new MainWindowViewModel(_core, _core.Translation, _core.GlobalSettings!,
             _core.GallerySettings);
         var titleBar = new CustomTitleBar();
         var bottomBar = new BottomBar();

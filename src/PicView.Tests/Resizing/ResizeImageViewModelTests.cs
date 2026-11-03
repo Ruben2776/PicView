@@ -46,7 +46,7 @@ public class ResizeImageViewModelTests
         core.InitializeNavigation(
             TestTabServices.For(core.SharedCache, core.SharedThumbnailCache, new TestTabServices.NoThumbnailLoader()),
             new NavigationService(string.CompareOrdinal));
-        var mainVm = new MainWindowViewModel(core, translations, null!, globalSettings, gallerySettings);
+        var mainVm = new MainWindowViewModel(core, translations, globalSettings, gallerySettings);
 
         var resizeVm = new ResizeImageViewModel();
         resizeVm.Initialize(mainVm);

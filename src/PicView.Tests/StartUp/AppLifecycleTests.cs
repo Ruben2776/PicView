@@ -232,8 +232,8 @@ public class AppLifecycleTests : IAsyncDisposable
         var first = app.MainWindows.Open[0];
         var second = await app.MainWindows.OpenNewAsync();
 
-        first.ShowAboutWindow();
-        second.ShowAboutWindow();
+        first.MainWindowInitializer.ShowAboutWindow();
+        second.MainWindowInitializer.ShowAboutWindow();
         await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Background);
 
         Assert.Equal(1, _provider.AboutWindowsCreated);
@@ -289,7 +289,7 @@ public class AppLifecycleTests : IAsyncDisposable
         var app = CreateApp();
         await app.StartAsync(settingsExists: true, []);
         var second = await app.MainWindows.OpenNewAsync();
-        await second.ShowConvertWindow();
+        await second.MainWindowInitializer.ShowConvertWindow();
         await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Background);
         var convert = Assert.Single(_provider.ConvertWindows);
         var closed = false;
@@ -308,8 +308,8 @@ public class AppLifecycleTests : IAsyncDisposable
         var first = app.MainWindows.Open[0];
         var second = await app.MainWindows.OpenNewAsync();
 
-        await first.ShowBatchResizeWindow();
-        await second.ShowBatchResizeWindow();
+        await first.MainWindowInitializer.ShowBatchResizeWindow();
+        await second.MainWindowInitializer.ShowBatchResizeWindow();
         await app.MainWindows.CloseAsync(first);
 
         var batchResize = Assert.Single(_provider.BatchResizeWindows);
@@ -323,8 +323,8 @@ public class AppLifecycleTests : IAsyncDisposable
         var app = CreateApp();
         await app.StartAsync(settingsExists: true, []);
         var main = app.MainWindows.Open[0];
-        main.ShowAboutWindow();
-        await main.ShowBatchResizeWindow();
+        main.MainWindowInitializer.ShowAboutWindow();
+        await main.MainWindowInitializer.ShowBatchResizeWindow();
         await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Background);
         var about = Assert.Single(_provider.AboutWindows);
         var aboutClosed = false;
@@ -346,7 +346,7 @@ public class AppLifecycleTests : IAsyncDisposable
     {
         var app = CreateApp();
         await app.StartAsync(settingsExists: true, []);
-        await app.MainWindows.Open[0].ShowBatchResizeWindow();
+        await app.MainWindows.Open[0].MainWindowInitializer.ShowBatchResizeWindow();
         var closed = false;
         Assert.Single(_provider.BatchResizeWindows).Closed += (_, _) => closed = true;
 
@@ -1234,7 +1234,7 @@ public class AppLifecycleTests : IAsyncDisposable
         public MainWindow CreateMainWindow(TabViewModel? firstTab = null)
         {
             var window = new TestMainWindow(new NoOpModeAdapter(), this);
-            window.DataContext = new MainWindowViewModel(core, core.Translation, window, core.GlobalSettings!,
+            window.DataContext = new MainWindowViewModel(core, core.Translation, core.GlobalSettings!,
                 core.GallerySettings, firstTab);
             Created.Add(window);
             return window;

@@ -9,7 +9,6 @@ public class MainWindowViewModel : IDisposable
     #region Properties
     public CoreViewModel Core { get; }
     public IActionRunner? ActionRunner { get; set; }
-    public IPlatformWindowService? PlatformWindowService { get; }
     public FileHistoryViewModel? FileHistory { get; set; }
     public FavoritesViewModel? Favorites { get; set; }
     public TranslationViewModel Translation { get;  } 
@@ -107,11 +106,10 @@ public class MainWindowViewModel : IDisposable
     #endregion
 
     /// <param name="firstTab">A tab moved out of another Main Window, for a window that opens with it.</param>
-    public MainWindowViewModel(CoreViewModel core, TranslationViewModel translations, IPlatformWindowService windowService, GlobalSettingsViewModel globalSettings, GallerySharedSettingsViewModel gallerySettings, TabViewModel? firstTab = null)
+    public MainWindowViewModel(CoreViewModel core, TranslationViewModel translations, GlobalSettingsViewModel globalSettings, GallerySharedSettingsViewModel gallerySettings, TabViewModel? firstTab = null)
     {
         Core = core;
         Translation = translations;
-        PlatformWindowService = windowService;
         GlobalSettings = globalSettings;
         GallerySettings = gallerySettings;
         WindowTabs = new TabOverviewViewModel(this, firstTab);

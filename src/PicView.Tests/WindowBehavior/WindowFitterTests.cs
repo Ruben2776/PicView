@@ -432,7 +432,7 @@ public class WindowFitterTests
         Func<ScreenSize>? readScreen = null)
     {
         var window = new TestMainWindow(new NativeStateAdapter());
-        var vm = new MainWindowViewModel(_core, _core.Translation, window, _core.GlobalSettings!,
+        var vm = new MainWindowViewModel(_core, _core.Translation, _core.GlobalSettings!,
             _core.GallerySettings);
         window.DataContext = vm;
         return (new WindowFitter(window, () => ContentSize, readScreen), vm, window);

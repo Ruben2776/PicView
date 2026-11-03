@@ -36,7 +36,7 @@ public class InputAllocationTests
     public InputAllocationTests()
     {
         SetDefaults();
-        _vm = new MainWindowViewModel(null!, null!, null!, null!, null!);
+        _vm = new MainWindowViewModel(null!, null!, null!, null!);
     }
 
     [Fact]

@@ -56,7 +56,7 @@ public class FileSavingServiceTests : IDisposable
 
     private static TabViewModel CreateClipboardTab(int width, int height)
     {
-        var vm = new MainWindowViewModel(null!, null!, null!, null!, null!);
+        var vm = new MainWindowViewModel(null!, null!, null!, null!);
         var tab = new TabViewModel(vm);
         var bitmap = new WriteableBitmap(new PixelSize(width, height), new Vector(96, 96), PixelFormat.Bgra8888,
             AlphaFormat.Premul);
@@ -128,7 +128,7 @@ public class FileSavingServiceTests : IDisposable
         {
             image.Write(path);
         }
-        var vm = new MainWindowViewModel(null!, null!, null!, null!, null!);
+        var vm = new MainWindowViewModel(null!, null!, null!, null!);
         var tab = new TabViewModel(vm);
         tab.FileInfo.Value = new FileInfo(path);
         tab.Orientation.TurnTo(1);
@@ -168,7 +168,7 @@ public class FileSavingServiceTests : IDisposable
     {
         var source = WriteMarkedPng("source.png");
         var destination = Path.Combine(_tempDir, "flipped.png");
-        var vm = new MainWindowViewModel(null!, null!, null!, null!, null!);
+        var vm = new MainWindowViewModel(null!, null!, null!, null!);
         var tab = new TabViewModel(vm);
         tab.FileInfo.Value = new FileInfo(source);
         tab.Orientation.TurnTo(quarterTurns);
@@ -212,7 +212,7 @@ public class FileSavingServiceTests : IDisposable
     {
         var source = WriteRedPng("source.png");
         var destination = Path.Combine(_tempDir, "copy.png");
-        var vm = new MainWindowViewModel(null!, null!, null!, null!, null!);
+        var vm = new MainWindowViewModel(null!, null!, null!, null!);
         var tab = new TabViewModel(vm);
         tab.FileInfo.Value = new FileInfo(source);
         using var effects = CreateEffectsWithRender(new FileInfo(source));
@@ -230,7 +230,7 @@ public class FileSavingServiceTests : IDisposable
     {
         var source = WriteRedPng("source.png");
         var destination = Path.Combine(_tempDir, "copy.jpg");
-        var vm = new MainWindowViewModel(null!, null!, null!, null!, null!);
+        var vm = new MainWindowViewModel(null!, null!, null!, null!);
         var tab = new TabViewModel(vm);
         tab.FileInfo.Value = new FileInfo(source);
         using var effects = CreateEffectsWithRender(new FileInfo(Path.Combine(_tempDir, "other.png")));
@@ -248,7 +248,7 @@ public class FileSavingServiceTests : IDisposable
     public void ExportCommonFormatAsync_UntouchedPng_ReturnsFilePath()
     {
         var source = WriteRedPng("source.png");
-        var vm = new MainWindowViewModel(null!, null!, null!, null!, null!);
+        var vm = new MainWindowViewModel(null!, null!, null!, null!);
         var tab = new TabViewModel(vm);
         tab.FileInfo.Value = new FileInfo(source);
         var service = new FileSavingService(new StubSavePathPicker(null), () => null);
@@ -262,7 +262,7 @@ public class FileSavingServiceTests : IDisposable
     public void ExportCommonFormatAsync_RotatedTab_ExportsRotatedPng()
     {
         var source = WriteRedPng("source.png");
-        var vm = new MainWindowViewModel(null!, null!, null!, null!, null!);
+        var vm = new MainWindowViewModel(null!, null!, null!, null!);
         var tab = new TabViewModel(vm);
         tab.FileInfo.Value = new FileInfo(source);
         tab.Orientation.TurnTo(1);

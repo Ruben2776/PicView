@@ -24,7 +24,7 @@ public class PrintJobStarterTests : IDisposable
     public PrintJobStarterTests()
     {
         SetDefaults();
-        _vm = new MainWindowViewModel(null!, null!, null!, null!, null!);
+        _vm = new MainWindowViewModel(null!, null!, null!, null!);
         Directory.CreateDirectory(_tempDir);
         ShowRedImage();
     }
