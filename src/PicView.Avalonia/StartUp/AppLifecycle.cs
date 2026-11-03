@@ -326,8 +326,7 @@ public sealed class AppLifecycle
         var fileWatcher = new FileWatcherService(platform.CompareStrings, _core.SharedCache, _core.SharedThumbnailCache,
             fileRenamed: (oldPath, newPath) => FileRenames.Follow(_core, oldPath, newPath),
             folderRenamed: (oldFolder, newFolder) => FileRenames.FollowFolder(_core, oldFolder, newFolder));
-        var navigation = new NavigationService(imageLoader, _core.SharedCache, fileWatcher, platform,
-            platform.CompareStrings);
+        var navigation = new NavigationService(platform.CompareStrings);
         _core.InitializeNavigation(
             new TabServices(_core.SharedCache, _core.SharedThumbnailCache, thumbnailLoader, fileWatcher, imageLoader,
                 platform),

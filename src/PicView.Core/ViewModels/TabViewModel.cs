@@ -460,6 +460,27 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
 
     private ArchiveOpenings? _archives;
     private IDisposable? _archiveStateSubscription;
+
+    /// <summary>
+    /// The tab's Load, the one owner of every load of a source into it (ADR-0019), made on first use from the services
+    /// the tab was created with.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">The tab was created without services.</exception>
+    public TabLoad Load
+    {
+        get
+        {
+            if (_load is null)
+            {
+                var services = Services ?? throw new InvalidOperationException("The tab has no services");
+                LazyInitializer.EnsureInitialized(ref _load, () => new TabLoad(this, services));
+            }
+
+            return _load;
+        }
+    }
+
+    private TabLoad? _load;
     public IThumbnailCache? ThumbnailCache { get; private set; }
 
     private IFileWatcherService? _fileWatcherService = services?.Watcher;
@@ -545,6 +566,13 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
     /// files and gallery.
     /// </summary>
     internal bool IsLatestLoad(int version) => Volatile.Read(ref _loadVersion) == version;
+
+    private bool _isDisposed;
+
+    /// <summary>
+    /// Whether the tab was disposed, after which no load changes it.
+    /// </summary>
+    internal bool IsDisposed => Volatile.Read(ref _isDisposed);
 
     #endregion
 
@@ -741,6 +769,8 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
     
     public void Dispose()
     {
+        // First, so a load still running stops at its next check instead of showing into a disposed tab
+        Volatile.Write(ref _isDisposed, true);
         _fileWatcherService?.Unwatch(this);
         ThumbnailCache?.RemoveOwner(Id);
 

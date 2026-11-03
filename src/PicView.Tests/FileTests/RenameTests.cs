@@ -151,10 +151,11 @@ public class RenameTests : IDisposable
         var core = new CoreViewModel(null, file => ValueTask.FromResult(new ImageModel { FileInfo = file, Image = new object() }));
         var thumbnails = new NoThumbnails();
         var folderWatcher = new NoFolderWatcher();
-        // The navigation needs no image loader or platform for a file in a folder
+        // The tab's Load needs no image loader for a file in a folder. Without a platform it cannot sort the names it
+        // lists, which these tests leave alone: the converted file shows before the Load lists anything
         core.InitializeNavigation(
             new TabServices(core.SharedCache, core.SharedThumbnailCache, thumbnails, folderWatcher, null!, null!),
-            new NavigationService(null!, core.SharedCache, folderWatcher, null!, string.CompareOrdinal));
+            new NavigationService(string.CompareOrdinal));
         var vm = new MainWindowViewModel(core, new TranslationViewModel(), null!, new GlobalSettingsViewModel(),
             new GallerySharedSettingsViewModel()) { ToolTip = new ToolTipViewModel() };
         core.MainWindows.MainWindows.Add(vm);
