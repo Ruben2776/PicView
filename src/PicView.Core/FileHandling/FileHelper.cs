@@ -83,7 +83,7 @@ public static partial class FileHelper
     }
 
     [GeneratedRegex(@"\b(?:https?://|www\.)\S+\b", RegexOptions.IgnoreCase | RegexOptions.Compiled, "en-US")]
-    private static partial Regex URLregex();
+    private static partial Regex URLRegex { get; }
 
     /// <summary>
     ///     Returns the URL contained in the given string `value` by matching it against a regex pattern.
@@ -96,7 +96,7 @@ public static partial class FileHelper
     {
         try
         {
-            return URLregex().Match(value).ToString();
+            return URLRegex.Match(value).ToString();
         }
         catch (Exception e)
         {
@@ -183,8 +183,8 @@ public static partial class FileHelper
             await using (fs.ConfigureAwait(false))
             {
                 var bytes = await File.ReadAllBytesAsync(currentFile).ConfigureAwait(false);
-            await fs.WriteAsync(bytes).ConfigureAwait(false);
-            return newFile;
+                await fs.WriteAsync(bytes).ConfigureAwait(false);
+                return newFile;
             }
         }
         catch (Exception e)

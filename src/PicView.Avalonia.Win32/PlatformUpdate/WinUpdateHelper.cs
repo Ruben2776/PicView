@@ -36,19 +36,19 @@ public static class WinUpdateHelper
         switch (architecture)
         {
             case InstalledArchitecture.Arm64Install:
-                await InstallWindowsUpdate(updateInfo.Arm64Install, tempPath);
+                await InstallWindowsUpdate(updateInfo.Arm64Install, tempPath).ConfigureAwait(false);
                 break;
 
             case InstalledArchitecture.Arm64Portable:
-                await OpenDownloadInBrowser(updateInfo.Arm64Portable);
+                await OpenDownloadInBrowser(updateInfo.Arm64Portable).ConfigureAwait(false);
                 break;
 
             case InstalledArchitecture.X64Install:
-                await InstallWindowsUpdate(updateInfo.X64Install, tempPath);
+                await InstallWindowsUpdate(updateInfo.X64Install, tempPath).ConfigureAwait(false);
                 break;
 
             case InstalledArchitecture.X64Portable:
-                await OpenDownloadInBrowser(updateInfo.X64Portable);
+                await OpenDownloadInBrowser(updateInfo.X64Portable).ConfigureAwait(false);
                 break;
         }
     }
@@ -80,7 +80,7 @@ public static class WinUpdateHelper
         };
 
         process.Start();
-        await AppLifecycle.Current.ShutdownAsync();
+        await AppLifecycle.Current.ShutdownAsync().ConfigureAwait(false);
     }
 
     /// <summary>
@@ -98,7 +98,7 @@ public static class WinUpdateHelper
         };
 
         process.Start();
-        await process.WaitForExitAsync();
+        await process.WaitForExitAsync().ConfigureAwait(false);
     }
 
     /// <summary>
@@ -106,7 +106,7 @@ public static class WinUpdateHelper
     /// </summary>
     private static bool IsApplicationInstalled()
     {
-        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        if (!OperatingSystem.IsWindows())
         {
             return false;
         }

@@ -41,6 +41,6 @@ public class Win32WindowProvider : IWindowProvider
 
     public async Task HandlePlatformUpdate(UpdateInfo updateInfo, string tempPath)
     {
-        await WinUpdateHelper.HandleWindowsUpdate(updateInfo, tempPath);
+        await WinUpdateHelper.HandleWindowsUpdate(updateInfo, tempPath).ConfigureAwait(false);
     }
 }

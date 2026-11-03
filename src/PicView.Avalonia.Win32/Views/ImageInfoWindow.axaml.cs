@@ -1,4 +1,5 @@
 using Avalonia;
+using Avalonia.LogicalTree;
 using Avalonia.Media;
 using Avalonia.VisualTree;
 using PicView.Avalonia.CustomControls;
@@ -97,8 +98,9 @@ public partial class ImageInfoWindow: GenericWindow, IDisposable
         GC.SuppressFinalize(this);
     }
 
-    ~ImageInfoWindow()
+    protected override void OnDetachedFromLogicalTree(LogicalTreeAttachmentEventArgs e)
     {
         Disposable.Dispose(_disposables);
+        base.OnDetachedFromLogicalTree(e);
     }
 }

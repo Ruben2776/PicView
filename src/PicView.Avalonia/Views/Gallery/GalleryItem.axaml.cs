@@ -45,10 +45,9 @@ public partial class GalleryItem : NavigateAbleItem
         ContextMenu = _contextMenu;
     }
 
-    public async Task LoadImage()
+    public async Task LoadImage(GalleryItemViewModel vm)
     {
-        var vm = Dispatcher.UIThread.Invoke(() => DataContext as GalleryItemViewModel);
-        if (vm is null)
+        if (vm.ThumbnailLoaderFunc is null)
         {
             return;
         }
@@ -65,7 +64,9 @@ public partial class GalleryItem : NavigateAbleItem
         }
 
         // ReSharper disable once MethodHasAsyncOverload
+#pragma warning disable MA0042
         _loadCts?.Cancel();
+#pragma warning restore MA0042
         _loadCts = new CancellationTokenSource();
         var token = _loadCts.Token;
 

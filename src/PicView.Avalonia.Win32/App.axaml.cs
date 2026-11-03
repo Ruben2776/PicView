@@ -131,7 +131,7 @@ public class App : Application, IPlatformSpecificService
         {
             var style = (WallpaperHelper.WallpaperStyle)wallpaperStyle;
             WallpaperHelper.SetDesktopWallpaper(path, style);
-        });
+        }).ConfigureAwait(false);
     }
 
     public bool SetAsLockScreen(string path)
@@ -142,7 +142,7 @@ public class App : Application, IPlatformSpecificService
 
     public async Task<bool> ExtractWithLocalSoftwareAsync(string path, string tempDirectory)
     {
-        return await ArchiveExtractionHelper.ExtractWithLocalSoftwareAsync(path, tempDirectory);
+        return await ArchiveExtractionHelper.ExtractWithLocalSoftwareAsync(path, tempDirectory).ConfigureAwait(false);
     }
 
     public string DefaultJsonKeyMap()

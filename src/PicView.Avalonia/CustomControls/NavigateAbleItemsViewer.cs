@@ -121,10 +121,11 @@ public class NavigateAbleItemsViewer : ItemsControl
         navItem.SetCurrent(CurrentItemIndex >= 0 && index == CurrentItemIndex);
         navItem.SetSelected(SelectedItemIndex >= 0 && index == SelectedItemIndex);
 
-        if (navItem is GalleryItem galleryItem)
+        if (navItem is not GalleryItem { DataContext: GalleryItemViewModel vm } galleryItem)
         {
-            _ = galleryItem.LoadImage().ConfigureAwait(false);
+            return;
         }
+        _ = galleryItem.LoadImage(vm).ConfigureAwait(false);
     }
 
     protected override void ClearContainerForItemOverride(Control container)

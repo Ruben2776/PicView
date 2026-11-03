@@ -159,7 +159,7 @@ public static class GetImageModel
         }
         catch (OperationCanceledException)
         {
-            return null;
+            return null!;
         }
         catch (Exception e)
         {
