@@ -57,7 +57,7 @@ public readonly record struct WindowModeState
     /// <summary>
     /// The mode the window is shown in, or will be shown in again once it is no longer minimized.
     /// </summary>
-    private WindowMode Shown => Mode is WindowMode.Minimized ? BeforeMinimized : Mode;
+    public WindowMode Shown => Mode is WindowMode.Minimized ? BeforeMinimized : Mode;
 
     /// <summary>
     /// The state a window opens in, before <see cref="Start"/> gives it the remembered mode: Normal, following the
