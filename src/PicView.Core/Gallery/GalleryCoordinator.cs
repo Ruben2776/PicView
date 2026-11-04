@@ -433,14 +433,16 @@ public class GalleryCoordinator : IDisposable
             });
 
             // The current image and the surrounding files come first. Nothing else sees these items yet, so their
-            // details need no queue
+            // details need no queue. Files are read one at a time: ImageMagick serializes its reads, so reading in
+            // parallel only queues them behind each other
             var center = Math.Clamp(currentIndex, 0, Math.Max(0, files.Count - 1));
             var start = Math.Max(0, center - NeighborsEachSide);
             var end = Math.Min(files.Count, center + NeighborsEachSide + 1);
-            Parallel.For(start, end, parallelOptions, i =>
+            for (var i = start; i < end; i++)
             {
+                ct.ThrowIfCancellationRequested();
                 items[i].SetDetails(ReadDetails(files[i]) ?? GalleryFileDetails.Unreadable);
-            });
+            }
 
             // Cancellation happens on the queue too, so a change that started the load again owns the items
             await Enqueue(() =>
@@ -478,12 +480,13 @@ public class GalleryCoordinator : IDisposable
                     break;
                 }
 
-                // Read the batch's details in parallel; the array keeps them in the batch's order
+                // Read the batch's details one at a time; the array keeps them in the batch's order
                 var details = new GalleryFileDetails[batch.Length];
-                Parallel.For(0, batch.Length, parallelOptions, i =>
+                for (var i = 0; i < batch.Length; i++)
                 {
+                    ct.ThrowIfCancellationRequested();
                     details[i] = ReadDetails(batch[i].FileInfo!) ?? GalleryFileDetails.Unreadable;
-                });
+                }
 
                 await Enqueue(() =>
                 {

@@ -1,4 +1,5 @@
 using System.Collections.Specialized;
+using System.Diagnostics;
 using ImageMagick;
 using ObservableCollections;
 using PicView.Core.Extensions;
@@ -536,6 +537,22 @@ public class GalleryFollowsFilesTests : IDisposable
         Assert.Equal(81, tab.Gallery.GalleryItems.Count(item => item.Details is not null));
     }
 
+    [Fact]
+    public async Task Load_ReadsOneFileAtATime()
+    {
+        // ImageMagick serializes its reads, so reading files in parallel only queues them behind each other
+        var tab = CreateTab();
+        Show(tab);
+        var reader = new OverlapCountingReader();
+        tab.GalleryCoordinator!.ReadDetails = reader.Read;
+        var names = Names(1, 100);
+
+        tab.ImageIterator.Initialize(await FilesAsync(names));
+        await WaitUntilLoadedAsync(tab, names);
+
+        Assert.Equal(1, reader.MostAtOnce);
+    }
+
     #region File limit
 
     [Fact]
@@ -791,6 +808,38 @@ public class GalleryFollowsFilesTests : IDisposable
                 _reads.Add(file.Name);
             }
             return DetailsOf(file.Name);
+        }
+    }
+
+    /// <summary>
+    /// Stands in for reading files and counts how many reads are in flight at once. Each read takes a moment, so reads
+    /// started together overlap.
+    /// </summary>
+    private sealed class OverlapCountingReader
+    {
+        private int _inFlight;
+        private int _mostAtOnce;
+
+        /// <summary>The most reads that were in flight at the same time.</summary>
+        public int MostAtOnce => Volatile.Read(ref _mostAtOnce);
+
+        public GalleryFileDetails? Read(FileInfo file)
+        {
+            var inFlight = Interlocked.Increment(ref _inFlight);
+            int mostAtOnce;
+            while ((mostAtOnce = Volatile.Read(ref _mostAtOnce)) < inFlight &&
+                   Interlocked.CompareExchange(ref _mostAtOnce, inFlight, mostAtOnce) != mostAtOnce)
+            {
+            }
+
+            var started = Stopwatch.GetTimestamp();
+            while (Stopwatch.GetElapsedTime(started).TotalMicroseconds < 200)
+            {
+                Thread.SpinWait(50);
+            }
+
+            Interlocked.Decrement(ref _inFlight);
+            return new GalleryFileDetails(200, 100, null);
         }
     }
 }
