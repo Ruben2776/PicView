@@ -363,18 +363,17 @@ public static class ExifReader
         return titleTag ?? string.Empty;
     }
 
-    public static string GetSubject(IExifProfile? profile)
-    {
-        var xPSubject = profile?.GetValue(ExifTag.XPSubject)?.Value;
-        var subject = xPSubject is null ? string.Empty : Encoding.ASCII.GetString(xPSubject);
-        if (!string.IsNullOrWhiteSpace(subject))
-        {
-            return subject;
-        }
+    public static string GetSubject(IExifProfile? profile) => GetXpString(profile?.GetValue(ExifTag.XPSubject)?.Value);
 
-        var subjectTag = profile?.GetValue(ExifTag.XPSubject)?.Value;
-        return subjectTag?.GetValue(0)?.ToString() ?? string.Empty;
-    }
+    /// <summary>
+    /// Retrieves the Windows keywords (tags) from the specified Exif profile.
+    /// Windows stores them as one semicolon-separated string, which is returned as is.
+    /// </summary>
+    public static string GetKeywords(IExifProfile? profile) => GetXpString(profile?.GetValue(ExifTag.XPKeywords)?.Value);
+
+    // Windows XP* tags hold null-terminated UTF-16LE text.
+    private static string GetXpString(byte[]? value) =>
+        value is null ? string.Empty : Encoding.Unicode.GetString(value).TrimEnd('\0');
 
     /// <summary>
     /// Retrieves the user comment from the specified Exif profile, if available.

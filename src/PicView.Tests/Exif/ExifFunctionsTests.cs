@@ -230,6 +230,57 @@ public class ExifFunctionsTests : IDisposable
     }
 
     [Fact]
+    public async Task AddKeywords_ValidString_RoundTripsThroughReader()
+    {
+        var fileInfo = CreateImage(MagickFormat.Jpeg);
+        const string keywords = "风景;山;Holiday";
+
+        var actual = await ExifWriter.AddKeywords(fileInfo, keywords);
+
+        Assert.True(actual);
+        var profile = ReadProfile(fileInfo);
+        Assert.NotNull(profile);
+        Assert.Equal(Encoding.Unicode.GetBytes(keywords), profile.GetValue(ExifTag.XPKeywords)?.Value);
+        Assert.Equal(keywords, ExifReader.GetKeywords(profile));
+    }
+
+    [Fact]
+    public async Task AddKeywords_NullString_ReturnsFalseAndLeavesFileUntouched()
+    {
+        var fileInfo = CreateImage(MagickFormat.Jpeg);
+        var expected = await ReadAllBytesAsync(fileInfo);
+
+        var actual = await ExifWriter.AddKeywords(fileInfo, null);
+
+        Assert.False(actual);
+        Assert.Equal(expected, await ReadAllBytesAsync(fileInfo));
+    }
+
+    [Fact]
+    public void GetKeywords_NullTerminatedUtf16_ReturnsTextWithoutTerminator()
+    {
+        var profile = new ExifProfile();
+        profile.SetValue(ExifTag.XPKeywords, Encoding.Unicode.GetBytes("cat;dog\0"));
+
+        Assert.Equal("cat;dog", ExifReader.GetKeywords(profile));
+    }
+
+    [Fact]
+    public void GetKeywords_NoProfile_ReturnsEmpty()
+    {
+        Assert.Equal(string.Empty, ExifReader.GetKeywords(null));
+    }
+
+    [Fact]
+    public void GetSubject_Utf16Value_DecodesAsUnicode()
+    {
+        var profile = new ExifProfile();
+        profile.SetValue(ExifTag.XPSubject, Encoding.Unicode.GetBytes("主题\0"));
+
+        Assert.Equal("主题", ExifReader.GetSubject(profile));
+    }
+
+    [Fact]
     public async Task AddTitle_ValidString_WritesTitleToProfile()
     {
         var fileInfo = CreateImage(MagickFormat.Jpeg);

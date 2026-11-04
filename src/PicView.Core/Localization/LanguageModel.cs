@@ -223,6 +223,7 @@ public class LanguageModel
     public string? InterfaceConfiguration { get; set; }
     public string? ISOSpeed { get; set; }
     public string? ItemSpacing { get; set; }
+    public string? Keywords { get; set; }
     public string? Landscape { get; set; }
     public string? LandscapeCrisp { get; set; }
     public string? Language { get; set; }

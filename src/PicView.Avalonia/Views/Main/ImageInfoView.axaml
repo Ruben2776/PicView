@@ -1043,6 +1043,34 @@
                                 </customControls:CopyButton>
                             </StackPanel>
 
+                            <!--  Keywords  -->
+                            <StackPanel Margin="10" Orientation="Horizontal">
+                                <TextBlock
+                                    Width="{CompiledBinding InfoWindow.TextWidth}"
+                                    Margin="0,8,2,0"
+                                    Classes="txt"
+                                    Text="{CompiledBinding Translation.Keywords.Value,
+                                                           Mode=OneWay}" />
+                                <customControls:FuncTextBox
+                                    x:Name="KeywordsBox"
+                                    Width="{CompiledBinding InfoWindow.TextBoxXxlWidth.Value}"
+                                    MaxHeight="84"
+                                    Classes=" TStyle x"
+                                    Command="{CompiledBinding Exif.SetKeywordsCommand}"
+                                    CommandParameter="{Binding $self.Text}"
+                                    Text="{CompiledBinding Exif.Keywords.Value,
+                                                           Mode=TwoWay}" />
+                                <customControls:CopyButton
+                                    Classes="ToolButtonHover ToolWindowBorderStyle"
+                                    CopyText="{CompiledBinding Exif.Keywords.Value,
+                                                               Mode=OneWay}"
+                                    IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
+                                    ToolTip.Tip="{CompiledBinding Translation.Copy.Value,
+                                                                  Mode=OneWay}">
+                                    <Path Classes="CopyPath Xl" />
+                                </customControls:CopyButton>
+                            </StackPanel>
+
                             <!--  Title  -->
                             <StackPanel Margin="10" Orientation="Horizontal">
                                 <TextBlock

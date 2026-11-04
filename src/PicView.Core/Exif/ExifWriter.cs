@@ -91,6 +91,26 @@ public static class ExifWriter
         }, nameof(ExifWriter), nameof(AddSubject));
 
     /// <summary>
+    /// Sets the Windows keywords (tags) in the EXIF metadata of an image file.
+    /// </summary>
+    /// <param name="fileInfo">The image file to update.</param>
+    /// <param name="value">The keywords, separated by semicolons as Windows expects.</param>
+    /// <returns>A task that represents the asynchronous operation. The task result contains true if the operation succeeded; otherwise, false.</returns>
+    public static Task<bool> AddKeywords(FileInfo? fileInfo, string? value) =>
+        ExifFunctions.TryUpdateImageProfileAsync(fileInfo, magickImage =>
+        {
+            if (value is null)
+            {
+                return false;
+            }
+
+            var profile = magickImage.GetExifProfile() ?? new ExifProfile();
+            profile.SetValue(ExifTag.XPKeywords, Encoding.Unicode.GetBytes(value));
+            magickImage.SetProfile(profile);
+            return true;
+        }, nameof(ExifWriter), nameof(AddKeywords));
+
+    /// <summary>
     /// Adds a title to the EXIF metadata of an image file.
     /// </summary>
     /// <param name="fileInfo">The image file to update.</param>

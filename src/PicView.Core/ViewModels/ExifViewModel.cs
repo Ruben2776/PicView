@@ -35,6 +35,7 @@ public class ExifViewModel : IDisposable
         SetCopyrightCommand = new ReactiveCommand<string>(async (s, _) => { Copyright.Value = s; await AddExifPropertyAsync(ExifWriter.AddCopyright, s).ConfigureAwait(false); });
         SetSoftwareCommand = new ReactiveCommand<string>(async (s, _) => { Software.Value = s; await AddExifPropertyAsync(ExifWriter.AddSoftware, s).ConfigureAwait(false); });
         SetSubjectCommand = new ReactiveCommand<string>(async (s, _) => { Subject.Value = s; await AddExifPropertyAsync(ExifWriter.AddSubject, s).ConfigureAwait(false); });
+        SetKeywordsCommand = new ReactiveCommand<string>(async (s, _) => { Keywords.Value = s; await AddExifPropertyAsync(ExifWriter.AddKeywords, s).ConfigureAwait(false); });
         SetTitleCommand = new ReactiveCommand<string>(async (s, _) => { Title.Value = s; await AddExifPropertyAsync(ExifWriter.AddTitle, s).ConfigureAwait(false); });
         SetCommentCommand = new ReactiveCommand<string>(async (s, _) => { Comment.Value = s; await AddExifPropertyAsync(ExifWriter.AddComment, s).ConfigureAwait(false); });
         SetLatitudeCommand = new ReactiveCommand<string>(async (s, _) => { Latitude.Value = s; await AddExifPropertyAsync(GpsHelper.AddLatitude, s).ConfigureAwait(false); });
@@ -167,6 +168,7 @@ public class ExifViewModel : IDisposable
     public ReactiveCommand<string> SetCopyrightCommand { get; set; }
     public ReactiveCommand<string> SetSoftwareCommand { get; set; }
     public ReactiveCommand<string> SetSubjectCommand { get; set; }
+    public ReactiveCommand<string> SetKeywordsCommand { get; set; }
     public ReactiveCommand<string> SetTitleCommand { get; set; }
     public ReactiveCommand<string> SetCommentCommand { get; set; }
     public ReactiveCommand<string> SetLatitudeCommand { get; set; }
@@ -235,6 +237,8 @@ public class ExifViewModel : IDisposable
     public BindableReactiveProperty<string?> Title { get; } = new();
 
     public BindableReactiveProperty<string?> Subject { get; } = new();
+
+    public BindableReactiveProperty<string?> Keywords { get; } = new();
 
     public BindableReactiveProperty<string?> Software { get; } = new();
 
@@ -377,6 +381,7 @@ public class ExifViewModel : IDisposable
             SizeMp,
             Software,
             Subject,
+            Keywords,
             Title,
             WhiteBalance,
             ImageFormat,
@@ -384,6 +389,7 @@ public class ExifViewModel : IDisposable
             SetCopyrightCommand,
             SetSoftwareCommand,
             SetSubjectCommand,
+            SetKeywordsCommand,
             SetTitleCommand,
             SetCommentCommand,
             SetLatitudeCommand,
@@ -812,6 +818,7 @@ public class ExifViewModel : IDisposable
             Copyright.Value = profile?.GetValue(ExifTag.Copyright)?.Value ?? string.Empty;
             Title.Value = ExifReader.GetTitle(profile);
             Subject.Value = ExifReader.GetSubject(profile);
+            Keywords.Value = ExifReader.GetKeywords(profile);
             Software.Value = profile?.GetValue(ExifTag.Software)?.Value ?? string.Empty;
             ResolutionUnit.Value = ExifReader.GetResolutionUnit(profile);
             ColorRepresentation.Value = profile?.GetValue(ExifTag.ColorSpace)?.Value ?? 0;
@@ -903,6 +910,7 @@ public class ExifViewModel : IDisposable
         Authors.Value = string.Empty;
         Software.Value = string.Empty;
         Subject.Value = string.Empty;
+        Keywords.Value = string.Empty;
         Title.Value = string.Empty;
         Comment.Value = string.Empty;
         Latitude.Value = null;

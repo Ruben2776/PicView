@@ -167,6 +167,7 @@ public class TranslationViewModel
         InterfaceConfiguration.Value = t.InterfaceConfiguration;
         ISOSpeed.Value = t.ISOSpeed;
         ItemSpacing.Value = t.ItemSpacing;
+        Keywords.Value = t.Keywords;
         Language.Value = t.Language;
         LastAccessTime.Value = t.LastAccessTime;
         LastImage.Value = t.LastImage;
@@ -543,6 +544,7 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> InterfaceConfiguration { get; } = new();
     public BindableReactiveProperty<string?> ISOSpeed { get; } = new();
     public BindableReactiveProperty<string?> ItemSpacing { get; } = new();
+    public BindableReactiveProperty<string?> Keywords { get; } = new();
     public BindableReactiveProperty<string?> Language { get; } = new();
     public BindableReactiveProperty<string?> LastAccessTime { get; } = new();
     public BindableReactiveProperty<string?> LastImage { get; } = new();
