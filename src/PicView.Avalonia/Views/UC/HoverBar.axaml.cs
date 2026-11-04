@@ -16,6 +16,13 @@ namespace PicView.Avalonia.Views.UC;
 
 public partial class HoverBar : UserControl, IDisposable
 {
+    /// <summary>Transparent room above the bar that fades it in, over a docked gallery; 30 px keeps it reachable.</summary>
+    private const double DockedDetectionMargin = 30;
+    /// <summary>Gap between the bar and a docked gallery below it.</summary>
+    private const double DockedGap = 6;
+    /// <summary>Room above and below the bar without a docked gallery; 160 px in all.</summary>
+    private const double UndockedMargin = 61.5;
+
     private DisposableBag _disposables;
     public HoverBar()
     {
@@ -214,8 +221,27 @@ public partial class HoverBar : UserControl, IDisposable
         // Make sure hover bar is above the bottom gallery if needed
         var isDockedGalleryShown = mainWindow.ViewModel is { } vm &&
                                    vm.WindowTabs.ActiveTab.CurrentValue.Gallery.IsDockedGalleryVisible.CurrentValue;
-        var newHeight = isDockedGalleryShown ? 50 : 160;
-        Height = mainWindow.UIHelper.GetMainView.Bounds.Height > SizeDefaults.WindowMinSize ? newHeight : double.NaN;
+        if (mainWindow.UIHelper.GetMainView.Bounds.Height > SizeDefaults.WindowMinSize)
+        {
+            ApplyDetectionArea(isDockedGalleryShown);
+        }
+        else
+        {
+            BottomBorder.Margin = new Thickness(0);
+            Height = double.NaN;
+        }
+    }
+
+    /// <summary>
+    ///     Sizes the transparent area the pointer enters to fade the bar in: the bar sits at the bottom with a gap
+    ///     below it, and the room above it is what the pointer has to reach.
+    /// </summary>
+    internal void ApplyDetectionArea(bool isDockedGalleryShown)
+    {
+        var above = isDockedGalleryShown ? DockedDetectionMargin : UndockedMargin;
+        var below = isDockedGalleryShown ? DockedGap : UndockedMargin;
+        BottomBorder.Margin = new Thickness(0, 0, 0, below);
+        Height = above + BottomBorder.Height + below;
     }
 
 

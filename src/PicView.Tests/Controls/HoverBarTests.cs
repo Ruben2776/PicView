@@ -72,6 +72,28 @@ public class HoverBarTests
         window.Close();
     }
 
+    [AvaloniaFact]
+    public void ApplyDetectionArea_OverADockedGallery_Leaves30PxAboveTheBar()
+    {
+        var bar = new HoverBar();
+
+        bar.ApplyDetectionArea(isDockedGalleryShown: true);
+
+        Assert.Equal(30, bar.Height - bar.BottomBorder.Height - bar.BottomBorder.Margin.Bottom);
+        Assert.Equal(6, bar.BottomBorder.Margin.Bottom);
+    }
+
+    [AvaloniaFact]
+    public void ApplyDetectionArea_WithoutADockedGallery_KeepsTheBarWhereItWas()
+    {
+        var bar = new HoverBar();
+
+        bar.ApplyDetectionArea(isDockedGalleryShown: false);
+
+        Assert.Equal(160, bar.Height);
+        Assert.Equal(61.5, bar.BottomBorder.Margin.Bottom);
+    }
+
     private sealed class MockFrameProvider : FrameProvider
     {
         public override long GetFrameCount() => 0;

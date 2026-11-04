@@ -14,7 +14,9 @@
     <Border
         x:Name="BottomBorder"
         Height="37"
+        Margin="0,0,0,61.5"
         MaxWidth="775"
+        VerticalAlignment="Bottom"
         Background="{DynamicResource HoverBarBackgroundColor}"
         BorderBrush="{DynamicResource HoverBarBorderColor}"
         BorderThickness="1"
