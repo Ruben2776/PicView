@@ -54,7 +54,7 @@ public static class UpdateImage
         SetTaskbarProgress(vm, tab);
     }
 
-    private static void SetTaskbarProgress(MainWindowViewModel vm, TabViewModel tab)
+    internal static void SetTaskbarProgress(MainWindowViewModel vm, TabViewModel tab)
     {
         if (Settings.UIProperties.IsTaskbarProgressEnabled && vm.Core.PlatformService is { } platform &&
             tab.ImageIterator is { CurrentIndex: > -1 } iterator && iterator.Files.Count > 0)

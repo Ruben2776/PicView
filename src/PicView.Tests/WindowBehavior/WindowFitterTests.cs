@@ -25,7 +25,8 @@ public class WindowFitterTests
         TranslationManager.Init();
         Settings.WindowProperties.AutoFit = false;
         Settings.ImageScaling.ZoomToFit = false;
-        _core = new CoreViewModel(null, _ => ValueTask.FromResult(new ImageModel()));
+        _core = new CoreViewModel(null, _ => ValueTask.FromResult(new ImageModel()),
+            new GlobalSettingsViewModel(static () => ValueTask.FromResult(true)));
     }
 
     [AvaloniaFact]
@@ -97,6 +98,61 @@ public class WindowFitterTests
         Assert.True(tab.Zoom.Level.CurrentValue > 100);
         Assert.Equal(Convert.ToInt32(tab.Zoom.FitScale * 100), tab.Zoom.Level.CurrentValue);
         Assert.Equal(400 * tab.Zoom.FitScale, vm.ImageWidth.Value, precision: 6);
+    }
+
+    [AvaloniaFact]
+    public void FollowFitInputs_ZoomToFitTurnsOn_FitsWithoutARefit()
+    {
+        var (fitter, vm, window) = CreateShownWindow(800, 600);
+        using var following = fitter.FollowFitInputs();
+        var tab = vm.WindowTabs.ActiveTab.Value;
+        tab.Display(Model("a.jpg", 400, 300));
+        fitter.Refit();
+        Assert.Equal(100, tab.Zoom.Level.CurrentValue);
+
+        vm.GlobalSettings.IsZoomedToFit.Value = true;
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.True(tab.Zoom.Level.CurrentValue > 100);
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public void FollowFitInputs_ScrollingTurnsOn_FitsToTheWidthWithoutARefit()
+    {
+        var (fitter, vm, window) = CreateShownWindow(800, 600);
+        using var following = fitter.FollowFitInputs();
+        var tab = vm.WindowTabs.ActiveTab.Value;
+        tab.Display(Model("a.jpg", 1600, 2400));
+        fitter.Refit();
+        var widthBefore = vm.ImageWidth.Value;
+        Assert.True(double.IsNaN(vm.ScrollViewerHeight.Value));
+
+        vm.GlobalSettings.IsScrollingEnabled.Value = true;
+        Dispatcher.UIThread.RunJobs();
+
+        // Scrolling fits the width and scrolls the rest of the height
+        Assert.True(vm.ImageWidth.Value > widthBefore);
+        Assert.False(double.IsNaN(vm.ScrollViewerHeight.Value));
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public void FollowFitInputs_SideBySideTurnsOff_FitsTheOneImageWithoutARefit()
+    {
+        var (fitter, vm, window) = CreateShownWindow(800, 600);
+        using var following = fitter.FollowFitInputs();
+        vm.GlobalSettings.IsSideBySide.Value = true;
+        var tab = vm.WindowTabs.ActiveTab.Value;
+        tab.Display(Model("a.jpg", 400, 300), Model("b.jpg", 400, 300));
+        fitter.Refit();
+        var pairWidth = vm.ImageWidth.Value;
+
+        vm.GlobalSettings.IsSideBySide.Value = false;
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Equal(pairWidth / 2, vm.ImageWidth.Value, precision: 6);
+        window.Close();
     }
 
     [AvaloniaFact]

@@ -3,6 +3,7 @@ using Avalonia.Media;
 using Avalonia.Threading;
 using PicView.Core.ColorHandling;
 using PicView.Core.ViewModels;
+using R3;
 
 // ReSharper disable PossibleLossOfFraction
 
@@ -73,19 +74,7 @@ public static class BackgroundManager
     /// <param name="choice">The background choice to set.</param>
     public static void SetBackground(MainWindowViewModel vm, int choice)
     {
-        Settings.UIProperties.BgColorChoice = choice;
-        if (Settings.UIProperties.IsConstrainBackgroundColorEnabled)
-        {
-            vm.GlobalSettings.ImageBackground.Value = new SolidColorBrush(Colors.Transparent);
-            vm.GlobalSettings.ConstrainedImageBackground.Value = GetBackgroundBrush((BackgroundType)choice);
-        }
-        else
-        {
-            vm.GlobalSettings.ImageBackground.Value = GetBackgroundBrush((BackgroundType)choice);
-            vm.GlobalSettings.ConstrainedImageBackground.Value = new SolidColorBrush(Colors.Transparent);
-        }
-        
-        vm.GlobalSettings.BackgroundChoice.Value = choice;
+        SetBackground(vm.GlobalSettings, choice);
     }
 
     /// <summary>
@@ -180,12 +169,18 @@ public static class BackgroundManager
             return;
         }
         
-        var globalSettings = core.GlobalSettings;
+        SetBackground(core.GlobalSettings, backgroundIndex);
+    }
 
-        Settings.UIProperties.BgColorChoice = backgroundIndex;
-                 
-        var brush = GetBackgroundBrush((BackgroundType)backgroundIndex);
-                 
+    /// <summary>
+    /// Sets the two background brushes and the choice on the global settings.
+    /// </summary>
+    public static void SetBackground(GlobalSettingsViewModel globalSettings, int choice)
+    {
+        Settings.UIProperties.BgColorChoice = choice;
+
+        var brush = GetBackgroundBrush((BackgroundType)choice);
+
         if (Settings.UIProperties.IsConstrainBackgroundColorEnabled)
         {
             globalSettings.ImageBackground.Value = new SolidColorBrush(Colors.Transparent);
@@ -196,7 +191,16 @@ public static class BackgroundManager
             globalSettings.ImageBackground.Value = brush;
             globalSettings.ConstrainedImageBackground.Value = new SolidColorBrush(Colors.Transparent);
         }
-                 
-        globalSettings.BackgroundChoice.Value = backgroundIndex;
+
+        globalSettings.BackgroundChoice.Value = choice;
+    }
+
+    /// <summary>
+    /// Re-derives the two brushes when the constrain setting changes. Lives for the process.
+    /// </summary>
+    public static IDisposable Follow(GlobalSettingsViewModel globalSettings)
+    {
+        return globalSettings.IsConstrainingBackgroundColor.Skip(1).Subscribe(_ =>
+            Dispatcher.UIThread.Post(() => SetBackground(globalSettings, Settings.UIProperties.BgColorChoice)));
     }
 }

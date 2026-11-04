@@ -92,7 +92,7 @@ public class AppLifecycleTests : IAsyncDisposable
                 file.Extension.Equals(".tif", StringComparison.OrdinalIgnoreCase)
                     ? ThreePageTiff(file)
                     : new ImageModel { FileInfo = file });
-        });
+        }, new GlobalSettingsViewModel(static () => ValueTask.FromResult(true)));
         _provider = new LifecycleWindowProvider(_core);
         _sharedFiles = new FolderSharedFiles(_folder);
     }
@@ -138,6 +138,22 @@ public class AppLifecycleTests : IAsyncDisposable
         var tab = ViewModelOf(app.MainWindows.Open[0]).WindowTabs.ActiveTab.CurrentValue;
         Assert.Equal(TitlePhase.None, tab.Titles.Phase);
         Assert.Equal(TranslationManager.Translation.NoImage, tab.Titles.Title);
+    }
+
+    [AvaloniaFact]
+    public async Task TopMost_Changed_EveryMainWindowFollows()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        await app.MainWindows.OpenNewAsync();
+        Dispatcher.UIThread.RunJobs();
+        Assert.Equal(2, _provider.Created.Count);
+        Assert.All(_provider.Created, w => Assert.False(w.Topmost));
+
+        _core.GlobalSettings.IsTopMost.Value = true;
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.All(_provider.Created, w => Assert.True(w.Topmost));
     }
 
     [AvaloniaFact]

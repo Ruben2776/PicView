@@ -331,7 +331,7 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
 
         if (TopLevel.GetTopLevel(this) is MainWindow { ViewModel: { } vm })
         {
-            vm.IsScrollingEnabled.Subscribe(isScrolling =>
+            vm.GlobalSettings.IsScrollingEnabled.Subscribe(isScrolling =>
             {
                 ImageScrollViewer.VerticalScrollBarVisibility = isScrolling ?
                     ScrollBarVisibility.Visible : ScrollBarVisibility.Disabled;

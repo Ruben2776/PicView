@@ -366,6 +366,29 @@ public sealed class MainWindowLifecycle
     }
 
     /// <summary>
+    /// Every Main Window follows the two window settings, top most and the taskbar progress (ADR-0020).
+    /// </summary>
+    internal static IDisposable FollowSettings(MainWindow window)
+    {
+        var vm = ViewModelOf(window);
+        var settings = vm.GlobalSettings;
+        return Disposable.Combine(
+            // Not Skip(1), so a new window takes the setting as it is
+            settings.IsTopMost.Subscribe(topMost => Dispatcher.UIThread.Post(() => window.Topmost = topMost)),
+            settings.IsShowingTaskbarProgress.Skip(1).Subscribe(shown => Dispatcher.UIThread.Post(() =>
+            {
+                if (shown)
+                {
+                    UpdateImage.SetTaskbarProgress(vm, vm.WindowTabs.ActiveTab.CurrentValue);
+                }
+                else
+                {
+                    vm.Core.PlatformService?.StopTaskbarProgress();
+                }
+            })));
+    }
+
+    /// <summary>
     /// Starts a shown window in its Window Mode and gives it its Actions, input handlers and menus.
     /// </summary>
     private static Task SetUpShownWindow(MainWindow window, bool isAppStart)
@@ -373,6 +396,7 @@ public sealed class MainWindowLifecycle
         var vm = ViewModelOf(window);
         window.WindowModeSwitcher.Start(isAppStart);
         window.Disposables.Add(window.WindowFitter.FollowFitInputs());
+        window.Disposables.Add(FollowSettings(window));
         if (vm.IsFullscreen.Value)
         {
             Dispatcher.UIThread.Post(() =>
@@ -390,10 +414,6 @@ public sealed class MainWindowLifecycle
         {
             vm.ActionRunner = new FunctionsMapper(vm, window);
             vm.IsScrollingEnabled.Value = Settings.Zoom.ScrollEnabled;
-            if (Settings.WindowProperties.TopMost)
-            {
-                Dispatcher.UIThread.Invoke(() => { window.Topmost = true; });
-            }
             vm.WindowTabs.SetSortOrder((SortFilesBy)Settings.Sorting.SortPreference);
         });
 

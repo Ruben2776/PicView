@@ -18,6 +18,7 @@ using PicView.Core.FileHandling;
 using PicView.Core.Navigation;
 using PicView.Core.ProcessHandling;
 using PicView.Core.ViewModels;
+using R3;
 
 namespace PicView.Avalonia.StartUp;
 
@@ -297,6 +298,7 @@ public sealed class AppLifecycle
     private void ApplySharedSettings(bool settingsExists)
     {
         ComposeServices();
+        FollowSharedSettings();
         _ = Task.Run(() =>
         {
             _core.GlobalSettings.BackgroundChoice.Value = Settings.UIProperties.BgColorChoice;
@@ -306,6 +308,24 @@ public sealed class AppLifecycle
         });
         ThemeManager.DetermineTheme(Application.Current, settingsExists);
         ColorManager.UpdateAccentColors(Settings.Theme.ColorTheme);
+    }
+
+    private void FollowSharedSettings()
+    {
+        var settings = _core.GlobalSettings;
+        // Both live for the process, as IPC does
+        _ = BackgroundManager.Follow(settings);
+        _ = settings.IsOpeningInSameWindow.Skip(1).Subscribe(sameWindow =>
+        {
+            if (sameWindow)
+            {
+                _ = IPC.StartListeningForArguments();
+            }
+            else
+            {
+                IPC.StopListening();
+            }
+        });
     }
 
     /// <summary>
@@ -328,6 +348,8 @@ public sealed class AppLifecycle
         var fileWatcher = new FileWatcherService(platform.CompareStrings, _core.SharedCache, _core.SharedThumbnailCache,
             fileRenamed: (oldPath, newPath) => FileRenames.Follow(_core, oldPath, newPath),
             folderRenamed: (oldFolder, newFolder) => FileRenames.FollowFolder(_core, oldFolder, newFolder));
+        // Every tab's watch follows the setting
+        _ = _core.GlobalSettings.IsIncludingSubdirectories.Skip(1).Subscribe(_ => fileWatcher.RestartWatches());
         var navigation = new NavigationService(platform.CompareStrings);
         _core.InitializeNavigation(
             new TabServices(_core.SharedCache, _core.SharedThumbnailCache, thumbnailLoader, fileWatcher, imageLoader,
