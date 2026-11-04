@@ -58,6 +58,20 @@ public class DropDownMenuViewModelTests
     }
 
     [Fact]
+    public void Dispose_ThenSettingChanged_IsFileHistoryVisibleStops()
+    {
+        var settings = NewSettings();
+        settings.IsFileHistoryEnabled.Value = true;
+        var menu = new DropDownMenuViewModel(settings);
+        Assert.True(menu.IsFileHistoryVisible.Value);
+
+        menu.Dispose();
+        settings.IsFileHistoryEnabled.Value = false;
+
+        Assert.True(menu.IsFileHistoryVisible.Value);
+    }
+
+    [Fact]
     public void IsFileHistoryVisible_NoSettings_False()
     {
         var menu = new DropDownMenuViewModel();

@@ -28,7 +28,7 @@
                 x:Name="ScrollToggleButton"
                 Classes="MenuItemHover settingsToggleButton"
                 Command="{CompiledBinding MainWindows.ActiveWindow.Value.RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ToggleScroll}"
-                IsChecked="{CompiledBinding GlobalSettings.IsScrollingEnabled.Value}"
+                IsChecked="{CompiledBinding GlobalSettings.IsScrollingEnabled.Value, Mode=OneWay}"
                 Text="{CompiledBinding GlobalSettings.ScrollingText.Value,
                                        Mode=OneWay}" />
         </Border>

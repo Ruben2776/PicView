@@ -117,7 +117,7 @@
                         Command="{CompiledBinding RunActionCommand}"
                         CommandParameter="{x:Static keybindings:Actions.ToggleScroll}"
                         Foreground="{DynamicResource MainTextColor}"
-                        IsChecked="{CompiledBinding GlobalSettings.IsScrollingEnabled.Value}"
+                        IsChecked="{CompiledBinding GlobalSettings.IsScrollingEnabled.Value, Mode=OneWay}"
                         Text="{CompiledBinding GlobalSettings.ScrollingText.Value,
                                                Mode=OneWay}"
                         TextMaxWidth="150"
@@ -156,7 +156,7 @@
                         Command="{CompiledBinding RunActionCommand}"
                         CommandParameter="{x:Static keybindings:Actions.ZoomToFit}"
                         Foreground="{DynamicResource MainTextColor}"
-                        IsChecked="{CompiledBinding GlobalSettings.IsZoomedToFit.Value}"
+                        IsChecked="{CompiledBinding GlobalSettings.IsZoomedToFit.Value, Mode=OneWay}"
                         Text="{CompiledBinding Translation.ZoomToFit.Value,
                                                Mode=OneWay}"
                         TextMaxWidth="150"
@@ -197,7 +197,7 @@
                         Command="{CompiledBinding RunActionCommand}"
                         CommandParameter="{x:Static keybindings:Actions.SetTopMost}"
                         Foreground="{DynamicResource MainTextColor}"
-                        IsChecked="{CompiledBinding GlobalSettings.IsTopMost.Value}"
+                        IsChecked="{CompiledBinding GlobalSettings.IsTopMost.Value, Mode=OneWay}"
                         Text="{CompiledBinding Translation.StayTopMost.Value,
                                                Mode=OneWay}"
                         TextMaxWidth="150"
@@ -217,7 +217,7 @@
                         Command="{CompiledBinding RunActionCommand}"
                         CommandParameter="{x:Static keybindings:Actions.ToggleSubdirectories}"
                         Foreground="{DynamicResource MainTextColor}"
-                        IsChecked="{CompiledBinding GlobalSettings.IsIncludingSubdirectories.Value}"
+                        IsChecked="{CompiledBinding GlobalSettings.IsIncludingSubdirectories.Value, Mode=OneWay}"
                         Text="{CompiledBinding Translation.SearchSubdirectory.Value,
                                                Mode=OneWay}"
                         TextMaxWidth="150"

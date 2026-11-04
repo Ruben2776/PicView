@@ -765,10 +765,6 @@ public class TranslationViewModel
 
     #region Dynamic Translation strings
 
-
-
-
-
     public BindableReactiveProperty<string?> IsShowingFadingUIButtons { get; } = new();
 
     public BindableReactiveProperty<string?> IsUsingTouchpad { get; } = new();

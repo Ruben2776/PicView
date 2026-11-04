@@ -422,7 +422,7 @@
                 x:Name="ConstrainingBackgroundColorToggleButton"
                 Classes="MenuItemHover settingsToggleButton"
                 Command="{CompiledBinding MainWindows.ActiveWindow.Value.RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ToggleConstrainBackgroundColor}"
-                IsChecked="{CompiledBinding GlobalSettings.IsConstrainingBackgroundColor.Value}"
+                IsChecked="{CompiledBinding GlobalSettings.IsConstrainingBackgroundColor.Value, Mode=OneWay}"
                 Text="{CompiledBinding Translation.ConstrainBackgroundToImage.Value,
                                        Mode=OneWay}" />
         </Border>

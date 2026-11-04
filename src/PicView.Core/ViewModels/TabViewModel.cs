@@ -541,7 +541,7 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
             {
                 if (ImageIterator is { Files.Count: > 0 } && FileInfo.CurrentValue is { } file)
                 {
-                    await Load.LoadAsync(file.FullName, new LoadOptions(Relist: true)).ConfigureAwait(false);
+                    await Task.Run(() => Load.LoadAsync(file.FullName, new LoadOptions(Relist: true)).AsTask()).ConfigureAwait(false);
                 }
             }, AwaitOperation.Sequential));
     }

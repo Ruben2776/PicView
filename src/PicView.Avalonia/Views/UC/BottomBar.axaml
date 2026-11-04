@@ -338,7 +338,7 @@
                 CommandParameter="{x:Static keybindings:Actions.ToggleSubdirectories}"
                 Header="{CompiledBinding Translation.SearchSubdirectory.Value,
                                          Mode=OneWay}"
-                IsChecked="{Binding GlobalSettings.IsIncludingSubdirectories.Value}"
+                IsChecked="{Binding GlobalSettings.IsIncludingSubdirectories.Value, Mode=OneWay}"
                 ToggleType="CheckBox" />
 
             <Separator />
@@ -349,7 +349,7 @@
                 CommandParameter="{x:Static keybindings:Actions.ToggleLooping}"
                 Header="{CompiledBinding GlobalSettings.LoopingText.Value,
                                          Mode=OneWay}"
-                IsChecked="{Binding GlobalSettings.IsLooping.Value}"
+                IsChecked="{Binding GlobalSettings.IsLooping.Value, Mode=OneWay}"
                 ToggleType="CheckBox" />
 
             <Separator />
@@ -358,7 +358,7 @@
             <customControls:StyledMenuItem
                 Header="{CompiledBinding GlobalSettings.ScrollingText.Value,
                                          Mode=OneWay}"
-                IsChecked="{CompiledBinding GlobalSettings.IsScrollingEnabled.Value}"
+                IsChecked="{CompiledBinding GlobalSettings.IsScrollingEnabled.Value, Mode=OneWay}"
                 ToggleType="CheckBox" />
 
             <!--  Zoom to fit  -->
@@ -367,7 +367,7 @@
                 CommandParameter="{x:Static keybindings:Actions.ZoomToFit}"
                 Header="{CompiledBinding Translation.ZoomToFit.Value,
                                          Mode=OneWay}"
-                IsChecked="{CompiledBinding GlobalSettings.IsZoomedToFit.Value}"
+                IsChecked="{CompiledBinding GlobalSettings.IsZoomedToFit.Value, Mode=OneWay}"
                 ToggleType="CheckBox" />
 
             <Separator />
@@ -378,7 +378,7 @@
                 CommandParameter="{x:Static keybindings:Actions.SetTopMost}"
                 Header="{CompiledBinding Translation.StayTopMost.Value,
                                          Mode=OneWay}"
-                IsChecked="{CompiledBinding GlobalSettings.IsTopMost.Value}"
+                IsChecked="{CompiledBinding GlobalSettings.IsTopMost.Value, Mode=OneWay}"
                 ToggleType="CheckBox" />
 
             <!--  Toggle auto fit  -->

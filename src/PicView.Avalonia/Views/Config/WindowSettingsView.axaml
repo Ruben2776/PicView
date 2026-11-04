@@ -81,7 +81,7 @@
                 x:Name="TopMostToggleButton"
                 Classes="MenuItemHover settingsToggleButton"
                 Command="{CompiledBinding MainWindows.ActiveWindow.Value.RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.SetTopMost}"
-                IsChecked="{CompiledBinding GlobalSettings.IsTopMost.Value}"
+                IsChecked="{CompiledBinding GlobalSettings.IsTopMost.Value, Mode=OneWay}"
                 Text="{CompiledBinding Translation.StayTopMost.Value,
                                        Mode=OneWay}" />
         </Border>
@@ -101,7 +101,7 @@
                 x:Name="OpenInSameWindowToggleButton"
                 Classes="MenuItemHover settingsToggleButton"
                 Command="{CompiledBinding MainWindows.ActiveWindow.Value.RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ToggleOpeningInSameWindow}"
-                IsChecked="{CompiledBinding GlobalSettings.IsOpeningInSameWindow.Value}"
+                IsChecked="{CompiledBinding GlobalSettings.IsOpeningInSameWindow.Value, Mode=OneWay}"
                 Text="{CompiledBinding Translation.OpenInSameWindow.Value,
                                        Mode=OneWay}" />
         </Border>

@@ -67,7 +67,6 @@ public static class WindowFunctions
         window.Focus();
     }
 
-
     /// <summary>
     /// Turns AutoFit on or off in every main window, the opposite of what it is in <paramref name="vm"/>'s window.
     /// </summary>

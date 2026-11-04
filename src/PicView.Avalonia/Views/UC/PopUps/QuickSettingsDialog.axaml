@@ -79,7 +79,7 @@
                     Command="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).RunActionCommand}"
                     CommandParameter="{x:Static keybindings:Actions.ToggleScroll}"
                     Foreground="{DynamicResource MainTextColor}"
-                    IsChecked="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).GlobalSettings.IsScrollingEnabled.Value}"
+                    IsChecked="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).GlobalSettings.IsScrollingEnabled.Value, Mode=OneWay}"
                     Text="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).GlobalSettings.ScrollingText.Value,
                                            Mode=OneWay}"
                     TextMaxWidth="155"
@@ -115,7 +115,7 @@
                     Command="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).RunActionCommand}"
                     CommandParameter="{x:Static keybindings:Actions.ToggleLooping}"
                     Foreground="{DynamicResource MainTextColor}"
-                    IsChecked="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).GlobalSettings.IsLooping.Value}"
+                    IsChecked="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).GlobalSettings.IsLooping.Value, Mode=OneWay}"
                     Text="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).GlobalSettings.LoopingText.Value,
                                            Mode=OneWay}"
                     TextMaxWidth="155"
@@ -150,7 +150,7 @@
                     Command="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).RunActionCommand}"
                     CommandParameter="{x:Static keybindings:Actions.SetTopMost}"
                     Foreground="{DynamicResource MainTextColor}"
-                    IsChecked="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).GlobalSettings.IsTopMost.Value}"
+                    IsChecked="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).GlobalSettings.IsTopMost.Value, Mode=OneWay}"
                     Text="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).Translation.StayTopMost.Value,
                                            Mode=OneWay}"
                     TextMaxWidth="155"

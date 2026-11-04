@@ -83,10 +83,7 @@ public class MainWindowViewModel : IDisposable
     public BindableReactiveProperty<bool> IsTopToolbarShown { get; } = new(Settings.UIProperties.ShowInterface);
 
     public BindableReactiveProperty<bool> IsEditableTitlebarOpen { get; } = new(false);
-    
 
-    
-    
     #endregion
     
     #endregion
@@ -157,7 +154,8 @@ public class MainWindowViewModel : IDisposable
             RunActionCommand,
             IsBottomToolbarShown,
             IsAutoFit,
-            IsFullscreen
+            IsFullscreen,
+            TopTitlebarViewModel.DropDownMenu
         );
         GC.SuppressFinalize(this);
     }
