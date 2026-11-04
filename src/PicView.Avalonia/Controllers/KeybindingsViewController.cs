@@ -73,7 +73,7 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
         
         PopulateCategories();
         
-        core.GlobalSettings?.Initialize();
+        core.GlobalSettings?.InitializeExtraSettings();
 
         _filterSubscription?.Dispose();
         if (core.Keybindings is not null)

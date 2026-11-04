@@ -6,7 +6,7 @@ namespace PicView.Core.ViewModels;
 
 public class GlobalSettingsViewModel
 {
-    private bool _isInitialized;
+    private bool _isExtraSettingsInitialized;
     public BindableReactiveProperty<bool> IsIncludingSubdirectories { get; } =
         new(Settings.Sorting.IncludeSubDirectories);
 
@@ -24,13 +24,13 @@ public class GlobalSettingsViewModel
     
     public BindableReactiveProperty<int> GalleryMouseWheelBehavior { get; } = new((int)Settings.Gallery.GalleryMouseWheelBehavior);
     
-    public void Initialize()
+    public void InitializeExtraSettings()
     {
-        if (_isInitialized)
+        if (_isExtraSettingsInitialized)
         {
             return;
         }
-        _isInitialized = true;
+        _isExtraSettingsInitialized = true;
         
         GalleryMouseWheelBehavior
             .Subscribe(x => {

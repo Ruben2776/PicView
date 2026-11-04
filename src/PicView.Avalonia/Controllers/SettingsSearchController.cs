@@ -59,7 +59,7 @@ public class SettingsSearchController(SettingsView view) : IDisposable
         }
 
         _subscription = core.SettingsViewModel.SelectedCategory.Subscribe(OnViewModelCategoryChanged);
-        core.GlobalSettings.Initialize();
+        core.GlobalSettings.InitializeExtraSettings();
     }
 
     public void Dispose()
