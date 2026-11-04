@@ -1,6 +1,6 @@
 # PicView
 
-An image viewer. This glossary covers the language of input (how key presses, mouse buttons and the wheel become things the viewer does), of tabs, and of saving.
+An image viewer. This glossary covers the language of input (how key presses, mouse buttons and the wheel become things the viewer does), of tabs, of saving, and of settings.
 
 ## Input
 
@@ -160,6 +160,12 @@ _Avoid_: Gallery stretch, stretch mode
 **Save Source**:
 What a save writes out, decided by the save module rather than the caller: the Effects Render when there is one for the shown file, else the file on disk, else the in-memory bitmap of a Single Image. The tab's rotation and flip are applied to each. Setting a wallpaper writes out the same Save Source, and a Print Job prints it.
 _Avoid_: Source file, input path
+
+## Settings
+
+**Setting**:
+A value the user chooses that PicView remembers between runs, stored in one record saved whole. The fourteen a menu toggles publish their changes: one bindable each, which writes the stored value and saves, and what reacts to it subscribes. The rest are read from the record.
+_Avoid_: Option, preference, flag, mirror (for the bindable), flip (for toggling)
 
 ## Sizing
 

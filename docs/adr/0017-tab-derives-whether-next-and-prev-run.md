@@ -16,7 +16,7 @@ Before this, the flags had five writers in five files. The iterator's `UpdateNav
 
 ## Consequences
 
-- A new input to whether Next and Prev run is a derive call inside the tab or a bindable the tab subscribes to, never a write or a poke from another module. `RefreshCanNavigate()` is the one call allowed from outside, and it goes with `Titles.Refresh()` when the settings publish their changes.
+- A new input to whether Next and Prev run is a derive call inside the tab or a bindable the tab subscribes to, never a write or a poke from another module. `RefreshCanNavigate()` is the one call allowed from outside, and it goes with `Titles.Refresh()` when the settings publish their changes. Gone with ADR-0020: the tab subscribes to looping and side by side.
 - The derivation runs on whatever thread changed an input, as the iterator's writes did; it allocates nothing and reads no disk, so showing an image is never delayed. `Next` and `Prev` keep reading the flag before navigating.
 - `ArchiveOpenings.State` is read as `.Value` and subscribed through `AsObservable()`. Only the latest opening's state is published: an older opening ending leaves the newer one's as it is, as the volatile read did. ADR-0013 holds; the state only changed its shape.
 - Crop still blocks the keybinds itself (ADR-0004); this decides only what the buttons show.
