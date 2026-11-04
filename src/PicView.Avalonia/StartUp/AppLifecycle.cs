@@ -303,7 +303,7 @@ public sealed class AppLifecycle
         {
             _core.GlobalSettings.BackgroundChoice.Value = Settings.UIProperties.BgColorChoice;
 #pragma warning disable MA0042
-            LanguageUpdater.UpdateLanguage(_core.Translation, settingsExists);
+            LanguageUpdater.UpdateLanguage(_core.Translation, _core.GlobalSettings, settingsExists);
 #pragma warning restore MA0042
         });
         ThemeManager.DetermineTheme(Application.Current, settingsExists);

@@ -273,7 +273,7 @@
                     <customControls:StyledMenuItem
                         Command="{Binding RunActionCommand}"
                         CommandParameter="{x:Static keybindings:Actions.ToggleInterface}"
-                        Header="{Binding Translation.IsShowingUI.Value, Mode=OneWay}"
+                        Header="{Binding GlobalSettings.InterfaceText.Value, Mode=OneWay}"
                         IsVisible="{Binding IsUIShown.Value, Mode=OneWay}"
                         Theme="{StaticResource MainBg}">
                         <MenuItem.Icon>
@@ -304,7 +304,7 @@
                         Command="{Binding RunActionCommand}"
                         CommandParameter="{x:Static keybindings:Actions.SideBySide}"
                         Header="{Binding Translation.SideBySide.Value, Mode=OneWay}"
-                        IsChecked="{Binding IsSideBySide.Value}"
+                        IsChecked="{Binding GlobalSettings.IsSideBySide.Value}"
                         Theme="{StaticResource MainBg}"
                         ToggleType="CheckBox" />
 
@@ -824,7 +824,7 @@
                     <customControls:StyledMenuItem
                         Command="{CompiledBinding RunActionCommand}"
                         CommandParameter="{x:Static keybindings:Actions.ToggleLooping}"
-                        Header="{CompiledBinding Translation.IsLooping.Value,
+                        Header="{CompiledBinding GlobalSettings.LoopingText.Value,
                                                  Mode=OneWay}"
                         IsChecked="{Binding GlobalSettings.IsLooping.Value}"
                         Theme="{StaticResource MainBg}"
@@ -832,9 +832,9 @@
 
                     <!--  Toggle scrolling  -->
                     <customControls:StyledMenuItem
-                        Header="{CompiledBinding Translation.IsScrolling.Value,
+                        Header="{CompiledBinding GlobalSettings.ScrollingText.Value,
                                                  Mode=OneWay}"
-                        IsChecked="{CompiledBinding IsScrollingEnabled.Value}"
+                        IsChecked="{CompiledBinding GlobalSettings.IsScrollingEnabled.Value}"
                         Theme="{StaticResource MainBg}"
                         ToggleType="CheckBox" />
 
@@ -844,7 +844,7 @@
                         CommandParameter="{x:Static keybindings:Actions.ZoomToFit}"
                         Header="{CompiledBinding Translation.ZoomToFit.Value,
                                                  Mode=OneWay}"
-                        IsChecked="{CompiledBinding IsZoomedToFit.Value}"
+                        IsChecked="{CompiledBinding GlobalSettings.IsZoomedToFit.Value}"
                         Theme="{StaticResource MainBg}"
                         ToggleType="CheckBox" />
 
@@ -854,7 +854,7 @@
                         CommandParameter="{x:Static keybindings:Actions.SetTopMost}"
                         Header="{CompiledBinding Translation.StayTopMost.Value,
                                                  Mode=OneWay}"
-                        IsChecked="{CompiledBinding IsTopMost.Value}"
+                        IsChecked="{CompiledBinding GlobalSettings.IsTopMost.Value}"
                         Theme="{StaticResource MainBg}"
                         ToggleType="CheckBox" />
 

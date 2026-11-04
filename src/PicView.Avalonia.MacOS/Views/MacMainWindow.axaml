@@ -193,12 +193,12 @@
                     <!--  Toggle UI  -->
                     <NativeMenuItem
                         Command="{Binding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ToggleInterface}"
-                        Header="{CompiledBinding Translation.IsShowingUI.Value,
+                        Header="{CompiledBinding GlobalSettings.InterfaceText.Value,
                                                  Mode=OneWay}"
                         ToggleType="CheckBox" />
 
                     <!--  Toggle bottom bar  -->
-                    <NativeMenuItem Command="{Binding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ToggleBottomToolbar}" Header="{CompiledBinding Translation.IsShowingBottomToolbar.Value, Mode=OneWay}" />
+                    <NativeMenuItem Command="{Binding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ToggleBottomToolbar}" Header="{CompiledBinding GlobalSettings.BottomBarText.Value, Mode=OneWay}" />
 
                     <!--  Toggle gallery  -->
                     <NativeMenuItem Command="{Binding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ToggleGallery}" Header="{CompiledBinding Translation.ShowImageGallery.Value, Mode=OneWay}" />
@@ -492,7 +492,7 @@
                     <!--  Toggle looping  -->
                     <NativeMenuItem
                         Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ToggleLooping}"
-                        Header="{CompiledBinding Translation.IsLooping.Value,
+                        Header="{CompiledBinding GlobalSettings.LoopingText.Value,
                                                  Mode=OneWay}"
                         IsChecked="{CompiledBinding GlobalSettings.IsLooping.Value}"
                         ToggleType="CheckBox" />

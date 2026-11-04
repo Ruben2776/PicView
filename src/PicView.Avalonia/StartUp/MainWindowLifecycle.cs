@@ -357,7 +357,6 @@ public sealed class MainWindowLifecycle
             vm.BottombarHeight.Value = startsFullscreen || !Settings.UIProperties.ShowInterface
                 ? 0
                 : SizeDefaults.BottombarHeight;
-            vm.IsSideBySide.Value = Settings.ImageScaling.ShowImageSideBySide;
             vm.IsUIShown.Value = Settings.UIProperties.ShowInterface;
             vm.IsTopToolbarShown.Value = Settings.UIProperties.ShowInterface;
             vm.IsBottomToolbarShown.Value = Settings.UIProperties.ShowBottomNavBar &&
@@ -413,7 +412,6 @@ public sealed class MainWindowLifecycle
         var settingUp = Task.Run(() =>
         {
             vm.ActionRunner = new FunctionsMapper(vm, window);
-            vm.IsScrollingEnabled.Value = Settings.Zoom.ScrollEnabled;
             vm.WindowTabs.SetSortOrder((SortFilesBy)Settings.Sorting.SortPreference);
         });
 

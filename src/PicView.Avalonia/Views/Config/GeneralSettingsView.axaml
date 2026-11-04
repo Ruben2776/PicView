@@ -80,9 +80,9 @@
                 x:Name="FileHistoryToggleButton"
                 Classes="MenuItemHover settingsToggleButton"
                 Command="{Binding MainWindows.ActiveWindow.Value.RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ToggleFileHistory}"
-                IsChecked="{CompiledBinding SettingsViewModel.IsFileHistoryEnabled.Value,
+                IsChecked="{CompiledBinding GlobalSettings.IsFileHistoryEnabled.Value,
                                             Mode=OneWay}"
-                Text="{CompiledBinding Translation.ToggleFileHistory.Value,
+                Text="{CompiledBinding GlobalSettings.FileHistoryText.Value,
                                        Mode=OneWay}" />
         </Border>
 
@@ -91,7 +91,7 @@
                 x:Name="ShowFullPathInTitleBarToggleButton"
                 Classes="MenuItemHover settingsToggleButton"
                 Command="{Binding MainWindows.ActiveWindow.Value.RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ToggleShowFullPathInTitleBar}"
-                IsChecked="{CompiledBinding SettingsViewModel.IsShowingFullPathInTitleBar.Value,
+                IsChecked="{CompiledBinding GlobalSettings.IsShowingFullPathInTitleBar.Value,
                                             Mode=OneWay}"
                 Text="{CompiledBinding Translation.ShowFullPathInTitleBar.Value,
                                        Mode=OneWay}" />

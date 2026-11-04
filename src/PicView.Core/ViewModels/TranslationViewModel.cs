@@ -727,7 +727,6 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> Tile { get; } = new();
     public BindableReactiveProperty<string?> Tint { get; } = new();
     public BindableReactiveProperty<string?> Title { get; } = new();
-    public BindableReactiveProperty<string?> ToggleFileHistory { get; } = new();
     public BindableReactiveProperty<string?> ToggleFullscreen { get; } = new();
     public BindableReactiveProperty<string?> ToggleLooping { get; } = new();
     public BindableReactiveProperty<string?> ToggleScroll { get; } = new();
@@ -767,16 +766,11 @@ public class TranslationViewModel
     #region Dynamic Translation strings
 
 
-    public BindableReactiveProperty<string?> IsLooping { get; } = new();
 
-    public BindableReactiveProperty<string?> IsScrolling { get; } = new();
 
-    public BindableReactiveProperty<string?> IsShowingBottomToolbar { get; } = new();
 
     public BindableReactiveProperty<string?> IsShowingFadingUIButtons { get; } = new();
-    public BindableReactiveProperty<string?> IsShowingHoverNavigationBar { get; } = new();
 
-    public BindableReactiveProperty<string?> IsShowingUI { get; } = new();
     public BindableReactiveProperty<string?> IsUsingTouchpad { get; } = new();
 
     #endregion

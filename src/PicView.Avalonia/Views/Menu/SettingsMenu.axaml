@@ -117,8 +117,8 @@
                         Command="{CompiledBinding RunActionCommand}"
                         CommandParameter="{x:Static keybindings:Actions.ToggleScroll}"
                         Foreground="{DynamicResource MainTextColor}"
-                        IsChecked="{CompiledBinding IsScrollingEnabled.Value}"
-                        Text="{CompiledBinding Translation.IsScrolling.Value,
+                        IsChecked="{CompiledBinding GlobalSettings.IsScrollingEnabled.Value}"
+                        Text="{CompiledBinding GlobalSettings.ScrollingText.Value,
                                                Mode=OneWay}"
                         TextMaxWidth="150"
                         ToolTip.Tip="{CompiledBinding Translation.ToggleScroll.Value,
@@ -137,7 +137,7 @@
                         Command="{CompiledBinding RunActionCommand}"
                         CommandParameter="{x:Static keybindings:Actions.ToggleLooping}"
                         Foreground="{DynamicResource MainTextColor}"
-                        Text="{CompiledBinding Translation.IsLooping.Value,
+                        Text="{CompiledBinding GlobalSettings.LoopingText.Value,
                                                Mode=OneWay}"
                         TextMaxWidth="150"
                         ToolTip.Tip="{CompiledBinding Translation.ToggleLooping.Value,
@@ -156,7 +156,7 @@
                         Command="{CompiledBinding RunActionCommand}"
                         CommandParameter="{x:Static keybindings:Actions.ZoomToFit}"
                         Foreground="{DynamicResource MainTextColor}"
-                        IsChecked="{CompiledBinding IsZoomedToFit.Value}"
+                        IsChecked="{CompiledBinding GlobalSettings.IsZoomedToFit.Value}"
                         Text="{CompiledBinding Translation.ZoomToFit.Value,
                                                Mode=OneWay}"
                         TextMaxWidth="150"
@@ -197,7 +197,7 @@
                         Command="{CompiledBinding RunActionCommand}"
                         CommandParameter="{x:Static keybindings:Actions.SetTopMost}"
                         Foreground="{DynamicResource MainTextColor}"
-                        IsChecked="{CompiledBinding IsTopMost.Value}"
+                        IsChecked="{CompiledBinding GlobalSettings.IsTopMost.Value}"
                         Text="{CompiledBinding Translation.StayTopMost.Value,
                                                Mode=OneWay}"
                         TextMaxWidth="150"

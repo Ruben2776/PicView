@@ -5,7 +5,8 @@ namespace PicView.Avalonia.SettingsManagement;
 
 public static class LanguageUpdater
 {
-    public static void UpdateLanguage(TranslationViewModel translationViewModel, bool settingsExists)
+    public static void UpdateLanguage(TranslationViewModel translationViewModel,
+        GlobalSettingsViewModel globalSettings, bool settingsExists)
     {
         if (settingsExists)
         {
@@ -18,42 +19,24 @@ public static class LanguageUpdater
         
         translationViewModel.UpdateLanguage();
 
-        translationViewModel.IsShowingUI.Value = !Settings.UIProperties.ShowInterface ? translationViewModel.ShowUI.CurrentValue : translationViewModel.HideUI.CurrentValue;
-    
-        translationViewModel.IsScrolling.Value = Settings.Zoom.ScrollEnabled ?
-            TranslationManager.Translation.ScrollingEnabled : TranslationManager.Translation.ScrollingDisabled;
-    
-        translationViewModel.IsLooping.Value = Settings.UIProperties.Looping
-            ? TranslationManager.Translation.LoopingEnabled
-            : TranslationManager.Translation.LoopingDisabled;
-    
-        translationViewModel.IsShowingBottomToolbar.Value = Settings.UIProperties.ShowBottomNavBar
-            ? TranslationManager.Translation.HideBottomToolbar
-            : TranslationManager.Translation.ShowBottomToolbar;
-    
+        globalSettings.Rephrase();
+
         translationViewModel.IsShowingFadingUIButtons.Value = Settings.UIProperties.ShowAltInterfaceButtons
             ? TranslationManager.Translation.DisableFadeInButtonsOnHover
             : TranslationManager.Translation.ShowFadeInButtonsOnHover;
 
-        translationViewModel.IsShowingHoverNavigationBar.Value = Settings.UIProperties.ShowHoverNavigationBar
-            ? TranslationManager.Translation.HideHoverNavigationBar
-            : TranslationManager.Translation.ShowHoverNavigationBar;
-    
         translationViewModel.IsUsingTouchpad.Value = Settings.Zoom.IsUsingTouchPad
             ? TranslationManager.Translation.UsingTouchpad
             : TranslationManager.Translation.UsingMouse;
-    
-        translationViewModel.ToggleFileHistory.Value = Settings.Navigation.IsFileHistoryEnabled
-            ? TranslationManager.Translation.FileHistoryEnabled
-            : TranslationManager.Translation.FileHistoryDisabled;
     }
 
-    public static async Task UpdateLanguageAsync(TranslationViewModel translationViewModel, bool settingsExists)
+    public static async Task UpdateLanguageAsync(TranslationViewModel translationViewModel,
+        GlobalSettingsViewModel globalSettings, bool settingsExists)
     {
         await Task.Run(() =>
         {
 #pragma warning disable MA0042
-            UpdateLanguage(translationViewModel, settingsExists);
+            UpdateLanguage(translationViewModel, globalSettings, settingsExists);
 #pragma warning restore MA0042
         }).ConfigureAwait(false);
     }

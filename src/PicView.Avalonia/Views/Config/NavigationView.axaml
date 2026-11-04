@@ -37,8 +37,8 @@
             <customControls:TextToggleButton
                 Classes="MenuItemHover settingsToggleButton"
                 Command="{Binding MainWindows.ActiveWindow.Value.RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ToggleLooping}"
-                IsChecked="{Binding GlobalSettings.IsLooping.Value, Mode=TwoWay}"
-                Text="{CompiledBinding Translation.IsLooping.Value,
+                IsChecked="{Binding GlobalSettings.IsLooping.Value, Mode=OneWay}"
+                Text="{CompiledBinding GlobalSettings.LoopingText.Value,
                                        Mode=OneWay}"
                 ToolTip.Tip="{CompiledBinding Translation.ToggleLooping.Value,
                                               Mode=OneWay}"
@@ -50,7 +50,7 @@
             <customControls:TextToggleButton
                 Classes="MenuItemHover settingsToggleButton"
                 Command="{Binding MainWindows.ActiveWindow.CurrentValue.RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ToggleTaskbarProgress}"
-                IsChecked="{CompiledBinding SettingsViewModel.IsShowingTaskbarProgress.Value,
+                IsChecked="{CompiledBinding GlobalSettings.IsShowingTaskbarProgress.Value,
                                             Mode=OneWay}"
                 Text="{CompiledBinding Translation.ToggleTaskbarProgress.Value,
                                        Mode=OneWay}"

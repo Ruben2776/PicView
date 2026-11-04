@@ -31,7 +31,7 @@
                 IconHeight="18"
                 IconMargin="10,0,10,0"
                 IconWidth="18"
-                Text="{CompiledBinding Translation.IsShowingBottomToolbar.Value,
+                Text="{CompiledBinding GlobalSettings.BottomBarText.Value,
                                        Mode=OneWay}" />
         </Border>
 
@@ -47,7 +47,7 @@
                     IconMargin="10,0,10,0"
                     IconWidth="18"
                     IsVisible="{Binding !MainWindows.ActiveWindow.Value.IsUIShown.Value}"
-                    Text="{CompiledBinding Translation.IsShowingUI.Value,
+                    Text="{CompiledBinding GlobalSettings.InterfaceText.Value,
                                            Mode=OneWay}" />
                 <customControls:TextIconButton
                     x:Name="ShowUIButton"
@@ -58,7 +58,7 @@
                     IconMargin="10,0,10,0"
                     IconWidth="18"
                     IsVisible="{Binding MainWindows.ActiveWindow.Value.IsUIShown.Value}"
-                    Text="{CompiledBinding Translation.IsShowingUI.Value,
+                    Text="{CompiledBinding GlobalSettings.InterfaceText.Value,
                                            Mode=OneWay}" />
             </StackPanel>
         </Border>
@@ -87,7 +87,7 @@
                 IconHeight="18"
                 IconMargin="10,0,10,0"
                 IconWidth="18"
-                Text="{CompiledBinding Translation.IsShowingHoverNavigationBar.Value,
+                Text="{CompiledBinding GlobalSettings.HoverBarText.Value,
                                        Mode=OneWay}" />
         </Border>
 

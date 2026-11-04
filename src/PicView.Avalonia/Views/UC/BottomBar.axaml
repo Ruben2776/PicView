@@ -347,7 +347,7 @@
             <customControls:StyledMenuItem
                 Command="{CompiledBinding RunActionCommand}"
                 CommandParameter="{x:Static keybindings:Actions.ToggleLooping}"
-                Header="{CompiledBinding Translation.IsLooping.Value,
+                Header="{CompiledBinding GlobalSettings.LoopingText.Value,
                                          Mode=OneWay}"
                 IsChecked="{Binding GlobalSettings.IsLooping.Value}"
                 ToggleType="CheckBox" />
@@ -356,9 +356,9 @@
 
             <!--  Toggle scrolling  -->
             <customControls:StyledMenuItem
-                Header="{CompiledBinding Translation.IsScrolling.Value,
+                Header="{CompiledBinding GlobalSettings.ScrollingText.Value,
                                          Mode=OneWay}"
-                IsChecked="{CompiledBinding IsScrollingEnabled.Value}"
+                IsChecked="{CompiledBinding GlobalSettings.IsScrollingEnabled.Value}"
                 ToggleType="CheckBox" />
 
             <!--  Zoom to fit  -->
@@ -367,7 +367,7 @@
                 CommandParameter="{x:Static keybindings:Actions.ZoomToFit}"
                 Header="{CompiledBinding Translation.ZoomToFit.Value,
                                          Mode=OneWay}"
-                IsChecked="{CompiledBinding IsZoomedToFit.Value}"
+                IsChecked="{CompiledBinding GlobalSettings.IsZoomedToFit.Value}"
                 ToggleType="CheckBox" />
 
             <Separator />
@@ -378,7 +378,7 @@
                 CommandParameter="{x:Static keybindings:Actions.SetTopMost}"
                 Header="{CompiledBinding Translation.StayTopMost.Value,
                                          Mode=OneWay}"
-                IsChecked="{CompiledBinding IsTopMost.Value}"
+                IsChecked="{CompiledBinding GlobalSettings.IsTopMost.Value}"
                 ToggleType="CheckBox" />
 
             <!--  Toggle auto fit  -->
@@ -496,7 +496,7 @@
             <customControls:StyledMenuItem
                 Command="{Binding RunActionCommand}"
                 CommandParameter="{x:Static keybindings:Actions.ToggleInterface}"
-                Header="{Binding Translation.IsShowingUI.Value, Mode=OneWay}">
+                Header="{Binding GlobalSettings.InterfaceText.Value, Mode=OneWay}">
                 <MenuItem.Icon>
                     <Image
                         Width="12"

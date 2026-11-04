@@ -300,7 +300,7 @@ public class LanguageAndSettingsUnitTest
             CultureInfo.CurrentUICulture = new CultureInfo("da-DK");
 
             var vm = new TranslationViewModel();
-            await LanguageUpdater.UpdateLanguageAsync(vm, settingsExists: false);
+            await LanguageUpdater.UpdateLanguageAsync(vm, new GlobalSettingsViewModel(static () => ValueTask.FromResult(true)), settingsExists: false);
 
             Assert.Equal("da", Settings.UIProperties.UserLanguage);
             Assert.Equal("Billede", vm.Image.Value);

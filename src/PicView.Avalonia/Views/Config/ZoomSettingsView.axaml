@@ -28,7 +28,7 @@
                 x:Name="ZoomToFitToggleButton"
                 Classes="MenuItemHover settingsToggleButton"
                 Command="{Binding MainWindows.ActiveWindow.Value.RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ZoomToFit}"
-                IsChecked="{Binding MainWindows.ActiveWindow.Value.IsZoomedToFit.Value, Mode=TwoWay}"
+                IsChecked="{Binding GlobalSettings.IsZoomedToFit.Value, Mode=OneWay}"
                 Text="{CompiledBinding Translation.ZoomToFit.Value,
                                        Mode=OneWay}"
                 ToolTip.Tip="{CompiledBinding Translation.ZoomToFit.Value,

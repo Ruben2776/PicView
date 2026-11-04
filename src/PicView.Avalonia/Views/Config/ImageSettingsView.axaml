@@ -28,8 +28,8 @@
                 x:Name="ScrollToggleButton"
                 Classes="MenuItemHover settingsToggleButton"
                 Command="{CompiledBinding MainWindows.ActiveWindow.Value.RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ToggleScroll}"
-                IsChecked="{CompiledBinding MainWindows.ActiveWindow.Value.IsScrollingEnabled.Value}"
-                Text="{CompiledBinding Translation.IsScrolling.Value,
+                IsChecked="{CompiledBinding GlobalSettings.IsScrollingEnabled.Value}"
+                Text="{CompiledBinding GlobalSettings.ScrollingText.Value,
                                        Mode=OneWay}" />
         </Border>
 
@@ -39,7 +39,7 @@
                 x:Name="SideBySideToggleButton"
                 Classes="MenuItemHover settingsToggleButton"
                 Command="{CompiledBinding MainWindows.ActiveWindow.Value.RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.SideBySide}"
-                IsChecked="{Binding MainWindows.ActiveWindow.Value.IsSideBySide.Value, Mode=OneWay}"
+                IsChecked="{Binding GlobalSettings.IsSideBySide.Value, Mode=OneWay}"
                 Text="{CompiledBinding Translation.SideBySide.Value,
                                        Mode=OneWay}" />
 

@@ -52,7 +52,7 @@
                                         Source="{CompiledBinding Image.Value, Converter={StaticResource DisplayableConverter}}" />
                                     <uc:MotionPhotoView x:Name="MotionPhotoView" />
                                 </Grid>
-                                <Grid DockPanel.Dock="Right" IsVisible="{CompiledBinding ParentWindowContext.IsSideBySide.Value}">
+                                <Grid DockPanel.Dock="Right" IsVisible="{CompiledBinding ParentWindowContext.GlobalSettings.IsSideBySide.Value}">
                                     <customControls:PicBox
                                         x:Name="SecondaryImage"
                                         CurrentFileInfo="{Binding SecondaryFileInfo.Value}"

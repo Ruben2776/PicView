@@ -69,9 +69,6 @@ public class SettingsViewModel : IDisposable
         GoHomeCommand = IsHome.ToReactiveCommand(_ => GoHome()).AddTo(ref _disposables);
         
         // Navigation Properties
-        IsIncludingSubdirectories.Subscribe(x => Settings.Sorting.IncludeSubDirectories = x).AddTo(ref _disposables);
-        IsShowingTaskbarProgress.Subscribe(x => Settings.UIProperties.IsTaskbarProgressEnabled = x).AddTo(ref _disposables);
-        IsFileHistoryEnabled.Subscribe(x => Settings.Navigation.IsFileHistoryEnabled = x).AddTo(ref _disposables);
         IsRespectingArchiveStructure.Subscribe(x => Settings.Navigation.IsRespectingArchiveStructure = x).AddTo(ref _disposables);
         
         ToggleUsingTouchpadCommand = new ReactiveCommand(_ =>
@@ -193,11 +190,7 @@ public class SettingsViewModel : IDisposable
     public BindableReactiveProperty<string> UserLanguage { get; } = new(Settings.UIProperties.UserLanguage, StringComparer.OrdinalIgnoreCase);
 
     // Navigation
-    public BindableReactiveProperty<bool> IsIncludingSubdirectories { get; } = new(Settings.Sorting.IncludeSubDirectories);
-    public BindableReactiveProperty<bool> IsShowingTaskbarProgress { get; } = new(Settings.UIProperties.IsTaskbarProgressEnabled);
-    public BindableReactiveProperty<bool> IsFileHistoryEnabled { get; } = new(Settings.Navigation.IsFileHistoryEnabled);
     public BindableReactiveProperty<bool> IsRespectingArchiveStructure { get; } = new(Settings.Navigation.IsRespectingArchiveStructure);
-    public BindableReactiveProperty<bool> IsShowingFullPathInTitleBar { get; } = new(Settings.UIProperties.ShowFullPathInTitleBar);
     public BindableReactiveProperty<bool> IsNavigatingByClicking { get; } =
         new(Settings.Navigation.IsNavigatingByClicking);
 
@@ -207,7 +200,6 @@ public class SettingsViewModel : IDisposable
     public BindableReactiveProperty<bool> IsShowingPermanentDeletionDialog { get; } =
         new(Settings.UIProperties.ShowPermanentDeletionConfirmation);
 
-    public BindableReactiveProperty<bool> IsOpeningInSameWindow { get; } = new(Settings.UIProperties.OpenInSameWindow);
 
     public BindableReactiveProperty<bool> IsShowingConfirmationOnEsc { get; } =
         new(Settings.UIProperties.ShowConfirmationOnEsc);
@@ -220,9 +212,6 @@ public class SettingsViewModel : IDisposable
     public BindableReactiveProperty<bool> IsUsingTouchpad { get; } = new(Settings.Zoom.IsUsingTouchPad);
     
     public BindableReactiveProperty<bool> IsShowingFadeButtons { get; } = new(Settings.UIProperties.ShowAltInterfaceButtons);
-
-    public BindableReactiveProperty<bool> IsConstrainingBackgroundColor { get; } =
-        new(Settings.UIProperties.IsConstrainBackgroundColorEnabled);
 
     public BindableReactiveProperty<bool> IsAvoidingZoomingOut { get; } = new(Settings.Zoom.AvoidZoomingOut);
     public BindableReactiveProperty<bool> IsResettingZoomOnImageChange { get; } = new(Settings.Zoom.ResetZoomOnChange);
@@ -276,10 +265,8 @@ public class SettingsViewModel : IDisposable
             GoForwardCommand,
             IsAvoidingZoomingOut,
             IsBackButtonEnabled,
-            IsConstrainingBackgroundColor,
             IsEscLeavingFullscreen,
             IsForwardButtonEnabled,
-            IsOpeningInSameWindow,
             IsShowingConfirmationOnEsc,
             IsShowingPermanentDeletionDialog,
             IsShowingRecycleDialog,
@@ -305,9 +292,6 @@ public class SettingsViewModel : IDisposable
             ImageScalingIndex,
             IsAutoPlayingMotionPhotos,
             UserLanguage,
-            IsIncludingSubdirectories,
-            IsShowingTaskbarProgress,
-            IsFileHistoryEnabled,
             IsRespectingArchiveStructure,
             SetColorThemeCommand,
             SetBackgroundCommand,
@@ -392,9 +376,6 @@ public class SettingsViewModel : IDisposable
 
         Observable.EveryValueChanged(this, x => x.IsEscLeavingFullscreen.CurrentValue)
             .Subscribe(x => Settings.WindowProperties.EscLeavesFullscreen = x).AddTo(ref _disposables);
-
-        Observable.EveryValueChanged(this, x => x.IsOpeningInSameWindow.CurrentValue)
-            .Subscribe(x => Settings.UIProperties.OpenInSameWindow = x).AddTo(ref _disposables);
 
         Observable.EveryValueChanged(this, x => x.WindowMargin.CurrentValue)
             .Subscribe(x => Settings.WindowProperties.Margin = x).AddTo(ref _disposables);

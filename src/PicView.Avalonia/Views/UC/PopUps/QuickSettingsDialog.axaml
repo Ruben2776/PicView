@@ -79,8 +79,8 @@
                     Command="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).RunActionCommand}"
                     CommandParameter="{x:Static keybindings:Actions.ToggleScroll}"
                     Foreground="{DynamicResource MainTextColor}"
-                    IsChecked="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).IsScrollingEnabled.Value}"
-                    Text="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).Translation.IsScrolling.Value,
+                    IsChecked="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).GlobalSettings.IsScrollingEnabled.Value}"
+                    Text="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).GlobalSettings.ScrollingText.Value,
                                            Mode=OneWay}"
                     TextMaxWidth="155"
                     ToolTip.Tip="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).Translation.ToggleScroll.Value,
@@ -97,8 +97,8 @@
                     Command="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).RunActionCommand}"
                     CommandParameter="{x:Static keybindings:Actions.ZoomToFit}"
                     Foreground="{DynamicResource MainTextColor}"
-                    IsChecked="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).IsZoomedToFit.Value,
-                                                Mode=TwoWay}"
+                    IsChecked="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).GlobalSettings.IsZoomedToFit.Value,
+                                                Mode=OneWay}"
                     Text="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).Translation.ZoomToFit.Value,
                                            Mode=OneWay}"
                     TextMaxWidth="145"
@@ -116,7 +116,7 @@
                     CommandParameter="{x:Static keybindings:Actions.ToggleLooping}"
                     Foreground="{DynamicResource MainTextColor}"
                     IsChecked="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).GlobalSettings.IsLooping.Value}"
-                    Text="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).Translation.IsLooping.Value,
+                    Text="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).GlobalSettings.LoopingText.Value,
                                            Mode=OneWay}"
                     TextMaxWidth="155"
                     ToolTip.Tip="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).Translation.ToggleScroll.Value,
@@ -150,7 +150,7 @@
                     Command="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).RunActionCommand}"
                     CommandParameter="{x:Static keybindings:Actions.SetTopMost}"
                     Foreground="{DynamicResource MainTextColor}"
-                    IsChecked="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).IsTopMost.Value}"
+                    IsChecked="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).GlobalSettings.IsTopMost.Value}"
                     Text="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).Translation.StayTopMost.Value,
                                            Mode=OneWay}"
                     TextMaxWidth="155"
@@ -168,7 +168,7 @@
                     CommandParameter="{x:Static keybindings:Actions.ToggleSubdirectories}"
                     Foreground="{DynamicResource MainTextColor}"
                     IsChecked="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).GlobalSettings.IsIncludingSubdirectories.Value,
-                                                Mode=TwoWay}"
+                                                Mode=OneWay}"
                     Text="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).Translation.SearchSubdirectory.Value,
                                            Mode=OneWay}"
                     TextMaxWidth="145"

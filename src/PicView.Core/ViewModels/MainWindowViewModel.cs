@@ -28,7 +28,6 @@ public class MainWindowViewModel : IDisposable
     // Hidden with the interface, as the window applies its settings, so a Fit before that already leaves it out
     public BindableReactiveProperty<bool> IsBottomToolbarShown { get; } =
         new(Settings.UIProperties.ShowBottomNavBar && Settings.UIProperties.ShowInterface);
-    public BindableReactiveProperty<bool> IsSideBySide { get; } = new(Settings.ImageScaling.ShowImageSideBySide);
     
     public BindableReactiveProperty<double> ScrollViewerWidth { get; } = new(double.NaN);
     
@@ -85,11 +84,8 @@ public class MainWindowViewModel : IDisposable
 
     public BindableReactiveProperty<bool> IsEditableTitlebarOpen { get; } = new(false);
     
-    public BindableReactiveProperty<bool> IsScrollingEnabled { get; } = new(Settings.Zoom.ScrollEnabled);
 
-    public BindableReactiveProperty<bool> IsZoomedToFit { get; } = new(Settings.ImageScaling.ZoomToFit);
     
-    public BindableReactiveProperty<bool> IsTopMost { get; } = new(Settings.WindowProperties.TopMost);
     
     #endregion
     
@@ -161,10 +157,7 @@ public class MainWindowViewModel : IDisposable
             RunActionCommand,
             IsBottomToolbarShown,
             IsAutoFit,
-            IsSideBySide,
-            IsFullscreen,
-            IsScrollingEnabled,
-            IsZoomedToFit
+            IsFullscreen
         );
         GC.SuppressFinalize(this);
     }

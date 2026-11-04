@@ -243,7 +243,7 @@
                     Classes="MenuItemHover"
                     CornerRadius="4"
                     Foreground="{DynamicResource MainTextColor}"
-                    IsChecked="{Binding IsSideBySide.Value, Mode=OneWay}"
+                    IsChecked="{Binding GlobalSettings.IsSideBySide.Value, Mode=OneWay}"
                     Text="{CompiledBinding Translation.SideBySide.Value,
                                            Mode=OneWay}"
                     TextMaxWidth="145"

@@ -228,7 +228,7 @@
                 <customControls:StyledMenuItem
                     Command="{CompiledBinding RunActionCommand}"
                     CommandParameter="{x:Static keybindings:Actions.ToggleLooping}"
-                    Header="{CompiledBinding Translation.IsLooping.Value,
+                    Header="{CompiledBinding GlobalSettings.LoopingText.Value,
                                              Mode=OneWay}"
                     IsChecked="{Binding GlobalSettings.IsLooping.Value, Mode=OneWay}"
                     ToggleType="CheckBox" />
@@ -239,9 +239,9 @@
                 <customControls:StyledMenuItem
                     Command="{CompiledBinding RunActionCommand}"
                     CommandParameter="{x:Static keybindings:Actions.ToggleScroll}"
-                    Header="{CompiledBinding Translation.IsScrolling.Value,
+                    Header="{CompiledBinding GlobalSettings.ScrollingText.Value,
                                              Mode=OneWay}"
-                    IsChecked="{Binding IsScrollingEnabled.Value, Mode=OneWay}"
+                    IsChecked="{Binding GlobalSettings.IsScrollingEnabled.Value, Mode=OneWay}"
                     ToggleType="CheckBox" />
 
                 <!--  Zoom to fit  -->
@@ -250,7 +250,7 @@
                     CommandParameter="{x:Static keybindings:Actions.ZoomToFit}"
                     Header="{CompiledBinding Translation.ZoomToFit.Value,
                                              Mode=OneWay}"
-                    IsChecked="{Binding IsZoomedToFit.Value, Mode=OneWay}"
+                    IsChecked="{Binding GlobalSettings.IsZoomedToFit.Value, Mode=OneWay}"
                     ToggleType="CheckBox" />
 
                 <!--  Toggle side-by-side  -->
@@ -259,7 +259,7 @@
                     CommandParameter="{x:Static keybindings:Actions.SideBySide}"
                     Header="{CompiledBinding Translation.SideBySide.Value,
                                              Mode=OneWay}"
-                    IsChecked="{Binding IsSideBySide.Value, Mode=OneWay}"
+                    IsChecked="{Binding GlobalSettings.IsSideBySide.Value, Mode=OneWay}"
                     ToggleType="CheckBox" />
 
                 <Separator />
@@ -270,7 +270,7 @@
                     CommandParameter="{x:Static keybindings:Actions.SetTopMost}"
                     Header="{CompiledBinding Translation.StayTopMost.Value,
                                              Mode=OneWay}"
-                    IsChecked="{Binding IsTopMost.Value, Mode=OneWay}"
+                    IsChecked="{Binding GlobalSettings.IsTopMost.Value, Mode=OneWay}"
                     ToggleType="CheckBox" />
 
                 <!--  Toggle auto fit  -->
@@ -288,7 +288,7 @@
                 <customControls:StyledMenuItem
                     Command="{CompiledBinding RunActionCommand}"
                     CommandParameter="{x:Static keybindings:Actions.ToggleInterface}"
-                    Header="{CompiledBinding Translation.IsShowingUI.Value,
+                    Header="{CompiledBinding GlobalSettings.InterfaceText.Value,
                                              Mode=OneWay}"
                     IsVisible="{CompiledBinding IsUIShown.Value,
                                                 Mode=OneWay}">
@@ -303,7 +303,7 @@
                 <customControls:StyledMenuItem
                     Command="{CompiledBinding RunActionCommand}"
                     CommandParameter="{x:Static keybindings:Actions.ToggleInterface}"
-                    Header="{CompiledBinding Translation.IsShowingUI.Value,
+                    Header="{CompiledBinding GlobalSettings.InterfaceText.Value,
                                              Mode=OneWay}"
                     IsVisible="{CompiledBinding !IsUIShown.Value,
                                                 Mode=OneWay}">

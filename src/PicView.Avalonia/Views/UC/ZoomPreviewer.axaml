@@ -78,7 +78,7 @@
                             CurrentFileInfo="{Binding SecondaryFileInfo.Value}"
                             DockPanel.Dock="Right"
                             ImageType="{Binding SecondaryImageType.Value}"
-                            IsVisible="{CompiledBinding ParentWindowContext.IsSideBySide.Value}"
+                            IsVisible="{CompiledBinding ParentWindowContext.GlobalSettings.IsSideBySide.Value}"
                             Source="{CompiledBinding SecondaryImage.Value}" />
                     </DockPanel>
                     <Canvas x:Name="OverlayCanvas">
