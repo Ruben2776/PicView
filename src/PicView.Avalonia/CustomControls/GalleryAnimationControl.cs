@@ -269,13 +269,6 @@ public class GalleryAnimationControl : UserControl
 
         IsVisible = true;
 
-        // Only a mode or dock move writes the hover bar; the first show always does, as _applied starts closed and
-        // this appearance is shown. Other writers, such as ToggleInterface, keep it through size and stretch changes
-        if (appearance.Mode != _applied.Mode || appearance.Dock != _applied.Dock)
-        {
-            TabViewModel?.Hoverbar.IsHoverbarVisible.Value = appearance.ShowsHoverBar;
-        }
-
         // Moving to another edge wraps at the docked extent for one render pass
         if (dockChanged && _itemsPanel is { } movedPanel)
         {

@@ -9,9 +9,7 @@ public class GalleryAppearanceTests
         ExpandedItemSize: 150,
         DockedStretch: GalleryStretchMode.Uniform,
         ExpandedStretch: GalleryStretchMode.UniformToFill,
-        ItemSpacing: 4,
-        ShowBottomNavBar: false,
-        ShowHoverNavigationBar: true);
+        ItemSpacing: 4);
 
     private static readonly GalleryDockPosition[] Edges =
     [
@@ -88,7 +86,6 @@ public class GalleryAppearanceTests
 
             Assert.False(a.IsShown);
             Assert.Equal(0, a.Extent);
-            Assert.False(a.ShowsHoverBar);
         }
     }
 
@@ -115,21 +112,5 @@ public class GalleryAppearanceTests
         {
             Assert.True(double.IsNaN(a.ItemWidth));
         }
-    }
-
-    [Theory]
-    [InlineData(false, false)]
-    [InlineData(false, true)]
-    [InlineData(true, false)]
-    [InlineData(true, true)]
-    public void For_Docked_ShowsHoverBarFromTheUISettings(bool showBottomNavBar, bool showHoverNavigationBar)
-    {
-        var inputs = Inputs with { ShowBottomNavBar = showBottomNavBar, ShowHoverNavigationBar = showHoverNavigationBar };
-
-        var docked = GalleryAppearance.For(GalleryMode.Docked, GalleryDockPosition.Bottom, inputs);
-        var expanded = GalleryAppearance.For(GalleryMode.Expanded, GalleryDockPosition.Bottom, inputs);
-
-        Assert.Equal(!showBottomNavBar && showHoverNavigationBar, docked.ShowsHoverBar);
-        Assert.False(expanded.ShowsHoverBar);
     }
 }

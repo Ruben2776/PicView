@@ -428,12 +428,7 @@ public class FunctionsMapper : IActionRunner
         return ValueTask.CompletedTask;
     }
 
-    /// <inheritdoc cref="ToggleUIVisibility.ToggleHoverBar(MainWindowViewModel)" />
-    private ValueTask ToggleHoverBar()
-    {
-        ToggleUIVisibility.ToggleHoverBar(_vm);
-        return ValueTask.CompletedTask;
-    }
+    private ValueTask ToggleHoverBar() => Toggle(_vm.GlobalSettings.ShowHoverBar);
 
     private ValueTask ToggleSubdirectories() => Toggle(_vm.GlobalSettings.IsIncludingSubdirectories);
 

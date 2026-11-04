@@ -3,10 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Threading;
 using PicView.Avalonia.Animations;
-using PicView.Avalonia.CustomControls;
-using PicView.Avalonia.Views.UC;
 using PicView.Core.DebugTools;
-using PicView.Core.ViewModels;
 
 namespace PicView.Avalonia.UI;
 
@@ -75,33 +72,7 @@ public class HoverFadeButtonHandler : IDisposable
         });
     }
 
-    private bool ShouldShowButton()
-    {
-        if (!Settings.UIProperties.ShowAltInterfaceButtons)
-        {
-            return false;
-        }
-
-        if (_mainButton is not HoverBar hoverBar)
-        {
-            return true;
-        }
-
-        if (!Settings.UIProperties.ShowHoverNavigationBar)
-        {
-            hoverBar.IsVisible = false;
-            return false;
-        }
-
-        if (TopLevel.GetTopLevel(hoverBar) is not MainWindow { ViewModel: { } vm })
-        {
-            return true;
-        }
-
-        var isBottomToolbarShown = vm.IsBottomToolbarShown.CurrentValue;
-        hoverBar.IsVisible = !isBottomToolbarShown;
-        return !isBottomToolbarShown;
-    }
+    private static bool ShouldShowButton() => Settings.UIProperties.ShowAltInterfaceButtons;
 
     /// <summary>
     ///     Checks if the pointer is over the main button or the child button.

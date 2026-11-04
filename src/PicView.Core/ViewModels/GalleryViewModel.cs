@@ -157,13 +157,12 @@ public class GalleryViewModel : IDisposable
             .AddTo(ref _disposables);
     }
 
-    // The dock position and the hover bar flags are read here, so every caller builds the inputs the same way
+    // The dock position is read here, so every caller builds the inputs the same way
     private static GalleryAppearance ComputeAppearance(GalleryMode mode, double dockedSize, double expandedSize,
         GalleryStretchMode dockedStretch, GalleryStretchMode expandedStretch, double spacing)
     {
         return GalleryAppearance.For(mode, Settings.Gallery.DockPosition, new GalleryAppearanceInputs(dockedSize,
-            expandedSize, dockedStretch, expandedStretch, spacing, Settings.UIProperties.ShowBottomNavBar,
-            Settings.UIProperties.ShowHoverNavigationBar));
+            expandedSize, dockedStretch, expandedStretch, spacing));
     }
 
     public void Navigate(NavigateTo direction)

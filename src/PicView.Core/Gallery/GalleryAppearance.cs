@@ -22,9 +22,7 @@ public readonly record struct GalleryAppearanceInputs(
     double ExpandedItemSize,
     GalleryStretchMode DockedStretch,
     GalleryStretchMode ExpandedStretch,
-    double ItemSpacing,
-    bool ShowBottomNavBar,
-    bool ShowHoverNavigationBar);
+    double ItemSpacing);
 
 /// <summary>
 ///     How a gallery looks in a given mode and dock position. <see cref="Extent" /> is the docked thickness,
@@ -43,8 +41,7 @@ public readonly record struct GalleryAppearance(
     double ItemSpacing,
     GalleryInsets Margin,
     GalleryInsets Border,
-    double Extent,
-    bool ShowsHoverBar)
+    double Extent)
 {
     public static GalleryAppearance For(GalleryMode shownMode, GalleryDockPosition dock, GalleryAppearanceInputs inputs)
     {
@@ -72,8 +69,7 @@ public readonly record struct GalleryAppearance(
                     border,
                     horizontal
                         ? GalleryDefaults.GetDockedGalleryHeight(inputs.DockedItemSize)
-                        : GalleryDefaults.GetDockedGalleryWidth(inputs.DockedItemSize),
-                    !inputs.ShowBottomNavBar && inputs.ShowHoverNavigationBar);
+                        : GalleryDefaults.GetDockedGalleryWidth(inputs.DockedItemSize));
             case GalleryMode.Expanded:
                 return new GalleryAppearance(
                     shownMode, dock, true,
@@ -86,8 +82,7 @@ public readonly record struct GalleryAppearance(
                     inputs.ItemSpacing,
                     new GalleryInsets(15, 40, 15, 5),
                     GalleryInsets.Zero,
-                    double.NaN,
-                    false);
+                    double.NaN);
             default:
                 return new GalleryAppearance(
                     shownMode, dock, false,
@@ -100,8 +95,7 @@ public readonly record struct GalleryAppearance(
                     0,
                     GalleryInsets.Zero,
                     GalleryInsets.Zero,
-                    0,
-                    false);
+                    0);
         }
     }
 

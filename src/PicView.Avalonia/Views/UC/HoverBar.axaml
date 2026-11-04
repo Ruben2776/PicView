@@ -8,12 +8,12 @@
     Height="160"
     x:DataType="vm:TabViewModel"
     Background="Transparent"
-    IsVisible="{CompiledBinding Hoverbar.IsHoverbarVisible.Value}"
+    IsVisible="{CompiledBinding ParentWindowContext.IsHoverBarShown.Value}"
     Opacity="0">
     <Border
         x:Name="BottomBorder"
         Height="37"
-        MaxWidth="{CompiledBinding Hoverbar.MaxWidth}"
+        MaxWidth="775"
         Background="{DynamicResource HoverBarBackgroundColor}"
         BorderBrush="{DynamicResource HoverBarBorderColor}"
         BorderThickness="1"

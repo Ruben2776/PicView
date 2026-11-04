@@ -115,7 +115,6 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
     #region UI view models
     
     public BindableReactiveProperty<object?> CurrentView { get; } = new(null);
-    public HoverbarViewModel Hoverbar { get; } = new();
     public GalleryViewModel Gallery { get; } = new();
     
     /// <summary>

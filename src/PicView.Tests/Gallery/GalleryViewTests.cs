@@ -193,34 +193,11 @@ public class GalleryViewTests
     }
 
     [AvaloniaFact]
-    public void DockedItemSizeChanged_WhileDocked_LeavesHoverBarAlone()
+    public void HiddenByCrop_KeepsItemHeight()
     {
-        WithShownDockedGallery((core, window, view, _) =>
-        {
-            var tab = (TabViewModel)view.DataContext!;
-
-            // Another writer, such as ToggleInterface, sets the hover bar while docked
-            var other = !tab.Hoverbar.IsHoverbarVisible.Value;
-            tab.Hoverbar.IsHoverbarVisible.Value = other;
-
-            core.GallerySettings.DockedGalleryItemSize.Value = 120;
-            RenderFrame(window);
-
-            Assert.Equal(other, tab.Hoverbar.IsHoverbarVisible.Value);
-        });
-    }
-
-    [AvaloniaFact]
-    public void HiddenByCrop_KeepsHoverBarAndItemHeight()
-    {
-        // The docked look shows the hover bar, and the closed record's says not to
-        Settings.UIProperties.ShowBottomNavBar = false;
-        Settings.UIProperties.ShowHoverNavigationBar = true;
         WithShownDockedGallery((_, window, view, panel) =>
         {
             var tab = (TabViewModel)view.DataContext!;
-            var hoverBar = tab.Hoverbar.IsHoverbarVisible.Value;
-            Assert.True(hoverBar);
             var itemHeight = panel.ItemHeight;
 
             // Crop hides the gallery without animation
@@ -228,7 +205,6 @@ public class GalleryViewTests
             RenderFrame(window);
 
             Assert.False(view.IsVisible);
-            Assert.Equal(hoverBar, tab.Hoverbar.IsHoverbarVisible.Value);
             Assert.Equal(itemHeight, panel.ItemHeight);
             Assert.True(panel.ItemHeight > 0);
         });

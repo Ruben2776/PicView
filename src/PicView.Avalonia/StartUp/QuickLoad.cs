@@ -118,7 +118,6 @@ public static class QuickLoad
             return result;
         }
 
-        SourceOpener.ShowHoverBarIfNeeded(tab);
         if (vm.WindowModeState.CurrentValue.AutoFit)
         {
             await Dispatcher.UIThread.InvokeAsync(() => mainWindow.WindowFitter.Center(), DispatcherPriority.Render);
@@ -164,7 +163,6 @@ public static class QuickLoad
             }, DispatcherPriority.Send);
         }
 
-        SourceOpener.ShowHoverBarIfNeeded(tab);
         if (Settings.UIProperties.IsTaskbarProgressEnabled && tab.ImageIterator is { } iterator)
         {
             core.PlatformService.SetTaskbarProgress((ulong)iterator.CurrentIndex, (ulong)iterator.Files.Count);

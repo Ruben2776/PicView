@@ -92,7 +92,6 @@ public static class SourceOpener
         {
             Settings.StartUp.StartUpDirectory = rootDirectory;
         }
-        ShowHoverBarIfNeeded(tab);
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
             mainWindow.WindowFitter.Refit();
@@ -127,19 +126,5 @@ public static class SourceOpener
         return !string.IsNullOrWhiteSpace(remembered) && source.Contains(remembered, StringComparison.Ordinal)
             ? remembered
             : Path.GetDirectoryName(source);
-    }
-
-    internal static void ShowHoverBarIfNeeded(TabViewModel tab)
-    {
-        if (!Settings.UIProperties.ShowInterface && Settings.UIProperties.ShowAltInterfaceButtons
-            || Settings.UIProperties.ShowAltInterfaceButtons &&
-            tab.ParentWindowContext.WindowModeState.CurrentValue.Mode is WindowMode.Fullscreen)
-        {
-            tab.Hoverbar.IsHoverbarVisible.Value = Settings.UIProperties.ShowHoverNavigationBar;
-        }
-        else
-        {
-            tab.Hoverbar.IsHoverbarVisible.Value = false;
-        }
     }
 }
