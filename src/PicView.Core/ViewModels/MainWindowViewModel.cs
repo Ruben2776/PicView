@@ -82,6 +82,14 @@ public class MainWindowViewModel : IDisposable
     public BindableReactiveProperty<bool> IsUIShown { get; } = new();
     public BindableReactiveProperty<bool> IsTopToolbarShown { get; } = new(Settings.UIProperties.ShowInterface);
 
+    /// <summary>
+    /// Which bars this window shows, their heights and whether the hover bar may show, derived from the three
+    /// interface settings and its Window Mode (ADR-0021).
+    /// </summary>
+    public IReadOnlyBindableReactiveProperty<InterfaceVisibility> Interface { get; }
+
+    public IReadOnlyBindableReactiveProperty<bool> IsHoverBarShown { get; }
+
     public BindableReactiveProperty<bool> IsEditableTitlebarOpen { get; } = new(false);
 
     #endregion
@@ -117,6 +125,17 @@ public class MainWindowViewModel : IDisposable
             .ToReadOnlyBindableReactiveProperty();
         ShouldMaximizeBeShown = mode.Select(static m => m is not WindowMode.Maximized)
             .ToReadOnlyBindableReactiveProperty();
+
+        // Interface Visibility: the settings publish their value (ADR-0020); without them, the stored record is read once
+        Observable<InterfaceVisibility> visibility = globalSettings is null
+            ? WindowModeState.Select(static state => InterfaceVisibility.For(Settings.UIProperties.ShowInterface,
+                Settings.UIProperties.ShowBottomNavBar, Settings.UIProperties.ShowHoverNavigationBar, state.Shown))
+            : Observable.CombineLatest(globalSettings.ShowInterface, globalSettings.ShowBottomBar,
+                globalSettings.ShowHoverBar, WindowModeState,
+                static (showInterface, showBottomBar, showHoverBar, state) =>
+                    InterfaceVisibility.For(showInterface, showBottomBar, showHoverBar, state.Shown));
+        Interface = visibility.ToReadOnlyBindableReactiveProperty();
+        IsHoverBarShown = Interface.AsObservable().Select(static v => v.ShowsHoverBar).ToReadOnlyBindableReactiveProperty();
 
         // Each tab has its own gallery mode, and every window shares one TranslationViewModel, so the text is per window
         var isDocked = WindowTabs.ActiveTab.Select(static tab => tab.Gallery.Switcher.IsDocked.AsObservable()).Switch();
@@ -155,6 +174,8 @@ public class MainWindowViewModel : IDisposable
             IsBottomToolbarShown,
             IsAutoFit,
             IsFullscreen,
+            Interface,
+            IsHoverBarShown,
             TopTitlebarViewModel.DropDownMenu
         );
         GC.SuppressFinalize(this);
