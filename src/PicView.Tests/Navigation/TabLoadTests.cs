@@ -936,6 +936,150 @@ public class TabLoadTests : IDisposable
     }
 
     [Fact]
+    public async Task Subdirectories_TurnedOn_RelistsATabWithFiles()
+    {
+        var a = await WriteImageAsync("a.jpg");
+        Directory.CreateDirectory(Path.Combine(_testDirectory, "sub"));
+        var c = await WriteImageAsync(Path.Combine("sub", "c.jpg"));
+        var tab = CreateTab(_testDirectory);
+        await tab.Load.LoadAsync(a);
+        Assert.Equal([a], tab.ImageIterator!.Files.Select(f => f.FullName));
+
+        tab.Services!.GlobalSettings.IsIncludingSubdirectories.Value = true;
+
+        await WaitUntil(() => tab.ImageIterator!.Files.Count == 2, () => "the relist");
+        Assert.Equal([a, c], tab.ImageIterator!.Files.Select(f => f.FullName));
+        Assert.Equal(a, tab.Model.FileInfo?.FullName);
+    }
+
+    [Fact]
+    public async Task SideBySide_TurnedOnThenOff_PairsTheShownFileThenShowsItAlone()
+    {
+        var a = await WriteImageAsync("a.jpg");
+        var b = await WriteImageAsync("b.jpg");
+        var tab = CreateTab(_testDirectory);
+        await tab.Load.LoadAsync(a);
+        Assert.Null(tab.SecondaryModel);
+
+        tab.Services!.GlobalSettings.IsSideBySide.Value = true;
+        await WaitUntil(() => tab.SecondaryModel?.FileInfo?.FullName == b, () => "the pair");
+        Assert.Equal(a, tab.Model.FileInfo?.FullName);
+        Assert.False(tab.CanNavigateForwards.Value);
+
+        tab.Services.GlobalSettings.IsSideBySide.Value = false;
+        await WaitUntil(() => tab.SecondaryModel is null, () => "the single image");
+        Assert.Equal(a, tab.Model.FileInfo?.FullName);
+        Assert.True(tab.CanNavigateForwards.Value);
+    }
+
+    [Fact]
+    public async Task SideBySide_TurnedOnThenOffAtTheLastFile_ShowsItAloneAndNextStaysOff()
+    {
+        await WriteImageAsync("a.jpg");
+        var b = await WriteImageAsync("b.jpg");
+        var tab = CreateTab(_testDirectory);
+        await tab.Load.LoadAsync(b);
+
+        tab.Services!.GlobalSettings.IsSideBySide.Value = true;
+        await Task.Delay(EarlyEndWait, TestContext.Current.CancellationToken);
+        Assert.Null(tab.SecondaryModel);
+        Assert.Equal(b, tab.Model.FileInfo?.FullName);
+        Assert.False(tab.CanNavigateForwards.Value);
+
+        tab.Services.GlobalSettings.IsSideBySide.Value = false;
+        await Task.Delay(EarlyEndWait, TestContext.Current.CancellationToken);
+        Assert.Null(tab.SecondaryModel);
+        Assert.Equal(b, tab.Model.FileInfo?.FullName);
+        Assert.False(tab.CanNavigateForwards.Value);
+    }
+
+    [Theory]
+    [InlineData(true, true)]
+    [InlineData(true, false)]
+    [InlineData(false, true)]
+    [InlineData(false, false)]
+    public async Task Setting_ChangedOnATabWithoutAnIterator_DoesNothing(bool fresh, bool sideBySide)
+    {
+        var tab = CreateTab(_testDirectory, withIterator: false);
+        if (!fresh)
+        {
+            // A URL drops the iterator a file had made
+            var a = await WriteImageAsync("a.jpg");
+            await tab.Load.LoadAsync(a);
+            await tab.Load.LoadAsync("http://127.0.0.1:9/image.jpg");
+            Assert.Null(tab.ImageIterator);
+        }
+        _decoded.Clear();
+
+        if (sideBySide)
+        {
+            tab.Services!.GlobalSettings.IsSideBySide.Value = true;
+        }
+        else
+        {
+            tab.Services!.GlobalSettings.IsIncludingSubdirectories.Value = true;
+        }
+        await Task.Delay(EarlyEndWait, TestContext.Current.CancellationToken);
+
+        Assert.Null(tab.ImageIterator);
+        Assert.Empty(_decoded);
+        Assert.False(tab.Load.IsLoading.Value);
+    }
+
+    [Fact]
+    public async Task Subdirectories_ChangedTwiceQuickly_EndsInTheFinalState()
+    {
+        var a = await WriteImageAsync("a.jpg");
+        Directory.CreateDirectory(Path.Combine(_testDirectory, "sub"));
+        await WriteImageAsync(Path.Combine("sub", "c.jpg"));
+        var tab = CreateTab(_testDirectory);
+        await tab.Load.LoadAsync(a);
+        var watches = 0;
+        _mockFileWatcherService.OnWatch = _ => Interlocked.Increment(ref watches);
+
+        tab.Services!.GlobalSettings.IsIncludingSubdirectories.Value = true;
+        tab.Services.GlobalSettings.IsIncludingSubdirectories.Value = false;
+
+        // One relist per change, in order, so the second lists without the subdirectory
+        await WaitUntil(() => Volatile.Read(ref watches) == 2, () => "two relists");
+        Assert.Equal([a], tab.ImageIterator!.Files.Select(f => f.FullName));
+    }
+
+    [Fact]
+    public async Task FollowSettings_IteratorMadeAgain_FollowsOnce()
+    {
+        var a = await WriteImageAsync("a.jpg");
+        var tab = CreateTab(_testDirectory);
+        await tab.Load.LoadAsync(a);
+        tab.DisposeImageIterator();
+        await tab.Load.LoadAsync(a);
+        var watches = 0;
+        _mockFileWatcherService.OnWatch = _ => Interlocked.Increment(ref watches);
+
+        tab.Services!.GlobalSettings.IsIncludingSubdirectories.Value = true;
+
+        await WaitUntil(() => Volatile.Read(ref watches) >= 1, () => "the relist");
+        await Task.Delay(EarlyEndWait, TestContext.Current.CancellationToken);
+        Assert.Equal(1, Volatile.Read(ref watches));
+    }
+
+    [Fact]
+    public async Task Dispose_ThenSettingChanged_RelistsNothing()
+    {
+        var a = await WriteImageAsync("a.jpg");
+        var tab = CreateTab(_testDirectory);
+        await tab.Load.LoadAsync(a);
+        var watches = 0;
+        _mockFileWatcherService.OnWatch = _ => Interlocked.Increment(ref watches);
+        tab.Dispose();
+
+        tab.Services!.GlobalSettings.IsIncludingSubdirectories.Value = true;
+        await Task.Delay(EarlyEndWait, TestContext.Current.CancellationToken);
+
+        Assert.Equal(0, Volatile.Read(ref watches));
+    }
+
+    [Fact]
     public async Task LoadAsync_RelistOfADeletedFile_FailsAndChangesNothing()
     {
         var a = await WriteImageAsync("a.jpg");
