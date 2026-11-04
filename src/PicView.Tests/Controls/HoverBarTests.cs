@@ -73,13 +73,13 @@ public class HoverBarTests
     }
 
     [AvaloniaFact]
-    public void ApplyDetectionArea_OverADockedGallery_Leaves30PxAboveTheBar()
+    public void ApplyDetectionArea_OverADockedGallery_Leaves45PxAboveTheBar()
     {
         var bar = new HoverBar();
 
         bar.ApplyDetectionArea(isDockedGalleryShown: true);
 
-        Assert.Equal(30, bar.Height - bar.BottomBorder.Height - bar.BottomBorder.Margin.Bottom);
+        Assert.Equal(45, bar.Height - bar.BottomBorder.Height - bar.BottomBorder.Margin.Bottom);
         Assert.Equal(6, bar.BottomBorder.Margin.Bottom);
     }
 
