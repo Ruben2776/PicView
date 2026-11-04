@@ -17,7 +17,7 @@ namespace PicView.Avalonia.Views.UC;
 public partial class HoverBar : UserControl, IDisposable
 {
     /// <summary>Transparent room above the bar that fades it in, over a docked gallery; 30 px keeps it reachable.</summary>
-    private const double DockedDetectionMargin = 30;
+    private const double DockedDetectionMargin = 45;
     /// <summary>Gap between the bar and a docked gallery below it.</summary>
     private const double DockedGap = 6;
     /// <summary>Room above and below the bar without a docked gallery; 160 px in all.</summary>

@@ -54,7 +54,7 @@ public partial class MainView : UserControl
             {
                 return;
             }
-            mainWindow.Disposables.Add(new HoverFadeButtonHandler(AltButtonsPanel));
+            mainWindow.Disposables.Add(new HoverFadeButtonHandler(AltButtonsPanel, AltButtonHolder));
 
             if (DataContext is MainWindowViewModel vm)
             {

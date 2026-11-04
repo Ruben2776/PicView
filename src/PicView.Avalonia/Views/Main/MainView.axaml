@@ -346,7 +346,8 @@
                     CommandParameter="{x:Static keybindings:Actions.ToggleBottomToolbar}"
                     Header="{CompiledBinding Translation.ShowBottomToolbar.Value,
                                              Mode=OneWay}"
-                    IsChecked="{CompiledBinding IsBottomToolbarShown.Value, Mode=OneWay}"
+                    IsChecked="{CompiledBinding IsBottomToolbarShown.Value,
+                                                Mode=OneWay}"
                     IsVisible="{CompiledBinding !IsBottomToolbarShown.Value}"
                     ToggleType="CheckBox">
                     <MenuItem.Icon>
@@ -1095,47 +1096,53 @@
             IsVisible="{Binding IsLoadingIndicatorShown.Value, Mode=OneWay}"
             ZIndex="9" />
 
-        <DockPanel
+        <Panel
             x:Name="AltButtonsPanel"
-            Height="150"
+            Height="110"
             VerticalAlignment="Top"
+            Background="Transparent"
             IsHitTestVisible="{Binding !IsUIShown.Value, Mode=OneWay}"
             IsVisible="{Binding !WindowTabs.ActiveTab.Value.Gallery.IsGalleryExpanded.Value}"
-            LastChildFill="True"
-            Opacity="0"
             ZIndex="9">
-            <buttons:AltClose
-                x:Name="AltClose"
+            <DockPanel
+                x:Name="AltButtonHolder"
+                Height="35"
                 VerticalAlignment="Top"
-                DockPanel.Dock="Right"
-                IsVisible="{Binding !IsUIShown.Value}" />
-            <buttons:AltRestore
-                x:Name="AltRestore"
-                VerticalAlignment="Top"
-                DockPanel.Dock="Right"
-                IsVisible="{Binding !IsUIShown.Value}" />
-            <buttons:AltMinimize
-                x:Name="AltMinimize"
-                VerticalAlignment="Top"
-                DockPanel.Dock="Right"
-                IsVisible="{Binding !IsUIShown.Value}" />
-            <Border
-                x:Name="AltTitleBorder"
-                Height="{StaticResource TopBorderHeight}"
-                Padding="2,0"
-                VerticalAlignment="Top"
-                Background="{DynamicResource PopUpBackgroundColor}"
-                BorderBrush="{DynamicResource PopUpMainBorderColor}"
-                BorderThickness="0,0,0,1"
-                DockPanel.Dock="Left"
-                IsVisible="{Binding !IsUIShown.Value}"
-                PointerPressed="DragMove">
-                <TextBlock
-                    Classes="txt"
-                    Text="{Binding WindowTabs.ActiveTab.Value.Titles.Title}"
-                    TextAlignment="Center" />
-            </Border>
-        </DockPanel>
+                LastChildFill="True"
+                Opacity="0">
+                <buttons:AltClose
+                    x:Name="AltClose"
+                    VerticalAlignment="Top"
+                    DockPanel.Dock="Right"
+                    IsVisible="{Binding !IsUIShown.Value}" />
+                <buttons:AltRestore
+                    x:Name="AltRestore"
+                    VerticalAlignment="Top"
+                    DockPanel.Dock="Right"
+                    IsVisible="{Binding !IsUIShown.Value}" />
+                <buttons:AltMinimize
+                    x:Name="AltMinimize"
+                    VerticalAlignment="Top"
+                    DockPanel.Dock="Right"
+                    IsVisible="{Binding !IsUIShown.Value}" />
+                <Border
+                    x:Name="AltTitleBorder"
+                    Height="{StaticResource TopBorderHeight}"
+                    Padding="2,0"
+                    VerticalAlignment="Top"
+                    Background="{DynamicResource PopUpBackgroundColor}"
+                    BorderBrush="{DynamicResource PopUpMainBorderColor}"
+                    BorderThickness="0,0,0,1"
+                    DockPanel.Dock="Left"
+                    IsVisible="{Binding !IsUIShown.Value}"
+                    PointerPressed="DragMove">
+                    <TextBlock
+                        Classes="txt"
+                        Text="{Binding WindowTabs.ActiveTab.Value.Titles.Title}"
+                        TextAlignment="Center" />
+                </Border>
+            </DockPanel>
+        </Panel>
 
         <uc:ToolTipMessage
             x:Name="ToolTipMessage"
