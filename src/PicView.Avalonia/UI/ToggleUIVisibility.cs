@@ -10,20 +10,18 @@ public static class ToggleUIVisibility
 {
     public static void ToggleBottomBar(MainWindowViewModel vm, MainWindow mainWindow)
     {
-        if (Settings.UIProperties.ShowBottomNavBar)
+        if (vm.GlobalSettings.ShowBottomBar.Value)
         {
             vm.IsBottomToolbarShown.Value = false;
-            Settings.UIProperties.ShowBottomNavBar = false;
-            vm.Translation.IsShowingBottomToolbar.Value = TranslationManager.Translation.ShowBottomToolbar;
+            vm.GlobalSettings.ShowBottomBar.Value = false;
             vm.WindowTabs.ActiveTab.CurrentValue.Hoverbar.IsHoverbarVisible.Value =
-                Settings.UIProperties.ShowHoverNavigationBar;
+                vm.GlobalSettings.ShowHoverBar.Value;
         }
         else
         {
             vm.IsBottomToolbarShown.Value = true;
-            Settings.UIProperties.ShowBottomNavBar = true;
+            vm.GlobalSettings.ShowBottomBar.Value = true;
             vm.BottombarHeight.Value = SizeDefaults.BottombarHeight;
-            vm.Translation.IsShowingBottomToolbar.Value = TranslationManager.Translation.HideBottomToolbar;
             vm.WindowTabs.ActiveTab.CurrentValue.Hoverbar.IsHoverbarVisible.Value = false;
 
             Dispatcher.UIThread.Post(() => mainWindow.SharedBottomBar.ResponsiveNavigationBtnSize(mainWindow.Bounds.Width));
@@ -33,23 +31,21 @@ public static class ToggleUIVisibility
     public static void ToggleInterface(MainWindowViewModel vm, MainWindow mainWindow)
     {
         var tab = vm.WindowTabs.ActiveTab.CurrentValue;
-        if (Settings.UIProperties.ShowInterface)
+        if (vm.GlobalSettings.ShowInterface.Value)
         {
             // Hide Interface
 
             vm.IsUIShown.Value = false;
-            Settings.UIProperties.ShowInterface = false;
+            vm.GlobalSettings.ShowInterface.Value = false;
             vm.IsTopToolbarShown.Value = false;
             vm.IsBottomToolbarShown.Value = false;
-            vm.Translation.IsShowingUI.Value = TranslationManager.Translation.ShowUI;
-            tab.Hoverbar.IsHoverbarVisible.Value = Settings.UIProperties.ShowHoverNavigationBar;
+            tab.Hoverbar.IsHoverbarVisible.Value = vm.GlobalSettings.ShowHoverBar.Value;
         }
         else
         {
             vm.IsUIShown.Value = true;
             vm.IsTopToolbarShown.Value = true;
-            vm.Translation.IsShowingUI.Value = TranslationManager.Translation.HideUI;
-            if (Settings.UIProperties.ShowBottomNavBar)
+            if (vm.GlobalSettings.ShowBottomBar.Value)
             {
                 vm.IsBottomToolbarShown.Value = true;
                 vm.BottombarHeight.Value = SizeDefaults.BottombarHeight;
@@ -57,10 +53,10 @@ public static class ToggleUIVisibility
             }
             else
             {
-                tab.Hoverbar.IsHoverbarVisible.Value = Settings.UIProperties.ShowHoverNavigationBar;
+                tab.Hoverbar.IsHoverbarVisible.Value = vm.GlobalSettings.ShowHoverBar.Value;
             }
 
-            Settings.UIProperties.ShowInterface = true;
+            vm.GlobalSettings.ShowInterface.Value = true;
             vm.TitlebarHeight.Value = SizeDefaults.MainTitlebarHeight;
         }
 
@@ -70,11 +66,10 @@ public static class ToggleUIVisibility
             mainWindow.SharedBottomBar.ResponsiveNavigationBtnSize(mainWindow.Bounds.Width), DispatcherPriority.Render);
     }
 
-    public static async ValueTask ToggleHoverBar(MainWindowViewModel vm)
+    public static void ToggleHoverBar(MainWindowViewModel vm)
     {
-        var shouldShow = !Settings.UIProperties.ShowHoverNavigationBar;
-        
-        Settings.UIProperties.ShowHoverNavigationBar = shouldShow;
+        var shouldShow = !vm.GlobalSettings.ShowHoverBar.Value;
+        vm.GlobalSettings.ShowHoverBar.Value = shouldShow;
         if (shouldShow && !vm.IsBottomToolbarShown.CurrentValue || shouldShow && vm.IsFullscreen.Value)
         {
             ShowHoverBar(vm);
@@ -83,20 +78,16 @@ public static class ToggleUIVisibility
         {
             HideHoverBar(vm);
         }
-        
-        await SaveSettingsAsync().ConfigureAwait(false);
     }
     
     private static void ShowHoverBar(MainWindowViewModel vm)
     {
         vm.WindowTabs.ActiveTab.CurrentValue.Hoverbar.IsHoverbarVisible.Value = true;
-        vm.Translation.IsShowingHoverNavigationBar.Value = TranslationManager.Translation.HideHoverNavigationBar;
     }
     
     private static void HideHoverBar(MainWindowViewModel vm)
     {
         vm.WindowTabs.ActiveTab.CurrentValue.Hoverbar.IsHoverbarVisible.Value = false;
-        vm.Translation.IsShowingHoverNavigationBar.Value = TranslationManager.Translation.ShowHoverNavigationBar;
     }
 
     public static void RestoreInterface(MainWindowViewModel vm)

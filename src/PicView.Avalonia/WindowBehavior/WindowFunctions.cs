@@ -67,20 +67,6 @@ public static class WindowFunctions
         window.Focus();
     }
 
-    public static async Task ToggleTopMost(MainWindowViewModel vm)
-    {
-        if (Application.Current.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
-        {
-            return;
-        }
-
-        var shouldBeTopMost = !Settings.WindowProperties.TopMost;
-        desktop.MainWindow.Topmost = shouldBeTopMost;
-        Settings.WindowProperties.TopMost = shouldBeTopMost;
-        vm.IsTopMost.Value = shouldBeTopMost;
-
-        await SaveSettingsAsync().ConfigureAwait(false);
-    }
 
     /// <summary>
     /// Turns AutoFit on or off in every main window, the opposite of what it is in <paramref name="vm"/>'s window.
