@@ -159,13 +159,20 @@ public class GlobalSettingsViewModel
 
     private void SaveSoon()
     {
-        if (Interlocked.CompareExchange(ref _saveState, 1, 0) is 0)
+        while (true)
         {
-            _saving = SaveUntilClean();
-        }
-        else
-        {
-            Interlocked.Exchange(ref _saveState, 2);
+            if (Interlocked.CompareExchange(ref _saveState, 1, 0) is 0)
+            {
+                _saving = SaveUntilClean();
+                return;
+            }
+
+            // A save runs: mark that a change landed (1 -> 2), or it is already marked. If the save ended between
+            // the two checks the state is 0 again, so go round and start one
+            if (Interlocked.CompareExchange(ref _saveState, 2, 1) is 1 or 2)
+            {
+                return;
+            }
         }
     }
 
@@ -173,13 +180,21 @@ public class GlobalSettingsViewModel
     {
         while (true)
         {
-            await _save().ConfigureAwait(false);
+            try
+            {
+                await _save().ConfigureAwait(false);
+            }
+            catch (Exception e)
+            {
+                DebugHelper.LogDebug(nameof(GlobalSettingsViewModel), nameof(SaveUntilClean), e);
+            }
+
             // Clean: a change after this starts its own save. Otherwise a change landed meanwhile, so save once more
             if (Interlocked.CompareExchange(ref _saveState, 0, 1) is 1)
             {
                 return;
             }
-            Interlocked.Exchange(ref _saveState, 1);
+            Interlocked.CompareExchange(ref _saveState, 1, 2);
         }
     }
 }

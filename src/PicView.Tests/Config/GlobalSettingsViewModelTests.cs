@@ -96,6 +96,27 @@ public class GlobalSettingsViewModelTests
         Assert.Equal(2, saves);
     }
 
+    [Fact]
+    public async Task SaveSoon_SaveThrows_LaterChangesStillSave()
+    {
+        var saves = 0;
+        var settings = new GlobalSettingsViewModel(() =>
+        {
+            if (Interlocked.Increment(ref saves) is 1)
+            {
+                throw new IOException("disk");
+            }
+            return ValueTask.FromResult(true);
+        });
+
+        settings.IsLooping.Value = true;
+        await settings.Saving;
+        settings.IsScrollingEnabled.Value = true;
+        await settings.Saving;
+
+        Assert.Equal(2, saves);
+    }
+
     public static TheoryData<string, Func<GlobalSettingsViewModel, BindableReactiveProperty<bool>>,
         Func<GlobalSettingsViewModel, IReadOnlyBindableReactiveProperty<string?>>, Func<LanguageModel, string?>,
         Func<LanguageModel, string?>> Texts => new()
