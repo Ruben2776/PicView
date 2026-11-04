@@ -285,8 +285,15 @@ public class Gallery
     public double ItemSpacing { get; set; } = 25;
 
     public double LineSpacing { get; set; } = 20;
-    
+
     public GalleryMouseWheel GalleryMouseWheelBehavior { get; set; } = GalleryMouseWheel.Scroll;
+
+    /// <summary>
+    /// The number of files at which a tab hides its gallery: a tab whose file list has this many files or more shows
+    /// no gallery and loads no Gallery Items, without changing its Gallery Mode. 0 or less is no limit. Not shown in
+    /// the Settings window; it is set in the settings file.
+    /// </summary>
+    public int HideGalleryAtFileCount { get; set; } = 0;
 }
 
 public class ImageScaling

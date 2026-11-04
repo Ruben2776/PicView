@@ -195,6 +195,64 @@ public class GalleryModeSwitcherTests : IDisposable
     }
 
     [Fact]
+    public void SetOverLimit_WhileDocked_ShowsClosedWithoutAnimationAndKeepsMode()
+    {
+        _sut.Start(true);
+        _changes.Clear();
+
+        _sut.SetOverLimit(true);
+
+        Assert.Equal(GalleryMode.Closed, _sut.ShownMode.CurrentValue);
+        Assert.Equal(GalleryMode.Docked, _sut.Mode.CurrentValue);
+        Assert.True(_sut.IsHidden.CurrentValue);
+        Assert.Equal([new GalleryModeChange(GalleryMode.Docked, GalleryMode.Closed, false)], _changes);
+    }
+
+    [Fact]
+    public void SetOverLimit_False_GivesBackShownModeWithoutAnimation()
+    {
+        _sut.Start(true);
+        _sut.SetOverLimit(true);
+        _changes.Clear();
+
+        _sut.SetOverLimit(false);
+
+        Assert.False(_sut.IsHidden.CurrentValue);
+        Assert.Equal([new GalleryModeChange(GalleryMode.Closed, GalleryMode.Docked, false)], _changes);
+    }
+
+    [Fact]
+    public void SetOverLimit_False_WhileCropHides_StaysHidden()
+    {
+        _sut.Start(true);
+        _sut.SetHidden(true);
+        _sut.SetOverLimit(true);
+        _changes.Clear();
+
+        _sut.SetOverLimit(false);
+
+        Assert.True(_sut.IsHidden.CurrentValue);
+        Assert.Equal(GalleryMode.Closed, _sut.ShownMode.CurrentValue);
+        Assert.Empty(_changes);
+    }
+
+    [Fact]
+    public async Task Commands_WhileOverLimit_AreRefusedWithoutSave()
+    {
+        _sut.Start(true);
+        _sut.SetOverLimit(true);
+
+        _sut.ToggleExpanded();
+        await _sut.ToggleDocked();
+        await _sut.Contract();
+        await _sut.Close();
+
+        Assert.Equal(GalleryMode.Docked, _sut.Mode.CurrentValue);
+        Assert.Equal(GalleryMode.Closed, _sut.ShownMode.CurrentValue);
+        Assert.Equal(0, _save.Count);
+    }
+
+    [Fact]
     public async Task TwoSwitchers_DoNotAffectEachOther()
     {
         using var other = new GalleryModeSwitcher(_save.SaveAsync);

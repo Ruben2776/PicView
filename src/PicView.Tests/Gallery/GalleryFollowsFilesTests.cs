@@ -536,6 +536,81 @@ public class GalleryFollowsFilesTests : IDisposable
         Assert.Equal(81, tab.Gallery.GalleryItems.Count(item => item.Details is not null));
     }
 
+    #region File limit
+
+    [Fact]
+    public async Task FilesListed_AtTheLimit_HidesTheGalleryAndLoadsNothing()
+    {
+        Settings.Gallery.HideGalleryAtFileCount = 3;
+        var tab = CreateTab();
+        Show(tab);
+
+        tab.ImageIterator.Initialize(await FilesAsync("a.jpg", "b.jpg", "c.jpg"));
+        await IdleAsync(tab);
+
+        Assert.Equal(GalleryMode.Closed, tab.Gallery.ShownMode.Value);
+        Assert.Equal(GalleryMode.Docked, tab.Gallery.Mode.Value);
+        Assert.Empty(tab.Gallery.GalleryItems);
+        Assert.Equal(GalleryLoadingState.NotLoaded, tab.Gallery.LoadingState);
+    }
+
+    [Fact]
+    public async Task FilesListed_OneUnderTheLimit_ShowsTheGalleryAndLoads()
+    {
+        Settings.Gallery.HideGalleryAtFileCount = 3;
+        var tab = CreateTab();
+        Show(tab);
+
+        tab.ImageIterator.Initialize(await FilesAsync("a.jpg", "b.jpg"));
+
+        await WaitUntilLoadedAsync(tab, "a.jpg", "b.jpg");
+        Assert.Equal(GalleryMode.Docked, tab.Gallery.ShownMode.Value);
+    }
+
+    [Fact]
+    public async Task FilesListed_LimitBelowOne_IsNoLimit()
+    {
+        Settings.Gallery.HideGalleryAtFileCount = -1;
+        var tab = CreateTab();
+        Show(tab);
+
+        tab.ImageIterator.Initialize(await FilesAsync("a.jpg", "b.jpg"));
+
+        await WaitUntilLoadedAsync(tab, "a.jpg", "b.jpg");
+    }
+
+    [Fact]
+    public async Task FileInserted_CrossingTheLimit_HidesTheGalleryAndDropsTheItems()
+    {
+        Settings.Gallery.HideGalleryAtFileCount = 3;
+        var tab = await LoadedTabAsync("a.jpg", "c.jpg");
+
+        tab.ImageIterator.Insert((await FilesAsync("b.jpg"))[0], string.CompareOrdinal);
+        await IdleAsync(tab);
+
+        Assert.Equal(GalleryMode.Closed, tab.Gallery.ShownMode.Value);
+        Assert.Empty(tab.Gallery.GalleryItems);
+        Assert.Equal(GalleryLoadingState.NotLoaded, tab.Gallery.LoadingState);
+        Assert.Contains(tab.Id, _thumbnails.RemovedOwners);
+    }
+
+    [Fact]
+    public async Task FileRemoved_BackUnderTheLimit_ShowsTheGalleryAndLoads()
+    {
+        Settings.Gallery.HideGalleryAtFileCount = 3;
+        var tab = CreateTab();
+        Show(tab);
+        tab.ImageIterator.Initialize(await FilesAsync("a.jpg", "b.jpg", "c.jpg"));
+        await IdleAsync(tab);
+
+        tab.ImageIterator.Remove(Path.Combine(_directory, "b.jpg"));
+
+        await WaitUntilLoadedAsync(tab, "a.jpg", "c.jpg");
+        Assert.Equal(GalleryMode.Docked, tab.Gallery.ShownMode.Value);
+    }
+
+    #endregion
+
     private TabViewModel CreateTab()
     {
         var tab = new TabViewModel(null!, TestTabServices.For(_cache, _thumbnails, new MockThumbnailLoader()))

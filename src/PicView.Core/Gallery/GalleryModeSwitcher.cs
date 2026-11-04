@@ -3,9 +3,10 @@ using R3;
 namespace PicView.Core.Gallery;
 
 /// <summary>
-/// Changes one tab's Gallery Mode; nothing else does (ADR-0011). Crop and a Single Image hide the gallery without
-/// changing its mode, and mode changes are refused while it is hidden. The settings only remember whether a new tab
-/// starts docked, written when the user changes the tab's docked choice by hand.
+/// Changes one tab's Gallery Mode; nothing else does (ADR-0011). Crop, a Single Image and a file list at or over
+/// <see cref="Config.Gallery.HideGalleryAtFileCount"/> hide the gallery without changing its mode, and mode changes
+/// are refused while it is hidden. The settings only remember whether a new tab starts docked, written when the user
+/// changes the tab's docked choice by hand.
 /// </summary>
 /// <param name="saveSettings">Saves the settings once the remembered choice changed; the settings file by default.</param>
 public sealed class GalleryModeSwitcher(Func<ValueTask<bool>>? saveSettings = null) : IDisposable
@@ -22,6 +23,10 @@ public sealed class GalleryModeSwitcher(Func<ValueTask<bool>>? saveSettings = nu
     /// </summary>
     private GalleryMode _giveBack = GalleryMode.Closed;
 
+    // The two hiders; the gallery is hidden while either holds
+    private bool _hiddenByTab;
+    private bool _isOverLimit;
+
     /// <summary>
     /// The tab's mode, whether or not it is hidden.
     /// </summary>
@@ -33,7 +38,7 @@ public sealed class GalleryModeSwitcher(Func<ValueTask<bool>>? saveSettings = nu
     public ReadOnlyReactiveProperty<bool> IsDocked => _isDocked;
 
     /// <summary>
-    /// Whether crop or a Single Image hides the gallery.
+    /// Whether crop, a Single Image or the file limit hides the gallery.
     /// </summary>
     public ReadOnlyReactiveProperty<bool> IsHidden => _isHidden;
 
@@ -61,6 +66,23 @@ public sealed class GalleryModeSwitcher(Func<ValueTask<bool>>? saveSettings = nu
     /// </summary>
     public void SetHidden(bool hidden)
     {
+        _hiddenByTab = hidden;
+        UpdateHidden();
+    }
+
+    /// <summary>
+    /// Hides or shows the gallery for a file list at or over the file limit, without animation and without changing
+    /// the mode. The tab's gallery coordinator calls it with each file list, as it is the one reader of the limit.
+    /// </summary>
+    public void SetOverLimit(bool overLimit)
+    {
+        _isOverLimit = overLimit;
+        UpdateHidden();
+    }
+
+    private void UpdateHidden()
+    {
+        var hidden = _hiddenByTab || _isOverLimit;
         if (_isHidden.Value == hidden)
         {
             return;

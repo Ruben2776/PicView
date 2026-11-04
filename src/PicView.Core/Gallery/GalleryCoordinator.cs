@@ -53,6 +53,12 @@ public class GalleryCoordinator : IDisposable
     private CancellationTokenSource? _cts;
     private bool _isShown;
 
+    /// <summary>
+    /// Whether the file list is at or over <see cref="Config.Gallery.HideGalleryAtFileCount"/>. The gallery is hidden
+    /// then and, unlike for crop and a Single Image, has no items: there is nothing to show (ADR-0011).
+    /// </summary>
+    private bool _isOverLimit;
+
     public GalleryCoordinator(TabViewModel tab, IThumbnailLoader thumbnailLoader, IThumbnailCache thumbnailCache)
     {
         _tab = tab;
@@ -82,26 +88,58 @@ public class GalleryCoordinator : IDisposable
     /// and a load that has not added its items yet applies the change once they are in, rather than starting again:
     /// an archive's pages are inserted one by one as they are extracted.
     /// </summary>
-    internal void FilesChanged(FileListChange change) => _ = Enqueue(() =>
+    internal void FilesChanged(FileListChange change)
     {
-        if (change.Kind is FileListChangeKind.Listed)
+        // Published now, on the iterator's thread, so the gallery hides as the list arrives rather than after the
+        // queue; the tab's position reaches the UI the same way
+        var overLimit = IsOverLimit(change.Files.Count);
+        Gallery.Switcher.SetOverLimit(overLimit);
+        _ = Enqueue(() =>
         {
-            Listed(change.Files, change.Index);
-            return;
-        }
+            var wasOverLimit = _isOverLimit;
+            _isOverLimit = overLimit;
+            if (change.Kind is FileListChangeKind.Listed)
+            {
+                Listed(change.Files, change.Index);
+                return;
+            }
 
-        _files = change.Files;
-        switch (Gallery.LoadingState)
-        {
-            case GalleryLoadingState.Starting:
-                _pendingEdits.Add(change);
-                break;
-            case GalleryLoadingState.Loading:
-            case GalleryLoadingState.Loaded:
-                Edit(change);
-                break;
-        }
-    });
+            _files = change.Files;
+            if (overLimit)
+            {
+                // Crossing the limit, as an archive's pages are inserted, drops the items; already over, there are none
+                Drop();
+                return;
+            }
+
+            if (wasOverLimit)
+            {
+                // Back under the limit, as a file is deleted: the gallery shows again and loads
+                LoadIfShown(_tab.NavigationIndex.CurrentValue);
+                return;
+            }
+
+            switch (Gallery.LoadingState)
+            {
+                case GalleryLoadingState.Starting:
+                    _pendingEdits.Add(change);
+                    break;
+                case GalleryLoadingState.Loading:
+                case GalleryLoadingState.Loaded:
+                    Edit(change);
+                    break;
+            }
+        });
+    }
+
+    /// <summary>
+    /// Whether a list of <paramref name="count"/> files is at or over the file limit; a limit of 0 or less is none.
+    /// </summary>
+    private static bool IsOverLimit(int count)
+    {
+        var limit = Settings.Gallery.HideGalleryAtFileCount;
+        return limit > 0 && count >= limit;
+    }
 
     /// <summary>
     /// Completes once the changes queued so far are applied. For tests.
@@ -159,12 +197,15 @@ public class GalleryCoordinator : IDisposable
 
         var previous = _files;
         _files = files;
+        if (_isOverLimit)
+        {
+            Drop();
+            return;
+        }
+
         if (SameOrder(previous, files))
         {
-            if (Gallery.LoadingState is GalleryLoadingState.NotLoaded && _isShown)
-            {
-                StartLoad(currentIndex);
-            }
+            LoadIfShown(currentIndex);
             return;
         }
 
@@ -177,10 +218,7 @@ public class GalleryCoordinator : IDisposable
         }
 
         Drop();
-        if (_isShown)
-        {
-            StartLoad(currentIndex);
-        }
+        LoadIfShown(currentIndex);
     }
 
     private void Edit(FileListChange change)
@@ -320,11 +358,19 @@ public class GalleryCoordinator : IDisposable
     private void OnShownChanged(bool isShown) => _ = Enqueue(() =>
     {
         _isShown = isShown;
-        if (isShown && Gallery.LoadingState is GalleryLoadingState.NotLoaded && _files.Count > 0)
-        {
-            StartLoad(_tab.NavigationIndex.CurrentValue);
-        }
+        LoadIfShown(_tab.NavigationIndex.CurrentValue);
     });
+
+    /// <summary>
+    /// Starts a load when the gallery is shown, under the file limit, and has files but no items yet.
+    /// </summary>
+    private void LoadIfShown(int currentIndex)
+    {
+        if (_isShown && !_isOverLimit && Gallery.LoadingState is GalleryLoadingState.NotLoaded && _files.Count > 0)
+        {
+            StartLoad(currentIndex);
+        }
+    }
 
     /// <summary>
     /// Forgets the items and their thumbnails, for a list they no longer match.

@@ -55,6 +55,28 @@ public class LanguageAndSettingsUnitTest
     }
 
     [Fact]
+    public void HideGalleryAtFileCount_MissingFromSavedSettings_IsNoLimit()
+    {
+        const string json = """{ "Gallery": { "IsGalleryDocked": true } }""";
+
+        var loaded = JsonSerializer.Deserialize(json, SettingsGenerationContext.Default.AppSettings);
+
+        Assert.Equal(0, EnsureSettings(loaded!).Gallery!.HideGalleryAtFileCount);
+    }
+
+    [Fact]
+    public void HideGalleryAtFileCount_Set_StaysAfterSavingAndLoading()
+    {
+        var settings = GetDefaults();
+        settings.Gallery!.HideGalleryAtFileCount = 100_000;
+
+        var json = JsonSerializer.Serialize(settings, SettingsGenerationContext.Default.AppSettings);
+        var loaded = JsonSerializer.Deserialize(json, SettingsGenerationContext.Default.AppSettings);
+
+        Assert.Equal(100_000, loaded!.Gallery!.HideGalleryAtFileCount);
+    }
+
+    [Fact]
     public void CheckLanguages()
     {
         // Load the keys from the en.json file

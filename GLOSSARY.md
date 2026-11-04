@@ -136,8 +136,12 @@ _Avoid_: Current archive, last opened archive, temp zip directory
 ## Gallery
 
 **Gallery Mode**:
-The state a tab's gallery is in, exactly one at a time: Closed, Docked or Expanded. Each tab has its own, and closing the Expanded Gallery gives back the mode the tab had before it expanded. Cropping or showing a Single Image hides the gallery without changing its mode, and the mode cannot change while it is hidden; hiding the interface does not hide it. The settings only remember whether a new tab starts docked, which is the last choice the user made by hand in any tab, and where every Docked Gallery sits.
+The state a tab's gallery is in, exactly one at a time: Closed, Docked or Expanded. Each tab has its own, and closing the Expanded Gallery gives back the mode the tab had before it expanded. Cropping, showing a Single Image or a file list at or over the Gallery File Limit hides the gallery without changing its mode, and the mode cannot change while it is hidden; hiding the interface does not hide it. The settings only remember whether a new tab starts docked, which is the last choice the user made by hand in any tab, and where every Docked Gallery sits.
 _Avoid_: Gallery state, `ActiveGalleryMode`, `IsGalleryDocked` (as a tab's current state)
+
+**Gallery File Limit**:
+The number of files at which a tab hides its gallery: a tab whose file list has that many files or more shows no gallery and loads no Gallery Items, so a folder of a hundred thousand images browses without the gallery's load. It is a Setting with no place in the Settings window, set in the settings file; 0 or less is no limit, and it is 0 by default.
+_Avoid_: Gallery threshold, max gallery size, `HideGalleryAtFileCount` (in prose)
 
 **Docked Gallery**:
 The strip of thumbnails along one edge of a Main Window, top, bottom, left or right, beside the image.
