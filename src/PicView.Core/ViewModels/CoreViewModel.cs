@@ -7,7 +7,8 @@ namespace PicView.Core.ViewModels;
 
 public class CoreViewModel(
     IPlatformSpecificService? platformSpecificService,
-    Func<FileInfo, ValueTask<ImageModel>> imageLoader)
+    Func<FileInfo, ValueTask<ImageModel>> imageLoader,
+    GlobalSettingsViewModel? globalSettings = null)
 {
     // Shared Services
     public IPlatformSpecificService? PlatformService { get; } = platformSpecificService;
@@ -39,7 +40,8 @@ public class CoreViewModel(
 
     // --- Globally Shared State ---
     public TranslationViewModel Translation { get; } = new();
-    public GlobalSettingsViewModel? GlobalSettings { get; } = new();
+    /// <summary>The settings every tab follows; a test hands in one with a fake save.</summary>
+    public GlobalSettingsViewModel GlobalSettings { get; } = globalSettings ?? new();
     public GallerySharedSettingsViewModel GallerySettings { get; } = new();
     public KeybindingsViewModel? Keybindings { get; set; }
     public SettingsViewModel? SettingsViewModel { get; set; } // Single settings window

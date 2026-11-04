@@ -299,7 +299,7 @@ public sealed class AppLifecycle
         ComposeServices();
         _ = Task.Run(() =>
         {
-            _core.GlobalSettings?.BackgroundChoice.Value = Settings.UIProperties.BgColorChoice;
+            _core.GlobalSettings.BackgroundChoice.Value = Settings.UIProperties.BgColorChoice;
 #pragma warning disable MA0042
             LanguageUpdater.UpdateLanguage(_core.Translation, settingsExists);
 #pragma warning restore MA0042
@@ -331,7 +331,7 @@ public sealed class AppLifecycle
         var navigation = new NavigationService(platform.CompareStrings);
         _core.InitializeNavigation(
             new TabServices(_core.SharedCache, _core.SharedThumbnailCache, thumbnailLoader, fileWatcher, imageLoader,
-                platform),
+                platform, _core.GlobalSettings),
             navigation);
     }
 

@@ -16,9 +16,10 @@ public static class TestTabServices
 {
     public static TabServices For(SharedImageCache cache, IThumbnailCache thumbnails, IThumbnailLoader thumbnailLoader,
         IFileWatcherService? watcher = null, IImageModelLoader? imageLoader = null,
-        IPlatformSpecificService? platform = null) =>
+        IPlatformSpecificService? platform = null, GlobalSettingsViewModel? globalSettings = null) =>
         new(cache, thumbnails, thumbnailLoader, watcher ?? new NoFileWatcher(), imageLoader ?? new NoImageModelLoader(),
-            platform ?? new OrdinalPlatform());
+            platform ?? new OrdinalPlatform(),
+            globalSettings ?? new GlobalSettingsViewModel(static () => ValueTask.FromResult(true)));
 
     /// <summary>
     /// Gives no thumbnails, for a suite whose tabs need a thumbnail loader but show no gallery.

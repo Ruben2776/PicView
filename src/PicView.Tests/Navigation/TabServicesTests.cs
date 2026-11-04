@@ -37,6 +37,16 @@ public class TabServicesTests
     }
 
     [Fact]
+    public void ComposedServices_CarryTheCoresGlobalSettings()
+    {
+        var core = CreateCore();
+        core.InitializeNavigation(ServicesFor(core), navigation: null!);
+        var tab = new MainWindowViewModel(core, null!, null!, null!).WindowTabs.CreateTab();
+
+        Assert.Same(core.GlobalSettings, tab.Services!.GlobalSettings);
+    }
+
+    [Fact]
     public void CreateInitialTab_WithServicesOnCore_HandsThemToTheTab()
     {
         var core = CreateCore();
@@ -99,11 +109,12 @@ public class TabServicesTests
     }
 
     private static CoreViewModel CreateCore() =>
-        new(new MockPlatformSpecificService(), file => ValueTask.FromResult(new ImageModel { FileInfo = file }));
+        new(new MockPlatformSpecificService(), file => ValueTask.FromResult(new ImageModel { FileInfo = file }),
+            new GlobalSettingsViewModel(static () => ValueTask.FromResult(true)));
 
     private static TabServices ServicesFor(CoreViewModel core) =>
         new(core.SharedCache, core.SharedThumbnailCache, new MockThumbnailLoader(), new MockFileWatcherService(),
-            new MockImageModelLoader(), core.PlatformService!);
+            new MockImageModelLoader(), core.PlatformService!, core.GlobalSettings);
 
     private static NavigationService NavigationFor(CoreViewModel core, TabServices services) =>
         new(core.PlatformService!.CompareStrings);

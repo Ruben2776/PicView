@@ -1157,10 +1157,11 @@ public class TabLoadTests : IDisposable
     {
         var a = await WriteImageAsync("a.jpg");
         var platform = new MockPlatformSpecificService();
-        var core = new CoreViewModel(platform, file => ValueTask.FromResult(new ImageModel { FileInfo = file }));
+        var core = new CoreViewModel(platform, file => ValueTask.FromResult(new ImageModel { FileInfo = file }),
+            new GlobalSettingsViewModel(static () => ValueTask.FromResult(true)));
         core.InitializeNavigation(
             new TabServices(core.SharedCache, core.SharedThumbnailCache, _mockThumbnailLoader, _mockFileWatcherService,
-                _mockImageModelLoader, platform),
+                _mockImageModelLoader, platform, core.GlobalSettings),
             new NavigationService(platform.CompareStrings));
         var vm = new MainWindowViewModel(core, null!, null!, null!);
         var first = vm.WindowTabs.ActiveTab.Value;
@@ -1278,7 +1279,8 @@ public class TabLoadTests : IDisposable
     {
         var dummyParent = parentVm ?? new MainWindowViewModel(null!, null!, null!, null!);
         var services = new TabServices(cache ?? _cache, new MockThumbnailCache(), _mockThumbnailLoader,
-            watcher ?? _mockFileWatcherService, _mockImageModelLoader, platform ?? new MockPlatformSpecificService());
+            watcher ?? _mockFileWatcherService, _mockImageModelLoader, platform ?? new MockPlatformSpecificService(),
+            new GlobalSettingsViewModel(static () => ValueTask.FromResult(true)));
         var tab = new TabViewModel(dummyParent, services, writer);
         if (withIterator)
         {
