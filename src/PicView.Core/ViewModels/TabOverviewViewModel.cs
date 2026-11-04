@@ -526,8 +526,6 @@ public class TabOverviewViewModel
 
     #region Retrieval
 
-    public object? GetCurrentSource() => GetSourceFromFile(ActiveTab.CurrentValue.Model?.FileInfo);
-
     public object? GetSourceFromFile(FileInfo fileInfo)
     {
         if (SharedCache is null || fileInfo is null)
