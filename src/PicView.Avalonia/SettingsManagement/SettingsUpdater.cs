@@ -218,6 +218,7 @@ public static class SettingsUpdater
         {
             Settings.UIProperties.ShowFullPathInTitleBar = true;
         }
+        vm.GlobalSettings.IsShowingFullPathInTitleBar.Value = Settings.UIProperties.ShowFullPathInTitleBar;
         await SaveSettingsAsync().ConfigureAwait(false);
     }
     
@@ -234,6 +235,7 @@ public static class SettingsUpdater
         if (showSideBySide)
         {
             Settings.ImageScaling.ShowImageSideBySide = true;
+            vm.GlobalSettings.IsSideBySide.Value = true;
             vm.IsSideBySide.Value = true;
             if (tab.CurrentView.CurrentValue is ImageViewer imageViewer)
             {
@@ -249,6 +251,7 @@ public static class SettingsUpdater
         else
         {
             Settings.ImageScaling.ShowImageSideBySide = false;
+            vm.GlobalSettings.IsSideBySide.Value = false;
             vm.IsSideBySide.Value = false;
             if (tab.CurrentView.CurrentValue is ImageViewer imageViewer)
             {
