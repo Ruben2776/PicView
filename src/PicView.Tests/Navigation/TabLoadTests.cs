@@ -973,24 +973,23 @@ public class TabLoadTests : IDisposable
     }
 
     [Fact]
-    public async Task SideBySide_TurnedOnThenOffAtTheLastFile_ShowsItAloneAndNextStaysOff()
+    public async Task SideBySide_TurnedOnAtTheLastFile_PairsItWithTheFileBefore_ThenOffShowsThatFileAlone()
     {
-        await WriteImageAsync("a.jpg");
+        var a = await WriteImageAsync("a.jpg");
         var b = await WriteImageAsync("b.jpg");
         var tab = CreateTab(_testDirectory);
         await tab.Load.LoadAsync(b);
 
+        // A pair cannot start at the last file, so the pair ending at it shows, as the iterator has always done
         tab.Services!.GlobalSettings.IsSideBySide.Value = true;
-        await Task.Delay(EarlyEndWait, TestContext.Current.CancellationToken);
-        Assert.Null(tab.SecondaryModel);
-        Assert.Equal(b, tab.Model.FileInfo?.FullName);
+        await WaitUntil(() => tab.SecondaryModel?.FileInfo?.FullName == b, () => "the pair");
+        Assert.Equal(a, tab.Model.FileInfo?.FullName);
         Assert.False(tab.CanNavigateForwards.Value);
 
         tab.Services.GlobalSettings.IsSideBySide.Value = false;
-        await Task.Delay(EarlyEndWait, TestContext.Current.CancellationToken);
-        Assert.Null(tab.SecondaryModel);
-        Assert.Equal(b, tab.Model.FileInfo?.FullName);
-        Assert.False(tab.CanNavigateForwards.Value);
+        await WaitUntil(() => tab.SecondaryModel is null, () => "the single image");
+        Assert.Equal(a, tab.Model.FileInfo?.FullName);
+        Assert.True(tab.CanNavigateForwards.Value);
     }
 
     [Theory]

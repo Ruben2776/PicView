@@ -532,16 +532,10 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
             settings.IsSideBySide.Skip(1).SubscribeAwait(async (_, _) =>
             {
                 DeriveCanNavigate();
-                if (ImageIterator is not { Files.Count: > 0 } iterator)
+                if (ImageIterator is { Files.Count: > 0 } iterator)
                 {
-                    return;
+                    await iterator.ReloadAsync(clearCache: false).ConfigureAwait(false);
                 }
-                // Nothing follows the last file to pair it with, and a pair there would move the shown file back one
-                if (settings.IsSideBySide.Value && !settings.IsLooping.Value && iterator.CurrentIndex >= iterator.Files.Count - 1)
-                {
-                    return;
-                }
-                await iterator.ReloadAsync(clearCache: false).ConfigureAwait(false);
             }, AwaitOperation.Sequential),
             settings.IsIncludingSubdirectories.Skip(1).SubscribeAwait(async (_, _) =>
             {
