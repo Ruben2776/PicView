@@ -23,7 +23,7 @@ public static class AppleScriptManager
     /// </returns>
     public static async Task<bool> ExecuteAppleScriptAsync(string appleScript)
     {
-        var scriptPath = await WriteTempScriptAsync(appleScript);
+        var scriptPath = await WriteTempScriptAsync(appleScript).ConfigureAwait(false);
         try
         {
             var (exitCode, output, errors) = await RunAppleScriptProcessAsync(scriptPath, true).ConfigureAwait(false);
@@ -65,7 +65,7 @@ public static class AppleScriptManager
     /// </returns>
     public static async Task<string?> ExecuteAppleScriptWithResultAsync(string appleScript)
     {
-        var scriptPath = await WriteTempScriptAsync(appleScript);
+        var scriptPath = await WriteTempScriptAsync(appleScript).ConfigureAwait(false);
         try
         {
             var (exitCode, output, _) = await RunAppleScriptProcessAsync(scriptPath, false).ConfigureAwait(false);
@@ -170,7 +170,7 @@ public static class AppleScriptManager
             }
         }
 
-        await process.WaitForExitAsync();
+        await process.WaitForExitAsync().ConfigureAwait(false);
 
         return (process.ExitCode, output, errors);
     }

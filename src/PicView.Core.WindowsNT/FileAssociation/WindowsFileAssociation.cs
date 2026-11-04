@@ -92,7 +92,7 @@ public static class WindowsFileAssociation
         try
         {
             // Remove leading period if present
-            if (extension.StartsWith("."))
+            if (extension.StartsWith('.', StringComparison.Ordinal))
                 extension = extension[1..];
                 
             var progId = $"{StringExtensions.AppName}.{extension}";

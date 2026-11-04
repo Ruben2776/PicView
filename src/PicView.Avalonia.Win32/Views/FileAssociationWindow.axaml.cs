@@ -76,23 +76,23 @@ public partial class FileAssociationWindow : GenericWindow
             if (fileTypeGroup.Name is null)
             {
                 // If going into this view too fast, sometimes the name is null. This is a workaround
-                if (fileTypeGroup.FileTypes.Any(x => x.Extension.StartsWith(".png")))
+                if (fileTypeGroup.FileTypes.Any(x => x.Extension.StartsWith(".png", StringComparison.OrdinalIgnoreCase)))
                 {
                     fileTypeGroup.Name = TranslationManager.Translation.Normal!;
                 }
-                else if (fileTypeGroup.FileTypes.Any(x => x.Extension.StartsWith(".svg")))
+                else if (fileTypeGroup.FileTypes.Any(x => x.Extension.StartsWith(".svg", StringComparison.OrdinalIgnoreCase)))
                 {
                     fileTypeGroup.Name = TranslationManager.Translation.Graphics!;
                 }
-                else if (fileTypeGroup.FileTypes.Any(x => x.Extension.StartsWith(".raw")))
+                else if (fileTypeGroup.FileTypes.Any(x => x.Extension.StartsWith(".raw", StringComparison.OrdinalIgnoreCase)))
                 {
                     fileTypeGroup.Name = TranslationManager.Translation.RawCamera!;
                 }
-                else if (fileTypeGroup.FileTypes.Any(x => x.Extension.StartsWith(".wpg")))
+                else if (fileTypeGroup.FileTypes.Any(x => x.Extension.StartsWith(".wpg", StringComparison.OrdinalIgnoreCase)))
                 {
                     fileTypeGroup.Name = TranslationManager.Translation.Uncommon!;
                 }
-                else if (fileTypeGroup.FileTypes.Any(x => x.Extension.StartsWith(".zip")))
+                else if (fileTypeGroup.FileTypes.Any(x => x.Extension.StartsWith(".zip", StringComparison.OrdinalIgnoreCase)))
                 {
                     fileTypeGroup.Name = TranslationManager.Translation.Archives!;
                 }
@@ -123,7 +123,7 @@ public partial class FileAssociationWindow : GenericWindow
             container.Children.Add(groupCheckBox);
 
             // Add to the collection for filtering
-            _allCheckBoxes.Add((groupCheckBox, fileTypeGroup.Name));
+            _allCheckBoxes.Add((groupCheckBox, fileTypeGroup.Name)!);
 
             // Subscribe to changes in the file type group's IsSelected property
             Observable.EveryValueChanged(fileTypeGroup, x => x.IsSelected.Value)

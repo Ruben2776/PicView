@@ -39,8 +39,6 @@ public class Win32WindowProvider : IWindowProvider
 
     public ISystemPrinters CreateSystemPrinters() => new Win32Printers();
 
-    public async Task HandlePlatformUpdate(UpdateInfo updateInfo, string tempPath)
-    {
+    public async Task HandlePlatformUpdate(UpdateInfo updateInfo, string tempPath) =>
         await WinUpdateHelper.HandleWindowsUpdate(updateInfo, tempPath).ConfigureAwait(false);
-    }
 }

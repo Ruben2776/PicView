@@ -60,18 +60,20 @@ public class FileHistoryViewModel
         }
 
         // What the active tab shows: its file, its archive or its URL, which is not always the file it has open
-        var currentPath = _vm.WindowTabs?.ActiveTab?.Value?.ViewHistory.Current?.HistoryPath;
+        var currentPath = _vm.WindowTabs.ActiveTab.Value.ViewHistory.Current?.HistoryPath;
 
         // Read before the entries, so a change made while they are read is picked up by the next call
         var version = FileHistoryManager.Version;
         if (version == _syncedVersion)
         {
-            if (!string.Equals(currentPath, _syncedCurrentPath, StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(currentPath, _syncedCurrentPath, StringComparison.Ordinal))
             {
-                MarkCurrent(PinnedEntries, currentPath);
-                MarkCurrent(Entries, currentPath);
-                _syncedCurrentPath = currentPath;
+                return;
             }
+
+            MarkCurrent(PinnedEntries, currentPath);
+            MarkCurrent(Entries, currentPath);
+            _syncedCurrentPath = currentPath;
 
             return;
         }

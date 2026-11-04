@@ -15,6 +15,6 @@ public static class FileProperties
                            """;
         
         // Execute the script using the existing AppleScriptManager
-        return await AppleScriptManager.ExecuteAppleScriptAsync(appleScript);
+        return await AppleScriptManager.ExecuteAppleScriptAsync(appleScript).ConfigureAwait(false);
     }
 }

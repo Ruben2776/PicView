@@ -71,11 +71,10 @@ public partial class DropDownMenu : AnimatedMenu
             return;
         }
         
-        vm.Favorites.AddFavoritesDialogCommand.Subscribe(
-                _ =>
-                {
-                    _mainWindow.AddFavoriteDialog();
-                }, DebugHelper.LogError(nameof(DropDownMenu), nameof(vm.Favorites.AddFavoritesDialogCommand)))
+        vm.Favorites.AddFavoritesDialogCommand.Subscribe(_ =>
+            {
+                _mainWindow.AddFavoriteDialog();
+            }, DebugHelper.LogError(nameof(DropDownMenu), nameof(vm.Favorites.AddFavoritesDialogCommand)))
             .AddTo(ref _disposables);
         vm.Favorites.EditFavoritesDialogCommand.Subscribe(entry =>
             {

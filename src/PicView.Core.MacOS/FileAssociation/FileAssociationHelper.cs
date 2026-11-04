@@ -4,12 +4,12 @@ namespace PicView.Core.MacOS.FileAssociation;
 
 public static class FileAssociationHelper
 {
-    public static async Task<bool> RegisterFileAssociation(string extension, string contentType)
+    public static async Task<bool> RegisterFileAssociation(string extension)
     {
         try
         {
             // Remove leading period if present
-            if (extension.StartsWith('.'))
+            if (extension.StartsWith('.', StringComparison.Ordinal))
             {
                 extension = extension[1..];
             }
@@ -31,7 +31,7 @@ public static class FileAssociationHelper
             };
 
             process.Start();
-            await process.WaitForExitAsync();
+            await process.WaitForExitAsync().ConfigureAwait(false);
 
             return process.ExitCode == 0;
         }
@@ -44,7 +44,7 @@ public static class FileAssociationHelper
         }
     }
 
-    public static async Task<bool> UnregisterFileAssociationMacOS(string extension)
+    public static async Task<bool> UnregisterFileAssociationMacOS()
     {
         try
         {
@@ -67,7 +67,7 @@ public static class FileAssociationHelper
             };
 
             process.Start();
-            await process.WaitForExitAsync();
+            await process.WaitForExitAsync().ConfigureAwait(false);
 
             return process.ExitCode == 0;
         }

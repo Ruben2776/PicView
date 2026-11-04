@@ -8,11 +8,11 @@ namespace PicView.Core.WindowsNT.FileAssociation;
 public class WindowsFileAssociationService : IFileAssociationService
 {
     public async Task<bool> RegisterFileAssociation(string extension, string description) =>
-        await Task.Run(() => WindowsFileAssociation.RegisterFileAssociation(extension, description));
+        await Task.Run(() => WindowsFileAssociation.RegisterFileAssociation(extension, description)).ConfigureAwait(false);
     
     public async Task<bool> UnregisterFileAssociation(string extension) =>
-        await Task.Run(() => WindowsFileAssociation.UnregisterFileAssociation(extension));
+        await Task.Run(() => WindowsFileAssociation.UnregisterFileAssociation(extension)).ConfigureAwait(false);
     
     public async Task<bool> IsFileAssociated(string extension) =>
-        await Task.Run(() => WindowsFileAssociation.IsFileAssociated(extension));
+        await Task.Run(() => WindowsFileAssociation.IsFileAssociated(extension)).ConfigureAwait(false);
 }

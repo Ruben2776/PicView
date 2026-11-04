@@ -53,7 +53,8 @@ public static class ArchiveExtractionHelper
             Arguments = arguments,
             RedirectStandardOutput = true,
             CreateNoWindow = false,
-            WorkingDirectory = Path.GetDirectoryName(appPath)
+            WorkingDirectory = Path.GetDirectoryName(appPath),
+            UseShellExecute = false
         });
 
         if (process == null)
@@ -61,7 +62,7 @@ public static class ArchiveExtractionHelper
             return false;
         }
 
-        await process.WaitForExitAsync();
+        await process.WaitForExitAsync().ConfigureAwait(false);
         
         return process.ExitCode == 0;
     }

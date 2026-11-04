@@ -16,10 +16,10 @@ public static class WallpaperHelper
     public static async Task SetWallpaper(string imagePath)
     {
         // Convert backslashes to forward slashes for macOS paths
-        imagePath = imagePath.Replace("\\", "/");
+        imagePath = imagePath.Replace('\\', '/');
 
         var script = $"tell application \"System Events\" to tell every desktop to set picture to \"{imagePath}\"";
 
-        await AppleScriptManager.ExecuteAppleScriptAsync(script);
+        await AppleScriptManager.ExecuteAppleScriptAsync(script).ConfigureAwait(false);
     }
 }

@@ -48,7 +48,7 @@ repeat with appURL in appsArray
 end repeat
 return resultList";
 
-        var result = await AppleScriptManager.ExecuteAppleScriptWithResultAsync(appleScript);
+        var result = await AppleScriptManager.ExecuteAppleScriptWithResultAsync(appleScript).ConfigureAwait(false);
         if (!string.IsNullOrEmpty(result))
         {
             var apps = result.Split(',');
@@ -67,7 +67,7 @@ return resultList";
                 var bundleId = parts.Length > 2 ? parts[2].Trim() : string.Empty;
                     
                 // Skip if this is our own app
-                if (IsOwnApp(appName, appPath, bundleId))
+                if (IsOwnApp(appName, bundleId))
                     continue;
                     
                 appInfos.Add(new AppInfo
@@ -86,7 +86,7 @@ return resultList";
         return Array.Empty<AppInfo>();
     }
     
-    private static bool IsOwnApp(string appName, string appPath, string bundleId)
+    private static bool IsOwnApp(string appName, string bundleId)
     {
         // Check by bundle identifier first (most reliable)
         if (!string.IsNullOrEmpty(bundleId) && 

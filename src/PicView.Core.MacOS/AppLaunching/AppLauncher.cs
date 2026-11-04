@@ -10,12 +10,11 @@ public static class AppLauncher
     /// <param name="appPath">Full path to the application</param>
     /// <param name="filePath">Path to the file to open</param>
     /// <returns>True if the app was launched successfully</returns>
-    public static async Task<bool> LaunchAppWithFileAsync(string appPath, string filePath)
+    public static async Task LaunchAppWithFileAsync(string appPath, string filePath)
     {
         try
         {
-            if (string.IsNullOrEmpty(appPath) || string.IsNullOrEmpty(filePath))
-                return false;
+            if (string.IsNullOrEmpty(appPath) || string.IsNullOrEmpty(filePath)) return;
 
             var process = new Process
             {
@@ -30,16 +29,13 @@ public static class AppLauncher
             };
 
             process.Start();
-            await process.WaitForExitAsync();
-            
-            return process.ExitCode == 0;
+            await process.WaitForExitAsync().ConfigureAwait(false);
         }
         catch (Exception ex)
         {
 #if DEBUG
             Console.WriteLine($"Error launching app {appPath} with file {filePath}: {ex.Message}");
 #endif
-            return false;
         }
     }
 }

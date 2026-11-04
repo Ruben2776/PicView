@@ -6,7 +6,6 @@ using Avalonia.Interactivity;
 using Avalonia.LogicalTree;
 using Avalonia.Media;
 using Avalonia.Styling;
-using Avalonia.Threading;
 using PicView.Avalonia.Clipboard;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.FileSystem;
@@ -236,7 +235,7 @@ public partial class GalleryItem : NavigateAbleItem
     private void CopyFile_OnClick(object? sender, RoutedEventArgs e)
     {
         if (DataContext is not GalleryItemViewModel item ||
-            TopLevel.GetTopLevel(this) is not MainWindow { DataContext: MainWindowViewModel vm } mainWindow)
+            TopLevel.GetTopLevel(this) is not MainWindow { DataContext: MainWindowViewModel } mainWindow)
         {
             return;
         }

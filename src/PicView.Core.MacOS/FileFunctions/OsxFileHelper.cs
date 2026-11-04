@@ -8,6 +8,6 @@ public static class OsxFileHelper
     {
         var appleScript = "tell application \"Finder\" to delete POSIX file \"" + filePath + "\"";
     
-        return await AppleScriptManager.ExecuteAppleScriptAsync(appleScript);
+        return await AppleScriptManager.ExecuteAppleScriptAsync(appleScript).ConfigureAwait(false);
     }
 }
