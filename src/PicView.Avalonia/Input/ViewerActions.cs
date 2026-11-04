@@ -34,10 +34,10 @@ public static class ViewerActions
     // Cached once, so running an Action on the UI thread allocates nothing
     private static readonly Action<IZoomScrollTarget> ScrollLineDown = target => ScrollLine(target, true);
     private static readonly Action<IZoomScrollTarget> ScrollLineUp = target => ScrollLine(target, false);
-    private static readonly Action<IZoomScrollTarget> ScrollToTopOf = target => ScrollToTop(target);
-    private static readonly Action<IZoomScrollTarget> ScrollToBottomOf = target => ScrollToBottom(target);
-    private static readonly Action<IZoomScrollTarget> ZoomInOf = target => ZoomIn(target);
-    private static readonly Action<IZoomScrollTarget> ZoomOutOf = target => ZoomOut(target);
+    private static readonly Action<IZoomScrollTarget> ScrollToTopOf = ScrollToTop;
+    private static readonly Action<IZoomScrollTarget> ScrollToBottomOf = ScrollToBottom;
+    private static readonly Action<IZoomScrollTarget> ZoomInOf = ZoomIn;
+    private static readonly Action<IZoomScrollTarget> ZoomOutOf = ZoomOut;
 
     private static ValueTask OnUiThread(MainWindowViewModel vm, Action<IZoomScrollTarget> action)
     {
@@ -46,12 +46,12 @@ public static class ViewerActions
             return ValueTask.CompletedTask;
         }
 
-        if (Dispatcher.UIThread.CheckAccess())
+        if (!Dispatcher.UIThread.CheckAccess())
         {
-            action(target);
-            return ValueTask.CompletedTask;
+            return new ValueTask(Dispatcher.UIThread.InvokeAsync(() => action(target)).GetTask());
         }
 
-        return new ValueTask(Dispatcher.UIThread.InvokeAsync(() => action(target)).GetTask());
+        action(target);
+        return ValueTask.CompletedTask;
     }
 }

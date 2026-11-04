@@ -8,7 +8,6 @@ using PicView.Avalonia.Interfaces;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.WindowBehavior;
 using PicView.Core.Config;
-using PicView.Core.ViewModels;
 
 namespace PicView.Avalonia.Services;
 

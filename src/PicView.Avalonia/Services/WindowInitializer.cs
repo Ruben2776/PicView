@@ -1,4 +1,3 @@
-using Avalonia;
 using Avalonia.Controls;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.FileSystem;

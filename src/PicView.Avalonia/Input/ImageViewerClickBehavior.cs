@@ -38,21 +38,13 @@ public static class ImageViewerClickBehavior
             {
                 // Prevent unintended behavior when double-clicking
                 var view = vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.CurrentValue;
-                if (view is ImageViewer imageViewer)
+                switch (view)
                 {
-                    if (imageViewer.GalleryView.IsPointerOver)
-                    {
+                    case ImageViewer imageViewer when imageViewer.GalleryView.IsPointerOver:
                         return;
-                    }
-
-                    if (imageViewer.ClickArrowLeft.IsPointerOver || imageViewer.ClickArrowRight.IsPointerOver)
-                    {
+                    case ImageViewer imageViewer when imageViewer.ClickArrowLeft.IsPointerOver || imageViewer.ClickArrowRight.IsPointerOver:
+                    case StartUpMenu startUpMenu when startUpMenu.Buttons.IsPointerOver:
                         return;
-                    }
-                }
-                else if (view is StartUpMenu startUpMenu && startUpMenu.Buttons.IsPointerOver)
-                {
-                    return;
                 }
 
                 if (window.SharedBottomBar.IsPointerOver || window.SharedTitleBar.IsPointerOver)
@@ -138,11 +130,4 @@ public static class ImageViewerClickBehavior
             2 => DoubleClickAction.ToggleFullscreen,
             _ => DoubleClickAction.None
         };
-}
-
-internal enum DoubleClickAction
-{
-    None,
-    ResetZoom,
-    ToggleFullscreen
 }

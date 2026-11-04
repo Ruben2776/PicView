@@ -425,28 +425,28 @@ public sealed class MainWindowLifecycle
         window.Deactivated += delegate { window.KeybindRouter.Deactivated(); };
     }
 
-    private static void OnKeyDown(object? sender, KeyEventArgs e)
+    private static async ValueTask OnKeyDown(object? sender, KeyEventArgs e)
     {
         if (sender is MainWindow window)
         {
-            _ = window.KeybindRouter.KeyDownAsync(new Keybind(e.Key, e.KeyModifiers),
-                window.FocusManager?.GetFocusedElement());
+            await window.KeybindRouter.KeyDownAsync(new Keybind(e.Key, e.KeyModifiers),
+                window.FocusManager?.GetFocusedElement()).ConfigureAwait(false);
         }
     }
 
-    private static void OnKeyUp(object? sender, KeyEventArgs e)
+    private static async ValueTask OnKeyUp(object? sender, KeyEventArgs e)
     {
         if (sender is MainWindow window)
         {
-            _ = window.KeybindRouter.KeyUpAsync(e.Key);
+            await window.KeybindRouter.KeyUpAsync(e.Key).ConfigureAwait(false);
         }
     }
 
-    private static void OnPointerPressed(object? sender, PointerPressedEventArgs e)
+    private static async ValueTask OnPointerPressed(object? sender, PointerPressedEventArgs e)
     {
         if (sender is MainWindow window)
         {
-            _ = ImageViewerClickBehavior.PointerPressedAsync(e, window);
+            await ImageViewerClickBehavior.PointerPressedAsync(e, window).ConfigureAwait(false);
         }
     }
 }
