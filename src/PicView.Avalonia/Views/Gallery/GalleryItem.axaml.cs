@@ -46,18 +46,8 @@ public partial class GalleryItem : NavigateAbleItem
 
     public async Task LoadImage(GalleryItemViewModel vm)
     {
-        if (vm.ThumbnailLoaderFunc is null)
-        {
-            return;
-        }
-
         // Fast-path: If the image is already loaded, skip
         if (vm.Image.Value is IImage)
-        {
-            return;
-        }
-
-        if (vm.ThumbnailLoaderFunc == null)
         {
             return;
         }
@@ -71,8 +61,7 @@ public partial class GalleryItem : NavigateAbleItem
 
         try
         {
-            // Execute the lazy load directly
-            var thumb = await vm.ThumbnailLoaderFunc(token).ConfigureAwait(false);
+            var thumb = await vm.LoadThumbnailAsync(token).ConfigureAwait(false);
         
             // Ensure the user hasn't scrolled past this item while we were loading
             if (!token.IsCancellationRequested && thumb is not null)
@@ -168,7 +157,7 @@ public partial class GalleryItem : NavigateAbleItem
         {
             return;
         }
-        var fileName = item.FileLocation.CurrentValue;
+        var fileName = item.FileLocation;
         _ = FileManager.OpenWith(fileName).ConfigureAwait(false);
     }
 
@@ -178,7 +167,7 @@ public partial class GalleryItem : NavigateAbleItem
         {
             return;
         }
-        var fileName = item.FileLocation.CurrentValue;
+        var fileName = item.FileLocation;
         _ = FileManager.LocateOnDisk(fileName).ConfigureAwait(false);
     }
 
@@ -188,7 +177,7 @@ public partial class GalleryItem : NavigateAbleItem
         {
             return;
         }
-        var fileName = item.FileLocation.CurrentValue;
+        var fileName = item.FileLocation;
         _ = core.PlatformService.SetAsWallpaper(fileName, 4);
     }
 
@@ -198,7 +187,7 @@ public partial class GalleryItem : NavigateAbleItem
         {
             return;
         }
-        var fileName = item.FileLocation.CurrentValue;
+        var fileName = item.FileLocation;
         _ = core.PlatformService.SetAsWallpaper(fileName, 3);
     }
 
@@ -208,7 +197,7 @@ public partial class GalleryItem : NavigateAbleItem
         {
             return;
         }
-        var fileName = item.FileLocation.CurrentValue;
+        var fileName = item.FileLocation;
         _ = core.PlatformService.SetAsWallpaper(fileName, 2);
     }
 
@@ -218,7 +207,7 @@ public partial class GalleryItem : NavigateAbleItem
         {
             return;
         }
-        var fileName = item.FileLocation.CurrentValue;
+        var fileName = item.FileLocation;
         _ = core.PlatformService.SetAsWallpaper(fileName, 1);
     }
 
@@ -228,7 +217,7 @@ public partial class GalleryItem : NavigateAbleItem
         {
             return;
         }
-        var fileName = item.FileLocation.CurrentValue;
+        var fileName = item.FileLocation;
         _ = core.PlatformService.SetAsWallpaper(fileName, 0);
     }
 
@@ -239,7 +228,7 @@ public partial class GalleryItem : NavigateAbleItem
         {
             return;
         }
-        var fileName = item.FileLocation.CurrentValue;
+        var fileName = item.FileLocation;
         _ = mainWindow.ClipboardCopyService.CopyFileAsync(fileName);
     }
 
@@ -253,13 +242,13 @@ public partial class GalleryItem : NavigateAbleItem
 
         // The image open in the viewer is copied as it is shown there, turned and flipped
         var tab = vm.WindowTabs.ActiveTab.CurrentValue;
-        if (item.FileLocation.CurrentValue.Equals(tab.FileInfo.CurrentValue.FullName, StringComparison.Ordinal))
+        if (item.FileLocation.Equals(tab.FileInfo.CurrentValue.FullName, StringComparison.Ordinal))
         {
             _ = mainWindow.ClipboardCopyService.CopyImageAsync(tab).ConfigureAwait(false);
             return;
         }
 
-        _ = CopyOriginalImageAsync(new FileInfo(item.FileLocation.CurrentValue), core.SharedCache,
+        _ = CopyOriginalImageAsync(new FileInfo(item.FileLocation), core.SharedCache,
             mainWindow.ClipboardCopyService);
     }
 
@@ -282,7 +271,7 @@ public partial class GalleryItem : NavigateAbleItem
         {
             return;
         }
-        _ = mainWindow.ClipboardCopyService.CopyBase64Async(item.FileLocation.CurrentValue).ConfigureAwait(false);
+        _ = mainWindow.ClipboardCopyService.CopyBase64Async(item.FileLocation).ConfigureAwait(false);
     }
 
     private void DuplicateFile_OnClick(object? sender, RoutedEventArgs e)
@@ -292,7 +281,7 @@ public partial class GalleryItem : NavigateAbleItem
         {
             return;
         }
-        var sourcePath = item.FileLocation.CurrentValue;
+        var sourcePath = item.FileLocation;
         var currentActiveFilePath = vm.WindowTabs.ActiveTab.CurrentValue?.FileInfo?.CurrentValue.FullName;
         _ = FileManager.DuplicateFileAsync(sourcePath, currentActiveFilePath, vm, mainWindow)
             .ConfigureAwait(false);
@@ -305,7 +294,7 @@ public partial class GalleryItem : NavigateAbleItem
         {
             return;
         }
-        var fileName = item.FileLocation.CurrentValue;
+        var fileName = item.FileLocation;
         _ = FileManager.DeleteFileWithOptionalDialog(recycle: true, fileName, core.PlatformService, mainWindow);
     }
     

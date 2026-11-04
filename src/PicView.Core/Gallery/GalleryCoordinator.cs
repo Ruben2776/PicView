@@ -584,55 +584,54 @@ public class GalleryCoordinator : IDisposable
     /// </summary>
     private GalleryItemViewModel CreateItem(FileInfo file, GalleryFileDetails? details, double maxHeight)
     {
-        var core = _tab.ParentWindowContext?.Core;
-        var item = new GalleryItemViewModel { FileInfo = file };
-
-        var thumbData = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(file);
-        item.FileName.Value = thumbData.FileName;
-        item.FileSize.Value = thumbData.FileSize;
-        item.FileDate.Value = thumbData.FileDate;
-        item.FileLocation.Value = thumbData.FileLocation;
+        var item = new GalleryItemViewModel { FileInfo = file, Coordinator = this, ThumbnailHeight = (uint)maxHeight };
         // The size text comes with the details, so an item whose details aren't read yet shows no size rather than 0 x 0
         if (details is not null)
         {
             item.SetDetails(details);
         }
 
-        // Assign the lazy-loading logic, but don't execute it!
-        item.ThumbnailLoaderFunc = async cancellationToken =>
-        {
-            if (_thumbnailCache.TryGet(file.FullName, out var cached) && cached is not null)
-            {
-                return cached;
-            }
-
-            // Items that scroll out of view cancel while they wait, so the slots go to what is visible
-            await ThumbnailSlots.WaitAsync(cancellationToken).ConfigureAwait(false);
-            try
-            {
-                var thumb = await _thumbnailLoader.GetThumbnailAsync(file, (uint)maxHeight, core)
-                    .ConfigureAwait(false);
-                if (thumb is not null)
-                {
-                    _thumbnailCache.Add(_tab.Id, file.FullName, thumb);
-                }
-
-                // Detection reads the file again up to three times, so skip it while the badges are hidden
-                if (Settings.Gallery.ShowMotionPhotoBadges)
-                {
-                    item.IsMotionPhoto.Value = MotionPhotoDetector.TryDetect(
-                        item.FileInfo, item.Details?.XmpPacket, fastMode: true) is not null;
-                }
-
-                return thumb;
-            }
-            finally
-            {
-                ThumbnailSlots.Release();
-            }
-        };
-
         return item;
+    }
+
+    /// <summary>
+    /// Loads <paramref name="item"/>'s thumbnail when the item is shown: the cached one, or one the thumbnail loader
+    /// makes once a slot is free, which the cache then holds. The motion photo badge is detected along with it.
+    /// </summary>
+    /// <returns>The thumbnail, or null when the file gives none.</returns>
+    internal async ValueTask<object?> LoadThumbnailAsync(GalleryItemViewModel item, CancellationToken cancellationToken)
+    {
+        var file = item.FileInfo!;
+        if (_thumbnailCache.TryGet(file.FullName, out var cached) && cached is not null)
+        {
+            return cached;
+        }
+
+        // Items that scroll out of view cancel while they wait, so the slots go to what is visible
+        await ThumbnailSlots.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try
+        {
+            var thumb = await _thumbnailLoader
+                .GetThumbnailAsync(file, item.ThumbnailHeight, _tab.ParentWindowContext?.Core)
+                .ConfigureAwait(false);
+            if (thumb is not null)
+            {
+                _thumbnailCache.Add(_tab.Id, file.FullName, thumb);
+            }
+
+            // Detection reads the file again up to three times, so skip it while the badges are hidden
+            if (Settings.Gallery.ShowMotionPhotoBadges)
+            {
+                item.IsMotionPhoto.Value = MotionPhotoDetector.TryDetect(
+                    file, item.Details?.XmpPacket, fastMode: true) is not null;
+            }
+
+            return thumb;
+        }
+        finally
+        {
+            ThumbnailSlots.Release();
+        }
     }
 
     private static double ThumbnailHeight()

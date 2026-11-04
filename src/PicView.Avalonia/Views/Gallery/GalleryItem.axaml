@@ -349,25 +349,25 @@
                     Margin="2,0,2,6"
                     Classes="txt bold"
                     Foreground="{DynamicResource MainTextColor}"
-                    Text="{CompiledBinding FileName.Value}"
+                    Text="{CompiledBinding FileName}"
                     TextWrapping="NoWrap" />
                 <TextBlock
                     x:Name="FileLocation"
                     Margin="2,0,2,2"
                     Classes="txt"
-                    Text="{CompiledBinding FileLocation.Value}"
+                    Text="{CompiledBinding FileLocation}"
                     TextWrapping="NoWrap" />
                 <TextBlock
                     x:Name="FileSize"
                     Margin="2,0,2,2"
                     Classes="txt"
-                    Text="{CompiledBinding FileSize.Value}"
+                    Text="{CompiledBinding FileSize}"
                     TextWrapping="NoWrap" />
                 <TextBlock
                     x:Name="FileDate"
                     Margin="2,0,2,4"
                     Classes="txt"
-                    Text="{CompiledBinding FileDate.Value}"
+                    Text="{CompiledBinding FileDate}"
                     TextWrapping="NoWrap" />
                 <TextBlock
                     x:Name="ImageSize"

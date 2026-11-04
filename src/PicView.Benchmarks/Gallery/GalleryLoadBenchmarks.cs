@@ -15,8 +15,8 @@ namespace PicView.Benchmarks.Gallery;
 /// <summary>
 /// Where a gallery load spends its allocations: building one item for each file, or the batches that read the files'
 /// details afterwards. <see cref="Load"/> runs a whole load with the details reader replaced, so disk reads don't
-/// drown the measurement; <see cref="ThumbDataPerFile"/> and <see cref="ItemPerFile"/> are the two parts of building
-/// one item; <see cref="PingPerFile"/> is one real details read, for scale.
+/// drown the measurement; <see cref="ItemPerFile"/> is building one item and <see cref="TextsPerFile"/> the texts its
+/// tooltip adds; <see cref="PingPerFile"/> is one real details read, for scale.
 /// </summary>
 [MemoryDiagnoser]
 public class GalleryLoadBenchmarks
@@ -108,12 +108,15 @@ public class GalleryLoadBenchmarks
         return gallery.GalleryItems.Count;
     }
 
-    /// <summary>The file's name, size and date texts, which every item is built with.</summary>
+    /// <summary>The file's name, size and date texts, which an item makes the first time its tooltip reads them.</summary>
     [Benchmark]
-    public GalleryThumbInfo.GalleryThumbHolder ThumbDataPerFile() =>
-        GalleryThumbInfo.GalleryThumbHolder.GetThumbData(_files[0]);
+    public int TextsPerFile()
+    {
+        var item = new GalleryItemViewModel { FileInfo = _files[0] };
+        return item.FileName.Length + item.FileSize.Length + item.FileDate.Length;
+    }
 
-    /// <summary>An empty item: its seven bindable properties.</summary>
+    /// <summary>An item as a load builds it: its three bindable properties and no texts yet.</summary>
     [Benchmark]
     public GalleryItemViewModel ItemPerFile() => new() { FileInfo = _files[0] };
 

@@ -553,6 +553,27 @@ public class GalleryFollowsFilesTests : IDisposable
         Assert.Equal(1, reader.MostAtOnce);
     }
 
+    [Fact]
+    public async Task LoadThumbnailAsync_OfALoadedItem_GivesTheLoaderThumbnailAndCachesIt()
+    {
+        var thumb = new object();
+        var cache = new StoringThumbnailCache();
+        var tab = new TabViewModel(null!, TestTabServices.For(_cache, cache, new FixedThumbnailLoader(thumb)))
+        {
+            Model = new ImageModel { FileInfo = new FileInfo(Path.Combine(_directory, "shown.jpg")) }
+        };
+        tab.Initialize();
+        Show(tab);
+        tab.ImageIterator.Initialize(await FilesAsync("a.jpg"));
+        await WaitUntilLoadedAsync(tab, "a.jpg");
+        var item = tab.Gallery.GalleryItems[0];
+
+        var loaded = await item.LoadThumbnailAsync(TestContext.Current.CancellationToken);
+
+        Assert.Same(thumb, loaded);
+        Assert.Equal(item.FileInfo!.FullName, Assert.Single(cache.Added));
+    }
+
     #region File limit
 
     [Fact]
@@ -751,6 +772,27 @@ public class GalleryFollowsFilesTests : IDisposable
     private sealed class MockThumbnailLoader : IThumbnailLoader
     {
         public ValueTask<object?> GetThumbnailAsync(FileInfo file, uint size, CoreViewModel? core = null, MagickImage? magick = null) => ValueTask.FromResult<object?>(null);
+        public object? GetExifThumbnail(FileInfo file) => null;
+        public object? GetThumbQuick(FileInfo file, CoreViewModel? core = null) => null;
+    }
+
+    /// <summary>Keeps the paths of the thumbnails added to it.</summary>
+    private sealed class StoringThumbnailCache : IThumbnailCache
+    {
+        public List<string> Added { get; } = [];
+
+        public void Add(uint ownerId, string path, object thumbnail) => Added.Add(path);
+        public bool TryGet(string path, out object? thumbnail) { thumbnail = null; return false; }
+        public void Remove(string path) { }
+        public void RemoveOwner(uint ownerId) { }
+        public bool IsEmpty => Added.Count is 0;
+    }
+
+    /// <summary>Gives the same thumbnail for every file.</summary>
+    private sealed class FixedThumbnailLoader(object thumbnail) : IThumbnailLoader
+    {
+        public ValueTask<object?> GetThumbnailAsync(FileInfo file, uint size, CoreViewModel? core = null,
+            MagickImage? magick = null) => ValueTask.FromResult<object?>(thumbnail);
         public object? GetExifThumbnail(FileInfo file) => null;
         public object? GetThumbQuick(FileInfo file, CoreViewModel? core = null) => null;
     }
