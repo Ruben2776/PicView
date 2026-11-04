@@ -25,15 +25,6 @@ public sealed class NavigationSubscriptions(MainWindow mainWindow, MainWindowVie
                 .Subscribe(change => Dispatcher.UIThread.Post(() =>
                         UpdateImage.ReactToShown(mainWindow, tabViewModel, mainWindowViewModel, change),
                     DispatcherPriority.Send),
-                    DebugHelper.LogError(nameof(NavigationSubscriptions), nameof(UpdateImage.ReactToShown))),
-            tabViewModel.Gallery.OpenSelectedItemCommand
-                .Skip(1)
-                .SubscribeAwait(async (index, _) =>
-                {
-                    if (tabViewModel is { GalleryCoordinator: not null })
-                    {
-                        await tabViewModel.GalleryCoordinator.ToggleGalleryAndLoadItem(index).ConfigureAwait(false);
-                    }
-                }, DebugHelper.LogError(nameof(NavigationSubscriptions), nameof(tabViewModel.GalleryCoordinator.ToggleGalleryAndLoadItem)))));
+                    DebugHelper.LogError(nameof(NavigationSubscriptions), nameof(UpdateImage.ReactToShown)))));
     }
 }

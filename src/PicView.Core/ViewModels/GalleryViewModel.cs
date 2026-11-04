@@ -37,7 +37,8 @@ public class GalleryViewModel : IDisposable
         _appearanceBeforeInitialize = Switcher.ShownMode.Subscribe(mode => _appearance.Value = ComputeAppearance(mode,
             Settings.Gallery.DockedGalleryItemSize,
             Settings.Gallery.ExpandedGalleryItemSize, Settings.Gallery.DockedGalleryStretchMode,
-            Settings.Gallery.ExpandedGalleryStretchMode, Settings.Gallery.ItemSpacing));
+            Settings.Gallery.ExpandedGalleryStretchMode, Settings.Gallery.ItemSpacing), 
+            DebugHelper.LogError(nameof(GalleryViewModel), nameof(ShownMode)));
     }
 
     /// <summary>
@@ -51,9 +52,7 @@ public class GalleryViewModel : IDisposable
     public ReactiveCommand<Unit> CloseCommand { get; } = new();
     public ReactiveCommand<GalleryDockPosition> DockAtCommand { get; } = new();
     public ReactiveCommand<NavigateTo> NavigateGalleryCommand { get; } = new();
-    public ReactiveCommand<int> OpenSelectedItemCommand { get; } = new();
-
-    public ObservableList<GalleryItemViewModel> GalleryItems { get; } = new([]);
+    public ObservableList<GalleryItemViewModel> GalleryItems { get; } = [];
 
     /// <inheritdoc cref="GalleryModeSwitcher.Mode"/>
     public IReadOnlyBindableReactiveProperty<GalleryMode> Mode { get; }
@@ -205,7 +204,6 @@ public class GalleryViewModel : IDisposable
             CloseCommand,
             DockAtCommand,
             NavigateGalleryCommand,
-            OpenSelectedItemCommand,
             Mode,
             ShownMode,
             IsDocked,
