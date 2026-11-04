@@ -55,6 +55,10 @@ _Avoid_: Current window, focused window
 A window that works on images. Most work on what their Main Window shows: Print, Image Information, Resize Image and Convert. A Main Window has at most one of each, and they close with it. Effects works on the active tab of the Active Main Window instead, following it as the user switches windows: PicView has at most one, and it stays open until it is closed or the last Main Window closes. Batch Resize works on files the user picks: PicView has at most one, it belongs to no Main Window, and it stays open when the Main Window it was opened from closes.
 _Avoid_: Secondary window, child window, dialog
 
+**Interface Visibility**:
+Which of a Main Window's bars show, their heights, and whether the hover bar may show. Derived from the three interface settings and the window's Window Mode: fullscreen hides every bar; otherwise the titlebar follows the interface setting, the bottom bar shows only when the interface shows and its setting is on, and the hover bar may show when its setting is on and no bottom bar shows. The window derives it; nothing sets it.
+_Avoid_: UI shown, hidden UI, toggle UI (as a state)
+
 **App Window**:
 A window that belongs to PicView as a whole rather than to a Main Window: Settings, Keybindings, About and File Associations. There is at most one of each, opened from any Main Window, and it stays open until it is closed or App Shutdown.
 _Avoid_: Secondary window, global window, singleton window

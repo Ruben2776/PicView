@@ -24,6 +24,6 @@ Before this, `SettingsUpdater` held ten toggles that each hand-wrote the static,
 - The write-through subscribes first, so a later subscriber that reads the record sees the new value.
 - The fourteen are eager; the extra settings (`InitializeExtraSettings`) stay lazy.
 - Every Main Window follows top most; the setting is app-wide.
-- The three interface settings publish their value only; the window's shown state stays on the window until candidate 4 derives it from them.
+- The three interface settings publish their value; the window's shown state is derived from them and its Window Mode (ADR-0021).
 - The Settings window's 24 plain values still save through the static as they did.
 - ADR-0015 and ADR-0017 hold; their one outside call each is gone.
