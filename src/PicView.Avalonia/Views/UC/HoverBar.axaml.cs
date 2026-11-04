@@ -153,7 +153,7 @@ public partial class HoverBar : UserControl, IDisposable
     
     #endregion
     
-    private void ApplyResponsiveResize(double width)
+    internal void ApplyResponsiveResize(double width)
     {
         const int firstBreakpoint = 475;
         const int secondBreakpoint = 550;
@@ -162,8 +162,8 @@ public partial class HoverBar : UserControl, IDisposable
         switch (width)
         {
             case < SizeDefaults.SecondaryWindowMinWidth:
-                // Too small to fit
-                IsVisible = false;
+                // Too small to fit; the window's record owns IsVisible (ADR-0021)
+                BottomBorder.IsVisible = false;
                 break;
             case <= firstBreakpoint:
                 ApplyLayout(
@@ -204,8 +204,8 @@ public partial class HoverBar : UserControl, IDisposable
                 ZoomInMenuButton.IsVisible =
                     ZoomOutMenuButton.IsVisible = showAdvancedButtons;
 
-        IsVisible = true;
-        
+        BottomBorder.IsVisible = true;
+
         if (TopLevel.GetTopLevel(this) is not MainWindow mainWindow)
         {
             return;

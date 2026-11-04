@@ -21,7 +21,7 @@ Before this, seven hand-written entries in four modules wrote the window's shown
 - The record has value equality: a setting toggled while fullscreen notifies nothing and posts no fit, and the bar shows once the window leaves fullscreen.
 - The hover bar is the window's, reached through `ParentWindowContext.IsHoverBarShown`, so a tab moved to another Main Window follows that window's. `HoverbarViewModel` is deleted, and the Gallery Appearance no longer says whether the hover bar shows.
 - The Reserved Space reads the record, `ReservedSpace.For(tabCount, visibility, galleryWidth, galleryHeight)`. With several tabs and the interface hidden it reserves the tab strip without the collapsed titlebar, which the toggle used to reserve.
-- The fade-buttons setting gates only the fade-in, in `HoverFadeButtonHandler`; a hidden hover bar receives no pointer.
+- The fade-buttons setting is published too (`GlobalSettings.ShowFadeButtons`, one more of ADR-0020's) and gates the fade-in, in `HoverFadeButtonHandler`, and the hover bar's hit-testing, so a hover bar that can never fade in takes no clicks; it is not an input of the record. The hover bar's own code-behind sizes its buttons and hides its border when the window is too narrow, and never writes `IsVisible`.
 - The bottom bar sizes its own buttons when it becomes visible, from its top level's width, in place of the two posts the toggles made.
 - `IsTopToolbarShown` is `IsUIShown` under a second name, kept for its roughly 40 bindings. The one `IsChecked` binding on a bar, the bottom bar menu item, is `OneWay`.
 - The three interface settings publish their value (ADR-0020), and the window's shown state is derived from them; every Main Window derives from the same three and differs only by its Window Mode.

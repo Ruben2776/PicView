@@ -28,7 +28,7 @@ public class GlobalSettingsViewModelTests
 
     private GlobalSettingsViewModel New() => new(CountingSave);
 
-    public static TheoryData<string, Func<GlobalSettingsViewModel, BindableReactiveProperty<bool>>, Func<bool>> Fourteen => new()
+    public static TheoryData<string, Func<GlobalSettingsViewModel, BindableReactiveProperty<bool>>, Func<bool>> Published => new()
     {
         { "Looping", s => s.IsLooping, () => Settings.UIProperties.Looping },
         { "SideBySide", s => s.IsSideBySide, () => Settings.ImageScaling.ShowImageSideBySide },
@@ -44,9 +44,10 @@ public class GlobalSettingsViewModelTests
         { "Interface", s => s.ShowInterface, () => Settings.UIProperties.ShowInterface },
         { "BottomBar", s => s.ShowBottomBar, () => Settings.UIProperties.ShowBottomNavBar },
         { "HoverBar", s => s.ShowHoverBar, () => Settings.UIProperties.ShowHoverNavigationBar },
+        { "FadeButtons", s => s.ShowFadeButtons, () => Settings.UIProperties.ShowAltInterfaceButtons },
     };
 
-    [Theory, MemberData(nameof(Fourteen))]
+    [Theory, MemberData(nameof(Published))]
     public void Setting_Changed_WritesItsStoredValueAndSavesOnce(string _,
         Func<GlobalSettingsViewModel, BindableReactiveProperty<bool>> pick, Func<bool> stored)
     {

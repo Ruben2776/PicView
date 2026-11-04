@@ -9,6 +9,7 @@
     x:DataType="vm:TabViewModel"
     Background="Transparent"
     IsVisible="{CompiledBinding ParentWindowContext.IsHoverBarShown.Value}"
+    IsHitTestVisible="{CompiledBinding ParentWindowContext.GlobalSettings.ShowFadeButtons.Value}"
     Opacity="0">
     <Border
         x:Name="BottomBorder"

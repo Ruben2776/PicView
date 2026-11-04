@@ -20,7 +20,7 @@ public class SettingsViewModelTests
     [Fact]
     public void RestoreLastTab_Zero_SetsOverview()
     {
-        using var vm = new SettingsViewModel(new TranslationViewModel());
+        using var vm = new SettingsViewModel(new TranslationViewModel(), NewSettings());
         vm.RestoreLastTab(0);
         Assert.True(vm.IsOverviewVisible.Value);
     }
@@ -28,7 +28,7 @@ public class SettingsViewModelTests
     [Fact]
     public void RestoreLastTab_One_SetsGeneral()
     {
-        using var vm = new SettingsViewModel(new TranslationViewModel());
+        using var vm = new SettingsViewModel(new TranslationViewModel(), NewSettings());
         vm.RestoreLastTab(1);
         Assert.False(vm.IsOverviewVisible.Value);
         Assert.Equal(SettingsCategory.General, vm.SelectedCategory.Value);
@@ -37,7 +37,7 @@ public class SettingsViewModelTests
     [Fact]
     public void Navigation_History_Works()
     {
-        using var vm = new SettingsViewModel(new TranslationViewModel());
+        using var vm = new SettingsViewModel(new TranslationViewModel(), NewSettings());
         vm.RestoreLastTab(0); // Start at Overview
         
         // Go to General
@@ -65,6 +65,21 @@ public class SettingsViewModelTests
         Assert.Equal(SettingsCategory.General, vm.SelectedCategory.Value);
     }
     
+    private static GlobalSettingsViewModel NewSettings() => new(static () => ValueTask.FromResult(true));
+
+    [Fact]
+    public void ToggleFadeButtons_WritesThePublishedSetting()
+    {
+        var settings = NewSettings();
+        using var vm = new SettingsViewModel(new TranslationViewModel(), settings);
+        var before = settings.ShowFadeButtons.Value;
+
+        vm.ToggleFadeButtonsCommand.Execute(Unit.Default);
+
+        Assert.Equal(!before, settings.ShowFadeButtons.Value);
+        Assert.Equal(!before, Settings.UIProperties.ShowAltInterfaceButtons);
+    }
+
     private class ManualFrameProvider : FrameProvider
     {
         private readonly List<IFrameRunnerWorkItem> _items = [];

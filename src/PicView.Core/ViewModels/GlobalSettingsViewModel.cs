@@ -45,6 +45,11 @@ public class GlobalSettingsViewModel
 
     public BindableReactiveProperty<bool> ShowHoverBar { get; }
 
+    /// <summary>
+    /// Whether the alt buttons and the hover bar fade in on hover; a hover bar that cannot fade in takes no clicks (ADR-0021).
+    /// </summary>
+    public BindableReactiveProperty<bool> ShowFadeButtons { get; }
+
     private readonly BindableReactiveProperty<string?> _loopingText = new();
     private readonly BindableReactiveProperty<string?> _scrollingText = new();
     private readonly BindableReactiveProperty<string?> _fileHistoryText = new();
@@ -96,6 +101,7 @@ public class GlobalSettingsViewModel
         ShowInterface = new(Settings.UIProperties.ShowInterface);
         ShowBottomBar = new(Settings.UIProperties.ShowBottomNavBar);
         ShowHoverBar = new(Settings.UIProperties.ShowHoverNavigationBar);
+        ShowFadeButtons = new(Settings.UIProperties.ShowAltInterfaceButtons);
 
         Follow(IsLooping, value => Settings.UIProperties.Looping = value, rephrases: true);
         Follow(IsSideBySide, value => Settings.ImageScaling.ShowImageSideBySide = value);
@@ -111,6 +117,7 @@ public class GlobalSettingsViewModel
         Follow(ShowInterface, value => Settings.UIProperties.ShowInterface = value, rephrases: true);
         Follow(ShowBottomBar, value => Settings.UIProperties.ShowBottomNavBar = value, rephrases: true);
         Follow(ShowHoverBar, value => Settings.UIProperties.ShowHoverNavigationBar = value, rephrases: true);
+        Follow(ShowFadeButtons, value => Settings.UIProperties.ShowAltInterfaceButtons = value);
     }
 
     /// <summary>

@@ -25,7 +25,7 @@ public class SettingsViewModel : IDisposable
 
     public BindableReactiveProperty<List<SettingsCategoryItem>> Categories { get; } = new();
 
-    public SettingsViewModel(TranslationViewModel translation)
+    public SettingsViewModel(TranslationViewModel translation, GlobalSettingsViewModel globalSettings)
     {
         Categories.Value =
         [
@@ -89,25 +89,15 @@ public class SettingsViewModel : IDisposable
             await SaveSettingsAsync().ConfigureAwait(false);
         });
         
-        ToggleFadeButtonsCommand = new ReactiveCommand( _ =>
+        // The published setting writes the record and saves (ADR-0020); only the text is this window's
+        ToggleFadeButtonsCommand = new ReactiveCommand(_ =>
         {
-            if (IsShowingFadeButtons.Value)
-            {
-                IsShowingFadeButtons.Value = false;
-                translation.IsShowingFadingUIButtons.Value = TranslationManager.Translation.ShowFadeInButtonsOnHover;
-                Settings.UIProperties.ShowAltInterfaceButtons = false;
-            }
-            else
-            {
-                IsShowingFadeButtons.Value = true;
-                translation.IsShowingFadingUIButtons.Value = TranslationManager.Translation.DisableFadeInButtonsOnHover;
-                Settings.UIProperties.ShowAltInterfaceButtons = true;
-            }
+            var show = !globalSettings.ShowFadeButtons.Value;
+            globalSettings.ShowFadeButtons.Value = show;
+            translation.IsShowingFadingUIButtons.Value = show
+                ? TranslationManager.Translation.DisableFadeInButtonsOnHover
+                : TranslationManager.Translation.ShowFadeInButtonsOnHover;
         }).AddTo(ref _disposables);
-        ToggleFadeButtonsCommand.SubscribeAwait(async (_, _) =>
-        {
-            await SaveSettingsAsync().ConfigureAwait(false);
-        });
 
         // Search Initialization
         SearchData = new SettingsSearchData();
@@ -210,8 +200,6 @@ public class SettingsViewModel : IDisposable
     public BindableReactiveProperty<bool> IsStayingCentered { get; } = new(Settings.WindowProperties.KeepCentered);
 
     public BindableReactiveProperty<bool> IsUsingTouchpad { get; } = new(Settings.Zoom.IsUsingTouchPad);
-    
-    public BindableReactiveProperty<bool> IsShowingFadeButtons { get; } = new(Settings.UIProperties.ShowAltInterfaceButtons);
 
     public BindableReactiveProperty<bool> IsAvoidingZoomingOut { get; } = new(Settings.Zoom.AvoidZoomingOut);
     public BindableReactiveProperty<bool> IsResettingZoomOnImageChange { get; } = new(Settings.Zoom.ResetZoomOnChange);
