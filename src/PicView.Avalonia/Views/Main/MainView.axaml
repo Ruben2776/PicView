@@ -346,7 +346,7 @@
                     CommandParameter="{x:Static keybindings:Actions.ToggleBottomToolbar}"
                     Header="{CompiledBinding Translation.ShowBottomToolbar.Value,
                                              Mode=OneWay}"
-                    IsChecked="{CompiledBinding IsBottomToolbarShown.Value}"
+                    IsChecked="{CompiledBinding IsBottomToolbarShown.Value, Mode=OneWay}"
                     IsVisible="{CompiledBinding !IsBottomToolbarShown.Value}"
                     ToggleType="CheckBox">
                     <MenuItem.Icon>

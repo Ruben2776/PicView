@@ -25,9 +25,7 @@ public class MainWindowViewModel : IDisposable
     #region Window state
     public ClickedButton ClickedButton { get; set; }
 
-    // Hidden with the interface, as the window applies its settings, so a Fit before that already leaves it out
-    public BindableReactiveProperty<bool> IsBottomToolbarShown { get; } =
-        new(Settings.UIProperties.ShowBottomNavBar && Settings.UIProperties.ShowInterface);
+    public IReadOnlyBindableReactiveProperty<bool> IsBottomToolbarShown { get; }
     
     public BindableReactiveProperty<double> ScrollViewerWidth { get; } = new(double.NaN);
     
@@ -50,9 +48,9 @@ public class MainWindowViewModel : IDisposable
     /// </summary>
     public BindableReactiveProperty<double> ImageHeight { get; } = new(double.NaN);
 
-    public BindableReactiveProperty<double> TitlebarHeight { get; } = new();
+    public IReadOnlyBindableReactiveProperty<double> TitlebarHeight { get; }
 
-    public BindableReactiveProperty<double> BottombarHeight { get; } = new();
+    public IReadOnlyBindableReactiveProperty<double> BottombarHeight { get; }
 
     /// <summary>
     /// This window's Window Mode, which only its <see cref="WindowModeSwitcher"/> changes.
@@ -79,8 +77,12 @@ public class MainWindowViewModel : IDisposable
 
     public BindableReactiveProperty<bool> IsLoadingIndicatorShown { get; } = new();
 
-    public BindableReactiveProperty<bool> IsUIShown { get; } = new();
-    public BindableReactiveProperty<bool> IsTopToolbarShown { get; } = new(Settings.UIProperties.ShowInterface);
+    public IReadOnlyBindableReactiveProperty<bool> IsUIShown { get; }
+
+    /// <summary>
+    /// <see cref="IsUIShown"/> under the name its bindings use.
+    /// </summary>
+    public IReadOnlyBindableReactiveProperty<bool> IsTopToolbarShown => IsUIShown;
 
     /// <summary>
     /// Which bars this window shows, their heights and whether the hover bar may show, derived from the three
@@ -136,6 +138,10 @@ public class MainWindowViewModel : IDisposable
                     InterfaceVisibility.For(showInterface, showBottomBar, showHoverBar, state.Shown));
         Interface = visibility.ToReadOnlyBindableReactiveProperty();
         IsHoverBarShown = Interface.AsObservable().Select(static v => v.ShowsHoverBar).ToReadOnlyBindableReactiveProperty();
+        IsUIShown = Interface.AsObservable().Select(static v => v.IsInterfaceShown).ToReadOnlyBindableReactiveProperty();
+        IsBottomToolbarShown = Interface.AsObservable().Select(static v => v.IsBottomBarShown).ToReadOnlyBindableReactiveProperty();
+        TitlebarHeight = Interface.AsObservable().Select(static v => v.TitlebarHeight).ToReadOnlyBindableReactiveProperty();
+        BottombarHeight = Interface.AsObservable().Select(static v => v.BottombarHeight).ToReadOnlyBindableReactiveProperty();
 
         // Each tab has its own gallery mode, and every window shares one TranslationViewModel, so the text is per window
         var isDocked = WindowTabs.ActiveTab.Select(static tab => tab.Gallery.Switcher.IsDocked.AsObservable()).Switch();
@@ -168,7 +174,6 @@ public class MainWindowViewModel : IDisposable
             DockedGalleryToggleHeader,
             IsLoadingIndicatorShown,
             IsUIShown,
-            IsTopToolbarShown,
             IsEditableTitlebarOpen,
             RunActionCommand,
             IsBottomToolbarShown,

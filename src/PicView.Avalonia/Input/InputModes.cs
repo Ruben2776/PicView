@@ -38,5 +38,5 @@ public static class InputModes
 
     private static bool IsMenuOpen(MainWindowViewModel vm) =>
         (vm.TopTitlebarViewModel.DropDownMenu?.IsDropDownMenuVisible.CurrentValue ?? false) ||
-        (vm.IsUIShown.CurrentValue && vm.TopTitlebarViewModel.IsMainMenuVisible.CurrentValue);
+        (vm.IsUIShown.Value && vm.TopTitlebarViewModel.IsMainMenuVisible.CurrentValue);
 }

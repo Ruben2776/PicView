@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Interactivity;
+using R3;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.DragAndDrop;
 using PicView.Avalonia.UI;
@@ -15,11 +16,21 @@ namespace PicView.Avalonia.Views.UC;
 
 public partial class BottomBar : UserControl, IDisposable
 {
+    private readonly IDisposable _sizingWhenShown;
+
     public BottomBar()
     {
         InitializeComponent();
 
         Loaded += OnLoaded;
+        // Shown again, the bar sizes its buttons for the width the window has now (ADR-0021); a resize does the rest
+        _sizingWhenShown = this.GetObservable(IsVisibleProperty).ToObservable().Subscribe(shown =>
+        {
+            if (shown && TopLevel.GetTopLevel(this) is { } top)
+            {
+                ResponsiveNavigationBtnSize(top.Bounds.Width);
+            }
+        });
 
         if (OperatingSystem.IsMacOS())
         {
@@ -348,6 +359,7 @@ public partial class BottomBar : UserControl, IDisposable
         ResetZoomButton.Click -= OnResetZoomButtonClick;
         FlipButton.Click -= OnFlipButtonClick;
         SettingsMenuButton.Click -= OnSettingsMenuButtonClick;
+        _sizingWhenShown.Dispose();
 
         GC.SuppressFinalize(this);
     }

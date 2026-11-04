@@ -2,7 +2,6 @@ using Avalonia.Controls;
 using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Interfaces;
-using PicView.Avalonia.UI;
 using PicView.Avalonia.Views.UC;
 using PicView.Core.IPlatform;
 using PicView.Core.Sizing;
@@ -150,17 +149,7 @@ public sealed class WindowModeSwitcher(
                 window.WindowFitter.KeepSize();
             }
 
-            if (previous.Mode is WindowMode.Fullscreen)
-            {
-                ToggleUIVisibility.RestoreInterface(vm);
-            }
-
             adapter.EnterNativeState(window, next);
-
-            if (next.Mode is WindowMode.Fullscreen)
-            {
-                ToggleUIVisibility.FullscreenHideInterface(vm);
-            }
 
             if (next.Mode is not WindowMode.Maximized &&
                 vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.CurrentValue is ImageViewer imageViewer)

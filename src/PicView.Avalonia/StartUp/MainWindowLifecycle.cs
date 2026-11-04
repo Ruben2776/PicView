@@ -10,12 +10,10 @@ using PicView.Avalonia.Input;
 using PicView.Avalonia.Interfaces;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.Services;
-using PicView.Avalonia.UI;
 using PicView.Avalonia.Views.UC;
 using PicView.Avalonia.WindowBehavior;
 using PicView.Core.FileSorting;
 using PicView.Core.Navigation;
-using PicView.Core.Sizing;
 using PicView.Core.Titles;
 using PicView.Core.ViewModels;
 using R3;
@@ -73,11 +71,10 @@ public sealed class MainWindowLifecycle
     {
         var window = Create();
         var vm = ViewModelOf(window);
-        var settingUp = ApplyWindowSettingsAsync(vm, isAppStart: false);
         WindowFunctions.HandleWindowScalingMode(window, isAppStart: false);
         vm.WindowTabs.ActiveTab.Value.CurrentView.Value = CreateStartUpMenu(window, vm.WindowTabs.ActiveTab.CurrentValue);
         window.Show();
-        await Task.WhenAll(settingUp, SetUpShownWindow(window, isAppStart: false)).ConfigureAwait(true);
+        await SetUpShownWindow(window, isAppStart: false).ConfigureAwait(true);
         return window;
     }
 
@@ -89,14 +86,12 @@ public sealed class MainWindowLifecycle
     public async Task<MainWindow> OpenForMovedTabAsync(TabViewModel tab, PixelPoint position, double width, double height)
     {
         var window = Create(tab);
-        var vm = ViewModelOf(window);
-        var settingUp = ApplyWindowSettingsAsync(vm, isAppStart: false);
         window.Position = position;
         window.Width = width;
         window.Height = height;
         WindowFunctions.HandleWindowScalingMode(window, isAppStart: false, adjustPos: false);
         window.Show();
-        await Task.WhenAll(settingUp, SetUpShownWindow(window, isAppStart: false)).ConfigureAwait(true);
+        await SetUpShownWindow(window, isAppStart: false).ConfigureAwait(true);
         return window;
     }
 
@@ -110,8 +105,6 @@ public sealed class MainWindowLifecycle
     internal (MainWindow Window, Task SetUp) OpenAtAppStart(string? source, Func<bool>? launchFileArrived)
     {
         var window = Create(null, false);
-        var vm = ViewModelOf(window);
-        var settingUp = ApplyWindowSettingsAsync(vm, isAppStart: true);
         WindowFunctions.HandleWindowScalingMode(window, isAppStart: true, adjustPos: !Settings.WindowProperties.AutoFit);
         if (source is not null)
         {
@@ -132,7 +125,7 @@ public sealed class MainWindowLifecycle
             }, DispatcherPriority.Background);
         }
 
-        return (window, Task.WhenAll(settingUp, SetUpShownWindow(window, isAppStart: true)));
+        return (window, SetUpShownWindow(window, isAppStart: true));
     }
 
     /// <summary>
@@ -299,7 +292,7 @@ public sealed class MainWindowLifecycle
         var saysLoading = vm.WindowTabs.ActiveTab
             .Select(static tab => SaysLoading(tab.Titles))
             .Switch();
-        return Observable.CombineLatest(saysLoading, vm.IsTopToolbarShown,
+        return Observable.CombineLatest(saysLoading, vm.IsTopToolbarShown.AsObservable(),
                 static (loading, titlebarShown) => loading && !titlebarShown)
             .Subscribe(show => vm.IsLoadingIndicatorShown.Value = show);
     }
@@ -343,28 +336,6 @@ public sealed class MainWindowLifecycle
         ?? throw new InvalidOperationException("A main window needs a MainWindowViewModel as its DataContext.");
 
     /// <summary>
-    /// Gives a window the bars the remembered settings ask for. Only the first window at App Start may start fullscreen,
-    /// which hides them.
-    /// </summary>
-    private static Task ApplyWindowSettingsAsync(MainWindowViewModel vm, bool isAppStart)
-    {
-        var startsFullscreen = WindowModeSwitcher.Starting(isAppStart).Mode is WindowMode.Fullscreen;
-        return Task.Run(() =>
-        {
-            vm.TitlebarHeight.Value = startsFullscreen || !Settings.UIProperties.ShowInterface
-                ? 0
-                : SizeDefaults.MainTitlebarHeight;
-            vm.BottombarHeight.Value = startsFullscreen || !Settings.UIProperties.ShowInterface
-                ? 0
-                : SizeDefaults.BottombarHeight;
-            vm.IsUIShown.Value = Settings.UIProperties.ShowInterface;
-            vm.IsTopToolbarShown.Value = Settings.UIProperties.ShowInterface;
-            vm.IsBottomToolbarShown.Value = Settings.UIProperties.ShowBottomNavBar &&
-                                            Settings.UIProperties.ShowInterface;
-        });
-    }
-
-    /// <summary>
     /// Every Main Window follows the two window settings, top most and the taskbar progress (ADR-0020).
     /// </summary>
     internal static IDisposable FollowSettings(MainWindow window)
@@ -400,10 +371,6 @@ public sealed class MainWindowLifecycle
         {
             Dispatcher.UIThread.Post(() =>
             {
-                if (vm.IsFullscreen.Value)
-                {
-                    ToggleUIVisibility.FullscreenHideInterface(vm);
-                }
                 window.WindowFitter.Refit();
                 WindowFunctions.CenterWindowOnScreen(window, top: true);
             }, DispatcherPriority.ApplicationIdle);

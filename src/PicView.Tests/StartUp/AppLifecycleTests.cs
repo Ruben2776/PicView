@@ -213,13 +213,13 @@ public class AppLifecycleTests : IAsyncDisposable
         first.WindowTabs.MoveOut(tab);
         var moved = ViewModelOf(await app.MainWindows.OpenForMovedTabAsync(tab, new PixelPoint(40, 40), 800, 600));
 
-        Assert.Equal(SizeDefaults.MainTitlebarHeight, first.TitlebarHeight.CurrentValue);
-        Assert.Equal(SizeDefaults.BottombarHeight, first.BottombarHeight.CurrentValue);
+        Assert.Equal(SizeDefaults.MainTitlebarHeight, first.TitlebarHeight.Value);
+        Assert.Equal(SizeDefaults.BottombarHeight, first.BottombarHeight.Value);
         foreach (var vm in new[] { opened, moved })
         {
-            Assert.Equal(first.TitlebarHeight.CurrentValue, vm.TitlebarHeight.CurrentValue);
-            Assert.Equal(first.BottombarHeight.CurrentValue, vm.BottombarHeight.CurrentValue);
-            Assert.True(vm.IsUIShown.CurrentValue);
+            Assert.Equal(first.TitlebarHeight.Value, vm.TitlebarHeight.Value);
+            Assert.Equal(first.BottombarHeight.Value, vm.BottombarHeight.Value);
+            Assert.True(vm.IsUIShown.Value);
         }
     }
 
@@ -833,14 +833,14 @@ public class AppLifecycleTests : IAsyncDisposable
     [AvaloniaFact]
     public async Task OpenAsync_WhileTheTitlebarIsHidden_ShowsTheIndicatorOnlyWhileLoading()
     {
-        Settings.UIProperties.ShowInterface = false;
+        _core.GlobalSettings.ShowInterface.Value = false;
         var app = CreateApp();
         await app.StartAsync(settingsExists: true, []);
         var window = app.MainWindows.Open[0];
         var vm = ViewModelOf(window);
         var a = await WriteImageAsync("a.jpg");
         var held = Hold(a);
-        Assert.False(vm.IsTopToolbarShown.CurrentValue);
+        Assert.False(vm.IsTopToolbarShown.Value);
 
         var opening = SourceOpener.OpenAsync(window, _core, a).AsTask();
         await held.Requested.Task.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
@@ -862,7 +862,7 @@ public class AppLifecycleTests : IAsyncDisposable
         var vm = ViewModelOf(window);
         var a = await WriteImageAsync("a.jpg");
         var held = Hold(a);
-        Assert.True(vm.IsTopToolbarShown.CurrentValue);
+        Assert.True(vm.IsTopToolbarShown.Value);
         var seen = new List<bool>();
         using var watching = vm.IsLoadingIndicatorShown.AsObservable().Subscribe(seen.Add);
 
@@ -879,7 +879,7 @@ public class AppLifecycleTests : IAsyncDisposable
     [AvaloniaFact]
     public async Task TwoOverlappingLoads_KeepTheIndicatorUntilTheNewerEnds()
     {
-        Settings.UIProperties.ShowInterface = false;
+        _core.GlobalSettings.ShowInterface.Value = false;
         var app = CreateApp();
         await app.StartAsync(settingsExists: true, []);
         var window = app.MainWindows.Open[0];
@@ -919,7 +919,7 @@ public class AppLifecycleTests : IAsyncDisposable
         var opening = SourceOpener.OpenAsync(window, _core, a).AsTask();
         await held.Requested.Task.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
         var shownWithTitlebar = vm.IsLoadingIndicatorShown.CurrentValue;
-        vm.IsTopToolbarShown.Value = false;
+        vm.GlobalSettings.ShowInterface.Value = false;
         var shownWithoutTitlebar = vm.IsLoadingIndicatorShown.CurrentValue;
         held.Model.SetResult(new ImageModel { FileInfo = new FileInfo(a) });
         await opening.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
@@ -932,7 +932,7 @@ public class AppLifecycleTests : IAsyncDisposable
     [AvaloniaFact]
     public async Task SwitchingTabsWhileTheTitlebarIsHidden_ShowsTheIndicatorOfTheActiveTab()
     {
-        Settings.UIProperties.ShowInterface = false;
+        _core.GlobalSettings.ShowInterface.Value = false;
         var app = CreateApp();
         await app.StartAsync(settingsExists: true, []);
         var window = app.MainWindows.Open[0];
@@ -1073,7 +1073,7 @@ public class AppLifecycleTests : IAsyncDisposable
     [AvaloniaFact]
     public async Task StartUp_WhileTheInterfaceIsHiddenAndTheOpenIsHeld_ShowsTheIndicator()
     {
-        Settings.UIProperties.ShowInterface = false;
+        _core.GlobalSettings.ShowInterface.Value = false;
         var app = CreateApp();
         await app.StartAsync(settingsExists: true, []);
         var window = app.MainWindows.Open[0];
@@ -1095,7 +1095,7 @@ public class AppLifecycleTests : IAsyncDisposable
         _platform.CompareGate.Set();
         var result = await opening.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
 
-        Assert.False(vm.IsTopToolbarShown.CurrentValue);
+        Assert.False(vm.IsTopToolbarShown.Value);
         Assert.False(loadingWhileHeld);
         Assert.True(shownWhileHeld);
         Assert.True(result.IsLoaded);

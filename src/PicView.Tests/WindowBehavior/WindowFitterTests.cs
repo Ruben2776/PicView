@@ -243,8 +243,7 @@ public class WindowFitterTests
         tab.CurrentView.Value = menu;
         Dispatcher.UIThread.RunJobs();
 
-        var reserved = ReservedSpace.For(2, vm.TitlebarHeight.Value, vm.IsTopToolbarShown.Value,
-            Settings.UIProperties.ShowBottomNavBar, 0, 0);
+        var reserved = ReservedSpace.For(2, vm.Interface.Value, 0, 0);
         Assert.Equal(800, menu.Width);
         Assert.Equal(600 - reserved.Top - reserved.Bottom, menu.Height);
         Assert.True(reserved.Top >= SizeDefaults.TabHeight, "The tab strip shows with two tabs");
@@ -281,8 +280,7 @@ public class WindowFitterTests
 
         fitter.FitStartUpMenu(menu);
 
-        var reserved = ReservedSpace.For(1, vm.TitlebarHeight.Value, vm.IsTopToolbarShown.Value,
-            vm.IsBottomToolbarShown.Value, 0, 0);
+        var reserved = ReservedSpace.For(1, vm.Interface.Value, 0, 0);
         Assert.Equal(1000, menu.Width);
         Assert.Equal(470 - reserved.Top - reserved.Bottom, menu.Height);
     }
@@ -364,11 +362,11 @@ public class WindowFitterTests
         Settings.UIProperties.ShowBottomNavBar = true;
         var (fitter, vm, _) = CreateWindow(() => Screen(1920, 1040));
         vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 3000, 4000));
-        vm.IsBottomToolbarShown.Value = true;
+        vm.GlobalSettings.ShowBottomBar.Value = true;
         fitter.Refit();
         var withBar = vm.ImageHeight.Value;
 
-        vm.IsBottomToolbarShown.Value = false;
+        vm.GlobalSettings.ShowBottomBar.Value = false;
         fitter.Refit();
 
         Assert.Equal(withBar + SizeDefaults.BottombarHeight, vm.ImageHeight.Value, 6);
@@ -381,15 +379,33 @@ public class WindowFitterTests
         var (fitter, vm, window) = CreateShownWindow(800, 600);
         using var following = fitter.FollowFitInputs();
         vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 3000, 4000));
-        vm.IsBottomToolbarShown.Value = true;
+        vm.GlobalSettings.ShowBottomBar.Value = true;
         Dispatcher.UIThread.RunJobs();
         fitter.Refit();
         var withBar = vm.ImageHeight.Value;
 
-        vm.IsBottomToolbarShown.Value = false;
+        vm.GlobalSettings.ShowBottomBar.Value = false;
         Dispatcher.UIThread.RunJobs();
 
         Assert.Equal(withBar + SizeDefaults.BottombarHeight, vm.ImageHeight.Value, 6);
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public void FollowFitInputs_InterfaceHides_FitsTheImageToTheRoomItLeaves()
+    {
+        Settings.WindowProperties.AutoFit = true;
+        var (fitter, vm, window) = CreateShownWindow(800, 600);
+        using var following = fitter.FollowFitInputs();
+        vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 3000, 4000));
+        Dispatcher.UIThread.RunJobs();
+        fitter.Refit();
+        var withBars = vm.ImageHeight.Value;
+
+        vm.GlobalSettings.ShowInterface.Value = false;
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Equal(withBars + SizeDefaults.MainTitlebarHeight + 2 + SizeDefaults.BottombarHeight, vm.ImageHeight.Value, 6);
         window.Close();
     }
 

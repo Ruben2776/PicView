@@ -122,9 +122,7 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
             vm.WindowTabs.ActiveTab.Select(static tab => tab.Orientation.Current.Skip(1)).Switch()
                 .Subscribe(_ => FitSoon()),
             vm.WindowTabs.IsTabStripShown.Skip(1).Subscribe(_ => FitSoon()),
-            vm.IsTopToolbarShown.Skip(1).Subscribe(_ => FitSoon()),
-            vm.IsBottomToolbarShown.Skip(1).Subscribe(_ => FitSoon()),
-            vm.TitlebarHeight.Skip(1).Subscribe(_ => FitSoon()),
+            vm.Interface.AsObservable().Skip(1).Subscribe(_ => FitSoon()),
             vm.WindowModeState.Skip(1).Subscribe(_ => FitSoon()),
             vm.GlobalSettings.IsZoomedToFit.Skip(1).Subscribe(_ => FitSoon()),
             vm.GlobalSettings.IsScrollingEnabled.Skip(1).Subscribe(_ => FitSoon()),
@@ -339,7 +337,7 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
     {
         var (galleryWidth, galleryHeight) = GalleryHelper.GetGallerySize(vm);
         // What the window shows, not the settings: hiding the interface hides the bottom bar but keeps its setting
-        return ReservedSpace.For(vm.WindowTabs.Tabs.CurrentValue.Count, vm.TitlebarHeight.CurrentValue,
-            vm.IsTopToolbarShown.Value, vm.IsBottomToolbarShown.Value, galleryWidth, galleryHeight);
+        return ReservedSpace.For(vm.WindowTabs.Tabs.CurrentValue.Count, vm.Interface.Value, galleryWidth,
+            galleryHeight);
     }
 }

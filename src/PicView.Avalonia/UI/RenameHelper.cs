@@ -14,7 +14,7 @@ public static class RenameHelper
 {
     public static void Rename(MainWindowViewModel vm, MainWindow mainWindow)
     {
-        if (!vm.IsTopToolbarShown.CurrentValue || vm.IsFullscreen.Value)
+        if (!vm.IsTopToolbarShown.Value || vm.IsFullscreen.Value)
         {
             mainWindow.AddRenameDialog();
             return;

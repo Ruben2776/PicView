@@ -117,8 +117,8 @@ public class DockedGalleryWindowFitTests
     private static Size ExpectedWindowSize(MainWindowViewModel vm, GalleryDockPosition dock)
     {
         var isSide = dock is GalleryDockPosition.Left or GalleryDockPosition.Right;
-        var reserved = ReservedSpace.For(1, vm.TitlebarHeight.Value, vm.IsTopToolbarShown.Value,
-            vm.IsBottomToolbarShown.Value, isSide ? GalleryDefaults.GetDockedGalleryWidth(Settings.Gallery.DockedGalleryItemSize) : 0,
+        var reserved = ReservedSpace.For(1, vm.Interface.Value,
+            isSide ? GalleryDefaults.GetDockedGalleryWidth(Settings.Gallery.DockedGalleryItemSize) : 0,
             isSide ? 0 : GalleryDefaults.GetDockedGalleryHeight(Settings.Gallery.DockedGalleryItemSize));
         return new Size(ImageWidth + reserved.GalleryWidth,
             ImageHeight + reserved.Top + reserved.Bottom + reserved.GalleryHeight);

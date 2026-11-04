@@ -41,7 +41,7 @@ public partial class MacMainWindow : MainWindow
             }
             
             // Hide macOS traffic lights buttons when interface is hidden
-            Observable.EveryValueChanged(vm, x => x.IsTopToolbarShown.CurrentValue, FrameProvider).Subscribe(shown =>
+            Observable.EveryValueChanged(vm, x => x.IsTopToolbarShown.Value, FrameProvider).Subscribe(shown =>
             {
                 if (vm.IsFullscreen.Value)
                 {

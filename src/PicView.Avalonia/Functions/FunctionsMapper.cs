@@ -421,10 +421,10 @@ public class FunctionsMapper : IActionRunner
         return ValueTask.CompletedTask;
     }
 
-    /// <inheritdoc cref="ToggleUIVisibility.ToggleInterface(MainWindowViewModel, MainWindow)" />
     private ValueTask ToggleInterface()
     {
-        ToggleUIVisibility.ToggleInterface(_vm, _mainWindow);
+        _ = Toggle(_vm.GlobalSettings.ShowInterface);
+        _vm.TopTitlebarViewModel.CloseDropDownMenu();
         return ValueTask.CompletedTask;
     }
 
@@ -432,12 +432,7 @@ public class FunctionsMapper : IActionRunner
 
     private ValueTask ToggleSubdirectories() => Toggle(_vm.GlobalSettings.IsIncludingSubdirectories);
 
-    /// <inheritdoc cref="ToggleUIVisibility.ToggleBottomBar(MainWindowViewModel, MainWindow)" />
-    private ValueTask ToggleBottomToolbar()
-    {
-        ToggleUIVisibility.ToggleBottomBar(_vm, _mainWindow);
-        return ValueTask.CompletedTask;
-    }
+    private ValueTask ToggleBottomToolbar() => Toggle(_vm.GlobalSettings.ShowBottomBar);
 
     private ValueTask ToggleTaskbarProgress() => Toggle(_vm.GlobalSettings.IsShowingTaskbarProgress);
 

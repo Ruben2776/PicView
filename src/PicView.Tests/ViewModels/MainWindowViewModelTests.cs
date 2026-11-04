@@ -108,6 +108,21 @@ public class MainWindowViewModelTests
         Assert.False(vm.Interface.Value.IsInterfaceShown);
     }
 
+    [Fact]
+    public void Bars_AreProjectionsOfInterface()
+    {
+        var vm = NewWindow();
+        _core.GlobalSettings!.ShowInterface.Value = false;
+        Assert.False(vm.IsUIShown.Value);
+        Assert.False(vm.IsTopToolbarShown.Value);
+        Assert.False(vm.IsBottomToolbarShown.Value);
+        Assert.Equal(0, vm.TitlebarHeight.Value);
+        Assert.Equal(0, vm.BottombarHeight.Value);
+        _core.GlobalSettings.ShowInterface.Value = true;
+        Assert.Equal(SizeDefaults.MainTitlebarHeight, vm.TitlebarHeight.Value);
+        Assert.Equal(SizeDefaults.BottombarHeight, vm.BottombarHeight.Value);
+    }
+
     private sealed class MockFrameProvider : FrameProvider
     {
         public override long GetFrameCount() => 0;

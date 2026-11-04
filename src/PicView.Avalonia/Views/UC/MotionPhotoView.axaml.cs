@@ -166,7 +166,7 @@ public partial class MotionPhotoView : UserControl, IDisposable
     /// </summary>
     private void UpdateBadgeInset()
     {
-        if (DataContext is not TabViewModel tab || tab.ParentWindowContext.IsUIShown.CurrentValue)
+        if (DataContext is not TabViewModel tab || tab.ParentWindowContext.IsUIShown.Value)
         {
             _badgeTopInset = BadgeCornerInset;
             return;
@@ -184,7 +184,7 @@ public partial class MotionPhotoView : UserControl, IDisposable
             return;
         }
 
-        _uiShownSubscription = tab.ParentWindowContext.IsUIShown.Subscribe(_ => UpdateBadgeInset());
+        _uiShownSubscription = tab.ParentWindowContext.IsUIShown.AsObservable().Subscribe(_ => UpdateBadgeInset());
     }
 
     /// <summary>
