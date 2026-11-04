@@ -4,7 +4,7 @@ namespace PicView.Core.ViewModels;
 
 public class TopTitlebarViewModel
 {
-    public DropDownMenuViewModel DropDownMenu { get; } = new();
+    public DropDownMenuViewModel DropDownMenu { get; }
     
     public BindableReactiveProperty<bool> IsMainMenuVisible { get; } = new();
     public BindableReactiveProperty<bool> IsEditableTitlebarVisible { get; } = new(true);
@@ -17,8 +17,9 @@ public class TopTitlebarViewModel
     
     public ReactiveCommand? ToggleDropDownMenuCommand { get; private set; }
 
-    public TopTitlebarViewModel()
+    public TopTitlebarViewModel(GlobalSettingsViewModel? settings = null)
     {
+        DropDownMenu = new(settings);
         OpenMenuCommand = new ReactiveCommand(OpenMenu);
         ToggleDropDownMenuCommand = new ReactiveCommand(ToggleDropDownMenu);
     }
@@ -36,7 +37,6 @@ public class TopTitlebarViewModel
             return;
         }
         DropDownMenu.IsDropDownMenuVisible.Value = true;
-        DropDownMenu.IsFileHistoryVisible.Value = Settings.Navigation.IsFileHistoryEnabled && !DropDownMenu.IsExpandedOptionsOpened.CurrentValue;
     }
     public void CloseDropDownMenu()
     {

@@ -14,7 +14,7 @@ public class MainWindowViewModel : IDisposable
     public TranslationViewModel Translation { get;  } 
     public GallerySharedSettingsViewModel GallerySettings { get; }
     public GlobalSettingsViewModel GlobalSettings { get; }
-    public TopTitlebarViewModel TopTitlebarViewModel { get; }  = new();
+    public TopTitlebarViewModel TopTitlebarViewModel { get; }
     public TabOverviewViewModel WindowTabs { get; }
     public ToolTipViewModel? ToolTip { get; set; }
     public PrintPreviewViewModel? PrintPreview { get; set; }
@@ -111,6 +111,7 @@ public class MainWindowViewModel : IDisposable
         Core = core;
         Translation = translations;
         GlobalSettings = globalSettings;
+        TopTitlebarViewModel = new(globalSettings);
         GallerySettings = gallerySettings;
         WindowTabs = new TabOverviewViewModel(this, firstTab);
 

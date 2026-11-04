@@ -513,10 +513,38 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
         DeriveCanNavigate();
     }
 
+    private IDisposable? _settingsSubscription;
+
     /// <summary>
-    /// The Looping and side-by-side settings have no change notification; their toggles call this for the active tab.
+    /// Follows the global settings the tab reads, once: Looping derives Next and Prev again, side by side derives them
+    /// and has the shown file iterated to again, and including subdirectories lists the folder again.
     /// </summary>
-    public void RefreshCanNavigate() => DeriveCanNavigate();
+    private void FollowSettings()
+    {
+        if (_settingsSubscription is not null || Services?.GlobalSettings is not { } settings)
+        {
+            return;
+        }
+
+        _settingsSubscription = Disposable.Combine(
+            settings.IsLooping.Skip(1).Subscribe(_ => DeriveCanNavigate()),
+            // The pair is derived from the files, so the shown file is iterated to again, as a pair or alone
+            settings.IsSideBySide.Skip(1).SubscribeAwait(async (_, _) =>
+            {
+                DeriveCanNavigate();
+                if (ImageIterator is { Files.Count: > 0 } iterator)
+                {
+                    await iterator.ReloadAsync(clearCache: false).ConfigureAwait(false);
+                }
+            }, AwaitOperation.Sequential),
+            settings.IsIncludingSubdirectories.Skip(1).SubscribeAwait(async (_, _) =>
+            {
+                if (ImageIterator is { Files.Count: > 0 } && FileInfo.CurrentValue is { } file)
+                {
+                    await Load.LoadAsync(file.FullName, new LoadOptions(Relist: true)).ConfigureAwait(false);
+                }
+            }, AwaitOperation.Sequential));
+    }
 
     /// <summary>
     /// Whether Next and Prev run, derived from the tab's own state (ADR-0017): no iterator or a crop means neither; a
@@ -645,6 +673,7 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
         GalleryCoordinator = new Gallery.GalleryCoordinator(this, Services.ThumbnailLoader, Services.ThumbnailCache);
         ImageIterator = new ImageIterator(Services.Cache, Services.ThumbnailCache, Services.ThumbnailLoader, this,
             GalleryCoordinator.FilesChanged);
+        FollowSettings();
         DeriveCanNavigate();
     }
 
@@ -663,6 +692,7 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
         GalleryCoordinator ??= new Gallery.GalleryCoordinator(this, Services.ThumbnailLoader, Services.ThumbnailCache);
         ImageIterator ??= new ImageIterator(cache, Services.ThumbnailCache, Services.ThumbnailLoader, this,
             GalleryCoordinator.FilesChanged);
+        FollowSettings();
         DeriveCanNavigate();
         // Browsing files again, so it is no longer fresh
         _hasLostItsFiles = false;
@@ -781,6 +811,7 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
 
         ImageIterator?.Dispose();
         _archiveStateSubscription?.Dispose();
+        _settingsSubscription?.Dispose();
         Archives.Cleanup();
         GalleryCoordinator?.Dispose();
 

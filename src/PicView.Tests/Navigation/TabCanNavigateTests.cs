@@ -95,24 +95,22 @@ public class TabCanNavigateTests
     }
 
     [Fact]
-    public void RefreshCanNavigate_LoopingOnAtLast_ForwardsTrue_ThenOffFalse()
+    public void Looping_TurnedOnAtLast_ForwardsTrue_ThenOffFalse()
     {
         var files = Browse("a.jpg", "b.jpg", "c.jpg");
         _tab.ImageIterator!.Initialize(files, 2);
 
-        Settings.UIProperties.Looping = true;
-        _tab.RefreshCanNavigate();
+        _tab.Services!.GlobalSettings.IsLooping.Value = true;
         Assert.True(Forwards);
 
-        Settings.UIProperties.Looping = false;
-        _tab.RefreshCanNavigate();
+        _tab.Services.GlobalSettings.IsLooping.Value = false;
         Assert.False(Forwards);
     }
 
     [Fact]
     public void SideBySide_IndexOneOfThree_ForwardsFalse()
     {
-        Settings.ImageScaling.ShowImageSideBySide = true;
+        _tab.Services!.GlobalSettings.IsSideBySide.Value = true;
         var files = Browse("a.jpg", "b.jpg", "c.jpg");
 
         _tab.ImageIterator!.Initialize(files, 1);

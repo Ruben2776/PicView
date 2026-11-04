@@ -218,7 +218,6 @@ public static class SettingsUpdater
         {
             Settings.UIProperties.ShowFullPathInTitleBar = true;
         }
-        vm.WindowTabs.ActiveTab.CurrentValue.Titles.Refresh();
         await SaveSettingsAsync().ConfigureAwait(false);
     }
     
@@ -258,8 +257,6 @@ public static class SettingsUpdater
         }
         
         mainWindow.WindowFitter.Refit();
-        tab.Titles.Refresh();
-        tab.RefreshCanNavigate();
         await SaveSettingsAsync().ConfigureAwait(false);
     }
     
@@ -319,10 +316,6 @@ public static class SettingsUpdater
             ? TranslationManager.Translation.LoopingEnabled
             : TranslationManager.Translation.LoopingDisabled;
         _ = TooltipHelper.ShowTooltipMessageAsync(msg, false, mainWindow, TimeSpan.FromSeconds(1.5));
-
-        var windowTabs = vm.WindowTabs;
-        var tab = windowTabs.ActiveTab.CurrentValue;
-        tab.RefreshCanNavigate();
 
         await SaveSettingsAsync().ConfigureAwait(false);
     }

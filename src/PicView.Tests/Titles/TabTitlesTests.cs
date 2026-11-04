@@ -254,16 +254,27 @@ public class TabTitlesTests
     }
 
     [Fact]
-    public void Refresh_AfterFullPathSetting_TitleIsFilePathTitle()
+    public void FullPathSetting_TurnedOn_TitleIsFilePathTitle()
     {
         var files = Browse("a.jpg");
         _tab.Display(Model("a.jpg"));
         _ = _tab.Titles.Title;
 
-        Settings.UIProperties.ShowFullPathInTitleBar = true;
-        _tab.Titles.Refresh();
+        _tab.Services!.GlobalSettings.IsShowingFullPathInTitleBar.Value = true;
 
         Assert.Equal(Expected(files[0], 0, 1).FilePathTitle, _tab.Titles.Title);
+    }
+
+    [Fact]
+    public void SideBySideSetting_Changed_MarksTheTitles()
+    {
+        _ = _tab.Titles.Title;
+        Assert.Equal(1, _tab.Titles.BuildCount);
+
+        _tab.Services!.GlobalSettings.IsSideBySide.Value = true;
+        _ = _tab.Titles.Title;
+
+        Assert.Equal(2, _tab.Titles.BuildCount);
     }
 
     [Fact]

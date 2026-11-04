@@ -25,8 +25,8 @@ public enum TitlePhase
 /// Every input only marks them stale and raises one <see cref="PropertyChanged"/>; the four strings are built once
 /// when the next reader asks and kept until the next mark, so a tab nobody binds builds nothing, and a shown image
 /// that resets the zoom builds once, since the tab resets the Zoom Factor before it marks (ADR-0016). The tab is the
-/// only writer: it marks from its own methods and through three subscriptions on its zoom level and its file list
-/// position (ADR-0015).
+/// only writer: it marks from its own methods and through five subscriptions, three on its zoom level and its file
+/// list position and two on the settings it reads, side by side and the full path in the titlebar (ADR-0015).
 /// </summary>
 public sealed class TabTitles : INotifyPropertyChanged, IDisposable
 {
@@ -53,7 +53,9 @@ public sealed class TabTitles : INotifyPropertyChanged, IDisposable
         _subscriptions = Disposable.Combine(
             tab.Zoom.Level.Subscribe(_ => Mark()),
             tab.NavigationIndex.Subscribe(_ => Mark()),
-            tab.MaxIndex.Subscribe(_ => Mark()));
+            tab.MaxIndex.Subscribe(_ => Mark()),
+            tab.Services?.GlobalSettings.IsSideBySide.Skip(1).Subscribe(_ => Mark()) ?? Disposable.Empty,
+            tab.Services?.GlobalSettings.IsShowingFullPathInTitleBar.Skip(1).Subscribe(_ => Mark()) ?? Disposable.Empty);
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;
@@ -106,12 +108,6 @@ public sealed class TabTitles : INotifyPropertyChanged, IDisposable
 
     /// <summary>How many times the four strings were built. For tests.</summary>
     internal int BuildCount => _buildCount;
-
-    /// <summary>
-    /// Builds the Titles again on the next read. The two title settings, the full path in the titlebar and side by
-    /// side, have no change notification, so their toggles call this; nothing else needs to.
-    /// </summary>
-    public void Refresh() => Mark();
 
     internal void Mark()
     {

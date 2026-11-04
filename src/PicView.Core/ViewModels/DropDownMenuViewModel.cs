@@ -18,14 +18,17 @@ public class DropDownMenuViewModel : IDisposable
     public BindableReactiveProperty<int> SettingsCarouselIndex { get; } = new(0);
     public BindableReactiveProperty<bool> IsSettingsCarouselVisible { get; } = new(true);
     
-    public BindableReactiveProperty<bool> IsFileHistoryVisible { get; } = new(false);
+    public IReadOnlyBindableReactiveProperty<bool> IsFileHistoryVisible { get; }
     
     public BindableReactiveProperty<bool> IsExtraButtonsVisible { get; } = new(true);
     
     public ReactiveCommand CloseMenuCommand { get; }
     
-    public DropDownMenuViewModel()
+    public DropDownMenuViewModel(GlobalSettingsViewModel? settings = null)
     {
+        IsFileHistoryVisible = (settings?.IsFileHistoryEnabled.AsObservable() ?? Observable.Return(false))
+            .CombineLatest(IsExpandedOptionsOpened, static (on, open) => on && !open)
+            .ToReadOnlyBindableReactiveProperty();
         CloseMenuCommand = new ReactiveCommand(CloseMenus);
     }
 
@@ -61,7 +64,6 @@ public class DropDownMenuViewModel : IDisposable
         IsExpandedOptionsOpened.Value = true;
         IsSlideshowCarouselVisible.Value = false;
         IsSettingsCarouselVisible.Value = false;
-        IsFileHistoryVisible.Value = false;
         IsExtraButtonsVisible.Value = false;
     }
 
@@ -69,7 +71,6 @@ public class DropDownMenuViewModel : IDisposable
     {
         GalleryCarouselIndex.Value = 0;
         await CloseCarousel().ConfigureAwait(false);
-        IsFileHistoryVisible.Value = Settings.Navigation.IsFileHistoryEnabled;
         IsExtraButtonsVisible.Value = true;
     }
 
@@ -82,7 +83,6 @@ public class DropDownMenuViewModel : IDisposable
         IsSlideshowCarouselVisible.Value = true;
         IsGalleryCarouselVisible.Value = false;
         IsSettingsCarouselVisible.Value = false;
-        IsFileHistoryVisible.Value = false;
         IsExtraButtonsVisible.Value = false;
     }
 
@@ -90,7 +90,6 @@ public class DropDownMenuViewModel : IDisposable
     {
         SlideshowCarouselIndex.Value = 0;
         await CloseCarousel().ConfigureAwait(false);
-        IsFileHistoryVisible.Value = Settings.Navigation.IsFileHistoryEnabled;
         IsExtraButtonsVisible.Value = true;
     }
 
@@ -101,7 +100,6 @@ public class DropDownMenuViewModel : IDisposable
         IsGalleryCarouselVisible.Value = true;
         IsSlideshowCarouselVisible.Value = true;
         IsSettingsCarouselVisible.Value = true;
-        IsFileHistoryVisible.Value = Settings.Navigation.IsFileHistoryEnabled;
         IsExtraButtonsVisible.Value = true;
     }
 
@@ -114,7 +112,6 @@ public class DropDownMenuViewModel : IDisposable
         IsGalleryCarouselVisible.Value = true;
         IsSlideshowCarouselVisible.Value = true;
         IsSettingsCarouselVisible.Value = true;
-        IsFileHistoryVisible.Value = Settings.Navigation.IsFileHistoryEnabled;
         IsExtraButtonsVisible.Value = true;
     }
     
@@ -127,7 +124,6 @@ public class DropDownMenuViewModel : IDisposable
         IsGalleryCarouselVisible.Value = false;
         IsSlideshowCarouselVisible.Value = false;
         IsSettingsCarouselVisible.Value = true;
-        IsFileHistoryVisible.Value = false;
         IsExtraButtonsVisible.Value = false;
     }
     
@@ -142,6 +138,7 @@ public class DropDownMenuViewModel : IDisposable
         IsFileMenuVisible.Dispose();
         IsSettingsMenuVisible.Dispose();
         CloseMenuCommand.Dispose();
+        IsFileHistoryVisible.Dispose();
         GC.SuppressFinalize(this);
     }
 
