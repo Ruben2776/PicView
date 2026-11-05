@@ -25,7 +25,7 @@ The single mode a window is in, which decides what its Keybinds do. It follows f
 _Avoid_: Context, state, focus, dialog mode
 
 **Contextual Action**:
-A generic Action, such as `Confirm`, `Cancel` or `PlayPause`, whose meaning comes from the current Input Mode. When the mode gives it no meaning, each lower-ranked Non-blocking Input Mode that also applies is asked in turn, then Normal, and when none gives it a meaning, its Keybind falls through to the ordinary Action bound to the same Keybind. A Blocking Input Mode asks no other mode. This is why Escape stops a playing motion photo, then a slideshow, before it closes the window. `Cancel` (Escape) and `Copy` (the platform's copy keys) are fixed to their keys; the others can be rebound.
+A generic Action, such as `Confirm`, `Cancel`, `PlayPause` or the arrows `Up`, `Down`, `Left` and `Right`, whose meaning comes from the current Input Mode. When the mode gives it no meaning, each lower-ranked Non-blocking Input Mode that also applies is asked in turn, then Normal, and when none gives it a meaning, its Keybind falls through to the ordinary Action bound to the same Keybind. A Blocking Input Mode asks no other mode. This is why Escape stops a playing motion photo, then a slideshow, before it closes the window, and why the arrow keys move through the Expanded Gallery but otherwise scroll a tall image, rotate it, or go to the previous or next file. `Cancel` (Escape) and `Copy` (the platform's copy keys) are fixed to their keys; the others can be rebound.
 _Avoid_: Mode action, special key
 
 **Blocking Input Mode**:
@@ -37,7 +37,7 @@ What `Confirm` does in the Dialog Input Mode: the top dialog's main button, such
 _Avoid_: Enter action, OK button
 
 **Non-blocking Input Mode**:
-An Input Mode that overrides specific Actions, disallows Actions that need a still image (such as `Crop`), and lets every other Keybind work as usual. Slideshow, Motion Photo and Animated Image are non-blocking.
+An Input Mode that overrides specific Actions, disallows Actions that need a still image (such as `Crop`), and lets every other Keybind work as usual. Slideshow, Motion Photo, Animated Image and Gallery are non-blocking.
 _Avoid_: Overlay mode, passive mode
 
 ## Windows
@@ -156,7 +156,7 @@ The strip of thumbnails along one edge of a Main Window, top, bottom, left or ri
 _Avoid_: Bottom gallery, gallery bar
 
 **Expanded Gallery**:
-The gallery filling the Main Window in place of the image.
+The gallery filling the Main Window in place of the image. While it is shown, the window is in the Gallery Input Mode, which gives the arrows, `Confirm` and `Cancel` their gallery meanings.
 _Avoid_: Full gallery, fullscreen gallery
 
 **Gallery Items**:
