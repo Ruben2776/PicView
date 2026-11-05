@@ -177,6 +177,15 @@ public class InputDispatchTests
     }
 
     [Fact]
+    public async Task Dispatch_GalleryClaimsUp_ReturnsNone()
+    {
+        var (handler, ordinary) = await Dispatch(Up, Gallery, (InputMode.Gallery, "Up"));
+
+        Assert.Equal([(InputMode.Gallery, "Up")], handler.Asked);
+        Assert.Equal(KeymapResolution.None, ordinary);
+    }
+
+    [Fact]
     public async Task Dispatch_UpUnclaimedInNormal_FallsThroughToRotateRight()
     {
         var (_, ordinary) = await Dispatch(Up, Normal);

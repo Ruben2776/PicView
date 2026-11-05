@@ -191,6 +191,8 @@ public class InputAllocationTests
 
         public bool CanScrollVertically => false;
 
+        public bool IsImageTallerThanViewer => CanScrollVertically;
+
         public void ScrollLine(bool down)
         {
         }

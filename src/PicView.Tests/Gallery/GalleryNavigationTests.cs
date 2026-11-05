@@ -18,43 +18,19 @@ public class GalleryNavigationTests
     }
 
     [Fact]
-    public async Task NavigateDirectionalAsync_WhenGalleryIsExpanded_ShouldNavigateGallery()
+    public async Task NavigateDirectionalAsync_WhenGalleryIsExpanded_DoesNotNavigateGallery()
     {
-        // Arrange
+        // The Gallery Input Mode navigates the expanded gallery, so Next and Prev only move through the files
         var tabOverview = new TabOverviewViewModel(null!);
         var tab = tabOverview.ActiveTab.Value;
-        
         tab.Gallery.Switcher.ToggleExpanded();
-        
+
         NavigateTo? capturedNavigation = null;
         tab.Gallery.NavigateGalleryCommand.Subscribe(x => capturedNavigation = x);
 
-        // Act
         await tabOverview.NavigateDirectionalAsync(false, NavigateTo.Next);
 
-        // Assert
-        Assert.NotNull(capturedNavigation);
-        Assert.Equal(NavigateTo.Next, capturedNavigation);
-    }
-    
-    [Fact]
-    public async Task NavigateDirectionalAsync_WhenGalleryIsExpanded_ShouldNavigateGallery_Previous()
-    {
-        // Arrange
-        var tabOverview = new TabOverviewViewModel(null!);
-        var tab = tabOverview.ActiveTab.Value;
-        
-        tab.Gallery.Switcher.ToggleExpanded();
-        
-        NavigateTo? capturedNavigation = null;
-        tab.Gallery.NavigateGalleryCommand.Subscribe(x => capturedNavigation = x);
-
-        // Act
-        await tabOverview.NavigateDirectionalAsync(false, NavigateTo.Previous);
-
-        // Assert
-        Assert.NotNull(capturedNavigation);
-        Assert.Equal(NavigateTo.Previous, capturedNavigation);
+        Assert.Null(capturedNavigation);
     }
 
     [Fact]

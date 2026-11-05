@@ -12,6 +12,11 @@ public interface IZoomScrollTarget
     /// </summary>
     bool CanScrollVertically { get; }
 
+    /// <summary>
+    /// Whether the shown image is taller than the viewer, so Up and Down scroll it instead of rotating it.
+    /// </summary>
+    bool IsImageTallerThanViewer { get; }
+
     void ScrollLine(bool down);
 
     void ScrollToHome();

@@ -13,7 +13,7 @@ public static class WindowsKeybindings
                                                "F7": "BatchResizeWindow",
                                                "F10": "ToggleInterface",
                                                "F11": "ToggleFullscreen",
-                                               "W": "Up",
+                                               "W": "RotateRight",
                                                "Ctrl+E": "OpenWith",
                                                "R": "ResetZoom",
                                                "Ctrl+R": "Reload",
@@ -27,7 +27,7 @@ public static class WindowsKeybindings
                                                "A": "Prev",
                                                "Ctrl+A": "First",
                                                "Shift+A": "PrevFolder",
-                                               "S": "Down",
+                                               "S": "RotateLeft",
                                                "Ctrl+S": "Save",
                                                "Ctrl+Shift+S": "SaveAs",
                                                "D": "Next",
@@ -60,9 +60,9 @@ public static class WindowsKeybindings
                                                "Ctrl+Right": "Last",
                                                "Shift+Right": "NextFolder",
                                                "Shift+Left": "PrevFolder",
-                                               "Up": "Up",
+                                               "Up": "RotateRight",
                                                "PageUp": "ScrollUp",
-                                               "Down": "Down",
+                                               "Down": "RotateLeft",
                                                "PageDown": "ScrollDown",
                                                "Add": "ZoomIn",
                                                "OemPlus": "ZoomIn",
@@ -85,7 +85,15 @@ public static class WindowsKeybindings
                                                "Contextual": {
                                                  "Enter": "Confirm",
                                                  "E": "Confirm",
-                                                 "Space": "PlayPause"
+                                                 "Space": "PlayPause",
+                                                 "Up": "Up",
+                                                 "W": "Up",
+                                                 "Down": "Down",
+                                                 "S": "Down",
+                                                 "Left": "Left",
+                                                 "A": "Left",
+                                                 "Right": "Right",
+                                                 "D": "Right"
                                                }
                                              }
                                              """;

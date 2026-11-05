@@ -86,8 +86,6 @@ public class FunctionsMapper : IActionRunner
             Actions.NextFolder => NextFolder,
             Actions.PrevFolder => PrevFolder,
             
-            Actions.Up => Up,
-            Actions.Down => Down,
             
             Actions.Last => Last,
             Actions.First => First,
@@ -323,8 +321,6 @@ public class FunctionsMapper : IActionRunner
     private async ValueTask Search() =>
         await Dispatcher.UIThread.InvokeAsync(_mainWindow.AddFileSearchDialog);
     
-    private ValueTask Up() => ArrowKeyNavigation.Up(_vm, _mainWindow);
-
     /// <inheritdoc cref="RotationManager.RotateRight(MainWindowViewModel, MainWindow)" />
     private ValueTask RotateRight()
     {
@@ -368,8 +364,6 @@ public class FunctionsMapper : IActionRunner
         RotationManager.Flip(_vm);
         return ValueTask.CompletedTask;
     }
-
-    private ValueTask Down() => ArrowKeyNavigation.Down(_vm, _mainWindow);
 
     private ValueTask ScrollDown() => ViewerActions.ScrollLine(_vm, down: true);
 
