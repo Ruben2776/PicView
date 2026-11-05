@@ -491,7 +491,7 @@ public class FunctionsMapper : IActionRunner
     {
         if (_mainWindow.Lifecycle is { } lifecycle)
         {
-            await Dispatcher.UIThread.InvokeAsync(lifecycle.OpenNewAsync).ConfigureAwait(false);
+            await lifecycle.OpenNewAsync(_mainWindow).ConfigureAwait(false);
         }
     }
 

@@ -170,7 +170,7 @@ public class AppLifecycleTests : IAsyncDisposable
     {
         var app = CreateApp();
         await app.StartAsync(settingsExists: true, []);
-        await app.MainWindows.OpenNewAsync();
+        await app.MainWindows.OpenNewAsync(app.MainWindows.Open[0]);
         Dispatcher.UIThread.RunJobs();
         Assert.Equal(2, _provider.Created.Count);
         Assert.All(_provider.Created, w => Assert.False(w.Topmost));
@@ -204,7 +204,7 @@ public class AppLifecycleTests : IAsyncDisposable
         var path = Path.Combine(_folder, "seen.jpg");
         FileHistoryManager.Add(path);
 
-        await app.MainWindows.OpenNewAsync();
+        await app.MainWindows.OpenNewAsync(app.MainWindows.Open[0]);
 
         Assert.Contains(FileHistoryManager.AllEntries, entry => entry.Path == path);
     }
@@ -214,7 +214,7 @@ public class AppLifecycleTests : IAsyncDisposable
     {
         var app = CreateApp();
         await app.StartAsync(settingsExists: true, []);
-        var second = await app.MainWindows.OpenNewAsync();
+        var second = await app.MainWindows.OpenNewAsync(app.MainWindows.Open[0]);
         var tempFile = TempFileManager.GetNewTempFilePath("download.jpg");
         await File.WriteAllTextAsync(tempFile, "image");
 
@@ -233,7 +233,7 @@ public class AppLifecycleTests : IAsyncDisposable
         await app.StartAsync(settingsExists: true, []);
         var first = ViewModelOf(app.MainWindows.Open[0]);
 
-        var opened = ViewModelOf(await app.MainWindows.OpenNewAsync());
+        var opened = ViewModelOf(await app.MainWindows.OpenNewAsync(app.MainWindows.Open[0]));
         var tab = first.WindowTabs.CreateTab();
         first.WindowTabs.MoveOut(tab);
         var moved = ViewModelOf(await app.MainWindows.OpenForMovedTabAsync(tab, new PixelPoint(40, 40), 800, 600));
@@ -271,7 +271,7 @@ public class AppLifecycleTests : IAsyncDisposable
         var app = CreateApp();
         await app.StartAsync(settingsExists: true, []);
         var first = app.MainWindows.Open[0];
-        var second = await app.MainWindows.OpenNewAsync();
+        var second = await app.MainWindows.OpenNewAsync(app.MainWindows.Open[0]);
 
         first.MainWindowInitializer.ShowAboutWindow();
         second.MainWindowInitializer.ShowAboutWindow();
@@ -286,7 +286,7 @@ public class AppLifecycleTests : IAsyncDisposable
         var app = CreateApp();
         await app.StartAsync(settingsExists: true, []);
         var first = app.MainWindows.Open[0];
-        var second = await app.MainWindows.OpenNewAsync();
+        var second = await app.MainWindows.OpenNewAsync(app.MainWindows.Open[0]);
 
         await first.MainWindowInitializer.ShowEffectsWindow();
         await second.MainWindowInitializer.ShowEffectsWindow();
@@ -300,7 +300,7 @@ public class AppLifecycleTests : IAsyncDisposable
         var app = CreateApp();
         await app.StartAsync(settingsExists: true, []);
         var first = app.MainWindows.Open[0];
-        await app.MainWindows.OpenNewAsync();
+        await app.MainWindows.OpenNewAsync(app.MainWindows.Open[0]);
         await first.MainWindowInitializer.ShowEffectsWindow();
         var effects = Assert.Single(_provider.EffectsWindows);
 
@@ -329,7 +329,7 @@ public class AppLifecycleTests : IAsyncDisposable
     {
         var app = CreateApp();
         await app.StartAsync(settingsExists: true, []);
-        var second = await app.MainWindows.OpenNewAsync();
+        var second = await app.MainWindows.OpenNewAsync(app.MainWindows.Open[0]);
         await second.MainWindowInitializer.ShowConvertWindow();
         await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Background);
         var convert = Assert.Single(_provider.ConvertWindows);
@@ -347,7 +347,7 @@ public class AppLifecycleTests : IAsyncDisposable
         var app = CreateApp();
         await app.StartAsync(settingsExists: true, []);
         var first = app.MainWindows.Open[0];
-        var second = await app.MainWindows.OpenNewAsync();
+        var second = await app.MainWindows.OpenNewAsync(app.MainWindows.Open[0]);
 
         await first.MainWindowInitializer.ShowBatchResizeWindow();
         await second.MainWindowInitializer.ShowBatchResizeWindow();
@@ -403,7 +403,7 @@ public class AppLifecycleTests : IAsyncDisposable
         var app = CreateApp();
         await app.StartAsync(settingsExists: true, []);
         var first = app.MainWindows.Open[0];
-        var second = await app.MainWindows.OpenNewAsync();
+        var second = await app.MainWindows.OpenNewAsync(app.MainWindows.Open[0]);
         var firstFile = Path.Combine(_folder, "first.jpg");
         ViewModelOf(first).WindowTabs.ActiveTab.CurrentValue.Display(new ImageModel { FileInfo = new FileInfo(firstFile) });
         ViewModelOf(second).WindowTabs.ActiveTab.CurrentValue
@@ -436,7 +436,7 @@ public class AppLifecycleTests : IAsyncDisposable
         var app = CreateApp();
         await app.StartAsync(settingsExists: true, []);
         var first = app.MainWindows.Open[0];
-        await app.MainWindows.OpenNewAsync();
+        await app.MainWindows.OpenNewAsync(app.MainWindows.Open[0]);
         var firstFile = Path.Combine(_folder, "first.jpg");
         ViewModelOf(first).WindowTabs.ActiveTab.CurrentValue.Display(new ImageModel { FileInfo = new FileInfo(firstFile) });
         first.Activate();
@@ -480,7 +480,7 @@ public class AppLifecycleTests : IAsyncDisposable
         var app = CreateApp();
         await app.StartAsync(settingsExists: true, []);
         var first = app.MainWindows.Open[0];
-        var second = await app.MainWindows.OpenNewAsync();
+        var second = await app.MainWindows.OpenNewAsync(app.MainWindows.Open[0]);
         first.Activate();
         await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Background);
         var firstView = ViewOf(first);
@@ -501,7 +501,7 @@ public class AppLifecycleTests : IAsyncDisposable
         var app = CreateApp();
         await app.StartAsync(settingsExists: true, []);
         var first = app.MainWindows.Open[0];
-        var second = await app.MainWindows.OpenNewAsync();
+        var second = await app.MainWindows.OpenNewAsync(app.MainWindows.Open[0]);
         await ActivateAsync(first);
         var firstView = ViewOf(first);
         var secondView = ViewOf(second);
@@ -521,7 +521,7 @@ public class AppLifecycleTests : IAsyncDisposable
         var app = CreateApp();
         await app.StartAsync(settingsExists: true, []);
         var first = app.MainWindows.Open[0];
-        var second = await app.MainWindows.OpenNewAsync();
+        var second = await app.MainWindows.OpenNewAsync(app.MainWindows.Open[0]);
         await ActivateAsync(first);
         var firstView = ViewOf(first);
 
@@ -537,7 +537,7 @@ public class AppLifecycleTests : IAsyncDisposable
         var app = CreateApp();
         await app.StartAsync(settingsExists: true, []);
         var first = app.MainWindows.Open[0];
-        var second = await app.MainWindows.OpenNewAsync();
+        var second = await app.MainWindows.OpenNewAsync(app.MainWindows.Open[0]);
         var path = Path.Combine(_folder, "found.jpg");
         await File.WriteAllTextAsync(path, "image");
         // The dialog is only shown while browsing

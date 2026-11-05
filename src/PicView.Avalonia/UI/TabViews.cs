@@ -65,8 +65,8 @@ public sealed class TabViews(MainWindow window) : ITabViewFactory
             switch (kind)
             {
                 case TabViewKind.StartUpMenu:
+                    // Unsized, so it stretches to fill the window; only App Start fits the first menu to its opening size
                     _menu ??= new StartUpMenu { DataContext = _tab };
-                    _window.WindowFitter.FitStartUpMenu(_menu);
                     _view.Value = _menu;
                     break;
                 case TabViewKind.ImageViewer:

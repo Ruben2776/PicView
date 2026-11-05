@@ -1,6 +1,8 @@
 using System.ComponentModel;
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
+using PicView.Avalonia.Views.UC;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
@@ -67,11 +69,16 @@ public sealed class MainWindowLifecycle
     /// Opens a new Main Window whose tab derives the start-up menu.
     /// </summary>
     /// <returns>Completes once the window is set up, after it is shown.</returns>
-    public async Task<MainWindow> OpenNewAsync()
+    public async Task<MainWindow> OpenNewAsync(MainWindow senderWindow)
     {
-        var window = Create();
-        WindowFunctions.HandleWindowScalingMode(window, isAppStart: false);
-        window.Show();
+        var window = await Dispatcher.UIThread.InvokeAsync(() => Create());
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            WindowFunctions.SaveSize(senderWindow);
+            WindowFunctions.HandleWindowScalingMode(window, isAppStart: false);
+            window.Show();
+        });
+
         await SetUpShownWindow(window, isAppStart: false).ConfigureAwait(true);
         return window;
     }
@@ -152,6 +159,12 @@ public sealed class MainWindowLifecycle
 
         Dispatcher.UIThread.Post(() =>
         {
+            // Only the first menu at App Start is fitted to its opening size, before the window is shown, so an AutoFit
+            // window opens at the menu's size; a window opened later takes the size of the window that opened it
+            if (ViewModelOf(window).WindowTabs.ActiveTab.CurrentValue.CurrentView.Value is StartUpMenu menu)
+            {
+                window.WindowFitter.FitStartUpMenu(menu);
+            }
             window.Show();
             if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
