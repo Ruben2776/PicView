@@ -879,19 +879,23 @@ public class WindowFitterTests
     [AvaloniaFact]
     public void Follow_AttachedBeforeTheMode_FullscreenStartFits()
     {
-        Settings.WindowProperties.Fullscreen = true;
         var (fitter, vm, window) = CreateWindow(() => Screen(1280, 720));
         using var following = fitter.Follow();
+        vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 4000, 300));
+        Dispatcher.UIThread.RunJobs();
+        // Fitted to the 800 wide content before the mode starts
+        Assert.Equal(ContentSize.Width, vm.ImageWidth.Value);
         var fits = new List<Fitted>();
         using var listening = fitter.Fits.Subscribe(fits.Add);
+        Settings.WindowProperties.Fullscreen = true;
         var switcher = new WindowModeSwitcher(window, new NativeStateAdapter(), () => ValueTask.FromResult(true));
 
         switcher.Start(isAppStart: true);
-        vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 4000, 300));
         Dispatcher.UIThread.RunJobs();
 
+        // The starting mode is a Fit input like any later one: the image fills the whole screen, not the work area
         Assert.True(vm.IsFullscreen.Value);
-        Assert.Contains(fits, static fitted => fitted.Cause is FitCause.NewImage);
+        Assert.NotEmpty(fits);
         Assert.Equal(1280, vm.ImageWidth.Value, precision: 6);
     }
 

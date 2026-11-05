@@ -14,6 +14,7 @@ using PicView.Avalonia.StartUp;
 using PicView.Avalonia.Views.Menu;
 using PicView.Avalonia.Views.UC;
 using PicView.Avalonia.Views.UC.PopUps;
+using PicView.Avalonia.WindowBehavior;
 using PicView.Core.Config;
 using PicView.Core.Favorites;
 using PicView.Core.FileHandling;
@@ -153,6 +154,32 @@ public class AppLifecycleTests : IAsyncDisposable
 
         Assert.IsType<ImageViewer>(ViewOf(window));
         await setUp;
+    }
+
+    [AvaloniaFact]
+    public async Task OpenAtAppStart_WithASource_FitsTheFirstImageThroughTheFitter()
+    {
+        // Without AutoFit the window is shown at once, so the first image's Fit comes only from the fitter's NewImage
+        // input, which must be attached before the image shows
+        Settings.WindowProperties.AutoFit = false;
+        Settings.UIProperties.OpenInSameWindow = false;
+        _provider.GivesBars = true;
+        var a = WritePng("a.png");
+        var app = CreateApp();
+
+        await app.StartAsync(settingsExists: true, ["PicView", a]);
+        var vm = ViewModelOf(app.MainWindows.Open[0]);
+        // The source opens on another thread
+        var deadline = DateTime.UtcNow + WaitLimit;
+        while (!_provider.Fits.Any(static fitted => fitted.Cause is FitCause.NewImage) && DateTime.UtcNow < deadline)
+        {
+            await Task.Delay(10, TestContext.Current.CancellationToken);
+            Dispatcher.UIThread.RunJobs();
+        }
+
+        // The headless window has no laid-out content, so a Fixed Window fits to nothing; the Fit is what is under test
+        Assert.False(double.IsNaN(vm.ImageWidth.Value));
+        Assert.Contains(_provider.Fits, static fitted => fitted.Cause is FitCause.NewImage);
     }
 
     [AvaloniaFact]
@@ -1270,6 +1297,8 @@ public class AppLifecycleTests : IAsyncDisposable
     private sealed class LifecycleWindowProvider(CoreViewModel core) : IWindowProvider
     {
         public List<Window> Created { get; } = [];
+        public bool GivesBars { get; set; }
+        public List<Fitted> Fits { get; } = [];
         public int AboutWindowsCreated => AboutWindows.Count;
         public List<Window> AboutWindows { get; } = [];
         public List<Window> BatchResizeWindows { get; } = [];
@@ -1282,6 +1311,15 @@ public class AppLifecycleTests : IAsyncDisposable
             window.DataContext = new MainWindowViewModel(core, core.Translation, core.GlobalSettings!,
                 core.GallerySettings, firstTab);
             Created.Add(window);
+            if (GivesBars)
+            {
+                // Showing the window at startup lays out its bars, which the open thread does before a test can set them;
+                // the Fits are recorded from the start for the same reason
+                window.SharedTitleBar = new CustomTitleBar();
+                window.SharedBottomBar = new BottomBar();
+                window.WindowFitter.Fits.Subscribe(Fits.Add);
+            }
+
             return window;
         }
 
