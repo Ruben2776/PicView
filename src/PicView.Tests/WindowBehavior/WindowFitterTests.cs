@@ -526,6 +526,8 @@ public class WindowFitterTests
         var fit = Assert.Single(fits);
         Assert.Equal(FitCause.NewImage, fit.Cause);
         Assert.Equal(400, vm.ImageWidth.Value);
+        // The tab's view changed with the image, which fits once more later; let it run before the window closes
+        Dispatcher.UIThread.RunJobs();
         window.Close();
     }
 
@@ -736,6 +738,73 @@ public class WindowFitterTests
 
         Assert.Same(shown, vm.WindowTabs.ActiveTab.Value);
         Assert.Empty(fits);
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public void Follow_CropOpens_FitsWithoutTheGallery()
+    {
+        var (fitter, vm, window) = CreateShownWindow(800, 600);
+        using var following = fitter.Follow();
+        var tab = vm.WindowTabs.ActiveTab.Value;
+        tab.Gallery.Initialize(_core.GallerySettings);
+        tab.Display(Model("a.jpg", 1600, 1200));
+        Dispatcher.UIThread.RunJobs();
+        var heightWithoutGallery = vm.ImageHeight.Value;
+        tab.Gallery.Switcher.Start(docked: true);
+        Dispatcher.UIThread.RunJobs();
+        Assert.True(vm.ImageHeight.Value < heightWithoutGallery);
+        var fits = new List<Fitted>();
+        using var listening = fitter.Fits.Subscribe(fits.Add);
+
+        tab.Crop = new CropViewModel(tab.Zoom);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.NotEmpty(fits);
+        Assert.Equal(heightWithoutGallery, vm.ImageHeight.Value, precision: 6);
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public void Follow_CropCloses_FitsWithTheGalleryBack()
+    {
+        var (fitter, vm, window) = CreateShownWindow(800, 600);
+        using var following = fitter.Follow();
+        var tab = vm.WindowTabs.ActiveTab.Value;
+        tab.Gallery.Initialize(_core.GallerySettings);
+        tab.Display(Model("a.jpg", 1600, 1200));
+        tab.Gallery.Switcher.Start(docked: true);
+        Dispatcher.UIThread.RunJobs();
+        var heightWithGallery = vm.ImageHeight.Value;
+        tab.Crop = new CropViewModel(tab.Zoom);
+        Dispatcher.UIThread.RunJobs();
+        Assert.True(vm.ImageHeight.Value > heightWithGallery);
+        var fits = new List<Fitted>();
+        using var listening = fitter.Fits.Subscribe(fits.Add);
+
+        tab.Crop = null;
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.NotEmpty(fits);
+        Assert.Equal(heightWithGallery, vm.ImageHeight.Value, precision: 6);
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public void Follow_CropOpensBeforeAnyFit_FitsBeforeTheCropLaysOut()
+    {
+        var (fitter, vm, window) = CreateShownWindow(800, 600);
+        using var following = fitter.Follow();
+        var tab = vm.WindowTabs.ActiveTab.Value;
+        tab.Model = Model("a.jpg", 1600, 1200);
+        Assert.True(double.IsNaN(vm.ImageWidth.Value));
+
+        tab.Crop = new CropViewModel(tab.Zoom);
+        Dispatcher.UIThread.RunJobs(DispatcherPriority.Normal);
+
+        Assert.False(double.IsNaN(vm.ImageWidth.Value));
+        // The Fit after layout is still pending; let it run before the window closes
+        Dispatcher.UIThread.RunJobs();
         window.Close();
     }
 

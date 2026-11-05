@@ -1,8 +1,9 @@
-﻿using R3;
+﻿using PicView.Core.Sizing;
+using R3;
 
 namespace PicView.Core.ViewModels;
 
-public class CropViewModel : IDisposable
+public class CropViewModel(TabZoom zoom) : IDisposable
 {
     public ReactiveCommand CropImageCommand { get; } = new();
     public ReactiveCommand CopyCropImageCommand { get; } = new();
@@ -17,7 +18,10 @@ public class CropViewModel : IDisposable
     public BindableReactiveProperty<uint> PixelSelectionWidth { get; } = new();
     public BindableReactiveProperty<uint> PixelSelectionHeight { get; } = new();
     
-    public double AspectRatio { get; set; } = 1.0;
+    /// <summary>
+    /// The tab's Fit Scale, which the crop area is drawn at, so a selection in view units divides by it to give pixels.
+    /// </summary>
+    public double AspectRatio => zoom.FitScale;
     
     public void SetSelectionWidth(uint value)
     {

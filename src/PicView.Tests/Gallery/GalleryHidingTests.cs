@@ -48,7 +48,7 @@ public class GalleryHidingTests
         var tab = new TabViewModel(null!);
         tab.Gallery.Switcher.Start(true);
 
-        tab.Crop = new CropViewModel();
+        tab.Crop = new CropViewModel(tab.Zoom);
         Assert.Equal(GalleryMode.Closed, tab.Gallery.ShownMode.Value);
 
         tab.Crop = null;

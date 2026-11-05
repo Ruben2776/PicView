@@ -194,7 +194,9 @@ public class NavigationSubscriptionsTests
         WithWindow((window, vm, hookups, tab) =>
         {
             // A tab that shows an image derives the viewer unless it crops
-            tab.Crop = new CropViewModel();
+            tab.Crop = new CropViewModel(tab.Zoom);
+            // Opening the crop fits, as an input
+            Dispatcher.UIThread.RunJobs();
             using var attached = hookups.Attach(tab);
             var causes = new List<FitCause>();
             using var listening = window.WindowFitter.Fits.Subscribe(fitted => causes.Add(fitted.Cause));

@@ -101,7 +101,7 @@ public class TabViewKindTests
     public void Crop_SetAndCleared_IsCropThenImageViewerAgain()
     {
         _tab.Display(Model("a.jpg"));
-        _tab.Crop = new CropViewModel();
+        _tab.Crop = new CropViewModel(_tab.Zoom);
         Assert.Equal(TabViewKind.Crop, _tab.ViewKind.Value);
         _tab.Crop = null;
         Assert.Equal(TabViewKind.ImageViewer, _tab.ViewKind.Value);

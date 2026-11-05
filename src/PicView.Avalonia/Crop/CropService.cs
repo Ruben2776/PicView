@@ -32,10 +32,7 @@ public class CropService(TabViewModel tabViewModel, MainWindow mainWindow) : ICr
 
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
-            // Cropping hides the gallery, so fit before reading the size the crop area takes
-            tabViewModel.Crop = new CropViewModel();
-            mainWindow.WindowFitter.Refit();
-            tabViewModel.Crop.AspectRatio = tabViewModel.Zoom.FitScale;
+            tabViewModel.Crop = new CropViewModel(tabViewModel.Zoom);
         });
 
         IsCropping = true;
@@ -89,9 +86,6 @@ public class CropService(TabViewModel tabViewModel, MainWindow mainWindow) : ICr
         IsCropping = false;
         
         tabViewModel.Crop = null;
-
-        // Leaving crop shows the gallery again, if the tab has one
-        mainWindow.WindowFitter.Refit();
     }
 
     public async Task SaveCropAsAsync()

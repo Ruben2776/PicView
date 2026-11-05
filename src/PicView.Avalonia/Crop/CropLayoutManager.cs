@@ -24,28 +24,12 @@ public class CropLayoutManager(CropControl control)
             return;
         }
 
-        // Ensure image dimensions are valid before proceeding
-        double imageWidth, imageHeight;
-        if (double.IsNaN(vm.ImageWidth.CurrentValue) || double.IsNaN(vm.ImageHeight.CurrentValue))
+        // The window fits the crop before the control lays out, so a size not known yet means there is no image to crop
+        var imageWidth = vm.ImageWidth.CurrentValue;
+        var imageHeight = vm.ImageHeight.CurrentValue;
+        if (double.IsNaN(imageWidth) || double.IsNaN(imageHeight))
         {
-            if (TopLevel.GetTopLevel(control) is not MainWindow mainWindow)
-            {
-                return;
-            }
-
-            mainWindow.WindowFitter.Refit();
-            if (double.IsNaN(vm.ImageWidth.CurrentValue) || double.IsNaN(vm.ImageHeight.CurrentValue))
-            {
-                return;
-            }
-
-            imageWidth = vm.ImageWidth.CurrentValue;
-            imageHeight = vm.ImageHeight.CurrentValue;
-        }
-        else
-        {
-            imageWidth = vm.ImageWidth.CurrentValue;
-            imageHeight = vm.ImageHeight.CurrentValue;
+            return;
         }
 
         // Set initial width and height for the crop rectangle

@@ -149,7 +149,7 @@ public class GalleryViewTests
             var a = new GalleryItemViewModel { FileInfo = new FileInfo("a.jpg") };
             tab.Gallery.GalleryItems.Add(a);
             Dispatcher.UIThread.RunJobs();
-            tab.Crop = new CropViewModel();
+            tab.Crop = new CropViewModel(tab.Zoom);
             tab.Crop = null;
             var b = new GalleryItemViewModel { FileInfo = new FileInfo("b.jpg") };
             tab.Gallery.GalleryItems.Add(b);
@@ -200,7 +200,7 @@ public class GalleryViewTests
             var itemHeight = panel.ItemHeight;
 
             // Crop hides the gallery without animation
-            tab.Crop = new CropViewModel();
+            tab.Crop = new CropViewModel(tab.Zoom);
             RenderFrame(window);
 
             Assert.False(view.IsVisible);

@@ -125,7 +125,8 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
     /// Fits the window again whenever one of the Fit inputs it watches changes: the active tab shows a new image,
     /// another tab becomes active, the active tab is turned or flipped, the tab strip or a bar shows or hides, the
     /// Window Mode changes, zoom to fit, scrolling or side by side turns on or off, the active tab's gallery changes
-    /// its mode, dock, size or stretch, or, in a Fixed Window, its content is laid out at another size. A new image is
+    /// its mode, dock, size or stretch, the active tab changes its Tab View, as a crop opens or closes, or, in a Fixed
+    /// Window, its content is laid out at another size. A new image is
     /// fitted at the highest priority and published with the cause <see cref="FitCause.NewImage"/>. Other changes that
     /// come together give one Fit, before the next frame is drawn, so the window never shows them at the old size.
     /// Without AutoFit the Fit reads the laid-out view, so it is fitted once more after layout.
@@ -157,6 +158,11 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
             // Only the shown tab's gallery, so a gallery docking in a background tab fits nothing. It may change off the
             // UI thread, as FitSoon allows
             vm.WindowTabs.ActiveTab.Select(static tab => tab.Gallery.Appearance.AsObservable().Skip(1)).Switch()
+                .Subscribe(_ => FitSoon()),
+            // Only the shown tab's Tab View. A crop hides the docked gallery, so it changes the Reserved Space. The kind
+            // may change off the UI thread, as a load does, which FitSoon allows. The Fit posts at Normal, before the
+            // crop control lays out at Render, so the control meets its size
+            vm.WindowTabs.ActiveTab.Select(static tab => tab.ViewKind.AsObservable().Skip(1)).Switch()
                 .Subscribe(_ => FitSoon()),
             FollowContentBounds(vm));
     }

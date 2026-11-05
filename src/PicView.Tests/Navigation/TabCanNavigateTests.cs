@@ -150,7 +150,7 @@ public class TabCanNavigateTests
         var files = Browse("a.jpg", "b.jpg", "c.jpg");
         _tab.ImageIterator!.Initialize(files, 1);
 
-        _tab.Crop = new CropViewModel();
+        _tab.Crop = new CropViewModel(_tab.Zoom);
         Assert.False(Forwards);
         Assert.False(Backwards);
 
