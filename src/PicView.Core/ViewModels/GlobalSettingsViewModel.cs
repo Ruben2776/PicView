@@ -50,6 +50,8 @@ public class GlobalSettingsViewModel
     /// </summary>
     public BindableReactiveProperty<bool> ShowFadeButtons { get; }
 
+    public BindableReactiveProperty<double> WindowMargin { get; }
+
     private readonly BindableReactiveProperty<string?> _loopingText = new();
     private readonly BindableReactiveProperty<string?> _scrollingText = new();
     private readonly BindableReactiveProperty<string?> _fileHistoryText = new();
@@ -102,6 +104,7 @@ public class GlobalSettingsViewModel
         ShowBottomBar = new(Settings.UIProperties.ShowBottomNavBar);
         ShowHoverBar = new(Settings.UIProperties.ShowHoverNavigationBar);
         ShowFadeButtons = new(Settings.UIProperties.ShowAltInterfaceButtons);
+        WindowMargin = new(Settings.WindowProperties.Margin);
 
         Follow(IsLooping, value => Settings.UIProperties.Looping = value, rephrases: true);
         Follow(IsSideBySide, value => Settings.ImageScaling.ShowImageSideBySide = value);
@@ -118,6 +121,7 @@ public class GlobalSettingsViewModel
         Follow(ShowBottomBar, value => Settings.UIProperties.ShowBottomNavBar = value, rephrases: true);
         Follow(ShowHoverBar, value => Settings.UIProperties.ShowHoverNavigationBar = value, rephrases: true);
         Follow(ShowFadeButtons, value => Settings.UIProperties.ShowAltInterfaceButtons = value);
+        Follow(WindowMargin, value => Settings.WindowProperties.Margin = value);
     }
 
     /// <summary>
@@ -151,7 +155,7 @@ public class GlobalSettingsViewModel
             }, DebugHelper.LogError(nameof(GlobalSettingsViewModel), nameof(GalleryMouseWheelBehavior)));
     }
 
-    private void Follow(BindableReactiveProperty<bool> setting, Action<bool> write, bool rephrases = false)
+    private void Follow<T>(BindableReactiveProperty<T> setting, Action<T> write, bool rephrases = false)
     {
         setting.Skip(1).Subscribe(value =>
         {

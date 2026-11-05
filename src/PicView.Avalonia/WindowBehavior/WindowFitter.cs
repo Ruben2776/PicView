@@ -166,6 +166,7 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
             vm.GlobalSettings.IsZoomedToFit.Skip(1).Subscribe(_ => FitSoon()),
             vm.GlobalSettings.IsScrollingEnabled.Skip(1).Subscribe(_ => FitSoon()),
             vm.GlobalSettings.IsSideBySide.Skip(1).Subscribe(_ => FitSoon()),
+            vm.GlobalSettings.WindowMargin.Skip(1).Subscribe(_ => FitSoon()),
             // Only the shown tab's gallery, so a gallery docking in a background tab fits nothing. It may change off the
             // UI thread, as FitSoon allows
             vm.WindowTabs.ActiveTab.Select(static tab => tab.Gallery.Appearance.AsObservable().Skip(1)).Switch()
@@ -408,7 +409,7 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
             ZoomToFit = Settings.ImageScaling.ZoomToFit,
             ScrollEnabled = Settings.Zoom.ScrollEnabled,
             Screen = screen,
-            ScreenMargin = Settings.WindowProperties.Margin,
+            ScreenMargin = vm.GlobalSettings.WindowMargin.CurrentValue,
             WindowContentWidth = contentSize.Width,
             WindowContentHeight = contentSize.Height,
             ReservedSpace = GetReservedSpace(vm)

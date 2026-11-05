@@ -364,6 +364,25 @@ public class WindowFitterTests
     }
 
     [AvaloniaFact]
+    public void Follow_ScreenMarginChanges_FitsWithTheNewMargin()
+    {
+        Settings.WindowProperties.AutoFit = true;
+        var (fitter, vm, _) = CreateWindow(() => Screen(1280, 3000));
+        using var following = fitter.Follow();
+        vm.GlobalSettings.WindowMargin.Value = 0;
+        vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 4000, 3000));
+        Dispatcher.UIThread.RunJobs();
+        fitter.Refit();
+        var widthBefore = vm.ImageWidth.Value;
+        vm.ImageWidth.Value = double.NaN;
+
+        vm.GlobalSettings.WindowMargin.Value = 200;
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Equal(widthBefore - 200, vm.ImageWidth.Value, precision: 6);
+    }
+
+    [AvaloniaFact]
     public void Refit_BottomBarHiddenWithTheInterface_ReservesNoRoomForIt()
     {
         // Hiding the interface hides the bottom bar but keeps its setting

@@ -62,6 +62,18 @@ public class GlobalSettingsViewModelTests
     }
 
     [Fact]
+    public void WindowMargin_Changed_WritesTheStoredValueAndSavesOnce()
+    {
+        var settings = New();
+        Assert.Equal(Settings.WindowProperties.Margin, settings.WindowMargin.Value);
+
+        settings.WindowMargin.Value = 42;
+
+        Assert.Equal(42, Settings.WindowProperties.Margin);
+        Assert.Equal(1, _saves);
+    }
+
+    [Fact]
     public void Constructor_OverLoadedSettings_WritesAndSavesNothing()
     {
         Settings.UIProperties.Looping = true;

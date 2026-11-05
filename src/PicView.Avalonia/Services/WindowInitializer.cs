@@ -155,13 +155,6 @@ public class WindowInitializer(IWindowProvider provider, MainWindow mainWindow) 
         {
             core.SettingsViewModel = new SettingsViewModel(core.Translation, core.GlobalSettings);
             core.SettingsViewModel.Initialize(new ThemeService(), new LanguageService(), new ImageSettingsService());
-            core.SettingsViewModel.WindowMargin.Skip(1).Subscribe(_ =>
-            {
-                foreach (var window in mainWindow.Lifecycle?.Open ?? [mainWindow])
-                {
-                    window.WindowFitter.Refit();
-                }
-            }, DebugHelper.LogError(nameof(core.SettingsViewModel), nameof(core.SettingsViewModel.WindowMargin)));
         }
 
         if (core.SettingsViewModel.SettingsWindowConfig is null)

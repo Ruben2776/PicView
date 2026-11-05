@@ -12,6 +12,7 @@ namespace PicView.Core.ViewModels;
 
 public class SettingsViewModel : IDisposable
 {
+    private readonly GlobalSettingsViewModel _globalSettings;
     private readonly Stack<NavigationState> _backStack = new();
     private DisposableBag _disposables;
     private readonly Stack<NavigationState> _forwardStack = new();
@@ -27,6 +28,7 @@ public class SettingsViewModel : IDisposable
 
     public SettingsViewModel(TranslationViewModel translation, GlobalSettingsViewModel globalSettings)
     {
+        _globalSettings = globalSettings;
         Categories.Value =
         [
             new SettingsCategoryItem(translation.GeneralSettings, "GeneralSettingsImage", SettingsCategory.General),
@@ -212,7 +214,7 @@ public class SettingsViewModel : IDisposable
     public BindableReactiveProperty<bool> IsShowingZoomPreviewer { get; } =
         new(Settings.Zoom.IsShowingZoomPreviewer);
 
-    public BindableReactiveProperty<double> WindowMargin { get; } = new(Settings.WindowProperties.Margin);
+    public BindableReactiveProperty<double> WindowMargin => _globalSettings.WindowMargin;
 
     public BindableReactiveProperty<double> NavSpeed { get; } = new(Settings.UIProperties.NavSpeed);
     public BindableReactiveProperty<double> GetNavSpeed { get; } = new();
@@ -262,7 +264,6 @@ public class SettingsViewModel : IDisposable
             IsUsingTouchpad,
             NavSpeed,
             SlideshowSpeed,
-            WindowMargin,
             ZoomSpeed,
             MouseDoubleClickBehaviorIndex,
             MouseDoubleClickBehaviors,
@@ -364,9 +365,6 @@ public class SettingsViewModel : IDisposable
 
         Observable.EveryValueChanged(this, x => x.IsEscLeavingFullscreen.CurrentValue)
             .Subscribe(x => Settings.WindowProperties.EscLeavesFullscreen = x).AddTo(ref _disposables);
-
-        Observable.EveryValueChanged(this, x => x.WindowMargin.CurrentValue)
-            .Subscribe(x => Settings.WindowProperties.Margin = x).AddTo(ref _disposables);
 
         Observable.EveryValueChanged(this, x => x.MouseDoubleClickBehaviorIndex.CurrentValue)
             .Subscribe(x => Settings.UIProperties.DoubleClickBehavior = x).AddTo(ref _disposables);
