@@ -90,6 +90,13 @@ public sealed class Keymap : IEquatable<Keymap>
                 return;
             }
 
+            if (isContextual && !fromContextualSection && contextualActions.ContainsKey(parsed))
+            {
+                // A Contextual Action in the ordinary section, as in files from before Up and Down were contextual,
+                // does not replace what the contextual section binds
+                return;
+            }
+
             (isContextual ? contextualActions : actions)[parsed] = canonical;
         }
     }
@@ -286,6 +293,49 @@ public sealed class Keymap : IEquatable<Keymap>
 
             return added;
         }
+    }
+
+    /// <summary>
+    /// Migrates a keymap from before Up and Down were Contextual Actions: each Keybind bound to Up or Down also gets
+    /// the ordinary RotateRight or RotateLeft it used to fall back to, unless it has an ordinary Action, and the
+    /// Left and Right Keybinds of <paramref name="defaults"/> are added where the contextual layer leaves them free.
+    /// </summary>
+    /// <returns>This keymap when nothing needs adding.</returns>
+    public Keymap WithContextualNavigation(Keymap defaults)
+    {
+        Dictionary<Keybind, string>? actions = null;
+        foreach (var (keybind, action) in _contextual)
+        {
+            var rotation = action switch
+            {
+                ContextualActionHandler.Up => Actions.RotateRight,
+                ContextualActionHandler.Down => Actions.RotateLeft,
+                _ => null
+            };
+            if (rotation is not null && !_actions.ContainsKey(keybind))
+            {
+                actions ??= new Dictionary<Keybind, string>(_actions);
+                actions[keybind] = rotation;
+            }
+        }
+
+        Dictionary<Keybind, string>? contextual = null;
+        foreach (var (keybind, action) in defaults._contextual)
+        {
+            if (action is ContextualActionHandler.Left or ContextualActionHandler.Right &&
+                !_contextual.ContainsKey(keybind))
+            {
+                contextual ??= new Dictionary<Keybind, string>(_contextual);
+                contextual[keybind] = action;
+            }
+        }
+
+        if (actions is null && contextual is null)
+        {
+            return this;
+        }
+
+        return new Keymap(actions?.ToFrozenDictionary() ?? _actions, contextual?.ToFrozenDictionary() ?? _contextual);
     }
 
     private FrozenDictionary<Keybind, string> LayerOf(string canonicalAction) =>

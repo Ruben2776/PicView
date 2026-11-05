@@ -15,6 +15,11 @@ public static class Keymaps
     /// </summary>
     private const double MouseKeybindsVersion = 3.0;
 
+    /// <summary>
+    /// The settings version that made Up and Down Contextual Actions and added Left and Right.
+    /// </summary>
+    private const double GalleryNavigationKeybindsVersion = 3.1;
+
     private static Keymap _current = Keymap.Empty;
 
     /// <summary>
@@ -37,6 +42,12 @@ public static class Keymaps
         {
             // Keybindings files from before mouse Keybinds existed get the default ones
             keymap = keymap.WithDefaultMouseKeybinds(Defaults(platform));
+        }
+
+        if (bytes is not null && LoadedSettingsVersion < GalleryNavigationKeybindsVersion)
+        {
+            // Keybindings files from before Up and Down were contextual keep rotating and gain gallery Left and Right
+            keymap = keymap.WithContextualNavigation(Defaults(platform));
         }
 
         Replace(keymap);
