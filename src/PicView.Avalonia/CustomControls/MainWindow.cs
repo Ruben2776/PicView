@@ -197,10 +197,7 @@ public abstract class MainWindow : Window, IMainWindow
             .FirstOrDefault(window => window != this && window.ContainsScreenPoint(e.ScreenPosition));
         if (targetWindow?.DataContext is MainWindowViewModel targetVm)
         {
-            if (parentVm.WindowTabs.MoveTab(tab, targetVm.WindowTabs, e.TargetIndex))
-            {
-                RefreshViewBinding(tab);
-            }
+            parentVm.WindowTabs.MoveTab(tab, targetVm.WindowTabs, e.TargetIndex);
             return;
         }
 
@@ -220,18 +217,7 @@ public abstract class MainWindow : Window, IMainWindow
         {
             await lifecycle.OpenForMovedTabAsync(tab,
                 new PixelPoint(e.ScreenPosition.X - 100, e.ScreenPosition.Y - 50), Width, Height).ConfigureAwait(true);
-
-            RefreshViewBinding(tab);
         }, DispatcherPriority.Send));
-    }
-
-    private static void RefreshViewBinding(TabViewModel tab)
-    {
-        // The moved view can lose its DataContext when it leaves this window
-        if (tab.CurrentView.CurrentValue is Control control)
-        {
-            control.DataContext = tab;
-        }
     }
 
     private bool ContainsScreenPoint(PixelPoint screenPosition)

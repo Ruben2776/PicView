@@ -11,7 +11,6 @@ using PicView.Avalonia.Interfaces;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.Services;
 using PicView.Avalonia.UI;
-using PicView.Avalonia.Views.UC;
 using PicView.Avalonia.WindowBehavior;
 using PicView.Core.FileSorting;
 using PicView.Core.Navigation;
@@ -65,15 +64,13 @@ public sealed class MainWindowLifecycle
     public MainWindow? MostRecentlyActive { get; private set; }
 
     /// <summary>
-    /// Opens a new Main Window that shows the start-up menu.
+    /// Opens a new Main Window whose tab derives the start-up menu.
     /// </summary>
     /// <returns>Completes once the window is set up, after it is shown.</returns>
     public async Task<MainWindow> OpenNewAsync()
     {
         var window = Create();
-        var vm = ViewModelOf(window);
         WindowFunctions.HandleWindowScalingMode(window, isAppStart: false);
-        vm.WindowTabs.ActiveTab.Value.CurrentView.Value = CreateStartUpMenu(window, vm.WindowTabs.ActiveTab.CurrentValue);
         window.Show();
         await SetUpShownWindow(window, isAppStart: false).ConfigureAwait(true);
         return window;
@@ -154,9 +151,6 @@ public sealed class MainWindowLifecycle
 
         Dispatcher.UIThread.Post(() =>
         {
-            var vm = ViewModelOf(window);
-            var tab = vm.WindowTabs.ActiveTab.CurrentValue;
-            tab.CurrentView.Value = CreateStartUpMenu(window, tab);
             window.Show();
             if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
@@ -168,23 +162,6 @@ public sealed class MainWindowLifecycle
         {
             WindowFunctions.CenterWindowOnScreen(window);
         }
-    }
-
-    /// <summary>
-    /// Creates the start-up menu a window opens with, sized before it is shown so an AutoFit window opens at the
-    /// menu's size instead of shrinking to its minimum.
-    /// </summary>
-    private static StartUpMenu CreateStartUpMenu(MainWindow window, TabViewModel tab)
-    {
-        var menu = new StartUpMenu
-        {
-            Buttons =
-            {
-                DataContext = tab
-            }
-        };
-        window.WindowFitter.FitStartUpMenu(menu);
-        return menu;
     }
 
     /// <summary>
@@ -216,7 +193,7 @@ public sealed class MainWindowLifecycle
         window.MainWindowInitializer.CloseToolWindows();
         vm.WindowTabs.TearDown();
 
-        if (vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.CurrentValue is IDisposable disposable)
+        if (vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.Value is IDisposable disposable)
         {
             disposable.Dispose();
         }

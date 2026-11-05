@@ -4,6 +4,7 @@ using Avalonia.Threading;
 using PicView.Avalonia.Views.UC;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Interfaces;
+using PicView.Avalonia.UI;
 using PicView.Avalonia.WindowBehavior;
 using PicView.Core.Localization;
 using PicView.Core.Models;
@@ -239,8 +240,7 @@ public class WindowFitterTests
         using var following = fitter.FollowFitInputs();
 
         var tab = vm.WindowTabs.CreateTab();
-        var menu = new StartUpMenu();
-        tab.CurrentView.Value = menu;
+        var menu = (StartUpMenu)tab.CurrentView.Value!;
         Dispatcher.UIThread.RunJobs();
 
         var reserved = ReservedSpace.For(2, vm.Interface.Value, 0, 0);
@@ -262,8 +262,7 @@ public class WindowFitterTests
         fitter.Refit();
 
         var tab = vm.WindowTabs.CreateTab();
-        var menu = new StartUpMenu();
-        tab.CurrentView.Value = menu;
+        var menu = (StartUpMenu)tab.CurrentView.Value!;
         Dispatcher.UIThread.RunJobs();
 
         Assert.Equal(400, menu.Width);
@@ -306,8 +305,7 @@ public class WindowFitterTests
         using var following = fitter.FollowFitInputs();
 
         var tab = vm.WindowTabs.CreateTab();
-        var menu = new StartUpMenu { Width = 100, Height = 100 };
-        tab.CurrentView.Value = menu;
+        var menu = (StartUpMenu)tab.CurrentView.Value!;
         Dispatcher.UIThread.RunJobs();
 
         Assert.True(double.IsNaN(menu.Width));
@@ -507,6 +505,7 @@ public class WindowFitterTests
         var vm = new MainWindowViewModel(_core, _core.Translation, _core.GlobalSettings!,
             _core.GallerySettings);
         window.DataContext = vm;
+        vm.WindowTabs.SetViewFactory(new TabViews(window));
         return (new WindowFitter(window, () => ContentSize, readScreen), vm, window);
     }
 

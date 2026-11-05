@@ -340,6 +340,21 @@ public class TabOwnershipTests
     }
 
     [Fact]
+    public void CurrentView_FollowsTheAttachedViewsAndIsNullAfterRelease()
+    {
+        var factory = new RecordingViewFactory();
+        var window = CreateWindow(viewFactory: factory);
+        var tab = window.WindowTabs.CreateTab();
+        var views = (FakeViews)tab.Views!;
+
+        views.Control.Value = "a control";
+        Assert.Equal("a control", tab.CurrentView.Value);
+
+        window.WindowTabs.CloseTab(tab);
+        Assert.Null(tab.CurrentView.Value);
+    }
+
+    [Fact]
     public void SetViewFactory_WindowOpenedWithAMovedTab_AttachesIt()
     {
         var source = CreateWindow();

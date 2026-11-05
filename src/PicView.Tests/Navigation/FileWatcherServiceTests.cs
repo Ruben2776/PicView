@@ -546,8 +546,7 @@ public class FileWatcherServiceTests : IDisposable
         watch.RaiseDeleted("b.jpg");
 
         // Assert: it no longer browses the folder or shows its file, as a tab that never browsed files
-        await WaitUntilAsync(() => actionRunner.StartUpMenuTabs.Count == 1);
-        Assert.Same(tab, actionRunner.StartUpMenuTabs[0]);
+        await WaitUntilAsync(() => tab.Model.FileInfo is null && tab.ViewKind.Value is TabViewKind.StartUpMenu);
         Assert.True(tab.IsFresh);
         Assert.Null(tab.ImageIterator);
         Assert.Null(tab.Model.FileInfo);
@@ -575,8 +574,8 @@ public class FileWatcherServiceTests : IDisposable
         watch.RaiseDeleted("a.jpg");
 
         // Assert
-        await WaitUntilAsync(() => actionRunner.StartUpMenuTabs.Count == 2);
-        Assert.Equal([first, second], actionRunner.StartUpMenuTabs);
+        await WaitUntilAsync(() => first.Model.FileInfo is null && first.ViewKind.Value is TabViewKind.StartUpMenu &&
+                                   second.Model.FileInfo is null && second.ViewKind.Value is TabViewKind.StartUpMenu);
         Assert.True(first.IsFresh);
         Assert.True(second.IsFresh);
         Assert.Single(other.ImageIterator!.Files);
@@ -800,8 +799,8 @@ public class FileWatcherServiceTests : IDisposable
         watch.RaiseGone();
 
         // Assert
-        await WaitUntilAsync(() => actionRunner.StartUpMenuTabs.Count == 2);
-        Assert.Equal([first, second], actionRunner.StartUpMenuTabs);
+        await WaitUntilAsync(() => first.Model.FileInfo is null && first.ViewKind.Value is TabViewKind.StartUpMenu &&
+                                   second.Model.FileInfo is null && second.ViewKind.Value is TabViewKind.StartUpMenu);
         Assert.Null(first.ImageIterator);
         Assert.Null(second.ImageIterator);
         Assert.True(watch.IsDisposed);
@@ -829,7 +828,7 @@ public class FileWatcherServiceTests : IDisposable
         Directory.Move(folder, Path.Combine(otherFolder, "watched"));
 
         // Assert
-        await WaitUntilAsync(() => actionRunner.StartUpMenuTabs.Count == 1);
+        await WaitUntilAsync(() => tab.Model.FileInfo is null && tab.ViewKind.Value is TabViewKind.StartUpMenu);
         Assert.Null(tab.ImageIterator);
     }
 
@@ -857,7 +856,7 @@ public class FileWatcherServiceTests : IDisposable
         }
 
         // Assert
-        await WaitUntilAsync(() => actionRunner.StartUpMenuTabs.Count == 1);
+        await WaitUntilAsync(() => tab.Model.FileInfo is null && tab.ViewKind.Value is TabViewKind.StartUpMenu);
         Assert.True(tab.IsFresh);
         Assert.Null(tab.ImageIterator);
     }

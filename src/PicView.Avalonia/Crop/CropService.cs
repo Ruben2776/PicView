@@ -8,7 +8,6 @@ using PicView.Avalonia.Clipboard;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.FileSystem;
 using PicView.Avalonia.ImageHandling;
-using PicView.Avalonia.Views.UC;
 using PicView.Avalonia.WindowBehavior;
 using PicView.Core.DebugTools;
 using PicView.Core.Gallery;
@@ -23,8 +22,6 @@ namespace PicView.Avalonia.Crop;
 public class CropService(TabViewModel tabViewModel, MainWindow mainWindow) : ICropService
 {
     public bool IsCropping { get; private set; }
-    
-    private object? _backUpView;
 
     public async Task StartCropControlAsync()
     {
@@ -32,8 +29,6 @@ public class CropService(TabViewModel tabViewModel, MainWindow mainWindow) : ICr
         {
             return;
         }
-        
-        _backUpView = tabViewModel.CurrentView.Value;
 
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
@@ -41,15 +36,6 @@ public class CropService(TabViewModel tabViewModel, MainWindow mainWindow) : ICr
             tabViewModel.Crop = new CropViewModel();
             mainWindow.WindowFitter.Refit();
             tabViewModel.Crop.AspectRatio = tabViewModel.Zoom.FitScale;
-
-            var cropControl = new CropControl
-            {
-                DataContext = tabViewModel,
-                Width = vm.ImageWidth.CurrentValue,
-                Height = vm.ImageHeight.CurrentValue,
-                Margin = new Thickness(0)
-            };
-            tabViewModel.CurrentView.Value = cropControl;
         });
 
         IsCropping = true;
@@ -100,12 +86,6 @@ public class CropService(TabViewModel tabViewModel, MainWindow mainWindow) : ICr
 
     public void CloseCropControl()
     {
-        if (_backUpView is not null)
-        {
-            tabViewModel.CurrentView.Value = _backUpView;
-            _backUpView = null;
-        }
-
         IsCropping = false;
         
         tabViewModel.Crop = null;

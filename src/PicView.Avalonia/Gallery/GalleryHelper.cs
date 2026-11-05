@@ -26,7 +26,7 @@ public static class GalleryHelper
 
     public static void CenterGallery(MainWindowViewModel main)
     {
-        if (main.WindowTabs.ActiveTab.CurrentValue.CurrentView.CurrentValue is not ImageViewer imageViewer)
+        if (main.WindowTabs.ActiveTab.CurrentValue.CurrentView.Value is not ImageViewer imageViewer)
         {
             return;
         }

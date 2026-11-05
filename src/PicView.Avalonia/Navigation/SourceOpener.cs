@@ -2,7 +2,6 @@ using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.StartUp;
 using PicView.Avalonia.UI;
-using PicView.Avalonia.Views.UC;
 using PicView.Core.Navigation;
 using PicView.Core.Sizing;
 using PicView.Core.ViewModels;
@@ -26,8 +25,7 @@ public readonly record struct OpenOptions(bool IsStartup = false, bool ContinueF
 /// </summary>
 /// <remarks>
 /// Loading itself is the tab's (<see cref="TabViewModel.Load"/>); this module owns what the UI does around it: the
-/// startup order, hooking a fresh tab up, switching from the start-up menu, and telling the user when a source could
-/// not be opened.
+/// startup order, hooking a fresh tab up, and telling the user when a source could not be opened.
 /// </remarks>
 public static class SourceOpener
 {
@@ -46,17 +44,6 @@ public static class SourceOpener
         {
             TabNavigationInitializer.Initialize(core, vm, tab);
         }
-
-        var wasStartUpMenu = await Dispatcher.UIThread.InvokeAsync(() =>
-        {
-            // A new tab its window has not laid out yet has no view, and would get the start-up menu once it does
-            if (tab.CurrentView.CurrentValue is not (null or StartUpMenu))
-            {
-                return false;
-            }
-            tab.CurrentView.Value = new ImageViewer(tab);
-            return true;
-        });
 
         var rootDirectory = options.ContinueFromLeftOff ? GetStartUpDirectory(source) : null;
         var result = await tab.Load.LoadAsync(source,
@@ -80,10 +67,6 @@ public static class SourceOpener
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
                 ShowError(vm, result);
-                if (wasStartUpMenu)
-                {
-                    tab.CurrentView.Value = new StartUpMenu();
-                }
             });
             return result;
         }

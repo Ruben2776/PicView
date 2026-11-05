@@ -5,6 +5,9 @@
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
     x:DataType="viewModels:TabViewModel"
+    Width="{CompiledBinding ParentWindowContext.ImageWidth.Value, Mode=OneWay}"
+    Height="{CompiledBinding ParentWindowContext.ImageHeight.Value, Mode=OneWay}"
+    Margin="0"
     ClipToBounds="False">
     <UserControl.Resources>
         <SolidColorBrush x:Key="Brush0" Color="{DynamicResource MainTextColor}" />

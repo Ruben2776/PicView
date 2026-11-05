@@ -14,7 +14,7 @@ public class ImageSettingsService : IImageSettingsService
             return;
         }
 
-        if (core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.ActiveTab.CurrentValue.CurrentView.CurrentValue is ImageViewer imageViewer)
+        if (core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.ActiveTab.CurrentValue.CurrentView.Value is ImageViewer imageViewer)
         {
             imageViewer.TriggerScalingModeUpdate(nearestNeighbor);
         }

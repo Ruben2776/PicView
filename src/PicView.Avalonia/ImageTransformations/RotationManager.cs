@@ -14,7 +14,7 @@ public static class RotationManager
 {
     public static void ResetZoomAndRotations(MainWindowViewModel vm, MainWindow mainWindow)
     {
-        if (vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.CurrentValue is ImageViewer imageViewer)
+        if (vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.Value is ImageViewer imageViewer)
         {
             imageViewer.ResetZoomSlim();
         }
@@ -24,7 +24,7 @@ public static class RotationManager
     
     public static void ResetZoom(MainWindowViewModel vm, MainWindow mainWindow)
     {
-        if (vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.CurrentValue is not ImageViewer imageViewer)
+        if (vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.Value is not ImageViewer imageViewer)
         {
             return;
         }
@@ -49,7 +49,7 @@ public static class RotationManager
     public static void Flip(MainWindowViewModel vm)
     {
         var tab = vm.WindowTabs.ActiveTab.CurrentValue;
-        if (tab.CurrentView.CurrentValue is not ImageViewer { HasImage: true } imageViewer)
+        if (tab.CurrentView.Value is not ImageViewer { HasImage: true } imageViewer)
         {
             return;
         }
@@ -64,7 +64,7 @@ public static class RotationManager
     private static void Turn(MainWindowViewModel vm, MainWindow mainWindow, Action<TabOrientation> turn)
     {
         var tab = vm.WindowTabs.ActiveTab.CurrentValue;
-        if (tab.CurrentView.CurrentValue is not ImageViewer { HasImage: true })
+        if (tab.CurrentView.Value is not ImageViewer { HasImage: true })
         {
             return;
         }

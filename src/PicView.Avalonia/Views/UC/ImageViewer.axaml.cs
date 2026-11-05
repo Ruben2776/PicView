@@ -34,23 +34,9 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
         InitializeComponent();
         ZoomPanControl.ScaleChanged += OnScaleChanged;
         GalleryView.Initialize(tab);
-        DisposeGalleryViewWhenReplaced(tab);
         ImageControlHelper.TriggerScalingModeUpdate(MainImage, true);
         Loaded += OnLoaded;
     }
-
-    /// <summary>
-    /// Drops the gallery view's subscriptions to the tab once another view replaces this one in the tab, since this one
-    /// is not shown again. A crop control is the exception: it stands in for this view while cropping, then gives the
-    /// tab this view back.
-    /// </summary>
-    private void DisposeGalleryViewWhenReplaced(TabViewModel tab) =>
-        tab.CurrentView
-            .SkipWhile(view => !ReferenceEquals(view, this))
-            .Where(view => !ReferenceEquals(view, this) && view is not CropControl)
-            .Take(1)
-            .Subscribe(_ => GalleryView.Dispose(),
-                DebugHelper.LogError(nameof(ImageViewer), nameof(DisposeGalleryViewWhenReplaced)));
 
     private void OnLoaded(object? sender, RoutedEventArgs e)
     {
@@ -277,7 +263,7 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
         // The wheel only works on the image viewer the active tab shows
         if (TopLevel.GetTopLevel(this) is not MainWindow
             {
-                DataContext: MainWindowViewModel { WindowTabs.ActiveTab.CurrentValue.CurrentView.CurrentValue: ImageViewer }
+                DataContext: MainWindowViewModel { WindowTabs.ActiveTab.CurrentValue.CurrentView.Value: ImageViewer }
             } mainWindow)
         {
             return;

@@ -152,7 +152,7 @@ public sealed class WindowModeSwitcher(
             adapter.EnterNativeState(window, next);
 
             if (next.Mode is not WindowMode.Maximized &&
-                vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.CurrentValue is ImageViewer imageViewer)
+                vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.Value is ImageViewer imageViewer)
             {
                 imageViewer.ResetZoomSlim();
             }

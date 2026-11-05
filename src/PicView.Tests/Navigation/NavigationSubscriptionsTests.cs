@@ -6,6 +6,7 @@ using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Input;
 using PicView.Avalonia.Interfaces;
 using PicView.Avalonia.Navigation;
+using PicView.Avalonia.UI;
 using PicView.Avalonia.Views.UC;
 using PicView.Avalonia.WindowBehavior;
 using PicView.Core.ImageDecoding;
@@ -48,7 +49,7 @@ public class NavigationSubscriptionsTests
     {
         WithWindow((window, vm, hookups, tab) =>
         {
-            tab.CurrentView.Value = new ImageViewer(tab);
+            ViewerOf(tab);
             using var attached = hookups.Attach(tab);
             tab.Orientation.TurnRight();
 
@@ -66,7 +67,7 @@ public class NavigationSubscriptionsTests
         WithWindow((window, vm, hookups, tab) =>
         {
             tab.Display(BitmapModel("a.jpg"));
-            tab.CurrentView.Value = new ImageViewer(tab);
+            ViewerOf(tab);
             tab.Orientation.TurnRight();
 
             using var attached = hookups.Attach(tab);
@@ -81,7 +82,7 @@ public class NavigationSubscriptionsTests
     {
         WithWindow((window, vm, hookups, tab) =>
         {
-            tab.CurrentView.Value = new ImageViewer(tab);
+            ViewerOf(tab);
             using var attached = hookups.Attach(tab);
             tab.Display(BitmapModel("a.jpg"));
             Dispatcher.UIThread.RunJobs();
@@ -99,12 +100,15 @@ public class NavigationSubscriptionsTests
     {
         WithWindow((window, vm, hookups, tab) =>
         {
+            // A tab that shows an image derives the viewer unless it crops
+            tab.Crop = new CropViewModel();
             using var attached = hookups.Attach(tab);
             tab.Orientation.TurnRight();
 
             tab.Display(BitmapModel("a.jpg"));
             Dispatcher.UIThread.RunJobs();
 
+            Assert.IsType<CropControl>(tab.CurrentView.Value);
             Assert.Equal(1, tab.Orientation.Current.CurrentValue.QuarterTurns);
         });
     }
@@ -114,7 +118,7 @@ public class NavigationSubscriptionsTests
     {
         WithWindow((window, vm, hookups, tab) =>
         {
-            tab.CurrentView.Value = new ImageViewer(tab);
+            ViewerOf(tab);
             using var attached = hookups.Attach(tab);
             tab.Orientation.TurnRight();
             var turnsWhenLaterWorkRan = -1;
@@ -135,8 +139,7 @@ public class NavigationSubscriptionsTests
         Settings.Zoom.ZoomSpeed = 0.3;
         WithWindow((window, vm, hookups, tab) =>
         {
-            var viewer = new ImageViewer(tab);
-            tab.CurrentView.Value = viewer;
+            var viewer = ViewerOf(tab);
             using var attached = hookups.Attach(tab);
             tab.Display(BitmapModel("a.jpg"));
             Dispatcher.UIThread.RunJobs();
@@ -157,8 +160,7 @@ public class NavigationSubscriptionsTests
         Settings.Zoom.ResetZoomOnChange = true;
         WithWindow((window, vm, hookups, tab) =>
         {
-            var viewer = new ImageViewer(tab);
-            tab.CurrentView.Value = viewer;
+            var viewer = ViewerOf(tab);
             using var attached = hookups.Attach(tab);
             tab.Display(BitmapModel("a.jpg"));
             Dispatcher.UIThread.RunJobs();
@@ -184,6 +186,7 @@ public class NavigationSubscriptionsTests
         var window = new TestMainWindow(new NoOpModeAdapter());
         var vm = new MainWindowViewModel(core, core.Translation, core.GlobalSettings!, core.GallerySettings);
         window.DataContext = vm;
+        vm.WindowTabs.SetViewFactory(new TabViews(window));
         var tab = vm.WindowTabs.ActiveTab.CurrentValue;
         tab.IsSelected = true;
         var application = Application.Current!;
@@ -200,6 +203,12 @@ public class NavigationSubscriptionsTests
             window.Close();
             application.DataContext = previous;
         }
+    }
+
+    private static ImageViewer ViewerOf(TabViewModel tab)
+    {
+        tab.SetLoading();
+        return (ImageViewer)tab.CurrentView.Value!;
     }
 
     private static ImageModel BitmapModel(string name, uint pixelWidth = 2, uint pixelHeight = 2) => new()

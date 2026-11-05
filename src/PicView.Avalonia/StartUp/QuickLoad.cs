@@ -5,8 +5,6 @@ using ImageMagick;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.Navigation;
-using PicView.Avalonia.UI;
-using PicView.Avalonia.Views.UC;
 using PicView.Avalonia.WindowBehavior;
 using PicView.Core.DebugTools;
 using PicView.Core.FileSorting;
@@ -81,7 +79,6 @@ public static class QuickLoad
             if (result.Outcome is LoadOutcome.Failed)
             {
                 SourceOpener.ShowError(mainWindow.ViewModel!, result);
-                ViewChangeHelper.SwitchToStartUpMenu(mainWindow.ViewModel!);
                 mainWindow.Show();
             }
             if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
@@ -102,7 +99,6 @@ public static class QuickLoad
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
             mainWindow.Show();
-            tab.CurrentView.Value = new ImageViewer(tab);
         }, DispatcherPriority.Send);
         if (vm.WindowModeState.CurrentValue.AutoFit)
         {
@@ -221,10 +217,10 @@ public static class QuickLoad
             DebugHelper.LogDebug(nameof(QuickLoad), nameof(LoadSingleAsync), e);
         }
 
-        // Decoded while the viewer is set up and the tab hooked up, so the first image's reaction comes from the same
-        // subscription as every later one's. The pinged size rides on the decoded model
+        // Decoded while the tab is hooked up, so the first image's reaction comes from the same subscription as every
+        // later one's. The pinged size rides on the decoded model
         var decoding = GetImageModel.GetImageModelAsync(fileInfo, isPinged ? magickImage : null);
-        await ShowImageViewerAndHookUpAsync(tab).ConfigureAwait(false);
+        await HookUpAsync(tab).ConfigureAwait(false);
         var model = await decoding.ConfigureAwait(false);
         return await ShowThroughTheLoadAsync(core, tab, fileInfo,
             new LoadOptions(Model: model, Files: files, RootDirectory: rootDirectory)).ConfigureAwait(false);
@@ -286,10 +282,10 @@ public static class QuickLoad
             }
         }
 
-        // Both decode while the viewer is set up, and the tab's Load shows them as the pair with the files listed above
+        // Both decode while the tab is hooked up, and the tab's Load shows them as the pair with the files listed above
         var decodingFirst = GetImageModel.GetImageModelAsync(fileInfo, isPinged ? firstMagick : null);
         var decodingSecond = GetImageModel.GetImageModelAsync(nextFileInfo, isPinged ? secondMagick : null);
-        await ShowImageViewerAndHookUpAsync(tab).ConfigureAwait(false);
+        await HookUpAsync(tab).ConfigureAwait(false);
         var first = await decodingFirst.ConfigureAwait(false);
         var second = await decodingSecond.ConfigureAwait(false);
         var result = await ShowThroughTheLoadAsync(core, tab, fileInfo,
@@ -343,13 +339,12 @@ public static class QuickLoad
         });
 
     /// <summary>
-    /// Gives the tab its image viewer and hooks it up to its window before its first image shows, so the window reacts
-    /// to that image as it does to every later one. The window's hookups exist since the lifecycle created it.
+    /// Hooks the tab up to its window before its first image shows, so the window reacts to that image as it does to
+    /// every later one. The window's hookups exist since the lifecycle created it.
     /// </summary>
-    private static async ValueTask ShowImageViewerAndHookUpAsync(TabViewModel tab) =>
+    private static async ValueTask HookUpAsync(TabViewModel tab) =>
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
-            tab.CurrentView.Value = new ImageViewer(tab);
             tab.ParentWindowContext.WindowTabs.HookUp(tab);
         }, DispatcherPriority.Send);
 }

@@ -8,6 +8,7 @@ using ImageMagick;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Gallery;
 using PicView.Avalonia.Interfaces;
+using PicView.Avalonia.UI;
 using PicView.Avalonia.Views.Gallery;
 using PicView.Avalonia.Views.UC;
 using PicView.Core.Gallery;
@@ -120,7 +121,7 @@ public class GalleryViewTests
     }
 
     [AvaloniaFact]
-    public void Replaced_ImageViewer_StopsFollowingItsTabsGallery()
+    public void Released_ImageViewer_StopsFollowingItsTabsGallery()
     {
         WithImageViewer((tab, imageViewer, viewer) =>
         {
@@ -128,9 +129,9 @@ public class GalleryViewTests
             var b = new GalleryItemViewModel { FileInfo = new FileInfo("b.jpg") };
             tab.Gallery.GalleryItems.AddRange([a, b]);
             Dispatcher.UIThread.RunJobs();
-            tab.CurrentView.Value = imageViewer;
+            tab.ParentWindowContext.WindowTabs.CreateTab();
 
-            tab.CurrentView.Value = new StartUpMenu();
+            tab.ParentWindowContext.WindowTabs.CloseTab(tab);
             tab.Gallery.GalleryItems.Add(new GalleryItemViewModel { FileInfo = new FileInfo("c.jpg") });
             tab.Gallery.NavigateGalleryCommand.Execute(NavigateTo.Last);
             Dispatcher.UIThread.RunJobs();
@@ -148,10 +149,8 @@ public class GalleryViewTests
             var a = new GalleryItemViewModel { FileInfo = new FileInfo("a.jpg") };
             tab.Gallery.GalleryItems.Add(a);
             Dispatcher.UIThread.RunJobs();
-            tab.CurrentView.Value = imageViewer;
-
-            tab.CurrentView.Value = new CropControl();
-            tab.CurrentView.Value = imageViewer;
+            tab.Crop = new CropViewModel();
+            tab.Crop = null;
             var b = new GalleryItemViewModel { FileInfo = new FileInfo("b.jpg") };
             tab.Gallery.GalleryItems.Add(b);
             Dispatcher.UIThread.RunJobs();
@@ -333,7 +332,8 @@ public class GalleryViewTests
     private static void WithImageViewer(Action<TabViewModel, ImageViewer, NavigateAbleItemsViewer> test) =>
         WithTab(static vm => vm.WindowTabs.ActiveTab.CurrentValue, (tab, _) =>
         {
-            var imageViewer = new ImageViewer(tab);
+            tab.SetLoading();
+            var imageViewer = (ImageViewer)tab.CurrentView.Value!;
             test(tab, imageViewer, imageViewer.GalleryView.FindControl<NavigateAbleItemsViewer>("GalleryItemsControl")!);
         });
 
@@ -349,6 +349,7 @@ public class GalleryViewTests
         var window = new TestMainWindow(new NoOpModeAdapter());
         var vm = new MainWindowViewModel(core, core.Translation, core.GlobalSettings!, core.GallerySettings);
         window.DataContext = vm;
+        vm.WindowTabs.SetViewFactory(new TabViews(window));
         core.MainWindows.ActiveWindow.Value = vm;
         var tab = tabOf(vm);
         tab.Initialize();

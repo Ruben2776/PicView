@@ -141,6 +141,31 @@ public class AppLifecycleTests : IAsyncDisposable
     }
 
     [AvaloniaFact]
+    public async Task OpenAtAppStart_WithASource_ShowsTheViewerBeforeTheImage()
+    {
+        var a = await WriteImageAsync("a.jpg");
+        var app = CreateApp();
+
+        var (window, setUp) = app.MainWindows.OpenAtAppStart(a, null);
+        // Showing the window at startup lays out its bars
+        window.SharedTitleBar = new CustomTitleBar();
+        window.SharedBottomBar = new BottomBar();
+
+        Assert.IsType<ImageViewer>(ViewOf(window));
+        await setUp;
+    }
+
+    [AvaloniaFact]
+    public void OpenAtAppStart_WithNothing_HasItsMenuBeforeItIsShown()
+    {
+        var app = CreateApp();
+
+        var (window, _) = app.MainWindows.OpenAtAppStart(null, null);
+
+        Assert.IsType<StartUpMenu>(ViewOf(window));
+    }
+
+    [AvaloniaFact]
     public async Task TopMost_Changed_EveryMainWindowFollows()
     {
         var app = CreateApp();
@@ -460,8 +485,10 @@ public class AppLifecycleTests : IAsyncDisposable
         await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Background);
         var firstView = ViewOf(first);
         var secondView = ViewOf(second);
+        // A file that loads, so the window it opens in shows its viewer
+        var launched = await WriteImageAsync("launched.jpg");
 
-        await app.OpenLaunchFileAsync(Path.Combine(_folder, "launched.jpg"));
+        await app.OpenLaunchFileAsync(launched);
         await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Background);
 
         Assert.NotSame(firstView, ViewOf(first));
@@ -478,8 +505,10 @@ public class AppLifecycleTests : IAsyncDisposable
         await ActivateAsync(first);
         var firstView = ViewOf(first);
         var secondView = ViewOf(second);
+        // A file that loads, so the window it opens in shows its viewer
+        var opened = await WriteImageAsync("opened.jpg");
 
-        await SourceOpener.OpenAsync(second, _core, Path.Combine(_folder, "opened.jpg"));
+        await SourceOpener.OpenAsync(second, _core, opened);
         await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Background);
 
         Assert.Same(firstView, ViewOf(first));
@@ -979,7 +1008,7 @@ public class AppLifecycleTests : IAsyncDisposable
 
         Assert.True(result.IsLoaded);
         Assert.Equal(b, second.Model.FileInfo?.FullName);
-        Assert.IsType<ImageViewer>(second.CurrentView.CurrentValue);
+        Assert.IsType<ImageViewer>(second.CurrentView.Value);
         Assert.True(second.IsInitialized);
         Assert.NotNull(second.Hookups);
         Assert.Same(first, tabs.ActiveTab.CurrentValue);
@@ -997,7 +1026,7 @@ public class AppLifecycleTests : IAsyncDisposable
         var a = await WriteImageAsync("a.jpg");
         var b = await WriteImageAsync("b.jpg");
         var heldA = Hold(a);
-        Assert.IsType<StartUpMenu>(tab.CurrentView.CurrentValue);
+        Assert.IsType<StartUpMenu>(tab.CurrentView.Value);
 
         // Opened from the start-up menu, then overtaken by a newer open while its image is held
         var openingA = SourceOpener.OpenAsync(window, _core, a).AsTask();
@@ -1010,7 +1039,7 @@ public class AppLifecycleTests : IAsyncDisposable
 
         Assert.Equal(LoadOutcome.Superseded, resultA.Outcome);
         Assert.True(resultB.IsLoaded);
-        Assert.IsType<ImageViewer>(tab.CurrentView.CurrentValue);
+        Assert.IsType<ImageViewer>(tab.CurrentView.Value);
         Assert.Equal(b, tab.Model.FileInfo?.FullName);
     }
 
@@ -1192,7 +1221,7 @@ public class AppLifecycleTests : IAsyncDisposable
     }
 
     private static object? ViewOf(MainWindow window) =>
-        ViewModelOf(window).WindowTabs.ActiveTab.CurrentValue.CurrentView.CurrentValue;
+        ViewModelOf(window).WindowTabs.ActiveTab.CurrentValue.CurrentView.Value;
 
     private static MainWindowViewModel ViewModelOf(MainWindow window) => (MainWindowViewModel)window.DataContext!;
 

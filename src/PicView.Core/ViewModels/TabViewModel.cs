@@ -60,7 +60,18 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
     /// </summary>
     internal ITabViews? Views { get; private set; }
 
-    internal void SetViews(ITabViews? views) => Views = views;
+    internal void SetViews(ITabViews? views)
+    {
+        _viewsSubscription?.Dispose();
+        Views = views;
+        _viewsSubscription = views?.View.AsObservable().Subscribe(view => _currentView.Value = view);
+        if (views is null)
+        {
+            _currentView.Value = null;
+        }
+    }
+
+    private IDisposable? _viewsSubscription;
 
     /// <summary>
     /// Whether the tab has been opened, which attaches it to its window. A tab that never browsed files is not.
@@ -122,7 +133,13 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
 
     #region UI view models
     
-    public BindableReactiveProperty<object?> CurrentView { get; } = new(null);
+    /// <summary>
+    /// The control this tab's Main Window shows for its Tab View, or null for a tab no window has attached. Derived from
+    /// the window's view factory (ADR-0022); nothing assigns it.
+    /// </summary>
+    public IReadOnlyBindableReactiveProperty<object?> CurrentView => _currentView;
+
+    private readonly BindableReactiveProperty<object?> _currentView = new();
 
     /// <summary>
     /// Which view the tab shows: the Tab View (ADR-0022). Derived from the Crop, the Title Phase and whether the tab
@@ -806,7 +823,7 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
     /// Makes the tab fresh again once all the files it browsed were deleted: it stops following their folder, forgets
     /// its files, the image it shows and its gallery, and shows the start-up menu.
     /// </summary>
-    internal async ValueTask BecomeFreshAsync()
+    internal ValueTask BecomeFreshAsync()
     {
         _fileWatcherService?.Unwatch(this);
         ResetNavigationCts();
@@ -814,11 +831,7 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
         DisposeImageIterator();
         Display(new ImageModel());
         _hasLostItsFiles = true;
-
-        if (ParentWindowContext?.ActionRunner is { } actionRunner)
-        {
-            await actionRunner.ShowStartUpMenu(this).ConfigureAwait(false);
-        }
+        return ValueTask.CompletedTask;
     }
 
     /// <summary>
@@ -879,6 +892,8 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
         Zoom.Dispose();
         Hookups?.Dispose();
         Views?.Dispose();
+        _viewsSubscription?.Dispose();
+        _currentView.Dispose();
         _titles?.Dispose();
         _viewKind.Dispose();
         _shown.Dispose();

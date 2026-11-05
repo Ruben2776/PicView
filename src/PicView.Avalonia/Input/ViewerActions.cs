@@ -41,7 +41,7 @@ public static class ViewerActions
 
     private static ValueTask OnUiThread(MainWindowViewModel vm, Action<IZoomScrollTarget> action)
     {
-        if (vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.CurrentValue is not IZoomScrollTarget target)
+        if (vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.Value is not IZoomScrollTarget target)
         {
             return ValueTask.CompletedTask;
         }

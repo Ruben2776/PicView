@@ -46,8 +46,7 @@ public partial class MainView : UserControl
 
             LostFocus += HandleLostFocus;
             PointerPressed += PointerPressedBehavior;
-            
-            MainTabControl.TabCreated += MainTabControlOnTabCreated;
+
             MainTabControl.SelectionChanged += MainTabControlOnSelectionChanged;
 
             if (TopLevel.GetTopLevel(this) is not MainWindow mainWindow)
@@ -79,37 +78,6 @@ public partial class MainView : UserControl
         tab.ShouldPrintBeEnabled.Value = ConversionHelper.DetermineIfPrintMenuItemShouldBeEnabled(tab);
     }
 
-    private void MainTabControlOnTabCreated(object? sender, TabCreatedEventArgs e)
-    {
-        if (DataContext is not MainWindowViewModel vm)
-        {
-            return;
-        }
-        var tabs = vm.WindowTabs.Tabs.CurrentValue;
-
-        // Only set the StartUpMenu if the View is currently null.
-        // This prevents overwriting the view (e.g. an image) when reordering tabs,
-        // as reordering triggers the TabCreated event again by recreating containers.
-        if (e.CreatedItem is not TabViewModel { CurrentView.Value: null } tabViewModel)
-        {
-            return;
-        }
-
-        if (tabViewModel.Model?.FileInfo is not null)
-        {
-            tabViewModel.CurrentView.Value = new ImageViewer(tabViewModel);
-        }
-        else
-        {
-            // Sized before it is laid out, so the window keeps its size
-            var startUpMenu = new StartUpMenu();
-            if (TopLevel.GetTopLevel(this) is MainWindow mainWindow)
-            {
-                mainWindow.WindowFitter.FitStartUpMenu(startUpMenu);
-            }
-            tabViewModel.CurrentView.Value = startUpMenu;
-        }
-    }
     private void MainTabControlOnSelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
         if (DataContext is not MainWindowViewModel vm)
@@ -154,7 +122,7 @@ public partial class MainView : UserControl
             }
 
             var tab = vm.WindowTabs.ActiveTab.CurrentValue;
-            var view = tab.CurrentView.CurrentValue;
+            var view = tab.CurrentView.Value;
             switch (view)
             {
                 case CropControl:

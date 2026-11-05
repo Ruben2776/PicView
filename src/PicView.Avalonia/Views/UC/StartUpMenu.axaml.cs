@@ -48,17 +48,15 @@ public partial class StartUpMenu : UserControl
 
     private async ValueTask PasteClick(object? sender, RoutedEventArgs e)
     {
-        if (DataContext is not TabViewModel tab || TopLevel.GetTopLevel(this) is not MainWindow { ViewModel: { } vm } mainWindow)
+        if (DataContext is not TabViewModel || TopLevel.GetTopLevel(this) is not MainWindow { ViewModel: { } vm } mainWindow)
         {
             return;
         }
 
-        tab.CurrentView.Value = new ImageViewer(tab);
-        var isPastedSuccessfully = mainWindow.ClipboardPasteService is not null
-            && await mainWindow.ClipboardPasteService.PasteAsync(vm).ConfigureAwait(true);
-        if (!isPastedSuccessfully)
+        // The paste's own Loading derives the viewer, and its end the menu again if nothing was pasted
+        if (mainWindow.ClipboardPasteService is not null)
         {
-            tab.CurrentView.Value = new StartUpMenu();
+            await mainWindow.ClipboardPasteService.PasteAsync(vm).ConfigureAwait(true);
         }
     }
 

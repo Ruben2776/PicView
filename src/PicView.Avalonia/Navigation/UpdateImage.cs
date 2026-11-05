@@ -25,7 +25,7 @@ public static class UpdateImage
     /// </summary>
     public static void ReactToShown(MainWindow mainWindow, TabViewModel tab, MainWindowViewModel vm, ShownChange change)
     {
-        if (tab.CurrentView.CurrentValue is not ImageViewer imageViewer)
+        if (tab.CurrentView.Value is not ImageViewer imageViewer)
         {
             return;
         }
@@ -90,9 +90,9 @@ public static class UpdateImage
         // Fitted once its view is ready, with AutoFit or without, as a file is
         Dispatcher.UIThread.Invoke(() =>
         {
-            if (tabViewModel.CurrentView?.CurrentValue is not ImageViewer imageViewer)
+            if (tabViewModel.CurrentView?.Value is not ImageViewer imageViewer)
             {
-                tabViewModel.CurrentView.Value = new ImageViewer(tabViewModel);
+                // The adapter is making the tab's viewer; fit now, it binds the image when it arrives
                 mainWindow.WindowFitter.Refit();
                 if (Settings.WindowProperties.KeepCentered)
                 {

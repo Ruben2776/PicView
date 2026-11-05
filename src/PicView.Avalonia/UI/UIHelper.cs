@@ -26,7 +26,7 @@ public static class UIHelper
     
     public static ClickArrowRight? GetClickArrowRight(MainWindowViewModel vm)
     {
-        if (vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.CurrentValue is ImageViewer imageViewer)
+        if (vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.Value is ImageViewer imageViewer)
         {
             return imageViewer.ClickArrowRight;
         }
@@ -35,7 +35,7 @@ public static class UIHelper
     
     public static ClickArrowLeft? GetClickArrowLeft(MainWindowViewModel vm)
     {
-        if (vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.CurrentValue is ImageViewer imageViewer)
+        if (vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.Value is ImageViewer imageViewer)
         {
             return imageViewer.ClickArrowLeft;
         }
@@ -44,7 +44,7 @@ public static class UIHelper
     
     public static HoverBar? GetHoverBar(MainWindowViewModel vm)
     {
-        if (vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.CurrentValue is ImageViewer imageViewer)
+        if (vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.Value is ImageViewer imageViewer)
         {
             return imageViewer.HoverBar;
         }

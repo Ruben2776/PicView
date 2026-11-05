@@ -37,7 +37,7 @@ public static class ImageViewerClickBehavior
             if (e.ClickCount is 2)
             {
                 // Prevent unintended behavior when double-clicking
-                var view = vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.CurrentValue;
+                var view = vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.Value;
                 switch (view)
                 {
                     case ImageViewer imageViewer when imageViewer.GalleryView.IsPointerOver:
@@ -64,7 +64,7 @@ public static class ImageViewerClickBehavior
             }
             else if (Settings.Navigation.IsNavigatingByClicking)
             {
-                if (vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.CurrentValue is ImageViewer imageViewer && imageViewer.MainPanel.IsPointerOver)
+                if (vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.Value is ImageViewer imageViewer && imageViewer.MainPanel.IsPointerOver)
                 {
                     if (imageViewer.GalleryView.IsPointerOver)
                     {

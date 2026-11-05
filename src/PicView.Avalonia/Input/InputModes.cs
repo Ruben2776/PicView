@@ -24,7 +24,7 @@ public static class InputModes
             IsDialogOpen: IsPopUpOpen(window) || IsMenuOpen(vm),
             IsRenaming: vm.IsEditableTitlebarOpen.CurrentValue,
             IsCropping: activeTab?.CropService?.IsCropping ?? false,
-            IsMotionPhotoActive: activeTab?.CurrentView.CurrentValue is ImageViewer { IsMotionPhotoActive: true },
+            IsMotionPhotoActive: activeTab?.CurrentView.Value is ImageViewer { IsMotionPhotoActive: true },
             IsSlideshowRunning: Slideshow.IsRunning,
             IsAnimatedImageActive: activeTab?.Model?.ImageType is
                 ImageType.AnimatedGif or ImageType.AnimatedWebp or ImageType.AnimatedAvif);

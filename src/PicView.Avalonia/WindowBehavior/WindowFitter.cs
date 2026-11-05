@@ -168,7 +168,7 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
         {
             Fit(vm, sizes);
         }
-        else if (tab.CurrentView.CurrentValue is StartUpMenu menu)
+        else if (tab.CurrentView.Value is StartUpMenu menu)
         {
             FitStartUpMenu(menu);
         }

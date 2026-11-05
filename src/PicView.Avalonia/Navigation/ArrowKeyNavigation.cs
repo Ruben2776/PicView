@@ -127,5 +127,5 @@ public static class ArrowKeyNavigation
         vm.WindowTabs.ActiveTab.Value.Gallery.IsGalleryExpanded.Value;
 
     private static bool CanScrollImage(MainWindowViewModel vm) =>
-        vm.WindowTabs.ActiveTab.Value.CurrentView.CurrentValue is ImageViewer { IsImageTallerThanViewer: true };
+        vm.WindowTabs.ActiveTab.Value.CurrentView.Value is ImageViewer { IsImageTallerThanViewer: true };
 }

@@ -495,12 +495,6 @@ public class FunctionsMapper : IActionRunner
         }
     }
 
-    public ValueTask ShowStartUpMenu(TabViewModel tab)
-    {
-        ViewChangeHelper.SwitchToStartUpMenu(_vm, tab);
-        return ValueTask.CompletedTask;
-    }
-
     private ValueTask AboutWindow()
     {
         _mainWindow.MainWindowInitializer.ShowAboutWindow();
