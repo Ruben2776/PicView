@@ -241,6 +241,9 @@ public class WindowFitterTests
 
         var tab = vm.WindowTabs.CreateTab();
         var menu = (StartUpMenu)tab.CurrentView.Value!;
+        // A sentinel size, so only the re-fit as the tab becomes active can give the sizes below
+        menu.Width = 100;
+        menu.Height = 100;
         Dispatcher.UIThread.RunJobs();
 
         var reserved = ReservedSpace.For(2, vm.Interface.Value, 0, 0);
@@ -263,6 +266,9 @@ public class WindowFitterTests
 
         var tab = vm.WindowTabs.CreateTab();
         var menu = (StartUpMenu)tab.CurrentView.Value!;
+        // A sentinel size, so only the re-fit as the tab becomes active can give the sizes below
+        menu.Width = 100;
+        menu.Height = 100;
         Dispatcher.UIThread.RunJobs();
 
         Assert.Equal(400, menu.Width);
@@ -306,6 +312,9 @@ public class WindowFitterTests
 
         var tab = vm.WindowTabs.CreateTab();
         var menu = (StartUpMenu)tab.CurrentView.Value!;
+        // A sentinel size, so only the re-fit as the tab becomes active can give the sizes below
+        menu.Width = 100;
+        menu.Height = 100;
         Dispatcher.UIThread.RunJobs();
 
         Assert.True(double.IsNaN(menu.Width));
