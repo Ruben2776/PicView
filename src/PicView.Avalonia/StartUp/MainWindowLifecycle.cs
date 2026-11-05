@@ -10,6 +10,7 @@ using PicView.Avalonia.Input;
 using PicView.Avalonia.Interfaces;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.Services;
+using PicView.Avalonia.UI;
 using PicView.Avalonia.Views.UC;
 using PicView.Avalonia.WindowBehavior;
 using PicView.Core.FileSorting;
@@ -104,7 +105,11 @@ public sealed class MainWindowLifecycle
     /// <returns>The window, and a task that completes once it is set up.</returns>
     internal (MainWindow Window, Task SetUp) OpenAtAppStart(string? source, Func<bool>? launchFileArrived)
     {
-        var window = Create(null, false);
+        // A window that opens a source says Loading from the start, so no menu is made for it; QuickLoad replaces the
+        // ticket with its own
+        var opensSource = source is not null || (launchFileArrived is null && Settings.StartUp.OpenLastFile &&
+                                                 !string.IsNullOrWhiteSpace(Settings.StartUp.LastFile));
+        var window = Create(null, false, opensSource);
         WindowFunctions.HandleWindowScalingMode(window, isAppStart: true, adjustPos: !Settings.WindowProperties.AutoFit);
         if (source is not null)
         {
@@ -252,7 +257,7 @@ public sealed class MainWindowLifecycle
         LastFile.Remember(vm.WindowTabs.ActiveTab.CurrentValue);
     }
 
-    private MainWindow Create(TabViewModel? firstTab = null, bool setMainWindow = true)
+    private MainWindow Create(TabViewModel? firstTab = null, bool setMainWindow = true, bool opensSource = false)
     {
         var window = _provider.CreateMainWindow(firstTab);
         var vm = ViewModelOf(window);
@@ -260,6 +265,13 @@ public sealed class MainWindowLifecycle
         window.ViewModel = vm;
         vm.WindowModeSwitcher = window.WindowModeSwitcher;
         vm.WindowTabs.SetHookups(new NavigationSubscriptions(window, vm));
+        if (opensSource)
+        {
+            // Before the factory attaches, so no menu is made for a window that opens a source
+            vm.WindowTabs.ActiveTab.Value.SetLoading();
+        }
+
+        vm.WindowTabs.SetViewFactory(new TabViews(window));
         window.Disposables.Add(ShowLoadingIndicatorWhileLoading(vm));
         _core.MainWindows.MainWindows.Add(vm);
         _core.MainWindows.ActiveWindow.Value = vm;

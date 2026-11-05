@@ -473,6 +473,7 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
         SecondaryMotionPhotoView.PlaybackStopped -= OnMotionPhotoPlaybackStopped;
         SecondaryMotionPhotoView.FirstFrameShown -= OnMotionPhotoFirstFrameShown;
         SecondaryMotionPhotoView.Dispose();
+        GalleryView.Dispose();
         _disposables.Dispose();
         HoverBar.Dispose();
         
