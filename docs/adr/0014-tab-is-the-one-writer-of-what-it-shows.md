@@ -21,3 +21,4 @@ Before this, the shown-state bindables had writers in five other files. `UpdateI
 - `PicView.Core` stays free of Avalonia types: the SVG wrap is a converter in `PicView.Avalonia`.
 - The startup order of ADR-0005 holds: window, image, navigation. ADR-0010 and ADR-0012 hold as written.
 - The tab's titles are the next slice: ADR-0015 makes the tab derive them, so the reaction stops calling `UpdateTabTitle`. ADR-0017 does the same for whether Next and Prev run, the other slice this ADR parked.
+- The tab's view is derived too (ADR-0022), so the startup path hooks the tab up and no longer makes the viewer by hand.

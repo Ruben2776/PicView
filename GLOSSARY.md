@@ -109,6 +109,10 @@ _Avoid_: Set the title, update the title, tab title (for the whole set)
 A state a tab is told it is in, which stands in for its derived Titles until it ends: Loading, until the next image shows; Downloading, with its progress, until the image shows or fails; Error, until the next load; and Cropping, which replaces only the titlebar text and its tooltip and ends when the crop closes. No image is not a phase: a tab that shows nothing derives it.
 _Avoid_: Loading title, temporary title, title override
 
+**Tab View**:
+Which of three views a tab shows, derived from its own state: the crop control while a crop is open; otherwise the image viewer while the tab shows something or its Title Phase is Loading or Downloading; otherwise the start-up menu. The tab derives it; one adapter per Main Window makes the control it shows, once per tab, and nothing assigns a view into a tab.
+_Avoid_: Current view (as something set), switch to the viewer, switch to the start-up menu, restore the view
+
 **View History**:
 What a tab has shown, oldest to newest, with a cursor on what it shows now: each file, each page of a multi-page TIFF or an archive, and each Single Image. Back and Forward move through it and show that entry again in the same tab. Showing something new after going back drops the entries after the cursor. Images the tab never showed, such as those Next 10 jumps over, are not in it, and renaming a file or folder renames its entries. It lives only in memory and holds up to 100 entries, at most 10 of them Single Images. It moves with its tab and ends when the tab closes.
 _Avoid_: Navigation history, back stack, file history (for Back and Forward)
