@@ -2,7 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
-using PicView.Avalonia.Gallery;
+using PicView.Core.Gallery;
 using PicView.Avalonia.Views.UC;
 using PicView.Core.Sizing;
 using PicView.Core.ViewModels;
@@ -16,8 +16,10 @@ namespace PicView.Avalonia.WindowBehavior;
 /// </summary>
 /// <param name="readContentSize">Reads the size of the window's content as it is now; the main view's by default.</param>
 /// <param name="readScreen">Reads the screen the window is on now; the one Avalonia reports by default.</param>
+/// <param name="contentBounds">Publishes the size of the window's content each time it is laid out at another size;
+/// the main view's bounds by default.</param>
 public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize = null,
-    Func<ScreenSize>? readScreen = null) : IDisposable
+    Func<ScreenSize>? readScreen = null, Observable<Size>? contentBounds = null) : IDisposable
 {
     // Used when the window is not on any screen yet
     private static readonly ScreenSize NoScreen = new()
@@ -122,12 +124,13 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
     /// <summary>
     /// Fits the window again whenever one of the Fit inputs it watches changes: the active tab shows a new image,
     /// another tab becomes active, the active tab is turned or flipped, the tab strip or a bar shows or hides, the
-    /// Window Mode changes, or zoom to fit, scrolling or side by side turns on or off. A new image is fitted at the
-    /// highest priority and published with the cause <see cref="FitCause.NewImage"/>. Other changes that come together
-    /// give one Fit, before the next frame is drawn, so the window never shows them at the old size. Without AutoFit
-    /// the Fit reads the laid-out view, so it is fitted once more after layout.
+    /// Window Mode changes, zoom to fit, scrolling or side by side turns on or off, the active tab's gallery changes
+    /// its mode, dock, size or stretch, or, in a Fixed Window, its content is laid out at another size. A new image is
+    /// fitted at the highest priority and published with the cause <see cref="FitCause.NewImage"/>. Other changes that
+    /// come together give one Fit, before the next frame is drawn, so the window never shows them at the old size.
+    /// Without AutoFit the Fit reads the laid-out view, so it is fitted once more after layout.
     /// </summary>
-    /// <remarks>Screen changes, resizing by hand, and the gallery still ask for a Fit themselves.</remarks>
+    /// <remarks>Screen changes and resizing by hand still ask for a Fit themselves.</remarks>
     /// <returns>What stops following the inputs.</returns>
     public IDisposable Follow()
     {
@@ -150,7 +153,56 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
             vm.WindowModeState.Skip(1).Subscribe(_ => FitSoon()),
             vm.GlobalSettings.IsZoomedToFit.Skip(1).Subscribe(_ => FitSoon()),
             vm.GlobalSettings.IsScrollingEnabled.Skip(1).Subscribe(_ => FitSoon()),
-            vm.GlobalSettings.IsSideBySide.Skip(1).Subscribe(_ => FitSoon()));
+            vm.GlobalSettings.IsSideBySide.Skip(1).Subscribe(_ => FitSoon()),
+            // Only the shown tab's gallery, so a gallery docking in a background tab fits nothing. It may change off the
+            // UI thread, as FitSoon allows
+            vm.WindowTabs.ActiveTab.Select(static tab => tab.Gallery.Appearance.AsObservable().Skip(1)).Switch()
+                .Subscribe(_ => FitSoon()),
+            FollowContentBounds(vm));
+    }
+
+    // A Fixed Window fits its image to the room its content has, so it fits again when the content is laid out at
+    // another size. An AutoFit window's content follows the window it sized itself, so it never listens
+    private IDisposable FollowContentBounds(MainWindowViewModel vm)
+    {
+        void FitIfFixedWindow()
+        {
+            if (vm.WindowModeState.CurrentValue.FitMode is FitMode.FixedWindow)
+            {
+                FitSoon();
+            }
+        }
+
+        if (contentBounds is not null)
+        {
+            return contentBounds.Subscribe(_ => FitIfFixedWindow());
+        }
+
+        var subscription = new SerialDisposable();
+        void ObserveMainView()
+        {
+            if (window.UIHelper.GetMainView is { } view)
+            {
+                subscription.Disposable = view.GetObservable(Visual.BoundsProperty).ToObservable()
+                    .Subscribe(_ => FitIfFixedWindow());
+            }
+        }
+
+        if (window.UIHelper.GetMainView is not null)
+        {
+            ObserveMainView();
+            return subscription;
+        }
+
+        // The main view is created when the window opens
+        void OnOpened(object? sender, EventArgs e)
+        {
+            window.Opened -= OnOpened;
+            ObserveMainView();
+        }
+
+        window.Opened += OnOpened;
+        return Disposable.Combine(subscription, Disposable.Create(() => window.Opened -= OnOpened));
     }
 
     // The tab may show its image on a thread-pool thread, as a Load does. Posted, never invoked, so that thread does
@@ -408,7 +460,8 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
 
     private static ReservedSpace GetReservedSpace(MainWindowViewModel vm)
     {
-        var (galleryWidth, galleryHeight) = GalleryHelper.GetGallerySize(vm);
+        var (galleryWidth, galleryHeight) =
+            GalleryDocking.ReservedBy(vm.WindowTabs.ActiveTab.CurrentValue.Gallery.Appearance.Value);
         // What the window shows, not the settings: hiding the interface hides the bottom bar but keeps its setting
         return ReservedSpace.For(vm.WindowTabs.Tabs.CurrentValue.Count, vm.Interface.Value, galleryWidth,
             galleryHeight);

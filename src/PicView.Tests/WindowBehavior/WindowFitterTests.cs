@@ -23,6 +23,7 @@ public class WindowFitterTests
 
     public WindowFitterTests()
     {
+        ObservableSystem.DefaultFrameProvider = new MockFrameProvider();
         SetDefaults();
         TranslationManager.Init();
         Settings.WindowProperties.AutoFit = false;
@@ -652,6 +653,133 @@ public class WindowFitterTests
     }
 
     [AvaloniaFact]
+    public void Follow_GalleryDocks_ReservesItsExtent()
+    {
+        var (fitter, vm, window) = CreateShownWindow(800, 600);
+        using var following = fitter.Follow();
+        var tab = vm.WindowTabs.ActiveTab.Value;
+        tab.Gallery.Initialize(_core.GallerySettings);
+        tab.Display(Model("a.jpg", 1600, 1200));
+        Dispatcher.UIThread.RunJobs();
+        var heightBefore = vm.ImageHeight.Value;
+        var fits = new List<Fitted>();
+        using var listening = fitter.Fits.Subscribe(fits.Add);
+
+        tab.Gallery.Switcher.Start(docked: true);
+        Dispatcher.UIThread.RunJobs();
+
+        var extent = tab.Gallery.Appearance.Value.Extent;
+        Assert.True(extent > 0);
+        Assert.Contains(fits, static fitted => fitted.Cause is FitCause.Input);
+        Assert.Equal(heightBefore - extent, vm.ImageHeight.Value, precision: 6);
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public void Follow_GalleryHides_ReservesNothing()
+    {
+        var (fitter, vm, window) = CreateShownWindow(800, 600);
+        using var following = fitter.Follow();
+        var tab = vm.WindowTabs.ActiveTab.Value;
+        tab.Gallery.Initialize(_core.GallerySettings);
+        tab.Display(Model("a.jpg", 1600, 1200));
+        Dispatcher.UIThread.RunJobs();
+        var heightBefore = vm.ImageHeight.Value;
+        tab.Gallery.Switcher.Start(docked: true);
+        Dispatcher.UIThread.RunJobs();
+        Assert.True(vm.ImageHeight.Value < heightBefore);
+
+        tab.Gallery.Switcher.Start(docked: false);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Equal(heightBefore, vm.ImageHeight.Value, precision: 6);
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public void Follow_DockedGalleryItemSizeChanges_FitsAgain()
+    {
+        var (fitter, vm, window) = CreateShownWindow(800, 600);
+        using var following = fitter.Follow();
+        var tab = vm.WindowTabs.ActiveTab.Value;
+        tab.Gallery.Initialize(_core.GallerySettings);
+        tab.Display(Model("a.jpg", 1600, 1200));
+        tab.Gallery.Switcher.Start(docked: true);
+        Dispatcher.UIThread.RunJobs();
+        var heightBefore = vm.ImageHeight.Value;
+        var fits = new List<Fitted>();
+        using var listening = fitter.Fits.Subscribe(fits.Add);
+
+        _core.GallerySettings.DockedGalleryItemSize.Value += 40;
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.NotEmpty(fits);
+        Assert.True(vm.ImageHeight.Value < heightBefore);
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public void Follow_GalleryInABackgroundTab_FitsNothing()
+    {
+        var (fitter, vm, window) = CreateShownWindow(800, 600);
+        using var following = fitter.Follow();
+        var background = vm.WindowTabs.ActiveTab.Value;
+        background.Gallery.Initialize(_core.GallerySettings);
+        background.Display(Model("a.jpg", 1600, 1200));
+        var shown = vm.WindowTabs.CreateTab();
+        Dispatcher.UIThread.RunJobs();
+        var fits = new List<Fitted>();
+        using var listening = fitter.Fits.Subscribe(fits.Add);
+
+        background.Gallery.Switcher.Start(docked: true);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Same(shown, vm.WindowTabs.ActiveTab.Value);
+        Assert.Empty(fits);
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public void Follow_FixedWindowContentResizes_FitsTheImageToIt()
+    {
+        var content = new Subject<Size>();
+        var contentSize = new Size(800, 600);
+        var (fitter, vm, window) = CreateShownWindow(800, 600, () => contentSize, content);
+        using var following = fitter.Follow();
+        vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 1600, 1200));
+        Dispatcher.UIThread.RunJobs();
+        var heightBefore = vm.ImageHeight.Value;
+
+        contentSize = new Size(800, 400);
+        content.OnNext(contentSize);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.True(vm.ImageHeight.Value < heightBefore);
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public void Follow_AutoFitWindowContentResizes_FitsNothing()
+    {
+        var content = new Subject<Size>();
+        var contentSize = new Size(800, 600);
+        var (fitter, vm, window) = CreateShownWindow(800, 600, () => contentSize, content);
+        vm.WindowModeState.Value = vm.WindowModeState.Value.SetAutoFit(true);
+        using var following = fitter.Follow();
+        vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 1600, 1200));
+        Dispatcher.UIThread.RunJobs();
+        var fits = new List<Fitted>();
+        using var listening = fitter.Fits.Subscribe(fits.Add);
+
+        contentSize = new Size(800, 400);
+        content.OnNext(contentSize);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Empty(fits);
+        window.Close();
+    }
+
+    [AvaloniaFact]
     public void IsOnAnotherScreen_AfterTheWindowMovesToAnotherMonitor_IsTrueUntilItIsFittedThere()
     {
         var screen = Screen(1920, 1040);
@@ -672,20 +800,21 @@ public class WindowFitterTests
     }
 
     private (WindowFitter Fitter, MainWindowViewModel Vm, MainWindow Window) CreateWindow(
-        Func<ScreenSize>? readScreen = null)
+        Func<ScreenSize>? readScreen = null, Func<Size>? readContentSize = null,
+        Observable<Size>? contentBounds = null)
     {
         var window = new TestMainWindow(new NativeStateAdapter());
         var vm = new MainWindowViewModel(_core, _core.Translation, _core.GlobalSettings!,
             _core.GallerySettings);
         window.DataContext = vm;
         vm.WindowTabs.SetViewFactory(new TabViews(window));
-        return (new WindowFitter(window, () => ContentSize, readScreen), vm, window);
+        return (new WindowFitter(window, readContentSize ?? (() => ContentSize), readScreen, contentBounds), vm, window);
     }
 
     private (WindowFitter Fitter, MainWindowViewModel Vm, MainWindow Window) CreateShownWindow(double width,
-        double height)
+        double height, Func<Size>? readContentSize = null, Observable<Size>? contentBounds = null)
     {
-        var (fitter, vm, window) = CreateWindow();
+        var (fitter, vm, window) = CreateWindow(null, readContentSize, contentBounds);
         window.Width = width;
         window.Height = height;
         window.Show();
@@ -701,6 +830,12 @@ public class WindowFitterTests
 
     private static ImageModel Model(string name, uint width, uint height) =>
         new() { FileInfo = new FileInfo(name), PixelWidth = width, PixelHeight = height };
+
+    private sealed class MockFrameProvider : FrameProvider
+    {
+        public override long GetFrameCount() => 0;
+        public override void Register(IFrameRunnerWorkItem callback) => callback.MoveNext(0);
+    }
 
     private sealed class NativeStateAdapter : IWindowModeAdapter
     {

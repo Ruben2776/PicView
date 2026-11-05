@@ -2,7 +2,7 @@
 using Avalonia.Threading;
 using PicView.Avalonia.Animations;
 using PicView.Avalonia.CustomControls;
-using PicView.Avalonia.Gallery;
+using PicView.Core.Gallery;
 using PicView.Core.DebugTools;
 using PicView.Core.ViewModels;
 using VerticalAlignment = Avalonia.Layout.VerticalAlignment;
@@ -75,8 +75,8 @@ public static class TooltipHelper
                     {
                         if (mainWindow.DataContext is MainWindowViewModel vm && vm.WindowTabs.ActiveTab.CurrentValue.Gallery.IsDockedGalleryVisible.CurrentValue)
                         {
-                            var gallerySize = GalleryHelper.GetGallerySize(vm);
-                            tooltipMargin = new Thickness(0, 0, 0,  gallerySize.height + 15);
+                            var galleryHeight = GalleryDocking.ReservedBy(vm.WindowTabs.ActiveTab.CurrentValue.Gallery.Appearance.Value).Height;
+                            tooltipMargin = new Thickness(0, 0, 0,  galleryHeight + 15);
                         }
                         else
                         {

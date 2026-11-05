@@ -69,6 +69,8 @@ public class DockedGalleryWindowFitTests
         var window = new TestMainWindow(new NoOpModeAdapter());
         var vm = new MainWindowViewModel(core, core.Translation, core.GlobalSettings!, core.GallerySettings);
         window.DataContext = vm;
+        // The window follows the gallery's appearance itself, as the application starts it doing
+        using var following = window.WindowFitter.Follow();
         // Resizing the window lays out its bars
         window.SharedTitleBar = new CustomTitleBar();
         window.SharedBottomBar = new BottomBar();

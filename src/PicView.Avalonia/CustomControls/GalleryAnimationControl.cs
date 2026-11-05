@@ -139,8 +139,7 @@ public class GalleryAnimationControl : UserControl
             try
             {
                 IsInAnimation = true;
-                var autoFit = tab.ParentWindowContext?.WindowModeState.CurrentValue.AutoFit is true;
-                if (change.Animate && GalleryTransition.For(from.Mode, to.Mode, to.Dock, autoFit) is { } transition)
+                if (change.Animate && GalleryTransition.For(from.Mode, to.Mode) is { } transition)
                 {
                     await Animate(from, to, transition).ConfigureAwait(true);
                 }
@@ -189,17 +188,10 @@ public class GalleryAnimationControl : UserControl
             return;
         }
 
-        var dockChanged = appearance.Dock != _applied.Dock;
         Apply(appearance);
         SetExtent(appearance);
         _itemsPanel?.InvalidateMeasure();
         _viewer?.ScrollToCenterOfCurrentItem();
-
-        // The Reserved Space moves with the Docked Gallery
-        if (dockChanged && appearance.Mode is GalleryMode.Docked && TopLevel.GetTopLevel(this) is MainWindow window)
-        {
-            window.WindowFitter.Refit();
-        }
     }
 
     private void ShowWithoutAnimation(GalleryAppearance appearance)
@@ -212,11 +204,6 @@ public class GalleryAnimationControl : UserControl
             {
                 _viewer?.ScrollToCenterOfCurrentItem();
             }, DispatcherPriority.Render);
-        }
-
-        if (TopLevel.GetTopLevel(this) is MainWindow mainWindow)
-        {
-            mainWindow.WindowFitter.Refit();
         }
     }
 
@@ -395,11 +382,9 @@ public class GalleryAnimationControl : UserControl
                 Height = to.IsShown ? double.NaN : Height;
             }
 
-            tween = transition.RefitsEveryFrame
-                ? TweenWhileRefitting(startHeight, endHeight, transition.Speed)
-                : tweensHeight
-                    ? AnimationsHelper.HeightAnimation(startHeight, endHeight, transition.Speed).RunAsync(this)
-                    : AnimationsHelper.WidthAnimation(startWidth, endWidth, transition.Speed).RunAsync(this);
+            tween = tweensHeight
+                ? AnimationsHelper.HeightAnimation(startHeight, endHeight, transition.Speed).RunAsync(this)
+                : AnimationsHelper.WidthAnimation(startWidth, endWidth, transition.Speed).RunAsync(this);
         }
 
         await tween.ConfigureAwait(true);
@@ -437,12 +422,6 @@ public class GalleryAnimationControl : UserControl
                 _viewer?.ScrollToCenterOfCurrentItem();
             }, DispatcherPriority.Render);
         }
-
-        // 8. A fit for the gallery that docked or closed
-        if (transition.RefitsAtEnd && TopLevel.GetTopLevel(this) is MainWindow mainWindow)
-        {
-            mainWindow.WindowFitter.Refit();
-        }
     }
 
     /// <summary>
@@ -457,28 +436,6 @@ public class GalleryAnimationControl : UserControl
             GalleryMode.Docked => to.Extent,
             _ => 0
         };
-    }
-
-    /// <summary>
-    /// Tweens the height while refitting the window on every frame, since a window that doesn't AutoFit has to keep
-    /// fitting its image to the space the gallery gives back.
-    /// </summary>
-    private async Task TweenWhileRefitting(double from, double to, double speed)
-    {
-        if (TopLevel.GetTopLevel(this) is not MainWindow mainWindow)
-        {
-            await AnimationsHelper.HeightAnimation(from, to, speed).RunAsync(this).ConfigureAwait(true);
-            return;
-        }
-
-        using var cts = new CancellationTokenSource();
-        var ct = cts.Token;
-        Observable.EveryUpdate(mainWindow.FrameProvider, ct).Subscribe(_ =>
-        {
-            mainWindow.WindowFitter.Refit();
-        }, DebugHelper.LogError(nameof(GalleryAnimationControl), nameof(TweenWhileRefitting)));
-        await AnimationsHelper.HeightAnimation(from, to, speed).RunAsync(this, ct).ConfigureAwait(true);
-        await cts.CancelAsync().ConfigureAwait(true);
     }
 
     #endregion
