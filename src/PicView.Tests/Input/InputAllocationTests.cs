@@ -58,6 +58,16 @@ public class InputAllocationTests
     }
 
     [Fact]
+    public void KeyDown_ContextualActionUnclaimedInGallery_AllocatesNothing()
+    {
+        // The gallery leaves the Keybind to its ordinary Action
+        _state = new InputModeState(IsGalleryExpanded: true);
+        var router = Router(Claims.Nothing);
+
+        Assert.Equal(0, AllocatedBytes(() => PressAsync(router, Right)));
+    }
+
+    [Fact]
     public void KeyDown_EscapeThroughEveryNonBlockingMode_AllocatesNothing()
     {
         // Every mode leaves Cancel to the next one, down to what Escape closes in the Normal mode

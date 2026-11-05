@@ -12,6 +12,9 @@ public enum InputMode
     // An image is a motion photo or an animated image, never both
     AnimatedImage,
     MotionPhoto,
+
+    // The expanded gallery covers the image, so it ranks above what the image or the slideshow is doing
+    Gallery,
     Crop,
     Renaming,
     Dialog
@@ -22,13 +25,15 @@ public enum InputMode
 /// </summary>
 /// <param name="IsDialogOpen">A pop-up, the drop-down menu or the main menu is open.</param>
 /// <param name="IsAnimatedImageActive">The active tab shows an animated image.</param>
+/// <param name="IsGalleryExpanded">The active tab's gallery is shown expanded.</param>
 public readonly record struct InputModeState(
     bool IsDialogOpen = false,
     bool IsRenaming = false,
     bool IsCropping = false,
     bool IsMotionPhotoActive = false,
     bool IsSlideshowRunning = false,
-    bool IsAnimatedImageActive = false)
+    bool IsAnimatedImageActive = false,
+    bool IsGalleryExpanded = false)
 {
     /// <summary>
     /// Returns the highest-ranked Input Mode that applies.
@@ -48,6 +53,11 @@ public readonly record struct InputModeState(
         if (IsCropping)
         {
             return InputMode.Crop;
+        }
+
+        if (IsGalleryExpanded)
+        {
+            return InputMode.Gallery;
         }
 
         if (IsMotionPhotoActive)
@@ -79,6 +89,6 @@ public static class InputModeExtensions
         /// that need a still image.
         /// </summary>
         public bool DisallowsStillImageActions() =>
-            mode is InputMode.MotionPhoto or InputMode.AnimatedImage or InputMode.Slideshow;
+            mode is InputMode.Gallery or InputMode.MotionPhoto or InputMode.AnimatedImage or InputMode.Slideshow;
     }
 }

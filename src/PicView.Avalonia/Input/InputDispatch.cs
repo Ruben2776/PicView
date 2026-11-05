@@ -81,6 +81,11 @@ public static class InputDispatch
             return await handler.TryRunAsync(mode, contextualAction).ConfigureAwait(true);
         }
 
+        if (state.IsGalleryExpanded && await handler.TryRunAsync(InputMode.Gallery, contextualAction).ConfigureAwait(true))
+        {
+            return true;
+        }
+
         if (state.IsMotionPhotoActive && await handler.TryRunAsync(InputMode.MotionPhoto, contextualAction).ConfigureAwait(true))
         {
             return true;
