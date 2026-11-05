@@ -30,10 +30,6 @@ public static class RotationManager
         }
         
         imageViewer.ResetZoom(Settings.Zoom.IsZoomAnimated);
-        if (vm.WindowModeState.CurrentValue.AutoFit)
-        {
-            mainWindow.WindowFitter.Refit();
-        }
     }
 
     /// <param name="quarterTurns">Clockwise quarter turns from upright.</param>

@@ -33,12 +33,13 @@ public class WindowFitterTests
     }
 
     [AvaloniaFact]
-    public void Refit_ImageSmallerThanTheWindow_IsShownAtItsPixelSize()
+    public void Follow_ImageSmallerThanTheWindow_IsShownAtItsPixelSize()
     {
         var (fitter, vm, window) = CreateWindow();
+        using var following = fitter.Follow();
         vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 400, 300));
 
-        fitter.Refit();
+        Dispatcher.UIThread.RunJobs();
 
         Assert.Equal(400, vm.ImageWidth.Value);
         Assert.Equal(300, vm.ImageHeight.Value);
@@ -46,39 +47,42 @@ public class WindowFitterTests
     }
 
     [AvaloniaFact]
-    public void Refit_ImageLargerThanTheWindow_FitsInsideIt()
+    public void Follow_ImageLargerThanTheWindow_FitsInsideIt()
     {
         var (fitter, vm, _) = CreateWindow();
+        using var following = fitter.Follow();
         vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 1600, 600));
 
-        fitter.Refit();
+        Dispatcher.UIThread.RunJobs();
 
         Assert.Equal(800, vm.ImageWidth.Value);
         Assert.Equal(300, vm.ImageHeight.Value);
     }
 
     [AvaloniaFact]
-    public void Refit_AutoFitOff_LevelIsTheFitScaleInPercent()
+    public void Follow_AutoFitOff_LevelIsTheFitScaleInPercent()
     {
         var (fitter, vm, _) = CreateWindow();
+        using var following = fitter.Follow();
         var tab = vm.WindowTabs.ActiveTab.Value;
         tab.Display(Model("a.jpg", 1600, 600));
 
-        fitter.Refit();
+        Dispatcher.UIThread.RunJobs();
 
         Assert.Equal(0.5, tab.Zoom.FitScale);
         Assert.Equal(50, tab.Zoom.Level.CurrentValue);
     }
 
     [AvaloniaFact]
-    public void Refit_AutoFitOn_LevelFollowsTheFitAgainstTheScreen()
+    public void Follow_AutoFitOn_LevelFollowsTheFitAgainstTheScreen()
     {
         Settings.WindowProperties.AutoFit = true;
         var (fitter, vm, _) = CreateWindow(() => Screen(1280, 760));
+        using var following = fitter.Follow();
         var tab = vm.WindowTabs.ActiveTab.Value;
         tab.Display(Model("a.jpg", 1600, 2000));
 
-        fitter.Refit();
+        Dispatcher.UIThread.RunJobs();
 
         Assert.InRange(tab.Zoom.Level.CurrentValue, 1, 99);
         Assert.Equal(Convert.ToInt32(tab.Zoom.FitScale * 100), tab.Zoom.Level.CurrentValue);
@@ -86,16 +90,17 @@ public class WindowFitterTests
     }
 
     [AvaloniaFact]
-    public void Refit_AfterZoomToFitTurnsOn_LevelFollowsTheNewFit()
+    public void Follow_ZoomToFitTurnsOn_LevelFollowsTheNewFit()
     {
         var (fitter, vm, _) = CreateWindow();
+        using var following = fitter.Follow();
         var tab = vm.WindowTabs.ActiveTab.Value;
         tab.Display(Model("a.jpg", 400, 300));
-        fitter.Refit();
+        Dispatcher.UIThread.RunJobs();
         Assert.Equal(100, tab.Zoom.Level.CurrentValue);
 
-        Settings.ImageScaling.ZoomToFit = true;
-        fitter.Refit();
+        vm.GlobalSettings.IsZoomedToFit.Value = true;
+        Dispatcher.UIThread.RunJobs();
 
         // Upscaled to fill the 800×600 content less the reserved space, so the exact percent follows the fit
         Assert.True(tab.Zoom.Level.CurrentValue > 100);
@@ -104,13 +109,13 @@ public class WindowFitterTests
     }
 
     [AvaloniaFact]
-    public void Follow_ZoomToFitTurnsOn_FitsWithoutARefit()
+    public void Follow_ZoomToFitTurnsOn_FitsTheShownWindow()
     {
         var (fitter, vm, window) = CreateShownWindow(800, 600);
         using var following = fitter.Follow();
         var tab = vm.WindowTabs.ActiveTab.Value;
         tab.Display(Model("a.jpg", 400, 300));
-        fitter.Refit();
+        Dispatcher.UIThread.RunJobs();
         Assert.Equal(100, tab.Zoom.Level.CurrentValue);
 
         vm.GlobalSettings.IsZoomedToFit.Value = true;
@@ -121,13 +126,13 @@ public class WindowFitterTests
     }
 
     [AvaloniaFact]
-    public void Follow_ScrollingTurnsOn_FitsToTheWidthWithoutARefit()
+    public void Follow_ScrollingTurnsOn_FitsToTheWidth()
     {
         var (fitter, vm, window) = CreateShownWindow(800, 600);
         using var following = fitter.Follow();
         var tab = vm.WindowTabs.ActiveTab.Value;
         tab.Display(Model("a.jpg", 1600, 2400));
-        fitter.Refit();
+        Dispatcher.UIThread.RunJobs();
         var widthBefore = vm.ImageWidth.Value;
         Assert.True(double.IsNaN(vm.ScrollViewerHeight.Value));
 
@@ -141,14 +146,14 @@ public class WindowFitterTests
     }
 
     [AvaloniaFact]
-    public void Follow_SideBySideTurnsOff_FitsTheOneImageWithoutARefit()
+    public void Follow_SideBySideTurnsOff_FitsTheOneImage()
     {
         var (fitter, vm, window) = CreateShownWindow(800, 600);
         using var following = fitter.Follow();
         vm.GlobalSettings.IsSideBySide.Value = true;
         var tab = vm.WindowTabs.ActiveTab.Value;
         tab.Display(Model("a.jpg", 400, 300), Model("b.jpg", 400, 300));
-        fitter.Refit();
+        Dispatcher.UIThread.RunJobs();
         var pairWidth = vm.ImageWidth.Value;
 
         vm.GlobalSettings.IsSideBySide.Value = false;
@@ -159,13 +164,14 @@ public class WindowFitterTests
     }
 
     [AvaloniaFact]
-    public void Refit_PairWhoseSecondSizeIsNotKnownYet_WaitsInsteadOfFittingOneImage()
+    public void Follow_PairWhoseSecondSizeIsNotKnownYet_WaitsInsteadOfFittingOneImage()
     {
         Settings.ImageScaling.ShowImageSideBySide = true;
         var (fitter, vm, _) = CreateWindow();
+        using var following = fitter.Follow();
         vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 400, 300), Model("b.jpg", 0, 0));
 
-        fitter.Refit();
+        Dispatcher.UIThread.RunJobs();
 
         Assert.True(double.IsNaN(vm.ImageWidth.Value));
     }
@@ -215,18 +221,22 @@ public class WindowFitterTests
     }
 
     [AvaloniaFact]
-    public void Refit_AutoFitWindowsOnDifferentScreens_EachFitsItsOwnWorkArea()
+    public void Follow_AutoFitWindowsOnDifferentScreens_EachFitsItsOwnWorkArea()
     {
         Settings.WindowProperties.AutoFit = true;
         var (smallFitter, small, _) = CreateWindow(() => Screen(1280, 760));
         var (largeFitter, large, _) = CreateWindow(() => Screen(2560, 1400));
-        small.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 4000, 3000));
+        using var followingSmall = smallFitter.Follow();
+        using var followingLarge = largeFitter.Follow();
+        var smallTab = small.WindowTabs.ActiveTab.Value;
+        smallTab.Display(Model("a.jpg", 4000, 3000));
         large.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 4000, 3000));
 
-        smallFitter.Refit();
-        largeFitter.Refit();
+        Dispatcher.UIThread.RunJobs();
         var smallAfterTheOther = small.ImageWidth.Value;
-        smallFitter.Refit();
+        // Turned half way round it has the same shape, so it only fits again
+        smallTab.Orientation.TurnTo(2);
+        Dispatcher.UIThread.RunJobs();
 
         Assert.True(small.ImageWidth.Value < 1280);
         Assert.True(large.ImageWidth.Value < 2560);
@@ -264,7 +274,7 @@ public class WindowFitterTests
         var (fitter, vm, window) = CreateShownWindow(800, 600);
         using var following = fitter.Follow();
         vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 400, 300));
-        fitter.Refit();
+        Dispatcher.UIThread.RunJobs();
 
         var tab = vm.WindowTabs.CreateTab();
         var menu = (StartUpMenu)tab.CurrentView.Value!;
@@ -297,8 +307,9 @@ public class WindowFitterTests
     {
         Settings.WindowProperties.AutoFit = true;
         var (fitter, vm, _) = CreateWindow(() => Screen(1920, 1040));
+        using var following = fitter.Follow();
         vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 400, 300));
-        fitter.Refit();
+        Dispatcher.UIThread.RunJobs();
         var menu = new StartUpMenu();
 
         fitter.FitStartUpMenu(menu);
@@ -372,7 +383,6 @@ public class WindowFitterTests
         vm.GlobalSettings.WindowMargin.Value = 0;
         vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 4000, 3000));
         Dispatcher.UIThread.RunJobs();
-        fitter.Refit();
         var widthBefore = vm.ImageWidth.Value;
         vm.ImageWidth.Value = double.NaN;
 
@@ -383,33 +393,14 @@ public class WindowFitterTests
     }
 
     [AvaloniaFact]
-    public void Refit_BottomBarHiddenWithTheInterface_ReservesNoRoomForIt()
-    {
-        // Hiding the interface hides the bottom bar but keeps its setting
-        Settings.WindowProperties.AutoFit = true;
-        Settings.UIProperties.ShowBottomNavBar = true;
-        var (fitter, vm, _) = CreateWindow(() => Screen(1920, 1040));
-        vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 3000, 4000));
-        vm.GlobalSettings.ShowBottomBar.Value = true;
-        fitter.Refit();
-        var withBar = vm.ImageHeight.Value;
-
-        vm.GlobalSettings.ShowBottomBar.Value = false;
-        fitter.Refit();
-
-        Assert.Equal(withBar + SizeDefaults.BottombarHeight, vm.ImageHeight.Value, 6);
-    }
-
-    [AvaloniaFact]
     public void Follow_BottomBarHides_FitsTheImageToTheRoomItLeaves()
     {
         Settings.WindowProperties.AutoFit = true;
-        var (fitter, vm, window) = CreateShownWindow(800, 600);
+        var (fitter, vm, window) = CreateShownWindow(800, 600, readScreen: () => Screen(1920, 1040));
         using var following = fitter.Follow();
         vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 3000, 4000));
         vm.GlobalSettings.ShowBottomBar.Value = true;
         Dispatcher.UIThread.RunJobs();
-        fitter.Refit();
         var withBar = vm.ImageHeight.Value;
 
         vm.GlobalSettings.ShowBottomBar.Value = false;
@@ -423,11 +414,10 @@ public class WindowFitterTests
     public void Follow_InterfaceHides_FitsTheImageToTheRoomItLeaves()
     {
         Settings.WindowProperties.AutoFit = true;
-        var (fitter, vm, window) = CreateShownWindow(800, 600);
+        var (fitter, vm, window) = CreateShownWindow(800, 600, readScreen: () => Screen(1920, 1040));
         using var following = fitter.Follow();
         vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 3000, 4000));
         Dispatcher.UIThread.RunJobs();
-        fitter.Refit();
         var withBars = vm.ImageHeight.Value;
 
         vm.GlobalSettings.ShowInterface.Value = false;
@@ -444,7 +434,7 @@ public class WindowFitterTests
         var (fitter, vm, window) = CreateShownWindow(800, 600);
         using var following = fitter.Follow();
         vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 1600, 600));
-        fitter.Refit();
+        Dispatcher.UIThread.RunJobs();
         var withAutoFit = vm.ImageWidth.Value;
 
         vm.WindowModeState.Value = vm.WindowModeState.Value.SetAutoFit(false);
@@ -479,7 +469,7 @@ public class WindowFitterTests
         using var following = fitter.Follow();
         var tab = vm.WindowTabs.ActiveTab.Value;
         tab.Display(Model("a.jpg", 1600, 400));
-        fitter.Refit();
+        Dispatcher.UIThread.RunJobs();
         var upright = vm.ImageWidth.Value;
 
         tab.Orientation.TurnRight();
@@ -887,18 +877,40 @@ public class WindowFitterTests
     }
 
     [AvaloniaFact]
+    public void Follow_AttachedBeforeTheMode_FullscreenStartFits()
+    {
+        Settings.WindowProperties.Fullscreen = true;
+        var (fitter, vm, window) = CreateWindow(() => Screen(1280, 720));
+        using var following = fitter.Follow();
+        var fits = new List<Fitted>();
+        using var listening = fitter.Fits.Subscribe(fits.Add);
+        var switcher = new WindowModeSwitcher(window, new NativeStateAdapter(), () => ValueTask.FromResult(true));
+
+        switcher.Start(isAppStart: true);
+        vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 4000, 300));
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.True(vm.IsFullscreen.Value);
+        Assert.Contains(fits, static fitted => fitted.Cause is FitCause.NewImage);
+        Assert.Equal(1280, vm.ImageWidth.Value, precision: 6);
+    }
+
+    [AvaloniaFact]
     public void IsOnAnotherScreen_AfterTheWindowMovesToAnotherMonitor_IsTrueUntilItIsFittedThere()
     {
         var screen = Screen(1920, 1040);
-        var (fitter, vm, _) = CreateWindow(() => screen);
+        var changes = new Subject<Unit>();
+        var (fitter, vm, _) = CreateWindow(() => screen, screenChanges: changes);
+        using var following = fitter.Follow();
         vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 400, 300));
         var beforeFitting = fitter.IsOnAnotherScreen();
-        fitter.Refit();
+        Dispatcher.UIThread.RunJobs();
         var afterFitting = fitter.IsOnAnotherScreen();
 
         screen = Screen(2560, 1400) with { X = 1920, WorkingAreaX = 1920 };
         var afterMoving = fitter.IsOnAnotherScreen();
-        fitter.Refit();
+        changes.OnNext(Unit.Default);
+        Dispatcher.UIThread.RunJobs();
 
         Assert.False(beforeFitting);
         Assert.False(afterFitting);
@@ -982,9 +994,10 @@ public class WindowFitterTests
     }
 
     private (WindowFitter Fitter, MainWindowViewModel Vm, MainWindow Window) CreateShownWindow(double width,
-        double height, Func<Size>? readContentSize = null, Observable<Size>? contentBounds = null)
+        double height, Func<Size>? readContentSize = null, Observable<Size>? contentBounds = null,
+        Func<ScreenSize>? readScreen = null)
     {
-        var (fitter, vm, window) = CreateWindow(null, readContentSize, contentBounds);
+        var (fitter, vm, window) = CreateWindow(readScreen, readContentSize, contentBounds);
         window.Width = width;
         window.Height = height;
         window.Show();

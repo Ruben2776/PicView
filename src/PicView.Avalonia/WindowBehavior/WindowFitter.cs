@@ -12,7 +12,9 @@ namespace PicView.Avalonia.WindowBehavior;
 
 /// <summary>
 /// Fits one window to what its active tab shows, against the screen the window is on: the image's Fit, the window
-/// size its Window Mode and AutoFit give it, and where an AutoFit window sits.
+/// size its Window Mode and AutoFit give it, and where an AutoFit window sits. The window follows its Fit inputs
+/// (<see cref="Follow"/>) and publishes its Fits; App Start fits before showing (<see cref="FitBeforeShowing"/>,
+/// <see cref="FitStartUpMenu"/>).
 /// </summary>
 /// <param name="readContentSize">Reads the size of the window's content as it is now; the main view's by default.</param>
 /// <param name="readScreen">Reads the screen the window is on now; the one Avalonia reports by default.</param>
@@ -111,27 +113,6 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
     }
 
     /// <summary>
-    /// Fits the window to what its active tab shows now. It waits instead while a size is not known yet. Called from
-    /// another thread, it returns once the image and the window have their size.
-    /// </summary>
-    public void Refit()
-    {
-        if (!Dispatcher.UIThread.CheckAccess())
-        {
-            Dispatcher.UIThread.Invoke(Refit, DispatcherPriority.Send);
-            return;
-        }
-
-        if (window.DataContext is not MainWindowViewModel { WindowTabs.ActiveTab.CurrentValue: { } tab } vm ||
-            PixelSizes.Of(tab, vm.WindowTabs.SharedCache, Settings.ImageScaling.ShowImageSideBySide) is not { } sizes)
-        {
-            return;
-        }
-
-        Fit(vm, sizes);
-    }
-
-    /// <summary>
     /// Fits the window again whenever one of the Fit inputs it watches changes: the active tab shows a new image,
     /// another tab becomes active, the active tab is turned or flipped, the tab strip or a bar shows or hides, the
     /// Window Mode changes, zoom to fit, scrolling or side by side turns on or off, the active tab's gallery changes
@@ -142,7 +123,6 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
     /// frame is drawn, so the window never shows them at the old size. Without AutoFit the Fit reads the laid-out
     /// view, so it is fitted once more after layout.
     /// </summary>
-    /// <remarks>Only what asks for a Fit from outside is left here.</remarks>
     /// <returns>What stops following the inputs.</returns>
     public IDisposable Follow()
     {

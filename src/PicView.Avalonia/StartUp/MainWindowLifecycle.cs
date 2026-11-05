@@ -258,6 +258,11 @@ public sealed class MainWindowLifecycle
         }
 
         vm.WindowTabs.SetViewFactory(new TabViews(window));
+        // Before the window is shown and its mode applied, so the first image, which a startup source shows before the
+        // window is set up, and the starting mode are Fit inputs like any later one. After the factory, so the view
+        // adapter reacts to a new image before the fitter does
+        window.Disposables.Add(window.WindowFitter.Follow());
+        window.Disposables.Add(window.WindowFitter);
         window.Disposables.Add(ShowLoadingIndicatorWhileLoading(vm));
         _core.MainWindows.MainWindows.Add(vm);
         _core.MainWindows.ActiveWindow.Value = vm;
@@ -363,17 +368,7 @@ public sealed class MainWindowLifecycle
     {
         var vm = ViewModelOf(window);
         window.WindowModeSwitcher.Start(isAppStart);
-        window.Disposables.Add(window.WindowFitter.Follow());
-        window.Disposables.Add(window.WindowFitter);
         window.Disposables.Add(FollowSettings(window));
-        if (vm.IsFullscreen.Value)
-        {
-            Dispatcher.UIThread.Post(() =>
-            {
-                window.WindowFitter.Refit();
-                WindowFunctions.CenterWindowOnScreen(window, top: true);
-            }, DispatcherPriority.ApplicationIdle);
-        }
 
         var settingUp = Task.Run(() =>
         {
