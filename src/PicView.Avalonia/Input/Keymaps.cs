@@ -88,10 +88,7 @@ public static class Keymaps
             return;
         }
 
-        if (resolution.Owner is KeymapOwner.Action)
-        {
-            await actionRunner.Run(resolution.Value).ConfigureAwait(false);
-        }
+        await actionRunner.Run(resolution.Value).ConfigureAwait(false);
     }
 
     private static string DefaultJson(IPlatformSpecificService? platform) =>

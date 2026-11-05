@@ -35,11 +35,6 @@ public sealed class Keymap : IEquatable<Keymap>
         new(FrozenDictionary<Keybind, string>.Empty, FrozenDictionary<Keybind, string>.Empty);
 
     /// <summary>
-    /// The ordinary action bound to each Keybind.
-    /// </summary>
-    public IReadOnlyDictionary<Keybind, string> Bindings => _actions;
-
-    /// <summary>
     /// The Contextual Action bound to each contextual Keybind.
     /// </summary>
     public IReadOnlyDictionary<Keybind, string> ContextualBindings => _contextual;

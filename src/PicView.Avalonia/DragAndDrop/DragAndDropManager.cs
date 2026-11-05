@@ -23,12 +23,12 @@ public static class DragAndDropManager
 
     #region Public Entry Points
 
-    public static async ValueTask Drop(DragEventArgs e, TabOverviewViewModel tabOverview, MainWindow mainWindow)
+    public static async ValueTask Drop(DragEventArgs e, MainWindow mainWindow)
     {
         RemoveDragDropView(mainWindow);
 
         var files = e.DataTransfer.TryGetFiles();
-        if (files == null)  
+        if (files is null)  
         {
             await HandleDropFromUrl(e, mainWindow).ConfigureAwait(false);
             return;
@@ -40,7 +40,7 @@ public static class DragAndDropManager
         }
 
         var firstFile = files[0];
-        if (firstFile == null)
+        if (firstFile is null)
         {
             return;
         }
@@ -66,7 +66,7 @@ public static class DragAndDropManager
     public static async ValueTask DragEnter(DragEventArgs e, MainWindow mainWindow)
     {
         var files = e.DataTransfer.TryGetFiles();
-        if (files != null)
+        if (files is not null)
         {
             await HandleDragEnterWithFiles(files, mainWindow).ConfigureAwait(true);
         }
@@ -159,13 +159,13 @@ public static class DragAndDropManager
             }
         }
 
-        await SourceOpener.OpenAsync(mainWindow, mainWindow.ViewModel!.Core, source).ConfigureAwait(false);
+        await SourceOpener.OpenAsync(mainWindow, mainWindow.ViewModel.Core, source).ConfigureAwait(false);
     }
 
     private static async Task HandleDragEnterWithFiles(IEnumerable<IStorageItem> files, MainWindow mainWindow)
     {
         var fileArray = files as IStorageItem[] ?? files.ToArray();
-        if (fileArray.Length == 0)
+        if (fileArray.Length is 0)
         {
             return;
         }
@@ -278,7 +278,7 @@ public static class DragAndDropManager
                 _dragDropView.AddLinkChain();
             }
 
-            if (mainWindow.UIHelper.GetMainView != null && !mainWindow.UIHelper.GetMainView.MainPanel.Children.Contains(_dragDropView))
+            if (mainWindow.UIHelper.GetMainView is not null && !mainWindow.UIHelper.GetMainView.MainPanel.Children.Contains(_dragDropView))
             {
                 mainWindow.UIHelper.GetMainView.MainPanel.Children.Add(_dragDropView);
             }
@@ -294,7 +294,7 @@ public static class DragAndDropManager
             if (_dragDropView == null)
             {
                 _dragDropView = new DragDropView(mainWindow);
-                if (!mainWindow.IsPointerOver && mainWindow.UIHelper.GetMainView != null)
+                if (!mainWindow.IsPointerOver)
                 {
                     mainWindow.UIHelper.GetMainView.MainPanel.Children.Add(_dragDropView);
                 }
@@ -308,6 +308,10 @@ public static class DragAndDropManager
 
     private static async ValueTask LoadSupportedFile(MainWindow mainWindow, string path, CoreViewModel core)
     {
+        // If dropping a file from a browser, some browsers might add it as a file in a temporary directory
+        // and delete it right after (which would cause the file watcher to delete it as well (along with showing 
+        // unnecessary files)
+        // TODO: Add for macOS and add unit tests
         if (OperatingSystem.IsWindows())
         {
             // We need to determine if the path is a temporary file, since it might be deleted shortly after

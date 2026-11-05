@@ -69,7 +69,7 @@ public class AnimatedPopUp : ContentControl
 
     public async Task AnimatedOpening()
     {
-        if ( TopLevel.GetTopLevel(this) is not MainWindow mainWindow)
+        if (TopLevel.GetTopLevel(this) is not MainWindow mainWindow)
         {
             return;
         }

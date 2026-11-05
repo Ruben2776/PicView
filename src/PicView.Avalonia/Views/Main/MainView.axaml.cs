@@ -158,12 +158,7 @@ public partial class MainView : UserControl
 
     private async ValueTask Drop(object? sender, DragEventArgs e)
     {
-        if (DataContext is not MainWindowViewModel vm)
-        {
-            return;
-        }
-        
-        await DragAndDropManager.Drop(e, vm.WindowTabs, TopLevel.GetTopLevel(this) as MainWindow).ConfigureAwait(false);
+        await DragAndDropManager.Drop(e, TopLevel.GetTopLevel(this) as MainWindow).ConfigureAwait(false);
     }
     
     private async ValueTask DragEnter(object? sender, DragEventArgs e)
