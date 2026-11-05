@@ -92,7 +92,7 @@ public static class UpdateImage
         {
             if (tabViewModel.CurrentView?.Value is not ImageViewer imageViewer)
             {
-                // The adapter is making the tab's viewer; fit now, it binds the image when it arrives
+                // The tab shows something other than its viewer, such as a crop; fit now, the viewer binds the image when it returns
                 mainWindow.WindowFitter.Refit();
                 if (Settings.WindowProperties.KeepCentered)
                 {

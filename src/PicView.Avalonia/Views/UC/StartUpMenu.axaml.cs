@@ -226,8 +226,9 @@ public partial class StartUpMenu : UserControl
         SelectFileButton.PointerExited -= SelectFileButtonOnPointerExited;
         SelectFileButton.Click -= SelectFileButtonOnClick;
         
-        OpenLastFileLabel.PointerEntered -= OpenLastFileLabelOnPointerEntered;
-        OpenLastFileLabel.PointerExited -= OpenLastFileLabelOnPointerExited;
+        OpenLastFileButton.PointerEntered -= OpenLastFileLabelOnPointerEntered;
+        OpenLastFileButton.PointerExited -= OpenLastFileLabelOnPointerExited;
+        OpenLastFileButton.Click -= OpenLastFileButtonOnClick;
         
         PasteButton.PointerEntered -= PasteButtonOnPointerEntered;
         PasteButton.PointerExited -= PasteButtonOnPointerExited;

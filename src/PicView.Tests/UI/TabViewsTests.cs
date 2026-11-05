@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Reflection;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media.Imaging;
@@ -101,7 +103,7 @@ public class TabViewsTests
         });
 
     [AvaloniaFact]
-    public async Task Attach_OnAThreadPoolThread_MakesTheMenuOnTheUIThread()
+    public async Task Attach_OffTheUIThread_MakesTheMenuOnTheUIThread()
     {
         // Consecutive pasted files create their tabs off the UI thread
         await WithWindowAsync(async (_, vm, _) =>
@@ -116,6 +118,60 @@ public class TabViewsTests
             Dispatcher.UIThread.RunJobs();
             Assert.IsType<StartUpMenu>(ViewOf(tab!));
         });
+    }
+
+    [AvaloniaFact]
+    public void StartUpMenu_ReattachedAfterAViewer_HandlesAClickOnce()
+        => WithWindow((window, _, tab) =>
+        {
+            // The test window has no main view, so a host presents whatever the tab shows, as the main view does
+            var host = new ContentControl();
+            window.Content = host;
+            var menu = Assert.IsType<StartUpMenu>(ViewOf(tab));
+            host.Content = menu;
+            Settle(window);
+            Assert.True(menu.IsLoaded);
+
+            // The viewer replaces the menu, which detaches it; ending the load on a fresh tab shows the same menu again
+            var ticket = tab.SetLoading();
+            Assert.IsType<ImageViewer>(ViewOf(tab));
+            // The viewer's own Loaded needs the full window, so the host is left empty while it shows
+            host.Content = null;
+            Settle(window);
+            Assert.False(menu.IsLoaded);
+            tab.EndLoading(ticket);
+            host.Content = ViewOf(tab);
+            Settle(window);
+            Assert.Same(menu, ViewOf(tab));
+            Assert.True(menu.IsLoaded);
+
+            // The click's effect opens the last file, so count what the button holds for Click instead
+            Assert.Equal(1, ClickHandlerCount(menu.OpenLastFileButton));
+        });
+
+    // Loaded is raised by a layout pass, which the headless window runs when asked
+    private static void Settle(TestMainWindow window)
+    {
+        Dispatcher.UIThread.RunJobs();
+        window.UpdateLayout();
+        Dispatcher.UIThread.RunJobs();
+    }
+
+    // Interactive keeps its routed event handlers in a dictionary keyed by event
+    private static int ClickHandlerCount(Button button)
+    {
+        for (var type = typeof(Button); type is not null; type = type.BaseType)
+        {
+            foreach (var field in type.GetFields(BindingFlags.Instance | BindingFlags.NonPublic))
+            {
+                if (field.GetValue(button) is IDictionary handlers && handlers.Contains(Button.ClickEvent))
+                {
+                    return ((ICollection)handlers[Button.ClickEvent]!).Count;
+                }
+            }
+        }
+
+        return 0;
     }
 
     [AvaloniaFact]
