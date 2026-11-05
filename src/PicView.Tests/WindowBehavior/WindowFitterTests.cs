@@ -887,16 +887,79 @@ public class WindowFitterTests
         Assert.False(fitter.IsOnAnotherScreen());
     }
 
+    [AvaloniaFact]
+    public void Follow_ScalingChanges_FitsAgainstTheNewScreen()
+    {
+        var screen = Screen(1920, 1040);
+        var changes = new Subject<Unit>();
+        var (fitter, vm, window) = CreateWindow(() => screen, screenChanges: changes);
+        // AutoFit sizes the image against the screen
+        vm.WindowModeState.Value = vm.WindowModeState.Value.SetAutoFit(true);
+        using var following = fitter.Follow();
+        vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 4000, 3000));
+        Dispatcher.UIThread.RunJobs();
+        var widthBefore = vm.ImageWidth.Value;
+
+        screen = Screen(1280, 700);
+        changes.OnNext(Unit.Default);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.True(vm.ImageWidth.Value < widthBefore);
+        Assert.False(fitter.IsOnAnotherScreen());
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public void Follow_WindowMovesToAnotherScreen_FitsThere()
+    {
+        var screen = Screen(1920, 1040);
+        var changes = new Subject<Unit>();
+        var (fitter, vm, window) = CreateWindow(() => screen, screenChanges: changes);
+        // AutoFit, so the one Fit before the frame is the only one
+        vm.WindowModeState.Value = vm.WindowModeState.Value.SetAutoFit(true);
+        using var following = fitter.Follow();
+        vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 400, 300));
+        Dispatcher.UIThread.RunJobs();
+        var fits = new List<Fitted>();
+        using var listening = fitter.Fits.Subscribe(fits.Add);
+
+        screen = Screen(2560, 1400) with { X = 1920, WorkingAreaX = 1920 };
+        changes.OnNext(Unit.Default);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Single(fits);
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public void Follow_WindowMovesOnTheSameScreen_FitsNothing()
+    {
+        var changes = new Subject<Unit>();
+        var (fitter, vm, window) = CreateWindow(() => Screen(1920, 1040), screenChanges: changes);
+        using var following = fitter.Follow();
+        vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 400, 300));
+        Dispatcher.UIThread.RunJobs();
+        var fits = new List<Fitted>();
+        using var listening = fitter.Fits.Subscribe(fits.Add);
+
+        changes.OnNext(Unit.Default);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Empty(fits);
+        window.Close();
+    }
+
     private (WindowFitter Fitter, MainWindowViewModel Vm, MainWindow Window) CreateWindow(
         Func<ScreenSize>? readScreen = null, Func<Size>? readContentSize = null,
-        Observable<Size>? contentBounds = null)
+        Observable<Size>? contentBounds = null, Observable<Unit>? screenChanges = null)
     {
         var window = new TestMainWindow(new NativeStateAdapter());
         var vm = new MainWindowViewModel(_core, _core.Translation, _core.GlobalSettings!,
             _core.GallerySettings);
         window.DataContext = vm;
         vm.WindowTabs.SetViewFactory(new TabViews(window));
-        return (new WindowFitter(window, readContentSize ?? (() => ContentSize), readScreen, contentBounds), vm, window);
+        return (new WindowFitter(window, readContentSize ?? (() => ContentSize), readScreen, contentBounds,
+            screenChanges), vm, window);
     }
 
     private (WindowFitter Fitter, MainWindowViewModel Vm, MainWindow Window) CreateShownWindow(double width,

@@ -18,8 +18,11 @@ namespace PicView.Avalonia.WindowBehavior;
 /// <param name="readScreen">Reads the screen the window is on now; the one Avalonia reports by default.</param>
 /// <param name="contentBounds">Publishes the size of the window's content each time it is laid out at another size;
 /// the main view's bounds by default.</param>
+/// <param name="screenChanges">Publishes each time the window's scaling or position changes, which may mean it is on
+/// another screen; the window's own events by default.</param>
 public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize = null,
-    Func<ScreenSize>? readScreen = null, Observable<Size>? contentBounds = null) : IDisposable
+    Func<ScreenSize>? readScreen = null, Observable<Size>? contentBounds = null,
+    Observable<Unit>? screenChanges = null) : IDisposable
 {
     // Used when the window is not on any screen yet
     private static readonly ScreenSize NoScreen = new()
@@ -133,12 +136,13 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
     /// another tab becomes active, the active tab is turned or flipped, the tab strip or a bar shows or hides, the
     /// Window Mode changes, zoom to fit, scrolling or side by side turns on or off, the active tab's gallery changes
     /// its mode, dock, size or stretch, the active tab changes its Tab View, as a crop opens or closes, or, in a Fixed
-    /// Window, its content is laid out at another size. A new image is fitted at the highest priority and published
+    /// Window, its content is laid out at another size, or the window's scaling or position puts it on another screen
+    /// than the one it was last fitted against. A new image is fitted at the highest priority and published
     /// with the cause <see cref="FitCause.NewImage"/>. Other changes that come together give one Fit, before the next
     /// frame is drawn, so the window never shows them at the old size. Without AutoFit the Fit reads the laid-out
     /// view, so it is fitted once more after layout.
     /// </summary>
-    /// <remarks>Screen changes and resizing by hand still ask for a Fit themselves.</remarks>
+    /// <remarks>Only what asks for a Fit from outside is left here.</remarks>
     /// <returns>What stops following the inputs.</returns>
     public IDisposable Follow()
     {
@@ -171,8 +175,23 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
             // crop control lays out at Render, so the control meets its size
             vm.WindowTabs.ActiveTab.Select(static tab => tab.ViewKind.AsObservable().Skip(1)).Switch()
                 .Subscribe(_ => FitSoon()),
-            FollowContentBounds(vm));
+            FollowContentBounds(vm),
+            // A move within the same screen fits nothing; a drag to another monitor or a scaling change does
+            (screenChanges ?? ScreenChangesOf(window)).Subscribe(_ =>
+            {
+                if (IsOnAnotherScreen())
+                {
+                    FitSoon();
+                }
+            }));
     }
+
+    private static Observable<Unit> ScreenChangesOf(MainWindow window) =>
+        Observable.Merge(
+            Observable.FromEvent<EventHandler, Unit>(onNext => (_, _) => onNext(Unit.Default),
+                h => window.ScalingChanged += h, h => window.ScalingChanged -= h),
+            Observable.FromEventHandler<PixelPointEventArgs>(h => window.PositionChanged += h,
+                h => window.PositionChanged -= h).Select(static _ => Unit.Default));
 
     // A Fixed Window fits its image to the room its content has, so it fits again when the content is laid out at
     // another size. An AutoFit window's content follows the window it sized itself, so it never listens

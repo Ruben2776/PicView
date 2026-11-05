@@ -107,7 +107,6 @@ public abstract class MainWindow : Window, IMainWindow
         
         Activated += OnActivated;
         
-        ScalingChanged += OnScalingChanged;
         
         PointerExited += (_, _) => { DragAndDropManager.RemoveDragDropView(this); };
 
@@ -256,11 +255,6 @@ public abstract class MainWindow : Window, IMainWindow
         }
         
         core.SharedCache.ForceDisposalQueue();
-    }
-
-    private void OnScalingChanged(object? sender, EventArgs e)
-    {
-        WindowFitter.Refit();
     }
 
     private void OnActivated(object? sender, EventArgs e)
@@ -507,20 +501,18 @@ public abstract class MainWindow : Window, IMainWindow
         }
 
         // macOS reports dragging the window to another monitor as a resize by the user, which must not turn AutoFit
-        // off: the window is fitted to the new monitor instead
+        // off: the fitter fits the window to the new monitor instead
         if (WindowFitter.IsOnAnotherScreen())
         {
             if (WindowModeState.AutoFit && Settings.WindowProperties.KeepCentered)
             {
                 WindowFitter.Center();
             }
-            WindowFitter.Refit();
             return;
         }
 
         // Resizing by hand turns AutoFit off for this window only
         _ = WindowModeSwitcher.ResizedByHand();
-        WindowFitter.Refit();
     }
     
     // Window is being resized. The size changes of every window come through here, so only this window's count

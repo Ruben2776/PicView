@@ -197,15 +197,11 @@ public static class WindowFunctions
     }
 
     /// <summary>
-    /// Drags the window, and fits it to the monitor it was dragged to.
+    /// Drags the window. The fitter fits it to the monitor it was dragged to.
     /// </summary>
     public static void WindowDragBehavior(MainWindow window, PointerPressedEventArgs e)
     {
         window.BeginMoveDrag(e);
-        if (window.WindowFitter.IsOnAnotherScreen())
-        {
-            window.WindowFitter.Refit();
-        }
     }
 
     #endregion
