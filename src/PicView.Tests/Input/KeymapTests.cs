@@ -303,4 +303,26 @@ public class KeymapTests
 
         Assert.Equal("Confirm", keymap.ResolveContextual(new Keybind(Key.Up)));
     }
+
+    [Fact]
+    public void FromJson_FileWithoutContextualSection_LeavesDefaultArrowOffAReboundKey()
+    {
+        // A file from before the arrows were contextual keeps what the user bound W and Left to
+        var keymap = Migrated("""{ "W": "ToggleFullscreen", "Left": "ToggleFullscreen", "Up": "Up" }""");
+
+        Assert.Null(keymap.ResolveContextual(new Keybind(Key.W)));
+        Assert.Equal(KeymapResolution.Action("ToggleFullscreen"), keymap.Resolve(new Keybind(Key.W)));
+        Assert.Null(keymap.ResolveContextual(new Keybind(Key.Left)));
+        Assert.Equal("Up", keymap.ResolveContextual(new Keybind(Key.Up)));
+        Assert.Equal("Left", keymap.ResolveContextual(new Keybind(Key.A)));
+    }
+
+    [Fact]
+    public void WithContextualNavigation_LeftOnAReboundKey_IsNotAdded()
+    {
+        var keymap = Migrated("""{ "A": "ToggleFullscreen", "Contextual": { "Return": "Confirm" } }""");
+
+        Assert.Null(keymap.ResolveContextual(new Keybind(Key.A)));
+        Assert.Equal("Left", keymap.ResolveContextual(new Keybind(Key.Left)));
+    }
 }

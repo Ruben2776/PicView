@@ -56,6 +56,7 @@ public sealed class Keymap : IEquatable<Keymap>
 
         var ordinary = user?.Ordinary ?? defaults?.Ordinary ?? [];
         var contextual = user is not null ? user.Value.Contextual ?? defaults?.Contextual ?? [] : defaults?.Contextual ?? [];
+        var contextualFromDefaults = user is { Contextual: null };
 
         var actions = new Dictionary<Keybind, string>();
         var contextualActions = new Dictionary<Keybind, string>();
@@ -67,6 +68,19 @@ public sealed class Keymap : IEquatable<Keymap>
         foreach (var (key, action) in ordinary)
         {
             Add(key, action, fromContextualSection: false);
+        }
+
+        if (contextualFromDefaults)
+        {
+            // A file without a contextual section, as from before the arrows were contextual, keeps the keys it
+            // rebound: a default arrow only lands where it falls through to what that key did
+            foreach (var (keybind, action) in contextualActions.ToArray())
+            {
+                if (!FallsThroughAsBefore(keybind, action, actions))
+                {
+                    contextualActions.Remove(keybind);
+                }
+            }
         }
 
         return new Keymap(actions.ToFrozenDictionary(), contextualActions.ToFrozenDictionary());
@@ -323,7 +337,7 @@ public sealed class Keymap : IEquatable<Keymap>
         foreach (var (keybind, action) in defaults._contextual)
         {
             if (action is ContextualActionHandler.Left or ContextualActionHandler.Right &&
-                !_contextual.ContainsKey(keybind))
+                !_contextual.ContainsKey(keybind) && FallsThroughAsBefore(keybind, action, _actions))
             {
                 contextual ??= new Dictionary<Keybind, string>(_contextual);
                 contextual[keybind] = action;
@@ -336,6 +350,27 @@ public sealed class Keymap : IEquatable<Keymap>
         }
 
         return new Keymap(actions?.ToFrozenDictionary() ?? _actions, contextual?.ToFrozenDictionary() ?? _contextual);
+    }
+
+    /// <summary>
+    /// Whether binding the arrow Contextual Action <paramref name="contextualAction"/> to <paramref name="keybind"/>
+    /// leaves the key doing what it did: the ordinary layer binds it to nothing, or to the Action the arrow falls
+    /// through to. Other Contextual Actions always do.
+    /// </summary>
+    private static bool FallsThroughAsBefore(
+        Keybind keybind, string contextualAction, IReadOnlyDictionary<Keybind, string> ordinary)
+    {
+        var fallThrough = contextualAction switch
+        {
+            ContextualActionHandler.Up => Actions.RotateRight,
+            ContextualActionHandler.Down => Actions.RotateLeft,
+            ContextualActionHandler.Left => Actions.Prev,
+            ContextualActionHandler.Right => Actions.Next,
+            _ => null
+        };
+
+        return fallThrough is null || !ordinary.TryGetValue(keybind, out var action) ||
+               string.Equals(action, fallThrough, StringComparison.Ordinal);
     }
 
     private FrozenDictionary<Keybind, string> LayerOf(string canonicalAction) =>
