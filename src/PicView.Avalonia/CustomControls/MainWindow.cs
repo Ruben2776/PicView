@@ -104,10 +104,9 @@ public abstract class MainWindow : Window, IMainWindow
             .SubscribeOn(FrameProvider)
             .Subscribe(HandleWindowResize, DebugHelper.LogError(nameof(MainWindow), nameof(HandleWindowResize)))
             .AddTo(Disposables);
-        
+
         Activated += OnActivated;
-        
-        
+
         PointerExited += (_, _) => { DragAndDropManager.RemoveDragDropView(this); };
 
         Deactivated += OnDeactivated;

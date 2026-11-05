@@ -22,7 +22,7 @@ public static class RotationManager
         Turn(vm, mainWindow, static orientation => orientation.TurnTo(0));
     }
     
-    public static void ResetZoom(MainWindowViewModel vm, MainWindow mainWindow)
+    public static void ResetZoom(MainWindowViewModel vm)
     {
         if (vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.Value is not ImageViewer imageViewer)
         {

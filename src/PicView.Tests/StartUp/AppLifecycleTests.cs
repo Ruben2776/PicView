@@ -635,7 +635,7 @@ public class AppLifecycleTests : IAsyncDisposable
         {
             await SourceOpener.OpenAsync(window, _core, file);
             var bitmap = new WriteableBitmap(new PixelSize(4, 4), new Vector(96, 96), PixelFormat.Bgra8888, AlphaFormat.Premul);
-            UpdateImage.SetSingleImage(vm, window, bitmap, SingleImageType.Clipboard, "Clipboard image");
+            UpdateImage.SetSingleImage(vm, bitmap, SingleImageType.Clipboard, "Clipboard image");
             var pasted = tab.Model;
 
             await vm.ActionRunner!.Run(Actions.FileHistoryPrev);
@@ -696,10 +696,10 @@ public class AppLifecycleTests : IAsyncDisposable
         const string secondUrl = "https://example.com/second.png";
         // A download sets its URL before it shows the image
         tab.SourceURL = firstUrl;
-        UpdateImage.SetSingleImage(vm, window, NewBitmap(), SingleImageType.Url, firstUrl);
+        UpdateImage.SetSingleImage(vm, NewBitmap(), SingleImageType.Url, firstUrl);
         var first = tab.Model;
         tab.SourceURL = secondUrl;
-        UpdateImage.SetSingleImage(vm, window, NewBitmap(), SingleImageType.Url, secondUrl);
+        UpdateImage.SetSingleImage(vm, NewBitmap(), SingleImageType.Url, secondUrl);
 
         await vm.ActionRunner!.Run(Actions.FileHistoryPrev);
         // The Fit that start-up queued runs now, since nothing here lets the dispatcher idle before the window closes

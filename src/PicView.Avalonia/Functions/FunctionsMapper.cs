@@ -391,7 +391,7 @@ public class FunctionsMapper : IActionRunner
 
     private ValueTask ResetZoom()
     {
-        RotationManager.ResetZoom(_vm, _mainWindow);
+        RotationManager.ResetZoom(_vm);
         return ValueTask.CompletedTask;
     }
 

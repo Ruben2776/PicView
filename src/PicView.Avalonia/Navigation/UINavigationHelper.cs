@@ -101,7 +101,7 @@ public static class UINavigationHelper
                     tab.SourceURL = entry.Path;
                 }
 
-                UpdateImage.SetSingleImage(vm, mainWindow, entry.Model!, entry.SingleImageType, entry.Title ?? string.Empty);
+                UpdateImage.SetSingleImage(vm, entry.Model!, entry.SingleImageType, entry.Title ?? string.Empty);
                 break;
             case ViewHistoryKind.File:
                 if (entry.Page >= 0)

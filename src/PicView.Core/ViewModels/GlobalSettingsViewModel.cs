@@ -50,7 +50,15 @@ public class GlobalSettingsViewModel
     /// </summary>
     public BindableReactiveProperty<bool> ShowFadeButtons { get; }
 
+    /// <summary>
+    /// The Screen Margin: the total gap AutoFit keeps free around the window; every Fit reads it.
+    /// </summary>
     public BindableReactiveProperty<double> WindowMargin { get; }
+
+    /// <summary>
+    /// The margin a negative stored Screen Margin is replaced with, as the first window does before it is sized.
+    /// </summary>
+    public const double NegativeMarginReplacement = 45;
 
     private readonly BindableReactiveProperty<string?> _loopingText = new();
     private readonly BindableReactiveProperty<string?> _scrollingText = new();
@@ -104,7 +112,8 @@ public class GlobalSettingsViewModel
         ShowBottomBar = new(Settings.UIProperties.ShowBottomNavBar);
         ShowHoverBar = new(Settings.UIProperties.ShowHoverNavigationBar);
         ShowFadeButtons = new(Settings.UIProperties.ShowAltInterfaceButtons);
-        WindowMargin = new(Settings.WindowProperties.Margin);
+        // Built before the first window rewrites a negative stored margin, so it gives the same margin that window does
+        WindowMargin = new(Settings.WindowProperties.Margin < 0 ? NegativeMarginReplacement : Settings.WindowProperties.Margin);
 
         Follow(IsLooping, value => Settings.UIProperties.Looping = value, rephrases: true);
         Follow(IsSideBySide, value => Settings.ImageScaling.ShowImageSideBySide = value);

@@ -350,11 +350,8 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
         tab.Orientation.Current
             .Select(static orientation => orientation.IsFlipped)
             .DistinctUntilChanged()
-            .Subscribe(isFlipped =>
-            {
-                ShowFlip(isFlipped ? -1 : 1);
-            },
-            DebugHelper.LogError(nameof(ImageViewer), nameof(ShowFlip)))            
+            .Subscribe(_ => ShowFlip(),
+            DebugHelper.LogError(nameof(ImageViewer), nameof(ShowFlip)))
             .AddTo(ref _disposables);
         _disposables.Add(new HoverFadeButtonHandler(GalleryShortcut, GalleryShortcut.InnerButton));
     }
@@ -413,15 +410,19 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
     /// <summary>
     /// Mirrors the image as its tab's Orientation asks. The rotation is bound in the view instead.
     /// </summary>
-    private void ShowFlip(double scaleX)
+    private void ShowFlip()
     {
         // Posted, never invoked: a tab resets its Orientation on the thread that shows its next image, and only the
         // picture waits for this, not that thread
         if (!Dispatcher.UIThread.CheckAccess())
         {
-            Dispatcher.UIThread.Post(() => ShowFlip(scaleX), DispatcherPriority.Send);
+            Dispatcher.UIThread.Post(ShowFlip, DispatcherPriority.Send);
             return;
         }
+
+        // Read when it runs, not when it was posted: a flip on the UI thread and a reset on the loading thread may
+        // land in either order, and the one written last is the one to show
+        var scaleX = _tab.Orientation.Current.CurrentValue.IsFlipped ? -1d : 1d;
 
         if (_flipTransform is null)
         {

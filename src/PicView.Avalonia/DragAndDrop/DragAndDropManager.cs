@@ -320,7 +320,7 @@ public static class DragAndDropManager
             {
                 var fileInfo = new FileInfo(path);
                 var image = await GetImage.GetNonStandardBitmapAsync(fileInfo).ConfigureAwait(false);
-                UpdateImage.SetSingleImage(mainWindow.DataContext as MainWindowViewModel, mainWindow, image, SingleImageType.TempFile, fileInfo.Name);
+                UpdateImage.SetSingleImage(mainWindow.DataContext as MainWindowViewModel, image, SingleImageType.TempFile, fileInfo.Name);
                 return;
             }
         }

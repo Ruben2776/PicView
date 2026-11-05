@@ -21,7 +21,7 @@ public static class WindowFunctions
     {
         if (Settings.WindowProperties.Margin < 0)
         {
-            Settings.WindowProperties.Margin = 45;
+            Settings.WindowProperties.Margin = GlobalSettingsViewModel.NegativeMarginReplacement;
         }
 
         var starting = WindowModeSwitcher.Starting(isAppStart);

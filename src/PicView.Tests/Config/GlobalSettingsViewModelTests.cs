@@ -74,6 +74,16 @@ public class GlobalSettingsViewModelTests
     }
 
     [Fact]
+    public void WindowMargin_StoredNegative_PublishesTheSameMarginTheWindowStartsWith()
+    {
+        Settings.WindowProperties.Margin = -5;
+
+        var settings = New();
+
+        Assert.Equal(45, settings.WindowMargin.Value);
+    }
+
+    [Fact]
     public void Constructor_OverLoadedSettings_WritesAndSavesNothing()
     {
         Settings.UIProperties.Looping = true;

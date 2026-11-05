@@ -1,5 +1,4 @@
 using Avalonia.Media.Imaging;
-using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.ImageHandling;
 using PicView.Core.Gallery;
 using PicView.Core.ImageDecoding;
@@ -24,10 +23,10 @@ public static class UpdateImage
         }
     }
 
-    public static void SetSingleImage(MainWindowViewModel vm, MainWindow mainWindow, Bitmap image, SingleImageType type, string name)
+    public static void SetSingleImage(MainWindowViewModel vm, Bitmap image, SingleImageType type, string name)
     {
         // Its own model, so the previous file's cached model keeps its own size
-        SetSingleImage(vm, mainWindow, new ImageModel
+        SetSingleImage(vm, new ImageModel
         {
             Image = image,
             PixelWidth = (uint)image.PixelSize.Width,
@@ -40,7 +39,7 @@ public static class UpdateImage
     /// Shows <paramref name="model"/> as the active tab's Single Image. Showing a kept Single Image again passes back the
     /// model it kept, never a copy, since View History finds the entry by that instance.
     /// </summary>
-    public static void SetSingleImage(MainWindowViewModel vm, MainWindow mainWindow, ImageModel model, SingleImageType type, string title)
+    public static void SetSingleImage(MainWindowViewModel vm, ImageModel model, SingleImageType type, string title)
     {
         var tabViewModel = vm.WindowTabs.ActiveTab.CurrentValue;
 
@@ -51,7 +50,7 @@ public static class UpdateImage
         tabViewModel.DisposeImageIterator(); // SourceOpener creates a new one when browsing files again
     }
 
-    public static async ValueTask SetSingeBase64ImageAsync(string base64, MainWindowViewModel vm, MainWindow mainWindow, CancellationToken ct)
+    public static async ValueTask SetSingeBase64ImageAsync(string base64, MainWindowViewModel vm, CancellationToken ct)
     {
         var base64Model =
             await GetImageModel.GetBase64ImageModelAsync(base64, ct)
@@ -62,6 +61,6 @@ public static class UpdateImage
             return;
         }
 
-        SetSingleImage(vm, mainWindow, base64Model.Image as Bitmap, SingleImageType.Base64, TranslationManager.Translation.Base64Image);
+        SetSingleImage(vm, base64Model.Image as Bitmap, SingleImageType.Base64, TranslationManager.Translation.Base64Image);
     }
 }

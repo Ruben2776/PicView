@@ -118,7 +118,7 @@ public class ClipboardPasteService(
 
         if (Base64Decoder.IsBase64String(text, out var base64))
         {
-            await UpdateImage.SetSingeBase64ImageAsync(base64, vm, mainWindow, tab.GetTabCancellation().Token).ConfigureAwait(false);
+            await UpdateImage.SetSingeBase64ImageAsync(base64, vm, tab.GetTabCancellation().Token).ConfigureAwait(false);
             return true;
         }
 
@@ -146,7 +146,7 @@ public class ClipboardPasteService(
                 return false;
             }
 
-            UpdateImage.SetSingleImage(vm, mainWindow, bitmap, SingleImageType.Clipboard, TranslationManager.Translation?.ClipboardImage);
+            UpdateImage.SetSingleImage(vm, bitmap, SingleImageType.Clipboard, TranslationManager.Translation?.ClipboardImage);
             return true;
         }
         catch (Exception ex)
