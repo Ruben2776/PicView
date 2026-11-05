@@ -209,13 +209,17 @@ _Avoid_: Monitor size, screen size, working area
 The setting that keeps an AutoFit window centered in its Work Area as it changes size. With it off, the window keeps its own center as it resizes.
 _Avoid_: Keep centered, center window
 
+**Placement**:
+Where a Main Window sits. At App Start, an AutoFit window opens centered in the Work Area of the screen it opens on; a window that keeps its size opens at its last position; and a window that starts fullscreen or maximized opens in that state on the last screen it was closed from. A window opened while PicView runs opens on top of the window it was opened from, at its size, and a window opened for a dragged-out tab opens where the cursor is, with AutoFit or without. From then on, an AutoFit window is placed after each change of its size, a Fit included: centered in its Work Area with Stay Centered, else on its own center. Turning AutoFit on places it the same way; turning it off leaves it where it is. Returning to Normal from fullscreen or maximized centers an AutoFit window in the Work Area of the screen it is on, and gives a window that keeps its size its previous size and position back. A fullscreen or maximized window, or one that keeps its size, is otherwise not moved. The window places itself; nothing centers it, except App Start once and the user's Center action.
+_Avoid_: Center the window (as something a path does), window position (for the rule)
+
 **Screen Margin**:
 The total gap AutoFit keeps free around the window, beyond what the taskbar, dock and menu bar already take. It looks the same at any display scaling.
 _Avoid_: Window margin, padding
 
 **Fit**:
-The result of fitting an image, or a side-by-side pair, into the Available Area: its shown size, its Fit Scale, its Scroll Area, and the window size that AutoFit applies. A side-by-side pair is fitted as one image made of both, scaled to the same height. A pair whose second size is not known yet has no Fit, so the window waits instead of resizing twice.
-_Avoid_: Target size, image size, layout
+The result of fitting an image, or a side-by-side pair, into the Available Area: its shown size, its Fit Scale, its Scroll Area, and the window size that AutoFit applies. A side-by-side pair is fitted as one image made of both, scaled to the same height. A pair whose second size is not known yet has no Fit, so the window waits instead of resizing twice. The window derives it whenever one of its inputs changes; nothing asks for it.
+_Avoid_: Target size, image size, layout, refit (as something a path asks for)
 
 **Scroll Area**:
 With scrolling on, the area the image scrolls in. It fills the Available Area, except with AutoFit, where it takes the image's shown width and as much of its height as the Available Area allows. The image keeps its Fit Scale and sits centered in it.
