@@ -26,4 +26,37 @@ public class GalleryDockingTests
         Assert.Equal(expectedWidth, width);
         Assert.Equal(expectedHeight, height);
     }
+
+    [Theory]
+    [InlineData(GalleryDockPosition.Bottom)]
+    [InlineData(GalleryDockPosition.Top)]
+    [InlineData(GalleryDockPosition.Left)]
+    [InlineData(GalleryDockPosition.Right)]
+    public void ReservedBy_ExpandedThatReturnsToDocked_IsTheDockedThicknessItReturnsTo(GalleryDockPosition dock)
+    {
+        var inputs = new GalleryAppearanceInputs(100, 220, GalleryStretchMode.Uniform, GalleryStretchMode.Uniform, 0);
+        var docked = GalleryAppearance.For(GalleryMode.Docked, dock, inputs);
+        var expanded = GalleryAppearance.For(GalleryMode.Expanded, dock, inputs);
+
+        Assert.Equal(GalleryDocking.ReservedBy(docked), GalleryDocking.ReservedBy(expanded, returnsToDocked: true));
+        Assert.NotEqual((0d, 0d), GalleryDocking.ReservedBy(expanded, returnsToDocked: true));
+    }
+
+    [Fact]
+    public void ReservedBy_ExpandedThatReturnsToClosed_IsNothing()
+    {
+        var inputs = new GalleryAppearanceInputs(100, 220, GalleryStretchMode.Uniform, GalleryStretchMode.Uniform, 0);
+        var expanded = GalleryAppearance.For(GalleryMode.Expanded, GalleryDockPosition.Bottom, inputs);
+
+        Assert.Equal((0d, 0d), GalleryDocking.ReservedBy(expanded, returnsToDocked: false));
+    }
+
+    [Fact]
+    public void ReservedBy_ClosedThatWouldReturnToDocked_IsNothing()
+    {
+        var inputs = new GalleryAppearanceInputs(100, 220, GalleryStretchMode.Uniform, GalleryStretchMode.Uniform, 0);
+        var closed = GalleryAppearance.For(GalleryMode.Closed, GalleryDockPosition.Bottom, inputs);
+
+        Assert.Equal((0d, 0d), GalleryDocking.ReservedBy(closed, returnsToDocked: true));
+    }
 }

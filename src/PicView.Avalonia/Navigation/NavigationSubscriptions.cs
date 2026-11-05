@@ -22,7 +22,8 @@ public sealed class NavigationSubscriptions : ITabHookups
     public NavigationSubscriptions(MainWindow mainWindow, MainWindowViewModel mainWindowViewModel)
     {
         _mainWindowViewModel = mainWindowViewModel;
-        mainWindow.Disposables.Add(mainWindow.WindowFitter.Fits.Subscribe(FollowFit));
+        mainWindow.Disposables.Add(mainWindow.WindowFitter.Fits.Subscribe(FollowFit,
+            DebugHelper.LogError(nameof(NavigationSubscriptions), nameof(FollowFit))));
     }
 
     public IDisposable Attach(TabViewModel tabViewModel)
@@ -36,7 +37,8 @@ public sealed class NavigationSubscriptions : ITabHookups
     }
 
     // Fits publish on the UI thread. The tab reset its Zoom Factor when it published the image; the control's
-    // transform follows here, after the Fit, so the scale it reports meets the new Fit Scale (ADR-0016)
+    // transform follows here, after the Fit, so the scale it reports meets the new Fit Scale (ADR-0016). A tab that
+    // showed its image in the background gets its NewImage Fit when it is shown again, so its own viewer resets then
     private void FollowFit(Fitted fitted)
     {
         var tab = _mainWindowViewModel.WindowTabs.ActiveTab.CurrentValue;

@@ -130,6 +130,76 @@ public class NavigationSubscriptionsTests
     }
 
     [AvaloniaFact]
+    public void NewImageInABackgroundTab_ResetsItsViewerAndOverlayOnTheSwitchToIt()
+    {
+        Settings.WindowProperties.AutoFit = true;
+        Settings.Zoom.ResetZoomOnChange = true;
+        WithWindow((window, vm, hookups, tab) =>
+        {
+            var viewer = ViewerOf(tab);
+            tab.Display(BitmapModel("a.jpg"));
+            Dispatcher.UIThread.RunJobs();
+            ((IZoomScrollTarget)viewer).ZoomAt(zoomIn: true, new Point(1, 1));
+            var control = viewer.FindControl<ZoomPanControl>("ZoomPanControl")!;
+            var zoomedScale = control.Scale;
+            // Stands for the previous image's badge; the update hides it for an image that is no motion photo
+            var overlay = viewer.FindControl<MotionPhotoView>("MotionPhotoView")!;
+            overlay.IsVisible = true;
+            var other = vm.WindowTabs.CreateTab();
+            ViewerOf(other);
+            other.Display(BitmapModel("b.jpg"));
+            Dispatcher.UIThread.RunJobs();
+
+            // As the folder watcher replaces the shown file of the tab in the background
+            tab.Display(BitmapModel("c.jpg", 4000, 4000));
+            Dispatcher.UIThread.RunJobs();
+            var scaleInTheBackground = control.Scale;
+            var causes = new List<FitCause>();
+            using var listening = window.WindowFitter.Fits.Subscribe(fitted => causes.Add(fitted.Cause));
+            vm.WindowTabs.SelectTab(tab);
+            Dispatcher.UIThread.RunJobs();
+
+            Assert.NotEqual(1, zoomedScale);
+            Assert.Equal(zoomedScale, scaleInTheBackground);
+            Assert.Equal(FitCause.NewImage, causes[0]);
+            Assert.Equal(1, control.Scale);
+            Assert.False(overlay.IsVisible);
+            Assert.Equal(Convert.ToInt32(tab.Zoom.FitScale * 100), tab.Zoom.Level.CurrentValue);
+        });
+    }
+
+    [AvaloniaFact]
+    public void NewImageInABackgroundTabThatCloses_ResetsNothingAndDoesNotThrow()
+    {
+        Settings.WindowProperties.AutoFit = true;
+        Settings.Zoom.ResetZoomOnChange = true;
+        WithWindow((window, vm, hookups, tab) =>
+        {
+            ViewerOf(tab);
+            tab.Display(BitmapModel("a.jpg"));
+            Dispatcher.UIThread.RunJobs();
+            var other = vm.WindowTabs.CreateTab();
+            var otherViewer = ViewerOf(other);
+            other.Display(BitmapModel("b.jpg"));
+            Dispatcher.UIThread.RunJobs();
+            ((IZoomScrollTarget)otherViewer).ZoomAt(zoomIn: true, new Point(1, 1));
+            var otherControl = otherViewer.FindControl<ZoomPanControl>("ZoomPanControl")!;
+            var zoomedScale = otherControl.Scale;
+            tab.Display(BitmapModel("c.jpg", 4000, 4000));
+            Dispatcher.UIThread.RunJobs();
+            var causes = new List<FitCause>();
+            using var listening = window.WindowFitter.Fits.Subscribe(fitted => causes.Add(fitted.Cause));
+
+            vm.WindowTabs.CloseTab(tab);
+            var thrown = Record.Exception(() => Dispatcher.UIThread.RunJobs());
+
+            Assert.Null(thrown);
+            Assert.DoesNotContain(FitCause.NewImage, causes);
+            Assert.Equal(zoomedScale, otherControl.Scale);
+        });
+    }
+
+    [AvaloniaFact]
     public void InputFit_LeavesTheViewerAlone()
     {
         Settings.WindowProperties.AutoFit = true;

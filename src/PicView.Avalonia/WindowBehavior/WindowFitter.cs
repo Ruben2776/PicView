@@ -1,3 +1,4 @@
+using System.Collections.Specialized;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Threading;
@@ -48,11 +49,13 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
     // Set on Dispose; read by Fits posted earlier, which may run on a tab that is disposed by then
     private volatile bool _isDisposed;
 
-    // The tab whose new image the pending Fit is for; written on the thread that showed it
+    // The active tab whose new image the pending Fit is for; written on the thread that showed it, taken by the Fit
     private TabViewModel? _tabWithNewImage;
 
-    // Whether a new image is shown that no applied Fit has followed yet. Read and written on the UI thread
-    private bool _isNewImageFitOwed;
+    // The tabs that show a new image no applied Fit has followed yet: the active tab until its Fit applies, and a tab
+    // that showed it in the background until it is shown and fitted. Each tab keeps its own viewer, which resets on the
+    // NewImage Fit, so the debt is per tab. Read and written on the UI thread
+    private readonly HashSet<TabViewModel> _tabsOwingNewImageFit = [];
 
     // The window size the last image's Fit gave, or the start-up menu's before any, which a tab without an image keeps
     private Size? _fittedWindowSize;
@@ -62,6 +65,11 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
     /// model's sizes and the window's sizing were set. A Fit that could not be made publishes nothing.
     /// </summary>
     public Observable<Fitted> Fits => _fits;
+
+    /// <summary>
+    /// Whether <paramref name="tab"/> showed a new image that no applied Fit has followed yet. Read on the UI thread.
+    /// </summary>
+    internal bool IsNewImageFitOwed(TabViewModel tab) => _tabsOwingNewImageFit.Contains(tab);
 
     /// <summary>
     /// Ends <see cref="Fits"/> and stops the Fits already posted, which may run after the window tore down its tabs.
@@ -116,10 +124,11 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
     /// Fits the window again whenever one of the Fit inputs it watches changes: the active tab shows a new image,
     /// another tab becomes active, the active tab is turned or flipped, the tab strip or a bar shows or hides, the
     /// Window Mode changes, zoom to fit, scrolling or side by side turns on or off, the active tab's gallery changes
-    /// its mode, dock, size or stretch, the active tab changes its Tab View, as a crop opens or closes, or, in a Fixed
-    /// Window, its content is laid out at another size, or the window's scaling or position puts it on another screen
-    /// than the one it was last fitted against. A new image is fitted at the highest priority and published
-    /// with the cause <see cref="FitCause.NewImage"/>. Other changes that come together give one Fit, before the next
+    /// its mode, dock, size or stretch, or whether its Expanded Gallery returns to docked, the active tab changes its
+    /// Tab View, as a crop opens or closes, or, in a Fixed Window, its content is laid out at another size, or the
+    /// window's scaling or position puts it on another screen than the one it was last fitted against. A new image is
+    /// fitted at the highest priority and published with the cause <see cref="FitCause.NewImage"/>; a tab that shows
+    /// one in the background owes that cause to the first Fit for it once it is active. Other changes that come together give one Fit, before the next
     /// frame is drawn, so the window never shows them at the old size. Without AutoFit the Fit reads the laid-out
     /// view, so it is fitted once more after layout.
     /// </summary>
@@ -132,10 +141,7 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
         }
 
         return Disposable.Combine(
-            // Only the shown tab's images, so a tab loading in the background fits nothing
-            vm.WindowTabs.ActiveTab.Select(static tab =>
-                    tab.Shown.Where(static change => change is ShownChange.Image).Select(_ => tab)).Switch()
-                .Subscribe(FitForNewImageSoon),
+            FollowEveryTabsImages(vm),
             vm.WindowTabs.ActiveTab.Skip(1).Subscribe(_ => FitSoon()),
             // Only the shown tab's Orientation, so turning a tab in the background fits nothing
             vm.WindowTabs.ActiveTab.Select(static tab => tab.Orientation.Current.Skip(1)).Switch()
@@ -150,6 +156,10 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
             // Only the shown tab's gallery, so a gallery docking in a background tab fits nothing. It may change off the
             // UI thread, as FitSoon allows
             vm.WindowTabs.ActiveTab.Select(static tab => tab.Gallery.Appearance.AsObservable().Skip(1)).Switch()
+                .Subscribe(_ => FitSoon()),
+            // An Expanded Gallery reserves the docked thickness it returns to, so choosing whether it returns to docked
+            // changes the Reserved Space without changing its appearance
+            vm.WindowTabs.ActiveTab.Select(static tab => tab.Gallery.Switcher.IsDocked.Skip(1)).Switch()
                 .Subscribe(_ => FitSoon()),
             // Only the shown tab's Tab View. A crop hides the docked gallery, so it changes the Reserved Space. The kind
             // may change off the UI thread, as a load does, which FitSoon allows. The Fit posts at Normal, before the
@@ -218,11 +228,117 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
         return Disposable.Combine(subscription, Disposable.Create(() => window.Opened -= OnOpened));
     }
 
+    // Every tab of the window, not only the active one: a tab that shows a new image in the background, as when the
+    // folder watcher replaces its shown file, reset its Zoom Factor, so its viewer must reset when it is shown again.
+    // Tabs come and go on the UI thread, as the tab strip shows them
+    private IDisposable FollowEveryTabsImages(MainWindowViewModel vm)
+    {
+        var tabs = vm.WindowTabs.Tabs.Value;
+        var watched = new Dictionary<TabViewModel, IDisposable>();
+
+        void Watch(TabViewModel tab)
+        {
+            if (watched.ContainsKey(tab))
+            {
+                return;
+            }
+
+            watched[tab] = tab.Shown.Subscribe(change =>
+            {
+                if (change is ShownChange.Image)
+                {
+                    OnNewImage(vm, tab);
+                }
+            });
+        }
+
+        // Later, not as the tab is removed: a reorder removes a tab and inserts it again, and keeps what it owes
+        void ForgetTabsThatLeft()
+        {
+            List<TabViewModel>? left = null;
+            foreach (var tab in watched.Keys)
+            {
+                if (!tabs.Contains(tab))
+                {
+                    (left ??= []).Add(tab);
+                }
+            }
+
+            if (left is null)
+            {
+                return;
+            }
+
+            foreach (var tab in left)
+            {
+                watched.Remove(tab, out var subscription);
+                subscription?.Dispose();
+                _tabsOwingNewImageFit.Remove(tab);
+            }
+        }
+
+        void OnTabsChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action is NotifyCollectionChangedAction.Reset)
+            {
+                foreach (var tab in tabs)
+                {
+                    Watch(tab);
+                }
+            }
+            else if (e.NewItems is { } added)
+            {
+                foreach (TabViewModel tab in added)
+                {
+                    Watch(tab);
+                }
+            }
+
+            if (e.Action is NotifyCollectionChangedAction.Remove or NotifyCollectionChangedAction.Replace
+                or NotifyCollectionChangedAction.Reset)
+            {
+                Dispatcher.UIThread.Post(ForgetTabsThatLeft);
+            }
+        }
+
+        foreach (var tab in tabs)
+        {
+            Watch(tab);
+        }
+
+        tabs.CollectionChanged += OnTabsChanged;
+        return Disposable.Create(() =>
+        {
+            tabs.CollectionChanged -= OnTabsChanged;
+            foreach (var subscription in watched.Values)
+            {
+                subscription.Dispose();
+            }
+
+            watched.Clear();
+            _tabsOwingNewImageFit.Clear();
+        });
+    }
+
     // The tab may show its image on a thread-pool thread, as a Load does. Posted, never invoked, so that thread does
     // not wait for the window, and at the highest priority, so the Fit runs before work posted after the image showed
-    private void FitForNewImageSoon(TabViewModel tab)
+    private void OnNewImage(MainWindowViewModel vm, TabViewModel tab)
     {
-        Volatile.Write(ref _tabWithNewImage, tab);
+        if (!ReferenceEquals(tab, vm.WindowTabs.ActiveTab.CurrentValue))
+        {
+            // Rare, and fits nothing: the tab is only marked as owing its Fit
+            Dispatcher.UIThread.Post(() => FitNewImage(tab), DispatcherPriority.Send);
+            return;
+        }
+
+        // Many images of the active tab, as a held key shows them, give one Fit
+        var previous = Interlocked.Exchange(ref _tabWithNewImage, tab);
+        if (previous is not null && !ReferenceEquals(previous, tab))
+        {
+            // Another tab's image whose Fit has not run yet, as when the user switched tabs meanwhile: it still owes it
+            Dispatcher.UIThread.Post(() => FitNewImage(previous), DispatcherPriority.Send);
+        }
+
         if (Interlocked.Exchange(ref _isFitForNewImagePending, 1) is not 0)
         {
             return;
@@ -231,23 +347,28 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
         Dispatcher.UIThread.Post(() =>
         {
             Interlocked.Exchange(ref _isFitForNewImagePending, 0);
-            FitNewImage(Volatile.Read(ref _tabWithNewImage));
+            FitNewImage(Interlocked.Exchange(ref _tabWithNewImage, null));
         }, DispatcherPriority.Send);
     }
 
     private void FitNewImage(TabViewModel? tab)
     {
-        // A tab closed meanwhile is no longer the active one; switching to another tab fits that one as an input
-        if (_isDisposed || window.DataContext is not MainWindowViewModel vm || tab is null ||
-            !ReferenceEquals(tab, vm.WindowTabs.ActiveTab.CurrentValue))
+        if (_isDisposed || window.DataContext is not MainWindowViewModel vm || tab is null)
         {
             return;
         }
 
-        // Owed until a Fit applies: the tab already reset its Zoom Factor, so the viewer must still reset its control
-        // to meet it, also when this Fit cannot be made and a later input's Fit is the first that applies
-        _isNewImageFitOwed = true;
-        if (vm.WindowModeState.CurrentValue.Mode is WindowMode.Minimized ||
+        // Owed until a Fit for the tab applies: the tab already reset its Zoom Factor, so its viewer must still reset
+        // its control to meet it, also when this Fit cannot be made, or the tab is not shown, and a later Fit is the
+        // first that applies for it. A tab closed or moved out meanwhile owes nothing
+        if (!vm.WindowTabs.Tabs.Value.Contains(tab))
+        {
+            return;
+        }
+
+        _tabsOwingNewImageFit.Add(tab);
+        if (!ReferenceEquals(tab, vm.WindowTabs.ActiveTab.CurrentValue) ||
+            vm.WindowModeState.CurrentValue.Mode is WindowMode.Minimized ||
             PixelSizes.Of(tab, vm.WindowTabs.SharedCache, Settings.ImageScaling.ShowImageSideBySide) is not { } sizes)
         {
             return;
@@ -371,8 +492,8 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
         }
     }
 
-    // Published with the cause NewImage when it is the first Fit that applies since a new image showed, whatever asked
-    // for it, else with the cause Input
+    // Published with the cause NewImage when it is the first Fit that applies for the active tab since that tab showed a
+    // new image, whatever asked for it, as the switch to a tab that showed it in the background; else with Input
     private bool Fit(MainWindowViewModel vm, PixelSizes sizes)
     {
         var state = vm.WindowModeState.CurrentValue;
@@ -401,15 +522,15 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
 
         _fittedScreen = screen;
         _fittedWindowSize = new Size(fit.WindowWidth, fit.WindowHeight);
-        vm.WindowTabs.ActiveTab.CurrentValue.Zoom.SetFitScale(fit.Scale);
+        var tab = vm.WindowTabs.ActiveTab.CurrentValue;
+        tab.Zoom.SetFitScale(fit.Scale);
         vm.ScrollViewerWidth.Value = fit.ScrollViewerWidth;
         vm.ScrollViewerHeight.Value = fit.ScrollViewerHeight;
         vm.ImageWidth.Value = fit.Width;
         vm.ImageHeight.Value = fit.Height;
 
         Apply(vm, WindowSizingPlan.For(state.Mode, state.AutoFit, window.IsVisible, fit, screen));
-        var cause = _isNewImageFitOwed ? FitCause.NewImage : FitCause.Input;
-        _isNewImageFitOwed = false;
+        var cause = _tabsOwingNewImageFit.Remove(tab) ? FitCause.NewImage : FitCause.Input;
         // A Fit posted before the window disposed its fitter still runs, and must not throw
         if (_fits.IsDisposed)
         {
@@ -473,8 +594,9 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
 
     private static ReservedSpace GetReservedSpace(MainWindowViewModel vm)
     {
+        var gallery = vm.WindowTabs.ActiveTab.CurrentValue.Gallery;
         var (galleryWidth, galleryHeight) =
-            GalleryDocking.ReservedBy(vm.WindowTabs.ActiveTab.CurrentValue.Gallery.Appearance.Value);
+            GalleryDocking.ReservedBy(gallery.Appearance.Value, gallery.Switcher.IsDocked.CurrentValue);
         // What the window shows, not the settings: hiding the interface hides the bottom bar but keeps its setting
         return ReservedSpace.For(vm.WindowTabs.Tabs.CurrentValue.Count, vm.Interface.Value, galleryWidth,
             galleryHeight);

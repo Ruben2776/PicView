@@ -43,12 +43,19 @@ public readonly record struct GalleryAppearance(
     GalleryInsets Border,
     double Extent)
 {
+    /// <summary>
+    ///     The thickness the gallery has when docked at <see cref="Dock" />: <see cref="Extent" /> when docked, and for an
+    ///     Expanded Gallery the thickness it gets back if it returns to docked. 0 when closed.
+    /// </summary>
+    public double DockedExtent { get; init; }
+
     public static GalleryAppearance For(GalleryMode shownMode, GalleryDockPosition dock, GalleryAppearanceInputs inputs)
     {
         switch (shownMode)
         {
             case GalleryMode.Docked:
                 var horizontal = dock is GalleryDockPosition.Top or GalleryDockPosition.Bottom;
+                var dockedExtent = DockedExtentFor(dock, inputs.DockedItemSize);
                 var border = dock switch
                 {
                     GalleryDockPosition.Top => new GalleryInsets(0, 0, 0, 1),
@@ -67,9 +74,10 @@ public readonly record struct GalleryAppearance(
                     0,
                     GalleryInsets.Zero,
                     border,
-                    horizontal
-                        ? GalleryDefaults.GetDockedGalleryHeight(inputs.DockedItemSize)
-                        : GalleryDefaults.GetDockedGalleryWidth(inputs.DockedItemSize));
+                    dockedExtent)
+                {
+                    DockedExtent = dockedExtent
+                };
             case GalleryMode.Expanded:
                 return new GalleryAppearance(
                     shownMode, dock, true,
@@ -82,7 +90,10 @@ public readonly record struct GalleryAppearance(
                     inputs.ItemSpacing,
                     new GalleryInsets(15, 40, 15, 5),
                     GalleryInsets.Zero,
-                    double.NaN);
+                    double.NaN)
+                {
+                    DockedExtent = DockedExtentFor(dock, inputs.DockedItemSize)
+                };
             default:
                 return new GalleryAppearance(
                     shownMode, dock, false,
@@ -98,6 +109,11 @@ public readonly record struct GalleryAppearance(
                     0);
         }
     }
+
+    private static double DockedExtentFor(GalleryDockPosition dock, double dockedItemSize) =>
+        dock is GalleryDockPosition.Top or GalleryDockPosition.Bottom
+            ? GalleryDefaults.GetDockedGalleryHeight(dockedItemSize)
+            : GalleryDefaults.GetDockedGalleryWidth(dockedItemSize);
 
     private static double ItemWidthFor(GalleryStretchMode stretch, double itemHeight)
     {

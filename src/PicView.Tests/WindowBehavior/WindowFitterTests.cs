@@ -6,6 +6,7 @@ using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Interfaces;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.WindowBehavior;
+using PicView.Core.Gallery;
 using PicView.Core.Localization;
 using PicView.Core.Models;
 using PicView.Core.Sizing;
@@ -606,6 +607,8 @@ public class WindowFitterTests
         using var following = fitter.Follow();
         var first = vm.WindowTabs.ActiveTab.Value;
         first.Display(Model("a.jpg", 400, 300));
+        // Fitted while it is active, so its image is not new when it is shown again
+        Dispatcher.UIThread.RunJobs();
         var second = vm.WindowTabs.CreateTab();
         Dispatcher.UIThread.RunJobs();
         var fits = new List<Fitted>();
@@ -643,6 +646,114 @@ public class WindowFitterTests
         Assert.Equal(FitCause.NewImage, fits[0].Cause);
         Assert.Single(fits, static fitted => fitted.Cause is FitCause.NewImage);
         Assert.Equal(400, vm.ImageWidth.Value);
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public void Follow_NewImageInABackgroundTab_IsPublishedAsNewImageOnTheSwitchToIt()
+    {
+        var (fitter, vm, window) = CreateShownWindow(800, 600);
+        using var following = fitter.Follow();
+        var background = vm.WindowTabs.ActiveTab.Value;
+        background.Display(Model("a.jpg", 400, 300));
+        Dispatcher.UIThread.RunJobs();
+        var shown = vm.WindowTabs.CreateTab();
+        shown.Display(Model("b.jpg", 200, 100));
+        Dispatcher.UIThread.RunJobs();
+        var fits = new List<Fitted>();
+        using var listening = fitter.Fits.Subscribe(fits.Add);
+
+        // As the folder watcher replaces its shown file while another tab is shown
+        background.Display(Model("c.jpg", 300, 200));
+        Dispatcher.UIThread.RunJobs();
+        var fitsInTheBackground = fits.Count;
+        vm.WindowTabs.SelectTab(background);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Equal(0, fitsInTheBackground);
+        Assert.Equal(FitCause.NewImage, fits[0].Cause);
+        Assert.Single(fits, static fitted => fitted.Cause is FitCause.NewImage);
+        Assert.Equal(300, vm.ImageWidth.Value);
+        Assert.False(fitter.IsNewImageFitOwed(background));
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public void Follow_TabSwitchedAwayBeforeItsNewImageIsFitted_IsPublishedAsNewImageOnTheSwitchBack()
+    {
+        var (fitter, vm, window) = CreateShownWindow(800, 600);
+        using var following = fitter.Follow();
+        var first = vm.WindowTabs.ActiveTab.Value;
+        first.Display(Model("a.jpg", 400, 300));
+        Dispatcher.UIThread.RunJobs();
+        var second = vm.WindowTabs.CreateTab();
+        second.Display(Model("b.jpg", 200, 100));
+        Dispatcher.UIThread.RunJobs();
+        var fits = new List<Fitted>();
+        using var listening = fitter.Fits.Subscribe(fits.Add);
+
+        // Next pressed, then another tab chosen before the new image's Fit ran
+        second.Display(Model("c.jpg", 300, 200));
+        vm.WindowTabs.SelectTab(first);
+        Dispatcher.UIThread.RunJobs();
+        var causesOnTheFirstTab = fits.Select(static fitted => fitted.Cause).ToList();
+        fits.Clear();
+        vm.WindowTabs.SelectTab(second);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.DoesNotContain(FitCause.NewImage, causesOnTheFirstTab);
+        Assert.Equal(FitCause.NewImage, fits[0].Cause);
+        Assert.Single(fits, static fitted => fitted.Cause is FitCause.NewImage);
+        Assert.Equal(300, vm.ImageWidth.Value);
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public void Follow_BackgroundTabWithANewImageCloses_FitsNothingAndForgetsIt()
+    {
+        var (fitter, vm, window) = CreateShownWindow(800, 600);
+        using var following = fitter.Follow();
+        var background = vm.WindowTabs.ActiveTab.Value;
+        background.Display(Model("a.jpg", 400, 300));
+        Dispatcher.UIThread.RunJobs();
+        var shown = vm.WindowTabs.CreateTab();
+        shown.Display(Model("b.jpg", 200, 100));
+        Dispatcher.UIThread.RunJobs();
+        background.Display(Model("c.jpg", 300, 200));
+        Dispatcher.UIThread.RunJobs();
+        Assert.True(fitter.IsNewImageFitOwed(background));
+        var fits = new List<Fitted>();
+        using var listening = fitter.Fits.Subscribe(fits.Add);
+
+        vm.WindowTabs.CloseTab(background);
+        var thrown = Record.Exception(() => Dispatcher.UIThread.RunJobs());
+
+        Assert.Null(thrown);
+        Assert.False(fitter.IsNewImageFitOwed(background));
+        Assert.DoesNotContain(fits, static fitted => fitted.Cause is FitCause.NewImage);
+        Assert.Equal(200, vm.ImageWidth.Value);
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public void Follow_BackgroundTabReordered_KeepsItsNewImageFitOwed()
+    {
+        var (fitter, vm, window) = CreateShownWindow(800, 600);
+        using var following = fitter.Follow();
+        var background = vm.WindowTabs.ActiveTab.Value;
+        background.Display(Model("a.jpg", 400, 300));
+        Dispatcher.UIThread.RunJobs();
+        var shown = vm.WindowTabs.CreateTab();
+        shown.Display(Model("b.jpg", 200, 100));
+        Dispatcher.UIThread.RunJobs();
+        background.Display(Model("c.jpg", 300, 200));
+        Dispatcher.UIThread.RunJobs();
+
+        // Reordering takes the tab out of the collection and puts it back
+        vm.WindowTabs.Reorder(background, 1);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.True(fitter.IsNewImageFitOwed(background));
         window.Close();
     }
 
@@ -725,6 +836,56 @@ public class WindowFitterTests
 
         Assert.NotEmpty(fits);
         Assert.True(vm.ImageHeight.Value < heightBefore);
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public void Follow_DockedGalleryExpandsAndCollapses_KeepsTheDockedReserve()
+    {
+        Settings.WindowProperties.AutoFit = true;
+        var (fitter, vm, window) = CreateShownWindow(800, 600, readScreen: () => Screen(1280, 760));
+        using var following = fitter.Follow();
+        var tab = vm.WindowTabs.ActiveTab.Value;
+        tab.Gallery.Initialize(_core.GallerySettings);
+        tab.Display(Model("a.jpg", 1600, 1200));
+        tab.Gallery.Switcher.Start(docked: true);
+        Dispatcher.UIThread.RunJobs();
+        var docked = (vm.ImageWidth.Value, vm.ImageHeight.Value, vm.ScrollViewerHeight.Value);
+
+        tab.Gallery.Switcher.ToggleExpanded();
+        Dispatcher.UIThread.RunJobs();
+        var expanded = (vm.ImageWidth.Value, vm.ImageHeight.Value, vm.ScrollViewerHeight.Value);
+        tab.Gallery.Switcher.ToggleExpanded();
+        Dispatcher.UIThread.RunJobs();
+        var collapsed = (vm.ImageWidth.Value, vm.ImageHeight.Value, vm.ScrollViewerHeight.Value);
+
+        Assert.Equal(GalleryMode.Docked, tab.Gallery.ShownMode.Value);
+        Assert.Equal(docked, expanded);
+        Assert.Equal(docked, collapsed);
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public void Follow_ExpandedGalleryStopsReturningToDocked_GivesBackTheReserve()
+    {
+        var (fitter, vm, window) = CreateShownWindow(800, 600);
+        using var following = fitter.Follow();
+        var tab = vm.WindowTabs.ActiveTab.Value;
+        tab.Gallery.Initialize(_core.GallerySettings);
+        tab.Display(Model("a.jpg", 1600, 1200));
+        Dispatcher.UIThread.RunJobs();
+        var heightWithoutGallery = vm.ImageHeight.Value;
+        tab.Gallery.Switcher.Start(docked: true);
+        tab.Gallery.Switcher.ToggleExpanded();
+        Dispatcher.UIThread.RunJobs();
+        Assert.True(vm.ImageHeight.Value < heightWithoutGallery);
+
+        // Expanded still, but it now gives back Closed
+        _ = tab.Gallery.Switcher.ToggleDocked();
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Equal(GalleryMode.Expanded, tab.Gallery.ShownMode.Value);
+        Assert.Equal(heightWithoutGallery, vm.ImageHeight.Value, precision: 6);
         window.Close();
     }
 
