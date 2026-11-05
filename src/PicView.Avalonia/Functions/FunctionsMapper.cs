@@ -23,7 +23,6 @@ using PicView.Core.Keybindings;
 using PicView.Core.Navigation;
 using PicView.Avalonia.StartUp;
 using PicView.Core.ViewModels;
-using R3;
 
 namespace PicView.Avalonia.Functions;
 
@@ -398,48 +397,6 @@ public class FunctionsMapper : IActionRunner
 
     #endregion
 
-    #region Toggle UI functions
-    
-    // The write-through saves, and what reacts to the setting subscribes (ADR-0020)
-    private ValueTask Toggle(BindableReactiveProperty<bool> setting)
-    {
-        setting.Value = !setting.Value;
-        return ValueTask.CompletedTask;
-    }
-
-    private ValueTask ToggleScroll()
-    {
-        _ = Toggle(_vm.GlobalSettings.IsScrollingEnabled);
-        _ = TooltipHelper.ShowTooltipMessageAsync(_vm.GlobalSettings.ScrollingText.Value ?? string.Empty, false, _mainWindow, TimeSpan.FromSeconds(1.5));
-        return ValueTask.CompletedTask;
-    }
-
-    private ValueTask ToggleLooping()
-    {
-        _ = Toggle(_vm.GlobalSettings.IsLooping);
-        _ = TooltipHelper.ShowTooltipMessageAsync(_vm.GlobalSettings.LoopingText.Value ?? string.Empty, false, _mainWindow, TimeSpan.FromSeconds(1.5));
-        return ValueTask.CompletedTask;
-    }
-
-    private ValueTask ToggleInterface()
-    {
-        _ = Toggle(_vm.GlobalSettings.ShowInterface);
-        _vm.TopTitlebarViewModel.CloseDropDownMenu();
-        return ValueTask.CompletedTask;
-    }
-
-    private ValueTask ToggleHoverBar() => Toggle(_vm.GlobalSettings.ShowHoverBar);
-
-    private ValueTask ToggleSubdirectories() => Toggle(_vm.GlobalSettings.IsIncludingSubdirectories);
-
-    private ValueTask ToggleBottomToolbar() => Toggle(_vm.GlobalSettings.ShowBottomBar);
-
-    private ValueTask ToggleTaskbarProgress() => Toggle(_vm.GlobalSettings.IsShowingTaskbarProgress);
-
-    private ValueTask ToggleConstrainBackgroundColor() => Toggle(_vm.GlobalSettings.IsConstrainingBackgroundColor);
-
-    #endregion
-
     #region Gallery functions
 
     private ValueTask ToggleGallery()
@@ -545,7 +502,7 @@ public class FunctionsMapper : IActionRunner
 
     #region Image Scaling and Window Behavior
     
-    private ValueTask ZoomToFit() => Toggle(_vm.GlobalSettings.IsZoomedToFit);
+    private ValueTask ZoomToFit() => ToggleHelper.Toggle(_vm.GlobalSettings.IsZoomedToFit);
     
     /// <inheritdoc cref="WindowFunctions.ToggleAutoFit" />
     private async ValueTask AutoFitWindow() =>
@@ -564,7 +521,28 @@ public class FunctionsMapper : IActionRunner
     /// <summary>
     /// Turns top most on or off for every Main Window.
     /// </summary>
-    private ValueTask SetTopMost() => Toggle(_vm.GlobalSettings.IsTopMost);
+    private ValueTask SetTopMost() => ToggleHelper.Toggle(_vm.GlobalSettings.IsTopMost);
+
+    #endregion
+    
+    
+    #region Toggle UI functions
+
+    private ValueTask ToggleScroll() => ToggleHelper.ToggleScroll(_vm, _mainWindow);
+
+    private ValueTask ToggleLooping() => ToggleHelper.ToggleLooping(_vm, _mainWindow);
+
+    private ValueTask ToggleInterface() => ToggleHelper.ToggleInterface(_vm, _mainWindow);
+
+    private ValueTask ToggleHoverBar() => ToggleHelper.ToggleHoverBar(_vm);
+
+    private ValueTask ToggleSubdirectories() => ToggleHelper.ToggleSubdirectories(_vm);
+
+    private ValueTask ToggleBottomToolbar() => ToggleHelper.ToggleBottomToolbar(_vm);
+
+    private ValueTask ToggleTaskbarProgress() => ToggleHelper.ToggleTaskbarProgress(_vm);
+
+    private ValueTask ToggleConstrainBackgroundColor() => ToggleHelper.ToggleConstrainBackgroundColor(_vm);
 
     #endregion
 
@@ -713,7 +691,7 @@ public class FunctionsMapper : IActionRunner
     private async ValueTask ChangeBackground() =>
         await BackgroundManager.ChangeBackgroundAsync(_vm).ConfigureAwait(false);
 
-    private ValueTask SideBySide() => Toggle(_vm.GlobalSettings.IsSideBySide);
+    private ValueTask SideBySide() => ToggleHelper.Toggle(_vm.GlobalSettings.IsSideBySide);
 
     /// <inheritdoc cref="Core.Navigation.Interfaces.IImageIterator.ReloadAsync"/>
     private async ValueTask Reload()
@@ -882,11 +860,11 @@ public class FunctionsMapper : IActionRunner
 
     private ValueTask ShowFavoritesFile() => PlatformActions.ShowFile(_vm, FavoritesManager.CurrentFavoritesFile);
     
-    private ValueTask ToggleOpeningInSameWindow() => Toggle(_vm.GlobalSettings.IsOpeningInSameWindow);
+    private ValueTask ToggleOpeningInSameWindow() => ToggleHelper.Toggle(_vm.GlobalSettings.IsOpeningInSameWindow);
 
-    private ValueTask ToggleFileHistory() => Toggle(_vm.GlobalSettings.IsFileHistoryEnabled);
+    private ValueTask ToggleFileHistory() => ToggleHelper.Toggle(_vm.GlobalSettings.IsFileHistoryEnabled);
 
-    private ValueTask ToggleShowFullPathInTitleBar() => Toggle(_vm.GlobalSettings.IsShowingFullPathInTitleBar);
+    private ValueTask ToggleShowFullPathInTitleBar() => ToggleHelper.Toggle(_vm.GlobalSettings.IsShowingFullPathInTitleBar);
 
     #endregion
     

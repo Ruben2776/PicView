@@ -94,7 +94,7 @@ public class App : Application, IPlatformSpecificService
    public async Task<bool> CutFile(string filePath)
    {
        // Cut isn't a supported operation on macOS
-       await _coreViewModel.MainWindows.ActiveWindow.CurrentValue.ActionRunner.Run(Actions.CopyFile);
+       await _coreViewModel.MainWindows.ActiveWindow.CurrentValue.ActionRunner.Run(Actions.CopyFile).ConfigureAwait(false);
        return true;
    }
     
@@ -150,7 +150,7 @@ public class App : Application, IPlatformSpecificService
 
     public async Task SetAsWallpaper(string path, int wallpaperStyle)
     {
-         await WallpaperHelper.SetWallpaper(path);
+         await WallpaperHelper.SetWallpaper(path).ConfigureAwait(false);
     }
 
     public bool SetAsLockScreen(string path)
@@ -190,9 +190,9 @@ public class App : Application, IPlatformSpecificService
     {
         if (recycle)
         {
-            return await Task.Run(() => OsxFileHelper.MoveFileToRecycleBinAsync(path));
+            return await Task.Run(() => OsxFileHelper.MoveFileToRecycleBinAsync(path)).ConfigureAwait(false);
         }
-        await Task.Run(() => File.Delete(path));
+        await Task.Run(() => File.Delete(path)).ConfigureAwait(false);
         return !File.Exists(path); 
     }
 
