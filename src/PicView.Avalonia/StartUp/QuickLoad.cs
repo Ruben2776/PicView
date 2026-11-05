@@ -295,7 +295,6 @@ public static class QuickLoad
         Dispatcher.UIThread.Post(() =>
         {
             mainWindow.Show();
-            mainWindow.WindowFitter.Refit();
             mainWindow.SetLayoutSizeAndVisibility(mainWindow.Bounds.Width);
         }, DispatcherPriority.Background);
         return result;

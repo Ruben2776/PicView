@@ -36,6 +36,10 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
     private ScreenSize? _fittedScreen;
     private int _isFitBeforeFramePending;
     private int _isFitAfterLayoutPending;
+    private int _isFitForNewImagePending;
+
+    // The tab whose new image the pending Fit is for; written on the thread that showed it
+    private TabViewModel? _tabWithNewImage;
 
     // The window size the last image's Fit gave, or the start-up menu's before any, which a tab without an image keeps
     private Size? _fittedWindowSize;
@@ -113,14 +117,14 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
     }
 
     /// <summary>
-    /// Fits the window again whenever one of the Fit inputs it watches changes: another tab becomes active, the active
-    /// tab is turned or flipped, the tab strip or a bar shows or hides, the Window Mode changes, or zoom to fit, scrolling or side by side
-    /// turns on or off. Changes that come together give one Fit, before the
-    /// next frame is drawn, so the window never shows them at the old size. Without AutoFit the Fit reads the laid-out
-    /// view, so it is fitted once more after layout.
+    /// Fits the window again whenever one of the Fit inputs it watches changes: the active tab shows a new image,
+    /// another tab becomes active, the active tab is turned or flipped, the tab strip or a bar shows or hides, the
+    /// Window Mode changes, or zoom to fit, scrolling or side by side turns on or off. A new image is fitted at the
+    /// highest priority and published with the cause <see cref="FitCause.NewImage"/>. Other changes that come together
+    /// give one Fit, before the next frame is drawn, so the window never shows them at the old size. Without AutoFit
+    /// the Fit reads the laid-out view, so it is fitted once more after layout.
     /// </summary>
-    /// <remarks>A new image, screen changes, resizing by hand, and the gallery still ask for a Fit
-    /// themselves: the image path reads the Fit's zoom right after it.</remarks>
+    /// <remarks>Screen changes, resizing by hand, and the gallery still ask for a Fit themselves.</remarks>
     /// <returns>What stops following the inputs.</returns>
     public IDisposable Follow()
     {
@@ -130,6 +134,10 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
         }
 
         return Disposable.Combine(
+            // Only the shown tab's images, so a tab loading in the background fits nothing
+            vm.WindowTabs.ActiveTab.Select(static tab =>
+                    tab.Shown.Where(static change => change is ShownChange.Image).Select(_ => tab)).Switch()
+                .Subscribe(FitForNewImageSoon),
             vm.WindowTabs.ActiveTab.Skip(1).Subscribe(_ => FitSoon()),
             // Only the shown tab's Orientation, so turning a tab in the background fits nothing
             vm.WindowTabs.ActiveTab.Select(static tab => tab.Orientation.Current.Skip(1)).Switch()
@@ -140,6 +148,36 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
             vm.GlobalSettings.IsZoomedToFit.Skip(1).Subscribe(_ => FitSoon()),
             vm.GlobalSettings.IsScrollingEnabled.Skip(1).Subscribe(_ => FitSoon()),
             vm.GlobalSettings.IsSideBySide.Skip(1).Subscribe(_ => FitSoon()));
+    }
+
+    // The tab may show its image on a thread-pool thread, as a Load does. Posted, never invoked, so that thread does
+    // not wait for the window, and at the highest priority, so the Fit runs before work posted after the image showed
+    private void FitForNewImageSoon(TabViewModel tab)
+    {
+        Volatile.Write(ref _tabWithNewImage, tab);
+        if (Interlocked.Exchange(ref _isFitForNewImagePending, 1) is not 0)
+        {
+            return;
+        }
+
+        Dispatcher.UIThread.Post(() =>
+        {
+            Interlocked.Exchange(ref _isFitForNewImagePending, 0);
+            FitNewImage(Volatile.Read(ref _tabWithNewImage));
+        }, DispatcherPriority.Send);
+    }
+
+    private void FitNewImage(TabViewModel? tab)
+    {
+        // A tab closed meanwhile is no longer the active one; switching to another tab fits that one as an input
+        if (window.DataContext is not MainWindowViewModel vm || tab is null ||
+            !ReferenceEquals(tab, vm.WindowTabs.ActiveTab.CurrentValue) ||
+            PixelSizes.Of(tab, vm.WindowTabs.SharedCache, Settings.ImageScaling.ShowImageSideBySide) is not { } sizes)
+        {
+            return;
+        }
+
+        Fit(vm, sizes, FitCause.NewImage);
     }
 
     private void FitSoon()
@@ -292,6 +330,12 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
         vm.ImageHeight.Value = fit.Height;
 
         Apply(vm, WindowSizingPlan.For(state.Mode, state.AutoFit, window.IsVisible, fit, screen));
+        // A Fit posted before the window disposed its fitter still runs, and must not throw
+        if (_fits.IsDisposed)
+        {
+            return true;
+        }
+
         _fits.OnNext(new Fitted(fit, cause));
         return true;
     }

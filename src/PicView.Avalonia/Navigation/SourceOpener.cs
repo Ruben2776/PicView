@@ -75,10 +75,6 @@ public static class SourceOpener
         {
             Settings.StartUp.StartUpDirectory = rootDirectory;
         }
-        await Dispatcher.UIThread.InvokeAsync(() =>
-        {
-            mainWindow.WindowFitter.Refit();
-        });
         return result;
     }
 

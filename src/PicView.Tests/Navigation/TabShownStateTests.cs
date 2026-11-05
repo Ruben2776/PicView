@@ -226,6 +226,40 @@ public class TabShownStateTests
     }
 
     [Fact]
+    public void Publish_ImageWhileZoomResetsOnChange_ResetsOrientation()
+    {
+        Settings.Zoom.ResetZoomOnChange = true;
+        _tab.Orientation.TurnRight();
+
+        _tab.Display(Model("a.jpg"));
+
+        Assert.Equal(0, _tab.Orientation.Current.CurrentValue.QuarterTurns);
+    }
+
+    [Fact]
+    public void Publish_ImageWhileZoomKeeps_KeepsOrientation()
+    {
+        Settings.Zoom.ResetZoomOnChange = false;
+        _tab.Orientation.TurnRight();
+
+        _tab.Display(Model("a.jpg"));
+
+        Assert.Equal(1, _tab.Orientation.Current.CurrentValue.QuarterTurns);
+    }
+
+    [Fact]
+    public void DisplaySingleImage_ResetsOrientation()
+    {
+        // A Single Image is shown upright and unflipped, whatever the setting
+        Settings.Zoom.ResetZoomOnChange = false;
+        _tab.Orientation.TurnRight();
+
+        _tab.DisplaySingleImage(new ImageModel { Image = new object() }, SingleImageType.Clipboard);
+
+        Assert.Equal(0, _tab.Orientation.Current.CurrentValue.QuarterTurns);
+    }
+
+    [Fact]
     public void Display_AfterDispose_DoesNotThrow()
     {
         // A load that ends after its tab closed shows into a disposed tab, which must stay harmless

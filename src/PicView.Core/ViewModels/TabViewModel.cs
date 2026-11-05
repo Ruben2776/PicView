@@ -234,6 +234,8 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
         if (change is ShownChange.Image && Settings.Zoom.ResetZoomOnChange)
         {
             Zoom.ResetFactor();
+            // Here, before the shown mark, so the fitter reads the upright image in the Fit that follows it (ADR-0023)
+            Orientation.Reset();
         }
 
         // The titles are marked after the image bindable is set and before the UI reacts
@@ -273,6 +275,11 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
         _singleImageTitle = title;
         ShowModels(model, null);
         RecordShown();
+        // A Single Image is shown upright and unflipped, whatever the zoom setting; a closed tab has no Orientation
+        if (!IsDisposed)
+        {
+            Orientation.Reset();
+        }
         Publish(ShownChange.Image);
     }
 

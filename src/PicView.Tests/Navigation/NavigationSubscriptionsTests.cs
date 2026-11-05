@@ -16,6 +16,7 @@ using PicView.Core.Models;
 using PicView.Core.ViewModels;
 using PicView.Core.Sizing;
 using PicView.Tests.WindowBehavior;
+using R3;
 
 namespace PicView.Tests.Navigation;
 
@@ -45,19 +46,51 @@ public class NavigationSubscriptionsTests
     }
 
     [AvaloniaFact]
-    public void Display_AfterAttachWithImageViewer_RunsTheReactionOnce()
+    public void NewImageFitted_ResetsTheViewerAfterTheFit()
     {
+        // AutoFit fits against the screen, which a test window has; a fixed window would read no content size
+        Settings.WindowProperties.AutoFit = true;
+        Settings.Zoom.ResetZoomOnChange = true;
         WithWindow((window, vm, hookups, tab) =>
         {
-            ViewerOf(tab);
-            using var attached = hookups.Attach(tab);
-            tab.Orientation.TurnRight();
-
+            // Not attached: the viewer follows the window's Fits, not the tab
+            var viewer = ViewerOf(tab);
             tab.Display(BitmapModel("a.jpg"));
             Dispatcher.UIThread.RunJobs();
+            ((IZoomScrollTarget)viewer).ZoomAt(zoomIn: true, new Point(1, 1));
+            var control = viewer.FindControl<ZoomPanControl>("ZoomPanControl")!;
+            var zoomedScale = control.Scale;
 
-            // The reaction resets the orientation, as zoom resets on image change by default
-            Assert.Equal(Orientation.Upright, tab.Orientation.Current.CurrentValue);
+            tab.Display(BitmapModel("b.jpg", 4000, 4000));
+            Dispatcher.UIThread.RunJobs();
+
+            Assert.NotEqual(1, zoomedScale);
+            Assert.Equal(1, control.Scale);
+            Assert.Equal(Convert.ToInt32(tab.Zoom.FitScale * 100), tab.Zoom.Level.CurrentValue);
+        });
+    }
+
+    [AvaloniaFact]
+    public void InputFit_LeavesTheViewerAlone()
+    {
+        Settings.WindowProperties.AutoFit = true;
+        WithWindow((window, vm, hookups, tab) =>
+        {
+            var viewer = ViewerOf(tab);
+            tab.Display(BitmapModel("a.jpg"));
+            Dispatcher.UIThread.RunJobs();
+            ((IZoomScrollTarget)viewer).ZoomAt(zoomIn: true, new Point(1, 1));
+            var control = viewer.FindControl<ZoomPanControl>("ZoomPanControl")!;
+            var zoomedScale = control.Scale;
+            var causes = new List<FitCause>();
+            using var listening = window.WindowFitter.Fits.Subscribe(fitted => causes.Add(fitted.Cause));
+
+            vm.GlobalSettings.IsZoomedToFit.Value = !vm.GlobalSettings.IsZoomedToFit.Value;
+            Dispatcher.UIThread.RunJobs();
+
+            Assert.Contains(FitCause.Input, causes);
+            Assert.NotEqual(1, zoomedScale);
+            Assert.Equal(zoomedScale, control.Scale);
         });
     }
 
@@ -96,40 +129,41 @@ public class NavigationSubscriptionsTests
     }
 
     [AvaloniaFact]
-    public void Display_WhileViewIsNotAnImageViewer_DoesNothing()
+    public void NewImageFitted_WhileViewIsNotAnImageViewer_KeepsTheView()
     {
+        Settings.WindowProperties.AutoFit = true;
         WithWindow((window, vm, hookups, tab) =>
         {
             // A tab that shows an image derives the viewer unless it crops
             tab.Crop = new CropViewModel();
             using var attached = hookups.Attach(tab);
-            tab.Orientation.TurnRight();
+            var causes = new List<FitCause>();
+            using var listening = window.WindowFitter.Fits.Subscribe(fitted => causes.Add(fitted.Cause));
 
             tab.Display(BitmapModel("a.jpg"));
             Dispatcher.UIThread.RunJobs();
 
+            Assert.Equal([FitCause.NewImage], causes);
             Assert.IsType<CropControl>(tab.CurrentView.Value);
-            Assert.Equal(1, tab.Orientation.Current.CurrentValue.QuarterTurns);
         });
     }
 
     [AvaloniaFact]
-    public void Display_Reaction_RunsBeforeWorkPostedAfterIt()
+    public void Display_Fit_RunsBeforeWorkPostedAfterIt()
     {
+        Settings.WindowProperties.AutoFit = true;
         WithWindow((window, vm, hookups, tab) =>
         {
             ViewerOf(tab);
             using var attached = hookups.Attach(tab);
-            tab.Orientation.TurnRight();
-            var turnsWhenLaterWorkRan = -1;
+            var widthWhenLaterWorkRan = double.NaN;
 
             // As QuickLoad posts the Center after the first image, at the highest priority
-            tab.Display(BitmapModel("a.jpg"));
-            Dispatcher.UIThread.Post(() => turnsWhenLaterWorkRan = tab.Orientation.Current.CurrentValue.QuarterTurns,
-                DispatcherPriority.Send);
+            tab.Display(BitmapModel("a.jpg", 400, 300));
+            Dispatcher.UIThread.Post(() => widthWhenLaterWorkRan = vm.ImageWidth.Value, DispatcherPriority.Send);
             Dispatcher.UIThread.RunJobs();
 
-            Assert.Equal(0, turnsWhenLaterWorkRan);
+            Assert.Equal(400, widthWhenLaterWorkRan);
         });
     }
 
@@ -196,7 +230,9 @@ public class NavigationSubscriptionsTests
         {
             window.Show();
             Dispatcher.UIThread.RunJobs();
-            test(window, vm, new NavigationSubscriptions(window, vm), tab);
+            var hookups = new NavigationSubscriptions(window, vm);
+            using var following = window.WindowFitter.Follow();
+            test(window, vm, hookups, tab);
         }
         finally
         {

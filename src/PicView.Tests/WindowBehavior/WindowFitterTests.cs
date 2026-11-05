@@ -439,8 +439,9 @@ public class WindowFitterTests
     public void Follow_WindowMinimized_FitsNothing()
     {
         var (fitter, vm, window) = CreateShownWindow(800, 600);
-        using var following = fitter.Follow();
+        // Shown before following, so only the minimizing could fit it
         vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 400, 300));
+        using var following = fitter.Follow();
 
         vm.WindowModeState.Value = vm.WindowModeState.Value.OnNativeState(WindowMode.Minimized);
         Dispatcher.UIThread.RunJobs();
@@ -496,7 +497,7 @@ public class WindowFitterTests
         var fits = new List<Fitted>();
         using var listening = fitter.Fits.Subscribe(fits.Add);
         vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 400, 300));
-        fitter.Refit();
+        Dispatcher.UIThread.RunJobs();
         fits.Clear();
 
         vm.GlobalSettings.IsZoomedToFit.Value = true;
@@ -507,6 +508,106 @@ public class WindowFitterTests
         var fit = fits[^1];
         Assert.All(fits, published => Assert.Equal(FitCause.Input, published.Cause));
         Assert.Equal(vm.ImageWidth.Value, fit.Fit.Width);
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public void Follow_NewImageShown_FitsOnceAtSendWithCauseNewImage()
+    {
+        var (fitter, vm, window) = CreateShownWindow(800, 600);
+        using var following = fitter.Follow();
+        var fits = new List<Fitted>();
+        using var listening = fitter.Fits.Subscribe(fits.Add);
+
+        vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 400, 300));
+        Dispatcher.UIThread.RunJobs(DispatcherPriority.Send);
+
+        var fit = Assert.Single(fits);
+        Assert.Equal(FitCause.NewImage, fit.Cause);
+        Assert.Equal(400, vm.ImageWidth.Value);
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public void Follow_ShownFileRenamed_FitsNothing()
+    {
+        var (fitter, vm, window) = CreateShownWindow(800, 600);
+        using var following = fitter.Follow();
+        var tab = vm.WindowTabs.ActiveTab.Value;
+        var model = Model("a.jpg", 400, 300);
+        tab.Display(model);
+        Dispatcher.UIThread.RunJobs();
+        var fits = new List<Fitted>();
+        using var listening = fitter.Fits.Subscribe(fits.Add);
+
+        tab.UpdateShownFile(model.FileInfo!.FullName, new FileInfo("b.jpg"));
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Empty(fits);
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public void Follow_NewImageAndTurnTogether_FitsOncePerPriority()
+    {
+        // AutoFit, so the turn is not fitted once more after layout
+        Settings.WindowProperties.AutoFit = true;
+        var (fitter, vm, window) = CreateShownWindow(800, 600);
+        using var following = fitter.Follow();
+        var fits = new List<Fitted>();
+        using var listening = fitter.Fits.Subscribe(fits.Add);
+        var tab = vm.WindowTabs.ActiveTab.Value;
+
+        tab.Display(Model("a.jpg", 1600, 400));
+        tab.Orientation.TurnRight();
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Equal([FitCause.NewImage, FitCause.Input], fits.Select(static fitted => fitted.Cause));
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public void Follow_SwitchToATabStillLoading_FitsWhenItsImageShows()
+    {
+        var (fitter, vm, window) = CreateShownWindow(800, 600);
+        using var following = fitter.Follow();
+        var fits = new List<Fitted>();
+        using var listening = fitter.Fits.Subscribe(fits.Add);
+        var loading = vm.WindowTabs.CreateTab();
+        loading.SetLoading();
+        Dispatcher.UIThread.RunJobs();
+        var fitsWhileLoading = fits.Count;
+
+        loading.Display(Model("b.jpg", 400, 300));
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Equal(0, fitsWhileLoading);
+        var fit = Assert.Single(fits);
+        Assert.Equal(FitCause.NewImage, fit.Cause);
+        Assert.Equal(400, vm.ImageWidth.Value);
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public void Follow_TabClosesBeforeItsFit_PublishesNoNewImage()
+    {
+        var (fitter, vm, window) = CreateShownWindow(800, 600);
+        using var following = fitter.Follow();
+        var first = vm.WindowTabs.ActiveTab.Value;
+        first.Display(Model("a.jpg", 400, 300));
+        var second = vm.WindowTabs.CreateTab();
+        Dispatcher.UIThread.RunJobs();
+        var fits = new List<Fitted>();
+        using var listening = fitter.Fits.Subscribe(fits.Add);
+
+        // Closing it disposes it and shows the first tab, whose image is not new, so only that switch is fitted
+        second.Display(Model("b.jpg", 200, 100));
+        vm.WindowTabs.CloseTab(second);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.NotEmpty(fits);
+        Assert.All(fits, fitted => Assert.Equal(FitCause.Input, fitted.Cause));
+        Assert.Equal(400, vm.ImageWidth.Value);
         window.Close();
     }
 
