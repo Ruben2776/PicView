@@ -60,13 +60,72 @@ public class NavigationSubscriptionsTests
             ((IZoomScrollTarget)viewer).ZoomAt(zoomIn: true, new Point(1, 1));
             var control = viewer.FindControl<ZoomPanControl>("ZoomPanControl")!;
             var zoomedScale = control.Scale;
+            var widthWhenTheControlReset = double.NaN;
+            control.ScaleChanged += _ => widthWhenTheControlReset = vm.ImageWidth.Value;
 
+            // Larger than the screen, so its Fit gives another width than the first image's
             tab.Display(BitmapModel("b.jpg", 4000, 4000));
             Dispatcher.UIThread.RunJobs();
 
             Assert.NotEqual(1, zoomedScale);
             Assert.Equal(1, control.Scale);
+            Assert.InRange(tab.Zoom.FitScale, 0.01, 0.99);
+            // The Fit came first: the control reset after the new image's width was written
+            Assert.Equal(4000 * tab.Zoom.FitScale, widthWhenTheControlReset, 6);
             Assert.Equal(Convert.ToInt32(tab.Zoom.FitScale * 100), tab.Zoom.Level.CurrentValue);
+        });
+    }
+
+    [AvaloniaFact]
+    public void NewImageFitted_WhileZoomKeeps_KeepsTheViewersZoom()
+    {
+        Settings.WindowProperties.AutoFit = true;
+        Settings.Zoom.ResetZoomOnChange = false;
+        WithWindow((window, vm, hookups, tab) =>
+        {
+            var viewer = ViewerOf(tab);
+            tab.Display(BitmapModel("a.jpg"));
+            Dispatcher.UIThread.RunJobs();
+            ((IZoomScrollTarget)viewer).ZoomAt(zoomIn: true, new Point(1, 1));
+            var control = viewer.FindControl<ZoomPanControl>("ZoomPanControl")!;
+            var zoomedScale = control.Scale;
+            var causes = new List<FitCause>();
+            using var listening = window.WindowFitter.Fits.Subscribe(fitted => causes.Add(fitted.Cause));
+
+            tab.Display(BitmapModel("b.jpg", 4000, 4000));
+            Dispatcher.UIThread.RunJobs();
+
+            Assert.Contains(FitCause.NewImage, causes);
+            Assert.NotEqual(1, zoomedScale);
+            Assert.Equal(zoomedScale, control.Scale);
+        });
+    }
+
+    [AvaloniaFact]
+    public void NewImageWhileMinimized_ResetsTheViewerOnRestore()
+    {
+        Settings.WindowProperties.AutoFit = true;
+        Settings.Zoom.ResetZoomOnChange = true;
+        WithWindow((window, vm, hookups, tab) =>
+        {
+            var viewer = ViewerOf(tab);
+            tab.Display(BitmapModel("a.jpg"));
+            Dispatcher.UIThread.RunJobs();
+            ((IZoomScrollTarget)viewer).ZoomAt(zoomIn: true, new Point(1, 1));
+            var control = viewer.FindControl<ZoomPanControl>("ZoomPanControl")!;
+            var zoomedScale = control.Scale;
+            vm.WindowModeState.Value = vm.WindowModeState.Value.OnNativeState(WindowMode.Minimized);
+            Dispatcher.UIThread.RunJobs();
+            tab.Display(BitmapModel("b.jpg", 4000, 4000));
+            Dispatcher.UIThread.RunJobs();
+            var scaleWhileMinimized = control.Scale;
+
+            vm.WindowModeState.Value = vm.WindowModeState.Value.OnNativeState(WindowMode.Normal);
+            Dispatcher.UIThread.RunJobs();
+
+            Assert.NotEqual(1, zoomedScale);
+            Assert.Equal(zoomedScale, scaleWhileMinimized);
+            Assert.Equal(1, control.Scale);
         });
     }
 

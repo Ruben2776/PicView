@@ -612,6 +612,46 @@ public class WindowFitterTests
     }
 
     [AvaloniaFact]
+    public void Follow_NewImageWhileMinimized_PublishesItAsNewImageOnRestore()
+    {
+        var (fitter, vm, window) = CreateShownWindow(800, 600);
+        using var following = fitter.Follow();
+        var fits = new List<Fitted>();
+        using var listening = fitter.Fits.Subscribe(fits.Add);
+        vm.WindowModeState.Value = vm.WindowModeState.Value.OnNativeState(WindowMode.Minimized);
+        Dispatcher.UIThread.RunJobs();
+
+        vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 400, 300));
+        Dispatcher.UIThread.RunJobs();
+        var fitsWhileMinimized = fits.Count;
+        vm.WindowModeState.Value = vm.WindowModeState.Value.OnNativeState(WindowMode.Normal);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Equal(0, fitsWhileMinimized);
+        // The restore's Fit is the first that applies, so it carries the new image; the one after layout does not
+        Assert.Equal(FitCause.NewImage, fits[0].Cause);
+        Assert.Single(fits, static fitted => fitted.Cause is FitCause.NewImage);
+        Assert.Equal(400, vm.ImageWidth.Value);
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public void Follow_FitterDisposedBeforeTheNewImagesFit_DoesNotThrow()
+    {
+        var (fitter, vm, window) = CreateShownWindow(800, 600);
+        using var following = fitter.Follow();
+        vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 400, 300));
+
+        fitter.Dispose();
+        var thrown = Record.Exception(() => Dispatcher.UIThread.RunJobs());
+
+        Assert.Null(thrown);
+        // The Fit still applies; only its publishing is skipped
+        Assert.Equal(400, vm.ImageWidth.Value);
+        window.Close();
+    }
+
+    [AvaloniaFact]
     public void IsOnAnotherScreen_AfterTheWindowMovesToAnotherMonitor_IsTrueUntilItIsFittedThere()
     {
         var screen = Screen(1920, 1040);

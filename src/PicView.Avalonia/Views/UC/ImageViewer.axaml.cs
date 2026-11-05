@@ -415,9 +415,11 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
     /// </summary>
     private void ShowFlip(double scaleX)
     {
+        // Posted, never invoked: a tab resets its Orientation on the thread that shows its next image, and only the
+        // picture waits for this, not that thread
         if (!Dispatcher.UIThread.CheckAccess())
         {
-            Dispatcher.UIThread.Invoke(() => ShowFlip(scaleX), DispatcherPriority.Send);
+            Dispatcher.UIThread.Post(() => ShowFlip(scaleX), DispatcherPriority.Send);
             return;
         }
 

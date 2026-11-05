@@ -41,6 +41,9 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
     // The tab whose new image the pending Fit is for; written on the thread that showed it
     private TabViewModel? _tabWithNewImage;
 
+    // Whether a new image is shown that no applied Fit has followed yet. Read and written on the UI thread
+    private bool _isNewImageFitOwed;
+
     // The window size the last image's Fit gave, or the start-up menu's before any, which a tab without an image keeps
     private Size? _fittedWindowSize;
 
@@ -171,13 +174,21 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
     {
         // A tab closed meanwhile is no longer the active one; switching to another tab fits that one as an input
         if (window.DataContext is not MainWindowViewModel vm || tab is null ||
-            !ReferenceEquals(tab, vm.WindowTabs.ActiveTab.CurrentValue) ||
+            !ReferenceEquals(tab, vm.WindowTabs.ActiveTab.CurrentValue))
+        {
+            return;
+        }
+
+        // Owed until a Fit applies: the tab already reset its Zoom Factor, so the viewer must still reset its control
+        // to meet it, also when this Fit cannot be made and a later input's Fit is the first that applies
+        _isNewImageFitOwed = true;
+        if (vm.WindowModeState.CurrentValue.Mode is WindowMode.Minimized ||
             PixelSizes.Of(tab, vm.WindowTabs.SharedCache, Settings.ImageScaling.ShowImageSideBySide) is not { } sizes)
         {
             return;
         }
 
-        Fit(vm, sizes, FitCause.NewImage);
+        Fit(vm, sizes);
     }
 
     private void FitSoon()
@@ -295,7 +306,9 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
         }
     }
 
-    private bool Fit(MainWindowViewModel vm, PixelSizes sizes, FitCause cause = FitCause.Input)
+    // Published with the cause NewImage when it is the first Fit that applies since a new image showed, whatever asked
+    // for it, else with the cause Input
+    private bool Fit(MainWindowViewModel vm, PixelSizes sizes)
     {
         var state = vm.WindowModeState.CurrentValue;
         var contentSize = _readContentSize();
@@ -330,6 +343,8 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
         vm.ImageHeight.Value = fit.Height;
 
         Apply(vm, WindowSizingPlan.For(state.Mode, state.AutoFit, window.IsVisible, fit, screen));
+        var cause = _isNewImageFitOwed ? FitCause.NewImage : FitCause.Input;
+        _isNewImageFitOwed = false;
         // A Fit posted before the window disposed its fitter still runs, and must not throw
         if (_fits.IsDisposed)
         {
