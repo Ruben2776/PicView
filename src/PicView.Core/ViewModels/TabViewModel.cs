@@ -55,6 +55,14 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
     internal IDisposable? Hookups { get; set; }
 
     /// <summary>
+    /// The views this tab's Main Window makes for it while it is attached there (ADR-0022). Only the window's
+    /// <see cref="TabOverviewViewModel"/> sets them.
+    /// </summary>
+    internal ITabViews? Views { get; private set; }
+
+    internal void SetViews(ITabViews? views) => Views = views;
+
+    /// <summary>
     /// Whether the tab has been opened, which attaches it to its window. A tab that never browsed files is not.
     /// </summary>
     public bool IsInitialized { get; internal set; }
@@ -870,6 +878,7 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
         Orientation.Dispose();
         Zoom.Dispose();
         Hookups?.Dispose();
+        Views?.Dispose();
         _titles?.Dispose();
         _viewKind.Dispose();
         _shown.Dispose();

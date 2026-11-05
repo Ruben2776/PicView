@@ -38,6 +38,7 @@ public class TabOverviewViewModel
     // The Main Window these tabs belong to
     private readonly MainWindowViewModel _parentVm;
     private ITabHookups? _hookups;
+    private ITabViewFactory? _viewFactory;
     private bool _isTornDown;
 
     /// <param name="parentVm">The Main Window these tabs belong to.</param>
@@ -91,10 +92,34 @@ public class TabOverviewViewModel
         tab.Hookups = _hookups.Attach(tab);
     }
 
+    /// <summary>
+    /// Gives this window how it makes each tab's views, and attaches every tab already in it, such as a tab it opened
+    /// with after a move. Called once, when the window is created.
+    /// </summary>
+    public void SetViewFactory(ITabViewFactory factory)
+    {
+        _viewFactory = factory;
+        foreach (var tab in Tabs.Value)
+        {
+            AttachViews(tab);
+        }
+    }
+
+    private void AttachViews(TabViewModel tab)
+    {
+        if (_viewFactory is null || tab.Views is not null)
+        {
+            return;
+        }
+        tab.SetViews(_viewFactory.Attach(tab));
+    }
+
     private static void Detach(TabViewModel tab)
     {
         tab.Hookups?.Dispose();
         tab.Hookups = null;
+        tab.Views?.Dispose();
+        tab.SetViews(null);
     }
 
     /// <summary>
@@ -113,6 +138,7 @@ public class TabOverviewViewModel
     {
         var tab = new TabViewModel(_parentVm, Core?.Services);
         Tabs.Value.Add(tab);
+        AttachViews(tab);
         return tab;
     }
 
@@ -200,6 +226,7 @@ public class TabOverviewViewModel
     {
         Tabs.Value.Insert(Math.Clamp(index ?? Tabs.Value.Count, 0, Tabs.Value.Count), tab);
         tab.ParentWindowContext = _parentVm;
+        AttachViews(tab);
         Attach(tab);
         SelectTab(tab);
     }

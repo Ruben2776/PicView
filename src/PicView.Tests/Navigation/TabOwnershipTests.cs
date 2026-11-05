@@ -5,6 +5,7 @@ using PicView.Core.Models;
 using PicView.Core.Navigation;
 using PicView.Core.Navigation.Interfaces;
 using PicView.Core.ViewModels;
+using R3;
 
 namespace PicView.Tests.Navigation;
 
@@ -285,7 +286,74 @@ public class TabOwnershipTests
         Assert.Same(first.SharedThumbnailLoader, second.SharedThumbnailLoader);
     }
 
-    private MainWindowViewModel CreateWindow(ITabHookups? hookups = null, TabViewModel? firstTab = null)
+    [Fact]
+    public void SetViewFactory_AttachesTheInitialTab()
+    {
+        var factory = new RecordingViewFactory();
+        var window = CreateWindow(viewFactory: factory);
+
+        Assert.Equal([window.WindowTabs.ActiveTab.Value], factory.Attached);
+        Assert.NotNull(window.WindowTabs.ActiveTab.Value.Views);
+    }
+
+    [Fact]
+    public void CreateTab_AttachesTheNewTab()
+    {
+        var factory = new RecordingViewFactory();
+        var window = CreateWindow(viewFactory: factory);
+
+        var tab = window.WindowTabs.CreateTab();
+
+        Assert.Contains(tab, factory.Attached);
+        Assert.NotNull(tab.Views);
+    }
+
+    [Fact]
+    public void MoveTab_ReleasesItHereAndAttachesItThere()
+    {
+        var here = new RecordingViewFactory();
+        var there = new RecordingViewFactory();
+        var source = CreateWindow(viewFactory: here);
+        var target = CreateWindow(viewFactory: there);
+        var tab = source.WindowTabs.CreateTab();
+        var views = (FakeViews)tab.Views!;
+
+        source.WindowTabs.MoveTab(tab, target.WindowTabs);
+
+        Assert.True(views.IsDisposed);
+        Assert.Contains(tab, there.Attached);
+        Assert.NotSame(views, tab.Views);
+    }
+
+    [Fact]
+    public void CloseTab_ReleasesIt()
+    {
+        var factory = new RecordingViewFactory();
+        var window = CreateWindow(viewFactory: factory);
+        var tab = window.WindowTabs.CreateTab();
+        var views = (FakeViews)tab.Views!;
+
+        window.WindowTabs.CloseTab(tab);
+
+        Assert.True(views.IsDisposed);
+        Assert.Null(tab.Views);
+    }
+
+    [Fact]
+    public void SetViewFactory_WindowOpenedWithAMovedTab_AttachesIt()
+    {
+        var source = CreateWindow();
+        var tab = source.WindowTabs.CreateTab();
+        source.WindowTabs.MoveOut(tab);
+        var factory = new RecordingViewFactory();
+
+        CreateWindow(viewFactory: factory, firstTab: tab);
+
+        Assert.Equal([tab], factory.Attached);
+    }
+
+    private MainWindowViewModel CreateWindow(ITabHookups? hookups = null, TabViewModel? firstTab = null,
+        ITabViewFactory? viewFactory = null)
     {
         var vm = new MainWindowViewModel(_core, _core.Translation, _core.GlobalSettings!, _core.GallerySettings,
             firstTab);
@@ -293,7 +361,30 @@ public class TabOwnershipTests
         {
             vm.WindowTabs.SetHookups(hookups);
         }
+        if (viewFactory is not null)
+        {
+            vm.WindowTabs.SetViewFactory(viewFactory);
+        }
         return vm;
+    }
+
+    private sealed class RecordingViewFactory : ITabViewFactory
+    {
+        public List<TabViewModel> Attached { get; } = [];
+
+        public ITabViews Attach(TabViewModel tab)
+        {
+            Attached.Add(tab);
+            return new FakeViews();
+        }
+    }
+
+    private sealed class FakeViews : ITabViews
+    {
+        public BindableReactiveProperty<object?> Control { get; } = new();
+        public IReadOnlyBindableReactiveProperty<object?> View => Control;
+        public bool IsDisposed { get; private set; }
+        public void Dispose() => IsDisposed = true;
     }
 
     private sealed class RecordingHookups : ITabHookups
