@@ -17,7 +17,7 @@ namespace PicView.Avalonia.WindowBehavior;
 /// <param name="readContentSize">Reads the size of the window's content as it is now; the main view's by default.</param>
 /// <param name="readScreen">Reads the screen the window is on now; the one Avalonia reports by default.</param>
 public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize = null,
-    Func<ScreenSize>? readScreen = null)
+    Func<ScreenSize>? readScreen = null) : IDisposable
 {
     // Used when the window is not on any screen yet
     private static readonly ScreenSize NoScreen = new()
@@ -31,12 +31,25 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
     private readonly Func<ScreenSize> _readScreen = readScreen ?? (() =>
         ScreenOf(window));
 
+    private readonly Subject<Fitted> _fits = new();
+
     private ScreenSize? _fittedScreen;
     private int _isFitBeforeFramePending;
     private int _isFitAfterLayoutPending;
 
     // The window size the last image's Fit gave, or the start-up menu's before any, which a tab without an image keeps
     private Size? _fittedWindowSize;
+
+    /// <summary>
+    /// Each Fit the window applied, with its cause, published on the UI thread after the tab's Fit Scale, the view
+    /// model's sizes and the window's sizing were set. A Fit that could not be made publishes nothing.
+    /// </summary>
+    public Observable<Fitted> Fits => _fits;
+
+    /// <summary>
+    /// Ends <see cref="Fits"/>.
+    /// </summary>
+    public void Dispose() => _fits.Dispose();
 
     /// <summary>
     /// The screen the window is on now. Read on the UI thread.
@@ -109,7 +122,7 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
     /// <remarks>A new image, screen changes, resizing by hand, and the gallery still ask for a Fit
     /// themselves: the image path reads the Fit's zoom right after it.</remarks>
     /// <returns>What stops following the inputs.</returns>
-    public IDisposable FollowFitInputs()
+    public IDisposable Follow()
     {
         if (window.DataContext is not MainWindowViewModel vm)
         {
@@ -244,7 +257,7 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
         }
     }
 
-    private bool Fit(MainWindowViewModel vm, PixelSizes sizes)
+    private bool Fit(MainWindowViewModel vm, PixelSizes sizes, FitCause cause = FitCause.Input)
     {
         var state = vm.WindowModeState.CurrentValue;
         var contentSize = _readContentSize();
@@ -279,6 +292,7 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
         vm.ImageHeight.Value = fit.Height;
 
         Apply(vm, WindowSizingPlan.For(state.Mode, state.AutoFit, window.IsVisible, fit, screen));
+        _fits.OnNext(new Fitted(fit, cause));
         return true;
     }
 

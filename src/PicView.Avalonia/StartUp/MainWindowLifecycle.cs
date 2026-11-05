@@ -363,7 +363,8 @@ public sealed class MainWindowLifecycle
     {
         var vm = ViewModelOf(window);
         window.WindowModeSwitcher.Start(isAppStart);
-        window.Disposables.Add(window.WindowFitter.FollowFitInputs());
+        window.Disposables.Add(window.WindowFitter.Follow());
+        window.Disposables.Add(window.WindowFitter);
         window.Disposables.Add(FollowSettings(window));
         if (vm.IsFullscreen.Value)
         {
