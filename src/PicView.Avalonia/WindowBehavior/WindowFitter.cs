@@ -40,6 +40,9 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
     private int _isFitAfterLayoutPending;
     private int _isFitForNewImagePending;
 
+    // Set on Dispose; read by Fits posted earlier, which may run on a tab that is disposed by then
+    private volatile bool _isDisposed;
+
     // The tab whose new image the pending Fit is for; written on the thread that showed it
     private TabViewModel? _tabWithNewImage;
 
@@ -56,9 +59,13 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
     public Observable<Fitted> Fits => _fits;
 
     /// <summary>
-    /// Ends <see cref="Fits"/>.
+    /// Ends <see cref="Fits"/> and stops the Fits already posted, which may run after the window tore down its tabs.
     /// </summary>
-    public void Dispose() => _fits.Dispose();
+    public void Dispose()
+    {
+        _isDisposed = true;
+        _fits.Dispose();
+    }
 
     /// <summary>
     /// The screen the window is on now. Read on the UI thread.
@@ -126,10 +133,10 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
     /// another tab becomes active, the active tab is turned or flipped, the tab strip or a bar shows or hides, the
     /// Window Mode changes, zoom to fit, scrolling or side by side turns on or off, the active tab's gallery changes
     /// its mode, dock, size or stretch, the active tab changes its Tab View, as a crop opens or closes, or, in a Fixed
-    /// Window, its content is laid out at another size. A new image is
-    /// fitted at the highest priority and published with the cause <see cref="FitCause.NewImage"/>. Other changes that
-    /// come together give one Fit, before the next frame is drawn, so the window never shows them at the old size.
-    /// Without AutoFit the Fit reads the laid-out view, so it is fitted once more after layout.
+    /// Window, its content is laid out at another size. A new image is fitted at the highest priority and published
+    /// with the cause <see cref="FitCause.NewImage"/>. Other changes that come together give one Fit, before the next
+    /// frame is drawn, so the window never shows them at the old size. Without AutoFit the Fit reads the laid-out
+    /// view, so it is fitted once more after layout.
     /// </summary>
     /// <remarks>Screen changes and resizing by hand still ask for a Fit themselves.</remarks>
     /// <returns>What stops following the inputs.</returns>
@@ -231,7 +238,7 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
     private void FitNewImage(TabViewModel? tab)
     {
         // A tab closed meanwhile is no longer the active one; switching to another tab fits that one as an input
-        if (window.DataContext is not MainWindowViewModel vm || tab is null ||
+        if (_isDisposed || window.DataContext is not MainWindowViewModel vm || tab is null ||
             !ReferenceEquals(tab, vm.WindowTabs.ActiveTab.CurrentValue))
         {
             return;
@@ -272,7 +279,7 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
 
     private void FitWhatIsShown(bool afterLayout)
     {
-        if (window.DataContext is not MainWindowViewModel { WindowTabs.ActiveTab.CurrentValue: { } tab } vm)
+        if (_isDisposed || window.DataContext is not MainWindowViewModel { WindowTabs.ActiveTab.CurrentValue: { } tab } vm)
         {
             return;
         }

@@ -526,8 +526,7 @@ public class WindowFitterTests
         var fit = Assert.Single(fits);
         Assert.Equal(FitCause.NewImage, fit.Cause);
         Assert.Equal(400, vm.ImageWidth.Value);
-        // The tab's view changed with the image, which fits once more later; let it run before the window closes
-        Dispatcher.UIThread.RunJobs();
+        fitter.Dispose();
         window.Close();
     }
 
@@ -649,8 +648,8 @@ public class WindowFitterTests
         var thrown = Record.Exception(() => Dispatcher.UIThread.RunJobs());
 
         Assert.Null(thrown);
-        // The Fit still applies; only its publishing is skipped
-        Assert.Equal(400, vm.ImageWidth.Value);
+        // A disposed fitter applies no Fit that was posted before
+        Assert.True(double.IsNaN(vm.ImageWidth.Value));
         window.Close();
     }
 
@@ -744,6 +743,7 @@ public class WindowFitterTests
     [AvaloniaFact]
     public void Follow_CropOpens_FitsWithoutTheGallery()
     {
+        // Guards the gallery hiding; Follow_CropOpensBeforeAnyFit_FitsBeforeTheCropLaysOut proves the Tab View input
         var (fitter, vm, window) = CreateShownWindow(800, 600);
         using var following = fitter.Follow();
         var tab = vm.WindowTabs.ActiveTab.Value;
@@ -768,6 +768,7 @@ public class WindowFitterTests
     [AvaloniaFact]
     public void Follow_CropCloses_FitsWithTheGalleryBack()
     {
+        // Guards the gallery hiding; Follow_CropOpensBeforeAnyFit_FitsBeforeTheCropLaysOut proves the Tab View input
         var (fitter, vm, window) = CreateShownWindow(800, 600);
         using var following = fitter.Follow();
         var tab = vm.WindowTabs.ActiveTab.Value;
@@ -803,8 +804,26 @@ public class WindowFitterTests
         Dispatcher.UIThread.RunJobs(DispatcherPriority.Normal);
 
         Assert.False(double.IsNaN(vm.ImageWidth.Value));
-        // The Fit after layout is still pending; let it run before the window closes
+        fitter.Dispose();
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public void Dispose_WithAFitPending_LetsItRunAfterTheTabsAreTornDownWithoutThrowing()
+    {
+        var (fitter, vm, window) = CreateShownWindow(800, 600);
+        using var following = fitter.Follow();
+        vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 400, 300));
         Dispatcher.UIThread.RunJobs();
+        // An input posts a Fit at Normal and, in a Fixed Window, one at Background after layout
+        vm.GlobalSettings.IsZoomedToFit.Value = !vm.GlobalSettings.IsZoomedToFit.Value;
+
+        // As closing the window does: the fitter ends, the tabs are released, the posted Fits still run
+        fitter.Dispose();
+        vm.WindowTabs.TearDown();
+        var exception = Record.Exception(static () => Dispatcher.UIThread.RunJobs());
+
+        Assert.Null(exception);
         window.Close();
     }
 
