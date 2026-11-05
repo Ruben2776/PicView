@@ -115,6 +115,38 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
     #region UI view models
     
     public BindableReactiveProperty<object?> CurrentView { get; } = new(null);
+
+    /// <summary>
+    /// Which view the tab shows: the Tab View (ADR-0022). Derived from the Crop, the Title Phase and whether the tab
+    /// shows anything, in the tab's own methods; setting the same kind notifies nothing.
+    /// </summary>
+    public IReadOnlyBindableReactiveProperty<TabViewKind> ViewKind => _viewKind;
+
+    private readonly BindableReactiveProperty<TabViewKind> _viewKind = new(TabViewKind.StartUpMenu);
+
+    private bool Shows => Model.Image is not null || Model.FileInfo is not null;
+
+    // Reads _titles, not Titles, so a tab nothing binds still makes no TabTitles
+    private void DeriveViewKind()
+    {
+        // A load that ends after the tab closed calls this on a disposed tab, which stays harmless
+        if (_viewKind.IsDisposed)
+        {
+            return;
+        }
+
+        if (_crop is not null)
+        {
+            _viewKind.Value = TabViewKind.Crop;
+            return;
+        }
+
+        var phase = _titles?.Phase ?? TitlePhase.None;
+        _viewKind.Value = Shows || phase is TitlePhase.Loading or TitlePhase.Downloading
+            ? TabViewKind.ImageViewer
+            : TabViewKind.StartUpMenu;
+    }
+
     public GalleryViewModel Gallery { get; } = new();
     
     /// <summary>
@@ -130,6 +162,7 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
             // Cropping replaces the titlebar text until the crop closes, and turns Next and Prev off
             Titles.Mark();
             DeriveCanNavigate();
+            DeriveViewKind();
         }
     }
 
@@ -180,6 +213,7 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
 
         // The titles are marked after the image bindable is set and before the UI reacts
         Titles.OnShown(change);
+        DeriveViewKind();
         _shown.OnNext(change);
     }
 
@@ -615,23 +649,41 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
     /// Puts the tab in the Loading Title Phase, until the next image shows or <see cref="EndLoading(int)"/>.
     /// </summary>
     /// <returns>The ticket that <see cref="EndLoading(int)"/> takes.</returns>
-    public int SetLoading() => Titles.EnterLoading();
+    public int SetLoading()
+    {
+        var ticket = Titles.EnterLoading();
+        DeriveViewKind();
+        return ticket;
+    }
 
     /// <summary>Puts the tab in the Downloading Title Phase with <paramref name="text"/>, such as a progress report.</summary>
     /// <returns>The ticket that <see cref="EndLoading(int)"/> takes.</returns>
-    public int SetDownloading(string text) => Titles.Enter(TitlePhase.Downloading, text);
+    public int SetDownloading(string text)
+    {
+        var ticket = Titles.Enter(TitlePhase.Downloading, text);
+        DeriveViewKind();
+        return ticket;
+    }
 
     /// <summary>
     /// Puts the tab in the Error Title Phase with <paramref name="text"/>, until the next load or shown image. An Error
     /// has no end call.
     /// </summary>
-    public void SetError(string text) => Titles.Enter(TitlePhase.Error, text);
+    public void SetError(string text)
+    {
+        Titles.Enter(TitlePhase.Error, text);
+        DeriveViewKind();
+    }
 
     /// <summary>
     /// Ends Loading or Downloading when the load that entered it with <paramref name="ticket"/> gave up without showing
     /// anything, unless a newer phase was entered since. An Error stays.
     /// </summary>
-    public void EndLoading(int ticket) => Titles.EndLoading(ticket);
+    public void EndLoading(int ticket)
+    {
+        Titles.EndLoading(ticket);
+        DeriveViewKind();
+    }
 
     /// <summary>
     /// Shows <paramref name="image"/> in place of the shown model's image, as a Stand-in: a thumbnail while the next
@@ -819,6 +871,7 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
         Zoom.Dispose();
         Hookups?.Dispose();
         _titles?.Dispose();
+        _viewKind.Dispose();
         _shown.Dispose();
         
         GC.SuppressFinalize(this);
