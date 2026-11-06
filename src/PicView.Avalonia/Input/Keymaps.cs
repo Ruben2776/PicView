@@ -94,12 +94,12 @@ public static class Keymaps
     /// </summary>
     public static async ValueTask ExecuteAsync(KeymapResolution resolution, IActionRunner? actionRunner)
     {
-        if (actionRunner is null)
+        if (actionRunner is null || resolution.Value is not { } action)
         {
             return;
         }
 
-        await actionRunner.Run(resolution.Value).ConfigureAwait(false);
+        await actionRunner.Run(action).ConfigureAwait(false);
     }
 
     private static string DefaultJson(IPlatformSpecificService? platform) =>

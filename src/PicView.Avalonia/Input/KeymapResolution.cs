@@ -4,10 +4,10 @@ namespace PicView.Avalonia.Input;
 
 /// <summary>
 /// The owner of a <see cref="Keybind"/> in a <see cref="Keymap"/>.
-/// <see cref="Value"/> is the canonical action name.
+/// <see cref="Value"/> is the canonical action name, or <c>null</c> for <see cref="None"/>.
 /// </summary>
 [StructLayout(LayoutKind.Auto)]
-public readonly record struct KeymapResolution(string Value)
+public readonly record struct KeymapResolution(string? Value)
 {
     public static KeymapResolution None => default;
 

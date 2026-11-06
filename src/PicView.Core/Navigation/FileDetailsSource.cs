@@ -39,17 +39,21 @@ public sealed class FileDetailsSource(FileInfo file, bool waitUntilReady)
                 return false;
             }
 
+            // Gone already, as when macOS reports a deleted file's earlier writes after it: waiting would hold up the
+            // folder's queue of events, and a file written there again raises its own event
+            if (!File.Exists(path))
+            {
+                return false;
+            }
+
             try
             {
-                if (System.IO.File.Exists(path))
+                var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                await using (fs.ConfigureAwait(false))
                 {
-                    var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-                    await using (fs.ConfigureAwait(false))
+                    if (fs.Length > 0)
                     {
-                        if (fs.Length > 0)
-                        {
-                            return true;
-                        }
+                        return true;
                     }
                 }
             }
