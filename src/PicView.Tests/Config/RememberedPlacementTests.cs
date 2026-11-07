@@ -189,6 +189,31 @@ public class RememberedPlacementTests
         Assert.Equal(0, properties.Top);
     }
 
+    [Theory]
+    [InlineData(-32000, -32000)]
+    [InlineData(1920, 0)]
+    [InlineData(0, 1080)]
+    [InlineData(-801, 0)]
+    public void IsOnAScreen_PositionOutsideEveryScreen_IsFalse(int left, int top)
+    {
+        Assert.False(RememberedPlacement.IsOnAScreen(left, top, 800, 600, Primary));
+    }
+
+    [Theory]
+    [InlineData(0, 0)]
+    [InlineData(1900, 1000)]
+    [InlineData(-799, 0)]
+    public void IsOnAScreen_WindowOverlapsAScreen_IsTrue(int left, int top)
+    {
+        Assert.True(RememberedPlacement.IsOnAScreen(left, top, 800, 600, Primary));
+    }
+
+    [Fact]
+    public void IsOnAScreen_NoScreensKnown_IsTrue()
+    {
+        Assert.True(RememberedPlacement.IsOnAScreen(-32000, -32000, 800, 600, []));
+    }
+
     [Fact]
     public void Remember_Minimized_LeavesThePosition()
     {
