@@ -240,7 +240,7 @@ public sealed class SecondaryWindowOpener(
     /// The screens a window can open on, in the physical pixels its position is in. Empty when the platform reports
     /// none.
     /// </summary>
-    private static ScreenArea[] ScreenAreas(Window window)
+    internal static ScreenArea[] ScreenAreas(Window window)
     {
         var screens = window.Screens.All;
         var areas = new ScreenArea[screens.Count];

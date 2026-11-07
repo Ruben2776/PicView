@@ -4,6 +4,8 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
 using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
+using PicView.Avalonia.Services;
+using PicView.Core.Config;
 using PicView.Core.Sizing;
 using PicView.Core.ViewModels;
 
@@ -105,6 +107,7 @@ public static class WindowFunctions
 
     /// <summary>
     /// Remembers the window's position, and its size unless it is maximized or fullscreen.
+    /// A minimized window has no real position, so its position is not remembered.
     /// </summary>
     public static void SaveSize(Window window)
     {
@@ -121,8 +124,12 @@ public static class WindowFunctions
 
         void Set()
         {
-            Settings.WindowProperties.Top = window.Position.Y;
-            Settings.WindowProperties.Left = window.Position.X;
+            if (window.WindowState is not WindowState.Minimized)
+            {
+                Settings.WindowProperties.Top = window.Position.Y;
+                Settings.WindowProperties.Left = window.Position.X;
+            }
+
             if (window.DataContext is MainWindowViewModel { WindowModeState.CurrentValue.Mode: not WindowMode.Normal })
             {
                 return;
@@ -143,8 +150,7 @@ public static class WindowFunctions
     {
         if (Dispatcher.UIThread.CheckAccess())
         {
-            window.Position = new PixelPoint((int)Settings.WindowProperties.Left,
-                (int)Settings.WindowProperties.Top);
+            PlaceAtRememberedPosition(window);
             window.Width = Settings.WindowProperties.Width;
             window.Height = Settings.WindowProperties.Height;
         }
@@ -152,8 +158,7 @@ public static class WindowFunctions
         {
             Dispatcher.UIThread.Post(() =>
             {
-                window.Position = new PixelPoint((int)Settings.WindowProperties.Left,
-                    (int)Settings.WindowProperties.Top);
+                PlaceAtRememberedPosition(window);
                 window.Width = Settings.WindowProperties.Width;
                 window.Height = Settings.WindowProperties.Height;
             });
@@ -176,8 +181,26 @@ public static class WindowFunctions
         void Set()
         {
             window.WindowStartupLocation = WindowStartupLocation.Manual;
-            window.Position = new PixelPoint((int)Settings.WindowProperties.Left,
-                (int)Settings.WindowProperties.Top);
+            PlaceAtRememberedPosition(window);
+        }
+    }
+
+    /// <summary>
+    /// Puts the window at the position remembered from the last run, or centers it on a screen when that position is
+    /// on none of the screens, as with the position of a minimized window or of a monitor that is gone.
+    /// </summary>
+    private static void PlaceAtRememberedPosition(MainWindow window)
+    {
+        var left = (int)Settings.WindowProperties.Left;
+        var top = (int)Settings.WindowProperties.Top;
+        if (RememberedPlacement.IsOnAScreen(left, top, Settings.WindowProperties.Width,
+                Settings.WindowProperties.Height, SecondaryWindowOpener.ScreenAreas(window)))
+        {
+            window.Position = new PixelPoint(left, top);
+        }
+        else
+        {
+            window.WindowStartupLocation = WindowStartupLocation.CenterScreen;
         }
     }
 
