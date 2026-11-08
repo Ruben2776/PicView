@@ -26,7 +26,7 @@ public static class ToggleHelper
     public static async ValueTask ToggleLooping(MainWindowViewModel vm, MainWindow mainWindow)
     {
         var value = vm.GlobalSettings.IsLooping.CurrentValue;
-        var tip = value ? TranslationManager.Translation.LoopingEnabled : TranslationManager.Translation.LoopingDisabled;
+        var tip = value ? TranslationManager.Translation.LoopingDisabled : TranslationManager.Translation.LoopingEnabled;
         _ = TooltipHelper.ShowTooltipMessageAsync(tip, false, mainWindow, TimeSpan.FromSeconds(1.5));
         await Toggle(vm.GlobalSettings.IsLooping).ConfigureAwait(false);
     }
