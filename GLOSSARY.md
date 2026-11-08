@@ -128,7 +128,7 @@ _Avoid_: Last entry, current entry
 ## Images
 
 **Side-by-Side Pair**:
-Two images a tab shows beside each other when Side-by-Side is on: the shown image and its partner, the next image in the list. The last image has no partner unless the list loops, and a file with no partner shows alone. Paired navigation moves by two images at a time.
+Two images a tab shows beside each other when Side-by-Side is on: the shown image and its partner, the next image in the list. Going to the last image, whether by opening it, jumping to it, reloading it or turning Side-by-Side on, shows the pair that ends with it: the image before it and the last image. With looping, the last image pairs with the first instead. Only a list of one image shows alone. Paired navigation moves by two images at a time and always ends on a full pair. The gallery marks both images of the pair.
 _Avoid_: Dual view, two-up, double view
 
 ## Archives

@@ -239,6 +239,7 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
         // The titles are marked after the image bindable is set and before the UI reacts
         Titles.OnShown(change);
         DeriveViewKind();
+        DerivePartnerIndex();
         _shown.OnNext(change);
     }
 
@@ -569,10 +570,40 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
     {
         NavigationIndex.Value = index;
         MaxIndex.Value = count;
+        DerivePartnerIndex();
         DeriveCanNavigate();
     }
 
+    /// <summary>
+    /// The index of the image shown beside the one at <see cref="NavigationIndex"/>, or -1 when it shows alone, so the
+    /// gallery marks both images of a Side-by-Side Pair. Derived by the tab; nothing outside it writes it.
+    /// </summary>
+    public IReadOnlyBindableReactiveProperty<int> PartnerIndex => _partnerIndex;
+
+    private readonly BindableReactiveProperty<int> _partnerIndex = new(-1);
+
+    // Derived from where the tab is and whether it shows a pair, by the one pair rule (ADR-0024)
+    private void DerivePartnerIndex()
+    {
+        var partner = -1;
+        if (SecondaryModel is not null)
+        {
+            var (sideBySide, looping) = PairSettings();
+            partner = SideBySidePair.PairAt(NavigationIndex.CurrentValue, MaxIndex.CurrentValue, sideBySide, looping)
+                .Partner ?? -1;
+        }
+
+        _partnerIndex.Value = partner;
+    }
+
     private IDisposable? _settingsSubscription;
+
+    /// <summary>
+    /// Side-by-Side and looping as the tab's settings publish them, or the stored settings for a tab without them.
+    /// </summary>
+    public (bool SideBySide, bool Looping) PairSettings() => Services?.GlobalSettings is { } settings
+        ? (settings.IsSideBySide.CurrentValue, settings.IsLooping.CurrentValue)
+        : (Settings.ImageScaling.ShowImageSideBySide, Settings.UIProperties.Looping);
 
     /// <summary>
     /// Follows the global settings the tab reads, once: Looping derives Next and Prev again, side by side derives them
@@ -632,8 +663,9 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
             }
             else
             {
-                forwards = SideBySidePair.CanNavigateForwards(index, count, extracting);
-                backwards = Settings.UIProperties.Looping || index > 0;
+                var (sideBySide, looping) = PairSettings();
+                forwards = SideBySidePair.CanNavigateForwards(index, count, extracting, sideBySide, looping);
+                backwards = looping || index > 0;
             }
         }
 

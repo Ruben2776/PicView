@@ -174,8 +174,9 @@ public sealed class TabLoad
                 }
 
                 // The step shows nothing when the file left the list meanwhile, or its image could not be read, so
-                // this load showed its file only when the tab shows it now; otherwise its end ends its Loading
-                run.IsShown = IsModelOf(_tab.Model, file);
+                // this load showed its file only when the tab shows it now, beside the image before it when it is the
+                // last of a pair (ADR-0024); otherwise its end ends its Loading
+                run.IsShown = IsModelOf(_tab.Model, file) || IsModelOf(_tab.SecondaryModel, file);
                 return run.IsShown ? LoadResult.Loaded : LoadResult.Failed();
             }
         }
@@ -360,7 +361,7 @@ public sealed class TabLoad
             return LoadResult.Failed();
         }
 
-        var isSideBySide = Settings.ImageScaling.ShowImageSideBySide;
+        var (isSideBySide, looping) = _tab.PairSettings();
         if (!isSideBySide)
         {
             _tab.Display(model);
@@ -375,34 +376,48 @@ public sealed class TabLoad
         }
 
         var index = SideBySidePair.IndexOf(retrieved, file) ?? 0;
+        // The opened file shows in the pair that holds it, so the last file shows beside the one before it (ADR-0024)
+        var (primary, partner) = SideBySidePair.PairAt(index, retrieved.Count, isSideBySide, looping);
         var iterator = EnsureIterator();
-        iterator.Initialize(retrieved, index);
+        iterator.Initialize(retrieved, primary);
 
-        ImageModel? secondaryModel = null;
-        var secondaryIndex = 0;
+        // The image of the pair that is not the opened file, and where it is
+        ImageModel? otherModel = null;
+        var otherIndex = -1;
         if (isSideBySide)
         {
-            if (SideBySidePair.PartnerOf(index, iterator.Files.Count) is { } nextIteration)
+            if (partner is { } partnerIndex)
             {
-                var secondaryFileInfo = iterator.Files[nextIteration];
-                // The startup path decodes the partner beside the opened file, so it is not decoded again
-                secondaryModel = IsModelOf(givenSecondary, secondaryFileInfo)
+                otherIndex = primary == index ? partnerIndex : primary;
+                var otherFile = iterator.Files[otherIndex];
+                // The startup path decodes the other image of the pair beside the opened file, so it is not decoded again
+                otherModel = IsModelOf(givenSecondary, otherFile)
                     ? givenSecondary
-                    : await cache.GetAsync(_tab.Id, secondaryFileInfo, run.Token).ConfigureAwait(false);
+                    : await cache.GetAsync(_tab.Id, otherFile, run.Token).ConfigureAwait(false);
                 if (!IsCurrent(run))
                 {
                     return LoadResult.Superseded;
                 }
 
-                if (secondaryModel is null)
+                if (otherModel is null)
                 {
                     return LoadResult.Failed();
                 }
-
-                secondaryIndex = nextIteration;
             }
 
-            _tab.Display(model, secondaryModel);
+            if (otherModel is null)
+            {
+                _tab.Display(model);
+            }
+            else if (primary == index)
+            {
+                _tab.Display(model, otherModel);
+            }
+            else
+            {
+                _tab.Display(otherModel, model);
+            }
+
             run.IsShown = true;
         }
 
@@ -416,12 +431,13 @@ public sealed class TabLoad
         cache.ReleaseImages(_tab.Id);
         if (iterator.Files.Count > 0)
         {
-            var currentFile = iterator.Files[index];
-            cache.Put(_tab.Id, currentFile, model);
-            if (secondaryModel is not null)
+            cache.Put(_tab.Id, iterator.Files[index], model);
+            if (otherModel is not null)
             {
-                cache.Put(_tab.Id, iterator.Files[secondaryIndex], secondaryModel);
+                cache.Put(_tab.Id, iterator.Files[otherIndex], otherModel);
             }
+
+            var currentFile = iterator.Files[primary];
 
             cache.Preload(_tab.Id, currentFile, false, _tab.GetTabCancellation().Token);
         }

@@ -317,6 +317,32 @@ public class GalleryViewTests
         Dispatcher.UIThread.RunJobs();
     }
 
+    [AvaloniaFact]
+    public void ShownPair_MarksBothItems()
+    {
+        WithGalleryView((tab, viewer) =>
+        {
+            // As the image viewer gives it the tab
+            viewer.DataContext = tab;
+            tab.Services!.GlobalSettings.IsSideBySide.Value = true;
+            tab.ImageIterator!.Initialize([new FileInfo("a.jpg"), new FileInfo("b.jpg"), new FileInfo("c.jpg")]);
+
+            // The step may wait for the cache off the UI thread, so the UI thread runs its jobs until the step ends
+            var step = tab.ImageIterator.IterateToIndexAsync(2, new CancellationTokenSource()).AsTask();
+            var deadline = DateTime.UtcNow.AddSeconds(5);
+            while (!step.IsCompleted && DateTime.UtcNow < deadline)
+            {
+                Dispatcher.UIThread.RunJobs();
+                Thread.Sleep(10);
+            }
+            Dispatcher.UIThread.RunJobs();
+
+            // The last image shows in the pair before it, so the items of both are current
+            Assert.True(step.IsCompletedSuccessfully);
+            Assert.Equal((1, 2), (viewer.CurrentItemIndex, viewer.PartnerItemIndex));
+        });
+    }
+
     private static void WithGalleryView(Action<TabViewModel, NavigateAbleItemsViewer> test) =>
         WithGalleryView(static vm => vm.WindowTabs.ActiveTab.CurrentValue, (tab, _, viewer) => test(tab, viewer));
 

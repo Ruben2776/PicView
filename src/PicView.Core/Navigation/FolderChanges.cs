@@ -146,8 +146,9 @@ internal sealed class FolderChanges(TabViewModel tab)
         {
             return;
         }
-        var wasShownFileDeleted = currentFile.FullName.AsSpan()
-            .Equals(change.File.FullName.AsSpan(), StringComparison.OrdinalIgnoreCase);
+        var wasShownFileDeleted = IsSamePath(currentFile, change.File);
+        var wasPartnerDeleted = !wasShownFileDeleted && tab.SecondaryModel?.FileInfo is { } partner &&
+                                IsSamePath(partner, change.File);
 
         var removeIndex = iterator.Remove(change.File.FullName);
         if (removeIndex is -1)
@@ -166,22 +167,18 @@ internal sealed class FolderChanges(TabViewModel tab)
             var isNavigatingBackwards = Settings.Navigation.IsNavigatingBackwardsWhenDeleting;
             var targetIndex = isNavigatingBackwards ? oldIndex - 1 : oldIndex;
             targetIndex = Math.Clamp(targetIndex, 0, iterator.Files.Count - 1);
-            if (Settings.ImageScaling.ShowImageSideBySide)
-            {
-                var (iteration,  secondary, _) = SideBySidePair.Navigate(targetIndex,
-                    tab.ImageIterator.Files.Count, NavigateTo.Next, SkipAmount.None);
-                if (secondary.HasValue)
-                {
-                    await iterator.IterateToIndicesAsync(iteration, secondary.Value, tab.GetTabCancellation()).ConfigureAwait(false);
-                }
-            }
-            else
-            {
-                await iterator.IterateToIndexAsync(targetIndex, tab.GetTabCancellation())
-                    .ConfigureAwait(false);
-            }
+            // With Side-by-Side on, the iterator shows the pair that holds the index (ADR-0024)
+            await iterator.IterateToIndexAsync(targetIndex, tab.GetTabCancellation()).ConfigureAwait(false);
+        }
+        else if (wasPartnerDeleted)
+        {
+            // The shown image stays, with the image after it as its partner now
+            await iterator.IterateToIndexAsync(iterator.CurrentIndex, tab.GetTabCancellation()).ConfigureAwait(false);
         }
     }
+
+    private static bool IsSamePath(FileInfo a, FileInfo b) =>
+        a.FullName.AsSpan().Equals(b.FullName.AsSpan(), StringComparison.OrdinalIgnoreCase);
 
     private static bool Contains(Interfaces.IImageIterator iterator, string path)
     {

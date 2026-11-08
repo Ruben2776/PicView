@@ -314,43 +314,40 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
             return;
         }
 
-        if (Settings.ImageScaling.ShowImageSideBySide)
+        var (sideBySide, looping) = PairSettings();
+        var (iteration, isReversed) = sideBySide
+            ? SideBySidePair.Navigate(from.Index, from.Files.Length, navigateTo, skipAmount, looping)
+            : IterationHelper.GetIteration(from.Index, from.Files.Length, navigateTo, skipAmount);
+        IsReversed = isReversed;
+        if (ShouldNavigateTiffEntry(navigateTo, skipAmount))
         {
-            var (currentIndex, secondaryIndex, isReversed) = SideBySidePair.Navigate(from.Index, from.Files.Length, navigateTo, skipAmount);
-            IsReversed = isReversed;
-            if (ShouldNavigateTiffEntry(navigateTo, skipAmount))
-            {
-                return;
-            }
-
-            if (secondaryIndex is { } secondary)
-            {
-                await IterateToIndicesAsync(from.Files, currentIndex, secondary, ct).ConfigureAwait(false);
-            }
-            else
-            {
-                await IterateToIndexAsync(from.Files, currentIndex, ct).ConfigureAwait(false);
-            }
+            return;
         }
-        else
-        {
-            var (iteration, isReversed) = IterationHelper.GetIteration(from.Index, from.Files.Length, navigateTo, skipAmount);
-            IsReversed = isReversed;
-            if (ShouldNavigateTiffEntry(navigateTo, skipAmount))
-            {
-                return;
-            }
 
-            await IterateToIndexAsync(from.Files, iteration, ct).ConfigureAwait(false);
-        }
+        await ShowAtAsync(from.Files, iteration, ct).ConfigureAwait(false);
     }
 
     public ValueTask IterateToIndexAsync(int index, CancellationTokenSource ct) =>
-        IterateToIndexAsync(Volatile.Read(ref _files), index, ct);
+        ShowAtAsync(Volatile.Read(ref _files), index, ct);
+
+    /// <summary>
+    /// Shows what a tab shows at <paramref name="index"/>: the image there alone, or with Side-by-Side on, the pair that
+    /// holds it (ADR-0024).
+    /// </summary>
+    private ValueTask ShowAtAsync(FileInfo[] files, int index, CancellationTokenSource ct)
+    {
+        var (sideBySide, looping) = PairSettings();
+        var (primary, partner) = SideBySidePair.PairAt(index, files.Length, sideBySide, looping);
+        return partner is { } secondary
+            ? ShowPairAsync(files, primary, secondary, ct)
+            : ShowAloneAsync(files, primary, ct);
+    }
+
+    private (bool SideBySide, bool Looping) PairSettings() => _tab.PairSettings();
 
     /// <param name="files">The list <paramref name="index"/> counts in. The file there is shown wherever it is in the
     /// list now, as an archive's extraction inserts pages before it meanwhile.</param>
-    private async ValueTask IterateToIndexAsync(FileInfo[] files, int index, CancellationTokenSource ct)
+    private async ValueTask ShowAloneAsync(FileInfo[] files, int index, CancellationTokenSource ct)
     {
         if (index < 0 || index >= files.Length)
         {
@@ -396,12 +393,9 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
         UpdateModel(await request.ConfigureAwait(false));
     }
     
-    public ValueTask IterateToIndicesAsync(int index, int secondaryIndex, CancellationTokenSource ct) =>
-        IterateToIndicesAsync(Volatile.Read(ref _files), index, secondaryIndex, ct);
-
-    /// <param name="files">The list the indices count in, as <see cref="IterateToIndexAsync(FileInfo[], int, CancellationTokenSource)"/>
+    /// <param name="files">The list the indices count in, as <see cref="ShowAloneAsync"/>
     /// takes it.</param>
-    private async ValueTask IterateToIndicesAsync(FileInfo[] files, int index, int secondaryIndex, CancellationTokenSource ct)
+    private async ValueTask ShowPairAsync(FileInfo[] files, int index, int secondaryIndex, CancellationTokenSource ct)
     {
         if (index < 0 || index >= files.Length || secondaryIndex < 0 || secondaryIndex >= files.Length)
         {
@@ -501,18 +495,7 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
             Cache.ReleaseImages(_tab.Id);
         }
 
-        if (Settings.ImageScaling.ShowImageSideBySide)
-        {
-            var (iteration,  secondary, _) = SideBySidePair.Navigate(index, Files.Count, 
-                NavigateTo.Next, SkipAmount.None);
-            if (secondary.HasValue)
-            {
-                await IterateToIndicesAsync(iteration, secondary.Value, ct).ConfigureAwait(false);
-            }
-            return;
-        }
         await IterateToIndexAsync(index, ct).ConfigureAwait(false);
-        
     }
 
     public async ValueTask NavigateByIncrementsAsync(SkipAmount skipAmount, bool forwards, CancellationTokenSource ct)
@@ -529,17 +512,6 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
             Cache.ReleaseImages(_tab.Id);
         }
         var ct = _tab.GetTabCancellation();
-        if (Settings.ImageScaling.ShowImageSideBySide)
-        {
-            var (iteration,  secondary, _) = SideBySidePair.Navigate(CurrentIndex, Files.Count,
-                NavigateTo.Next, SkipAmount.None);
-            if (secondary.HasValue)
-            {
-                KeepTheShownPage();
-                await IterateToIndicesAsync(iteration, secondary.Value, ct).ConfigureAwait(false);
-            }
-            return;
-        }
         KeepTheShownPage();
         await IterateToIndexAsync(CurrentIndex, ct).ConfigureAwait(false);
     }
@@ -573,31 +545,17 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
             return;
         }
 
-        int iteration;
-        bool isReversed;
-        if (Settings.ImageScaling.ShowImageSideBySide)
-        {
-            (iteration, var secondary, isReversed) = SideBySidePair.Navigate(from.Index, from.Files.Length, to, SkipAmount.One);
-            IsReversed = isReversed;
-            if (ShouldNavigateTiffEntry(to, SkipAmount.One))
-            {
-                return;
-            }
-
-            if (secondary.HasValue)
-            {
-                await IterateToIndicesAsync(from.Files, iteration, secondary.Value, ct).ConfigureAwait(false);
-            }
-            return;
-        }
-        (iteration, isReversed) = IterationHelper.GetIteration(from.Index, from.Files.Length, to, SkipAmount.One);
+        var (sideBySide, looping) = PairSettings();
+        var (iteration, isReversed) = sideBySide
+            ? SideBySidePair.Navigate(from.Index, from.Files.Length, to, SkipAmount.One, looping)
+            : IterationHelper.GetIteration(from.Index, from.Files.Length, to, SkipAmount.One);
         IsReversed = isReversed;
         if (ShouldNavigateTiffEntry(to, SkipAmount.One))
         {
             return;
         }
 
-        await IterateToIndexAsync(from.Files, iteration, ct).ConfigureAwait(false);
+        await ShowAtAsync(from.Files, iteration, ct).ConfigureAwait(false);
     }
 
     public void StopRepeatedNavigation()
@@ -657,7 +615,7 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
 
         // How far past the shown file Next goes: to the next file, or to the second of the next pair
         var step = IterationHelper.SkipAmountToInt(skipAmount);
-        var reach = Settings.ImageScaling.ShowImageSideBySide ? step * 2 + 1 : step;
+        var reach = PairSettings().SideBySide ? step * 2 + 1 : step;
         if (shown.Index + reach < shown.Files.Length || HasNextTiffPage(skipAmount))
         {
             return ValueTask.FromResult<(int, FileInfo[])?>(shown);

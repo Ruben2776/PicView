@@ -86,7 +86,7 @@ public class TabCanNavigateTests
     [Fact]
     public void Looping_OneFile_BothFalse()
     {
-        Settings.UIProperties.Looping = true;
+        _tab.Services!.GlobalSettings.IsLooping.Value = true;
 
         Browse("a.jpg");
 
@@ -123,7 +123,7 @@ public class TabCanNavigateTests
     [Fact]
     public void SideBySide_TwoFilesAtFirst_BothFalse()
     {
-        Settings.ImageScaling.ShowImageSideBySide = true;
+        _tab.Services!.GlobalSettings.IsSideBySide.Value = true;
 
         Browse("a.jpg", "b.jpg");
 
