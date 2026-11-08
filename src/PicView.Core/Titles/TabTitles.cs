@@ -54,7 +54,41 @@ public sealed class TabTitles : INotifyPropertyChanged, IDisposable
             tab.MaxIndex.Subscribe(_ => Mark()),
             tab.Services?.GlobalSettings.IsSideBySide.Skip(1).Subscribe(_ => Mark()) ?? Disposable.Empty,
             tab.Services?.GlobalSettings.IsShowingFullPathInTitleBar.Skip(1).Subscribe(_ => Mark()) ?? Disposable.Empty);
+        SaysLoading = Observable.Create<bool, TabTitles>(this, static (observer, titles) =>
+        {
+            PropertyChangedEventHandler onChanged = (_, _) => PublishPhase(observer, titles);
+            titles.PropertyChanged += onChanged;
+            // After subscribing, so a phase entered meanwhile is not missed
+            PublishPhase(observer, titles);
+            return Disposable.Create(() => titles.PropertyChanged -= onChanged);
+        }).DistinctUntilChanged();
     }
+
+    /// <summary>
+    /// Whether the titles' Title Phase is Loading or Downloading, now and on each change. A tab that never loads
+    /// stays in no phase, so it says false.
+    /// </summary>
+    public Observable<bool> SaysLoading { get; }
+
+    // The Titles change from any thread, so a change published late could leave an older phase last. Reading the phase
+    // again after publishing, and publishing again until it holds, leaves the phase as it is now last
+    private static void PublishPhase(Observer<bool> observer, TabTitles titles)
+    {
+        var says = IsLoadingPhase(titles.Phase);
+        while (true)
+        {
+            observer.OnNext(says);
+            var now = IsLoadingPhase(titles.Phase);
+            if (now == says)
+            {
+                return;
+            }
+
+            says = now;
+        }
+    }
+
+    private static bool IsLoadingPhase(TitlePhase phase) => phase is TitlePhase.Loading or TitlePhase.Downloading;
 
     public event PropertyChangedEventHandler? PropertyChanged;
 

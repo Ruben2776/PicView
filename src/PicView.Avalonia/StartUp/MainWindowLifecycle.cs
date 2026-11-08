@@ -1,4 +1,3 @@
-using System.ComponentModel;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -16,7 +15,6 @@ using PicView.Avalonia.UI;
 using PicView.Avalonia.WindowBehavior;
 using PicView.Core.FileSorting;
 using PicView.Core.Navigation;
-using PicView.Core.Titles;
 using PicView.Core.ViewModels;
 using R3;
 
@@ -288,46 +286,12 @@ public sealed class MainWindowLifecycle
     private static IDisposable ShowLoadingIndicatorWhileLoading(MainWindowViewModel vm)
     {
         var saysLoading = vm.WindowTabs.ActiveTab
-            .Select(static tab => SaysLoading(tab.Titles))
+            .Select(static tab => tab.Titles.SaysLoading)
             .Switch();
         return saysLoading.CombineLatest(vm.IsTopToolbarShown.AsObservable(),
                 static (loading, titlebarShown) => loading && !titlebarShown)
             .Subscribe(show => vm.IsLoadingIndicatorShown.Value = show);
     }
-
-    /// <summary>
-    /// Whether <paramref name="titles"/> say Loading or Downloading, now and on each change. A tab that never loads
-    /// stays in no phase, so it says false.
-    /// </summary>
-    private static Observable<bool> SaysLoading(TabTitles titles) =>
-        Observable.Create<bool, TabTitles>(titles, static (observer, titles) =>
-        {
-            PropertyChangedEventHandler onChanged = (_, _) => PublishPhase(observer, titles);
-            titles.PropertyChanged += onChanged;
-            // After subscribing, so a phase entered meanwhile is not missed
-            PublishPhase(observer, titles);
-            return Disposable.Create(() => titles.PropertyChanged -= onChanged);
-        }).DistinctUntilChanged();
-
-    // The Titles change from any thread, so a change published late could leave an older phase last. Reading the phase
-    // again after publishing, and publishing again until it holds, leaves the phase as it is now last
-    private static void PublishPhase(Observer<bool> observer, TabTitles titles)
-    {
-        var says = IsLoadingPhase(titles.Phase);
-        while (true)
-        {
-            observer.OnNext(says);
-            var now = IsLoadingPhase(titles.Phase);
-            if (now == says)
-            {
-                return;
-            }
-
-            says = now;
-        }
-    }
-
-    private static bool IsLoadingPhase(TitlePhase phase) => phase is TitlePhase.Loading or TitlePhase.Downloading;
 
     private static MainWindowViewModel ViewModelOf(MainWindow window) =>
         window.DataContext as MainWindowViewModel
