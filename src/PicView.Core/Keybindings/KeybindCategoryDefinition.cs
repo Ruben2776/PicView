@@ -162,6 +162,7 @@ public static class KeybindCategoryDefinition
         (Actions.ToggleInterface, t.HideUI ?? string.Empty),
         (Actions.Slideshow, t.Slideshow ?? string.Empty),
         (Actions.ToggleGallery, t.ShowImageGallery ?? string.Empty),
+        (Actions.CloseImage, t.CloseImage ?? string.Empty),
     ];
 
     public static List<(string FunctionName, string DisplayName)> GetFileManagementEntries(LanguageModel t) =>
@@ -216,8 +217,7 @@ public static class KeybindCategoryDefinition
     public static List<(string FunctionName, string DisplayName)> GetTabManagementEntries(LanguageModel t) =>
     [
         (Actions.NewTab, t.NewTab ?? string.Empty),
-        (Actions.CloseTab, t.CloseTab ?? string.Empty),
-        (Actions.CloseImage, t.CloseImage ?? string.Empty),
+        (Actions.CloseTab, t.CloseTab ?? string.Empty)
     ];
 
     public static List<(string FunctionName, string DisplayName)> GetToolWindowsEntries(LanguageModel t) =>
