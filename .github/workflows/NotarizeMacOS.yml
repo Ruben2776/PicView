@@ -251,19 +251,18 @@ jobs:
               --team-id "$teamID" `
               --wait *>&1 | Out-File -FilePath $notarizeResultFile
 
+          $resultContent = Get-Content -Path $notarizeResultFile -Raw
+          Write-Host $resultContent
+
           if ($LASTEXITCODE -ne 0) {
-              Write-Error "Failed to submit ARM64 app for notarization."
-              Get-Content -Path $notarizeResultFile | Write-Host
               Remove-Item -Path $tempNotarizeDir -Recurse -Force
+              Write-Error "Failed to submit ARM64 app for notarization."
               exit 1
           }
 
-          $resultContent = Get-Content -Path $notarizeResultFile -Raw
-          if ($resultContent -match "status:\s*Accepted") {
+          if ($resultContent -match "(?m)^\s+status:\s*Accepted\s*$") {
               Write-Host "[INFO] Notarization successful for ARM64 app."
           } else {
-              Write-Error "Notarization failed or incomplete for ARM64 app."
-              Write-Host $resultContent
 
               if ($resultContent -match "([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})") {
                   $submissionId = $Matches[1]
@@ -279,6 +278,7 @@ jobs:
               }
 
               Remove-Item -Path $tempNotarizeDir -Recurse -Force
+              Write-Error "Notarization failed or incomplete for ARM64 app."
               exit 1
           }
 
@@ -333,15 +333,21 @@ jobs:
               --team-id "$teamID" `
               --wait *>&1 | Out-File -FilePath $dmgNotarizeOutput
 
+          # The pwsh shell on GitHub runners sets $ErrorActionPreference = 'Stop', so Write-Error
+          # ends the step at once: print the notarytool output and log before it, not after.
+          $dmgResult = Get-Content -Path $dmgNotarizeOutput -Raw
+          Write-Host $dmgResult
+
           if ($LASTEXITCODE -ne 0) {
-              Write-Error "Failed to submit DMG for notarization: $dmgOutputPath"
-              Get-Content -Path $dmgNotarizeOutput | Write-Host
               Remove-Item -Path $dmgNotarizeOutput -Force
+              Write-Error "Failed to submit DMG for notarization: $dmgOutputPath"
               exit 1
           }
 
-          $dmgStatus = Get-Content -Path $dmgNotarizeOutput | Select-String "status:" | Select-Object -First 1
-          if ($dmgStatus -match "status:\s*Accepted") {
+          # 'notarytool --wait' prints 'Current status: In Progress' lines while it waits, so the first
+          # 'status:' line is not the result. The final result is the indented 'status:' line at the end.
+          $dmgAccepted = $dmgResult -match "(?m)^\s+status:\s*Accepted\s*$"
+          if ($dmgAccepted) {
               Write-Host "DMG notarization successful: $dmgOutputPath"
 
               Write-Host "Stapling notarization ticket to DMG"
@@ -355,9 +361,19 @@ jobs:
               Write-Host "Successfully stapled notarization ticket to DMG: $dmgOutputPath"
               & xcrun stapler validate "$dmgOutputPath"
           } else {
-              Write-Error "DMG notarization failed: $dmgOutputPath"
-              Get-Content -Path $dmgNotarizeOutput | Write-Host
+              if ($dmgResult -match "([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})") {
+                  $dmgLogFile = Join-Path ([System.IO.Path]::GetTempPath()) "dmg-notarization-log.json"
+                  & xcrun notarytool log "$($Matches[1])" `
+                      --apple-id "$appleID" `
+                      --password "$appPassword" `
+                      --team-id "$teamID" `
+                      "$dmgLogFile"
+                  if (Test-Path $dmgLogFile) {
+                      Get-Content -Path $dmgLogFile | Write-Host
+                  }
+              }
               Remove-Item -Path $dmgNotarizeOutput -Force
+              Write-Error "DMG notarization failed: $dmgOutputPath"
               exit 1
           }
 
