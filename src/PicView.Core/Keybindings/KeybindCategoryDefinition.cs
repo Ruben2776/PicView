@@ -217,6 +217,7 @@ public static class KeybindCategoryDefinition
     [
         (Actions.NewTab, t.NewTab ?? string.Empty),
         (Actions.CloseTab, t.CloseTab ?? string.Empty),
+        (Actions.CloseImage, t.CloseImage ?? string.Empty),
     ];
 
     public static List<(string FunctionName, string DisplayName)> GetToolWindowsEntries(LanguageModel t) =>

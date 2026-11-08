@@ -76,6 +76,7 @@ public partial class MainView : UserControl
         tab.ShouldCropBeEnabled.Value = CropManager.SetIfCropEnabled(TopLevel.GetTopLevel(this) as MainWindow);
         tab.ShouldOptimizeImageBeEnabled.Value = ConversionHelper.DetermineIfOptimizeImageShouldBeEnabled(tab.FileInfo.CurrentValue);
         tab.ShouldPrintBeEnabled.Value = ConversionHelper.DetermineIfPrintMenuItemShouldBeEnabled(tab);
+        tab.ShouldCloseImageBeVisible.Value = tab.CurrentView.Value is ImageViewer;
     }
 
     private void MainTabControlOnSelectionChanged(object? sender, SelectionChangedEventArgs e)

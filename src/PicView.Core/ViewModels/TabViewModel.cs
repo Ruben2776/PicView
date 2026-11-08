@@ -480,6 +480,7 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
     public BindableReactiveProperty<bool> ShouldCropBeEnabled { get; } = new(false);
     public BindableReactiveProperty<bool> ShouldOptimizeImageBeEnabled { get; } = new(false);
     public BindableReactiveProperty<bool> ShouldPrintBeEnabled { get; } = new(true);
+    public BindableReactiveProperty<bool> ShouldCloseImageBeVisible { get; } = new(false);
     /// <summary>
     /// The tab's Zoom Level and its two inputs, the Fit Scale and the Zoom Factor (ADR-0016).
     /// </summary>
@@ -832,6 +833,22 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
         Display(new ImageModel());
         _hasLostItsFiles = true;
         return ValueTask.CompletedTask;
+    }
+
+    /// <summary>
+    /// Closes the image the tab shows and shows the start-up menu, as the Close image action: the tab becomes fresh, as
+    /// when it lost its files, and leaves the archives it opened. Does nothing unless the tab shows the image viewer, so
+    /// a crop and the start-up menu stay as they are.
+    /// </summary>
+    public async ValueTask CloseImageAsync()
+    {
+        if (_viewKind.Value is not TabViewKind.ImageViewer)
+        {
+            return;
+        }
+
+        await BecomeFreshAsync().ConfigureAwait(false);
+        Archives.Cleanup();
     }
 
     /// <summary>

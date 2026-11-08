@@ -228,6 +228,7 @@ public class FunctionsMapper : IActionRunner
             // Misc
             Actions.ChangeBackground => ChangeBackground,
             Actions.SideBySide => SideBySide,
+            Actions.CloseImage => CloseImage,
             Actions.Slideshow => Slideshow,
             Actions.ColorPicker => ColorPicker,
             Actions.Restart => Restart,
@@ -823,6 +824,9 @@ public class FunctionsMapper : IActionRunner
         _vm.WindowTabs.CloseTab();
         return ValueTask.CompletedTask;
     }
+
+    /// <inheritdoc cref="TabViewModel.CloseImageAsync" />
+    private ValueTask CloseImage() => _vm.WindowTabs.ActiveTab.CurrentValue.CloseImageAsync();
 
     #endregion
 

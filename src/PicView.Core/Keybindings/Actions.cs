@@ -99,6 +99,7 @@ public static class Actions
     // Tabs
     public const string NewTab = nameof(NewTab);
     public const string CloseTab = nameof(CloseTab);
+    public const string CloseImage = nameof(CloseImage);
 
     // Tool and app windows
     public const string AboutWindow = nameof(AboutWindow);
