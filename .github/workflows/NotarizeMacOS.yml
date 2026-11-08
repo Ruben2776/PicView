@@ -7,6 +7,22 @@ jobs:
   build-and-notarize:
     runs-on: macos-latest
 
+    # One job per architecture. macos-latest is Apple silicon; the x64 job cross-publishes osx-x64.
+    # Magick.NET 15 dropped Intel macOS, so the x64 job sets MagickLegacy=true: the projects then use
+    # Magick.NET 14.x (see src/Directory.Build.props) and compile against its older names (MAGICK_LEGACY).
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: arm64
+            macos-architecture: arm64
+            magick-package: Magick.NET-Q8-arm64
+            magick-legacy: 'false'
+          - platform: x64
+            macos-architecture: x86_64
+            magick-package: Magick.NET-Q8-x64
+            magick-legacy: 'true'
+
     steps:
       # Step 1: Checkout the code
       - name: Checkout repository
@@ -23,22 +39,22 @@ jobs:
         id: get-version
         run: pwsh -File "${{ github.workspace }}/Build/Get-VersionInfo.ps1"
 
-      # Step 4: Restore or build picview-ffmpeg (osx-arm64)
-      - name: Cache picview-ffmpeg (osx-arm64)
-        id: cache-ffmpeg-osx-arm64
+      # Step 4: Restore or build picview-ffmpeg (osx-<platform>)
+      - name: Cache picview-ffmpeg (osx-${{ matrix.platform }})
+        id: cache-ffmpeg
         uses: actions/cache@v6
         with:
-          path: Build/ffmpeg-native/osx-arm64
-          key: picview-ffmpeg-osx-arm64-${{ hashFiles('Build/Build-FFmpegNative.ps1', 'Build/ffmpeg/**', 'Native/ffmpeg/**') }}
+          path: Build/ffmpeg-native/osx-${{ matrix.platform }}
+          key: picview-ffmpeg-osx-${{ matrix.platform }}-${{ hashFiles('Build/Build-FFmpegNative.ps1', 'Build/ffmpeg/**', 'Native/ffmpeg/**') }}
 
       - name: Setup zig
-        if: steps.cache-ffmpeg-osx-arm64.outputs.cache-hit != 'true'
+        if: steps.cache-ffmpeg.outputs.cache-hit != 'true'
         uses: goto-bus-stop/setup-zig@v2
         with:
           version: 0.15.1
 
-      - name: Build picview-ffmpeg (osx-arm64)
-        if: steps.cache-ffmpeg-osx-arm64.outputs.cache-hit != 'true'
+      - name: Build picview-ffmpeg (osx-${{ matrix.platform }})
+        if: steps.cache-ffmpeg.outputs.cache-hit != 'true'
         shell: pwsh
         run: |
           brew install nasm make
@@ -47,7 +63,7 @@ jobs:
           # the directory containing it as 'make' to the build script
           $env:PV_EXTRA_PATH = Join-Path (brew --prefix make) 'libexec/gnubin'
 
-          & "${{ github.workspace }}/Build/Build-FFmpegNative.ps1" -Targets @('osx-arm64')
+          & "${{ github.workspace }}/Build/Build-FFmpegNative.ps1" -Targets @('osx-${{ matrix.platform }}')
 
       # Step 5: Decode MACOS_CERTIFICATE and configure build.keychain
       - name: Setup Keychain and Import Code-Signing Certificate
@@ -70,12 +86,32 @@ jobs:
 
           rm -f "$CERTIFICATE_PATH"
 
-      # Step 6: Restore dependencies
-      - name: Restore dependencies
-        run: dotnet restore src/PicView.Avalonia.MacOS/PicView.Avalonia.MacOS.csproj
+      # Step 6: Point PicView.Core at this architecture's Magick.NET package, then restore with the
+      # same runtime and MagickLegacy value the publish uses, so the restore matches the build
+      - name: Select Magick.NET package (${{ matrix.magick-package }})
+        shell: pwsh
+        run: |
+          $coreProjectPath = "${{ github.workspace }}/src/PicView.Core/PicView.Core.csproj"
+          [xml]$coreCsproj = Get-Content $coreProjectPath
+          $packageNodes = $coreCsproj.Project.ItemGroup.PackageReference | Where-Object { $_.Include -match "^Magick\.NET-Q8-" }
+          if (-not $packageNodes) {
+              Write-Error "No Magick.NET-Q8-* PackageReference found in $coreProjectPath"
+              exit 1
+          }
+          foreach ($packageNode in $packageNodes) {
+              $packageNode.Include = "${{ matrix.magick-package }}"
+          }
+          $coreCsproj.Save($coreProjectPath)
+          Write-Host "Using ${{ matrix.magick-package }} (MagickLegacy=${{ matrix.magick-legacy }})"
 
-      # Step 7: Build, Sign, Notarize, and Create DMG for arm64
-      - name: Build, Sign, Notarize, and Create DMG (arm64)
+      - name: Restore dependencies
+        run: >-
+          dotnet restore src/PicView.Avalonia.MacOS/PicView.Avalonia.MacOS.csproj
+          --runtime osx-${{ matrix.platform }}
+          -p:MagickLegacy=${{ matrix.magick-legacy }}
+
+      # Step 7: Build, Sign, Notarize, and Create DMG
+      - name: Build, Sign, Notarize, and Create DMG (${{ matrix.platform }})
         shell: pwsh
         env:
           APPLE_ID: ${{ secrets.AppleID || secrets.APPLE_ID }}
@@ -86,9 +122,10 @@ jobs:
           $repoRoot = "${{ github.workspace }}"
           $outputRoot = Join-Path $repoRoot "Build/output"
           $version = "${{ steps.get-version.outputs.version }}".Trim()
-          $platform = "arm64"
-          $macOSArchitecture = "arm64"
-          $targetPackage = "Magick.NET-Q8-arm64"
+          $platform = "${{ matrix.platform }}"
+          $platformLabel = $platform.ToUpperInvariant()
+          $macOSArchitecture = "${{ matrix.macos-architecture }}"
+          $magickLegacy = "${{ matrix.magick-legacy }}"
           $entitlementsPath = Join-Path $repoRoot "src/PicView.Core.MacOS/entitlements.plist"
           $signingIdentity = $env:SIGNING_IDENTITY
           $appleID = $env:APPLE_ID
@@ -112,25 +149,7 @@ jobs:
 
           Write-Host "Building PicView v$version for macOS ($platform)..."
 
-          # --- 1. Ensure Magick.NET-Q8-arm64 is referenced in PicView.Core.csproj ---
-          $coreProjectPath = Join-Path $repoRoot "src/PicView.Core/PicView.Core.csproj"
-          [xml]$coreCsproj = Get-Content $coreProjectPath
-          $packageNodes = $coreCsproj.Project.ItemGroup.PackageReference | Where-Object { $_.Include -match "^Magick\.NET-Q8-" }
-
-          $needsSave = $false
-          if ($packageNodes) {
-              foreach ($packageNode in $packageNodes) {
-                  if ($packageNode.Include -ne $targetPackage) {
-                      $packageNode.Include = $targetPackage
-                      $needsSave = $true
-                  }
-              }
-          }
-
-          if ($needsSave) {
-              $coreCsproj.Save($coreProjectPath)
-              Write-Host "Updated Magick.NET package to $targetPackage."
-          }
+          # --- 1. The Magick.NET package was selected in the 'Select Magick.NET package' step ---
 
           # --- 2. Prepare output directories ---
           $platformFolder = "PicView-v$version-osx-$platform"
@@ -153,6 +172,7 @@ jobs:
               --configuration Release `
               -p:UseAppHost=true `
               -p:PublishSingleFile=false `
+              -p:MagickLegacy=$magickLegacy `
               --output $tempBuildPath
 
           if ($LASTEXITCODE -ne 0) {
@@ -200,7 +220,7 @@ jobs:
           Write-Host "Build complete: $appBundlePath"
 
           # --- 5. Code Signing (inside-out: sign subcomponents before main executable and app bundle) ---
-          Write-Host "[INFO] Signing ARM64 app: $appBundlePath"
+          Write-Host "[INFO] Signing $platformLabel app: $appBundlePath"
           Write-Host "[INFO] Using entitlements: $entitlementsPath"
           Write-Host "[INFO] Using signing identity: $signingIdentity"
 
@@ -219,7 +239,7 @@ jobs:
               }
 
           # Now sign the main executable and the .app bundle itself
-          Write-Host "[INFO] Signing ARM64 app bundle"
+          Write-Host "[INFO] Signing $platformLabel app bundle"
           & /usr/bin/codesign --force --timestamp --options=runtime --entitlements "$entitlementsPath" --sign "$signingIdentity" "$appBundlePath" -v
           if ($LASTEXITCODE -ne 0) {
               Write-Error "App bundle signing failed with exit code $LASTEXITCODE"
@@ -238,10 +258,10 @@ jobs:
           $tempNotarizeDir = Join-Path ([System.IO.Path]::GetTempPath()) ([System.Guid]::NewGuid().ToString())
           New-Item -ItemType Directory -Path $tempNotarizeDir | Out-Null
 
-          $appZip = Join-Path $tempNotarizeDir "PicView-$version-arm64.zip"
-          $notarizeResultFile = Join-Path $tempNotarizeDir "arm64-notarization-result.txt"
+          $appZip = Join-Path $tempNotarizeDir "PicView-$version-$platform.zip"
+          $notarizeResultFile = Join-Path $tempNotarizeDir "$platform-notarization-result.txt"
 
-          Write-Host "[INFO] Creating zip archive for ARM64 app notarization..."
+          Write-Host "[INFO] Creating zip archive for $platformLabel app notarization..."
           & ditto -c -k --keepParent "$appBundlePath" "$appZip"
 
           Write-Host "[INFO] Uploading $appZip to Apple notary service..."
@@ -256,17 +276,17 @@ jobs:
 
           if ($LASTEXITCODE -ne 0) {
               Remove-Item -Path $tempNotarizeDir -Recurse -Force
-              Write-Error "Failed to submit ARM64 app for notarization."
+              Write-Error "Failed to submit $platformLabel app for notarization."
               exit 1
           }
 
           if ($resultContent -match "(?m)^\s+status:\s*Accepted\s*$") {
-              Write-Host "[INFO] Notarization successful for ARM64 app."
+              Write-Host "[INFO] Notarization successful for $platformLabel app."
           } else {
 
               if ($resultContent -match "([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})") {
                   $submissionId = $Matches[1]
-                  $logFile = Join-Path $tempNotarizeDir "arm64-notarization-log.json"
+                  $logFile = Join-Path $tempNotarizeDir "$platform-notarization-log.json"
                   & xcrun notarytool log "$submissionId" `
                       --apple-id "$appleID" `
                       --password "$appPassword" `
@@ -278,7 +298,7 @@ jobs:
               }
 
               Remove-Item -Path $tempNotarizeDir -Recurse -Force
-              Write-Error "Notarization failed or incomplete for ARM64 app."
+              Write-Error "Notarization failed or incomplete for $platformLabel app."
               exit 1
           }
 
@@ -287,16 +307,16 @@ jobs:
           Write-Host "[INFO] Stapling notarization ticket to $appBundlePath"
           & xcrun stapler staple "$appBundlePath"
           if ($LASTEXITCODE -ne 0) {
-              Write-Error "Failed to staple notarization ticket to ARM64 app."
+              Write-Error "Failed to staple notarization ticket to $platformLabel app."
               exit 1
           }
 
-          Write-Host "[INFO] Verifying ARM64 app with spctl"
+          Write-Host "[INFO] Verifying $platformLabel app with spctl"
           & spctl --assess --type exec "$appBundlePath"
           Write-Host "App notarization and stapling completed successfully."
 
           # --- 7. Create, Sign, Notarize & Staple DMG ---
-          $dmgName = "PicView-$version-macOS-arm64"
+          $dmgName = "PicView-$version-macOS-$platform"
           $dmgOutputPath = Join-Path $outputRoot "$dmgName.dmg"
 
           $tempDmgDir = Join-Path ([System.IO.Path]::GetTempPath()) ([System.Guid]::NewGuid().ToString())
@@ -380,13 +400,14 @@ jobs:
           Remove-Item -Path $dmgNotarizeOutput -Force
           Write-Host "All processes completed successfully! DMG at: $dmgOutputPath"
 
-      # Step 8: Upload signed and notarized artifacts
-      - name: Upload notarized arm64 artifacts
-        uses: actions/upload-artifact@v6
+      # Step 8: Upload the notarized DMG on its own, unzipped. The notarized app is inside it.
+      # (Uploading PicView.app as well put an extra copy in a zip, and zipping it drops the
+      # symlinks and extended attributes its signature and stapled ticket depend on.)
+      # archive: false names the artifact after the file and ignores 'name'.
+      - name: Upload notarized ${{ matrix.platform }} DMG
+        uses: actions/upload-artifact@v7
         with:
-          name: PicView-v${{ steps.get-version.outputs.version }}-macOS-arm64-notarized
+          archive: false
           if-no-files-found: error
-          path: |
-            ${{ github.workspace }}/Build/output/PicView-v${{ steps.get-version.outputs.version }}-osx-arm64/PicView.app
-            ${{ github.workspace }}/Build/output/PicView-${{ steps.get-version.outputs.version }}-macOS-arm64.dmg
+          path: ${{ github.workspace }}/Build/output/PicView-${{ steps.get-version.outputs.version }}-macOS-${{ matrix.platform }}.dmg
           retention-days: 14
