@@ -704,6 +704,7 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
 
     private int _busyClaims;
     private readonly BindableReactiveProperty<bool> _isBusy = new();
+    private readonly Lock _busyGate = new();
 
     /// <summary>
     /// Whether an operation on this tab, such as a crop save, an optimize or a rename, holds a busy claim.
@@ -721,21 +722,19 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
         return new BusyClaim(this);
     }
 
-    // Claims start and end on any thread, so a value published late could leave an older state last. Reading the
-    // count again after publishing, and publishing again until it holds, leaves the state as it is now last
+    // Claims start and end on any thread. Publishing under one lock orders the writes, so the last thread to publish
+    // has already changed the count and publishes the state as it is now; a publish after the tab is disposed does
+    // nothing, since Dispose disposes the property under the same lock
     private void PublishBusy()
     {
-        var busy = Volatile.Read(ref _busyClaims) > 0;
-        while (!Volatile.Read(ref _isDisposed))
+        lock (_busyGate)
         {
-            _isBusy.Value = busy;
-            var now = Volatile.Read(ref _busyClaims) > 0;
-            if (now == busy)
+            if (Volatile.Read(ref _isDisposed))
             {
                 return;
             }
 
-            busy = now;
+            _isBusy.Value = Volatile.Read(ref _busyClaims) > 0;
         }
     }
 
@@ -1002,7 +1001,10 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
         _titles?.Dispose();
         _viewKind.Dispose();
         _shown.Dispose();
-        _isBusy.Dispose();
+        lock (_busyGate)
+        {
+            _isBusy.Dispose();
+        }
         
         GC.SuppressFinalize(this);
     }

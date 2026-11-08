@@ -115,6 +115,46 @@ public class TabBusyClaimTests : IDisposable
     }
 
     [Fact]
+    public async Task ClaimBusy_ClaimedWhileAReleaseIsStillPublishing_PublishesBusyLast()
+    {
+        var held = _tab.ClaimBusy();
+        IDisposable? second = null;
+        Task? claiming = null;
+        var seen = new List<bool>();
+        // The release's notification is slow: while it is still being delivered, another thread claims the tab, as a
+        // release preempted between storing the value and notifying would be
+        using var watching = _tab.IsBusy.AsObservable().Subscribe(v =>
+        {
+            if (!v && claiming is null)
+            {
+                using var claimed = new ManualResetEventSlim();
+                claiming = Task.Run(() =>
+                {
+                    second = _tab.ClaimBusy();
+                    claimed.Set();
+                });
+                claimed.Wait(TimeSpan.FromMilliseconds(500));
+            }
+
+            lock (seen)
+            {
+                seen.Add(v);
+            }
+        });
+
+        held.Dispose();
+        await claiming!;
+
+        Assert.True(_tab.IsBusy.Value);
+        lock (seen)
+        {
+            Assert.True(seen[^1]);
+        }
+
+        second!.Dispose();
+    }
+
+    [Fact]
     public void ClaimBusy_ReleasedAfterTabDisposed_DoesNotThrow()
     {
         var tab = NewTab();
