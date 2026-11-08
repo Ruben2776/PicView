@@ -38,14 +38,12 @@ public sealed class TabTitles : INotifyPropertyChanged, IDisposable
     private readonly IDisposable _subscriptions;
 
     private bool _stale = true;
-    private TitlePhase _phase;
     private string? _phaseText;
     private int _ticket;
     private string _title = string.Empty;
     private string _titleTooltip = string.Empty;
     private string _windowTitle = string.Empty;
     private string _tabTitle = string.Empty;
-    private int _buildCount;
 
     internal TabTitles(TabViewModel tab)
     {
@@ -101,13 +99,12 @@ public sealed class TabTitles : INotifyPropertyChanged, IDisposable
     }
 
     /// <summary>The Title Phase the tab is in.</summary>
-    public TitlePhase Phase => _phase;
+    public TitlePhase Phase { get; private set; }
 
-    /// <summary>Whether the tab is cropping, which replaces the titlebar text and its tooltip.</summary>
-    public bool IsCropping => _tab.Crop is not null;
-
+#if DEBUG
     /// <summary>How many times the four strings were built. For tests.</summary>
-    internal int BuildCount => _buildCount;
+    internal int BuildCount { get; private set; }
+#endif
 
     internal void Mark()
     {
@@ -127,7 +124,7 @@ public sealed class TabTitles : INotifyPropertyChanged, IDisposable
         int ticket;
         lock (_lock)
         {
-            _phase = phase;
+            Phase = phase;
             _phaseText = text;
             ticket = ++_ticket;
         }
@@ -142,7 +139,7 @@ public sealed class TabTitles : INotifyPropertyChanged, IDisposable
         {
             lock (_lock)
             {
-                _phase = TitlePhase.None;
+                Phase = TitlePhase.None;
                 _phaseText = null;
             }
         }
@@ -169,11 +166,13 @@ public sealed class TabTitles : INotifyPropertyChanged, IDisposable
     // Callers hold _lock
     private void EndLoadingLocked()
     {
-        if (_phase is TitlePhase.Loading or TitlePhase.Downloading)
+        if (Phase is not (TitlePhase.Loading or TitlePhase.Downloading))
         {
-            _phase = TitlePhase.None;
-            _phaseText = null;
+            return;
         }
+
+        Phase = TitlePhase.None;
+        _phaseText = null;
     }
 
     private void BuildIfStale()
@@ -193,7 +192,9 @@ public sealed class TabTitles : INotifyPropertyChanged, IDisposable
             // Cleared before building, so a mark that lands while the inputs are read makes the next read build again
             _stale = false;
             Build();
-            _buildCount++;
+#if DEBUG
+            BuildCount++;
+#endif
         }
     }
 
@@ -201,7 +202,7 @@ public sealed class TabTitles : INotifyPropertyChanged, IDisposable
     private void Build()
     {
         var translation = TranslationManager.Translation;
-        switch (_phase)
+        switch (Phase)
         {
             case TitlePhase.Loading:
                 SetAll(translation?.Loading ?? string.Empty);

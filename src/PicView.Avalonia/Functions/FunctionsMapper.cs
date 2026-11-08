@@ -453,7 +453,9 @@ public class FunctionsMapper : IActionRunner
         return ValueTask.CompletedTask;
     }
 
-    private ValueTask CheckForUpdates() => PlatformActions.CheckForUpdates(_mainWindow);
+    /// <inheritdoc cref="PlatformActions.CheckForUpdates" />
+    private ValueTask CheckForUpdates() =>
+        PlatformActions.CheckForUpdates(_mainWindow);
 
     private ValueTask ConvertWindow() =>
         _mainWindow.MainWindowInitializer.ShowConvertWindow();
@@ -479,10 +481,8 @@ public class FunctionsMapper : IActionRunner
     private ValueTask ResizeWindow() =>
         _mainWindow.MainWindowInitializer.ShowSingleImageResizeWindow();
 
-    private async ValueTask BatchResizeWindow()
-    {
+    private async ValueTask BatchResizeWindow() => 
         await _mainWindow.MainWindowInitializer.ShowBatchResizeWindow().ConfigureAwait(false);
-    }
 
     private ValueTask FileAssociationsWindow()
     {
@@ -516,7 +516,8 @@ public class FunctionsMapper : IActionRunner
     /// <summary>
     /// Turns top most on or off for every Main Window.
     /// </summary>
-    private ValueTask SetTopMost() => ToggleHelper.Toggle(_vm.GlobalSettings.IsTopMost);
+    private ValueTask SetTopMost() =>
+        ToggleHelper.Toggle(_vm.GlobalSettings.IsTopMost);
 
     #endregion
     
@@ -538,11 +539,14 @@ public class FunctionsMapper : IActionRunner
     private ValueTask ToggleSubdirectories() =>
         ToggleHelper.ToggleSubdirectories(_vm);
 
-    private ValueTask ToggleBottomToolbar() => ToggleHelper.ToggleBottomToolbar(_vm);
+    private ValueTask ToggleBottomToolbar() =>
+        ToggleHelper.ToggleBottomToolbar(_vm);
 
-    private ValueTask ToggleTaskbarProgress() => ToggleHelper.ToggleTaskbarProgress(_vm);
+    private ValueTask ToggleTaskbarProgress() =>
+        ToggleHelper.ToggleTaskbarProgress(_vm);
 
-    private ValueTask ToggleConstrainBackgroundColor() => ToggleHelper.ToggleConstrainBackgroundColor(_vm);
+    private ValueTask ToggleConstrainBackgroundColor() =>
+        ToggleHelper.ToggleConstrainBackgroundColor(_vm);
 
     #endregion
 

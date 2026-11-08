@@ -109,12 +109,14 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
             }
         }
 
-        if (inserted > 0)
+        if (inserted <= 0)
         {
-            PublishPosition();
-            // The pages after the shown one are loaded ahead as they are listed, so a Next finds them loaded
-            TriggerPreload();
+            return inserted;
         }
+
+        PublishPosition();
+        // The pages after the shown one are loaded ahead as they are listed, so a Next finds them loaded
+        TriggerPreload();
         return inserted;
     }
 
@@ -266,16 +268,18 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
                 }
             }
 
-            if (moved.Count > 0)
+            if (moved.Count <= 0)
             {
-                Volatile.Write(ref _files, files);
-                Cache.SetFiles(_tab.Id, files);
-                foreach (var index in moved)
-                {
-                    filesChanged?.Invoke(new FileListChange(FileListChangeKind.Relocated, files, index, files[index]));
-                }
-                SignalFilesChanged();
+                return moved.ToArray();
             }
+
+            Volatile.Write(ref _files, files);
+            Cache.SetFiles(_tab.Id, files);
+            foreach (var index in moved)
+            {
+                filesChanged?.Invoke(new FileListChange(FileListChangeKind.Relocated, files, index, files[index]));
+            }
+            SignalFilesChanged();
             return moved.ToArray();
         }
     }
@@ -343,7 +347,8 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
             : ShowAloneAsync(files, primary, ct);
     }
 
-    private (bool SideBySide, bool Looping) PairSettings() => _tab.PairSettings();
+    private (bool SideBySide, bool Looping) PairSettings() =>
+        _tab.PairSettings();
 
     /// <param name="files">The list <paramref name="index"/> counts in. The file there is shown wherever it is in the
     /// list now, as an archive's extraction inserts pages before it meanwhile.</param>

@@ -37,13 +37,18 @@ public static class ToggleHelper
         await Toggle(vm.GlobalSettings.ShowInterface).ConfigureAwait(false);
     }
 
-    public static ValueTask ToggleHoverBar(MainWindowViewModel vm) => Toggle(vm.GlobalSettings.ShowHoverBar);
+    public static ValueTask ToggleHoverBar(MainWindowViewModel vm) =>
+        Toggle(vm.GlobalSettings.ShowHoverBar);
 
-    public static ValueTask ToggleSubdirectories(MainWindowViewModel vm) => Toggle(vm.GlobalSettings.IsIncludingSubdirectories);
+    public static ValueTask ToggleSubdirectories(MainWindowViewModel vm) =>
+        Toggle(vm.GlobalSettings.IsIncludingSubdirectories);
 
-    public static ValueTask ToggleBottomToolbar(MainWindowViewModel vm) => Toggle(vm.GlobalSettings.ShowBottomBar);
+    public static ValueTask ToggleBottomToolbar(MainWindowViewModel vm) =>
+        Toggle(vm.GlobalSettings.ShowBottomBar);
 
-    public static ValueTask ToggleTaskbarProgress(MainWindowViewModel vm) => Toggle(vm.GlobalSettings.IsShowingTaskbarProgress);
+    public static ValueTask ToggleTaskbarProgress(MainWindowViewModel vm) =>
+        Toggle(vm.GlobalSettings.IsShowingTaskbarProgress);
 
-    public static ValueTask ToggleConstrainBackgroundColor(MainWindowViewModel vm) => Toggle(vm.GlobalSettings.IsConstrainingBackgroundColor);
+    public static ValueTask ToggleConstrainBackgroundColor(MainWindowViewModel vm) => 
+        Toggle(vm.GlobalSettings.IsConstrainingBackgroundColor);
 }

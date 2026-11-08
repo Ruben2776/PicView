@@ -271,17 +271,16 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
     public void DisplaySingleImage(ImageModel model, SingleImageType type, string? title = null)
     {
         SingleImageType = type;
-        _singleImageTitle = title;
+        SingleImageTitle = title;
         ShowModels(model, null);
         RecordShown();
         Publish(ShownChange.Image);
     }
 
     // The title of the Single Image the tab shows, which its View History entry keeps
-    private string? _singleImageTitle;
 
     /// <summary>The title <see cref="DisplaySingleImage"/> was given, which the Titles name a Single Image by.</summary>
-    internal string? SingleImageTitle => _singleImageTitle;
+    internal string? SingleImageTitle { get; private set; }
 
     /// <summary>
     /// Turns the multi-page TIFF the tab shows to <paramref name="page"/>, and records it. Does nothing when the tab shows
@@ -372,7 +371,7 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
         ViewHistoryEntry entry;
         if (type is not SingleImageType.None)
         {
-            entry = ViewHistoryEntry.ForSingleImage(model, type, _singleImageTitle,
+            entry = ViewHistoryEntry.ForSingleImage(model, type, SingleImageTitle,
                 type is SingleImageType.Url ? SourceURL : null);
         }
         else if (model.FileInfo is not { } file)

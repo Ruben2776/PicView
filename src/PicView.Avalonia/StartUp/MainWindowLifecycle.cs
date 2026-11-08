@@ -290,7 +290,7 @@ public sealed class MainWindowLifecycle
         var saysLoading = vm.WindowTabs.ActiveTab
             .Select(static tab => SaysLoading(tab.Titles))
             .Switch();
-        return Observable.CombineLatest(saysLoading, vm.IsTopToolbarShown.AsObservable(),
+        return saysLoading.CombineLatest(vm.IsTopToolbarShown.AsObservable(),
                 static (loading, titlebarShown) => loading && !titlebarShown)
             .Subscribe(show => vm.IsLoadingIndicatorShown.Value = show);
     }
