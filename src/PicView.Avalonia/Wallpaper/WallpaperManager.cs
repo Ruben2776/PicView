@@ -21,7 +21,7 @@ public static class WallpaperManager
             return;
         }
         
-        vm.IsLoadingIndicatorShown.Value = true;
+        using var busy = vm.WindowTabs.ActiveTab.CurrentValue.ClaimBusy();
         try
         {
             var file = await FileSaver.ExportCommonFormat(vm).ConfigureAwait(false);
@@ -31,7 +31,10 @@ public static class WallpaperManager
             }
 
             var core = await Dispatcher.UIThread.InvokeAsync(() => Application.Current.DataContext as CoreViewModel);
-            core?.PlatformService?.SetAsWallpaper(file, GetWallpaperStyle(style));
+            if (core?.PlatformService is { } platform)
+            {
+                await platform.SetAsWallpaper(file, GetWallpaperStyle(style)).ConfigureAwait(false);
+            }
         }
         catch (Exception e)
         {
@@ -39,10 +42,6 @@ public static class WallpaperManager
 #if DEBUG
             Console.WriteLine(e);   
 #endif
-        }
-        finally
-        {
-            vm.IsLoadingIndicatorShown.Value = false;
         }
     }
     

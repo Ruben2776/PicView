@@ -32,19 +32,17 @@ public static class RenameHelper
             return false;
         }
 
-        vm.IsLoadingIndicatorShown.Value = true;
         var isRenamed = false;
-        try
+        using (tab.ClaimBusy())
         {
-            isRenamed = await Task.Run(() => RenameFileAsync(vm, tab, oldPath, newPath, mainWindow)).ConfigureAwait(false);
-        }
-        catch (Exception e)
-        {
-            DebugHelper.LogDebug(nameof(RenameHelper), nameof(RenameAction), e);
-        }
-        finally
-        {
-            vm.IsLoadingIndicatorShown.Value = false;
+            try
+            {
+                isRenamed = await Task.Run(() => RenameFileAsync(vm, tab, oldPath, newPath, mainWindow)).ConfigureAwait(false);
+            }
+            catch (Exception e)
+            {
+                DebugHelper.LogDebug(nameof(RenameHelper), nameof(RenameAction), e);
+            }
         }
 
         if (mainWindow is not null)

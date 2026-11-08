@@ -256,7 +256,6 @@ public sealed class MainWindowLifecycle
         }
 
         vm.WindowTabs.SetViewFactory(new TabViews(window));
-        window.Disposables.Add(ShowLoadingIndicatorWhileLoading(vm));
         _core.MainWindows.MainWindows.Add(vm);
         _core.MainWindows.ActiveWindow.Value = vm;
         _open.Add(window);
@@ -275,22 +274,6 @@ public sealed class MainWindowLifecycle
         }
 
         return window;
-    }
-
-    /// <summary>
-    /// Shows the window's loading indicator while the titlebar is hidden and its active tab's Title Phase is Loading or
-    /// Downloading. The titlebar already says Loading or Downloading, so the indicator shows that text's state when the
-    /// titlebar is hidden. It follows the phase, not the tab's Load, so a startup open, which says Loading while it
-    /// decodes before its Load begins, shows it too.
-    /// </summary>
-    private static IDisposable ShowLoadingIndicatorWhileLoading(MainWindowViewModel vm)
-    {
-        var saysLoading = vm.WindowTabs.ActiveTab
-            .Select(static tab => tab.Titles.SaysLoading)
-            .Switch();
-        return saysLoading.CombineLatest(vm.IsTopToolbarShown.AsObservable(),
-                static (loading, titlebarShown) => loading && !titlebarShown)
-            .Subscribe(show => vm.IsLoadingIndicatorShown.Value = show);
     }
 
     private static MainWindowViewModel ViewModelOf(MainWindow window) =>

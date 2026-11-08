@@ -21,7 +21,7 @@ public static class ImageOptimizer
             return;
         }
 
-        vm.IsLoadingIndicatorShown.Value = true;
+        using var busy = tab.ClaimBusy();
         await Task.Run(() =>
         {
             var file = tab.FileInfo.CurrentValue;
@@ -40,6 +40,5 @@ public static class ImageOptimizer
         }).ConfigureAwait(false);
         tab.ImageIterator.Cache.Invalidate(tab.FileInfo.CurrentValue.FullName);
         await tab.ImageIterator.ReloadAsync(clearCache:false).ConfigureAwait(false);
-        vm.IsLoadingIndicatorShown.Value = false;
     }
 }

@@ -75,7 +75,12 @@ public class MainWindowViewModel : IDisposable
     /// </summary>
     public IReadOnlyBindableReactiveProperty<string?> DockedGalleryToggleHeader { get; }
 
-    public BindableReactiveProperty<bool> IsLoadingIndicatorShown { get; } = new();
+    /// <summary>
+    /// Whether this window shows its loading indicator: while its active tab is Busy, or while the tab says Loading or
+    /// Downloading and the titlebar is hidden, since the titlebar already says Loading (ADR-0025). Derived; nothing
+    /// sets it.
+    /// </summary>
+    public IReadOnlyBindableReactiveProperty<bool> IsLoadingIndicatorShown { get; }
 
     public IReadOnlyBindableReactiveProperty<bool> IsUIShown { get; }
 
@@ -139,6 +144,14 @@ public class MainWindowViewModel : IDisposable
         Interface = visibility.ToReadOnlyBindableReactiveProperty();
         IsHoverBarShown = Interface.AsObservable().Select(static v => v.ShowsHoverBar).ToReadOnlyBindableReactiveProperty();
         IsUIShown = Interface.AsObservable().Select(static v => v.IsInterfaceShown).ToReadOnlyBindableReactiveProperty();
+        IsLoadingIndicatorShown = WindowTabs.ActiveTab
+            .Select(static tab => tab.IsBusy.AsObservable()
+                .CombineLatest(tab.Titles.SaysLoading, static (busy, loading) => (busy, loading)))
+            .Switch()
+            .CombineLatest(IsTopToolbarShown.AsObservable(),
+                static (tab, titlebarShown) => tab.busy || (tab.loading && !titlebarShown))
+            .DistinctUntilChanged()
+            .ToReadOnlyBindableReactiveProperty();
         IsBottomToolbarShown = Interface.AsObservable().Select(static v => v.IsBottomBarShown).ToReadOnlyBindableReactiveProperty();
         TitlebarHeight = Interface.AsObservable().Select(static v => v.TitlebarHeight).ToReadOnlyBindableReactiveProperty();
         BottombarHeight = Interface.AsObservable().Select(static v => v.BottombarHeight).ToReadOnlyBindableReactiveProperty();

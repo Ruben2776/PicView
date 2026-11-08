@@ -221,11 +221,12 @@ public class ImageInfoViewController(ImageInfoView view) : IDisposable
             return;
         }
 
-        var oldPath = vm.WindowTabs.ActiveTab.Value.FileInfo.CurrentValue.FullName;
+        var tab = vm.WindowTabs.ActiveTab.Value;
+        var oldPath = tab.FileInfo.CurrentValue.FullName;
         if (oldPath.Equals(newPath, StringComparison.OrdinalIgnoreCase)) return;
 
+        using var busy = tab.ClaimBusy();
         await Dispatcher.UIThread.InvokeAsync(() => SetLoadingState(true));
-        vm.IsLoadingIndicatorShown.Value = true;
         try
         {
             var isRenamed = await RenameHelper.RenameAction(vm, newPath).ConfigureAwait(false);
@@ -246,7 +247,6 @@ public class ImageInfoViewController(ImageInfoView view) : IDisposable
         finally
         {
             await Dispatcher.UIThread.InvokeAsync(() => SetLoadingState(false));
-            vm.IsLoadingIndicatorShown.Value = false;
         }
     }
 

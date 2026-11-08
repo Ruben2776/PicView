@@ -109,6 +109,10 @@ _Avoid_: Set the title, update the title, tab title (for the whole set)
 A state a tab is told it is in, which stands in for its derived Titles until it ends: Loading, until the next image shows; Downloading, with its progress, until the image shows or fails; Error, until the next load; and Cropping, which replaces only the titlebar text and its tooltip and ends when the crop closes. No image is not a phase: a tab that shows nothing derives it.
 _Avoid_: Loading title, temporary title, title override
 
+**Busy**:
+A tab is Busy while an operation on it holds a busy claim: a crop save, an optimize, setting the wallpaper, a rename or a duplicate. It ends when the last claim ends, however the operation ends. A Main Window shows its loading indicator while its active tab is Busy, or while the tab's Title Phase is Loading or Downloading and the titlebar is hidden.
+_Avoid_: loading indicator shown, busy flag
+
 **Tab View**:
 Which of three views a tab shows, derived from its own state: the crop control while a crop is open; otherwise the image viewer while the tab shows something or its Title Phase is Loading or Downloading; otherwise the start-up menu. The tab derives it; one adapter per Main Window makes the control it shows, once per tab, and nothing assigns a view into a tab.
 _Avoid_: Current view (as something set), switch to the viewer, switch to the start-up menu, restore the view

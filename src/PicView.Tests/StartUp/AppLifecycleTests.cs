@@ -873,13 +873,13 @@ public class AppLifecycleTests : IAsyncDisposable
 
         var opening = SourceOpener.OpenAsync(window, _core, a).AsTask();
         await held.Requested.Task.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
-        var shownWhileHeld = vm.IsLoadingIndicatorShown.CurrentValue;
+        var shownWhileHeld = vm.IsLoadingIndicatorShown.Value;
         held.Model.SetResult(new ImageModel { FileInfo = new FileInfo(a) });
         var result = await opening.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
 
         Assert.True(shownWhileHeld);
         Assert.True(result.IsLoaded);
-        Assert.False(vm.IsLoadingIndicatorShown.CurrentValue);
+        Assert.False(vm.IsLoadingIndicatorShown.Value);
     }
 
     [AvaloniaFact]
@@ -897,7 +897,7 @@ public class AppLifecycleTests : IAsyncDisposable
 
         var opening = SourceOpener.OpenAsync(window, _core, a).AsTask();
         await held.Requested.Task.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
-        var shownWhileHeld = vm.IsLoadingIndicatorShown.CurrentValue;
+        var shownWhileHeld = vm.IsLoadingIndicatorShown.Value;
         held.Model.SetResult(new ImageModel { FileInfo = new FileInfo(a) });
         await opening.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
 
@@ -927,12 +927,12 @@ public class AppLifecycleTests : IAsyncDisposable
         // The older load gives up first, and the newer one is still loading
         heldA.Model.SetResult(new ImageModel { FileInfo = new FileInfo(a) });
         await openingA.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
-        var shownAfterOlderEnded = vm.IsLoadingIndicatorShown.CurrentValue;
+        var shownAfterOlderEnded = vm.IsLoadingIndicatorShown.Value;
         heldB.Model.SetResult(new ImageModel { FileInfo = new FileInfo(b) });
         await openingB.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
 
         Assert.True(shownAfterOlderEnded);
-        Assert.False(vm.IsLoadingIndicatorShown.CurrentValue);
+        Assert.False(vm.IsLoadingIndicatorShown.Value);
     }
 
     [AvaloniaFact]
@@ -947,15 +947,15 @@ public class AppLifecycleTests : IAsyncDisposable
 
         var opening = SourceOpener.OpenAsync(window, _core, a).AsTask();
         await held.Requested.Task.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
-        var shownWithTitlebar = vm.IsLoadingIndicatorShown.CurrentValue;
+        var shownWithTitlebar = vm.IsLoadingIndicatorShown.Value;
         vm.GlobalSettings.ShowInterface.Value = false;
-        var shownWithoutTitlebar = vm.IsLoadingIndicatorShown.CurrentValue;
+        var shownWithoutTitlebar = vm.IsLoadingIndicatorShown.Value;
         held.Model.SetResult(new ImageModel { FileInfo = new FileInfo(a) });
         await opening.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
 
         Assert.False(shownWithTitlebar);
         Assert.True(shownWithoutTitlebar);
-        Assert.False(vm.IsLoadingIndicatorShown.CurrentValue);
+        Assert.False(vm.IsLoadingIndicatorShown.Value);
     }
 
     [AvaloniaFact]
@@ -973,19 +973,19 @@ public class AppLifecycleTests : IAsyncDisposable
 
         var opening = SourceOpener.OpenAsync(window, _core, a).AsTask();
         await held.Requested.Task.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
-        var shownInA = vm.IsLoadingIndicatorShown.CurrentValue;
+        var shownInA = vm.IsLoadingIndicatorShown.Value;
         // A new tab is selected, and it is not loading
         tabs.CreateTab();
-        var shownInB = vm.IsLoadingIndicatorShown.CurrentValue;
+        var shownInB = vm.IsLoadingIndicatorShown.Value;
         tabs.SelectTab(tabA);
-        var shownBackInA = vm.IsLoadingIndicatorShown.CurrentValue;
+        var shownBackInA = vm.IsLoadingIndicatorShown.Value;
         held.Model.SetResult(new ImageModel { FileInfo = new FileInfo(a) });
         await opening.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
 
         Assert.True(shownInA);
         Assert.False(shownInB);
         Assert.True(shownBackInA);
-        Assert.False(vm.IsLoadingIndicatorShown.CurrentValue);
+        Assert.False(vm.IsLoadingIndicatorShown.Value);
     }
 
     [AvaloniaFact]
@@ -1119,7 +1119,7 @@ public class AppLifecycleTests : IAsyncDisposable
         var opening = Task.Run(() =>
             SourceOpener.OpenAsync(window, _core, _folder, new OpenOptions(IsStartup: true)).AsTask());
         await _platform.Comparing.Task.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
-        var shownWhileHeld = vm.IsLoadingIndicatorShown.CurrentValue;
+        var shownWhileHeld = vm.IsLoadingIndicatorShown.Value;
         var loadingWhileHeld = tab.Load.IsLoading.Value;
         _platform.CompareGate.Set();
         var result = await opening.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
@@ -1128,7 +1128,7 @@ public class AppLifecycleTests : IAsyncDisposable
         Assert.False(loadingWhileHeld);
         Assert.True(shownWhileHeld);
         Assert.True(result.IsLoaded);
-        Assert.False(vm.IsLoadingIndicatorShown.CurrentValue);
+        Assert.False(vm.IsLoadingIndicatorShown.Value);
     }
 
     [AvaloniaFact]
