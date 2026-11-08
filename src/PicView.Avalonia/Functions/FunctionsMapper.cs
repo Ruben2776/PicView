@@ -523,15 +523,20 @@ public class FunctionsMapper : IActionRunner
     
     #region Toggle UI functions
 
-    private ValueTask ToggleScroll() => ToggleHelper.ToggleScroll(_vm, _mainWindow);
+    private ValueTask ToggleScroll() =>
+        ToggleHelper.ToggleScroll(_vm, _mainWindow);
 
-    private ValueTask ToggleLooping() => ToggleHelper.ToggleLooping(_vm, _mainWindow);
+    private ValueTask ToggleLooping() =>
+        ToggleHelper.ToggleLooping(_vm, _mainWindow);
 
-    private ValueTask ToggleInterface() => ToggleHelper.ToggleInterface(_vm, _mainWindow);
+    private ValueTask ToggleInterface() =>
+        ToggleHelper.ToggleInterface(_vm);
 
-    private ValueTask ToggleHoverBar() => ToggleHelper.ToggleHoverBar(_vm);
+    private ValueTask ToggleHoverBar() =>
+        ToggleHelper.ToggleHoverBar(_vm);
 
-    private ValueTask ToggleSubdirectories() => ToggleHelper.ToggleSubdirectories(_vm);
+    private ValueTask ToggleSubdirectories() =>
+        ToggleHelper.ToggleSubdirectories(_vm);
 
     private ValueTask ToggleBottomToolbar() => ToggleHelper.ToggleBottomToolbar(_vm);
 
@@ -719,7 +724,8 @@ public class FunctionsMapper : IActionRunner
     }
     
     /// <inheritdoc cref="TabViewModel.CloseImageAsync" />
-    private ValueTask CloseImage() => _vm.WindowTabs.ActiveTab.CurrentValue.CloseImageAsync();
+    private ValueTask CloseImage() =>
+        _vm.WindowTabs.ActiveTab.CurrentValue.CloseImageAsync();
     
     #endregion
 

@@ -1,5 +1,6 @@
 ﻿using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.UI;
+using PicView.Core.Localization;
 using PicView.Core.ViewModels;
 using R3;
 
@@ -16,17 +17,21 @@ public static class ToggleHelper
     
     public static async ValueTask ToggleScroll(MainWindowViewModel vm, MainWindow mainWindow)
     {
-        _ = TooltipHelper.ShowTooltipMessageAsync(vm.GlobalSettings.ScrollingText.Value ?? string.Empty, false, mainWindow, TimeSpan.FromSeconds(1.5));
+        var value = vm.GlobalSettings.IsScrollingEnabled.CurrentValue;
+        var tip = value ? TranslationManager.Translation.ScrollingDisabled : TranslationManager.Translation.ScrollingEnabled;
+        _ = TooltipHelper.ShowTooltipMessageAsync(tip, false, mainWindow, TimeSpan.FromSeconds(1.5));
         await Toggle(vm.GlobalSettings.IsScrollingEnabled).ConfigureAwait(false);
     }
 
     public static async ValueTask ToggleLooping(MainWindowViewModel vm, MainWindow mainWindow)
     {
-        _ = TooltipHelper.ShowTooltipMessageAsync(vm.GlobalSettings.LoopingText.Value ?? string.Empty, false, mainWindow, TimeSpan.FromSeconds(1.5));
+        var value = vm.GlobalSettings.IsLooping.CurrentValue;
+        var tip = value ? TranslationManager.Translation.LoopingEnabled : TranslationManager.Translation.LoopingDisabled;
+        _ = TooltipHelper.ShowTooltipMessageAsync(tip, false, mainWindow, TimeSpan.FromSeconds(1.5));
         await Toggle(vm.GlobalSettings.IsLooping).ConfigureAwait(false);
     }
 
-    public static async ValueTask ToggleInterface(MainWindowViewModel vm, MainWindow mainWindow)
+    public static async ValueTask ToggleInterface(MainWindowViewModel vm)
     {
         vm.TopTitlebarViewModel.CloseDropDownMenu();
         await Toggle(vm.GlobalSettings.ShowInterface).ConfigureAwait(false);
