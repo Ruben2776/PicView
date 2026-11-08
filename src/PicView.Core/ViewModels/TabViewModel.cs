@@ -700,6 +700,63 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
 
     #endregion
 
+    #region Busy
+
+    private int _busyClaims;
+    private readonly BindableReactiveProperty<bool> _isBusy = new();
+
+    /// <summary>
+    /// Whether an operation on this tab, such as a crop save, an optimize or a rename, holds a busy claim.
+    /// </summary>
+    public IReadOnlyBindableReactiveProperty<bool> IsBusy => _isBusy;
+
+    /// <summary>
+    /// Claims the tab Busy until the returned claim is disposed. Claims count, so the tab stays Busy until every
+    /// claim ends; disposing a claim twice releases it once.
+    /// </summary>
+    public IDisposable ClaimBusy()
+    {
+        Interlocked.Increment(ref _busyClaims);
+        PublishBusy();
+        return new BusyClaim(this);
+    }
+
+    // Claims start and end on any thread, so a value published late could leave an older state last. Reading the
+    // count again after publishing, and publishing again until it holds, leaves the state as it is now last
+    private void PublishBusy()
+    {
+        var busy = Volatile.Read(ref _busyClaims) > 0;
+        while (!Volatile.Read(ref _isDisposed))
+        {
+            _isBusy.Value = busy;
+            var now = Volatile.Read(ref _busyClaims) > 0;
+            if (now == busy)
+            {
+                return;
+            }
+
+            busy = now;
+        }
+    }
+
+    private sealed class BusyClaim(TabViewModel tab) : IDisposable
+    {
+        private int _released;
+
+        public void Dispose()
+        {
+            if (Interlocked.Exchange(ref _released, 1) != 0)
+            {
+                return;
+            }
+
+            Interlocked.Decrement(ref tab._busyClaims);
+            tab.PublishBusy();
+        }
+    }
+
+    #endregion
+
     #region Titles
 
     /// <summary>
@@ -945,6 +1002,7 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
         _titles?.Dispose();
         _viewKind.Dispose();
         _shown.Dispose();
+        _isBusy.Dispose();
         
         GC.SuppressFinalize(this);
     }
