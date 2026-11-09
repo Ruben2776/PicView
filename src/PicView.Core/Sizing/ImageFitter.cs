@@ -8,12 +8,7 @@ public static class ImageFitter
 {
     public static Fit Fit(FitInput input)
     {
-        if (input.SecondImageWidth > 0 && input.SecondImageHeight > 0)
-        {
-            return FitPair(input);
-        }
-
-        return FitSingle(input);
+        return input is { SecondImageWidth: > 0, SecondImageHeight: > 0 } ? FitPair(input) : FitSingle(input);
     }
 
     private static Fit FitSingle(FitInput input)
@@ -42,9 +37,13 @@ public static class ImageFitter
         double scale, viewWidth, viewHeight, scrollWidth, scrollHeight;
         if (input.ScrollEnabled)
         {
-            // Fit the available width and scroll the rest of the height
-            scale = maxAvailableWidth / shownWidth;
-            viewWidth = Math.Min(shownWidth * scale, maxAvailableWidth);
+            // Fit the available width and scroll the rest of the height. The vertical scrollbar is always shown
+            // while scrolling is on and takes its width from the scroll area, so the image is fitted beside it:
+            // an image as wide as the scroll area would scroll sideways by the scrollbar's width.
+            const double scrollbarWidth = SizeDefaults.VerticalScrollbarSize;
+            var maxImageWidth = Math.Max(0, Math.Min(maxAvailableWidth, availableWidth - scrollbarWidth));
+            scale = maxImageWidth / shownWidth;
+            viewWidth = shownWidth * scale + scrollbarWidth;
             viewHeight = Math.Min(shownHeight * scale, maxAvailableHeight);
 
             // An AutoFit window takes the image's size, while a window that keeps its size scrolls in all of it

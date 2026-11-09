@@ -44,7 +44,7 @@ public class AutoScrollViewer : ScrollViewer
     protected override Type StyleKeyOverride => typeof(AutoScrollViewer);
 
     private readonly Subject<bool> _autoScrollingSubject = new();
-    private readonly CompositeDisposable _disposables = new();
+    private DisposableBag _disposables;
 
     /// <summary>
     /// Defines the <see cref="CanScrollUp"/> property.
@@ -233,7 +233,7 @@ public class AutoScrollViewer : ScrollViewer
                         break;
                 }
             })
-            .AddTo(_disposables);
+            .AddTo(ref _disposables);
 
         // Handle all types of focus loss events to end auto-scrolling
         LostFocus += (_, _) => IsAutoScrolling = false;
@@ -301,7 +301,7 @@ public class AutoScrollViewer : ScrollViewer
         Observable.Interval(TimeSpan.FromMilliseconds(16))
             .TakeUntil(_autoScrollingSubject.Where(isScrolling => !isScrolling))
             .Subscribe(_ => PerformAutoScroll())
-            .AddTo(_disposables);
+            .AddTo(ref _disposables);
     }
 
     /// <summary>

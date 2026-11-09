@@ -33,15 +33,18 @@ public readonly record struct PixelSizes(
         }
 
         (double Width, double Height) second = default;
-        if (sideBySide && tab.SecondaryModel is { } secondary)
+        if (!sideBySide || tab.SecondaryModel is not { } secondary)
         {
-            if (SizeOf(secondary, cache) is not { } pair)
-            {
-                return null;
-            }
-
-            second = pair;
+            return new PixelSizes(first.Width, first.Height, second.Width, second.Height,
+                tab.Orientation.Current.CurrentValue.QuarterTurns);
         }
+
+        if (SizeOf(secondary, cache) is not { } pair)
+        {
+            return null;
+        }
+
+        second = pair;
 
         return new PixelSizes(first.Width, first.Height, second.Width, second.Height,
             tab.Orientation.Current.CurrentValue.QuarterTurns);

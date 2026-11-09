@@ -133,10 +133,11 @@ public class ImageFitterTests
     [Fact]
     public void Fit_Scroll_FitsWidthAndScrollsTheRest()
     {
+        // The window and the scroll area are 30 wider than the image, for the vertical scrollbar beside it
         var fit = Fit(Input(1000, 3000) with { ScrollEnabled = true });
 
-        AssertSizes(fit, 1000, 1025, 1000, 3000);
-        Assert.Equal(1000, fit.ScrollViewerWidth, Precision);
+        AssertSizes(fit, 1030, 1025, 1000, 3000);
+        Assert.Equal(1030, fit.ScrollViewerWidth, Precision);
         Assert.Equal(967, fit.ScrollViewerHeight, Precision);
     }
 
@@ -146,9 +147,9 @@ public class ImageFitterTests
         // Shown 1000 wide and 3000 high, the same as an unturned 1000x3000 image
         var fit = Fit(Input(3000, 1000) with { ScrollEnabled = true, QuarterTurns = 1 });
 
-        AssertSizes(fit, 1000, 1025, 3000, 1000);
+        AssertSizes(fit, 1030, 1025, 3000, 1000);
         Assert.Equal(1, fit.Scale, Precision);
-        Assert.Equal(1000, fit.ScrollViewerWidth, Precision);
+        Assert.Equal(1030, fit.ScrollViewerWidth, Precision);
         Assert.Equal(967, fit.ScrollViewerHeight, Precision);
     }
 
@@ -187,7 +188,7 @@ public class ImageFitterTests
     [Fact]
     public void Fit_ScrollAndZoomToFitInFixedWindowWithShortImage_ScrollAreaFillsAvailableHeight()
     {
-        // Scaled 1.6 to fill the 800 wide area, which leaves it 480 high
+        // Scaled 1.54 to fill the 800 wide area beside the 30 wide scrollbar, which leaves it 462 high
         var fit = Fit(Input(500, 300, FitMode.FixedWindow) with
         {
             ScrollEnabled = true,
@@ -196,10 +197,85 @@ public class ImageFitterTests
             WindowContentHeight = 600
         });
 
-        Assert.Equal(800, fit.Width, Precision);
-        Assert.Equal(480, fit.Height, Precision);
+        Assert.Equal(770, fit.Width, Precision);
+        Assert.Equal(462, fit.Height, Precision);
         Assert.Equal(800, fit.ScrollViewerWidth, Precision);
         Assert.Equal(600, fit.ScrollViewerHeight, Precision);
+    }
+
+    [Fact]
+    public void Fit_ScrollWithWideImage_AutoFitWindowStaysInsideWorkAreaMinusMargin()
+    {
+        // The image shrinks to 1905 - 30 wide, so image and scrollbar together fill the 1905 the window may take
+        var fit = Fit(Input(4000, 6000) with { ScrollEnabled = true });
+
+        AssertSizes(fit, 1905, 1025, 1875, 2812.5);
+        Assert.Equal(0.46875, fit.Scale, Precision);
+        Assert.Equal(1905, fit.ScrollViewerWidth, Precision);
+        Assert.Equal(967, fit.ScrollViewerHeight, Precision);
+    }
+
+    [Fact]
+    public void Fit_ScrollInFixedWindowWithWideImage_ImageFitsBesideVerticalScrollbar()
+    {
+        var fit = Fit(Input(4000, 6000, FitMode.FixedWindow) with
+        {
+            ScrollEnabled = true,
+            WindowContentWidth = 800,
+            WindowContentHeight = 600
+        });
+
+        Assert.Equal(770, fit.Width, Precision);
+        Assert.Equal(1155, fit.Height, Precision);
+        Assert.Equal(800, fit.ScrollViewerWidth, Precision);
+    }
+
+    /// <summary>
+    /// The scroll viewer always shows its vertical scrollbar while scrolling is on, and the scrollbar takes its
+    /// width from the viewport. An image wider than what is left makes the viewer scroll sideways, and
+    /// middle-click auto-scroll then moves the image left and right as well.
+    /// </summary>
+    [Theory]
+    [InlineData(FitMode.AutoFit, 1000, 3000, false)]
+    [InlineData(FitMode.AutoFit, 1000, 3000, true)]
+    [InlineData(FitMode.AutoFit, 4000, 6000, false)]
+    [InlineData(FitMode.AutoFit, 1890, 3000, false)]
+    [InlineData(FitMode.AutoFit, 400, 300, true)]
+    [InlineData(FitMode.FixedWindow, 4000, 6000, false)]
+    [InlineData(FitMode.FixedWindow, 790, 3000, false)]
+    [InlineData(FitMode.FixedWindow, 500, 300, true)]
+    [InlineData(FitMode.Fullscreen, 4000, 6000, false)]
+    [InlineData(FitMode.Fullscreen, 500, 3000, true)]
+    public void Fit_Scroll_ImageNeverWiderThanViewportBesideVerticalScrollbar(FitMode mode, double width,
+        double height, bool zoomToFit)
+    {
+        var fit = Fit(Input(width, height, mode) with
+        {
+            ScrollEnabled = true,
+            ZoomToFit = zoomToFit,
+            WindowContentWidth = 800,
+            WindowContentHeight = 600
+        });
+
+        Assert.True(fit.Width + SizeDefaults.VerticalScrollbarSize <= fit.ScrollViewerWidth + 1e-9,
+            $"Image {fit.Width} wide does not fit beside the scrollbar in a {fit.ScrollViewerWidth} wide scroll area");
+    }
+
+    [Theory]
+    [InlineData(1000, 3000, 1000, 3000)]
+    [InlineData(3000, 3000, 2000, 1500)]
+    public void Fit_ScrollWithPair_PairFitsBesideVerticalScrollbarInsideWorkArea(double width, double height,
+        double secondWidth, double secondHeight)
+    {
+        var fit = Fit(Input(width, height) with
+        {
+            ScrollEnabled = true,
+            SecondImageWidth = secondWidth,
+            SecondImageHeight = secondHeight
+        });
+
+        Assert.True(fit.Width + SizeDefaults.VerticalScrollbarSize <= fit.ScrollViewerWidth + 1e-9);
+        Assert.True(fit.WindowWidth <= Screen.WorkingAreaWidth - 15 + 1e-9);
     }
 
     [Fact]
