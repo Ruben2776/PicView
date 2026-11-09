@@ -1,6 +1,7 @@
 name: Build PicView macOS
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - dev
