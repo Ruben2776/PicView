@@ -1236,6 +1236,31 @@ public class WindowFitterTests
     }
 
     [AvaloniaFact]
+    public void Follow_NativelyMaximizedWindowResizes_IsNotMoved()
+    {
+        var (fitter, vm, window) = CreateShownAutoFitWindow(() => Screen(1920, 1040));
+        using var following = fitter.Follow();
+        vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 400, 300));
+        Dispatcher.UIThread.RunJobs();
+        window.Position = new PixelPoint(100, 50);
+        var modesWhenResized = new List<WindowMode>();
+        using var listening = window.GetPropertyChangedObservable(Window.ClientSizeProperty).ToObservable()
+            .Subscribe(_ => modesWhenResized.Add(vm.WindowModeState.Value.Mode));
+
+        // The operating system maximizes it, as Win+Up does, and its Window Mode follows only later
+        window.WindowState = WindowState.Maximized;
+        window.SizeToContent = SizeToContent.Manual;
+        window.Width = 1920;
+        window.Height = 1040;
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Equal([WindowMode.Normal], modesWhenResized);
+        Assert.Equal(new Size(1920, 1040), window.ClientSize);
+        Assert.Equal(new PixelPoint(100, 50), window.Position);
+        window.Close();
+    }
+
+    [AvaloniaFact]
     public void Follow_Placed_PublishesTheNewSize()
     {
         var (fitter, vm, window) = CreateShownAutoFitWindow(() => Screen(1920, 1040));

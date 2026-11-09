@@ -120,12 +120,13 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
     }
 
     // An AutoFit window is placed after each change of its size, a Fit included. A hidden window is not: App Start
-    // places it as it shows. Nor is one that is not Normal, keeps its size or is between Window Modes
+    // places it as it shows. Nor is one that is not Normal, keeps its size or is between Window Modes. Normal also
+    // natively: the operating system maximizes a window, as Win+Up does, before its Window Mode follows
     private void PlaceAfterResizeIfAutoFit(MainWindowViewModel vm, Size oldSize, Size newSize)
     {
         var state = vm.WindowModeState.CurrentValue;
-        if (!window.IsVisible || state.Mode is not WindowMode.Normal || !state.AutoFit ||
-            window.IsChangingWindowState || _placed.IsDisposed)
+        if (!window.IsVisible || state.Mode is not WindowMode.Normal || window.WindowState is not WindowState.Normal ||
+            !state.AutoFit || window.IsChangingWindowState || _placed.IsDisposed)
         {
             return;
         }
