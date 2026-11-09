@@ -5,9 +5,9 @@
 - **Solution**: `PicView.slnx` in the `src/` root.
 - **Target framework**: `net11.0` (with `net11.0-windows10.0.22621` for Win32 project). Language version set to `preview`.
 - **Platforms**: `x64` and `arm64` only — all projects specify `<Platforms>x64;arm64</Platforms>`.
-- **AOT**: `PicView.Core` is configured for Native AOT (`PublishAot`, `Trimming=full`, `IsAotCompatible`). Keep new Core code AOT-compatible (no reflection-heavy patterns).
+- **AOT**: `PicView.Core` is configured for Native AOT (`PublishAot`, `Trimming=full`, `IsAotCompatible`). Keep code AOT-compatible (no reflection-heavy patterns).
 - **Directory.Build.props** (solution root) sets shared properties: `Nullable=enable`, and version info.
-- **Linux W.I.P** Linux version has not been released or tested yet.
+- **Linux W.I.P** Linux version has not been released nor tested yet.
 
 ### Building the test project only (recommended on Windows)
 
@@ -93,7 +93,7 @@ public class TempFileTests
 - **File-scoped namespaces** (`namespace X;` not block-scoped).
 - **Nullable reference types** enabled globally.
 - **Implicit usings** enabled — no need for `using System;` etc.
-- **Braces** Use curly braces for if statements and loops.
+- **Braces**: Use curly braces for if statements and loops.
 - **Naming**: PascalCase for public members, `_camelCase` for private fields. Test methods use `MethodOrScenario_Condition_ExpectedResult` pattern.
 - **Async patterns**: `async Task` / `ValueTask` used extensively; avoid `async void`.
 - **Reactive extensions**: R3 (`ObservableCollections.R3`, `R3`) used for reactive patterns in ViewModels.
@@ -114,6 +114,7 @@ public class TempFileTests
 | `PicView.Benchmarks`      | BenchmarkDotNet performance benchmarks.                                                                                        |
 | `PicView.Tests`           | xUnit.v3 test project.                                                                                                         |
 
+__PicView uses custom made theme located in the `PicViewTheme` directory.__
 
 ## Agent skills
 
