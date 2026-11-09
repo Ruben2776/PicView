@@ -2,6 +2,7 @@ using System.Collections.Concurrent;
 using System.Reflection;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Avalonia.Threading;
@@ -14,6 +15,7 @@ using PicView.Avalonia.StartUp;
 using PicView.Avalonia.Views.Menu;
 using PicView.Avalonia.Views.UC;
 using PicView.Avalonia.Views.UC.PopUps;
+using PicView.Core.ColorHandling;
 using PicView.Core.Config;
 using PicView.Core.Favorites;
 using PicView.Core.FileHandling;
@@ -194,6 +196,52 @@ public class AppLifecycleTests : IAsyncDisposable
         var tab = ViewModelOf(app.MainWindows.Open[0]).WindowTabs.ActiveTab.CurrentValue;
         Assert.False(tab.IsInitialized);
         Assert.Same(_core.Services, tab.Services);
+    }
+
+    [AvaloniaFact]
+    public async Task StartAsync_SetsTheImageBackgroundFromTheSettings()
+    {
+        Settings.UIProperties.BgColorChoice = (int)BackgroundType.White;
+        Settings.UIProperties.IsConstrainBackgroundColorEnabled = false;
+        var app = CreateApp();
+        // PicView's App sets its core as the app's data context before App Start
+        Application.Current!.DataContext = _core;
+        try
+        {
+            await app.StartAsync(settingsExists: true, []);
+
+            var settings = _core.GlobalSettings;
+            Assert.Equal(Colors.White, Assert.IsType<SolidColorBrush>(settings.ImageBackground.Value).Color);
+            Assert.Equal(Colors.Transparent,
+                Assert.IsType<SolidColorBrush>(settings.ConstrainedImageBackground.Value).Color);
+            Assert.Equal((int)BackgroundType.White, settings.BackgroundChoice.Value);
+        }
+        finally
+        {
+            Application.Current.DataContext = null;
+        }
+    }
+
+    [AvaloniaFact]
+    public async Task StartAsync_WithTheBackgroundConstrained_SetsTheConstrainedImageBackgroundFromTheSettings()
+    {
+        Settings.UIProperties.BgColorChoice = (int)BackgroundType.White;
+        Settings.UIProperties.IsConstrainBackgroundColorEnabled = true;
+        var app = CreateApp();
+        Application.Current!.DataContext = _core;
+        try
+        {
+            await app.StartAsync(settingsExists: true, []);
+
+            var settings = _core.GlobalSettings;
+            Assert.Equal(Colors.Transparent, Assert.IsType<SolidColorBrush>(settings.ImageBackground.Value).Color);
+            Assert.Equal(Colors.White,
+                Assert.IsType<SolidColorBrush>(settings.ConstrainedImageBackground.Value).Color);
+        }
+        finally
+        {
+            Application.Current.DataContext = null;
+        }
     }
 
     [AvaloniaFact]
