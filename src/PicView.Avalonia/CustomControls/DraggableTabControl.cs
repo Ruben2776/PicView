@@ -779,9 +779,11 @@ public class DraggableTabControl : TabControl
             return;
         }
 
-        var window = TopLevel.GetTopLevel(this) as Window;
-        var windowWidth = window?.Width ?? double.NaN;
-        var windowHeight = window?.Height ?? double.NaN;
+        // The origin window's size as it is, not its Width and Height: an AutoFit window follows its content, so it has
+        // no explicit size, and the ghost would open at the platform's default size
+        var windowSize = TopLevel.GetTopLevel(this)?.ClientSize;
+        var windowWidth = windowSize?.Width ?? double.NaN;
+        var windowHeight = windowSize?.Height ?? double.NaN;
         var cornerRadius = new CornerRadius(16);
         var isMacOs = OperatingSystem.IsMacOS();
 

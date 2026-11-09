@@ -364,6 +364,23 @@ public class AppLifecycleTests : IAsyncDisposable
     }
 
     [AvaloniaFact]
+    public async Task MovedTab_StartUpMenuInAnAutoFitWindow_OpensAtTheOriginsSize()
+    {
+        Settings.WindowProperties.AutoFit = true;
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var first = ViewModelOf(app.MainWindows.Open[0]);
+        var tab = first.WindowTabs.CreateTab();
+        first.WindowTabs.MoveOut(tab);
+
+        var moved = await app.MainWindows.OpenForMovedTabAsync(tab, new PixelPoint(40, 40), 800, 600);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.IsType<StartUpMenu>(tab.CurrentView.Value);
+        Assert.Equal(new Size(800, 600), moved.Bounds.Size);
+    }
+
+    [AvaloniaFact]
     public async Task Open_WithAutoFitAndStayCenteredOff_KeepsTheWindowsPosition()
     {
         Settings.WindowProperties.AutoFit = true;
@@ -1451,7 +1468,7 @@ public class AppLifecycleTests : IAsyncDisposable
     private static WriteableBitmap NewBitmap() =>
         new(new PixelSize(4, 4), new Vector(96, 96), PixelFormat.Bgra8888, AlphaFormat.Premul);
 
-    // A 4×4 bitmap as the image loader returns it, so every file given one is the same pixel size
+    // A 4Ã—4 bitmap as the image loader returns it, so every file given one is the same pixel size
     private static ImageModel SizedModel(string path) => new()
     {
         FileInfo = new FileInfo(path),

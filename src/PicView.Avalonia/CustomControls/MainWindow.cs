@@ -216,10 +216,12 @@ public abstract class MainWindow : Window, IMainWindow
         }
 
         var lifecycle = Lifecycle;
+        // Not Width and Height: an AutoFit window follows its content, so it has no explicit size
+        var size = ClientSize;
         _ = Task.Run(() => Dispatcher.UIThread.InvokeAsync(async () =>
         {
             await lifecycle.OpenForMovedTabAsync(tab,
-                new PixelPoint(e.ScreenPosition.X - 100, e.ScreenPosition.Y - 50), Width, Height).ConfigureAwait(true);
+                new PixelPoint(e.ScreenPosition.X - 100, e.ScreenPosition.Y - 50), size.Width, size.Height).ConfigureAwait(true);
         }, DispatcherPriority.Send));
     }
 
