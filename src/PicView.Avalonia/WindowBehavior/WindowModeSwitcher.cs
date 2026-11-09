@@ -50,10 +50,47 @@ public sealed class WindowModeSwitcher(
     /// <param name="isAppStart">Whether this is the first window at app start, the only one that may start fullscreen.</param>
     public void Start(bool isAppStart)
     {
-        if (window.DataContext is MainWindowViewModel vm)
+        if (window.DataContext is not MainWindowViewModel vm)
         {
-            Apply(vm, vm.WindowModeState.CurrentValue, Starting(isAppStart));
+            return;
         }
+
+        var starting = Starting(isAppStart);
+        Apply(vm, vm.WindowModeState.CurrentValue, starting);
+        if (starting.Mode is WindowMode.Fullscreen)
+        {
+            PlaceFullscreenOnceShown(vm);
+        }
+    }
+
+    // Workaround, outside ADR-0026's rule that the fitter alone sizes the window: this moves it and fits nothing. The
+    // first window enters fullscreen here while it is still hidden, since QuickLoad shows it once it has sized it, and
+    // Windows leaves the taskbar over a window that went fullscreen hidden until the shown window is placed again. So
+    // the window is placed at the origin of its screen once it is open and the dispatcher is idle, as App Start did
+    // before the fitter followed its inputs (then through a Refit and a top-centering posted at ApplicationIdle)
+    private void PlaceFullscreenOnceShown(MainWindowViewModel vm)
+    {
+        void PlaceWhenIdle() => Dispatcher.UIThread.Post(() =>
+        {
+            if (vm.WindowModeState.CurrentValue.Mode is WindowMode.Fullscreen)
+            {
+                window.WindowFitter.MoveToScreenOrigin();
+            }
+        }, DispatcherPriority.ApplicationIdle);
+
+        if (window.IsVisible)
+        {
+            PlaceWhenIdle();
+            return;
+        }
+
+        void OnOpened(object? sender, EventArgs e)
+        {
+            window.Opened -= OnOpened;
+            PlaceWhenIdle();
+        }
+
+        window.Opened += OnOpened;
     }
 
     /// <summary>

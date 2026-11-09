@@ -102,6 +102,15 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
     }
 
     /// <summary>
+    /// Moves the window to the origin of its screen, where a fullscreen window sits. Call on the UI thread.
+    /// </summary>
+    public void MoveToScreenOrigin()
+    {
+        var position = WindowPlacement.ScreenOrigin(_readScreen());
+        window.Position = new PixelPoint(position.X, position.Y);
+    }
+
+    /// <summary>
     /// Places an AutoFit window after its size changed: centered in its work area with Stay centered, else on its own
     /// center.
     /// </summary>

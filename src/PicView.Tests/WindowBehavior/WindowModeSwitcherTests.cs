@@ -1,4 +1,6 @@
+using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Interfaces;
 using PicView.Avalonia.WindowBehavior;
@@ -74,6 +76,25 @@ public class WindowModeSwitcherTests
 
         Assert.Equal([WindowMode.Fullscreen], adapter.Entered);
         Assert.Equal(0, _saves);
+    }
+
+    [AvaloniaFact]
+    public void Start_FullscreenAtAppStart_PlacesTheWindowAtItsScreensOriginOnceShown()
+    {
+        Settings.WindowProperties.Fullscreen = true;
+        var (switcher, _, _, window) = CreateWindow();
+        window.Position = new PixelPoint(300, 200);
+
+        switcher.Start(isAppStart: true);
+        Dispatcher.UIThread.RunJobs();
+        var beforeShowing = window.Position;
+        window.Show();
+        Dispatcher.UIThread.RunJobs();
+
+        // Windows leaves the taskbar over a window that went fullscreen while hidden, so the shown window is placed
+        // again once idle, at the origin of its screen, which the headless screen has at 0, 0
+        Assert.Equal(new PixelPoint(300, 200), beforeShowing);
+        Assert.Equal(new PixelPoint(0, 0), window.Position);
     }
 
     [AvaloniaFact]

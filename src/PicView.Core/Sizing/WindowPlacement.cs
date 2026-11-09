@@ -26,6 +26,11 @@ public static class WindowPlacement
     }
 
     /// <summary>
+    /// The origin of the screen, where a fullscreen window sits.
+    /// </summary>
+    public static PixelPosition ScreenOrigin(ScreenSize screen) => ToPixels(screen, screen.X, screen.Y);
+
+    /// <summary>
     /// Where an AutoFit window goes when its size changes: centered in the work area with Stay centered, else where
     /// its center stays put.
     /// </summary>

@@ -1061,6 +1061,19 @@ public class WindowFitterTests
     }
 
     [AvaloniaFact]
+    public void MoveToScreenOrigin_SecondScalingScreen_PutsTheWindowAtItsOriginInPixels()
+    {
+        var screen = Screen(2560, 1400) with { X = 1920, Y = 0, WorkingAreaX = 1920, Scaling = 1.5 };
+        var (fitter, _, window) = CreateShownWindow(800, 600, readScreen: () => screen);
+        window.Position = new PixelPoint(100, 100);
+
+        fitter.MoveToScreenOrigin();
+
+        Assert.Equal(2880, window.Position.X);
+        Assert.Equal(0, window.Position.Y);
+    }
+
+    [AvaloniaFact]
     public void IsOnAnotherScreen_AfterTheWindowMovesToAnotherMonitor_IsTrueUntilItIsFittedThere()
     {
         var screen = Screen(1920, 1040);
