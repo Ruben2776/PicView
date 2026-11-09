@@ -74,7 +74,7 @@ public static class WindowFunctions
         SetAutoFitInEveryWindow(!vm.WindowModeState.CurrentValue.AutoFit);
 
     /// <summary>
-    /// Turns AutoFit on or off in every main window, and centers the windows that turn it on.
+    /// Turns AutoFit on or off in every main window. Each window's fitter places those that turn it on.
     /// </summary>
     public static async Task SetAutoFitInEveryWindow(bool autoFit)
     {
@@ -85,17 +85,12 @@ public static class WindowFunctions
 
         foreach (var window in desktop.Windows.OfType<MainWindow>().ToArray())
         {
-            if (window.DataContext is not MainWindowViewModel windowVm)
+            if (window.DataContext is not MainWindowViewModel)
             {
                 continue;
             }
 
-            var wasAutoFit = windowVm.WindowModeState.CurrentValue.AutoFit;
             await window.WindowModeSwitcher.SetAutoFit(autoFit).ConfigureAwait(true);
-            if (autoFit && !wasAutoFit)
-            {
-                CenterWindowOnScreen(window);
-            }
         }
     }
 

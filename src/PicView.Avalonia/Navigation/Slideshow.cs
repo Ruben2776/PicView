@@ -1,7 +1,6 @@
 using Avalonia;
 using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
-using PicView.Avalonia.WindowBehavior;
 using PicView.Core.Sizing;
 using PicView.Core.ViewModels;
 using R3;
@@ -16,9 +15,6 @@ public static class Slideshow
     private static Timer? _timer;
     private static IDisposable? _leavingFullscreen;
 
-    // The Main Window the running slideshow was started on, which leaving it centers
-    private static MainWindow? _window;
-
     public static Task StartSlideshow(MainWindow window) => StartSlideshow(window, 0);
 
     /// <param name="window">The Main Window the slideshow runs in.</param>
@@ -30,7 +26,6 @@ public static class Slideshow
             return;
         }
 
-        _window = window;
         var interval = milliseconds <= 0
             ? TimeSpan.FromSeconds(Settings.UIProperties.SlideShowTimer).TotalMilliseconds
             : milliseconds;
@@ -48,8 +43,7 @@ public static class Slideshow
             return;
         }
 
-        _ = LeaveSlideshowAsync(vm, _window);
-        _window = null;
+        _ = LeaveSlideshowAsync(vm);
 
         _timer.Stop();
         _timer.Dispose();
@@ -120,20 +114,14 @@ public static class Slideshow
             .Subscribe(_ => Dispatcher.UIThread.Post(() => StopSlideshow(vm)));
     }
 
-    private static async Task LeaveSlideshowAsync(MainWindowViewModel vm, MainWindow? window)
+    // The window's fitter centers it when it comes back to a Normal window with AutoFit
+    private static async Task LeaveSlideshowAsync(MainWindowViewModel vm)
     {
         if (vm.WindowModeSwitcher is null)
         {
             return;
         }
 
-        var before = vm.WindowModeState.CurrentValue.Mode;
         await vm.WindowModeSwitcher.LeaveSlideshow().ConfigureAwait(false);
-        // Only the window the slideshow was started on, not one whose view model stopped it from elsewhere
-        if (before is not WindowMode.Normal && window is not null && window.ViewModel == vm &&
-            vm.WindowModeState.CurrentValue is { Mode: WindowMode.Normal, AutoFit: true })
-        {
-            WindowFunctions.CenterWindowOnScreen(window);
-        }
     }
 }

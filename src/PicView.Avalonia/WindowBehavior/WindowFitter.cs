@@ -164,7 +164,9 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
     /// one in the background owes that cause to the first Fit for it once it is active. Other changes that come together give one Fit, before the next
     /// frame is drawn, so the window never shows them at the old size. Without AutoFit the Fit reads the laid-out
     /// view, so it is fitted once more after layout. A shown AutoFit window in Normal is also placed after each change
-    /// of its size, a Fit included, and published as <see cref="Placed"/> when that moved it.
+    /// of its size, a Fit included, and published as <see cref="Placed"/> when that moved it, which places it when
+    /// AutoFit turns on too. An AutoFit window that returns to Normal from fullscreen or maximized is centered once in
+    /// the work area of its screen.
     /// </summary>
     /// <returns>What stops following the inputs.</returns>
     public IDisposable Follow()
@@ -183,6 +185,8 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
             vm.WindowTabs.IsTabStripShown.Skip(1).Subscribe(_ => FitSoon()),
             vm.Interface.AsObservable().Skip(1).Subscribe(_ => FitSoon()),
             vm.WindowModeState.Skip(1).Subscribe(_ => FitSoon()),
+            vm.WindowModeState.Pairwise().Subscribe(pair => CenterIfBackToNormalWithAutoFit(vm, pair.Previous,
+                pair.Current)),
             vm.GlobalSettings.IsZoomedToFit.Skip(1).Subscribe(_ => FitSoon()),
             vm.GlobalSettings.IsScrollingEnabled.Skip(1).Subscribe(_ => FitSoon()),
             vm.GlobalSettings.IsSideBySide.Skip(1).Subscribe(_ => FitSoon()),
@@ -216,6 +220,28 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
                     FitSoon();
                 }
             }));
+    }
+
+    // An AutoFit window that returns to Normal from fullscreen or maximized is centered once in the work area of its
+    // screen; the operating system's restore moves it while it is between Window Modes, which the after-resize rule
+    // leaves alone. Posted by the change itself, not by the Fit that follows it, since a window showing the start-up
+    // menu fits no image. At Render, so that Fit, posted at Normal, has sized the window first
+    private void CenterIfBackToNormalWithAutoFit(MainWindowViewModel vm, WindowModeState previous,
+        WindowModeState next)
+    {
+        if (previous.Mode is not (WindowMode.Fullscreen or WindowMode.Maximized) ||
+            next is not { Mode: WindowMode.Normal, AutoFit: true })
+        {
+            return;
+        }
+
+        Dispatcher.UIThread.Post(() =>
+        {
+            if (!_isDisposed && vm.WindowModeState.CurrentValue is { Mode: WindowMode.Normal, AutoFit: true })
+            {
+                Center();
+            }
+        }, DispatcherPriority.Render);
     }
 
     private static Observable<Unit> ScreenChangesOf(MainWindow window) =>

@@ -34,7 +34,6 @@ public sealed class MacWindowModeAdapter : IWindowModeAdapter
             if (state.AutoFit)
             {
                 window.WindowFitter.FollowContent();
-                window.WindowFitter.Center();
             }
         });
     }

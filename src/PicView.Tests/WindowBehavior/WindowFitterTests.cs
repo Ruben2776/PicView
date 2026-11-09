@@ -1278,6 +1278,158 @@ public class WindowFitterTests
         window.Close();
     }
 
+    [AvaloniaFact]
+    public async Task Follow_ReturnsToNormalWithAutoFit_IsCenteredOnItsScreen()
+    {
+        var screen = Screen(1920, 1040);
+        var (fitter, vm, window) = CreateShownAutoFitWindow(() => screen);
+        var (otherFitter, otherVm, otherWindow) = CreateShownAutoFitWindow(() => screen);
+        using var following = fitter.Follow();
+        using var otherFollowing = otherFitter.Follow();
+        vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 400, 300));
+        otherVm.WindowTabs.ActiveTab.Value.Display(Model("b.jpg", 400, 300));
+        Dispatcher.UIThread.RunJobs();
+        window.Position = new PixelPoint(100, 50);
+        otherWindow.Position = new PixelPoint(300, 200);
+        var switcher = new WindowModeSwitcher(window, new NativeStateAdapter(), () => ValueTask.FromResult(true));
+
+        await switcher.ToggleFullscreen();
+        Dispatcher.UIThread.RunJobs();
+        await switcher.ToggleFullscreen();
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Equal(WindowMode.Normal, vm.WindowModeState.Value.Mode);
+        var centered = WindowPlacement.Centered(fitter.Screen, window.ClientSize.Width, window.ClientSize.Height);
+        Assert.NotEqual(new PixelPoint(100, 50), new PixelPoint(centered.X, centered.Y));
+        Assert.Equal(new PixelPoint(centered.X, centered.Y), window.Position);
+        Assert.Equal(new PixelPoint(300, 200), otherWindow.Position);
+        window.Close();
+        otherWindow.Close();
+    }
+
+    [AvaloniaFact]
+    public async Task Follow_ReturnsToNormalWithoutAutoFit_KeepsItsPreviousSizeAndPosition()
+    {
+        Settings.WindowProperties.KeepCentered = true;
+        var (fitter, vm, window) = CreateShownWindow(800, 600, readScreen: () => Screen(1920, 1040));
+        using var following = fitter.Follow();
+        vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 400, 300));
+        Dispatcher.UIThread.RunJobs();
+        window.Position = new PixelPoint(100, 50);
+        var switcher = new WindowModeSwitcher(window, new NativeStateAdapter(), () => ValueTask.FromResult(true));
+
+        await switcher.ToggleFullscreen();
+        Dispatcher.UIThread.RunJobs();
+        await switcher.ToggleFullscreen();
+        Dispatcher.UIThread.RunJobs();
+
+        // The operating system's native restore gives the window its previous size and position back; a headless
+        // window does no native restore, so this asserts the fitter moved and resized nothing on the way
+        Assert.Equal(WindowMode.Normal, vm.WindowModeState.Value.Mode);
+        Assert.Equal(new Size(800, 600), window.ClientSize);
+        Assert.Equal(new PixelPoint(100, 50), window.Position);
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public async Task Follow_LeavesFullscreenToMaximized_IsNotMoved()
+    {
+        Settings.WindowProperties.KeepCentered = true;
+        var (fitter, vm, window) = CreateShownAutoFitWindow(() => Screen(1920, 1040));
+        using var following = fitter.Follow();
+        vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 400, 300));
+        Dispatcher.UIThread.RunJobs();
+        var switcher = new WindowModeSwitcher(window, new NativeStateAdapter(), () => ValueTask.FromResult(true));
+        await switcher.ToggleMaximized();
+        Dispatcher.UIThread.RunJobs();
+        window.Position = new PixelPoint(100, 50);
+
+        await switcher.ToggleFullscreen();
+        Dispatcher.UIThread.RunJobs();
+        await switcher.ToggleFullscreen();
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Equal(WindowMode.Maximized, vm.WindowModeState.Value.Mode);
+        Assert.Equal(new PixelPoint(100, 50), window.Position);
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public async Task Follow_AutoFitTurnsOnWithStayCentered_IsCenteredInTheWorkArea()
+    {
+        Settings.WindowProperties.KeepCentered = true;
+        var screen = Screen(1920, 1040);
+        var (following, vm, window, switcher) = await CreateResizedByHandWindow(() => screen);
+        using var stopsFollowing = following;
+        window.Position = new PixelPoint(100, 50);
+
+        await switcher.SetAutoFit(true);
+        Dispatcher.UIThread.RunJobs();
+
+        // Through the after-resize rule: the window takes its Fit's size again
+        Assert.Equal(new Size(400, 300), window.ClientSize);
+        var centered = WindowPlacement.Centered(screen, 400, 300);
+        Assert.Equal(new PixelPoint(centered.X, centered.Y), window.Position);
+        Assert.True(vm.WindowModeState.Value.AutoFit);
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public async Task Follow_AutoFitTurnsOnWithoutStayCentered_KeepsItsCenter()
+    {
+        var (following, vm, window, switcher) = await CreateResizedByHandWindow(() => Screen(1920, 1040));
+        using var stopsFollowing = following;
+        window.Position = new PixelPoint(500, 300);
+        var centerBefore = CenterOf(window);
+
+        await switcher.SetAutoFit(true);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Equal(new Size(400, 300), window.ClientSize);
+        Assert.Equal(centerBefore, CenterOf(window));
+        Assert.True(vm.WindowModeState.Value.AutoFit);
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public async Task Follow_AutoFitTurnsOff_IsNotMoved()
+    {
+        Settings.WindowProperties.KeepCentered = true;
+        var (fitter, vm, window) = CreateShownAutoFitWindow(() => Screen(1920, 1040));
+        using var following = fitter.Follow();
+        vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 400, 300));
+        Dispatcher.UIThread.RunJobs();
+        window.Position = new PixelPoint(100, 50);
+        var switcher = new WindowModeSwitcher(window, new NativeStateAdapter(), () => ValueTask.FromResult(true));
+
+        await switcher.SetAutoFit(false);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.False(vm.WindowModeState.Value.AutoFit);
+        Assert.Equal(new Size(400, 300), window.ClientSize);
+        Assert.Equal(new PixelPoint(100, 50), window.Position);
+        window.Close();
+    }
+
+    // A shown window fitted to a 400 by 300 image with AutoFit, which then turned AutoFit off and was resized by hand
+    // to 600 by 500. Returns what stops its fitter following, and its own switcher
+    private async Task<(IDisposable Following, MainWindowViewModel Vm, MainWindow Window, WindowModeSwitcher Switcher)>
+        CreateResizedByHandWindow(Func<ScreenSize> readScreen)
+    {
+        var (fitter, vm, window) = CreateShownAutoFitWindow(readScreen);
+        var following = fitter.Follow();
+        vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 400, 300));
+        Dispatcher.UIThread.RunJobs();
+        var switcher = new WindowModeSwitcher(window, new NativeStateAdapter(), () => ValueTask.FromResult(true));
+        await switcher.SetAutoFit(false);
+        Dispatcher.UIThread.RunJobs();
+        window.Width = 600;
+        window.Height = 500;
+        Dispatcher.UIThread.RunJobs();
+        Assert.Equal(new Size(600, 500), window.ClientSize);
+        return (following, vm, window, switcher);
+    }
+
     private static PixelPoint CenterOf(Window window) =>
         new(window.Position.X + (int)window.ClientSize.Width / 2, window.Position.Y + (int)window.ClientSize.Height / 2);
 

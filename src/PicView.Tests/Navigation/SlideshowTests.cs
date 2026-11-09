@@ -18,7 +18,8 @@ using R3;
 namespace PicView.Tests.Navigation;
 
 /// <summary>
-/// Leaving a slideshow centers the Main Window it was started on when it comes back to a Normal window with AutoFit.
+/// Leaving a slideshow centers the Main Window it was started on when it comes back to a Normal window with AutoFit:
+/// the window's fitter follows it, as App Start attaches it, and centers it as it returns to Normal.
 /// </summary>
 [Collection("Sequential")]
 public class SlideshowTests
@@ -98,6 +99,8 @@ public class SlideshowTests
             tab);
         window.DataContext = vm;
         window.ViewModel = vm;
+        // Stops following as the window closes
+        window.Disposables.Add(window.WindowFitter.Follow());
         var switcher = new WindowModeSwitcher(window, adapter, () => ValueTask.FromResult(true));
         vm.WindowModeSwitcher = switcher;
         switcher.Start(isAppStart: true);

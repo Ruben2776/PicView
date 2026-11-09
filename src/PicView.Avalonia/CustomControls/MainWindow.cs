@@ -505,13 +505,9 @@ public abstract class MainWindow : Window, IMainWindow
         }
 
         // macOS reports dragging the window to another monitor as a resize by the user, which must not turn AutoFit
-        // off: the fitter fits the window to the new monitor instead
+        // off: the fitter fits the window to the new monitor and places it instead
         if (WindowFitter.IsOnAnotherScreen())
         {
-            if (WindowModeState.AutoFit && Settings.WindowProperties.KeepCentered)
-            {
-                WindowFitter.Center();
-            }
             return;
         }
 
