@@ -391,15 +391,6 @@ public class GalleryAnimationControl : UserControl
 
         // 4. The final extent
         SetExtent(to);
-        if (OperatingSystem.IsMacOS() && from.Mode is GalleryMode.Docked && to.Mode is GalleryMode.Expanded &&
-            to.Dock is GalleryDockPosition.Left or GalleryDockPosition.Right)
-        {
-            await Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                // Fixes rendering bug
-                Width = _parentControl!.Bounds.Width;
-            }, DispatcherPriority.Send);
-        }
 
         // 5. The new look when it comes at the end, or hidden
         if (!to.IsShown || transition.AppliesLookAtEnd)
