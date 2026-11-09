@@ -69,7 +69,9 @@ public static class RotationManager
         turn(tab.Orientation);
         if (OperatingSystem.IsMacOS() && vm.IsFullscreen.Value)
         {
-            // Sometimes the window is off-center after rotating on macOS fullscreen view; after the Fit
+            // Workaround, outside ADR-0026's rule: Placement does nothing in Fullscreen. This re-centers the macOS
+            // fullscreen window after a turn (after the Fit), because it sometimes ends up off-center there, a quirk
+            // nobody can reproduce, so it stays marked as one, in the spirit of ADR-0006
             Dispatcher.UIThread.Post(() => WindowFunctions.CenterWindowOnScreen(mainWindow),
                 DispatcherPriority.Background);
         }
