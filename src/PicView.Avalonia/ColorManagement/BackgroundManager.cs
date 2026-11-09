@@ -199,4 +199,26 @@ public static class BackgroundManager
                  
         globalSettings.BackgroundChoice.Value = backgroundIndex;
     }
+
+
+    /// <summary>
+    /// Applies the saved background choice during startup without relying on Application.DataContext.
+    /// Fixes #444: the two viewer brushes were never initialized on a fresh launch.
+    /// </summary>
+    public static void SetBackground(GlobalSettingsViewModel globalSettings, int choice)
+    {
+        Settings.UIProperties.BgColorChoice = choice;
+        var brush = GetBackgroundBrush((BackgroundType)choice);
+        if (Settings.UIProperties.IsConstrainBackgroundColorEnabled)
+        {
+            globalSettings.ImageBackground.Value = new SolidColorBrush(Colors.Transparent);
+            globalSettings.ConstrainedImageBackground.Value = brush;
+        }
+        else
+        {
+            globalSettings.ImageBackground.Value = brush;
+            globalSettings.ConstrainedImageBackground.Value = new SolidColorBrush(Colors.Transparent);
+        }
+        globalSettings.BackgroundChoice.Value = choice;
+    }
 }
