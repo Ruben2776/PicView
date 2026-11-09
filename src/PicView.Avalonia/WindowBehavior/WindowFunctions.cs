@@ -124,7 +124,8 @@ public static class WindowFunctions
     }
 
     /// <summary>
-    /// Centers the window in the work area of its own screen, after the next render, once its new size is laid out.
+    /// Centers the window in the work area of its own screen, after the next render, from the size it has then. It
+    /// serves the user's Center action, where the window's size is not changing.
     /// </summary>
     /// <param name="top">Keeps it at the top of the work area instead of centering it vertically.</param>
     public static void CenterWindowOnScreen(MainWindow window, bool top = false) =>

@@ -224,6 +224,59 @@ public class AppLifecycleTests : IAsyncDisposable
     }
 
     [AvaloniaFact]
+    public async Task AppStart_AutoFitWithAnImage_KeepsTheCenterItOpenedAtThroughItsFirstResize()
+    {
+        Settings.WindowProperties.AutoFit = true;
+        Settings.WindowProperties.KeepCentered = false;
+        Settings.UIProperties.OpenInSameWindow = false;
+        _provider.GivesBars = true;
+        var a = WritePng("a.png", 640, 480);
+        PixelPoint? centerWhenOpened = null;
+        Size? sizeWhenOpened = null;
+        _provider.OnCreated = window =>
+        {
+            // The headless window has no view to size it, so it is given content that takes the size its image is
+            // fitted to, as the main view's image does; the window shows at the Fit's window size, bars included, and
+            // shrinks to that content once it follows it again
+            var vm = ViewModelOf(window);
+            var content = new Border();
+            vm.ImageWidth.Subscribe(width => content.Width = width).AddTo(window.Disposables);
+            vm.ImageHeight.Subscribe(height => content.Height = height).AddTo(window.Disposables);
+            window.Content = content;
+            window.Opened += (_, _) =>
+            {
+                centerWhenOpened = CenterOf(window);
+                sizeWhenOpened = window.ClientSize;
+            };
+        };
+        var app = CreateApp();
+
+        await app.StartAsync(settingsExists: true, ["PicView", a]);
+        // The source opens on another thread
+        var deadline = DateTime.UtcNow + WaitLimit;
+        while (!_provider.Fits.Any(static fitted => fitted.Cause is FitCause.NewImage) && DateTime.UtcNow < deadline)
+        {
+            await Task.Delay(10, TestContext.Current.CancellationToken);
+            Dispatcher.UIThread.RunJobs();
+        }
+
+        Dispatcher.UIThread.RunJobs();
+
+        var window = app.MainWindows.Open[0];
+        Assert.Equal(WindowStartupLocation.CenterScreen, window.WindowStartupLocation);
+        Assert.NotNull(sizeWhenOpened);
+        Assert.Equal(new Size(640, 480), window.ClientSize);
+        Assert.NotEqual(sizeWhenOpened, window.ClientSize);
+        // Avalonia centers a CenterScreen window itself, so it may round a pixel apart from the fitter's placement
+        var center = CenterOf(window);
+        Assert.InRange(center.X, centerWhenOpened!.Value.X - 1, centerWhenOpened.Value.X + 1);
+        Assert.InRange(center.Y, centerWhenOpened.Value.Y - 1, centerWhenOpened.Value.Y + 1);
+    }
+
+    private static PixelPoint CenterOf(Window window) =>
+        new(window.Position.X + (int)window.ClientSize.Width / 2, window.Position.Y + (int)window.ClientSize.Height / 2);
+
+    [AvaloniaFact]
     public async Task AppStart_FixedWindow_OpensAtItsLastPosition()
     {
         Settings.WindowProperties.AutoFit = false;
@@ -1368,10 +1421,10 @@ public class AppLifecycleTests : IAsyncDisposable
     }
 
     // A real image, for the startup path, which decodes it itself
-    private string WritePng(string name)
+    private string WritePng(string name, uint width = 2, uint height = 2)
     {
         var path = Path.Combine(_folder, name);
-        using var image = new MagickImage(MagickColors.Red, 2, 2);
+        using var image = new MagickImage(MagickColors.Red, width, height);
         image.Write(path, MagickFormat.Png);
         return path;
     }

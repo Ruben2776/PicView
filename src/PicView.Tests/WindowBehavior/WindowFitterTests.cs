@@ -1243,18 +1243,26 @@ public class WindowFitterTests
         vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 400, 300));
         Dispatcher.UIThread.RunJobs();
         window.Position = new PixelPoint(100, 50);
+        // The operating system maximizes it, as Win+Up does, and its Window Mode follows only later. For one WM_SIZE,
+        // Win32 sets the new client size first and the native state right after it, once the size's handlers ran,
+        // the fitter's among them
         var modesWhenResized = new List<WindowMode>();
-        using var listening = window.GetPropertyChangedObservable(Window.ClientSizeProperty).ToObservable()
-            .Subscribe(_ => modesWhenResized.Add(vm.WindowModeState.Value.Mode));
+        var statesWhenResized = new List<WindowState>();
+        using var maximizing = window.GetPropertyChangedObservable(Window.ClientSizeProperty).ToObservable()
+            .Subscribe(_ =>
+            {
+                modesWhenResized.Add(vm.WindowModeState.Value.Mode);
+                statesWhenResized.Add(window.WindowState);
+                window.WindowState = WindowState.Maximized;
+            });
 
-        // The operating system maximizes it, as Win+Up does, and its Window Mode follows only later
-        window.WindowState = WindowState.Maximized;
         window.SizeToContent = SizeToContent.Manual;
         window.Width = 1920;
         window.Height = 1040;
         Dispatcher.UIThread.RunJobs();
 
         Assert.Equal([WindowMode.Normal], modesWhenResized);
+        Assert.Equal([WindowState.Normal], statesWhenResized);
         Assert.Equal(new Size(1920, 1040), window.ClientSize);
         Assert.Equal(new PixelPoint(100, 50), window.Position);
         window.Close();
@@ -1305,6 +1313,55 @@ public class WindowFitterTests
         Assert.Equal(new PixelPoint(300, 200), otherWindow.Position);
         window.Close();
         otherWindow.Close();
+    }
+
+    [AvaloniaFact]
+    public async Task Follow_ReturnsToNormalWithAutoFitAfterTheImageChanged_IsCenteredForItsNewSize()
+    {
+        var screen = Screen(1920, 1040);
+        var (fitter, vm, window) = CreateShownAutoFitWindow(() => screen);
+        using var following = fitter.Follow();
+        vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 400, 300));
+        Dispatcher.UIThread.RunJobs();
+        window.Position = new PixelPoint(100, 50);
+        var switcher = new WindowModeSwitcher(window, new RestoringNativeStateAdapter(), () => ValueTask.FromResult(true));
+        await switcher.ToggleFullscreen();
+        Dispatcher.UIThread.RunJobs();
+
+        // Next to an image of another size while fullscreen, so the window returns to Normal at a size it never had
+        vm.WindowTabs.ActiveTab.Value.Display(Model("b.jpg", 800, 600));
+        Dispatcher.UIThread.RunJobs();
+        await switcher.ToggleFullscreen();
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Equal(WindowMode.Normal, vm.WindowModeState.Value.Mode);
+        Assert.Equal(new Size(800, 600), window.ClientSize);
+        var centered = WindowPlacement.Centered(screen, 800, 600);
+        Assert.Equal(new PixelPoint(centered.X, centered.Y), window.Position);
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public async Task Follow_ReturnsToNormalFromMaximizedWithAutoFit_IsCenteredOnItsScreen()
+    {
+        var screen = Screen(1920, 1040);
+        var (fitter, vm, window) = CreateShownAutoFitWindow(() => screen);
+        using var following = fitter.Follow();
+        vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 400, 300));
+        Dispatcher.UIThread.RunJobs();
+        window.Position = new PixelPoint(100, 50);
+        var switcher = new WindowModeSwitcher(window, new NativeStateAdapter(), () => ValueTask.FromResult(true));
+
+        await switcher.ToggleMaximized();
+        Dispatcher.UIThread.RunJobs();
+        await switcher.ToggleMaximized();
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Equal(WindowMode.Normal, vm.WindowModeState.Value.Mode);
+        Assert.Equal(new Size(400, 300), window.ClientSize);
+        var centered = WindowPlacement.Centered(screen, 400, 300);
+        Assert.Equal(new PixelPoint(centered.X, centered.Y), window.Position);
+        window.Close();
     }
 
     [AvaloniaFact]
@@ -1496,5 +1553,22 @@ public class WindowFitterTests
 
         public void EnterNativeState(MainWindow window, WindowModeState state) =>
             WindowModeSwitcher.SetNativeState(window, state.Mode);
+    }
+
+    // The operating system's restore gives a window back a client size of its own, which lays it out again, so one
+    // that follows its content takes the size its content has now. A headless window keeps its client size through
+    // its native states, so this lays it out again as the restore would
+    private sealed class RestoringNativeStateAdapter : IWindowModeAdapter
+    {
+        public bool SkipsInitialNativeState => false;
+
+        public void EnterNativeState(MainWindow window, WindowModeState state)
+        {
+            WindowModeSwitcher.SetNativeState(window, state.Mode);
+            if (state.Mode is WindowMode.Normal)
+            {
+                window.InvalidateMeasure();
+            }
+        }
     }
 }

@@ -53,6 +53,10 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
     // Whether the window has opened: shown, and past the size it takes as it shows. Read and written on the UI thread
     private bool _hasOpened;
 
+    // The window's size before the first change of its size that the pending placement is for, or null when none is
+    // pending. Read and written on the UI thread
+    private Size? _sizeBeforePlacement;
+
     // The active tab whose new image the pending Fit is for; written on the thread that showed it, taken by the Fit
     private TabViewModel? _tabWithNewImage;
 
@@ -125,20 +129,37 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
     // An AutoFit window is placed after each change of its size, a Fit included. A window that has not opened is not:
     // while hidden, or while it shows and takes the size it was given, its opener has placed it, or App Start centers
     // it as it shows. Nor is one that is not Normal, keeps its size or is between Window Modes. Normal also natively:
-    // the operating system maximizes a window, as Win+Up does, before its Window Mode follows
-    private void PlaceAfterResizeIfAutoFit(MainWindowViewModel vm, Size oldSize, Size newSize)
+    // the operating system maximizes a window, as Win+Up does, before its Window Mode follows. Decided one dispatcher
+    // turn after the change, since Windows sets the new size before the native state for one WM_SIZE, and a drag of
+    // the border turns AutoFit off only once its size is set. At Send, so no frame shows the window unplaced. Changes
+    // until then give one placement, from the size before the first to the size after the last
+    private void PlaceAfterResizeSoon(MainWindowViewModel vm, Size oldSize)
     {
-        var state = vm.WindowModeState.CurrentValue;
-        if (!_hasOpened || state.Mode is not WindowMode.Normal || window.WindowState is not WindowState.Normal ||
-            !state.AutoFit || window.IsChangingWindowState || _placed.IsDisposed)
+        // A change before the window opened is its opener's, even when the decision runs once it has
+        if (!_hasOpened || _sizeBeforePlacement is not null)
         {
             return;
         }
 
-        if (PlaceAfterResize(oldSize, newSize))
+        _sizeBeforePlacement = oldSize;
+        Dispatcher.UIThread.Post(() =>
         {
-            _placed.OnNext(newSize);
-        }
+            var sizeBefore = _sizeBeforePlacement.GetValueOrDefault();
+            _sizeBeforePlacement = null;
+            var state = vm.WindowModeState.CurrentValue;
+            if (_isDisposed || !_hasOpened || state.Mode is not WindowMode.Normal ||
+                window.WindowState is not WindowState.Normal || !state.AutoFit || window.IsChangingWindowState ||
+                _placed.IsDisposed)
+            {
+                return;
+            }
+
+            var newSize = window.ClientSize;
+            if (PlaceAfterResize(sizeBefore, newSize))
+            {
+                _placed.OnNext(newSize);
+            }
+        }, DispatcherPriority.Send);
     }
 
     // Centered in its work area with Stay Centered, else on its own center. Whether the window moved; not when either
@@ -216,10 +237,8 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
             // Only this window's size, as it changes on the UI thread
             window.GetPropertyChangedObservable(Window.ClientSizeProperty).ToObservable()
                 .Subscribe(change =>
-                {
-                    var size = (AvaloniaPropertyChangedEventArgs<Size>)change;
-                    PlaceAfterResizeIfAutoFit(vm, size.OldValue.GetValueOrDefault(), size.NewValue.GetValueOrDefault());
-                }),
+                    PlaceAfterResizeSoon(vm, ((AvaloniaPropertyChangedEventArgs<Size>)change).OldValue
+                        .GetValueOrDefault())),
             // A move within the same screen fits nothing; a drag to another monitor or a scaling change does
             (screenChanges ?? ScreenChangesOf(window)).Subscribe(_ =>
             {
@@ -233,7 +252,8 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
     // An AutoFit window that returns to Normal from fullscreen or maximized is centered once in the work area of its
     // screen; the operating system's restore moves it while it is between Window Modes, which the after-resize rule
     // leaves alone. Posted by the change itself, not by the Fit that follows it, since a window showing the start-up
-    // menu fits no image. At Render, so that Fit, posted at Normal, has sized the window first
+    // menu fits no image. At Loaded, below Render, so it reads the window's size after the layout that follows that
+    // Fit: a shown AutoFit window takes the Fit's size as it is laid out, not as the Fit runs
     private void CenterIfBackToNormalWithAutoFit(MainWindowViewModel vm, WindowModeState previous,
         WindowModeState next)
     {
@@ -245,11 +265,12 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
 
         Dispatcher.UIThread.Post(() =>
         {
-            if (!_isDisposed && vm.WindowModeState.CurrentValue is { Mode: WindowMode.Normal, AutoFit: true })
+            if (!_isDisposed && window.IsVisible && window.WindowState is WindowState.Normal &&
+                vm.WindowModeState.CurrentValue is { Mode: WindowMode.Normal, AutoFit: true })
             {
                 Center();
             }
-        }, DispatcherPriority.Render);
+        }, DispatcherPriority.Loaded);
     }
 
     private static Observable<Unit> ScreenChangesOf(MainWindow window) =>
