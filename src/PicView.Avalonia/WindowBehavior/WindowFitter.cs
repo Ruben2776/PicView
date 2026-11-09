@@ -50,6 +50,9 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
     // Set on Dispose; read by Fits posted earlier, which may run on a tab that is disposed by then
     private volatile bool _isDisposed;
 
+    // Whether the window has opened: shown, and past the size it takes as it shows. Read and written on the UI thread
+    private bool _hasOpened;
+
     // The active tab whose new image the pending Fit is for; written on the thread that showed it, taken by the Fit
     private TabViewModel? _tabWithNewImage;
 
@@ -119,13 +122,14 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
         window.Position = new PixelPoint(position.X, position.Y);
     }
 
-    // An AutoFit window is placed after each change of its size, a Fit included. A hidden window is not: App Start
-    // places it as it shows. Nor is one that is not Normal, keeps its size or is between Window Modes. Normal also
-    // natively: the operating system maximizes a window, as Win+Up does, before its Window Mode follows
+    // An AutoFit window is placed after each change of its size, a Fit included. A window that has not opened is not:
+    // while hidden, or while it shows and takes the size it was given, its opener has placed it, or App Start centers
+    // it as it shows. Nor is one that is not Normal, keeps its size or is between Window Modes. Normal also natively:
+    // the operating system maximizes a window, as Win+Up does, before its Window Mode follows
     private void PlaceAfterResizeIfAutoFit(MainWindowViewModel vm, Size oldSize, Size newSize)
     {
         var state = vm.WindowModeState.CurrentValue;
-        if (!window.IsVisible || state.Mode is not WindowMode.Normal || window.WindowState is not WindowState.Normal ||
+        if (!_hasOpened || state.Mode is not WindowMode.Normal || window.WindowState is not WindowState.Normal ||
             !state.AutoFit || window.IsChangingWindowState || _placed.IsDisposed)
         {
             return;
@@ -163,7 +167,7 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
     /// fitted at the highest priority and published with the cause <see cref="FitCause.NewImage"/>; a tab that shows
     /// one in the background owes that cause to the first Fit for it once it is active. Other changes that come together give one Fit, before the next
     /// frame is drawn, so the window never shows them at the old size. Without AutoFit the Fit reads the laid-out
-    /// view, so it is fitted once more after layout. A shown AutoFit window in Normal is also placed after each change
+    /// view, so it is fitted once more after layout. An opened AutoFit window in Normal is also placed after each change
     /// of its size, a Fit included, and published as <see cref="Placed"/> when that moved it, which places it when
     /// AutoFit turns on too. An AutoFit window that returns to Normal from fullscreen or maximized is centered once in
     /// the work area of its screen.
@@ -176,7 +180,11 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
             return Disposable.Empty;
         }
 
+        // A window followed once it is shown has opened already
+        _hasOpened = window.IsVisible;
         return Disposable.Combine(
+            Observable.FromEventHandler(h => window.Opened += h, h => window.Opened -= h)
+                .Subscribe(_ => _hasOpened = true),
             FollowEveryTabsImages(vm),
             vm.WindowTabs.ActiveTab.Skip(1).Subscribe(_ => FitSoon()),
             // Only the shown tab's Orientation, so turning a tab in the background fits nothing

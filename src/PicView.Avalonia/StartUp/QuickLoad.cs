@@ -5,7 +5,6 @@ using ImageMagick;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.Navigation;
-using PicView.Avalonia.WindowBehavior;
 using PicView.Core.DebugTools;
 using PicView.Core.FileSorting;
 using PicView.Core.Models;
@@ -100,25 +99,10 @@ public static class QuickLoad
         {
             mainWindow.Show();
         }, DispatcherPriority.Send);
-        if (vm.WindowModeState.CurrentValue.AutoFit)
-        {
-            WindowFunctions.CenterWindowOnScreen(mainWindow);
-        }
 
         TabNavigationInitializer.Initialize(core, vm, tab);
 
-        var result = await tab.Load.LoadAsync(source).ConfigureAwait(false);
-
-        if (!result.IsLoaded)
-        {
-            return result;
-        }
-
-        if (vm.WindowModeState.CurrentValue.AutoFit)
-        {
-            await Dispatcher.UIThread.InvokeAsync(() => mainWindow.WindowFitter.Center(), DispatcherPriority.Render);
-        }
-        return result;
+        return await tab.Load.LoadAsync(source).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -149,14 +133,6 @@ public static class QuickLoad
         {
             result = await LoadSingleAsync(mainWindow, core, vm, tab, fileInfo, files, rootDirectory)
                 .ConfigureAwait(false);
-        }
-
-        if (vm.WindowModeState.CurrentValue.AutoFit)
-        {
-            Dispatcher.UIThread.Post(() =>
-            {
-                mainWindow.WindowFitter.Center();
-            }, DispatcherPriority.Send);
         }
 
         if (Settings.UIProperties.IsTaskbarProgressEnabled && tab.ImageIterator is { } iterator)
@@ -190,7 +166,7 @@ public static class QuickLoad
             var sizes = new PixelSizes(magickImage.Width, magickImage.Height);
 
             // Need to set size for the Maximize or fullscreen functions to work
-            // Predict window size and center beforehand for pleasant opening when double-clicking a file
+            // Predict window size beforehand, so it opens centered at its size when double-clicking a file
             if (vm.WindowModeState.CurrentValue.AutoFit)
             {
                 // Using await and DispatcherPriority.Render fixes cases where the window is not staying in place

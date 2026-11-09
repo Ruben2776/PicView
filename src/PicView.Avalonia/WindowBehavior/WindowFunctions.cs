@@ -14,9 +14,12 @@ public static class WindowFunctions
     #region Window State
     
     /// <summary>
-    /// Sizes and places a new window for the mode it is about to start in, before it is shown.
+    /// Sizes and places a new window for the mode it is about to start in, before it is shown. An AutoFit window at App
+    /// Start opens centered on its screen; with <paramref name="adjustPos"/>, a window takes the saved size and position,
+    /// which a window opened while PicView runs saved from its opener.
     /// </summary>
     /// <param name="isAppStart">Whether this is the first window at app start, the only one that may start fullscreen.</param>
+    /// <param name="adjustPos">Whether to give the window the saved size and position; false when it is placed already.</param>
     public static void HandleWindowScalingMode(MainWindow window, bool isAppStart, bool adjustPos = true)
     {
         if (Settings.WindowProperties.Margin < 0)
@@ -34,15 +37,8 @@ public static class WindowFunctions
             window.SizeToContent = SizeToContent.WidthAndHeight;
             if (adjustPos)
             {
-                if (!Settings.WindowProperties.KeepCentered)
-                {
-                    window.WindowStartupLocation = WindowStartupLocation.Manual;
-                    InitializeWindowSizeAndPosition(window);
-                }
-                else
-                {
-                    CenterWindowOnScreen(window);
-                }
+                window.WindowStartupLocation = WindowStartupLocation.Manual;
+                InitializeWindowSizeAndPosition(window);
             }
             else
             {

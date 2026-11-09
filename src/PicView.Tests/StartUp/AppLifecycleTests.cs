@@ -195,6 +195,145 @@ public class AppLifecycleTests : IAsyncDisposable
     }
 
     [AvaloniaFact]
+    public async Task AppStart_AutoFit_OpensCenteredOnItsScreen()
+    {
+        Settings.WindowProperties.AutoFit = true;
+        Settings.WindowProperties.Left = 123;
+        Settings.WindowProperties.Top = 45;
+        var app = CreateApp();
+
+        await app.StartAsync(settingsExists: true, []);
+        Dispatcher.UIThread.RunJobs();
+
+        var window = app.MainWindows.Open[0];
+        Assert.Equal(WindowStartupLocation.CenterScreen, window.WindowStartupLocation);
+        // The headless platform finds no screen from the window, so its fitter reads a fallback screen; the screen the
+        // window opens on, which CenterScreen centers it in, is the platform's only one
+        var opensOn = window.Screens.Primary!;
+        var screen = new ScreenSize
+        {
+            X = opensOn.Bounds.X, Y = opensOn.Bounds.Y, Width = opensOn.Bounds.Width, Height = opensOn.Bounds.Height,
+            WorkingAreaX = opensOn.WorkingArea.X, WorkingAreaY = opensOn.WorkingArea.Y,
+            WorkingAreaWidth = opensOn.WorkingArea.Width, WorkingAreaHeight = opensOn.WorkingArea.Height,
+            Scaling = opensOn.Scaling
+        };
+        var centered = WindowPlacement.Centered(screen, window.ClientSize.Width, window.ClientSize.Height);
+        // Avalonia centers a CenterScreen window itself, so it may round a pixel apart from WindowPlacement
+        Assert.InRange(window.Position.X, centered.X - 1, centered.X + 1);
+        Assert.InRange(window.Position.Y, centered.Y - 1, centered.Y + 1);
+    }
+
+    [AvaloniaFact]
+    public async Task AppStart_FixedWindow_OpensAtItsLastPosition()
+    {
+        Settings.WindowProperties.AutoFit = false;
+        Settings.WindowProperties.Left = 123;
+        Settings.WindowProperties.Top = 45;
+        var app = CreateApp();
+
+        await app.StartAsync(settingsExists: true, []);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Equal(new PixelPoint(123, 45), app.MainWindows.Open[0].Position);
+    }
+
+    [AvaloniaFact]
+    public async Task AppStart_Maximized_OpensOnItsLastScreen()
+    {
+        Settings.WindowProperties.Maximized = true;
+        Settings.WindowProperties.Left = 123;
+        Settings.WindowProperties.Top = 45;
+        PixelPoint? positionWhenMaximized = null;
+        _provider.OnCreated = window => ViewModelOf(window).WindowModeState.Subscribe(state =>
+        {
+            if (state.Mode is WindowMode.Maximized && positionWhenMaximized is null)
+            {
+                positionWhenMaximized = window.Position;
+            }
+        });
+        var app = CreateApp();
+
+        var (_, setUp) = app.MainWindows.OpenAtAppStart(null, null);
+        await setUp;
+        Dispatcher.UIThread.RunJobs();
+
+        // The headless platform does not maximize natively, and reports the window back as Normal once it shows, so
+        // the moment under test is the Window Mode turning Maximized: the window is on its last screen by then
+        Assert.Equal(new PixelPoint(123, 45), positionWhenMaximized);
+    }
+
+    [AvaloniaTheory]
+    [InlineData(true, true)]
+    [InlineData(true, false)]
+    [InlineData(false, true)]
+    [InlineData(false, false)]
+    public async Task OpenNew_OpensOnTopOfItsOpener(bool keepCentered, bool autoFit)
+    {
+        Settings.WindowProperties.KeepCentered = keepCentered;
+        Settings.WindowProperties.AutoFit = autoFit;
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        Dispatcher.UIThread.RunJobs();
+        var opener = app.MainWindows.Open[0];
+        // The headless window has no view to size it, so it is given content of a size, which an AutoFit window takes,
+        // and that size, which a window that keeps its size takes; then a place off-center
+        opener.Content = new Border { Width = 640, Height = 480 };
+        opener.Width = 640;
+        opener.Height = 480;
+        Dispatcher.UIThread.RunJobs();
+        opener.Position = new PixelPoint(123, 45);
+
+        var opened = await app.MainWindows.OpenNewAsync(opener);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Equal(new PixelPoint(123, 45), opener.Position);
+        Assert.Equal(new Size(640, 480), opener.Bounds.Size);
+        Assert.Equal(opener.Position, opened.Position);
+        Assert.Equal(opener.Bounds.Width, opened.Width);
+        Assert.Equal(opener.Bounds.Height, opened.Height);
+        Assert.Equal(opener.Bounds.Size, opened.Bounds.Size);
+    }
+
+    [AvaloniaFact]
+    public async Task MovedTab_OpensAtTheCursor()
+    {
+        Settings.WindowProperties.AutoFit = true;
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var first = ViewModelOf(app.MainWindows.Open[0]);
+        var tab = first.WindowTabs.CreateTab();
+        first.WindowTabs.MoveOut(tab);
+
+        var moved = await app.MainWindows.OpenForMovedTabAsync(tab, new PixelPoint(40, 40), 800, 600);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Equal(new PixelPoint(40, 40), moved.Position);
+    }
+
+    [AvaloniaFact]
+    public async Task Open_WithAutoFitAndStayCenteredOff_KeepsTheWindowsPosition()
+    {
+        Settings.WindowProperties.AutoFit = true;
+        Settings.WindowProperties.KeepCentered = false;
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var window = app.MainWindows.Open[0];
+        var a = await WriteImageAsync("a.jpg");
+        var b = await WriteImageAsync("b.jpg");
+        // Both the same pixel size, so the second open fits the window to the size it has
+        Hold(a).Model.SetResult(SizedModel(a));
+        Hold(b).Model.SetResult(SizedModel(b));
+        await SourceOpener.OpenAsync(window, _core, a);
+        Dispatcher.UIThread.RunJobs();
+        window.Position = new PixelPoint(123, 45);
+
+        await SourceOpener.OpenAsync(window, _core, b);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Equal(new PixelPoint(123, 45), window.Position);
+    }
+
+    [AvaloniaFact]
     public async Task TopMost_Changed_EveryMainWindowFollows()
     {
         var app = CreateApp();
@@ -1259,6 +1398,16 @@ public class AppLifecycleTests : IAsyncDisposable
     private static WriteableBitmap NewBitmap() =>
         new(new PixelSize(4, 4), new Vector(96, 96), PixelFormat.Bgra8888, AlphaFormat.Premul);
 
+    // A 4×4 bitmap as the image loader returns it, so every file given one is the same pixel size
+    private static ImageModel SizedModel(string path) => new()
+    {
+        FileInfo = new FileInfo(path),
+        Image = NewBitmap(),
+        PixelWidth = 4,
+        PixelHeight = 4,
+        ImageType = ImageType.Bitmap
+    };
+
     /// <summary>
     /// A multi-page TIFF as the image loader returns it: one bitmap per page, shown at the first.
     /// </summary>
@@ -1347,6 +1496,9 @@ public class AppLifecycleTests : IAsyncDisposable
         public List<Window> Created { get; } = [];
         public bool GivesBars { get; set; }
         public List<Fitted> Fits { get; } = [];
+
+        // Called with each main window as it is created, before the lifecycle sizes, places or shows it
+        public Action<MainWindow>? OnCreated { get; set; }
         public int AboutWindowsCreated => AboutWindows.Count;
         public List<Window> AboutWindows { get; } = [];
         public List<Window> BatchResizeWindows { get; } = [];
@@ -1368,6 +1520,7 @@ public class AppLifecycleTests : IAsyncDisposable
                 window.WindowFitter.Fits.Subscribe(Fits.Add);
             }
 
+            OnCreated?.Invoke(window);
             return window;
         }
 

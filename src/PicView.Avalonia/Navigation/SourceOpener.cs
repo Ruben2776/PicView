@@ -54,14 +54,6 @@ public static class SourceOpener
             return result;
         }
 
-        if (Settings.WindowProperties.AutoFit)
-        {
-            await Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                mainWindow.WindowFitter.Center();
-            });
-        }
-
         if (result.Outcome is LoadOutcome.Failed)
         {
             await Dispatcher.UIThread.InvokeAsync(() =>

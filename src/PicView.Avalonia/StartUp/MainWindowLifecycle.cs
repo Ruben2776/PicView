@@ -169,11 +169,6 @@ public sealed class MainWindowLifecycle
                 desktop.MainWindow = window;
             }
         }, DispatcherPriority.Send);
-
-        if (!Settings.StartUp.OpenLastFile && window.WindowModeState.AutoFit && OperatingSystem.IsMacOS())
-        {
-            WindowFunctions.CenterWindowOnScreen(window);
-        }
     }
 
     /// <summary>
