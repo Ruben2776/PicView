@@ -120,7 +120,21 @@ public class KeybindCategoryDefinitionTests
         var entries = KeybindCategoryDefinition.GetContextualEntries(languageModel);
 
         Assert.Equal(KeybindCategoryDefinition.ContextualActionNames, entries.Select(e => e.FunctionName));
-        Assert.Equal(["Confirm", "Play / pause"], entries.Select(e => e.DisplayName));
+        Assert.Equal(
+            ["Confirm", "Play / pause", languageModel.Up, languageModel.Down, languageModel.Left, languageModel.Right],
+            entries.Select(e => e.DisplayName));
+    }
+
+    [Fact]
+    public void GetScrollAndRotateEntries_ListsRotateRightAndRotateLeft()
+    {
+        var languageModel = TranslationManager.GetLanguageModel(new CultureInfo("en-US"));
+
+        var entries = KeybindCategoryDefinition.GetScrollAndRotateEntries(languageModel);
+
+        Assert.Contains(("RotateRight", languageModel.RotateRight ?? string.Empty), entries);
+        Assert.Contains(("RotateLeft", languageModel.RotateLeft ?? string.Empty), entries);
+        Assert.DoesNotContain(entries, e => e.FunctionName is "Up" or "Down");
     }
 
     [Fact]

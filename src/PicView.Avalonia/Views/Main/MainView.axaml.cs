@@ -76,6 +76,7 @@ public partial class MainView : UserControl
         tab.ShouldCropBeEnabled.Value = CropManager.SetIfCropEnabled(TopLevel.GetTopLevel(this) as MainWindow);
         tab.ShouldOptimizeImageBeEnabled.Value = ConversionHelper.DetermineIfOptimizeImageShouldBeEnabled(tab.FileInfo.CurrentValue);
         tab.ShouldPrintBeEnabled.Value = ConversionHelper.DetermineIfPrintMenuItemShouldBeEnabled(tab);
+        tab.ShouldCloseImageBeVisible.Value = tab.CurrentView.Value is ImageViewer;
     }
 
     private void MainTabControlOnSelectionChanged(object? sender, SelectionChangedEventArgs e)
@@ -158,12 +159,7 @@ public partial class MainView : UserControl
 
     private async ValueTask Drop(object? sender, DragEventArgs e)
     {
-        if (DataContext is not MainWindowViewModel vm)
-        {
-            return;
-        }
-        
-        await DragAndDropManager.Drop(e, vm.WindowTabs, TopLevel.GetTopLevel(this) as MainWindow).ConfigureAwait(false);
+        await DragAndDropManager.Drop(e, TopLevel.GetTopLevel(this) as MainWindow).ConfigureAwait(false);
     }
     
     private async ValueTask DragEnter(object? sender, DragEventArgs e)

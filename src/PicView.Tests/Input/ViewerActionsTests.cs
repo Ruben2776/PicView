@@ -84,6 +84,8 @@ public class ViewerActionsTests
 
         public bool CanScrollVertically => false;
 
+        public bool IsImageTallerThanViewer => CanScrollVertically;
+
         public void ScrollLine(bool down) => Calls.Add(down ? "ScrollLine(down)" : "ScrollLine(up)");
 
         public void ScrollToHome() => Calls.Add("ScrollToHome");

@@ -171,6 +171,16 @@ public static class BackgroundManager
         
         SetBackground(core.GlobalSettings, backgroundIndex);
     }
+    
+    public static void SetBackground()
+    {
+        if (Application.Current.DataContext is not CoreViewModel core)
+        {
+            return;
+        }
+        
+        SetBackground(core.GlobalSettings, Settings.UIProperties.BgColorChoice);
+    }
 
     /// <summary>
     /// Sets the two background brushes and the choice on the global settings.

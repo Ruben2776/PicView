@@ -50,5 +50,23 @@ public class DefaultKeybindingsContractTests
         Assert.Equal(KeymapResolution.Action(expectedAction),
             keymap.Resolve(Keybind.FromWheel(deltaY, KeyModifiers.None)));
     }
+
+    [Theory]
+    [InlineData(Key.Up, "Up", "RotateRight")]
+    [InlineData(Key.W, "Up", "RotateRight")]
+    [InlineData(Key.Down, "Down", "RotateLeft")]
+    [InlineData(Key.S, "Down", "RotateLeft")]
+    [InlineData(Key.Left, "Left", "Prev")]
+    [InlineData(Key.A, "Left", "Prev")]
+    [InlineData(Key.Right, "Right", "Next")]
+    [InlineData(Key.D, "Right", "Next")]
+    public void DefaultKeybindings_ArrowsAndWasd_CarryBothLayers(Key key, string contextual, string ordinary)
+    {
+        // The gallery and a tall image claim the Contextual Action; otherwise the key falls through
+        var keymap = Keymap.FromJson(null, DefaultKeybindings);
+
+        Assert.Equal(contextual, keymap.ResolveContextual(new Keybind(key)));
+        Assert.Equal(KeymapResolution.Action(ordinary), keymap.Resolve(new Keybind(key)));
+    }
 }
 #endif

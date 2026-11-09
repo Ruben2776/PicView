@@ -332,6 +332,8 @@ public class KeybindRouterTests
 
         public bool CanScrollVertically { get; init; }
 
+        public bool IsImageTallerThanViewer => CanScrollVertically;
+
         public void ScrollLine(bool down) => Calls.Add(down ? "ScrollLine(down)" : "ScrollLine(up)");
 
         public void ScrollToHome()

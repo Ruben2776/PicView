@@ -308,6 +308,7 @@ public sealed class AppLifecycle
         });
         ThemeManager.DetermineTheme(Application.Current, settingsExists);
         ColorManager.UpdateAccentColors(Settings.Theme.ColorTheme);
+        BackgroundManager.SetBackground();
     }
 
     private void FollowSharedSettings()

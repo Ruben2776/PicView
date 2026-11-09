@@ -5,48 +5,48 @@ namespace PicView.Core.Navigation;
 
 /// <summary>
 /// The side-by-side pair: which image sits beside which, how paired navigation moves, whether forward navigation is
-/// allowed, how many images are shown at once, and where an opened file is in the list. Reads the side-by-side and
-/// looping settings itself, so callers ask for an outcome instead of reading the settings.
+/// allowed, and where an opened file is in the list. Callers pass the
+/// side-by-side and looping settings in, so the rules read no stored settings.
 /// </summary>
 public static class SideBySidePair
 {
     /// <summary>
-    /// The index of the image shown beside the one at <paramref name="index"/>, or null when there is none: side-by-side
-    /// is off, the index is out of range, or there is no other image to show (a one-file list, or the last image
-    /// without looping).
+    /// The pair shown when a tab goes to <paramref name="index"/>: the image there and its partner, the image after it.
+    /// Without looping, the last image shows in the pair that ends with it, so the primary is the image before it. With
+    /// looping, the last image pairs with the first. Side-by-side off, or a list of one image, shows the image alone.
     /// </summary>
-    public static int? PartnerOf(int index, int count)
+    public static (int Primary, int? Partner) PairAt(int index, int count, bool sideBySide, bool looping)
     {
-        if (!Settings.ImageScaling.ShowImageSideBySide || index < 0 || index >= count || count < 2)
+        if (!sideBySide || count < 2 || index < 0 || index >= count)
         {
-            return null;
+            return (index, null);
         }
 
-        var next = index + 1;
-        if (next < count)
+        if (index < count - 1)
         {
-            return next;
+            return (index, index + 1);
         }
 
-        return Settings.UIProperties.Looping ? 0 : null;
+        return looping ? (index, 0) : (count - 2, count - 1);
     }
 
     /// <summary>
-    /// Where paired navigation goes from <paramref name="index"/>. Skips move by pairs.
+    /// Where paired navigation goes from <paramref name="index"/>: the index of the pair it ends on, whose partner
+    /// <see cref="PairAt"/> gives. Skips move by pairs, and without looping a step ends on a full pair.
     /// </summary>
     /// <returns>
-    /// The primary index, the secondary index (null when there is no other image), and whether the navigation is
-    /// reversed. Returns (-1, null, false) when the count is zero or the navigation is not valid.
+    /// The index, and whether the navigation is reversed. Returns (-1, false) when the count is zero or the navigation
+    /// is not valid.
     /// </returns>
-    public static (int Primary, int? Secondary, bool IsReversed) Navigate(int index, int count, NavigateTo navigation,
-        SkipAmount skipAmount)
+    public static (int Index, bool IsReversed) Navigate(int index, int count, NavigateTo navigation,
+        SkipAmount skipAmount, bool looping)
     {
         switch (count)
         {
             case 0:
-                return (-1, null, false);
+                return (-1, false);
             case 1:
-                return (0, null, false);
+                return (0, false);
         }
 
         // Each step moves by a pair, so the skip amount is doubled
@@ -56,68 +56,37 @@ public static class SideBySidePair
         {
             case NavigateTo.Next:
             case NavigateTo.Previous:
-                var indexChange = navigation == NavigateTo.Next ? jump : -jump;
                 var isReversed = navigation == NavigateTo.Previous;
+                var stepped = index + (isReversed ? -jump : jump);
 
-                if (Settings.UIProperties.Looping)
+                if (looping)
                 {
-                    // Calculate the first index with wrap-around logic
-                    var looped = (index + indexChange) % count;
-                    if (looped < 0)
-                    {
-                        looped += count;
-                    }
-
-                    // The second index is just the next image, also wrapped
-                    return (looped, (looped + 1) % count, isReversed);
+                    var looped = stepped % count;
+                    return (looped < 0 ? looped + count : looped, isReversed);
                 }
 
-                // Calculate raw indices without wrapping
-                var first = index + indexChange;
-                var second = first + 1;
-
-                // Clamp to the beginning of the list if we go too far back
-                if (first < 0)
-                {
-                    return (0, 1, isReversed);
-                }
-
-                // Clamp to the end of the list if the second index goes out of bounds
-                if (second >= count)
-                {
-                    return (count - 2, count - 1, isReversed);
-                }
-
-                return (first, second, isReversed);
+                // Clamped, so the step ends on a full pair at either end of the list
+                return (Math.Clamp(stepped, 0, count - 2), isReversed);
 
             case NavigateTo.First:
-                return (0, 1, true);
+                return (0, true);
 
             case NavigateTo.Last:
-                return (count - 2, count - 1, false);
+                return (count - 2, false);
 
             default:
 #if DEBUG
                 DebugHelper.LogDebug(nameof(SideBySidePair), nameof(Navigate), $"{navigation} is not a valid NavigateTo value.");
 #endif
-                return (-1, null, false);
+                return (-1, false);
         }
     }
 
     /// <summary>
     /// Whether forward navigation is allowed from <paramref name="index"/>. A pair needs one more image ahead of it.
     /// </summary>
-    public static bool CanNavigateForwards(int index, int count, bool isExtracting)
-    {
-        var isLooping = Settings.UIProperties.Looping;
-        return isLooping || isExtracting || index < count - (Settings.ImageScaling.ShowImageSideBySide ? 2 : 1);
-    }
-
-    /// <summary>
-    /// The number of images shown at once from a list of <paramref name="entryCount"/> entries: two when side-by-side
-    /// is on and there is more than one entry, otherwise one.
-    /// </summary>
-    public static int ShownCount(int entryCount) => Settings.ImageScaling.ShowImageSideBySide && entryCount > 1 ? 2 : 1;
+    public static bool CanNavigateForwards(int index, int count, bool isExtracting, bool sideBySide, bool looping) =>
+        looping || isExtracting || index < count - (sideBySide ? 2 : 1);
 
     /// <summary>
     /// The index of <paramref name="file"/> in <paramref name="files"/>, or null when it is not in the list.

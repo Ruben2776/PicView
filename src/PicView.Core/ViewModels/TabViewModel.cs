@@ -234,13 +234,14 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
         if (change is ShownChange.Image && Settings.Zoom.ResetZoomOnChange)
         {
             Zoom.ResetFactor();
-            // Here, before the shown mark, so the fitter reads the upright image in the Fit that follows it (ADR-0023)
+            // Here, before the shown mark, so the fitter reads the upright image in the Fit that follows it (ADR-0026)
             Orientation.Reset();
         }
 
         // The titles are marked after the image bindable is set and before the UI reacts
         Titles.OnShown(change);
         DeriveViewKind();
+        DerivePartnerIndex();
         _shown.OnNext(change);
     }
 
@@ -272,7 +273,7 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
     public void DisplaySingleImage(ImageModel model, SingleImageType type, string? title = null)
     {
         SingleImageType = type;
-        _singleImageTitle = title;
+        SingleImageTitle = title;
         ShowModels(model, null);
         RecordShown();
         // A Single Image is shown upright and unflipped, whatever the zoom setting; a closed tab has no Orientation
@@ -284,10 +285,9 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
     }
 
     // The title of the Single Image the tab shows, which its View History entry keeps
-    private string? _singleImageTitle;
 
     /// <summary>The title <see cref="DisplaySingleImage"/> was given, which the Titles name a Single Image by.</summary>
-    internal string? SingleImageTitle => _singleImageTitle;
+    internal string? SingleImageTitle { get; private set; }
 
     /// <summary>
     /// Turns the multi-page TIFF the tab shows to <paramref name="page"/>, and records it. Does nothing when the tab shows
@@ -378,7 +378,7 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
         ViewHistoryEntry entry;
         if (type is not SingleImageType.None)
         {
-            entry = ViewHistoryEntry.ForSingleImage(model, type, _singleImageTitle,
+            entry = ViewHistoryEntry.ForSingleImage(model, type, SingleImageTitle,
                 type is SingleImageType.Url ? SourceURL : null);
         }
         else if (model.FileInfo is not { } file)
@@ -487,6 +487,7 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
     public BindableReactiveProperty<bool> ShouldCropBeEnabled { get; } = new(false);
     public BindableReactiveProperty<bool> ShouldOptimizeImageBeEnabled { get; } = new(false);
     public BindableReactiveProperty<bool> ShouldPrintBeEnabled { get; } = new(true);
+    public BindableReactiveProperty<bool> ShouldCloseImageBeVisible { get; } = new(false);
     /// <summary>
     /// The tab's Zoom Level and its two inputs, the Fit Scale and the Zoom Factor (ADR-0016).
     /// </summary>
@@ -575,10 +576,40 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
     {
         NavigationIndex.Value = index;
         MaxIndex.Value = count;
+        DerivePartnerIndex();
         DeriveCanNavigate();
     }
 
+    /// <summary>
+    /// The index of the image shown beside the one at <see cref="NavigationIndex"/>, or -1 when it shows alone, so the
+    /// gallery marks both images of a Side-by-Side Pair. Derived by the tab; nothing outside it writes it.
+    /// </summary>
+    public IReadOnlyBindableReactiveProperty<int> PartnerIndex => _partnerIndex;
+
+    private readonly BindableReactiveProperty<int> _partnerIndex = new(-1);
+
+    // Derived from where the tab is and whether it shows a pair, by the one pair rule (ADR-0024)
+    private void DerivePartnerIndex()
+    {
+        var partner = -1;
+        if (SecondaryModel is not null)
+        {
+            var (sideBySide, looping) = PairSettings();
+            partner = SideBySidePair.PairAt(NavigationIndex.CurrentValue, MaxIndex.CurrentValue, sideBySide, looping)
+                .Partner ?? -1;
+        }
+
+        _partnerIndex.Value = partner;
+    }
+
     private IDisposable? _settingsSubscription;
+
+    /// <summary>
+    /// Side-by-Side and looping as the tab's settings publish them, or the stored settings for a tab without them.
+    /// </summary>
+    public (bool SideBySide, bool Looping) PairSettings() => Services?.GlobalSettings is { } settings
+        ? (settings.IsSideBySide.CurrentValue, settings.IsLooping.CurrentValue)
+        : (Settings.ImageScaling.ShowImageSideBySide, Settings.UIProperties.Looping);
 
     /// <summary>
     /// Follows the global settings the tab reads, once: Looping derives Next and Prev again, side by side derives them
@@ -638,8 +669,9 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
             }
             else
             {
-                forwards = SideBySidePair.CanNavigateForwards(index, count, extracting);
-                backwards = Settings.UIProperties.Looping || index > 0;
+                var (sideBySide, looping) = PairSettings();
+                forwards = SideBySidePair.CanNavigateForwards(index, count, extracting, sideBySide, looping);
+                backwards = looping || index > 0;
             }
         }
 
@@ -672,6 +704,62 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
     /// Whether the tab was disposed, after which no load changes it.
     /// </summary>
     internal bool IsDisposed => Volatile.Read(ref _isDisposed);
+
+    #endregion
+
+    #region Busy
+
+    private int _busyClaims;
+    private readonly BindableReactiveProperty<bool> _isBusy = new();
+    private readonly Lock _busyGate = new();
+
+    /// <summary>
+    /// Whether an operation on this tab, such as a crop save, an optimize or a rename, holds a busy claim.
+    /// </summary>
+    public IReadOnlyBindableReactiveProperty<bool> IsBusy => _isBusy;
+
+    /// <summary>
+    /// Claims the tab Busy until the returned claim is disposed. Claims count, so the tab stays Busy until every
+    /// claim ends; disposing a claim twice releases it once.
+    /// </summary>
+    public IDisposable ClaimBusy()
+    {
+        Interlocked.Increment(ref _busyClaims);
+        PublishBusy();
+        return new BusyClaim(this);
+    }
+
+    // Claims start and end on any thread. Publishing under one lock orders the writes, so the last thread to publish
+    // has already changed the count and publishes the state as it is now; a publish after the tab is disposed does
+    // nothing, since Dispose disposes the property under the same lock
+    private void PublishBusy()
+    {
+        lock (_busyGate)
+        {
+            if (Volatile.Read(ref _isDisposed))
+            {
+                return;
+            }
+
+            _isBusy.Value = Volatile.Read(ref _busyClaims) > 0;
+        }
+    }
+
+    private sealed class BusyClaim(TabViewModel tab) : IDisposable
+    {
+        private int _released;
+
+        public void Dispose()
+        {
+            if (Interlocked.Exchange(ref _released, 1) != 0)
+            {
+                return;
+            }
+
+            Interlocked.Decrement(ref tab._busyClaims);
+            tab.PublishBusy();
+        }
+    }
 
     #endregion
 
@@ -842,6 +930,22 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
     }
 
     /// <summary>
+    /// Closes the image the tab shows and shows the start-up menu, as the Close image action: the tab becomes fresh, as
+    /// when it lost its files, and leaves the archives it opened. Does nothing unless the tab shows the image viewer, so
+    /// a crop and the start-up menu stay as they are.
+    /// </summary>
+    public async ValueTask CloseImageAsync()
+    {
+        if (_viewKind.Value is not TabViewKind.ImageViewer)
+        {
+            return;
+        }
+
+        await BecomeFreshAsync().ConfigureAwait(false);
+        Archives.Cleanup();
+    }
+
+    /// <summary>
     /// Closes this tab in the Main Window that owns it now, which also disposes it.
     /// </summary>
     public void CloseTab()
@@ -904,6 +1008,10 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
         _titles?.Dispose();
         _viewKind.Dispose();
         _shown.Dispose();
+        lock (_busyGate)
+        {
+            _isBusy.Dispose();
+        }
         
         GC.SuppressFinalize(this);
     }

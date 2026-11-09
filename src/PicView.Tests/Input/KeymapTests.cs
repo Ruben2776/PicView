@@ -205,4 +205,124 @@ public class KeymapTests
 
         Assert.Same(keymap, keymap.WithDefaultMouseKeybinds(defaults));
     }
+
+    private const string DefaultsWithArrows = """
+                                              {
+                                                "Up": "RotateRight",
+                                                "W": "RotateRight",
+                                                "Down": "RotateLeft",
+                                                "S": "RotateLeft",
+                                                "Left": "Prev",
+                                                "A": "Prev",
+                                                "Right": "Next",
+                                                "D": "Next",
+                                                "Contextual": {
+                                                  "Return": "Confirm",
+                                                  "Up": "Up",
+                                                  "W": "Up",
+                                                  "Down": "Down",
+                                                  "S": "Down",
+                                                  "Left": "Left",
+                                                  "A": "Left",
+                                                  "Right": "Right",
+                                                  "D": "Right"
+                                                }
+                                              }
+                                              """;
+
+    private static Keymap Migrated(string userJson) =>
+        Keymap.FromJson(userJson, DefaultsWithArrows)
+            .WithContextualNavigation(Keymap.FromJson(null, DefaultsWithArrows));
+
+    [Fact]
+    public void WithContextualNavigation_Version30DefaultFile_KeepsRotateAndAddsLeftRight()
+    {
+        var keymap = Migrated("""
+            {
+              "Up": "Up", "W": "Up", "Down": "Down", "Left": "Prev", "Right": "Next",
+              "Contextual": { "Return": "Confirm" }
+            }
+            """);
+
+        Assert.Equal("Up", keymap.ResolveContextual(new Keybind(Key.Up)));
+        Assert.Equal(KeymapResolution.Action("RotateRight"), keymap.Resolve(new Keybind(Key.Up)));
+        Assert.Equal(KeymapResolution.Action("RotateRight"), keymap.Resolve(new Keybind(Key.W)));
+        Assert.Equal(KeymapResolution.Action("RotateLeft"), keymap.Resolve(new Keybind(Key.Down)));
+        Assert.Equal("Left", keymap.ResolveContextual(new Keybind(Key.Left)));
+        Assert.Equal(KeymapResolution.Action("Prev"), keymap.Resolve(new Keybind(Key.Left)));
+        Assert.Equal("Right", keymap.ResolveContextual(new Keybind(Key.D)));
+    }
+
+    [Fact]
+    public void WithContextualNavigation_CustomUpBinding_GainsRotateRight()
+    {
+        var keymap = Migrated("""{ "NumPad8": "Up", "Contextual": {} }""");
+
+        Assert.Equal("Up", keymap.ResolveContextual(new Keybind(Key.NumPad8)));
+        Assert.Equal(KeymapResolution.Action("RotateRight"), keymap.Resolve(new Keybind(Key.NumPad8)));
+    }
+
+    [Fact]
+    public void WithContextualNavigation_KeybindWithOrdinaryAction_KeepsIt()
+    {
+        var keymap = Migrated("""{ "Up": "Next", "Contextual": { "Up": "Up" } }""");
+
+        Assert.Equal(KeymapResolution.Action("Next"), keymap.Resolve(new Keybind(Key.Up)));
+    }
+
+    [Fact]
+    public void WithContextualNavigation_LeftAlreadyContextual_IsLeftAlone()
+    {
+        var keymap = Migrated("""{ "Contextual": { "Left": "Confirm" } }""");
+
+        Assert.Equal("Confirm", keymap.ResolveContextual(new Keybind(Key.Left)));
+        Assert.Equal("Left", keymap.ResolveContextual(new Keybind(Key.A)));
+    }
+
+    [Fact]
+    public void WithContextualNavigation_FileWithoutContextualSection_RotatesOnUpAndW()
+    {
+        var keymap = Migrated("""{ "Up": "Up", "W": "Up" }""");
+
+        Assert.Equal(KeymapResolution.Action("RotateRight"), keymap.Resolve(new Keybind(Key.Up)));
+        Assert.Equal(KeymapResolution.Action("RotateRight"), keymap.Resolve(new Keybind(Key.W)));
+    }
+
+    [Fact]
+    public void WithContextualNavigation_AlreadyMigrated_ReturnsSameKeymap()
+    {
+        var defaults = Keymap.FromJson(null, DefaultsWithArrows);
+
+        Assert.Same(defaults, defaults.WithContextualNavigation(defaults));
+    }
+
+    [Fact]
+    public void FromJson_ContextualSectionWins_OverContextualNameInOrdinarySection()
+    {
+        var keymap = Keymap.FromJson("""{ "Up": "Up", "Contextual": { "Up": "Confirm" } }""", DefaultsWithArrows);
+
+        Assert.Equal("Confirm", keymap.ResolveContextual(new Keybind(Key.Up)));
+    }
+
+    [Fact]
+    public void FromJson_FileWithoutContextualSection_LeavesDefaultArrowOffAReboundKey()
+    {
+        // A file from before the arrows were contextual keeps what the user bound W and Left to
+        var keymap = Migrated("""{ "W": "ToggleFullscreen", "Left": "ToggleFullscreen", "Up": "Up" }""");
+
+        Assert.Null(keymap.ResolveContextual(new Keybind(Key.W)));
+        Assert.Equal(KeymapResolution.Action("ToggleFullscreen"), keymap.Resolve(new Keybind(Key.W)));
+        Assert.Null(keymap.ResolveContextual(new Keybind(Key.Left)));
+        Assert.Equal("Up", keymap.ResolveContextual(new Keybind(Key.Up)));
+        Assert.Equal("Left", keymap.ResolveContextual(new Keybind(Key.A)));
+    }
+
+    [Fact]
+    public void WithContextualNavigation_LeftOnAReboundKey_IsNotAdded()
+    {
+        var keymap = Migrated("""{ "A": "ToggleFullscreen", "Contextual": { "Return": "Confirm" } }""");
+
+        Assert.Null(keymap.ResolveContextual(new Keybind(Key.A)));
+        Assert.Equal("Left", keymap.ResolveContextual(new Keybind(Key.Left)));
+    }
 }

@@ -1160,28 +1160,37 @@ public class TabLoadTests : IDisposable
     }
 
     [Fact]
-    public async Task LoadAsync_SideBySideOnTheLastFile_ShowsItAloneAndLoads()
+    public async Task LoadAsync_SideBySideOnTheLastFile_ShowsThePairBeforeIt()
     {
-        Settings.ImageScaling.ShowImageSideBySide = true;
-        try
-        {
-            var a = await WriteImageAsync("a.jpg");
-            var b = await WriteImageAsync("b.jpg");
-            var tab = CreateTab(_testDirectory);
+        var a = await WriteImageAsync("a.jpg");
+        var b = await WriteImageAsync("b.jpg");
+        var tab = CreateTab(_testDirectory);
+        tab.Services!.GlobalSettings.IsSideBySide.Value = true;
 
-            var result = await tab.Load.LoadAsync(b);
+        var result = await tab.Load.LoadAsync(b);
 
-            Assert.Equal(LoadOutcome.Loaded, result.Outcome);
-            Assert.Equal(b, tab.Model.FileInfo?.FullName);
-            Assert.Null(tab.SecondaryModel);
-            Assert.Equal([a, b], tab.ImageIterator!.Files.Select(f => f.FullName));
-            Assert.Equal(1, tab.ImageIterator.CurrentIndex);
-            Assert.False(tab.CanNavigateForwards.Value);
-        }
-        finally
-        {
-            Settings.ImageScaling.ShowImageSideBySide = false;
-        }
+        Assert.Equal(LoadOutcome.Loaded, result.Outcome);
+        Assert.Equal((a, b), (tab.Model.FileInfo?.FullName, tab.SecondaryModel?.FileInfo?.FullName));
+        Assert.Equal([a, b], tab.ImageIterator!.Files.Select(f => f.FullName));
+        Assert.Equal(0, tab.ImageIterator.CurrentIndex);
+        Assert.Equal((0, 1), (tab.NavigationIndex.Value, tab.PartnerIndex.Value));
+        Assert.False(tab.CanNavigateForwards.Value);
+    }
+
+    [Fact]
+    public async Task LoadAsync_SideBySideOnTheLastFileAlreadyListed_ShowsThePairBeforeIt()
+    {
+        var a = await WriteImageAsync("a.jpg");
+        var b = await WriteImageAsync("b.jpg");
+        var c = await WriteImageAsync("c.jpg");
+        var tab = CreateTab(_testDirectory);
+        tab.Services!.GlobalSettings.IsSideBySide.Value = true;
+        await tab.Load.LoadAsync(a);
+
+        var result = await tab.Load.LoadAsync(c);
+
+        Assert.Equal(LoadOutcome.Loaded, result.Outcome);
+        Assert.Equal((b, c), (tab.Model.FileInfo?.FullName, tab.SecondaryModel?.FileInfo?.FullName));
     }
 
     [Fact]

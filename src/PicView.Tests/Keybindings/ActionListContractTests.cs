@@ -127,12 +127,14 @@ public class ActionListContractTests
     }
 
     [Fact]
-    public void ContextualActions_AreConfirmAndPlayPause()
+    public void ContextualActions_AreConfirmPlayPauseAndArrows()
     {
-        Assert.Equal(["Confirm", "PlayPause"], KeybindCategoryDefinition.ContextualActionNames);
+        Assert.Equal(["Confirm", "PlayPause", "Up", "Down", "Left", "Right"],
+            KeybindCategoryDefinition.ContextualActionNames);
         Assert.All(KeybindCategoryDefinition.ContextualActionNames,
             name => Assert.True(KeybindCategoryDefinition.IsContextualAction(name), name));
         Assert.False(KeybindCategoryDefinition.IsContextualAction("Next"));
+        Assert.False(KeybindCategoryDefinition.IsContextualAction("RotateRight"));
         Assert.False(KeybindCategoryDefinition.IsContextualAction("Copy"));
         Assert.False(KeybindCategoryDefinition.IsContextualAction("Cancel"));
     }

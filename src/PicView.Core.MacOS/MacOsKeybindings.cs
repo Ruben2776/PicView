@@ -19,10 +19,10 @@ public static class MacOsKeybindings
                                                 "Shift+A": "PrevFolder",
                                                 "A": "Prev",
                                                 "Left": "Prev",
-                                                "W": "Up",
-                                                "Up": "Up",
-                                                "S": "Down",
-                                                "Down": "Down",
+                                                "W": "RotateRight",
+                                                "Up": "RotateRight",
+                                                "S": "RotateLeft",
+                                                "Down": "RotateLeft",
                                                 "PageUp": "ScrollUp",
                                                 "PageDown": "ScrollDown",
                                                 "Add": "ZoomIn",
@@ -82,7 +82,15 @@ public static class MacOsKeybindings
                                                 "Contextual": {
                                                   "Return": "Confirm",
                                                   "E": "Confirm",
-                                                  "Space": "PlayPause"
+                                                  "Space": "PlayPause",
+                                                  "Up": "Up",
+                                                  "W": "Up",
+                                                  "Down": "Down",
+                                                  "S": "Down",
+                                                  "Left": "Left",
+                                                  "A": "Left",
+                                                  "Right": "Right",
+                                                  "D": "Right"
                                                 }
                                               }
                                               """;

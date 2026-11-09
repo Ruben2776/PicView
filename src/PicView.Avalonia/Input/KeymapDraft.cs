@@ -76,7 +76,7 @@ public sealed class KeymapDraft(Keymap saved, Keymap defaults)
 
     private bool Step(List<Keymap> from, List<Keymap> to)
     {
-        if (from.Count == 0)
+        if (from.Count is 0)
         {
             return false;
         }

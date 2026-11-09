@@ -15,6 +15,11 @@ public static class Keymaps
     /// </summary>
     private const double MouseKeybindsVersion = 3.0;
 
+    /// <summary>
+    /// The settings version that made Up and Down Contextual Actions and added Left and Right.
+    /// </summary>
+    private const double GalleryNavigationKeybindsVersion = 3.1;
+
     private static Keymap _current = Keymap.Empty;
 
     /// <summary>
@@ -37,6 +42,12 @@ public static class Keymaps
         {
             // Keybindings files from before mouse Keybinds existed get the default ones
             keymap = keymap.WithDefaultMouseKeybinds(Defaults(platform));
+        }
+
+        if (bytes is not null && LoadedSettingsVersion < GalleryNavigationKeybindsVersion)
+        {
+            // Keybindings files from before Up and Down were contextual keep rotating and gain gallery Left and Right
+            keymap = keymap.WithContextualNavigation(Defaults(platform));
         }
 
         Replace(keymap);
@@ -62,11 +73,6 @@ public static class Keymaps
 
     public static KeymapResolution Resolve(Keybind keybind) => Current.Resolve(keybind);
 
-    #if DEBUG
-    /// <inheritdoc cref="Keymap.Resolve(Keybind, InputMode)" />
-    public static KeymapResolution Resolve(Keybind keybind, InputMode mode) => Current.Resolve(keybind, mode);
-    #endif
-
     /// <summary>
     /// Makes <paramref name="keybind"/> the only Keybind of the favorite action for <paramref name="slot"/>,
     /// taking it from any other action, and saves the keybindings file. <c>null</c> unbinds the slot.
@@ -83,15 +89,12 @@ public static class Keymaps
     /// </summary>
     public static async ValueTask ExecuteAsync(KeymapResolution resolution, IActionRunner? actionRunner)
     {
-        if (actionRunner is null)
+        if (actionRunner is null || resolution.Value is not { } action)
         {
             return;
         }
 
-        if (resolution.Owner is KeymapOwner.Action)
-        {
-            await actionRunner.Run(resolution.Value).ConfigureAwait(false);
-        }
+        await actionRunner.Run(action).ConfigureAwait(false);
     }
 
     private static string DefaultJson(IPlatformSpecificService? platform) =>

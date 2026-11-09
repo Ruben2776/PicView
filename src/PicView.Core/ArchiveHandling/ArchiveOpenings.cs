@@ -161,7 +161,11 @@ public sealed class ArchiveOpenings
             // The start page alone, with its side-by-side partner, so it shows before anything else is extracted: with ten
             // pages first, an archive of ten showed nothing until it was extracted whole. A start page that fails to
             // extract, such as a corrupt entry, is left out for the page after it
-            var partner = SideBySidePair.PartnerOf(start, keys.Length);
+            // The other page of the pair that holds the start page: the page after it, or before it when the start is
+            // the last page (ADR-0024)
+            var (sideBySide, looping) = _tab.PairSettings();
+            var (primary, partnerIndex) = SideBySidePair.PairAt(start, keys.Length, sideBySide, looping);
+            int? partner = partnerIndex is { } p ? primary == start ? p : primary : null;
             var extracted = new List<string>();
             var end = start;
             do

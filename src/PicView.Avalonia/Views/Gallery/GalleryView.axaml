@@ -145,6 +145,8 @@
             x:Name="GalleryItemsControl"
             CurrentItemIndex="{CompiledBinding NavigationIndex.Value,
                                                Mode=OneWay}"
+            PartnerItemIndex="{CompiledBinding PartnerIndex.Value,
+                                               Mode=OneWay}"
             SelectedItemIndex="{CompiledBinding Gallery.SelectedGalleryItemIndex.Value,
                                                 Mode=TwoWay}">
             <ItemsControl.ItemTemplate>

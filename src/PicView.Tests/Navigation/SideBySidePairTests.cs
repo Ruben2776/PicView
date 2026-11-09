@@ -4,222 +4,64 @@ using PicView.Core.Config;
 
 namespace PicView.Tests.Navigation;
 
-[Collection("Sequential")]
 public class SideBySidePairTests
 {
-    public SideBySidePairTests()
+    [Theory]
+    // index, count, navigation, looping, expected index, expected reversed
+    [InlineData(0, 3, NavigateTo.Next, false, 1, false)] // clamped, so the step ends on the last full pair
+    [InlineData(1, 3, NavigateTo.Next, false, 1, false)]
+    [InlineData(0, 5, NavigateTo.Next, false, 2, false)]
+    [InlineData(2, 3, NavigateTo.Next, true, 1, false)] // looping wraps around
+    [InlineData(0, 3, NavigateTo.Previous, false, 0, true)]
+    [InlineData(0, 3, NavigateTo.Previous, true, 1, true)]
+    [InlineData(2, 4, NavigateTo.First, false, 0, true)]
+    [InlineData(0, 4, NavigateTo.Last, false, 2, false)]
+    [InlineData(0, 4, NavigateTo.Last, true, 2, false)]
+    [InlineData(0, 1, NavigateTo.Next, false, 0, false)]
+    [InlineData(0, 0, NavigateTo.Next, false, -1, false)]
+    public void Navigate_StepsByPairs(int index, int count, NavigateTo navigation, bool looping, int expected,
+        bool reversed)
     {
-        SetDefaults();
+        Assert.Equal((expected, reversed), SideBySidePair.Navigate(index, count, navigation, SkipAmount.One, looping));
+    }
+
+    [Theory]
+    // index, count, sideBySide, looping, expected primary, expected partner (-1 = none)
+    [InlineData(0, 3, true, false, 0, 1)]
+    [InlineData(1, 3, true, false, 1, 2)]
+    [InlineData(2, 3, true, false, 1, 2)] // the last image shows in the pair before it
+    [InlineData(2, 3, true, true, 2, 0)] // looping pairs the last image with the first
+    [InlineData(0, 1, true, false, 0, -1)] // a list of one image shows alone
+    [InlineData(0, 1, true, true, 0, -1)]
+    [InlineData(1, 2, true, false, 0, 1)]
+    [InlineData(2, 3, false, false, 2, -1)] // side-by-side off
+    [InlineData(0, 3, false, true, 0, -1)]
+    public void PairAt_ShowsThePairThatHoldsTheIndex(int index, int count, bool sideBySide, bool looping,
+        int primary, int partner)
+    {
+        var pair = SideBySidePair.PairAt(index, count, sideBySide, looping);
+
+        Assert.Equal(primary, pair.Primary);
+        Assert.Equal(partner < 0 ? null : (int?)partner, pair.Partner);
+    }
+
+    [Theory]
+    // index, count, sideBySide, looping, expected
+    [InlineData(0, 3, true, false, true)]
+    [InlineData(1, 3, true, false, false)] // from index 1 the pair is already (1, 2), the last pair of three
+    [InlineData(1, 3, false, false, true)]
+    [InlineData(2, 3, false, false, false)]
+    [InlineData(2, 3, true, true, true)] // looping always moves on
+    public void CanNavigateForwards_NeedsAPairAhead(int index, int count, bool sideBySide, bool looping, bool expected)
+    {
+        Assert.Equal(expected,
+            SideBySidePair.CanNavigateForwards(index, count, isExtracting: false, sideBySide, looping));
     }
 
     [Fact]
-    public void Navigate_Next_NoLooping_ClampsAtEnd()
+    public void CanNavigateForwards_WhileExtracting_IsAllowed()
     {
-        // Arrange
-        var count = 3;
-        Settings.UIProperties.Looping = false;
-
-        // Act
-        var result = SideBySidePair.Navigate(0, count, NavigateTo.Next, SkipAmount.One);
-        var resultLast = SideBySidePair.Navigate(1, count, NavigateTo.Next, SkipAmount.One);
-
-        // Assert
-        Assert.Equal((1, (int?)2, false), result);
-        Assert.Equal((1, (int?)2, false), resultLast);
-    }
-
-    [Fact]
-    public void Navigate_Next_Looping_LoopsAround()
-    {
-        // Arrange
-        var count = 3;
-        Settings.UIProperties.Looping = true;
-
-        // Act
-        var result = SideBySidePair.Navigate(2, count, NavigateTo.Next, SkipAmount.One);
-
-        // Assert
-        Assert.Equal((1, (int?)2, false), result);
-    }
-
-    [Fact]
-    public void Navigate_Previous_NoLooping_ClampsAtStart()
-    {
-        // Arrange
-        var count = 3;
-        Settings.UIProperties.Looping = false;
-
-        // Act
-        var result = SideBySidePair.Navigate(0, count, NavigateTo.Previous, SkipAmount.One);
-
-        // Assert
-        Assert.Equal((0, (int?)1, true), result);
-    }
-
-    [Fact]
-    public void Navigate_First_And_Last()
-    {
-        // Arrange
-        var count = 4;
-
-        // Act
-        var first = SideBySidePair.Navigate(2, count, NavigateTo.First, SkipAmount.One);
-        var last = SideBySidePair.Navigate(2, count, NavigateTo.Last, SkipAmount.One);
-
-        // Assert
-        Assert.Equal((0, (int?)1, true), first);
-        Assert.Equal((2, (int?)3, false), last);
-    }
-
-    [Fact]
-    public void Navigate_OneImage_HasNoSecondary()
-    {
-        // Act
-        var result = SideBySidePair.Navigate(0, 1, NavigateTo.Next, SkipAmount.None);
-
-        // Assert
-        Assert.Equal((0, (int?)null, false), result);
-    }
-
-    [Fact]
-    public void Navigate_NoImages_ReturnsNoIndices()
-    {
-        // Act
-        var result = SideBySidePair.Navigate(0, 0, NavigateTo.Next, SkipAmount.None);
-
-        // Assert
-        Assert.Equal((-1, (int?)null, false), result);
-    }
-
-    [Fact]
-    public void PartnerOf_NextImage_IsTheImageAfter()
-    {
-        // Arrange
-        Settings.ImageScaling.ShowImageSideBySide = true;
-        Settings.UIProperties.Looping = false;
-
-        // Act & Assert
-        Assert.Equal(1, SideBySidePair.PartnerOf(0, 3));
-        Assert.Equal(2, SideBySidePair.PartnerOf(1, 3));
-    }
-
-    [Fact]
-    public void PartnerOf_LastImage_NoLooping_HasNoPartner()
-    {
-        // Arrange
-        Settings.ImageScaling.ShowImageSideBySide = true;
-        Settings.UIProperties.Looping = false;
-
-        // Act & Assert
-        Assert.Null(SideBySidePair.PartnerOf(2, 3));
-    }
-
-    [Fact]
-    public void PartnerOf_LastImage_Looping_IsTheFirstImage()
-    {
-        // Arrange
-        Settings.ImageScaling.ShowImageSideBySide = true;
-        Settings.UIProperties.Looping = true;
-
-        // Act & Assert
-        Assert.Equal(0, SideBySidePair.PartnerOf(2, 3));
-    }
-
-    [Fact]
-    public void PartnerOf_OneImage_HasNoPartner()
-    {
-        // Arrange
-        Settings.ImageScaling.ShowImageSideBySide = true;
-        Settings.UIProperties.Looping = true;
-
-        // Act & Assert
-        Assert.Null(SideBySidePair.PartnerOf(0, 1));
-    }
-
-    [Fact]
-    public void PartnerOf_SideBySideOff_HasNoPartner()
-    {
-        // Arrange
-        Settings.ImageScaling.ShowImageSideBySide = false;
-
-        // Act & Assert
-        Assert.Null(SideBySidePair.PartnerOf(0, 3));
-    }
-
-    [Fact]
-    public void PartnerOf_IndexOutOfRange_HasNoPartner()
-    {
-        // Arrange
-        Settings.ImageScaling.ShowImageSideBySide = true;
-
-        // Act & Assert
-        Assert.Null(SideBySidePair.PartnerOf(-1, 3));
-        Assert.Null(SideBySidePair.PartnerOf(3, 3));
-    }
-
-    [Fact]
-    public void ShownCount_SideBySideWithTwoEntries_IsTwo()
-    {
-        // Arrange
-        Settings.ImageScaling.ShowImageSideBySide = true;
-
-        // Act & Assert
-        Assert.Equal(2, SideBySidePair.ShownCount(2));
-    }
-
-    [Fact]
-    public void ShownCount_SideBySideWithOneEntry_IsOne()
-    {
-        // Arrange
-        Settings.ImageScaling.ShowImageSideBySide = true;
-
-        // Act & Assert
-        Assert.Equal(1, SideBySidePair.ShownCount(1));
-    }
-
-    [Fact]
-    public void ShownCount_SideBySideOff_IsOne()
-    {
-        // Arrange
-        Settings.ImageScaling.ShowImageSideBySide = false;
-
-        // Act & Assert
-        Assert.Equal(1, SideBySidePair.ShownCount(3));
-    }
-
-    [Fact]
-    public void CanNavigateForwards_SideBySide_NeedsAnImageAhead()
-    {
-        // Arrange
-        Settings.ImageScaling.ShowImageSideBySide = true;
-        Settings.UIProperties.Looping = false;
-
-        // Act & Assert: from index 1 the pair is already (1, 2), the last pair in a list of three
-        Assert.True(SideBySidePair.CanNavigateForwards(0, 3, isExtracting: false));
-        Assert.False(SideBySidePair.CanNavigateForwards(1, 3, isExtracting: false));
-    }
-
-    [Fact]
-    public void CanNavigateForwards_SideBySideOff_CanGoToLastImage()
-    {
-        // Arrange
-        Settings.ImageScaling.ShowImageSideBySide = false;
-        Settings.UIProperties.Looping = false;
-
-        // Act & Assert
-        Assert.True(SideBySidePair.CanNavigateForwards(1, 3, isExtracting: false));
-        Assert.False(SideBySidePair.CanNavigateForwards(2, 3, isExtracting: false));
-    }
-
-    [Fact]
-    public void CanNavigateForwards_Looping_AlwaysAllowed()
-    {
-        // Arrange
-        Settings.ImageScaling.ShowImageSideBySide = true;
-        Settings.UIProperties.Looping = true;
-
-        // Act & Assert
-        Assert.True(SideBySidePair.CanNavigateForwards(2, 3, isExtracting: false));
+        Assert.True(SideBySidePair.CanNavigateForwards(2, 3, isExtracting: true, sideBySide: true, looping: false));
     }
 
     [Fact]

@@ -27,7 +27,8 @@ public static class InputModes
             IsMotionPhotoActive: activeTab?.CurrentView.Value is ImageViewer { IsMotionPhotoActive: true },
             IsSlideshowRunning: Slideshow.IsRunning,
             IsAnimatedImageActive: activeTab?.Model?.ImageType is
-                ImageType.AnimatedGif or ImageType.AnimatedWebp or ImageType.AnimatedAvif);
+                ImageType.AnimatedGif or ImageType.AnimatedWebp or ImageType.AnimatedAvif,
+            IsGalleryExpanded: activeTab?.Gallery.IsGalleryExpanded.CurrentValue ?? false);
     }
 
     /// <summary>

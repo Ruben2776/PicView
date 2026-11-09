@@ -352,6 +352,50 @@ public class TabTitlesTests
         _ = _tab.Titles.Title;
     }
 
+    [Fact]
+    public void SaysLoading_NoPhase_SaysFalse()
+    {
+        bool? last = null;
+        using var watching = _tab.Titles.SaysLoading.Subscribe(v => last = v);
+
+        Assert.False(last);
+    }
+
+    [Fact]
+    public void SaysLoading_LoadingThenEnded_SaysTrueThenFalse()
+    {
+        var seen = new List<bool>();
+        using var watching = _tab.Titles.SaysLoading.Subscribe(seen.Add);
+
+        var ticket = _tab.SetLoading();
+        _tab.EndLoading(ticket);
+
+        Assert.Equal([false, true, false], seen);
+    }
+
+    [Fact]
+    public void SaysLoading_Downloading_SaysTrue()
+    {
+        bool? last = null;
+        using var watching = _tab.Titles.SaysLoading.Subscribe(v => last = v);
+
+        _tab.SetDownloading("50%");
+
+        Assert.True(last);
+    }
+
+    [Fact]
+    public void SaysLoading_Error_SaysFalse()
+    {
+        bool? last = null;
+        using var watching = _tab.Titles.SaysLoading.Subscribe(v => last = v);
+
+        _tab.SetLoading();
+        _tab.SetError("failed");
+
+        Assert.False(last);
+    }
+
     private sealed class MockThumbnailLoader : IThumbnailLoader
     {
         public ValueTask<object?> GetThumbnailAsync(FileInfo file, CoreViewModel core) => ValueTask.FromResult<object?>(null);

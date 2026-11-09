@@ -86,8 +86,6 @@ public class FunctionsMapper : IActionRunner
             Actions.NextFolder => NextFolder,
             Actions.PrevFolder => PrevFolder,
             
-            Actions.Up => Up,
-            Actions.Down => Down,
             
             Actions.Last => Last,
             Actions.First => First,
@@ -204,6 +202,7 @@ public class FunctionsMapper : IActionRunner
             Actions.Flip => Flip,
             Actions.OptimizeImage => OptimizeImage,
             Actions.ZoomToFit => ZoomToFit,
+            Actions.CloseImage => CloseImage,
 
             // Set stars
             Actions.Set0Star => Set0Star,
@@ -323,8 +322,6 @@ public class FunctionsMapper : IActionRunner
     private async ValueTask Search() =>
         await Dispatcher.UIThread.InvokeAsync(_mainWindow.AddFileSearchDialog);
     
-    private ValueTask Up() => ArrowKeyNavigation.Up(_vm, _mainWindow);
-
     /// <inheritdoc cref="RotationManager.RotateRight(MainWindowViewModel, MainWindow)" />
     private ValueTask RotateRight()
     {
@@ -368,8 +365,6 @@ public class FunctionsMapper : IActionRunner
         RotationManager.Flip(_vm);
         return ValueTask.CompletedTask;
     }
-
-    private ValueTask Down() => ArrowKeyNavigation.Down(_vm, _mainWindow);
 
     private ValueTask ScrollDown() => ViewerActions.ScrollLine(_vm, down: true);
 
@@ -458,7 +453,9 @@ public class FunctionsMapper : IActionRunner
         return ValueTask.CompletedTask;
     }
 
-    private ValueTask CheckForUpdates() => PlatformActions.CheckForUpdates(_mainWindow);
+    /// <inheritdoc cref="PlatformActions.CheckForUpdates" />
+    private ValueTask CheckForUpdates() =>
+        PlatformActions.CheckForUpdates(_mainWindow);
 
     private ValueTask ConvertWindow() =>
         _mainWindow.MainWindowInitializer.ShowConvertWindow();
@@ -484,10 +481,8 @@ public class FunctionsMapper : IActionRunner
     private ValueTask ResizeWindow() =>
         _mainWindow.MainWindowInitializer.ShowSingleImageResizeWindow();
 
-    private async ValueTask BatchResizeWindow()
-    {
+    private async ValueTask BatchResizeWindow() => 
         await _mainWindow.MainWindowInitializer.ShowBatchResizeWindow().ConfigureAwait(false);
-    }
 
     private ValueTask FileAssociationsWindow()
     {
@@ -521,28 +516,37 @@ public class FunctionsMapper : IActionRunner
     /// <summary>
     /// Turns top most on or off for every Main Window.
     /// </summary>
-    private ValueTask SetTopMost() => ToggleHelper.Toggle(_vm.GlobalSettings.IsTopMost);
+    private ValueTask SetTopMost() =>
+        ToggleHelper.Toggle(_vm.GlobalSettings.IsTopMost);
 
     #endregion
     
     
     #region Toggle UI functions
 
-    private ValueTask ToggleScroll() => ToggleHelper.ToggleScroll(_vm, _mainWindow);
+    private ValueTask ToggleScroll() =>
+        ToggleHelper.ToggleScroll(_vm, _mainWindow);
 
-    private ValueTask ToggleLooping() => ToggleHelper.ToggleLooping(_vm, _mainWindow);
+    private ValueTask ToggleLooping() =>
+        ToggleHelper.ToggleLooping(_vm, _mainWindow);
 
-    private ValueTask ToggleInterface() => ToggleHelper.ToggleInterface(_vm, _mainWindow);
+    private ValueTask ToggleInterface() =>
+        ToggleHelper.ToggleInterface(_vm);
 
-    private ValueTask ToggleHoverBar() => ToggleHelper.ToggleHoverBar(_vm);
+    private ValueTask ToggleHoverBar() =>
+        ToggleHelper.ToggleHoverBar(_vm);
 
-    private ValueTask ToggleSubdirectories() => ToggleHelper.ToggleSubdirectories(_vm);
+    private ValueTask ToggleSubdirectories() =>
+        ToggleHelper.ToggleSubdirectories(_vm);
 
-    private ValueTask ToggleBottomToolbar() => ToggleHelper.ToggleBottomToolbar(_vm);
+    private ValueTask ToggleBottomToolbar() =>
+        ToggleHelper.ToggleBottomToolbar(_vm);
 
-    private ValueTask ToggleTaskbarProgress() => ToggleHelper.ToggleTaskbarProgress(_vm);
+    private ValueTask ToggleTaskbarProgress() =>
+        ToggleHelper.ToggleTaskbarProgress(_vm);
 
-    private ValueTask ToggleConstrainBackgroundColor() => ToggleHelper.ToggleConstrainBackgroundColor(_vm);
+    private ValueTask ToggleConstrainBackgroundColor() =>
+        ToggleHelper.ToggleConstrainBackgroundColor(_vm);
 
     #endregion
 
@@ -722,6 +726,10 @@ public class FunctionsMapper : IActionRunner
     {
         return ValueTask.CompletedTask;
     }
+    
+    /// <inheritdoc cref="TabViewModel.CloseImageAsync" />
+    private ValueTask CloseImage() =>
+        _vm.WindowTabs.ActiveTab.CurrentValue.CloseImageAsync();
     
     #endregion
 

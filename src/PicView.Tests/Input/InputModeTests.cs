@@ -74,4 +74,50 @@ public class InputModeTests
         Assert.False(InputMode.AnimatedImage.IsBlocking());
         Assert.True(InputMode.AnimatedImage.DisallowsStillImageActions());
     }
+
+    [Fact]
+    public void Resolve_GalleryExpanded_IsGallery()
+    {
+        Assert.Equal(InputMode.Gallery, new InputModeState(IsGalleryExpanded: true).Resolve());
+    }
+
+    [Theory]
+    // The expanded gallery covers the image, so it ranks above what the image or the slideshow is doing
+    [InlineData(true, false, false)]
+    [InlineData(false, true, false)]
+    [InlineData(false, false, true)]
+    public void Resolve_GalleryRanksAboveNonBlockingModes(
+        bool isMotionPhotoActive, bool isAnimatedImageActive, bool isSlideshowRunning)
+    {
+        var state = new InputModeState(IsMotionPhotoActive: isMotionPhotoActive,
+            IsSlideshowRunning: isSlideshowRunning, IsAnimatedImageActive: isAnimatedImageActive,
+            IsGalleryExpanded: true);
+
+        Assert.Equal(InputMode.Gallery, state.Resolve());
+    }
+
+    [Theory]
+    [InlineData(true, false, false, InputMode.Dialog)]
+    [InlineData(false, true, false, InputMode.Renaming)]
+    [InlineData(false, false, true, InputMode.Crop)]
+    public void Resolve_BlockingModeAndGallery_IsTheBlockingMode(
+        bool isDialogOpen, bool isRenaming, bool isCropping, InputMode expected)
+    {
+        var state = new InputModeState(isDialogOpen, isRenaming, isCropping, IsGalleryExpanded: true);
+
+        Assert.Equal(expected, state.Resolve());
+    }
+
+    [Fact]
+    public void Resolve_CropAndGallery_IsCrop()
+    {
+        Assert.Equal(InputMode.Crop, new InputModeState(IsCropping: true, IsGalleryExpanded: true).Resolve());
+    }
+
+    [Fact]
+    public void Gallery_IsNonBlockingAndDisallowsStillImageActions()
+    {
+        Assert.False(InputMode.Gallery.IsBlocking());
+        Assert.True(InputMode.Gallery.DisallowsStillImageActions());
+    }
 }

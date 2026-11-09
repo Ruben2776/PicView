@@ -101,14 +101,10 @@ public interface IImageIterator : IDisposable
     ValueTask ReloadAsync(bool clearCache = true);
 
     /// <summary>
-    /// Moves the iterator to the specified index, triggers image loading, and handles UI updates.
+    /// Shows what the tab shows at <paramref name="index"/>: the image there, or with Side-by-Side on, the pair that holds
+    /// it, so the last image shows with the one before it (ADR-0024).
     /// </summary>
     ValueTask IterateToIndexAsync(int index, CancellationTokenSource ct);
-    
-    /// <summary>
-    /// Moves the iterator to the specified indices (for side-by-side viewing), triggers image loading, and handles UI updates.
-    /// </summary>
-    ValueTask IterateToIndicesAsync(int index, int secondaryIndex, CancellationTokenSource ct);
 
     /// <summary>
     /// Checks if the target index is cached before iterating. If not cached, clears cache first.

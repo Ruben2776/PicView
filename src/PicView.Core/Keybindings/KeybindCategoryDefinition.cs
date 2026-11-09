@@ -27,8 +27,8 @@ public static class KeybindCategoryDefinition
     private static readonly string[] HiddenActionNames =
     [
         Actions.CheckForUpdates, Actions.ColorPicker, Actions.CutFile, Actions.FileAssociationsWindow, Actions.ResetZoomAndRotations,
-        Actions.ResizeImage, Actions.Restart, Actions.Restore, Actions.Rotate0, Actions.Rotate90, Actions.Rotate180, Actions.Rotate270, Actions.RotateLeft,
-        Actions.RotateRight, Actions.SaveAsPDF, Actions.SetAsLockScreen, Actions.SetAsLockscreenCentered, Actions.SetAsWallpaper,
+        Actions.ResizeImage, Actions.Restart, Actions.Restore, Actions.Rotate0, Actions.Rotate90, Actions.Rotate180, Actions.Rotate270,
+        Actions.SaveAsPDF, Actions.SetAsLockScreen, Actions.SetAsLockscreenCentered, Actions.SetAsWallpaper,
         Actions.SetAsWallpaperCentered, Actions.SetAsWallpaperFilled, Actions.SetAsWallpaperFitted, Actions.SetAsWallpaperStretched,
         Actions.SetAsWallpaperTiled, Actions.ShowFavoritesFile, Actions.ShowKeybindingsFile, Actions.ShowRecentHistoryFile,
         Actions.ShowSettingsFile, Actions.SortFilesByLastWriteTime,
@@ -44,7 +44,8 @@ public static class KeybindCategoryDefinition
     /// Contextual Actions: generic Actions whose meaning comes from the window's Input Mode. Their Keybinds
     /// form a separate layer, so a Keybind can be bound to one of them and to an ordinary Action.
     /// </summary>
-    public static IReadOnlyList<string> ContextualActionNames { get; } = ["Confirm", "PlayPause"];
+    public static IReadOnlyList<string> ContextualActionNames { get; } =
+        ["Confirm", "PlayPause", "Up", "Down", "Left", "Right"];
 
     /// <summary>
     /// Actions that need a still image, which non-blocking Input Modes such as a playing motion photo disallow.
@@ -130,9 +131,9 @@ public static class KeybindCategoryDefinition
 
     public static List<(string FunctionName, string DisplayName)> GetScrollAndRotateEntries(LanguageModel t) =>
     [
-        (Actions.Up, t.RotateRight ?? string.Empty),
+        (Actions.RotateRight, t.RotateRight ?? string.Empty),
         (Actions.ScrollUp, t.ScrollUp ?? string.Empty),
-        (Actions.Down, t.RotateLeft ?? string.Empty),
+        (Actions.RotateLeft, t.RotateLeft ?? string.Empty),
         (Actions.ScrollDown, t.ScrollDown ?? string.Empty),
         (Actions.ScrollToTop, t.ScrollToTop ?? string.Empty),
         (Actions.ScrollToBottom, t.ScrollToBottom ?? string.Empty),
@@ -161,6 +162,7 @@ public static class KeybindCategoryDefinition
         (Actions.ToggleInterface, t.HideUI ?? string.Empty),
         (Actions.Slideshow, t.Slideshow ?? string.Empty),
         (Actions.ToggleGallery, t.ShowImageGallery ?? string.Empty),
+        (Actions.CloseImage, t.CloseImage ?? string.Empty),
     ];
 
     public static List<(string FunctionName, string DisplayName)> GetFileManagementEntries(LanguageModel t) =>
@@ -215,7 +217,7 @@ public static class KeybindCategoryDefinition
     public static List<(string FunctionName, string DisplayName)> GetTabManagementEntries(LanguageModel t) =>
     [
         (Actions.NewTab, t.NewTab ?? string.Empty),
-        (Actions.CloseTab, t.CloseTab ?? string.Empty),
+        (Actions.CloseTab, t.CloseTab ?? string.Empty)
     ];
 
     public static List<(string FunctionName, string DisplayName)> GetToolWindowsEntries(LanguageModel t) =>
@@ -268,6 +270,10 @@ public static class KeybindCategoryDefinition
     [
         ("Confirm", t.Confirm ?? string.Empty),
         ("PlayPause", t.PlayPause ?? string.Empty),
+        ("Up", t.Up ?? string.Empty),
+        ("Down", t.Down ?? string.Empty),
+        ("Left", t.Left ?? string.Empty),
+        ("Right", t.Right ?? string.Empty),
     ];
 
     public static List<(string CategoryName, List<(string FunctionName, string DisplayName)> Entries)> GetAllCategories(

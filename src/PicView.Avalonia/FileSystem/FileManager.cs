@@ -152,13 +152,12 @@ public static class FileManager
             return;
         }
 
+        var tab = vm.WindowTabs.ActiveTab.CurrentValue;
+        using var busy = tab.ClaimBusy();
         try
         {
-            vm.IsLoadingIndicatorShown.Value = true;
-
             if (string.Equals(targetPath, currentActiveFilePath, StringComparison.Ordinal))
             {
-                var tab = vm.WindowTabs.ActiveTab.CurrentValue;
                 var duplicatedPath = await FileHelper.DuplicateAndReturnFileNameAsync(targetPath).ConfigureAwait(false);
                 if (!string.IsNullOrWhiteSpace(duplicatedPath) && File.Exists(duplicatedPath))
                 {
@@ -186,10 +185,6 @@ public static class FileManager
         {
             DebugHelper.LogDebug(nameof(FileManager), nameof(DuplicateFileAsync), ex);
             TooltipHelper.ShowTooltipMessage(vm, TranslationManager.Translation?.UnexpectedError);
-        }
-        finally
-        {
-            vm.IsLoadingIndicatorShown.Value = false;
         }
     }
 }

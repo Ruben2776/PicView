@@ -18,10 +18,10 @@ public static class LinuxKeybindings
                                                 "Shift+Left": "PrevFolder",
                                                 "A": "Prev",
                                                 "Left": "Prev",
-                                                "W": "Up",
-                                                "Up": "Up",
-                                                "S": "Down",
-                                                "Down": "Down",
+                                                "W": "RotateRight",
+                                                "Up": "RotateRight",
+                                                "S": "RotateLeft",
+                                                "Down": "RotateLeft",
                                                 "PageUp": "ScrollUp",
                                                 "PageDown": "ScrollDown",
                                                 "Add": "ZoomIn",
@@ -72,7 +72,15 @@ public static class LinuxKeybindings
                                                 "Contextual": {
                                                   "Return": "Confirm",
                                                   "E": "Confirm",
-                                                  "Space": "PlayPause"
+                                                  "Space": "PlayPause",
+                                                  "Up": "Up",
+                                                  "W": "Up",
+                                                  "Down": "Down",
+                                                  "S": "Down",
+                                                  "Left": "Left",
+                                                  "A": "Left",
+                                                  "Right": "Right",
+                                                  "D": "Right"
                                                 }
                                               }
                                               """;

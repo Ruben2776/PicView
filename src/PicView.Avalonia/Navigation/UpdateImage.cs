@@ -43,7 +43,7 @@ public static class UpdateImage
     {
         var tabViewModel = vm.WindowTabs.ActiveTab.CurrentValue;
 
-        // The window's fitter follows the new image, and its viewer follows that Fit (ADR-0023)
+        // The window's fitter follows the new image, and its viewer follows that Fit (ADR-0026)
         tabViewModel.DisplaySingleImage(model, type, title);
 
         // The title follows from the tab's Titles, which derive it once the Single Image shows (ADR-0015)

@@ -3,6 +3,7 @@ using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Gallery;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.Views.UC;
+using PicView.Core.Navigation;
 using PicView.Core.ViewModels;
 
 namespace PicView.Avalonia.Input;
@@ -24,6 +25,19 @@ public sealed class ContextualActionHandler(MainWindow window, MainWindowViewMod
     /// Not a bindable Contextual Action: dispatch gives it to the fixed <see cref="InputDispatch.CopyKeybind"/>.
     /// </summary>
     public const string Copy = "Copy";
+
+    // Move through the expanded gallery; Up and Down also scroll an image taller than the viewer
+    public const string Up = "Up";
+    public const string Down = "Down";
+    public const string Left = "Left";
+    public const string Right = "Right";
+
+    /// <summary>
+    /// Whether Up and Down scroll <paramref name="target"/>: scrolling is on and the image is taller than the viewer.
+    /// Otherwise they fall through to rotating the image.
+    /// </summary>
+    internal static bool ScrollsImage(IZoomScrollTarget? target) =>
+        Settings.Zoom.ScrollEnabled && target is { IsImageTallerThanViewer: true };
 
     public async ValueTask<bool> TryRunAsync(InputMode mode, string contextualAction)
     {
@@ -64,10 +78,30 @@ public sealed class ContextualActionHandler(MainWindow window, MainWindowViewMod
                 // TODO: Pause and resume the slideshow. Claimed so Space does not run its ordinary Action meanwhile.
                 return true;
 
-            // TODO: Make the expanded gallery an Input Mode that overrides Next, Prev, Up and Down and gives
-            // Confirm this meaning, instead of those Actions checking the gallery themselves.
-            case (InputMode.Normal, Confirm) when activeTab.Gallery.IsGalleryExpanded.CurrentValue:
+            case (InputMode.Gallery, Up):
+                activeTab.Gallery.Navigate(NavigateTo.Up);
+                return true;
+            case (InputMode.Gallery, Down):
+                activeTab.Gallery.Navigate(NavigateTo.Down);
+                return true;
+            case (InputMode.Gallery, Left):
+                activeTab.Gallery.Navigate(NavigateTo.Previous);
+                return true;
+            case (InputMode.Gallery, Right):
+                activeTab.Gallery.Navigate(NavigateTo.Next);
+                return true;
+            case (InputMode.Gallery, Confirm):
                 await GalleryHelper.GalleryClick(vm).ConfigureAwait(false);
+                return true;
+            case (InputMode.Gallery, Cancel):
+                activeTab.Gallery.Switcher.ToggleExpanded();
+                return true;
+
+            case (InputMode.Normal, Up) when ScrollsImage(activeTab.CurrentView.Value as IZoomScrollTarget):
+                await ViewerActions.ScrollLine(vm, down: false).ConfigureAwait(false);
+                return true;
+            case (InputMode.Normal, Down) when ScrollsImage(activeTab.CurrentView.Value as IZoomScrollTarget):
+                await ViewerActions.ScrollLine(vm, down: true).ConfigureAwait(false);
                 return true;
             // Cancel in the Normal mode closes what Escape closes, which the KeybindRouter decides
 

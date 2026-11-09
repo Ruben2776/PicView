@@ -63,6 +63,7 @@ public class TranslationViewModel
         Close.Value = t.Close;
         CloseGallery.Value = t.CloseGallery;
         CloseTab.Value = t.CloseTab;
+        CloseImage.Value = t.CloseImage;
         CloseWindowPrompt.Value = t.CloseWindowPrompt;
         Color.Value = t.Color;
         ColorBalance.Value = t.ColorBalance;
@@ -440,6 +441,7 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> Close { get; } = new();
     public BindableReactiveProperty<string?> CloseGallery { get; } = new();
     public BindableReactiveProperty<string?> CloseTab { get; } = new();
+    public BindableReactiveProperty<string?> CloseImage { get; } = new();
     public BindableReactiveProperty<string?> CloseWindowPrompt { get; } = new();
     public BindableReactiveProperty<string?> Color { get; } = new();
     public BindableReactiveProperty<string?> ColorBalance { get; } = new();

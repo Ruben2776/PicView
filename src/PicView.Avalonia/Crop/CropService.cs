@@ -112,7 +112,7 @@ public class CropService(TabViewModel tabViewModel, MainWindow mainWindow) : ICr
         {
             return;
         }
-        vm.IsLoadingIndicatorShown.Value = true;
+        using var busy = tabViewModel.ClaimBusy();
         await SaveImage(fileName, fileInfo, bitmap).ConfigureAwait(false);
         if (string.Equals(tabViewModel.FileInfo.Value.FullName, fileName, StringComparison.Ordinal))
         {
@@ -122,7 +122,6 @@ public class CropService(TabViewModel tabViewModel, MainWindow mainWindow) : ICr
         }
         
         await Dispatcher.UIThread.InvokeAsync(CloseCropControl);
-        vm.IsLoadingIndicatorShown.Value = false;
     }
 
     private (string fileName, FileInfo? fileInfo, Bitmap? bitmap) PrepareCropData()

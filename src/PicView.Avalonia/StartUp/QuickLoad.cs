@@ -138,7 +138,7 @@ public static class QuickLoad
         tab.Gallery.Switcher.Start(Settings.Gallery.IsGalleryDocked);
 
         LoadResult result;
-        if (Settings.ImageScaling.ShowImageSideBySide)
+        if (tab.PairSettings().SideBySide)
         {
             // Listed once, to find the image beside the opened one; the tab's Load browses the same files
             var listFrom = rootDirectory is null ? fileInfo : new FileInfo(rootDirectory);
@@ -234,9 +234,11 @@ public static class QuickLoad
         MainWindowViewModel vm, TabViewModel tab, FileInfo fileInfo, List<FileInfo> files, string? rootDirectory)
     {
         var index = SideBySidePair.IndexOf(files, fileInfo) ?? 0;
+        var (sideBySide, looping) = tab.PairSettings();
+        var (primary, partner) = SideBySidePair.PairAt(index, files.Count, sideBySide, looping);
 
         // Without another image there is no pair to size or show, so the image loads as a single one
-        if (SideBySidePair.PartnerOf(index, files.Count) is not { } nextIndex)
+        if (partner is not { } partnerIndex)
         {
             return await LoadSingleAsync(mainWindow, core, vm, tab, fileInfo, files, rootDirectory)
                 .ConfigureAwait(false);
@@ -247,7 +249,9 @@ public static class QuickLoad
             ShowNow(mainWindow);
         }
 
-        var nextFileInfo = files[nextIndex];
+        // The other image of the pair: the one after the opened file, or before it when that is the last (ADR-0024)
+        var isOpenedFirst = primary == index;
+        var nextFileInfo = files[isOpenedFirst ? partnerIndex : primary];
 
         using var firstMagick = new MagickImage();
         using var secondMagick = new MagickImage();
@@ -267,8 +271,10 @@ public static class QuickLoad
                 isPinged = true;
                 await Dispatcher.UIThread.InvokeAsync(() =>
                 {
-                    var sizes = new PixelSizes(firstMagick.Width, firstMagick.Height, secondMagick.Width,
-                        secondMagick.Height);
+                    // Sized in the order the pair shows, left to right
+                    var sizes = isOpenedFirst
+                        ? new PixelSizes(firstMagick.Width, firstMagick.Height, secondMagick.Width, secondMagick.Height)
+                        : new PixelSizes(secondMagick.Width, secondMagick.Height, firstMagick.Width, firstMagick.Height);
                     if (!ShowSized(mainWindow, sizes))
                     {
                         mainWindow.Show();

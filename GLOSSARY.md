@@ -25,7 +25,7 @@ The single mode a window is in, which decides what its Keybinds do. It follows f
 _Avoid_: Context, state, focus, dialog mode
 
 **Contextual Action**:
-A generic Action, such as `Confirm`, `Cancel` or `PlayPause`, whose meaning comes from the current Input Mode. When the mode gives it no meaning, each lower-ranked Non-blocking Input Mode that also applies is asked in turn, then Normal, and when none gives it a meaning, its Keybind falls through to the ordinary Action bound to the same Keybind. A Blocking Input Mode asks no other mode. This is why Escape stops a playing motion photo, then a slideshow, before it closes the window. `Cancel` (Escape) and `Copy` (the platform's copy keys) are fixed to their keys; the others can be rebound.
+A generic Action, such as `Confirm`, `Cancel`, `PlayPause` or the arrows `Up`, `Down`, `Left` and `Right`, whose meaning comes from the current Input Mode. When the mode gives it no meaning, each lower-ranked Non-blocking Input Mode that also applies is asked in turn, then Normal, and when none gives it a meaning, its Keybind falls through to the ordinary Action bound to the same Keybind. A Blocking Input Mode asks no other mode. This is why Escape stops a playing motion photo, then a slideshow, before it closes the window, and why the arrow keys move through the Expanded Gallery but otherwise scroll a tall image, rotate it, or go to the previous or next file. `Cancel` (Escape) and `Copy` (the platform's copy keys) are fixed to their keys; the others can be rebound.
 _Avoid_: Mode action, special key
 
 **Blocking Input Mode**:
@@ -37,7 +37,7 @@ What `Confirm` does in the Dialog Input Mode: the top dialog's main button, such
 _Avoid_: Enter action, OK button
 
 **Non-blocking Input Mode**:
-An Input Mode that overrides specific Actions, disallows Actions that need a still image (such as `Crop`), and lets every other Keybind work as usual. Slideshow, Motion Photo and Animated Image are non-blocking.
+An Input Mode that overrides specific Actions, disallows Actions that need a still image (such as `Crop`), and lets every other Keybind work as usual. Slideshow, Motion Photo, Animated Image and Gallery are non-blocking.
 _Avoid_: Overlay mode, passive mode
 
 ## Windows
@@ -109,6 +109,10 @@ _Avoid_: Set the title, update the title, tab title (for the whole set)
 A state a tab is told it is in, which stands in for its derived Titles until it ends: Loading, until the next image shows; Downloading, with its progress, until the image shows or fails; Error, until the next load; and Cropping, which replaces only the titlebar text and its tooltip and ends when the crop closes. No image is not a phase: a tab that shows nothing derives it.
 _Avoid_: Loading title, temporary title, title override
 
+**Busy**:
+A tab is Busy while an operation on it holds a busy claim: a crop save, an optimize, setting the wallpaper, a rename or a duplicate. It ends when the last claim ends, however the operation ends. A Main Window shows its loading indicator while its active tab is Busy, or while the tab's Title Phase is Loading or Downloading and the titlebar is hidden.
+_Avoid_: loading indicator shown, busy flag
+
 **Tab View**:
 Which of three views a tab shows, derived from its own state: the crop control while a crop is open; otherwise the image viewer while the tab shows something or its Title Phase is Loading or Downloading; otherwise the start-up menu. The tab derives it; one adapter per Main Window makes the control it shows, once per tab, and nothing assigns a view into a tab.
 _Avoid_: Current view (as something set), switch to the viewer, switch to the start-up menu, restore the view
@@ -128,7 +132,7 @@ _Avoid_: Last entry, current entry
 ## Images
 
 **Side-by-Side Pair**:
-Two images a tab shows beside each other when Side-by-Side is on: the shown image and its partner, the next image in the list. The last image has no partner unless the list loops, and a file with no partner shows alone. Paired navigation moves by two images at a time.
+Two images a tab shows beside each other when Side-by-Side is on: the shown image and its partner, the next image in the list. Going to the last image, whether by opening it, jumping to it, reloading it or turning Side-by-Side on, shows the pair that ends with it: the image before it and the last image. With looping, the last image pairs with the first instead. Only a list of one image shows alone. Paired navigation moves by two images at a time and always ends on a full pair. The gallery marks both images of the pair.
 _Avoid_: Dual view, two-up, double view
 
 ## Archives
@@ -156,7 +160,7 @@ The strip of thumbnails along one edge of a Main Window, top, bottom, left or ri
 _Avoid_: Bottom gallery, gallery bar
 
 **Expanded Gallery**:
-The gallery filling the Main Window in place of the image.
+The gallery filling the Main Window in place of the image. While it is shown, the window is in the Gallery Input Mode, which gives the arrows, `Confirm` and `Cancel` their gallery meanings.
 _Avoid_: Full gallery, fullscreen gallery
 
 **Gallery Items**:

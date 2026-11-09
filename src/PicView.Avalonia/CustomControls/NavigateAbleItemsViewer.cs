@@ -49,6 +49,22 @@ public class NavigateAbleItemsViewer : ItemsControl
         set => SetValue(CurrentItemIndexProperty, value);
     }
 
+    /// <summary>
+    /// The index of the item shown beside the current one, or -1 for none. A Side-by-Side Pair marks both items as
+    /// current, and they are not always next to each other, as the last image pairs with the first when looping.
+    /// </summary>
+    public static readonly StyledProperty<int> PartnerItemIndexProperty =
+        AvaloniaProperty.Register<NavigateAbleItemsViewer, int>(nameof(PartnerItemIndex), defaultValue: -1);
+
+    public int PartnerItemIndex
+    {
+        get => GetValue(PartnerItemIndexProperty);
+        set => SetValue(PartnerItemIndexProperty, value);
+    }
+
+    // Whether the item at the index is shown: the current item, or its partner
+    private bool IsCurrentItem(int index) => index >= 0 && (index == CurrentItemIndex || index == PartnerItemIndex);
+
     #endregion
 
     #region Constructor and Control Overrides
@@ -79,6 +95,10 @@ public class NavigateAbleItemsViewer : ItemsControl
         {
             UpdateCurrentVisualState();
             ScrollToCenterOfCurrentItem();
+        }
+        else if (change.Property == PartnerItemIndexProperty)
+        {
+            UpdateCurrentVisualState();
         }
         else if (change.Property == SelectedItemIndexProperty)
         {
@@ -118,7 +138,7 @@ public class NavigateAbleItemsViewer : ItemsControl
 
     private void InitializeNavItem(NavigateAbleItem navItem, int index)
     {
-        navItem.SetCurrent(CurrentItemIndex >= 0 && index == CurrentItemIndex);
+        navItem.SetCurrent(IsCurrentItem(index));
         navItem.SetSelected(SelectedItemIndex >= 0 && index == SelectedItemIndex);
 
         if (navItem is not GalleryItem { DataContext: GalleryItemViewModel vm } galleryItem)
@@ -271,13 +291,12 @@ public class NavigateAbleItemsViewer : ItemsControl
 
     public void UpdateCurrentVisualState()
     {
-        var currentIndex = CurrentItemIndex;
         if (ItemsPanelRoot is VirtualizingGallery gallery)
         {
             foreach (var realized in gallery.RealizedItems)
             {
                 var navItem = GetNavigateAbleItem(realized.Element);
-                navItem?.SetCurrent(currentIndex >= 0 && realized.Index == currentIndex);
+                navItem?.SetCurrent(IsCurrentItem(realized.Index));
             }
         }
         else
@@ -285,7 +304,7 @@ public class NavigateAbleItemsViewer : ItemsControl
             for (var i = 0; i < ItemCount; i++)
             {
                 var navItem = GetNavigateAbleItem(ContainerFromIndex(i));
-                navItem?.SetCurrent(currentIndex >= 0 && i == currentIndex);
+                navItem?.SetCurrent(IsCurrentItem(i));
             }
         }
     }

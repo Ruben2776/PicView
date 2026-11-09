@@ -25,8 +25,6 @@ public static class Actions
     public const string ToggleLooping = nameof(ToggleLooping);
 
     // Scroll and rotate
-    public const string Up = nameof(Up);
-    public const string Down = nameof(Down);
     public const string ScrollUp = nameof(ScrollUp);
     public const string ScrollDown = nameof(ScrollDown);
     public const string ScrollToTop = nameof(ScrollToTop);
@@ -101,6 +99,7 @@ public static class Actions
     // Tabs
     public const string NewTab = nameof(NewTab);
     public const string CloseTab = nameof(CloseTab);
+    public const string CloseImage = nameof(CloseImage);
 
     // Tool and app windows
     public const string AboutWindow = nameof(AboutWindow);

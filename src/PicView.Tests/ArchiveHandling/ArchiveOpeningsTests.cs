@@ -200,6 +200,20 @@ public class ArchiveOpeningsTests : IDisposable
     }
 
     [Fact]
+    public async Task OpenAsync_SideBySideAtTheLastPage_ExtractsThePageBeforeItWithIt()
+    {
+        var tab = CreateTab();
+        tab.Services!.GlobalSettings.IsSideBySide.Value = true;
+        var zip = await CreateZipAsync("before.zip", 12);
+
+        var opening = await OpenAsync(tab, zip, "img_12.jpg");
+
+        Assert.NotNull(opening);
+        Assert.Equal("img_12.jpg", opening.StartFile.Name);
+        Assert.Equal(["img_11.jpg", "img_12.jpg"], opening.Files.Select(f => f.Name));
+    }
+
+    [Fact]
     public async Task OpenAsync_WhileANewerOpeningStarts_GivesUpAndLeavesTheNewerOneOpen()
     {
         // The first opening writes its start page until the test lets it, and a newer one opens meanwhile

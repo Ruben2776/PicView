@@ -116,6 +116,45 @@ public class TabViewKindTests
     }
 
     [Fact]
+    public async Task CloseImageAsync_AfterAFileShows_IsStartUpMenuAndFresh()
+    {
+        _tab.Display(Model("a.jpg"));
+        await _tab.CloseImageAsync();
+        Assert.Equal(TabViewKind.StartUpMenu, _tab.ViewKind.Value);
+        Assert.Null(_tab.FileInfo.Value);
+        Assert.True(_tab.IsFresh);
+    }
+
+    [Fact]
+    public async Task CloseImageAsync_AfterASingleImageShows_IsStartUpMenu()
+    {
+        _tab.DisplaySingleImage(new ImageModel { Image = new object() }, SingleImageType.Clipboard);
+        await _tab.CloseImageAsync();
+        Assert.Equal(TabViewKind.StartUpMenu, _tab.ViewKind.Value);
+        Assert.Null(_tab.Image.Value);
+    }
+
+    [Fact]
+    public async Task CloseImageAsync_OnAFreshTab_NotifiesNothing()
+    {
+        var changes = 0;
+        using var following = _tab.ViewKind.AsObservable().Skip(1).Subscribe(_ => changes++);
+        await _tab.CloseImageAsync();
+        Assert.Equal(0, changes);
+        Assert.Equal(TabViewKind.StartUpMenu, _tab.ViewKind.Value);
+    }
+
+    [Fact]
+    public async Task CloseImageAsync_WhileCropping_StaysCrop()
+    {
+        _tab.Display(Model("a.jpg"));
+        _tab.Crop = new CropViewModel(_tab.Zoom);
+        await _tab.CloseImageAsync();
+        Assert.Equal(TabViewKind.Crop, _tab.ViewKind.Value);
+        Assert.NotNull(_tab.FileInfo.Value);
+    }
+
+    [Fact]
     public void Display_WhileTheViewerShows_NotifiesNothing()
     {
         _tab.Display(Model("a.jpg"));

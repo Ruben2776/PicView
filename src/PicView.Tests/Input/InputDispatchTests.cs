@@ -8,6 +8,9 @@ public class InputDispatchTests
     private static readonly Keybind Enter = new(Key.Enter);
     private static readonly Keybind Escape = new(Key.Escape);
     private static readonly Keybind Right = new(Key.Right);
+    private static readonly Keybind Up = new(Key.Up);
+    private static readonly Keybind Space = new(Key.Space);
+    private static readonly Keybind C = new(Key.C);
 
     // Enter is both Confirm and ToggleFullscreen; Escape is the fixed Cancel and also bound to Close
     private static readonly Keymap Keymap = Keymap.FromJson(null, """
@@ -15,13 +18,16 @@ public class InputDispatchTests
           "Right": "Next",
           "Enter": "ToggleFullscreen",
           "Escape": "Close",
-          "Contextual": { "Enter": "Confirm" }
+          "Up": "RotateRight",
+          "C": "Crop",
+          "Contextual": { "Enter": "Confirm", "Up": "Up", "Space": "PlayPause" }
         }
         """);
 
     private static readonly InputModeState Normal = new();
     private static readonly InputModeState Crop = new(IsCropping: true);
     private static readonly InputModeState Dialog = new(IsDialogOpen: true);
+    private static readonly InputModeState Gallery = new(IsGalleryExpanded: true);
     private static readonly InputModeState MotionPhotoInSlideshow = new(IsMotionPhotoActive: true, IsSlideshowRunning: true);
 
     private sealed class FakeHandler(params (InputMode Mode, string Action)[] claims) : IContextualActionHandler
@@ -159,5 +165,50 @@ public class InputDispatchTests
         var (handler, _) = await Dispatch(Escape, state);
 
         Assert.Equal(expected, handler.Asked.Select(asked => asked.Mode));
+    }
+
+    [Fact]
+    public async Task Dispatch_GalleryClaimsConfirm_ReturnsNone()
+    {
+        var (handler, ordinary) = await Dispatch(Enter, Gallery, (InputMode.Gallery, "Confirm"));
+
+        Assert.Equal([(InputMode.Gallery, "Confirm")], handler.Asked);
+        Assert.Equal(KeymapResolution.None, ordinary);
+    }
+
+    [Fact]
+    public async Task Dispatch_GalleryClaimsUp_ReturnsNone()
+    {
+        var (handler, ordinary) = await Dispatch(Up, Gallery, (InputMode.Gallery, "Up"));
+
+        Assert.Equal([(InputMode.Gallery, "Up")], handler.Asked);
+        Assert.Equal(KeymapResolution.None, ordinary);
+    }
+
+    [Fact]
+    public async Task Dispatch_UpUnclaimedInNormal_FallsThroughToRotateRight()
+    {
+        var (_, ordinary) = await Dispatch(Up, Normal);
+
+        Assert.Equal(KeymapResolution.Action("RotateRight"), ordinary);
+    }
+
+    [Fact]
+    public async Task Dispatch_GalleryOverMotionPhoto_AsksGalleryThenMotionPhoto()
+    {
+        var state = new InputModeState(IsMotionPhotoActive: true, IsGalleryExpanded: true);
+
+        var (handler, ordinary) = await Dispatch(Space, state, (InputMode.MotionPhoto, "PlayPause"));
+
+        Assert.Equal([(InputMode.Gallery, "PlayPause"), (InputMode.MotionPhoto, "PlayPause")], handler.Asked);
+        Assert.Equal(KeymapResolution.None, ordinary);
+    }
+
+    [Fact]
+    public async Task Dispatch_CropActionInGallery_IsNotResolved()
+    {
+        var (_, ordinary) = await Dispatch(C, Gallery);
+
+        Assert.Equal(KeymapResolution.None, ordinary);
     }
 }
