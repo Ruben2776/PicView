@@ -1,4 +1,4 @@
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Runtime;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -298,6 +298,8 @@ public sealed class AppLifecycle
     {
         ServiceHelper.SetAvaloniaImageLoader(_core);
         ServiceHelper.SetGalleryLoader();
+        Dispatcher.UIThread.Post(() =>
+            BackgroundManager.SetBackground(_core.GlobalSettings, Settings.UIProperties.BgColorChoice));
         _ = Task.Run(() =>
         {
             _core.GlobalSettings?.BackgroundChoice.Value = Settings.UIProperties.BgColorChoice;
