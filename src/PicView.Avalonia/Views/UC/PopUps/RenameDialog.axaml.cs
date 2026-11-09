@@ -20,7 +20,9 @@ public partial class RenameDialog : AnimatedPopUp
         RenameBox.Focus();
         if (RenameBox.Text is not null)
         {
-            RenameBox.CaretIndex = RenameBox.Text.Length;
+            // Select the name without the extension, as the title bar and File Explorer do, so typing keeps the extension
+            RenameBox.SelectionStart = 0;
+            RenameBox.SelectionEnd = Path.GetFileNameWithoutExtension(RenameBox.Text).Length;
         }
         
         CancelButton.Click += CloseMenu;
