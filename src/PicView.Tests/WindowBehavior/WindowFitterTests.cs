@@ -1158,6 +1158,121 @@ public class WindowFitterTests
         window.Close();
     }
 
+    [AvaloniaFact]
+    public void Follow_FitGrowsTheWindowWithStayCentered_StaysCentered()
+    {
+        Settings.WindowProperties.KeepCentered = true;
+        var screen = Screen(1920, 1040);
+        var (fitter, vm, window) = CreateShownAutoFitWindow(() => screen);
+        using var following = fitter.Follow();
+        vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 400, 300));
+        Dispatcher.UIThread.RunJobs();
+        window.Position = new PixelPoint(100, 50);
+
+        vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 800, 600));
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Equal(new Size(800, 600), window.ClientSize);
+        var centered = WindowPlacement.Centered(screen, 800, 600);
+        Assert.Equal(new PixelPoint(centered.X, centered.Y), window.Position);
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public void Follow_FitGrowsTheWindowWithoutStayCentered_KeepsItsCenter()
+    {
+        var (fitter, vm, window) = CreateShownAutoFitWindow(() => Screen(1920, 1040));
+        using var following = fitter.Follow();
+        vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 400, 300));
+        Dispatcher.UIThread.RunJobs();
+        window.Position = new PixelPoint(500, 300);
+        var centerBefore = CenterOf(window);
+
+        vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 800, 600));
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Equal(new Size(800, 600), window.ClientSize);
+        Assert.Equal(centerBefore, CenterOf(window));
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public void Follow_FixedWindowResizes_IsNotMoved()
+    {
+        Settings.WindowProperties.KeepCentered = true;
+        var (fitter, _, window) = CreateShownWindow(400, 300, readScreen: () => Screen(1920, 1040));
+        using var following = fitter.Follow();
+        window.Position = new PixelPoint(100, 50);
+
+        window.Width = 800;
+        window.Height = 600;
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Equal(new Size(800, 600), window.ClientSize);
+        Assert.Equal(new PixelPoint(100, 50), window.Position);
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public void Follow_FullscreenFit_IsNotMoved()
+    {
+        Settings.WindowProperties.KeepCentered = true;
+        var (fitter, vm, window) = CreateShownAutoFitWindow(() => Screen(1920, 1040));
+        using var following = fitter.Follow();
+        vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 400, 300));
+        Dispatcher.UIThread.RunJobs();
+        vm.WindowModeState.Value = vm.WindowModeState.Value.ToggleFullscreen();
+        Dispatcher.UIThread.RunJobs();
+        window.Position = new PixelPoint(100, 50);
+
+        // A fullscreen window takes the size of its screen
+        window.Width = 1920;
+        window.Height = 1080;
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Equal(new Size(1920, 1080), window.ClientSize);
+        Assert.Equal(new PixelPoint(100, 50), window.Position);
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public void Follow_Placed_PublishesTheNewSize()
+    {
+        var (fitter, vm, window) = CreateShownAutoFitWindow(() => Screen(1920, 1040));
+        using var following = fitter.Follow();
+        vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 400, 300));
+        Dispatcher.UIThread.RunJobs();
+        window.Position = new PixelPoint(500, 300);
+        var placed = new List<Size>();
+        using var listening = fitter.Placed.Subscribe(placed.Add);
+
+        vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 800, 600));
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Equal([new Size(800, 600)], placed);
+        window.Close();
+    }
+
+    private static PixelPoint CenterOf(Window window) =>
+        new(window.Position.X + (int)window.ClientSize.Width / 2, window.Position.Y + (int)window.ClientSize.Height / 2);
+
+    // An AutoFit window, shown, whose content takes the size its image is fitted to, as the main view's image does
+    private (WindowFitter Fitter, MainWindowViewModel Vm, MainWindow Window) CreateShownAutoFitWindow(
+        Func<ScreenSize> readScreen)
+    {
+        var (fitter, vm, window) = CreateWindow(readScreen);
+        vm.WindowModeState.Value = vm.WindowModeState.Value.SetAutoFit(true);
+        var content = new Border { Width = 400, Height = 300 };
+        vm.ImageWidth.Subscribe(width => content.Width = double.IsNaN(width) ? 400 : width).AddTo(window.Disposables);
+        vm.ImageHeight.Subscribe(height => content.Height = double.IsNaN(height) ? 300 : height)
+            .AddTo(window.Disposables);
+        window.Content = content;
+        window.SizeToContent = SizeToContent.WidthAndHeight;
+        window.Show();
+        Dispatcher.UIThread.RunJobs();
+        return (fitter, vm, window);
+    }
+
     private (WindowFitter Fitter, MainWindowViewModel Vm, MainWindow Window) CreateWindow(
         Func<ScreenSize>? readScreen = null, Func<Size>? readContentSize = null,
         Observable<Size>? contentBounds = null, Observable<Unit>? screenChanges = null)

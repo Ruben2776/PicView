@@ -97,7 +97,7 @@ public abstract class MainWindow : Window, IMainWindow
     {
         Resized += WindowSizeChanged;
         
-        // Keep window position when resizing
+        // Shows or hides the buttons that fit the window's width as it is resized
         Debug.Assert(FrameProvider != null, nameof(FrameProvider) + " != null");
         ClientSizeProperty.Changed.ToObservable()
             .Skip(1)
@@ -115,6 +115,11 @@ public abstract class MainWindow : Window, IMainWindow
         {
             return;
         }
+
+        // The cursor goes back on the button whose click resized the window, once the fitter has placed it
+        WindowFitter.Placed
+            .Subscribe(size => SetCursorOnButton.AfterResize(this, vm, size.Width))
+            .AddTo(Disposables);
 
         // Changes the user makes with the operating system's own window controls
         var windowStates = Observable.EveryValueChanged(this, x => x.WindowState, FrameProvider);
@@ -522,16 +527,11 @@ public abstract class MainWindow : Window, IMainWindow
             return;
         }
         
-        if (DataContext is not MainWindowViewModel vm)
+        if (DataContext is not MainWindowViewModel)
         {
             return;
         }
 
-        if (vm.WindowModeState.CurrentValue.AutoFit && size.OldValue.HasValue && size.NewValue.HasValue &&
-            WindowFitter.PlaceAfterResize(size.OldValue.Value, size.NewValue.Value))
-        {
-            SetCursorOnButton.AfterResize(this, vm, size.NewValue.Value.Width);
-        }
         var newWidth = size.NewValue.Value.Width;
         if (newWidth == Bounds.Width || 
             size.OldValue.Value.Width >= SizeDefaults.FullBtnBp && size.NewValue.Value.Width >= SizeDefaults.FullBtnBp)

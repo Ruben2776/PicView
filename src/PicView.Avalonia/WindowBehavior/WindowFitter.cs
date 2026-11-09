@@ -40,6 +40,7 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
         ScreenOf(window));
 
     private readonly Subject<Fitted> _fits = new();
+    private readonly Subject<Size> _placed = new();
 
     private ScreenSize? _fittedScreen;
     private int _isFitBeforeFramePending;
@@ -67,17 +68,25 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
     public Observable<Fitted> Fits => _fits;
 
     /// <summary>
+    /// The window's new client size each time it was moved after a change of its size, published on the UI thread
+    /// once it sits where its Placement puts it.
+    /// </summary>
+    public Observable<Size> Placed => _placed;
+
+    /// <summary>
     /// Whether <paramref name="tab"/> showed a new image that no applied Fit has followed yet. Read on the UI thread.
     /// </summary>
     internal bool IsNewImageFitOwed(TabViewModel tab) => _tabsOwingNewImageFit.Contains(tab);
 
     /// <summary>
-    /// Ends <see cref="Fits"/> and stops the Fits already posted, which may run after the window tore down its tabs.
+    /// Ends <see cref="Fits"/> and <see cref="Placed"/>, and stops the Fits already posted, which may run after the
+    /// window tore down its tabs.
     /// </summary>
     public void Dispose()
     {
         _isDisposed = true;
         _fits.Dispose();
+        _placed.Dispose();
     }
 
     /// <summary>
@@ -110,12 +119,26 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
         window.Position = new PixelPoint(position.X, position.Y);
     }
 
-    /// <summary>
-    /// Places an AutoFit window after its size changed: centered in its work area with Stay centered, else on its own
-    /// center.
-    /// </summary>
-    /// <returns>Whether the window was placed; not when either size is empty.</returns>
-    public bool PlaceAfterResize(Size oldSize, Size newSize)
+    // An AutoFit window is placed after each change of its size, a Fit included. A hidden window is not: App Start
+    // places it as it shows. Nor is one that is not Normal, keeps its size or is between Window Modes
+    private void PlaceAfterResizeIfAutoFit(MainWindowViewModel vm, Size oldSize, Size newSize)
+    {
+        var state = vm.WindowModeState.CurrentValue;
+        if (!window.IsVisible || state.Mode is not WindowMode.Normal || !state.AutoFit ||
+            window.IsChangingWindowState || _placed.IsDisposed)
+        {
+            return;
+        }
+
+        if (PlaceAfterResize(oldSize, newSize))
+        {
+            _placed.OnNext(newSize);
+        }
+    }
+
+    // Centered in its work area with Stay Centered, else on its own center. Whether the window moved; not when either
+    // size is empty
+    private bool PlaceAfterResize(Size oldSize, Size newSize)
     {
         if (oldSize.Width is 0 || oldSize.Height is 0 || newSize.Width is 0 || newSize.Height is 0)
         {
@@ -139,7 +162,8 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
     /// fitted at the highest priority and published with the cause <see cref="FitCause.NewImage"/>; a tab that shows
     /// one in the background owes that cause to the first Fit for it once it is active. Other changes that come together give one Fit, before the next
     /// frame is drawn, so the window never shows them at the old size. Without AutoFit the Fit reads the laid-out
-    /// view, so it is fitted once more after layout.
+    /// view, so it is fitted once more after layout. A shown AutoFit window in Normal is also placed after each change
+    /// of its size, a Fit included, and published as <see cref="Placed"/> when that moved it.
     /// </summary>
     /// <returns>What stops following the inputs.</returns>
     public IDisposable Follow()
@@ -176,6 +200,13 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
             vm.WindowTabs.ActiveTab.Select(static tab => tab.ViewKind.AsObservable().Skip(1)).Switch()
                 .Subscribe(_ => FitSoon()),
             FollowContentBounds(vm),
+            // Only this window's size, as it changes on the UI thread
+            window.GetPropertyChangedObservable(Window.ClientSizeProperty).ToObservable()
+                .Subscribe(change =>
+                {
+                    var size = (AvaloniaPropertyChangedEventArgs<Size>)change;
+                    PlaceAfterResizeIfAutoFit(vm, size.OldValue.GetValueOrDefault(), size.NewValue.GetValueOrDefault());
+                }),
             // A move within the same screen fits nothing; a drag to another monitor or a scaling change does
             (screenChanges ?? ScreenChangesOf(window)).Subscribe(_ =>
             {
