@@ -141,51 +141,56 @@ public sealed class TabLoad
     private async ValueTask<LoadResult> LoadFileAsync(FileInfo file, LoadOptions options, Run run)
     {
         // A file in the tab's list is stepped to, unless the caller gave its model or its own listing
-        if (options.Model is null && options.RootDirectory is null && options.Files is null &&
-            _tab.ImageIterator is { Files.Count: > 0 } iterator)
+        if (options.Model is not null || options.RootDirectory is not null || options.Files is not null ||
+            _tab.ImageIterator is not { Files.Count: > 0 } iterator)
         {
-            var index = SideBySidePair.IndexOf(iterator.Files, file);
-            if (index is null && IsInShownFolder(file))
+            return await Task.Run(() => ShowThenListAsync(file, options.Files, options.Model, options.SecondaryModel,
+                    options.RootDirectory, run).AsTask(),
+                run.Token).ConfigureAwait(false);
+        }
+
+        var index = SideBySidePair.IndexOf(iterator.Files, file);
+        if (index is null && IsInShownFolder(file))
+        {
+            // A file just written next to the shown one, such as a duplicate, is added by the folder watcher,
+            // which also adds it to the gallery, so wait for it rather than rebuilding the list and the gallery
+            if (await iterator.WaitForFileAsync(file.FullName, FolderWatcherWait, run.Token).ConfigureAwait(false))
             {
-                // A file just written next to the shown one, such as a duplicate, is added by the folder watcher,
-                // which also adds it to the gallery, so wait for it rather than rebuilding the list and the gallery
-                if (await iterator.WaitForFileAsync(file.FullName, FolderWatcherWait, run.Token).ConfigureAwait(false))
-                {
-                    index = SideBySidePair.IndexOf(iterator.Files, file);
-                }
-
-                if (!IsCurrent(run))
-                {
-                    return LoadResult.Superseded;
-                }
-
-                if (run.Token.IsCancellationRequested)
-                {
-                    return LoadResult.Failed();
-                }
+                index = SideBySidePair.IndexOf(iterator.Files, file);
             }
 
-            if (index is { } found)
+            if (!IsCurrent(run))
             {
-                await iterator.IterateToIndexAsync(found, run.Cancellation).ConfigureAwait(false);
-                if (!IsCurrent(run))
-                {
-                    return LoadResult.Superseded;
-                }
+                return LoadResult.Superseded;
+            }
 
-                // The step shows nothing when the file left the list meanwhile, or its image could not be read, so
-                // this load showed its file only when the tab shows it now, beside the image before it when it is the
-                // last of a pair (ADR-0024); otherwise its end ends its Loading
-                run.IsShown = IsModelOf(_tab.Model, file) || IsModelOf(_tab.SecondaryModel, file);
-                return run.IsShown ? LoadResult.Loaded : LoadResult.Failed();
+            if (run.Token.IsCancellationRequested)
+            {
+                return LoadResult.Failed();
             }
         }
 
+        if (index is not { } found)
+        {
+            return await Task.Run(() => ShowThenListAsync(file, options.Files, options.Model, options.SecondaryModel,
+                    options.RootDirectory, run).AsTask(),
+                run.Token).ConfigureAwait(false);
+        }
+
+        await iterator.IterateToIndexAsync(found, run.Cancellation).ConfigureAwait(false);
+        if (!IsCurrent(run))
+        {
+            return LoadResult.Superseded;
+        }
+
+        // The step shows nothing when the file left the list meanwhile, or its image could not be read, so
+        // this load showed its file only when the tab shows it now, beside the image before it when it is the
+        // last of a pair (ADR-0024); otherwise its end ends its Loading
+        run.IsShown = IsModelOf(_tab.Model, file) || IsModelOf(_tab.SecondaryModel, file);
+        return run.IsShown ? LoadResult.Loaded : LoadResult.Failed();
+
         // TODO: Figure out way to share file list, if another tab is already in the same directory
         // AsTask, because Task.Run waits for a Task but returns a ValueTask without awaiting it
-        return await Task.Run(() => ShowThenListAsync(file, options.Files, options.Model, options.SecondaryModel,
-                options.RootDirectory, run).AsTask(),
-            run.Token).ConfigureAwait(false);
     }
 
     private async ValueTask<LoadResult> LoadFolderAsync(string folder, Run run)
@@ -494,17 +499,15 @@ public sealed class TabLoad
     /// </summary>
     private List<FileInfo> ListAround(FileInfo file, string? rootDirectory)
     {
-        if (rootDirectory is not null && IsInside(file, rootDirectory))
+        if (rootDirectory is null || !IsInside(file, rootDirectory))
         {
-            var fromRoot = FileListRetriever.RetrieveFiles(new FileInfo(rootDirectory), _compareNames);
-            // Without subdirectories, a file deeper in the root is not listed from it
-            if (SideBySidePair.IndexOf(fromRoot, file) is not null)
-            {
-                return fromRoot;
-            }
+            return FileListRetriever.RetrieveFiles(file, _compareNames);
         }
 
-        return FileListRetriever.RetrieveFiles(file, _compareNames);
+        var fromRoot = FileListRetriever.RetrieveFiles(new FileInfo(rootDirectory), _compareNames);
+        // Without subdirectories, a file deeper in the root is not listed from it
+        return SideBySidePair.IndexOf(fromRoot, file) is not null ? fromRoot 
+            : FileListRetriever.RetrieveFiles(file, _compareNames);
     }
 
     private static bool IsModelOf(ImageModel? model, FileInfo file) =>
@@ -596,8 +599,6 @@ public sealed class TabLoad
     // One load: its version, the tab's cancellation it reads, the Title Phase ticket it ends, and whether it showed
     private sealed class Run(int version)
     {
-        private int _ticket;
-
         public int Version { get; } = version;
 
         public CancellationTokenSource Cancellation { get; set; } = null!;
@@ -607,8 +608,8 @@ public sealed class TabLoad
         // A download's progress reports replace it from the download's thread
         public int Ticket
         {
-            get => Volatile.Read(ref _ticket);
-            set => Volatile.Write(ref _ticket, value);
+            get => Volatile.Read(ref field);
+            set => Volatile.Write(ref field, value);
         }
 
         public bool IsShown { get; set; }
