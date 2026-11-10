@@ -83,7 +83,7 @@ public static class RememberedPlacement
     /// Whether a window at this position and size overlaps any of the screens. A size that is not a number counts
     /// as one pixel. With no screens known, every position counts as on a screen.
     /// </summary>
-    private static bool IsOnAScreen(int left, int top, double width, double height, ReadOnlySpan<ScreenArea> screens)
+    public static bool IsOnAScreen(int left, int top, double width, double height, ReadOnlySpan<ScreenArea> screens)
     {
         if (screens.IsEmpty)
         {

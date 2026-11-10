@@ -212,7 +212,7 @@ public sealed class SecondaryWindowOpener(
     private static void Restore(Window window, IWindowProperties properties)
     {
         var placement = RememberedPlacement.Restore(properties, new WindowLimits(window.CanResize, window.MinWidth,
-            window.MaxWidth, window.MinHeight, window.MaxHeight, window.Width, window.Height), ScreenAreas(window));
+            window.MaxWidth, window.MinHeight, window.MaxHeight, window.Width, window.Height), WindowFunctions.ScreenAreas(window));
 
         if (placement.Size is { } size)
         {
@@ -234,23 +234,6 @@ public sealed class SecondaryWindowOpener(
         {
             window.WindowState = WindowState.Maximized;
         }
-    }
-
-    /// <summary>
-    /// The screens a window can open on, in the physical pixels its position is in. Empty when the platform reports
-    /// none.
-    /// </summary>
-    private static ScreenArea[] ScreenAreas(Window window)
-    {
-        var screens = window.Screens.All;
-        var areas = new ScreenArea[screens.Count];
-        for (var i = 0; i < areas.Length; i++)
-        {
-            var bounds = screens[i].Bounds;
-            areas[i] = new ScreenArea(bounds.X, bounds.Y, bounds.Width, bounds.Height);
-        }
-
-        return areas;
     }
 
     /// <summary>

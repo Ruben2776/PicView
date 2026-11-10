@@ -4,6 +4,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
 using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
+using PicView.Core.Config;
 using PicView.Core.Sizing;
 using PicView.Core.ViewModels;
 
@@ -137,20 +138,20 @@ public static class WindowFunctions
     {
         if (Dispatcher.UIThread.CheckAccess())
         {
-            window.Position = new PixelPoint((int)Settings.WindowProperties.Left,
-                (int)Settings.WindowProperties.Top);
-            window.Width = Settings.WindowProperties.Width;
-            window.Height = Settings.WindowProperties.Height;
+            Set();
         }
         else
         {
-            Dispatcher.UIThread.Post(() =>
-            {
-                window.Position = new PixelPoint((int)Settings.WindowProperties.Left,
-                    (int)Settings.WindowProperties.Top);
-                window.Width = Settings.WindowProperties.Width;
-                window.Height = Settings.WindowProperties.Height;
-            });
+            Dispatcher.UIThread.Post(Set);
+        }
+
+        return;
+
+        void Set()
+        {
+            window.Width = Settings.WindowProperties.Width;
+            window.Height = Settings.WindowProperties.Height;
+            PlaceFromSettings(window);
         }
     }
 
@@ -167,12 +168,44 @@ public static class WindowFunctions
 
         return;
 
-        void Set()
+        void Set() => PlaceFromSettings(window);
+    }
+
+    /// <summary>
+    /// Puts a window that is not shown yet at the saved position, or in the center of the screen when the saved
+    /// position is on none of the screens connected now, such as Windows' minimized position (-32000, -32000) or a
+    /// monitor that has since been unplugged. Positions left of or above the primary screen are negative and valid.
+    /// </summary>
+    private static void PlaceFromSettings(Window window)
+    {
+        var properties = Settings.WindowProperties;
+        var left = (int)properties.Left;
+        var top = (int)properties.Top;
+        if (!RememberedPlacement.IsOnAScreen(left, top, properties.Width, properties.Height, ScreenAreas(window)))
         {
-            window.WindowStartupLocation = WindowStartupLocation.Manual;
-            window.Position = new PixelPoint((int)Settings.WindowProperties.Left,
-                (int)Settings.WindowProperties.Top);
+            window.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            return;
         }
+
+        window.WindowStartupLocation = WindowStartupLocation.Manual;
+        window.Position = new PixelPoint(left, top);
+    }
+
+    /// <summary>
+    /// The screens a window can open on, in the physical pixels its position is in. Empty when the platform reports
+    /// none.
+    /// </summary>
+    public static ScreenArea[] ScreenAreas(Window window)
+    {
+        var screens = window.Screens.All;
+        var areas = new ScreenArea[screens.Count];
+        for (var i = 0; i < areas.Length; i++)
+        {
+            var bounds = screens[i].Bounds;
+            areas[i] = new ScreenArea(bounds.X, bounds.Y, bounds.Width, bounds.Height);
+        }
+
+        return areas;
     }
 
     #endregion

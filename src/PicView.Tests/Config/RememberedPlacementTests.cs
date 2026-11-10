@@ -237,4 +237,28 @@ public class RememberedPlacementTests
         Assert.Null(properties.Width);
         Assert.Equal(400d, properties.Height);
     }
+
+    /// <summary>
+    /// Three 1920x1080 monitors with the primary in the middle, so the left one has negative positions.
+    /// </summary>
+    private static readonly ScreenArea[] ThreeMonitors =
+        [new(-1920, 0, 1920, 1080), new(0, 0, 1920, 1080), new(1920, 0, 1920, 1080)];
+
+    [Theory]
+    [InlineData(-1500, 200)] // on the monitor left of the primary
+    [InlineData(-8, -8)] // maximized on the primary, its invisible border off the edge
+    [InlineData(3000, 100)] // on the monitor right of the primary
+    public void IsOnAScreen_PositionOnAMonitor_IsTrue(int left, int top)
+    {
+        Assert.True(RememberedPlacement.IsOnAScreen(left, top, 800, 600, ThreeMonitors));
+    }
+
+    [Theory]
+    [InlineData(-32000, -32000)] // Windows' position for a minimized window
+    [InlineData(4000, 100)] // right of every monitor, as after one is unplugged
+    [InlineData(100, 1200)] // below every monitor
+    public void IsOnAScreen_PositionOffEveryMonitor_IsFalse(int left, int top)
+    {
+        Assert.False(RememberedPlacement.IsOnAScreen(left, top, 800, 600, ThreeMonitors));
+    }
 }
