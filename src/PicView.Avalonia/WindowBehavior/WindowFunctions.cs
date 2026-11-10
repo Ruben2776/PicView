@@ -112,12 +112,14 @@ public static class WindowFunctions
 
         void Set()
         {
-            Settings.WindowProperties.Top = window.Position.Y;
-            Settings.WindowProperties.Left = window.Position.X;
-            if (window.DataContext is MainWindowViewModel { WindowModeState.CurrentValue.Mode: not WindowMode.Normal })
+            if (window.DataContext is MainWindowViewModel { WindowModeState.CurrentValue.Mode: not WindowMode.Normal }
+                || window.WindowState is WindowState.Minimized)
             {
                 return;
             }
+            Settings.WindowProperties.Top = window.Position.Y;
+            Settings.WindowProperties.Left = window.Position.X;
+
             Settings.WindowProperties.Width = window.Bounds.Width;
             Settings.WindowProperties.Height = window.Bounds.Height;
         }
