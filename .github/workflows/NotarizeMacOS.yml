@@ -34,10 +34,11 @@ jobs:
         with:
           dotnet-version: '11.x'
 
-      # Step 3: Get version from Directory.Build.props using PowerShell
+      # Step 3: Clear VersionSuffix and get version from Directory.Build.props using PowerShell
+      # (as ReleaseSignWindows.yaml does), so the release build and file names have no suffix
       - name: Get version from Directory.Build.props
         id: get-version
-        run: pwsh -File "${{ github.workspace }}/Build/Get-VersionInfo.ps1"
+        run: pwsh -File "${{ github.workspace }}/Build/Get-VersionInfo.ps1" -ClearVersionSuffix
 
       # Step 4: Restore or build picview-ffmpeg (osx-<platform>)
       - name: Cache picview-ffmpeg (osx-${{ matrix.platform }})
