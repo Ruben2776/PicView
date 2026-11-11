@@ -26,6 +26,26 @@ public class ZoomPanControl : Decorator
         set => SetValue(DeadzoneToleranceProperty, Math.Max(0, value));
     }
 
+    public static readonly StyledProperty<ZoomPanHost> HostProperty =
+        AvaloniaProperty.Register<ZoomPanControl, ZoomPanHost>(nameof(Host));
+
+    /// <summary>
+    /// The view this control zooms, which decides when a press pans (ADR-0027). Set before the control is attached.
+    /// </summary>
+    public ZoomPanHost Host
+    {
+        get => GetValue(HostProperty);
+        set => SetValue(HostProperty, value);
+    }
+
+    /// <summary>
+    /// Whether Space, the crop's pan key, is down. Only the <see cref="ZoomPanHost.Crop"/> host follows it.
+    /// </summary>
+    public bool IsSpaceHeld { get; private set; }
+
+    /// <summary>Raised when <see cref="IsSpaceHeld"/> changed, with the new value.</summary>
+    public event Action<bool>? SpaceHeldChanged;
+
     // Transform Properties
 
     public double Scale { get; private set; } = 1.0;
@@ -49,6 +69,13 @@ public class ZoomPanControl : Decorator
 
     // Panning State
     private bool _isPanning;
+
+    // The crop's pan key, fixed for now
+    private const Key PanKey = Key.Space;
+    private static readonly Cursor PanCursor = new(StandardCursorType.SizeAll);
+    private bool _isInitialized;
+    private bool _hasInputHandlers;
+    private TopLevel? _keyTopLevel;
     private Point _panStartPointer;
     private Point _panStartTranslate;
 
@@ -59,20 +86,128 @@ public class ZoomPanControl : Decorator
 
     #region Initialization and Lifecycle
 
-    public void Initialize(ZoomPreviewer zoomPreviewer)
+    /// <summary>
+    /// Starts the pointer handling for panning, and wires <paramref name="zoomPreviewer"/> when the host has one.
+    /// </summary>
+    public void Initialize(ZoomPreviewer? zoomPreviewer = null)
     {
-        // Pointer handling for panning
-        AddHandler(PointerPressedEvent, HandleResetZoomOrStartPanning, RoutingStrategies.Tunnel);
-        AddHandler(PointerMovedEvent, HandlePanning, RoutingStrategies.Tunnel);
-        AddHandler(PointerReleasedEvent, StopPanning, RoutingStrategies.Tunnel);
+        _isInitialized = true;
+        if (TopLevel.GetTopLevel(this) is not null)
+        {
+            AddInputHandlers();
+        }
+
+        if (zoomPreviewer is null)
+        {
+            return;
+        }
 
         zoomPreviewer.SetZoomPanControl(this);
         ZoomPreviewer = zoomPreviewer;
     }
 
+    // Added on every attach and removed on every detach, so a view that is shown again still pans
+    private void AddInputHandlers()
+    {
+        if (_hasInputHandlers)
+        {
+            return;
+        }
+
+        _hasInputHandlers = true;
+        AddHandler(PointerPressedEvent, HandleResetZoomOrStartPanning, RoutingStrategies.Tunnel);
+        AddHandler(PointerMovedEvent, HandlePanning, RoutingStrategies.Tunnel);
+        AddHandler(PointerReleasedEvent, StopPanning, RoutingStrategies.Tunnel);
+
+        if (Host is not ZoomPanHost.Crop || TopLevel.GetTopLevel(this) is not { } topLevel)
+        {
+            return;
+        }
+
+        // The window has the keyboard, not this control; handled keys count too, since Space is only watched here
+        _keyTopLevel = topLevel;
+        topLevel.AddHandler(KeyDownEvent, OnTopLevelKeyDown, RoutingStrategies.Tunnel, handledEventsToo: true);
+        topLevel.AddHandler(KeyUpEvent, OnTopLevelKeyUp, RoutingStrategies.Tunnel, handledEventsToo: true);
+        if (topLevel is Window window)
+        {
+            window.Deactivated += OnWindowDeactivated;
+        }
+    }
+
+    private void RemoveInputHandlers()
+    {
+        if (!_hasInputHandlers)
+        {
+            return;
+        }
+
+        _hasInputHandlers = false;
+        RemoveHandler(PointerPressedEvent, HandleResetZoomOrStartPanning);
+        RemoveHandler(PointerMovedEvent, HandlePanning);
+        RemoveHandler(PointerReleasedEvent, StopPanning);
+
+        if (_keyTopLevel is { } topLevel)
+        {
+            topLevel.RemoveHandler(KeyDownEvent, OnTopLevelKeyDown);
+            topLevel.RemoveHandler(KeyUpEvent, OnTopLevelKeyUp);
+            if (topLevel is Window window)
+            {
+                window.Deactivated -= OnWindowDeactivated;
+            }
+
+            _keyTopLevel = null;
+        }
+
+        OnWindowDeactivated();
+    }
+
+    private void OnTopLevelKeyDown(object? sender, KeyEventArgs e)
+    {
+        if (e.Key is PanKey)
+        {
+            SetSpaceHeld(true);
+        }
+    }
+
+    private void OnTopLevelKeyUp(object? sender, KeyEventArgs e)
+    {
+        if (e.Key is PanKey)
+        {
+            SetSpaceHeld(false);
+        }
+    }
+
+    private void OnWindowDeactivated(object? sender, EventArgs e) => OnWindowDeactivated();
+
+    /// <summary>
+    /// Forgets Space and ends a pan, since a window that lost the keyboard will not see the key released.
+    /// </summary>
+    internal void OnWindowDeactivated()
+    {
+        _isPanning = false;
+        SetSpaceHeld(false);
+    }
+
+    private void SetSpaceHeld(bool held)
+    {
+        if (IsSpaceHeld == held)
+        {
+            return;
+        }
+
+        IsSpaceHeld = held;
+        Cursor = held ? PanCursor : null;
+        SpaceHeldChanged?.Invoke(held);
+    }
+
     protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
     {
         base.OnAttachedToVisualTree(e);
+
+        if (_isInitialized)
+        {
+            AddInputHandlers();
+        }
 
         // Show preview window when attached
         if (ZoomPreviewer is not { IsVisible: false })
@@ -98,10 +233,8 @@ public class ZoomPanControl : Decorator
 
     protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
     {
-        RemoveHandler(PointerPressedEvent, HandleResetZoomOrStartPanning);
-        RemoveHandler(PointerMovedEvent, HandlePanning);
-        RemoveHandler(PointerReleasedEvent, StopPanning);
-        
+        RemoveInputHandlers();
+
         base.OnDetachedFromVisualTree(e);
     }
 
@@ -210,6 +343,34 @@ public class ZoomPanControl : Decorator
         UpdateChildTransform();
     }
 
+    /// <summary>The child-space point shown at the centre of the control.</summary>
+    public Point ViewCentre =>
+        new((Bounds.Width / 2.0 - TranslateX) / Scale, (Bounds.Height / 2.0 - TranslateY) / Scale);
+
+    /// <summary>The child-space rectangle the control shows.</summary>
+    public Rect VisibleChildRect =>
+        new(-TranslateX / Scale, -TranslateY / Scale, Bounds.Width / Scale, Bounds.Height / Scale);
+
+    /// <summary>
+    /// Shows the child at <paramref name="scale"/> with <paramref name="centre"/>, a child-space point, at the
+    /// centre of the control as far as the bounds allow, without animation. Takes a view from another control.
+    /// </summary>
+    public void SetView(double scale, Point centre)
+    {
+        if (Child == null || double.IsNaN(scale) || double.IsInfinity(scale) || scale <= 0)
+        {
+            return;
+        }
+
+        SetTransitions(false);
+        SetScale(scale);
+        var middle = CenterPoint();
+        TranslateX = middle.X - scale * centre.X;
+        TranslateY = middle.Y - scale * centre.Y;
+        ConstrainTranslationToBounds();
+        UpdateChildTransform();
+    }
+
     #endregion
 
     #region Panning Event Handlers
@@ -228,23 +389,31 @@ public class ZoomPanControl : Decorator
             return;
         }
 
-        // Panning shouldn't happen when moving the window by holding shift
-        if (e.KeyModifiers == KeyModifiers.Shift)
+        var isCrop = Host is ZoomPanHost.Crop;
+        if (!isCrop)
         {
-            return;
-        }
+            // Panning shouldn't happen when moving the window by holding shift
+            if (e.KeyModifiers == KeyModifiers.Shift)
+            {
+                return;
+            }
 
-        if (e.ClickCount is 2 && Settings.UIProperties.DoubleClickBehavior is 1)
-        {
-            ResetZoom(Settings.Zoom.IsZoomAnimated);
-            return;
+            if (e.ClickCount is 2 && Settings.UIProperties.DoubleClickBehavior is 1)
+            {
+                ResetZoom(Settings.Zoom.IsZoomAnimated);
+                return;
+            }
         }
 
         var p = e.GetPosition(this);
-        if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed || !(Math.Abs(Scale) > 1.0001))
+        if (!StartsPan(Host, e.GetCurrentPoint(this).Properties.IsLeftButtonPressed, Scale, e.KeyModifiers,
+                IsSpaceHeld))
         {
             return;
         }
+
+        // In the crop the same press would otherwise move or resize the selection
+        e.Handled = isCrop;
 
         // Animated panning feels off, should disable it
         SetTransitions(false);
@@ -263,7 +432,7 @@ public class ZoomPanControl : Decorator
         }
 
         // Panning shouldn't happen when moving the window by holding shift
-        if (e.KeyModifiers == KeyModifiers.Shift)
+        if (Host is ZoomPanHost.ImageViewer && e.KeyModifiers == KeyModifiers.Shift)
         {
             return;
         }
@@ -284,6 +453,26 @@ public class ZoomPanControl : Decorator
 
         ConstrainTranslationToBounds();
         UpdateChildTransform();
+    }
+
+    /// <summary>
+    /// Whether a press starts a pan: a left press on an image zoomed in, which in the viewer is not a press with
+    /// Shift alone, and in the crop needs Space held.
+    /// </summary>
+    internal static bool StartsPan(ZoomPanHost host, bool isLeftPressed, double scale, KeyModifiers modifiers,
+        bool isSpaceHeld)
+    {
+        if (!isLeftPressed || !(Math.Abs(scale) > 1.0001))
+        {
+            return false;
+        }
+
+        if (host is ZoomPanHost.Crop)
+        {
+            return isSpaceHeld;
+        }
+
+        return modifiers != KeyModifiers.Shift;
     }
 
     private void StopPanning(object? sender, PointerReleasedEventArgs e)
@@ -340,7 +529,8 @@ public class ZoomPanControl : Decorator
 
     private void SetTransitionsAndScale(double targetScale, Point center, bool animated)
     {
-        SetTransitions(animated);
+        // The crop's overlay follows the reported scale, which is the target at once, so its zoom is never animated
+        SetTransitions(animated && Host is not ZoomPanHost.Crop);
         SetScaleImmediate(targetScale, center);
     }
 
