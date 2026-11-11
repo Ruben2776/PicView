@@ -4,6 +4,7 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.Media;
+using Avalonia.Threading;
 using PicView.Avalonia.Crop;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.CustomControls.Zoom;
@@ -31,11 +32,14 @@ public partial class CropControl : UserControl, IZoomScrollTarget
     private readonly ScaleTransform[] _constantSize;
     private DisposableBag _disposables;
     private bool _isLoadedOnce;
+    private bool _isPullBackPending;
+    private readonly Action _pullBackAfterTheFit;
 
     /// <param name="start">The view the crop opens at, taken from the tab's viewer.</param>
     public CropControl(ZoomView start)
     {
         PendingZoomView = start;
+        _pullBackAfterTheFit = OnPullBackAfterTheFit;
         InitializeComponent();
         if (OperatingSystem.IsMacOS())
         {
@@ -113,11 +117,12 @@ public partial class CropControl : UserControl, IZoomScrollTarget
                 DebugHelper.LogError(nameof(CropControl), nameof(SizeViewPanel)))
             .AddTo(ref _disposables);
 
-        // The tab turned: the crop has remapped the selection to the image as shown, so refit and pull it into view
+        // The tab turned: the crop has remapped the selection to the image as shown, so refit at once and pull it
+        // into view once the turn has been fitted
         tab.Crop?.Turned.Subscribe(_ =>
             {
                 Refit();
-                KeepSelectionInView();
+                PullBackAfterTheFit();
             }, DebugHelper.LogError(nameof(CropControl), nameof(Refit)))
             .AddTo(ref _disposables);
     }
@@ -156,6 +161,9 @@ public partial class CropControl : UserControl, IZoomScrollTarget
     private void OnControlUnloaded(object? sender, RoutedEventArgs e)
     {
         _disposables.Dispose();
+        // A disposed bag disposes whatever is added to it, so the next load, as when the tab is shown again, starts
+        // a new one
+        _disposables = default;
     }
 
     /// <summary>Places the selection's rectangle, its handles and the dimming from the crop's selection.</summary>
@@ -168,8 +176,9 @@ public partial class CropControl : UserControl, IZoomScrollTarget
             return;
         }
 
-        SizeViewPanel(tab.ParentWindowContext);
+        // The crop first, since the panel is sized to the image as shown at the new Fit Scale
         crop.Refit();
+        SizeViewPanel(tab.ParentWindowContext);
         _layoutManager.UpdateLayout();
     }
 
@@ -321,6 +330,38 @@ public partial class CropControl : UserControl, IZoomScrollTarget
 
         crop.SetSelection(moved.X, moved.Y, selection.Width, selection.Height);
         _layoutManager.UpdateLayout();
+    }
+
+    /// <summary>
+    /// Pulls the selection into view after a turn, once the window has fitted the turned image and laid it out. The
+    /// pull-back reads the surface and the view from layout: at the turn itself they still hold the unturned surface
+    /// at the old Fit Scale, which the turned selection may lie outside of, as a landscape image turned upright
+    /// is taller than its view until fitted again. The window's fitter posts its fits at Normal and, after layout, at
+    /// Background before the crop hears of the turn, so a pull-back posted at Background runs after both and their
+    /// layout passes. Several turns before it runs pull back once.
+    /// </summary>
+    private void PullBackAfterTheFit()
+    {
+        if (_isPullBackPending)
+        {
+            return;
+        }
+
+        _isPullBackPending = true;
+        Dispatcher.UIThread.Post(_pullBackAfterTheFit, DispatcherPriority.Background);
+    }
+
+    private void OnPullBackAfterTheFit()
+    {
+        _isPullBackPending = false;
+        // A crop no longer shown, as when its tab is left, keeps its selection where the turn put it
+        if (!IsLoaded)
+        {
+            return;
+        }
+
+        UpdateLayout();
+        KeepSelectionInView();
     }
 
     /// <summary>

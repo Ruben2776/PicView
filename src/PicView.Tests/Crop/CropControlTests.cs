@@ -4,11 +4,16 @@ using Avalonia.Headless;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
+using Avalonia.Threading;
+using PicView.Avalonia.Crop;
 using PicView.Avalonia.ImageTransformations;
 using PicView.Avalonia.Input;
 using PicView.Avalonia.Views.UC;
+using PicView.Core.ImageTransformations;
 using PicView.Core.Localization;
 using PicView.Core.ViewModels;
+using R3;
+using Orientation = PicView.Core.ImageTransformations.Orientation;
 using PicView.Tests.WindowBehavior;
 using static PicView.Tests.UI.TabViewsHarness;
 
@@ -269,19 +274,113 @@ public class CropControlTests
         });
 
     [AvaloniaFact]
+    public void TurnRight_UnzoomedWithTheSelectionAtTheBottomRight_KeepsTheSameContentSelected()
+        => WithLaidOutCrop((window, vm, tab, crop) =>
+        {
+            // Turned right, the selection lies at 0, 300 of the 300 by 400 image as shown: outside the unturned
+            // surface, and below the 300 a view this high shows until the window fits the turned image
+            tab.Crop!.SetSelection(300, 250, 100, 50);
+            tab.Orientation.TurnRight();
+            // The window's fitter posts its fit of the turned image, here 225 by 300 at three quarters
+            Dispatcher.UIThread.Post(() =>
+            {
+                tab.Zoom.SetFitScale(0.75);
+                vm.ImageWidth.Value = 225;
+                vm.ImageHeight.Value = 300;
+            }, DispatcherPriority.Normal);
+            Settle(window);
+
+            Assert.Equal(new PixelArea(300, 250, 100, 50), tab.Crop.SourceSelection);
+            Assert.Equal(new Size(225, 300), crop.CropSurface.Bounds.Size);
+            Assert.Equal(0, Canvas.GetLeft(crop.MainRectangle));
+            Assert.Equal(225, Canvas.GetTop(crop.MainRectangle));
+        });
+
+    [AvaloniaFact]
     public void TurnRight_WhileZoomedIn_PullsTheSelectionIntoView()
         => WithLaidOutCrop((window, _, tab, crop) =>
         {
-            tab.Crop!.SetSelection(10, 10, 40, 30);
+            // In the part the view shows, 100 by 75 from 300, 212.5, so the zoom itself leaves it
+            tab.Crop!.SetSelection(320, 230, 40, 30);
             crop.ZoomPanControl.ShowChildAt(4, new Point(350, 250));
+            Assert.Equal(new PixelArea(320, 230, 40, 30), tab.Crop.SourceSelection);
+
             tab.Orientation.TurnRight();
             Settle(window);
+
+            // Turned right the same pixels lie at 40, 320 of the image as shown, out of what the view now shows
+            var turned = new Rect(40, 320, 30, 40);
+            var visible = crop.VisibleSurfaceRect();
+            Assert.False(visible.Contains(turned.TopLeft) && visible.Contains(turned.BottomRight),
+                $"{turned} {visible}");
 
             var selection = new Rect(tab.Crop.SelectionX.Value, tab.Crop.SelectionY.Value,
                 tab.Crop.SelectionWidth.Value, tab.Crop.SelectionHeight.Value);
             var bounds = crop.SelectionBounds();
             Assert.True(bounds.Contains(selection.TopLeft) && bounds.Contains(selection.BottomRight),
                 $"{selection} {bounds}");
+            Assert.Equal(new Size(30, 40), selection.Size);
+        });
+
+    [AvaloniaFact]
+    public void Reloaded_AfterBeingDetached_StillFollowsATurn()
+        => WithLaidOutCrop((window, _, tab, crop) =>
+        {
+            tab.Crop!.SetSelection(10, 20, 100, 50);
+            // As when another tab is shown during the crop and this one again after
+            var host = (ContentControl)window.Content!;
+            window.Content = null;
+            Settle(window);
+            Assert.False(crop.IsLoaded);
+            window.Content = host;
+            Settle(window);
+            Assert.True(crop.IsLoaded);
+
+            tab.Orientation.TurnTo(2);
+            Settle(window);
+
+            Assert.Equal(290, Canvas.GetLeft(crop.MainRectangle));
+            Assert.Equal(230, Canvas.GetTop(crop.MainRectangle));
+        });
+
+    [AvaloniaFact]
+    public void CloseCropControl_StopsTheClosedCropFollowingTheTab()
+        => WithLaidOutCrop((window, _, tab, _) =>
+        {
+            var service = new CropService(tab, window);
+            var closed = tab.Crop!;
+            var turned = 0;
+            using var subscription = closed.Turned.Subscribe(_ => turned++);
+
+            service.CloseCropControl();
+            Settle(window);
+            tab.Orientation.TurnRight();
+            Settle(window);
+
+            Assert.Null(tab.Crop);
+            Assert.Equal(0, turned);
+            Assert.Equal(Orientation.Upright, closed.Orientation);
+            // A binding still holding the closed crop reads its last values without throwing
+            Assert.Equal(400, closed.ShownWidth.Value);
+            Assert.True(closed.SelectionWidth.Value > 0);
+        });
+
+    [AvaloniaFact]
+    public void CloseCropCommand_ThroughTheService_ClosesAndStopsTheCropFollowingTheTab()
+        => WithLaidOutCrop((window, _, tab, _) =>
+        {
+            // Wired as the service wires a crop it opens: the close runs inside the crop's own command
+            var service = new CropService(tab, window);
+            var closed = tab.Crop!;
+            using var wiring = closed.CloseCropCommand.Subscribe(_ => service.CloseCropControl());
+
+            closed.CloseCropCommand.Execute(Unit.Default);
+            Settle(window);
+            tab.Orientation.TurnRight();
+            Settle(window);
+
+            Assert.Null(tab.Crop);
+            Assert.Equal(Orientation.Upright, closed.Orientation);
         });
 
     [AvaloniaFact]

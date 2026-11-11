@@ -108,8 +108,12 @@ public class CropService(TabViewModel tabViewModel, MainWindow mainWindow) : ICr
     public void CloseCropControl()
     {
         IsCropping = false;
-        
+
+        // Taken off the tab first, so the tab's view and everything that reads the tab's crop is done with it, then
+        // disposed, so it stops following the tab's Orientation and its commands end the service's subscriptions
+        var crop = tabViewModel.Crop;
         tabViewModel.Crop = null;
+        crop?.Dispose();
     }
 
     public async Task SaveCropAsAsync()
