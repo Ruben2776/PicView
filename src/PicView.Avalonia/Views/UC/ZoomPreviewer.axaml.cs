@@ -6,6 +6,7 @@ using Avalonia.LogicalTree;
 using Avalonia.Threading;
 using PicView.Avalonia.Animations;
 using PicView.Avalonia.CustomControls;
+using PicView.Avalonia.CustomControls.Zoom;
 using PicView.Core.ViewModels;
 
 namespace PicView.Avalonia.Views.UC;

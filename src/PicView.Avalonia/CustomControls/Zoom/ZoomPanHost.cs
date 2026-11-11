@@ -1,4 +1,4 @@
-namespace PicView.Avalonia.CustomControls;
+namespace PicView.Avalonia.CustomControls.Zoom;
 
 /// <summary>
 /// Which view a <see cref="ZoomPanControl"/> zooms, which decides when a press pans (ADR-0027).

@@ -6,7 +6,7 @@ using Avalonia.Interactivity;
 using Avalonia.Media;
 using PicView.Avalonia.Views.UC;
 
-namespace PicView.Avalonia.CustomControls;
+namespace PicView.Avalonia.CustomControls.Zoom;
 
 public class ZoomPanControl : Decorator
 {

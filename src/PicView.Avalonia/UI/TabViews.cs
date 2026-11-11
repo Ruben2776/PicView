@@ -1,5 +1,6 @@
 using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
+using PicView.Avalonia.CustomControls.Zoom;
 using PicView.Avalonia.Views.UC;
 using PicView.Core.IPlatform;
 using PicView.Core.Models;

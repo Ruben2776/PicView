@@ -8,6 +8,7 @@
     xmlns:gallery="clr-namespace:PicView.Avalonia.Views.Gallery"
     xmlns:uc="clr-namespace:PicView.Avalonia.Views.UC"
     xmlns:vm="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
+    xmlns:zoom="clr-namespace:PicView.Avalonia.CustomControls.Zoom"
     x:DataType="vm:TabViewModel">
     <UserControl.Resources>
         <converters:DisplayableConverter x:Key="DisplayableConverter" />
@@ -24,7 +25,7 @@
                 <LayoutTransformControl.LayoutTransform>
                     <RotateTransform Angle="{Binding Orientation.Degrees.Value}" />
                 </LayoutTransformControl.LayoutTransform>
-                <customControls:ZoomPanControl x:Name="ZoomPanControl">
+                <zoom:ZoomPanControl x:Name="ZoomPanControl">
                     <customControls:AutoScrollViewer
                         x:Name="ImageScrollViewer"
                         Width="{Binding ParentWindowContext.ScrollViewerWidth.Value}"
@@ -49,7 +50,8 @@
                                         x:Name="MainImage"
                                         CurrentFileInfo="{Binding FileInfo.Value}"
                                         ImageType="{Binding ImageType.Value}"
-                                        Source="{CompiledBinding Image.Value, Converter={StaticResource DisplayableConverter}}" />
+                                        Source="{CompiledBinding Image.Value,
+                                                                 Converter={StaticResource DisplayableConverter}}" />
                                     <uc:MotionPhotoView x:Name="MotionPhotoView" />
                                 </Grid>
                                 <Grid DockPanel.Dock="Right" IsVisible="{CompiledBinding ParentWindowContext.GlobalSettings.IsSideBySide.Value}">
@@ -57,13 +59,14 @@
                                         x:Name="SecondaryImage"
                                         CurrentFileInfo="{Binding SecondaryFileInfo.Value}"
                                         ImageType="{Binding SecondaryImageType.Value}"
-                                        Source="{CompiledBinding SecondaryImage.Value, Converter={StaticResource DisplayableConverter}}" />
+                                        Source="{CompiledBinding SecondaryImage.Value,
+                                                                 Converter={StaticResource DisplayableConverter}}" />
                                     <uc:MotionPhotoView x:Name="SecondaryMotionPhotoView" AllowAutoPlay="False" />
                                 </Grid>
                             </DockPanel>
                         </Border>
                     </customControls:AutoScrollViewer>
-                </customControls:ZoomPanControl>
+                </zoom:ZoomPanControl>
             </LayoutTransformControl>
             <uc:ZoomPreviewer
                 x:Name="ZoomPreview"

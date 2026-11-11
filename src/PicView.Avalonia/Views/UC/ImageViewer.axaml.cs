@@ -7,6 +7,7 @@ using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
+using PicView.Avalonia.CustomControls.Zoom;
 using PicView.Avalonia.ImageTransformations;
 using PicView.Avalonia.Input;
 using PicView.Avalonia.UI;
@@ -426,7 +427,7 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
             ? new Rect(origin, MainBorder.Bounds.Size)
             : default;
 
-    /// <inheritdoc cref="ZoomPanControl.ZoomIn"/>
+    /// <inheritdoc cref="CustomControls.Zoom.ZoomPanControl.ZoomIn"/>
     public void ZoomIn() =>
         ZoomPanControl.ZoomIn();
 

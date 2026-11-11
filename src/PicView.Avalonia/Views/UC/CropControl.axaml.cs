@@ -5,6 +5,7 @@ using Avalonia.Interactivity;
 using Avalonia.Media;
 using PicView.Avalonia.Crop;
 using PicView.Avalonia.CustomControls;
+using PicView.Avalonia.CustomControls.Zoom;
 using PicView.Avalonia.Input;
 using PicView.Core.DebugTools;
 using PicView.Core.ViewModels;
@@ -13,7 +14,7 @@ using R3;
 namespace PicView.Avalonia.Views.UC;
 
 /// <summary>
-/// The view a tab shows while a crop is open. It zooms through its own <see cref="CustomControls.ZoomPanControl"/>
+/// The view a tab shows while a crop is open. It zooms through its own <see cref="CustomControls.Zoom.ZoomPanControl"/>
 /// (ADR-0027): the wheel and the zoom Actions zoom it, Space and a drag pan it, and a plain drag moves or resizes
 /// the selection. The handles, the selection's border and the size label keep their size on screen at any zoom.
 /// </summary>
@@ -32,10 +33,6 @@ public partial class CropControl : UserControl, IZoomScrollTarget
     private IDisposable? _viewWidthSubscription;
     private IDisposable? _viewHeightSubscription;
     private bool _isLoadedOnce;
-
-    public CropControl() : this(ZoomView.Fit)
-    {
-    }
 
     /// <param name="start">The view the crop opens at, taken from the tab's viewer.</param>
     public CropControl(ZoomView start)
@@ -342,7 +339,7 @@ public partial class CropControl : UserControl, IZoomScrollTarget
         }
     }
 
-    /// <inheritdoc cref="CustomControls.ZoomPanControl.ResetZoom(bool)"/>
+    /// <inheritdoc cref="CustomControls.Zoom.ZoomPanControl.ResetZoom(bool)"/>
     public void ResetZoom() => ZoomPanControl.ResetZoom(false);
 
     /// <summary>A view taken before this crop is laid out, which it shows when it is loaded.</summary>

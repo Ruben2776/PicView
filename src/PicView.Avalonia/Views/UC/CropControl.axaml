@@ -4,10 +4,13 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
-    x:DataType="viewModels:TabViewModel"
-    Width="{CompiledBinding ParentWindowContext.ScrollViewerWidth.Value, Mode=OneWay}"
-    Height="{CompiledBinding ParentWindowContext.ScrollViewerHeight.Value, Mode=OneWay}"
+    xmlns:zoom="clr-namespace:PicView.Avalonia.CustomControls.Zoom"
+    Width="{CompiledBinding ParentWindowContext.ScrollViewerWidth.Value,
+                            Mode=OneWay}"
+    Height="{CompiledBinding ParentWindowContext.ScrollViewerHeight.Value,
+                             Mode=OneWay}"
     Margin="0"
+    x:DataType="viewModels:TabViewModel"
     ClipToBounds="True">
     <UserControl.Resources>
         <SolidColorBrush x:Key="Brush0" Color="{DynamicResource MainTextColor}" />
@@ -62,7 +65,7 @@
         </ContextMenu>
     </UserControl.ContextMenu>
     <!--  The crop zooms through its own control: Space and a drag pan, a plain drag moves or resizes the selection  -->
-    <customControls:ZoomPanControl x:Name="ZoomPanControl" Host="Crop">
+    <zoom:ZoomPanControl x:Name="ZoomPanControl" Host="Crop">
         <!--
             At least as large as the view, so a zoomed image has the room the viewer gives it, and as large as an
             image fitted larger than the view. The code-behind sizes it from the window's view area.
@@ -71,8 +74,10 @@
             <!--  The fitted image with the selection drawn over it  -->
             <Panel
                 x:Name="CropSurface"
-                Width="{CompiledBinding ParentWindowContext.ImageWidth.Value, Mode=OneWay}"
-                Height="{CompiledBinding ParentWindowContext.ImageHeight.Value, Mode=OneWay}"
+                Width="{CompiledBinding ParentWindowContext.ImageWidth.Value,
+                                        Mode=OneWay}"
+                Height="{CompiledBinding ParentWindowContext.ImageHeight.Value,
+                                         Mode=OneWay}"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center">
                 <!--  Image control to display the bitmap  -->
@@ -179,5 +184,5 @@
                 </Canvas>
             </Panel>
         </Panel>
-    </customControls:ZoomPanControl>
+    </zoom:ZoomPanControl>
 </UserControl>

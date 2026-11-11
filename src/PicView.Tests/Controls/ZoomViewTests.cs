@@ -1,5 +1,6 @@
 using Avalonia;
 using PicView.Avalonia.CustomControls;
+using PicView.Avalonia.CustomControls.Zoom;
 
 namespace PicView.Tests.Controls;
 

@@ -3,6 +3,7 @@ using Avalonia.Media.Imaging;
 using Avalonia.Controls;
 using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
+using PicView.Avalonia.CustomControls.Zoom;
 using PicView.Avalonia.Input;
 using PicView.Avalonia.Interfaces;
 using PicView.Avalonia.Navigation;

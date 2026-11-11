@@ -8,6 +8,7 @@ using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using ImageMagick;
 using PicView.Avalonia.CustomControls;
+using PicView.Avalonia.CustomControls.Zoom;
 using PicView.Avalonia.Interfaces;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.Views.UC;
