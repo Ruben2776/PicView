@@ -14,9 +14,14 @@ public static class RotationManager
 {
     public static void ResetZoomAndRotations(MainWindowViewModel vm, MainWindow mainWindow)
     {
-        if (vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.Value is ImageViewer imageViewer)
+        switch (vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.Value)
         {
-            imageViewer.ResetZoomSlim();
+            case ImageViewer imageViewer:
+                imageViewer.ResetZoomSlim();
+                break;
+            case CropControl cropControl:
+                cropControl.ResetZoom();
+                break;
         }
 
         Turn(vm, mainWindow, static orientation => orientation.TurnTo(0));
