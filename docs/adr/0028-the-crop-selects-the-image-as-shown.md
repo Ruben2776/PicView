@@ -1,0 +1,27 @@
+# The Crop Selects the Image as Shown
+
+A **Tab**'s crop works on the image as the user sees it, under the tab's **Orientation**, and what it saves or copies is that selection as shown, with the **Quarter Turn** and the flip written into its pixels. `CropViewModel` takes the tab's `TabOrientation` beside its `TabZoom`, and the pixel selection ADR-0027 introduced, `PixelX`, `PixelY`, `PixelSelectionWidth` and `PixelSelectionHeight`, is in pixels of the image as shown. `ShownPixelWidth` and `ShownPixelHeight` are the decoded size, swapped for one or three quarter turns, and `ShownWidth` and `ShownHeight` are those times the Fit Scale; `SetSelection` keeps the rectangle inside that shown size. The canvas, the handles and their cursors, the size label, the dimming and the clamp and pull-back of ADR-0027 all stay upright and unchanged, because the selection they work on is already in the frame the user looks at.
+
+`OrientedRect`, in `PicView.Core/ImageTransformations`, converts between that frame and the unturned source. `ToSource` and `FromSource` take a `PixelArea`, a whole-pixel rectangle of the image's own, an `Orientation` and the source size, and use the order the viewer already uses: turned clockwise, then mirrored horizontally. `CropViewModel` listens to `Orientation.Current` and, when it changes from one orientation to another, maps the selection through the source, `FromSource(ToSource(selection, old), new)`, updates the shown size and refits. Any sequence of turns and flips therefore keeps the same source area selected, with no case per turn. `SourceSelection` is the same conversion of the current selection, and it is the only rectangle saving and copying read.
+
+The image can be turned or flipped while the crop is open. `InputMode.Allows` admits `RotateLeft`, `RotateRight`, `Rotate0`, `Rotate90`, `Rotate180`, `Rotate270` and `Flip` for Crop beside the zoom Actions, so Crop stays a **Blocking Input Mode** for everything else and the check stays a comparison on the input hot path. `RotationManager.Turn` and `Flip` accept a shown `CropControl` as well as an `ImageViewer`, so the keys, the bottom bar and the hover bar all change the tab's own Orientation, and the viewer, the crop and the saved file agree. `CropManager.CanCrop` no longer requires an upright tab. After a turn the selection is pulled back into the part of the image the view shows, as it is after a zoom.
+
+`CropControl` draws the turn under the upright canvas. Its `PicBox` sits in a `LayoutTransformControl` whose rotation is a layout transform bound to the Orientation's degrees and whose flip is a `ScaleX` on its render transform, so the mirror comes after the turn, as in `ImageViewer`. The crop surface binds its size to `ShownWidth` and `ShownHeight` instead of the window's `ImageWidth` and `ImageHeight`, which are the unturned size times the Fit Scale.
+
+Saving cuts first and turns the cut. `CropRender.CutAndOrient` applies the file's EXIF orientation with `AutoOrient`, crops `SourceSelection`, resets the page, then rotates and flops, so a large image is not turned whole. This also corrects an older fault: `CropService` opened the file without applying its EXIF orientation while the viewer shows it applied, so a crop of a phone photo with an EXIF turn cut the wrong area. A bitmap with no file, from the clipboard or base64, and a copy take the same selection as a `CroppedBitmap` and pass it through `OrientedBitmap.Render` when the tab is not upright, so the clipboard gets what is shown. When the crop is saved over the tab's own file, the turn is in the file's pixels, so the tab's Orientation is reset to upright before the reloaded model is displayed, since keeping it would turn the image twice. Saved elsewhere, the tab keeps its turn.
+
+## Considered Options
+
+- **The selection in source pixels, with the whole crop surface inside the transform.** Saving would need no conversion. But the size label would turn sideways, the resize cursors would point the wrong way, and the clamp and pull-back of ADR-0027 would each have to undo the transform before working, in a control whose point is placing edges on exact pixels.
+- **A hybrid**, the selection in source pixels and the drawing in shown pixels, converting at each handler. Two frames in one control, and every handler decides which one it is in.
+- **Writing an EXIF orientation tag** instead of turning the pixels. It would not change the pixels, but other programs and formats ignore the tag, and a PNG or WebP would not carry it, so what is saved would not be what was shown.
+- **Free-angle straightening**, which the crop rotation could grow into. Out of scope: a tab has only the quarter turns and a flip.
+- **Keeping the tab's turn after a crop is saved over its own file**, and writing the cut unturned. Then the file would not look like the crop the user saw when opened elsewhere.
+
+## Consequences
+
+- Nothing outside `CropViewModel` converts between frames; `CropService` reads `SourceSelection` and `CropRender.CutAndOrient` for files, and `RenderSelection` for bitmaps.
+- Turning and flipping are the one tab Orientation, so the viewer needs no hand-over of a turn when the crop closes.
+- The turned bitmap from a copy is not disposed by `CropService`, as in `ClipboardCopyService.CopyImageAsync`.
+- Effects remain ignored by the crop, as before.
+- The input hot path allocates nothing more: `Allows` is a comparison.
