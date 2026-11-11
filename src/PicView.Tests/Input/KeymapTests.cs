@@ -139,6 +139,28 @@ public class KeymapTests
     }
 
     [Theory]
+    [InlineData("ZoomIn")]
+    [InlineData("ZoomOut")]
+    [InlineData("ResetZoom")]
+    public void Resolve_ZoomActionInCrop_ResolvesIt(string action)
+    {
+        // The crop view zooms (ADR-0027), so Crop handles the zoom Actions though it blocks every other
+        var keymap = Keymap.FromJson($$"""{ "F9": "{{action}}" }""", Defaults);
+
+        Assert.Equal(KeymapResolution.Action(action), keymap.Resolve(new Keybind(Key.F9), InputMode.Crop));
+    }
+
+    [Theory]
+    [InlineData(InputMode.Dialog)]
+    [InlineData(InputMode.Renaming)]
+    public void Resolve_ZoomActionInAnotherBlockingMode_ResolvesNothing(InputMode mode)
+    {
+        var keymap = Keymap.FromJson("""{ "F9": "ZoomIn" }""", Defaults);
+
+        Assert.Equal(KeymapResolution.None, keymap.Resolve(new Keybind(Key.F9), mode));
+    }
+
+    [Theory]
     [InlineData(InputMode.Normal)]
     [InlineData(InputMode.MotionPhoto)]
     [InlineData(InputMode.Slideshow)]

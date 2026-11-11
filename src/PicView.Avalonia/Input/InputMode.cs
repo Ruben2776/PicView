@@ -1,3 +1,5 @@
+using PicView.Core.Keybindings;
+
 namespace PicView.Avalonia.Input;
 
 /// <summary>
@@ -83,6 +85,13 @@ public static class InputModeExtensions
         /// </summary>
         public bool IsBlocking() =>
             mode is InputMode.Dialog or InputMode.Renaming or InputMode.Crop;
+
+        /// <summary>
+        /// Whether the blocking <paramref name="mode"/> handles the ordinary <paramref name="action"/>, so it runs
+        /// there: the crop view zooms (ADR-0027), so Crop handles the zoom Actions. No other blocking mode handles any.
+        /// </summary>
+        public bool Allows(string action) =>
+            mode is InputMode.Crop && action is Actions.ZoomIn or Actions.ZoomOut or Actions.ResetZoom;
 
         /// <summary>
         /// Whether <paramref name="mode"/> is a non-blocking mode other than Normal, which disallows Actions

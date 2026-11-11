@@ -55,6 +55,20 @@ public class InputModeTests
     }
 
     [Theory]
+    [InlineData(InputMode.Crop, "ZoomIn", true)]
+    [InlineData(InputMode.Crop, "ZoomOut", true)]
+    [InlineData(InputMode.Crop, "ResetZoom", true)]
+    [InlineData(InputMode.Crop, "ResetZoomAndRotations", false)]
+    [InlineData(InputMode.Crop, "Next", false)]
+    [InlineData(InputMode.Dialog, "ZoomIn", false)]
+    [InlineData(InputMode.Renaming, "ResetZoom", false)]
+    [InlineData(InputMode.Normal, "ZoomIn", false)]
+    public void Allows_OnlyCropAndTheThreeZoomActions(InputMode mode, string action, bool expected)
+    {
+        Assert.Equal(expected, mode.Allows(action));
+    }
+
+    [Theory]
     [InlineData(false, false, InputMode.AnimatedImage)]
     // A slideshow reaching an animated image: the animated image ranks higher
     [InlineData(true, false, InputMode.AnimatedImage)]
