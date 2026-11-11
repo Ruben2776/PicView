@@ -29,6 +29,8 @@ public partial class CropControl : UserControl, IZoomScrollTarget
     private readonly ScaleTransform[] _constantSize;
     private IDisposable? _imageWidthSubscription;
     private IDisposable? _imageHeightSubscription;
+    private IDisposable? _viewWidthSubscription;
+    private IDisposable? _viewHeightSubscription;
     private bool _isLoadedOnce;
 
     public CropControl() : this(ZoomView.Fit)
@@ -61,6 +63,9 @@ public partial class CropControl : UserControl, IZoomScrollTarget
         ZoomPanControl.ScaleChanged += OnScaleChanged;
         ZoomPanControl.SpaceHeldChanged += OnSpaceHeldChanged;
         ZoomPanControl.ViewChanged += KeepSelectionInView;
+
+        // The menu takes the keyboard, so the window may never see Space released while it is open
+        CropContextMenu.Opened += (_, _) => ZoomPanControl.OnWindowDeactivated();
         ZoomPanControl.Initialize();
 
         AddHandler(PointerWheelChangedEvent, PreviewOnPointerWheelChanged, RoutingStrategies.Tunnel);
@@ -104,6 +109,46 @@ public partial class CropControl : UserControl, IZoomScrollTarget
             DebugHelper.LogError(nameof(CropControl), nameof(Refit)));
         _imageHeightSubscription = window.ImageHeight.Subscribe(_ => Refit(),
             DebugHelper.LogError(nameof(CropControl), nameof(Refit)));
+        _viewWidthSubscription = window.ScrollViewerWidth.Subscribe(_ => SizeViewPanel(window),
+            DebugHelper.LogError(nameof(CropControl), nameof(SizeViewPanel)));
+        _viewHeightSubscription = window.ScrollViewerHeight.Subscribe(_ => SizeViewPanel(window),
+            DebugHelper.LogError(nameof(CropControl), nameof(SizeViewPanel)));
+    }
+
+    private static double AtLeast(double view, double image) => double.IsNaN(image) ? view : Math.Max(view, image);
+
+    protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        base.OnAttachedToVisualTree(e);
+
+        // Before the first layout, which the view the crop opens at and its default selection are placed in
+        if (DataContext is TabViewModel tab)
+        {
+            SizeViewPanel(tab.ParentWindowContext);
+        }
+    }
+
+    /// <summary>
+    /// Makes the zoomed panel at least as large as the view. A view area that is not sized, as while the window
+    /// fits the image, leaves the panel to fill the control. An image fitted larger than the view, as a tall image
+    /// with scrolling on, makes the panel as large as the image, starting at the view's top left, so the whole of
+    /// it can be zoomed and panned to.
+    /// </summary>
+    private void SizeViewPanel(MainWindowViewModel window)
+    {
+        var width = window.ScrollViewerWidth.CurrentValue;
+        var height = window.ScrollViewerHeight.CurrentValue;
+        var isWidthKnown = !double.IsNaN(width);
+        var isHeightKnown = !double.IsNaN(height);
+        // A minimum holds when the panel is arranged, where a size it merely asks for is cut to the room there is
+        ViewPanel.MinWidth = isWidthKnown ? AtLeast(width, window.ImageWidth.CurrentValue) : 0;
+        ViewPanel.MinHeight = isHeightKnown ? AtLeast(height, window.ImageHeight.CurrentValue) : 0;
+        ViewPanel.HorizontalAlignment = isWidthKnown
+            ? global::Avalonia.Layout.HorizontalAlignment.Left
+            : global::Avalonia.Layout.HorizontalAlignment.Stretch;
+        ViewPanel.VerticalAlignment = isHeightKnown
+            ? global::Avalonia.Layout.VerticalAlignment.Top
+            : global::Avalonia.Layout.VerticalAlignment.Stretch;
     }
 
     private void OnControlUnloaded(object? sender, RoutedEventArgs e)
@@ -112,6 +157,10 @@ public partial class CropControl : UserControl, IZoomScrollTarget
         _imageWidthSubscription = null;
         _imageHeightSubscription?.Dispose();
         _imageHeightSubscription = null;
+        _viewWidthSubscription?.Dispose();
+        _viewWidthSubscription = null;
+        _viewHeightSubscription?.Dispose();
+        _viewHeightSubscription = null;
     }
 
     /// <summary>Places the selection's rectangle, its handles and the dimming from the crop's selection.</summary>
@@ -119,11 +168,12 @@ public partial class CropControl : UserControl, IZoomScrollTarget
 
     private void Refit()
     {
-        if (DataContext is not TabViewModel { Crop: { } crop })
+        if (DataContext is not TabViewModel { Crop: { } crop } tab)
         {
             return;
         }
 
+        SizeViewPanel(tab.ParentWindowContext);
         crop.Refit();
         _layoutManager.UpdateLayout();
     }
@@ -264,10 +314,10 @@ public partial class CropControl : UserControl, IZoomScrollTarget
 
         var selection = new Rect(crop.SelectionX.Value, crop.SelectionY.Value, crop.SelectionWidth.Value,
             crop.SelectionHeight.Value);
-        var moved = CropDragHandler.ClampMove(selection, selection.Position, VisibleSurfaceRect(), image);
+        var moved = CropDragHandler.ClampMove(selection, selection.Position, SelectionBounds(), image);
 
-        // The selection sits on whole image pixels, so it may lie up to one pixel over the view's edge
-        var pixel = crop.AspectRatio;
+        // Both lie on whole image pixels, so less than half a pixel apart is the same place
+        var pixel = crop.AspectRatio / 2;
         if (Math.Abs(moved.X - selection.X) < pixel && Math.Abs(moved.Y - selection.Y) < pixel)
         {
             // The handles and the size label are still placed inside what the view now shows, at its scale
@@ -326,6 +376,18 @@ public partial class CropControl : UserControl, IZoomScrollTarget
         ZoomPanControl.Child is { } child && CropSurface.TranslatePoint(default, child) is { } origin
             ? new Rect(origin, CropSurface.Bounds.Size)
             : default;
+
+    /// <summary>
+    /// What the selection may reach when moved or resized: the whole image pixels in the part of the surface the
+    /// view shows, so no edge of it comes to lie outside the view.
+    /// </summary>
+    internal Rect SelectionBounds()
+    {
+        var visible = VisibleSurfaceRect();
+        return DataContext is TabViewModel { Crop: { } crop }
+            ? CropLayoutManager.SnapInward(visible, crop.AspectRatio)
+            : visible;
+    }
 
     /// <summary>
     /// The part of the crop surface the view shows, in the surface's own units: all of it when not zoomed in.

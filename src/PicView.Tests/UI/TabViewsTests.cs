@@ -111,6 +111,25 @@ public class TabViewsTests
         });
 
     [AvaloniaFact]
+    public void Crop_SavedOverTheShownFileFromAZoomedViewer_ReturnsTheViewerUnzoomed()
+        => WithWindow((_, _, tab) =>
+        {
+            // The viewer was zoomed when the crop opened and is not shown while the new image is displayed, so
+            // nothing else resets its zoom for the new image
+            tab.Display(BitmapModel("a.jpg"));
+            var viewer = Assert.IsType<ImageViewer>(ViewOf(tab));
+            viewer.ZoomPanControl.SetScaleImmediate(2);
+            tab.Crop = new CropViewModel(tab.Zoom, 2, 2);
+
+            tab.Display(BitmapModel("b.jpg"));
+            tab.Crop = null;
+
+            Assert.Equal(1, viewer.ZoomPanControl.Scale);
+            Assert.Equal(1, tab.Zoom.Factor);
+            Assert.Null(viewer.PendingZoomView);
+        });
+
+    [AvaloniaFact]
     public void CloseTab_WhileCropping_DoesNotThrow()
         => WithWindow((_, vm, _) =>
         {

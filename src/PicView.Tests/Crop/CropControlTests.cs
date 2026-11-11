@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Headless;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Media;
 using PicView.Avalonia.ImageTransformations;
 using PicView.Avalonia.Input;
@@ -172,6 +173,56 @@ public class CropControlTests
         });
 
     [AvaloniaFact]
+    public void ViewChanged_WithAnEdgeOutOfView_HidesThatEdgesHandles()
+        => WithLaidOutCrop((tab, crop) =>
+        {
+            // Wider than the view shows: its left edge is out of view while its top, bottom and right edges are in
+            tab.Crop!.SetSelection(10, 230, 380, 30);
+
+            crop.ZoomPanControl.SetView(4, new Point(350, 250));
+
+            Assert.False(crop.LeftMiddleButton.IsVisible);
+            Assert.True(crop.RightMiddleButton.IsVisible);
+            Assert.True(crop.TopRightButton.IsVisible);
+            Assert.False(crop.TopLeftButton.IsVisible);
+            Assert.True(crop.TopMiddleButton.IsVisible);
+            Assert.True(crop.BottomMiddleButton.IsVisible);
+
+            crop.ZoomPanControl.SetView(1, new Point(200, 150));
+
+            Assert.True(crop.LeftMiddleButton.IsVisible);
+            Assert.True(crop.TopLeftButton.IsVisible);
+        });
+
+    [AvaloniaFact]
+    public void ContextMenuOpened_WithSpaceHeld_ForgetsSpace()
+        => WithLaidOutCrop((tab, crop) =>
+        {
+            // The menu takes the keyboard, so the window may never see Space released
+            var window = (Window)TopLevel.GetTopLevel(crop)!;
+            window.KeyPress(Key.Space, RawInputModifiers.None, PhysicalKey.Space, " ");
+            Assert.True(crop.ZoomPanControl.IsSpaceHeld);
+
+            // The headless window cannot show a popup, so the menu's own event stands in for opening it
+            crop.ContextMenu!.RaiseEvent(new RoutedEventArgs(ContextMenu.OpenedEvent));
+
+            Assert.False(crop.ZoomPanControl.IsSpaceHeld);
+            Assert.True(crop.RootCanvas.IsHitTestVisible);
+        });
+
+    [AvaloniaFact]
+    public void TallImageInAShorterView_ZoomedIn_ReachesItsTopAndBottom()
+        => WithLaidOutCrop((_, crop) =>
+        {
+            // With scrolling on, an image is fitted taller than the view
+            crop.ZoomPanControl.SetView(2, new Point(200, 0));
+            Assert.Equal(0, crop.VisibleSurfaceRect().Y);
+
+            crop.ZoomPanControl.SetView(2, new Point(200, 600));
+            Assert.Equal(600, crop.VisibleSurfaceRect().Bottom);
+        }, imageHeight: 600);
+
+    [AvaloniaFact]
     public void ViewChanged_WithTheSelectionInView_LeavesTheSelection()
         => WithLaidOutCrop((tab, crop) =>
         {
@@ -196,16 +247,16 @@ public class CropControlTests
         });
 
     // A crop of a 400 by 300 image shown at its pixel size in a view of the same size, hosted and laid out
-    private static void WithLaidOutCrop(Action<TabViewModel, CropControl> test)
+    private static void WithLaidOutCrop(Action<TabViewModel, CropControl> test, double imageHeight = 300)
         => WithWindow((window, vm, tab) =>
         {
             vm.ImageWidth.Value = 400;
-            vm.ImageHeight.Value = 300;
+            vm.ImageHeight.Value = imageHeight;
             vm.ScrollViewerWidth.Value = 400;
             vm.ScrollViewerHeight.Value = 300;
             tab.Display(BitmapModel("a.jpg"));
             tab.Zoom.SetFitScale(1);
-            tab.Crop = new CropViewModel(tab.Zoom, 400, 300);
+            tab.Crop = new CropViewModel(tab.Zoom, 400, (uint)imageHeight);
             var crop = Assert.IsType<CropControl>(ViewOf(tab));
             window.Content = new ContentControl { Content = crop };
             Settle(window);

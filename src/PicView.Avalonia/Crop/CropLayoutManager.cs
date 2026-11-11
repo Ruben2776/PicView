@@ -135,18 +135,29 @@ public class CropLayoutManager(CropControl control)
         var visible = control.VisibleSurfaceRect();
         var scale = control.ZoomPanControl.Scale;
 
-        var topLeft = PlaceHandle(new Point(left, top), visible, scale);
-        Place(control.TopLeftButton, topLeft);
-        Place(control.TopMiddleButton, PlaceHandle(new Point(centreX, top), visible, scale));
-        Place(control.TopRightButton, PlaceHandle(new Point(right, top), visible, scale));
-        Place(control.LeftMiddleButton, PlaceHandle(new Point(left, centreY), visible, scale));
-        Place(control.RightMiddleButton, PlaceHandle(new Point(right, centreY), visible, scale));
-        Place(control.BottomLeftButton, PlaceHandle(new Point(left, bottom), visible, scale));
-        Place(control.BottomMiddleButton, PlaceHandle(new Point(centreX, bottom), visible, scale));
-        Place(control.BottomRightButton, PlaceHandle(new Point(right, bottom), visible, scale));
+        // A side's handle slides along its side to stay in view, since it moves only that side
+        var alongX = Within(centreX, visible.X, visible.Right);
+        var alongY = Within(centreY, visible.Y, visible.Bottom);
 
+        PlaceAndShow(control.TopLeftButton, new Point(left, top), visible, scale);
+        PlaceAndShow(control.TopMiddleButton, new Point(alongX, top), visible, scale);
+        PlaceAndShow(control.TopRightButton, new Point(right, top), visible, scale);
+        PlaceAndShow(control.LeftMiddleButton, new Point(left, alongY), visible, scale);
+        PlaceAndShow(control.RightMiddleButton, new Point(right, alongY), visible, scale);
+        PlaceAndShow(control.BottomLeftButton, new Point(left, bottom), visible, scale);
+        PlaceAndShow(control.BottomMiddleButton, new Point(alongX, bottom), visible, scale);
+        PlaceAndShow(control.BottomRightButton, new Point(right, bottom), visible, scale);
+
+        // The label keeps its place by the top left corner, in view, whether or not that corner's handle shows
+        var topLeft = PlaceHandle(new Point(left, top), visible, scale);
         var handleCentre = new Point(topLeft.X + HandleSize / 2, topLeft.Y + HandleSize / 2);
         Place(control.SizeBorder, PlaceLabel(handleCentre, control.SizeBorder.Bounds.Size, visible, scale));
+    }
+
+    private static void PlaceAndShow(Control handle, Point point, Rect visible, double scale)
+    {
+        handle.IsVisible = ShowsHandle(point, visible);
+        Place(handle, PlaceHandle(point, visible, scale));
     }
 
     private static void Place(Control element, Point position)
@@ -185,6 +196,37 @@ public class CropLayoutManager(CropControl control)
         var shownTop = Within(handleCentre.Y - HandleSize * 1.5 / scale, visible.Y, visible.Bottom - shownHeight);
 
         return new Point(shownLeft, shownTop + shownHeight - label.Height);
+    }
+
+    /// <summary>
+    /// Whether a handle at <paramref name="point"/> is shown: only when its point is in <paramref name="visible"/>.
+    /// A handle drawn at the view's edge for a selection edge that is out of view would not sit on the edge it
+    /// moves, so that handle is hidden until the edge is in view.
+    /// </summary>
+    internal static bool ShowsHandle(Point point, Rect visible) =>
+        point.X >= visible.X - Epsilon && point.X <= visible.Right + Epsilon &&
+        point.Y >= visible.Y - Epsilon && point.Y <= visible.Bottom + Epsilon;
+
+    // Slack for the arithmetic of a point that lies on an edge
+    private const double Epsilon = 1e-6;
+
+    /// <summary>
+    /// <paramref name="visible"/> drawn in to whole image pixels, each <paramref name="pixel"/> view units wide: what
+    /// a selection, which sits on whole pixels, may reach without an edge lying outside the view. With no whole
+    /// pixel in view it is <paramref name="visible"/> itself.
+    /// </summary>
+    internal static Rect SnapInward(Rect visible, double pixel)
+    {
+        if (pixel <= 0 || double.IsNaN(pixel))
+        {
+            return visible;
+        }
+
+        var left = Math.Ceiling(visible.X / pixel - Epsilon) * pixel;
+        var top = Math.Ceiling(visible.Y / pixel - Epsilon) * pixel;
+        var right = Math.Floor(visible.Right / pixel + Epsilon) * pixel;
+        var bottom = Math.Floor(visible.Bottom / pixel + Epsilon) * pixel;
+        return right > left && bottom > top ? new Rect(left, top, right - left, bottom - top) : visible;
     }
 
     // The lowest wins when there is no room, so what is placed starts inside the view

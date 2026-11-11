@@ -36,6 +36,31 @@ public class CropLayoutManagerTests
     public void PlaceHandle_OnTheFarCornerOfAZoomedView_StaysInsideTheView()
         => Assert.Equal(new Point(387.5, 275), CropLayoutManager.PlaceHandle(new Point(400, 287.5), Zoomed, 4));
 
+    [Theory]
+    [InlineData(350, 250, true)]
+    // On the view's own edge: the handle is shown, moved inwards
+    [InlineData(400, 250, true)]
+    [InlineData(300, 212.5, true)]
+    // The selection's edge is out of view: a handle drawn at the view's edge would not be on the edge it moves
+    [InlineData(500, 250, false)]
+    [InlineData(350, 100, false)]
+    public void ShowsHandle_OnlyWhenItsPointIsInView(double x, double y, bool expected)
+        => Assert.Equal(expected, CropLayoutManager.ShowsHandle(new Point(x, y), Zoomed));
+
+    [Fact]
+    public void SnapInward_ToWholeImagePixels_NeverReachesOutsideTheView()
+    {
+        // The selection sits on whole image pixels, so what it may reach is the whole pixels inside the view
+        Assert.Equal(new Rect(300.5, 212.5, 99.75, 75),
+            CropLayoutManager.SnapInward(new Rect(300.3, 212.5, 100, 75), 0.25));
+        Assert.Equal(new Rect(301, 213, 99, 74), CropLayoutManager.SnapInward(new Rect(300.3, 212.5, 100, 75), 1));
+        Assert.Equal(Image, CropLayoutManager.SnapInward(Image, 0.25));
+    }
+
+    [Fact]
+    public void SnapInward_WithNoWholePixelInView_IsTheViewItself()
+        => Assert.Equal(new Rect(0.2, 0.2, 0.5, 0.5), CropLayoutManager.SnapInward(new Rect(0.2, 0.2, 0.5, 0.5), 1));
+
     [Fact]
     public void PlaceLabel_AwayFromTheEdges_SitsAboveAndBesideTheHandle()
         => Assert.Equal(new Point(112, 70), CropLayoutManager.PlaceLabel(new Point(100, 100), Label, Image, 1));
