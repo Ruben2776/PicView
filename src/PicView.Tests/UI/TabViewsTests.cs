@@ -99,9 +99,29 @@ public class TabViewsTests
         });
 
     [AvaloniaFact]
-    public void Crop_ZoomedAndClosedOnAZoomedViewer_KeepsTheViewersZoom()
+    public void Crop_ClosedOnAZoomedViewerWithResetOnChange_ReturnsTheViewerUnzoomed()
         => WithWindow((window, _, tab) =>
         {
+            Settings.Zoom.ResetZoomOnChange = true;
+            tab.Display(BitmapModel("a.jpg"));
+            Settle(window);
+            var viewer = Assert.IsType<ImageViewer>(ViewOf(tab));
+            viewer.ZoomPanControl.SetScaleImmediate(2);
+            tab.Crop = new CropViewModel(tab.Zoom, 2, 2);
+            Settle(window);
+
+            tab.Crop = null;
+            Settle(window);
+
+            Assert.Equal(1, viewer.ZoomPanControl.Scale);
+            Assert.Equal(1, tab.Zoom.Factor);
+        });
+
+    [AvaloniaFact]
+    public void Crop_ZoomedAndClosedOnAZoomedViewerWithoutResetOnChange_KeepsTheViewersZoom()
+        => WithWindow((window, _, tab) =>
+        {
+            Settings.Zoom.ResetZoomOnChange = false;
             tab.Display(BitmapModel("a.jpg"));
             Settle(window);
             var viewer = Assert.IsType<ImageViewer>(ViewOf(tab));

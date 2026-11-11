@@ -103,13 +103,13 @@ public sealed class TabViews(MainWindow window) : ITabViewFactory
                 {
                     viewer.ResetZoomSlim();
                 }
-                else
-                {
-                    // The crop wrote the tab's Zoom Factor while it was shown; the viewer writes it from here on
-                    _tab.Zoom.SetFactor(viewer.ZoomPanControl.Scale);
-                }
-                // Don't let the zoom previewer show when the crop is ended
-                viewer.ZoomPanControl.ZoomPreviewer.IsVisible = false;
+
+                // The crop wrote the tab's Zoom Factor while it was shown; the viewer writes it from here on. Written
+                // after a reset too, which reports nothing when the viewer was not zoomed
+                _tab.Zoom.SetFactor(viewer.ZoomPanControl.Scale);
+
+                // Don't let the zoom previewer show when the crop is ended. A viewer not loaded yet has none
+                viewer.ZoomPanControl.ZoomPreviewer?.IsVisible = false;
             }
 
             _crop = null;
