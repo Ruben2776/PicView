@@ -77,6 +77,23 @@ public class CropRenderTests
     }
 
     [Fact]
+    public void CutAndOrient_TurnedRightAndFlipped_TurnsThenMirrorsTheCut()
+    {
+        using var image = CreateFourByTwo();
+
+        CropRender.CutAndOrient(image, new PixelArea(0, 0, 4, 2), new Orientation(1, true));
+
+        // Turned right, red is top right and blue top left; mirrored, they swap. Mirrored first and then turned,
+        // green would be top right and white top left instead
+        Assert.Equal(2u, image.Width);
+        Assert.Equal(4u, image.Height);
+        Assert.Equal(Red, ColorAt(image, 0, 0));
+        Assert.Equal(Blue, ColorAt(image, 1, 0));
+        Assert.Equal(Green, ColorAt(image, 0, 3));
+        Assert.Equal(White, ColorAt(image, 1, 3));
+    }
+
+    [Fact]
     public void CutAndOrient_ACornerTurned_KeepsOnlyThatCorner()
     {
         using var image = CreateFourByTwo();

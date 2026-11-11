@@ -20,7 +20,8 @@ public class CropLayoutManager(CropControl control)
             return;
         }
 
-        // The window fits the crop before the control lays out, so a size not known yet means there is no image to crop
+        // With a crop the size is the image as shown times the Fit Scale, so it is not a number only when the Fit
+        // Scale is not, and then there is no size to place a selection in
         var shown = control.ShownImageRect();
         var imageWidth = shown.Width;
         var imageHeight = shown.Height;

@@ -156,6 +156,38 @@ public class CropViewModelTests
     }
 
     [Fact]
+    public void Flip_Twice_KeepsTheSourceSelection()
+    {
+        using var zoom = new TabZoom();
+        using var orientation = new TabOrientation(null);
+        using var crop = Turnable(zoom, orientation);
+
+        orientation.Flip();
+        orientation.Flip();
+
+        Assert.Equal(new PixelArea(10, 20, 100, 50), crop.SourceSelection);
+        Assert.Equal((10, 20), (crop.PixelX.Value, crop.PixelY.Value));
+    }
+
+    [Fact]
+    public void Flip_MirrorsTheShownSelectionAndRaisesTurned()
+    {
+        using var zoom = new TabZoom();
+        using var orientation = new TabOrientation(null);
+        using var crop = Turnable(zoom, orientation);
+        var raised = 0;
+        using var subscription = crop.Turned.Subscribe(_ => raised++);
+
+        orientation.Flip();
+
+        Assert.Equal(1, raised);
+        Assert.Equal((290, 20, 100u, 50u),
+            (crop.PixelX.Value, crop.PixelY.Value, crop.PixelSelectionWidth.Value, crop.PixelSelectionHeight.Value));
+        Assert.Equal(290, crop.SelectionX.Value);
+        Assert.Equal(new PixelArea(10, 20, 100, 50), crop.SourceSelection);
+    }
+
+    [Fact]
     public void TurnRight_RaisesTurnedAfterTheSelectionMoved()
     {
         using var zoom = new TabZoom();
