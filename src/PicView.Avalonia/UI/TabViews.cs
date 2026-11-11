@@ -99,13 +99,17 @@ public sealed class TabViews(MainWindow window) : ITabViewFactory
             {
                 // The viewer was not shown when the new image was, so the reset that follows a new image's fit
                 // passed it by
-                if (!ReferenceEquals(_tab.Model, _croppedModel) && Settings.Zoom.ResetZoomOnChange)
+                if (Settings.Zoom.ResetZoomOnChange || !ReferenceEquals(_tab.Model, _croppedModel))
                 {
                     viewer.ResetZoomSlim();
                 }
-
-                // The crop wrote the tab's Zoom Factor while it was shown; the viewer writes it from here on
-                _tab.Zoom.SetFactor(viewer.ZoomPanControl.Scale);
+                else
+                {
+                    // The crop wrote the tab's Zoom Factor while it was shown; the viewer writes it from here on
+                    _tab.Zoom.SetFactor(viewer.ZoomPanControl.Scale);
+                }
+                // Don't let the zoom previewer show when the crop is ended
+                viewer.ZoomPanControl.ZoomPreviewer.IsVisible = false;
             }
 
             _crop = null;
