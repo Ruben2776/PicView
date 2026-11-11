@@ -56,6 +56,12 @@ public class ZoomPanControl : Decorator
     /// </summary>
     public event Action<double>? ScaleChanged;
 
+    /// <summary>
+    /// Raised after the scale or the translation was applied to the child, so after a zoom and after each step of
+    /// a pan. The crop keeps its selection in the part of the image the view then shows (ADR-0027).
+    /// </summary>
+    public event Action? ViewChanged;
+
     public double TranslateX { get; private set; }
 
     public double TranslateY { get; private set; }
@@ -610,6 +616,8 @@ public class ZoomPanControl : Decorator
 
         // Update preview window after transform change
         UpdatePreviewWindow();
+
+        ViewChanged?.Invoke();
     }
 
     private void SetTransitions(bool isAnimated)

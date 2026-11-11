@@ -60,6 +60,7 @@ public partial class CropControl : UserControl, IZoomScrollTarget
 
         ZoomPanControl.ScaleChanged += OnScaleChanged;
         ZoomPanControl.SpaceHeldChanged += OnSpaceHeldChanged;
+        ZoomPanControl.ViewChanged += KeepSelectionInView;
         ZoomPanControl.Initialize();
 
         AddHandler(PointerWheelChangedEvent, PreviewOnPointerWheelChanged, RoutingStrategies.Tunnel);
@@ -240,6 +241,40 @@ public partial class CropControl : UserControl, IZoomScrollTarget
         {
             tab.Zoom.SetFactor(scale);
         }
+    }
+
+    /// <summary>
+    /// Moves the selection into the part of the image the view shows after a zoom or a pan, as a move by hand
+    /// keeps it there. A selection too long for the view on an axis is left where it is on that axis.
+    /// </summary>
+    private void KeepSelectionInView()
+    {
+        // Before the first layout there is no selection to keep
+        if (!_isLoadedOnce || DataContext is not TabViewModel { Crop: { } crop } tab)
+        {
+            return;
+        }
+
+        var window = tab.ParentWindowContext;
+        var image = new Rect(0, 0, window.ImageWidth.CurrentValue, window.ImageHeight.CurrentValue);
+        if (double.IsNaN(image.Width) || double.IsNaN(image.Height))
+        {
+            return;
+        }
+
+        var selection = new Rect(crop.SelectionX.Value, crop.SelectionY.Value, crop.SelectionWidth.Value,
+            crop.SelectionHeight.Value);
+        var moved = CropDragHandler.ClampMove(selection, selection.Position, VisibleSurfaceRect(), image);
+
+        // The selection sits on whole image pixels, so it may lie up to one pixel over the view's edge
+        var pixel = crop.AspectRatio;
+        if (Math.Abs(moved.X - selection.X) < pixel && Math.Abs(moved.Y - selection.Y) < pixel)
+        {
+            return;
+        }
+
+        crop.SetSelection(moved.X, moved.Y, selection.Width, selection.Height);
+        _layoutManager.UpdateLayout();
     }
 
     /// <summary>

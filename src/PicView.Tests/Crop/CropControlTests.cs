@@ -134,6 +134,66 @@ public class CropControlTests
             Assert.False(crop.MainRectangle.UseLayoutRounding);
         });
 
+    [AvaloniaFact]
+    public void ViewChanged_AwayFromTheSelection_MovesTheSelectionIntoView()
+        => WithLaidOutCrop((tab, crop) =>
+        {
+            tab.Crop!.SetSelection(10, 10, 40, 30);
+            crop.UpdateSelectionLayout();
+
+            // Four times zoom about a point near the bottom right shows 100 by 75 of the image, from 300, 212.5
+            crop.ZoomPanControl.SetView(4, new Point(350, 250));
+
+            Assert.Equal(new Rect(300, 212.5, 100, 75), crop.VisibleSurfaceRect());
+            Assert.Equal(300, tab.Crop.SelectionX.Value);
+            Assert.Equal(213, tab.Crop.SelectionY.Value);
+            Assert.Equal(40, tab.Crop.SelectionWidth.Value);
+            Assert.Equal(30, tab.Crop.SelectionHeight.Value);
+            Assert.Equal(300, Canvas.GetLeft(crop.MainRectangle));
+        });
+
+    [AvaloniaFact]
+    public void ViewChanged_WithTheSelectionInView_LeavesTheSelection()
+        => WithLaidOutCrop((tab, crop) =>
+        {
+            tab.Crop!.SetSelection(320, 230, 40, 30);
+
+            crop.ZoomPanControl.SetView(4, new Point(350, 250));
+
+            Assert.Equal(320, tab.Crop.SelectionX.Value);
+            Assert.Equal(230, tab.Crop.SelectionY.Value);
+        });
+
+    [AvaloniaFact]
+    public void ViewChanged_WithASelectionLargerThanTheView_LeavesTheSelection()
+        => WithLaidOutCrop((tab, crop) =>
+        {
+            tab.Crop!.SetSelection(10, 10, 300, 200);
+
+            crop.ZoomPanControl.SetView(4, new Point(350, 250));
+
+            Assert.Equal(10, tab.Crop.SelectionX.Value);
+            Assert.Equal(10, tab.Crop.SelectionY.Value);
+        });
+
+    // A crop of a 400 by 300 image shown at its pixel size in a view of the same size, hosted and laid out
+    private static void WithLaidOutCrop(Action<TabViewModel, CropControl> test)
+        => WithWindow((window, vm, tab) =>
+        {
+            vm.ImageWidth.Value = 400;
+            vm.ImageHeight.Value = 300;
+            vm.ScrollViewerWidth.Value = 400;
+            vm.ScrollViewerHeight.Value = 300;
+            tab.Display(BitmapModel("a.jpg"));
+            tab.Zoom.SetFitScale(1);
+            tab.Crop = new CropViewModel(tab.Zoom, 400, 300);
+            var crop = Assert.IsType<CropControl>(ViewOf(tab));
+            window.Content = new ContentControl { Content = crop };
+            Settle(window);
+            Assert.True(crop.IsLoaded);
+            test(tab, crop);
+        });
+
     private static void AssertScaled(Control element, double expected)
     {
         var transform = Assert.IsType<ScaleTransform>(element.RenderTransform);

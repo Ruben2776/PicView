@@ -192,6 +192,18 @@ public class ZoomPanControlTests
     }
 
     [AvaloniaFact]
+    public void Pan_RaisesViewChanged()
+        => Hosted(ZoomPanHost.ImageViewer, (window, control, _) =>
+        {
+            var raised = 0;
+            control.ViewChanged += () => raised++;
+
+            Drag(window);
+
+            Assert.True(raised > 0);
+        });
+
+    [AvaloniaFact]
     public void Initialize_WithoutAPreviewer_Zooms()
         => Hosted(ZoomPanHost.Crop, (_, control, _) =>
         {
