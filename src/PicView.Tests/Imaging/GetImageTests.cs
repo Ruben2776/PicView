@@ -131,6 +131,64 @@ public class GetImageTests : IDisposable
         Assert.Equal(new PixelSize(133, 100), actual.PixelSize);
     }
 
+    [AvaloniaTheory]
+    [InlineData(100u)] // 128 is the closest stored size
+    [InlineData(40u)] // 48 is the closest stored size
+    public async Task GetThumbAsync_IconWithDifferentPicturePerSize_ShowsTheFrameTheViewerShows(uint height)
+    {
+        // Each size has its own color, so a thumbnail made from another size than the main image shows it
+        var path = CreateIcon((256, MagickColors.White), (128, MagickColors.Black), (48, MagickColors.Red));
+
+        using var viewed = GetImage.GetSkBitmap(new FileInfo(path));
+        using var actual = await GetThumbnails.GetThumbAsync(new FileInfo(path), height);
+
+        Assert.NotNull(viewed);
+        Assert.Equal(new PixelSize(256, 256), viewed.PixelSize);
+        Assert.NotNull(actual);
+        Assert.Equal(new PixelSize((int)height, (int)height), actual.PixelSize);
+        var pixels = ReadPremulBgra(actual);
+        var center = (actual.PixelSize.Height / 2 * actual.PixelSize.Width + actual.PixelSize.Width / 2) * 4;
+        Assert.Equal(new byte[] { 255, 255, 255, 255 }, pixels[center..(center + 4)]);
+    }
+
+    /// <summary>
+    /// Writes an .ico file that stores each size as a PNG filled with its own color.
+    /// </summary>
+    private string CreateIcon(params (int Size, MagickColor Color)[] frames)
+    {
+        var images = frames.Select(f =>
+        {
+            using var image = new MagickImage(f.Color, (uint)f.Size, (uint)f.Size);
+            return image.ToByteArray(MagickFormat.Png32);
+        }).ToArray();
+
+        var path = Path.Combine(_directory, "sizes.ico");
+        using var writer = new BinaryWriter(File.Create(path));
+        writer.Write((ushort)0); // Reserved
+        writer.Write((ushort)1); // Icon
+        writer.Write((ushort)frames.Length);
+        var offset = 6 + 16 * frames.Length;
+        for (var i = 0; i < frames.Length; i++)
+        {
+            writer.Write((byte)(frames[i].Size % 256)); // 0 means 256
+            writer.Write((byte)(frames[i].Size % 256));
+            writer.Write((byte)0); // Palette colors
+            writer.Write((byte)0); // Reserved
+            writer.Write((ushort)1); // Planes
+            writer.Write((ushort)32); // Bits per pixel
+            writer.Write(images[i].Length);
+            writer.Write(offset);
+            offset += images[i].Length;
+        }
+
+        foreach (var image in images)
+        {
+            writer.Write(image);
+        }
+
+        return path;
+    }
+
     private string CreateGradientImage(string extension, bool withAlpha, int width = 61, int height = 37)
     {
         var pixels = new byte[width * height * 4];
