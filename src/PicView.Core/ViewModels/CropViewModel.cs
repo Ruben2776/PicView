@@ -1,15 +1,24 @@
-﻿using PicView.Core.Sizing;
+﻿using PicView.Core.ImageTransformations;
+using PicView.Core.Sizing;
 using R3;
 
 namespace PicView.Core.ViewModels;
 
 /// <summary>
-/// A tab's open crop. Its selection is held as a whole-pixel rectangle of the image, the one truth, and the values
-/// the crop surface draws are derived from it through the tab's Fit Scale (ADR-0027). <see cref="SetSelection"/> is
-/// the only way in.
+/// A tab's open crop. Its selection is held as a whole-pixel rectangle of the image as shown (turned and flipped by
+/// the tab's Orientation), the one truth, and the values the crop surface draws are derived from it through the tab's
+/// Fit Scale (ADR-0027, ADR-0028). <see cref="SetSelection"/> is the only way in besides the tab's Orientation, which
+/// the selection follows while the crop is open.
 /// </summary>
-public class CropViewModel(TabZoom zoom, uint imagePixelWidth, uint imagePixelHeight) : IDisposable
+public class CropViewModel : IDisposable
 {
+    private readonly TabZoom _zoom;
+    private readonly uint _sourcePixelWidth;
+    private readonly uint _sourcePixelHeight;
+    private readonly Subject<Unit> _turned = new();
+    private readonly IDisposable? _orientationSubscription;
+    private readonly BindableReactiveProperty<double> _shownWidth = new();
+    private readonly BindableReactiveProperty<double> _shownHeight = new();
     private readonly BindableReactiveProperty<int> _pixelX = new();
     private readonly BindableReactiveProperty<int> _pixelY = new();
     private readonly BindableReactiveProperty<uint> _pixelSelectionWidth = new();
@@ -19,7 +28,46 @@ public class CropViewModel(TabZoom zoom, uint imagePixelWidth, uint imagePixelHe
     private readonly BindableReactiveProperty<double> _selectionWidth = new();
     private readonly BindableReactiveProperty<double> _selectionHeight = new();
 
+    /// <param name="zoom">The tab's zoom, whose Fit Scale the crop area is drawn at.</param>
+    /// <param name="imagePixelWidth">The width of the unturned source image, in pixels.</param>
+    /// <param name="imagePixelHeight">The height of the unturned source image, in pixels.</param>
+    /// <param name="orientation">The tab's Orientation to follow; without it the image is always shown upright.</param>
+    public CropViewModel(TabZoom zoom, uint imagePixelWidth, uint imagePixelHeight,
+        TabOrientation? orientation = null)
+    {
+        _zoom = zoom;
+        _sourcePixelWidth = imagePixelWidth;
+        _sourcePixelHeight = imagePixelHeight;
+        Orientation = orientation?.Current.CurrentValue ?? Orientation.Upright;
+        (ShownPixelWidth, ShownPixelHeight) = OrientedRect.ShownSize(Orientation, imagePixelWidth, imagePixelHeight);
+        Refit();
+        _orientationSubscription = orientation?.Current.Subscribe(Follow);
+    }
+
     public ReactiveCommand CropImageCommand { get; } = new();
+
+    /// <summary>The Orientation the selection is currently shown under.</summary>
+    public Orientation Orientation { get; private set; }
+
+    /// <summary>The width of the image as shown, in pixels.</summary>
+    public uint ShownPixelWidth { get; private set; }
+
+    /// <summary>The height of the image as shown, in pixels.</summary>
+    public uint ShownPixelHeight { get; private set; }
+
+    /// <summary>The image as shown, as the crop surface draws it: <see cref="ShownPixelWidth"/> times the Fit Scale.</summary>
+    public IReadOnlyBindableReactiveProperty<double> ShownWidth => _shownWidth;
+
+    public IReadOnlyBindableReactiveProperty<double> ShownHeight => _shownHeight;
+
+    /// <summary>
+    /// Raised after the selection has been remapped and refitted because the tab's Orientation changed.
+    /// </summary>
+    public Observable<Unit> Turned => _turned;
+
+    /// <summary>The current selection in the unturned source image, which is what gets cropped.</summary>
+    public PixelArea SourceSelection => OrientedRect.ToSource(CurrentArea(), Orientation, _sourcePixelWidth,
+        _sourcePixelHeight);
     public ReactiveCommand CopyCropImageCommand { get; } = new();
     public ReactiveCommand CloseCropCommand { get; } = new();
 
@@ -42,7 +90,7 @@ public class CropViewModel(TabZoom zoom, uint imagePixelWidth, uint imagePixelHe
     /// <summary>
     /// The tab's Fit Scale, which the crop area is drawn at, so a selection in view units divides by it to give pixels.
     /// </summary>
-    public double AspectRatio => zoom.FitScale;
+    public double AspectRatio => _zoom.FitScale;
 
     /// <summary>
     /// Sets the selection from a rectangle in view units: rounded to whole image pixels, kept inside the image and
@@ -52,13 +100,13 @@ public class CropViewModel(TabZoom zoom, uint imagePixelWidth, uint imagePixelHe
     {
         var scale = AspectRatio;
         if (scale <= 0 || double.IsNaN(scale) || double.IsNaN(x) || double.IsNaN(y) || double.IsNaN(width) ||
-            double.IsNaN(height) || imagePixelWidth == 0 || imagePixelHeight == 0)
+            double.IsNaN(height) || ShownPixelWidth == 0 || ShownPixelHeight == 0)
         {
             return;
         }
 
-        var (pixelX, pixelWidth) = ToPixels(x, width, scale, imagePixelWidth);
-        var (pixelY, pixelHeight) = ToPixels(y, height, scale, imagePixelHeight);
+        var (pixelX, pixelWidth) = ToPixels(x, width, scale, ShownPixelWidth);
+        var (pixelY, pixelHeight) = ToPixels(y, height, scale, ShownPixelHeight);
         _pixelX.Value = pixelX;
         _pixelY.Value = pixelY;
         _pixelSelectionWidth.Value = pixelWidth;
@@ -76,6 +124,31 @@ public class CropViewModel(TabZoom zoom, uint imagePixelWidth, uint imagePixelHe
         _selectionY.Value = _pixelY.Value * scale;
         _selectionWidth.Value = _pixelSelectionWidth.Value * scale;
         _selectionHeight.Value = _pixelSelectionHeight.Value * scale;
+        _shownWidth.Value = ShownPixelWidth * scale;
+        _shownHeight.Value = ShownPixelHeight * scale;
+    }
+
+    private PixelArea CurrentArea() =>
+        new(_pixelX.Value, _pixelY.Value, _pixelSelectionWidth.Value, _pixelSelectionHeight.Value);
+
+    private void Follow(Orientation orientation)
+    {
+        if (orientation == Orientation)
+        {
+            return;
+        }
+
+        var source = OrientedRect.ToSource(CurrentArea(), Orientation, _sourcePixelWidth, _sourcePixelHeight);
+        var shown = OrientedRect.FromSource(source, orientation, _sourcePixelWidth, _sourcePixelHeight);
+        Orientation = orientation;
+        (ShownPixelWidth, ShownPixelHeight) = OrientedRect.ShownSize(orientation, _sourcePixelWidth,
+            _sourcePixelHeight);
+        _pixelX.Value = shown.X;
+        _pixelY.Value = shown.Y;
+        _pixelSelectionWidth.Value = shown.Width;
+        _pixelSelectionHeight.Value = shown.Height;
+        Refit();
+        _turned.OnNext(Unit.Default);
     }
 
     private static (int Start, uint Length) ToPixels(double start, double length, double scale, uint imageLength)
@@ -89,6 +162,10 @@ public class CropViewModel(TabZoom zoom, uint imagePixelWidth, uint imagePixelHe
 
     public void Dispose()
     {
+        _orientationSubscription?.Dispose();
+        _turned.Dispose();
+        _shownWidth.Dispose();
+        _shownHeight.Dispose();
         CropImageCommand.Dispose();
         CopyCropImageCommand.Dispose();
         CloseCropCommand.Dispose();

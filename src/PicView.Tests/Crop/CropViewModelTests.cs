@@ -1,5 +1,7 @@
+using PicView.Core.ImageTransformations;
 using PicView.Core.Sizing;
 using PicView.Core.ViewModels;
+using R3;
 
 namespace PicView.Tests.Crop;
 
@@ -97,6 +99,131 @@ public class CropViewModelTests
         Assert.Equal(401, crop.PixelX.Value);
         Assert.Equal(200.5, crop.SelectionX.Value);
         Assert.Equal(400, crop.SelectionWidth.Value);
+    }
+
+    [Fact]
+    public void TurnRight_FourTimes_KeepsTheSourceSelection()
+    {
+        using var zoom = new TabZoom();
+        using var orientation = new TabOrientation(null);
+        using var crop = Turnable(zoom, orientation);
+
+        for (var i = 0; i < 4; i++)
+        {
+            orientation.TurnRight();
+            Assert.Equal(new PixelArea(10, 20, 100, 50), crop.SourceSelection);
+        }
+    }
+
+    [Fact]
+    public void TurnRight_SwapsTheShownSize()
+    {
+        using var zoom = new TabZoom();
+        using var orientation = new TabOrientation(null);
+        using var crop = Turnable(zoom, orientation);
+
+        orientation.TurnRight();
+
+        Assert.Equal((300u, 400u), (crop.ShownPixelWidth, crop.ShownPixelHeight));
+        Assert.Equal((300d, 400d), (crop.ShownWidth.Value, crop.ShownHeight.Value));
+    }
+
+    [Fact]
+    public void TurnRight_ShowsTheSelectionTurned()
+    {
+        using var zoom = new TabZoom();
+        using var orientation = new TabOrientation(null);
+        using var crop = Turnable(zoom, orientation);
+
+        orientation.TurnRight();
+
+        Assert.Equal((230, 10, 50u, 100u),
+            (crop.PixelX.Value, crop.PixelY.Value, crop.PixelSelectionWidth.Value, crop.PixelSelectionHeight.Value));
+    }
+
+    [Fact]
+    public void TurnRightFlipTurnLeft_KeepsTheSourceSelection()
+    {
+        using var zoom = new TabZoom();
+        using var orientation = new TabOrientation(null);
+        using var crop = Turnable(zoom, orientation);
+
+        orientation.TurnRight();
+        orientation.Flip();
+        orientation.TurnLeft();
+
+        Assert.Equal(new PixelArea(10, 20, 100, 50), crop.SourceSelection);
+    }
+
+    [Fact]
+    public void TurnRight_RaisesTurnedAfterTheSelectionMoved()
+    {
+        using var zoom = new TabZoom();
+        using var orientation = new TabOrientation(null);
+        using var crop = Turnable(zoom, orientation);
+        var pixelXAtTurned = -1;
+        var raised = 0;
+        using var subscription = crop.Turned.Subscribe(_ =>
+        {
+            raised++;
+            pixelXAtTurned = crop.PixelX.Value;
+        });
+
+        orientation.TurnRight();
+
+        Assert.Equal(1, raised);
+        Assert.Equal(230, pixelXAtTurned);
+    }
+
+    [Fact]
+    public void TurnRight_WithTheSelectionAtTheBottomRightCorner_KeepsItInsideTheImage()
+    {
+        using var zoom = new TabZoom();
+        using var orientation = new TabOrientation(null);
+        using var crop = Turnable(zoom, orientation);
+        crop.SetSelection(300, 250, 100, 50);
+
+        orientation.TurnRight();
+
+        Assert.Equal((0, 300, 50u, 100u),
+            (crop.PixelX.Value, crop.PixelY.Value, crop.PixelSelectionWidth.Value, crop.PixelSelectionHeight.Value));
+        Assert.Equal(new PixelArea(300, 250, 100, 50), crop.SourceSelection);
+    }
+
+    [Fact]
+    public void SetSelection_AfterATurn_ClampsToTheShownSize()
+    {
+        using var zoom = new TabZoom();
+        using var orientation = new TabOrientation(null);
+        using var crop = Turnable(zoom, orientation);
+        orientation.TurnRight();
+
+        crop.SetSelection(290, 0, 50, 10);
+
+        Assert.Equal(10u, crop.PixelSelectionWidth.Value);
+    }
+
+    [Fact]
+    public void Dispose_StopsFollowingTheOrientation()
+    {
+        using var zoom = new TabZoom();
+        using var orientation = new TabOrientation(null);
+        var crop = Turnable(zoom, orientation);
+        var raised = 0;
+        using var subscription = crop.Turned.Subscribe(_ => raised++);
+
+        crop.Dispose();
+        orientation.TurnRight();
+
+        Assert.Equal(0, raised);
+    }
+
+    private static CropViewModel Turnable(TabZoom zoom, TabOrientation orientation)
+    {
+        zoom.SetFitScale(1);
+        var crop = new CropViewModel(zoom, 400, 300, orientation);
+        crop.SetSelection(10, 20, 100, 50);
+        return crop;
     }
 
     private static CropViewModel Crop(TabZoom zoom, double fitScale = 0.25, uint w = 4000, uint h = 3000)
