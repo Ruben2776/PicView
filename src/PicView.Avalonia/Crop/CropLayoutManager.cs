@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Media;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Views.UC;
 using PicView.Avalonia.WindowBehavior;
@@ -68,7 +69,7 @@ public class CropLayoutManager(CropControl control)
             }
 
             UpdateButtonPositions();
-            UpdateSurroundingRectangles();
+            UpdateDimming();
         }
         catch (Exception e)
         {
@@ -76,7 +77,8 @@ public class CropLayoutManager(CropControl control)
         }
     }
 
-    private void UpdateSurroundingRectangles()
+    /// <summary>Dims everything but the selection.</summary>
+    private void UpdateDimming()
     {
         if (control.DataContext is not TabViewModel tab)
         {
@@ -89,37 +91,21 @@ public class CropLayoutManager(CropControl control)
         }
         
         var vm = tab.ParentWindowContext;
-        
-        // The selection sits on image pixels, which are fractions of a view unit once the image is fitted smaller
-        var left = tab.Crop.SelectionX.Value;
-        var top = tab.Crop.SelectionY.Value;
-        var right = left + tab.Crop.SelectionWidth.Value;
-        var bottom = top + tab.Crop.SelectionHeight.Value;
-        
-        // Calculate the positions and sizes for the surrounding rectangles
-        // Top Rectangle (above MainRectangle)
-        control.TopRectangle.Width = vm.ImageWidth.CurrentValue;
-        control.TopRectangle.Height = top < 0 ? 0 : top;
-        Canvas.SetTop(control.TopRectangle, 0);
-        
-        // Bottom Rectangle (below MainRectangle)
-        control.BottomRectangle.Width = vm.ImageWidth.CurrentValue;
-        var newBottomRectangleHeight = vm.ImageHeight.CurrentValue - bottom < 0 ? 0 : vm.ImageHeight.CurrentValue - bottom;
-        control.BottomRectangle.Height = newBottomRectangleHeight;
-        Canvas.SetTop(control.BottomRectangle, bottom);
-        
-        // Left Rectangle (left of MainRectangle)
-        control.LeftRectangle.Width = left < 0 ? 0 : left;
-        control.LeftRectangle.Height = tab.Crop.SelectionHeight.Value;
-        Canvas.SetLeft(control.LeftRectangle, 0);
-        Canvas.SetTop(control.LeftRectangle, top);
-        
-        // Right Rectangle (right of MainRectangle)
-        var newRightRectangleWidth = vm.ImageWidth.CurrentValue - right < 0 ? 0 : vm.ImageWidth.CurrentValue - right;
-        control.RightRectangle.Width = newRightRectangleWidth;
-        control.RightRectangle.Height = tab.Crop.SelectionHeight.Value;
-        Canvas.SetLeft(control.RightRectangle, right);
-        Canvas.SetTop(control.RightRectangle, top);
+        var image = new Rect(0, 0, vm.ImageWidth.CurrentValue, vm.ImageHeight.CurrentValue);
+        if (double.IsNaN(image.Width) || double.IsNaN(image.Height))
+        {
+            return;
+        }
+
+        // One shape with the selection as its hole. Four rectangles side by side showed seams where they met once
+        // the selection lay at fractions of a view unit, as it does on image pixels
+        var selection = new Rect(tab.Crop.SelectionX.Value, tab.Crop.SelectionY.Value, tab.Crop.SelectionWidth.Value,
+            tab.Crop.SelectionHeight.Value);
+        control.Dimming.Data = new GeometryGroup
+        {
+            FillRule = FillRule.EvenOdd,
+            Children = { new RectangleGeometry(image), new RectangleGeometry(selection) }
+        };
     }
 
     public void UpdateButtonPositions()

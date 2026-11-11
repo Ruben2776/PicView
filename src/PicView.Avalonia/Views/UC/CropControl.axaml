@@ -79,7 +79,17 @@
                     ImageType="{Binding ImageType.Value}"
                     Source="{Binding Image.Value}" />
 
-                <Canvas x:Name="RootCanvas" Background="Transparent">
+                <!--  Not rounded to whole units: the selection sits on image pixels, which are fractions of a unit  -->
+                <Canvas
+                    x:Name="RootCanvas"
+                    Background="Transparent"
+                    UseLayoutRounding="False">
+
+                    <!--  Everything but the selection, dimmed, as one shape with a hole so no seam can show  -->
+                    <Path
+                        x:Name="Dimming"
+                        Fill="#80000000"
+                        IsHitTestVisible="False" />
 
                     <!--  Size Border  -->
                     <Border
@@ -163,11 +173,6 @@
                         Classes="x"
                         Cursor="SizeWestEast" />
 
-                    <!--  Surrounding rectangles  -->
-                    <Rectangle x:Name="TopRectangle" Fill="#80000000" />
-                    <Rectangle x:Name="BottomRectangle" Fill="#80000000" />
-                    <Rectangle x:Name="LeftRectangle" Fill="#80000000" />
-                    <Rectangle x:Name="RightRectangle" Fill="#80000000" />
                 </Canvas>
             </Panel>
         </Panel>

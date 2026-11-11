@@ -113,6 +113,9 @@ public partial class CropControl : UserControl, IZoomScrollTarget
         _imageHeightSubscription = null;
     }
 
+    /// <summary>Places the selection's rectangle, its handles and the dimming from the crop's selection.</summary>
+    internal void UpdateSelectionLayout() => _layoutManager.UpdateLayout();
+
     private void Refit()
     {
         if (DataContext is not TabViewModel { Crop: { } crop })

@@ -108,6 +108,32 @@ public class CropControlTests
             Assert.True(crop.RootCanvas.IsHitTestVisible);
         });
 
+    [AvaloniaFact]
+    public void UpdateSelectionLayout_AtAFractionOfAViewUnit_DimsAllButTheSelectionInOneShape()
+        => WithCrop((_, vm, tab, crop) =>
+        {
+            // A selection on image pixels lies at fractions of a view unit. Four dimming rectangles side by side
+            // left seams there, and layout rounding moved the border off the pixels it marks
+            vm.ImageWidth.Value = 1000;
+            vm.ImageHeight.Value = 750;
+            tab.Zoom.SetFitScale(0.25);
+            tab.Crop = new CropViewModel(tab.Zoom, 4000, 3000);
+            tab.Crop.SetSelection(100.25, 50.5, 200.25, 100.75);
+
+            crop.UpdateSelectionLayout();
+
+            var dimming = Assert.IsType<GeometryGroup>(crop.Dimming.Data);
+            Assert.Equal(FillRule.EvenOdd, dimming.FillRule);
+            Assert.Equal(2, dimming.Children.Count);
+            Assert.Equal(new Rect(0, 0, 1000, 750), Assert.IsType<RectangleGeometry>(dimming.Children[0]).Rect);
+            Assert.Equal(new Rect(100.25, 50.5, 200.25, 100.75),
+                Assert.IsType<RectangleGeometry>(dimming.Children[1]).Rect);
+            Assert.Equal(100.25, Canvas.GetLeft(crop.MainRectangle));
+            Assert.Equal(50.5, Canvas.GetTop(crop.MainRectangle));
+            Assert.False(crop.RootCanvas.UseLayoutRounding);
+            Assert.False(crop.MainRectangle.UseLayoutRounding);
+        });
+
     private static void AssertScaled(Control element, double expected)
     {
         var transform = Assert.IsType<ScaleTransform>(element.RenderTransform);

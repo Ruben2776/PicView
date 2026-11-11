@@ -30,6 +30,6 @@ Before this, the crop could not zoom: the wheel handler lived on the viewer, whi
 - ADR-0022 holds: Crop is a Tab View with a control made per crop. The adapter now gives that control the viewer's view and takes its view back, and keeps the model the crop opened on to tell a changed image.
 - The crop control no longer binds its size to `ImageWidth` and `ImageHeight`, as ADR-0022 and ADR-0026 describe; its crop surface does.
 - Nothing outside `CropViewModel` writes the selection, and `CropService` reads the pixel rectangle in its three places. `CropLayoutManager` places the rectangle, the handles and the dimming from the derived values.
-- The dimming rectangles are placed at fractions of a view unit, where they were rounded to whole units to avoid a seam beside the selection. Whether a seam shows is a hand check.
+- The dimming is one shape, the image with the selection as its hole, and the selection canvas is not layout-rounded. Four dimming rectangles side by side had been rounded to whole view units to hide the seams where they met; a selection on image pixels lies at fractions of a unit, where the seams came back and layout rounding moved the border off the pixels it marks. One shape has no joins, so nothing is rounded.
 - `RotationManager.ResetZoom` resets the crop's zoom when the active tab shows a crop.
 - The input hot path allocates nothing more: `Allows` and `StartsPan` are comparisons.
