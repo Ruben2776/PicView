@@ -246,8 +246,68 @@ public class CropControlTests
             Assert.Equal(10, tab.Crop.SelectionY.Value);
         });
 
-    // A crop of a 400 by 300 image shown at its pixel size in a view of the same size, hosted and laid out
+    [AvaloniaFact]
+    public void TurnRight_SizesTheSurfaceToTheTurnedImage()
+        => WithLaidOutCrop((window, _, tab, crop) =>
+        {
+            tab.Orientation.TurnRight();
+            Settle(window);
+
+            Assert.Equal(new Size(300, 400), crop.CropSurface.Bounds.Size);
+        });
+
+    [AvaloniaFact]
+    public void HalfTurn_MovesTheDrawnSelection()
+        => WithLaidOutCrop((window, _, tab, crop) =>
+        {
+            tab.Crop!.SetSelection(10, 20, 100, 50);
+            tab.Orientation.TurnTo(2);
+            Settle(window);
+
+            Assert.Equal(290, Canvas.GetLeft(crop.MainRectangle));
+            Assert.Equal(230, Canvas.GetTop(crop.MainRectangle));
+        });
+
+    [AvaloniaFact]
+    public void TurnRight_WhileZoomedIn_PullsTheSelectionIntoView()
+        => WithLaidOutCrop((window, _, tab, crop) =>
+        {
+            tab.Crop!.SetSelection(10, 10, 40, 30);
+            crop.ZoomPanControl.ShowChildAt(4, new Point(350, 250));
+            tab.Orientation.TurnRight();
+            Settle(window);
+
+            var selection = new Rect(tab.Crop.SelectionX.Value, tab.Crop.SelectionY.Value,
+                tab.Crop.SelectionWidth.Value, tab.Crop.SelectionHeight.Value);
+            var bounds = crop.SelectionBounds();
+            Assert.True(bounds.Contains(selection.TopLeft) && bounds.Contains(selection.BottomRight),
+                $"{selection} {bounds}");
+        });
+
+    [AvaloniaFact]
+    public void RotationManagerRotateRight_WithACropShown_TurnsTheTab()
+        => WithLaidOutCrop((window, vm, tab, _) =>
+        {
+            RotationManager.RotateRight(vm, window);
+
+            Assert.Equal(1, tab.Orientation.Current.CurrentValue.QuarterTurns);
+        });
+
+    [AvaloniaFact]
+    public void RotationManagerFlip_WithACropShown_FlipsTheTab()
+        => WithLaidOutCrop((_, vm, tab, _) =>
+        {
+            RotationManager.Flip(vm);
+
+            Assert.True(tab.Orientation.Current.CurrentValue.IsFlipped);
+        });
+
     private static void WithLaidOutCrop(Action<TabViewModel, CropControl> test, double imageHeight = 300)
+        => WithLaidOutCrop((_, _, tab, crop) => test(tab, crop), imageHeight);
+
+    // A crop of a 400 by 300 image shown at its pixel size in a view of the same size, hosted and laid out
+    private static void WithLaidOutCrop(
+        Action<TestMainWindow, MainWindowViewModel, TabViewModel, CropControl> test, double imageHeight = 300)
         => WithWindow((window, vm, tab) =>
         {
             vm.ImageWidth.Value = 400;
@@ -256,12 +316,12 @@ public class CropControlTests
             vm.ScrollViewerHeight.Value = 300;
             tab.Display(BitmapModel("a.jpg"));
             tab.Zoom.SetFitScale(1);
-            tab.Crop = new CropViewModel(tab.Zoom, 400, (uint)imageHeight);
+            tab.Crop = new CropViewModel(tab.Zoom, 400, (uint)imageHeight, tab.Orientation);
             var crop = Assert.IsType<CropControl>(ViewOf(tab));
             window.Content = new ContentControl { Content = crop };
             Settle(window);
             Assert.True(crop.IsLoaded);
-            test(tab, crop);
+            test(window, vm, tab, crop);
         });
 
     private static void AssertScaled(Control element, double expected)

@@ -88,10 +88,13 @@ public static class InputModeExtensions
 
         /// <summary>
         /// Whether the blocking <paramref name="mode"/> handles the ordinary <paramref name="action"/>, so it runs
-        /// there: the crop view zooms (ADR-0027), so Crop handles the zoom Actions. No other blocking mode handles any.
+        /// there: the crop view zooms (ADR-0027) and turns with its tab, so Crop handles the zoom Actions and the
+        /// turn and flip Actions. No other blocking mode handles any.
         /// </summary>
         public bool Allows(string action) =>
-            mode is InputMode.Crop && action is Actions.ZoomIn or Actions.ZoomOut or Actions.ResetZoom;
+            mode is InputMode.Crop && action is Actions.ZoomIn or Actions.ZoomOut or Actions.ResetZoom
+                or Actions.RotateLeft or Actions.RotateRight or Actions.Rotate0 or Actions.Rotate90
+                or Actions.Rotate180 or Actions.Rotate270 or Actions.Flip;
 
         /// <summary>
         /// Whether <paramref name="mode"/> is a non-blocking mode other than Normal, which disallows Actions

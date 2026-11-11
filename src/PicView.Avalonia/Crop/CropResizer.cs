@@ -96,7 +96,7 @@ public static class CropResizer
     
         // Keep the rectangle in the part of the image the view shows
         var bounds = ResizeBounds(originalRect, control.SelectionBounds(),
-            new Rect(0, 0, vm.ImageWidth.CurrentValue, vm.ImageHeight.CurrentValue));
+            control.ShownImageRect());
         var constrained = Constrain(new Rect(newX, newY, Math.Max(newWidth, 0), Math.Max(newHeight, 0)), bounds);
         newX = constrained.X;
         newY = constrained.Y;

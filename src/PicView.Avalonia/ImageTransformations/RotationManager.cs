@@ -49,12 +49,17 @@ public static class RotationManager
     public static void Flip(MainWindowViewModel vm)
     {
         var tab = vm.WindowTabs.ActiveTab.CurrentValue;
-        if (tab.CurrentView.Value is not ImageViewer { HasImage: true } imageViewer)
+        var view = tab.CurrentView.Value;
+        if (view is not (ImageViewer { HasImage: true } or CropControl))
         {
             return;
         }
 
-        imageViewer.AnimateNextFlip();
+        if (view is ImageViewer imageViewer)
+        {
+            imageViewer.AnimateNextFlip();
+        }
+
         tab.Orientation.Flip();
     }
 
@@ -64,7 +69,7 @@ public static class RotationManager
     private static void Turn(MainWindowViewModel vm, MainWindow mainWindow, Action<TabOrientation> turn)
     {
         var tab = vm.WindowTabs.ActiveTab.CurrentValue;
-        if (tab.CurrentView.Value is not ImageViewer { HasImage: true })
+        if (tab.CurrentView.Value is not (ImageViewer { HasImage: true } or CropControl))
         {
             return;
         }

@@ -101,15 +101,35 @@ public partial class CropControl : UserControl, IZoomScrollTarget
         // The Fit Scale changes with the fitted size, as when the window is resized: the selection stays on its pixels
         var window = tab.ParentWindowContext;
         window.ImageWidth.Subscribe(_ => Refit(),
-            DebugHelper.LogError(nameof(CropControl), nameof(Refit)));
+                DebugHelper.LogError(nameof(CropControl), nameof(Refit)))
+            .AddTo(ref _disposables);
         window.ImageHeight.Subscribe(_ => Refit(),
-            DebugHelper.LogError(nameof(CropControl), nameof(Refit)));
+                DebugHelper.LogError(nameof(CropControl), nameof(Refit)))
+            .AddTo(ref _disposables);
         window.ScrollViewerWidth.Subscribe(_ => SizeViewPanel(window),
-            DebugHelper.LogError(nameof(CropControl), nameof(SizeViewPanel)));
-       window.ScrollViewerHeight.Subscribe(_ => SizeViewPanel(window),
-            DebugHelper.LogError(nameof(CropControl), nameof(SizeViewPanel)))
-           .AddTo(ref _disposables);
+                DebugHelper.LogError(nameof(CropControl), nameof(SizeViewPanel)))
+            .AddTo(ref _disposables);
+        window.ScrollViewerHeight.Subscribe(_ => SizeViewPanel(window),
+                DebugHelper.LogError(nameof(CropControl), nameof(SizeViewPanel)))
+            .AddTo(ref _disposables);
+
+        // The tab turned: the crop has remapped the selection to the image as shown, so refit and pull it into view
+        tab.Crop?.Turned.Subscribe(_ =>
+            {
+                Refit();
+                KeepSelectionInView();
+            }, DebugHelper.LogError(nameof(CropControl), nameof(Refit)))
+            .AddTo(ref _disposables);
     }
+
+    /// <summary>
+    /// The image as shown, turned and flipped, at the Fit Scale: where the selection may lie. Not a number in size
+    /// when there is no crop, so the guards against a size not known yet hold.
+    /// </summary>
+    internal Rect ShownImageRect() =>
+        DataContext is TabViewModel { Crop: { } crop }
+            ? new Rect(0, 0, crop.ShownWidth.Value, crop.ShownHeight.Value)
+            : new Rect(0, 0, double.NaN, double.NaN);
 
     private static double AtLeast(double view, double image) => double.IsNaN(image) ? view : Math.Max(view, image);
 
@@ -126,8 +146,9 @@ public partial class CropControl : UserControl, IZoomScrollTarget
         var isWidthKnown = !double.IsNaN(width);
         var isHeightKnown = !double.IsNaN(height);
         // A minimum holds when the panel is arranged, where a size it merely asks for is cut to the room there is
-        ViewPanel.MinWidth = isWidthKnown ? AtLeast(width, window.ImageWidth.CurrentValue) : 0;
-        ViewPanel.MinHeight = isHeightKnown ? AtLeast(height, window.ImageHeight.CurrentValue) : 0;
+        var shown = ShownImageRect();
+        ViewPanel.MinWidth = isWidthKnown ? AtLeast(width, shown.Width) : 0;
+        ViewPanel.MinHeight = isHeightKnown ? AtLeast(height, shown.Height) : 0;
         ViewPanel.HorizontalAlignment = isWidthKnown ? HorizontalAlignment.Left : HorizontalAlignment.Stretch;
         ViewPanel.VerticalAlignment = isHeightKnown ? VerticalAlignment.Top : VerticalAlignment.Stretch;
     }
@@ -279,8 +300,7 @@ public partial class CropControl : UserControl, IZoomScrollTarget
             return;
         }
 
-        var window = tab.ParentWindowContext;
-        var image = new Rect(0, 0, window.ImageWidth.CurrentValue, window.ImageHeight.CurrentValue);
+        var image = ShownImageRect();
         if (double.IsNaN(image.Width) || double.IsNaN(image.Height))
         {
             return;

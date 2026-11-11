@@ -74,18 +74,27 @@
             <!--  The fitted image with the selection drawn over it  -->
             <Panel
                 x:Name="CropSurface"
-                Width="{CompiledBinding ParentWindowContext.ImageWidth.Value,
+                Width="{CompiledBinding Crop.ShownWidth.Value,
                                         Mode=OneWay}"
-                Height="{CompiledBinding ParentWindowContext.ImageHeight.Value,
+                Height="{CompiledBinding Crop.ShownHeight.Value,
                                          Mode=OneWay}"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center">
                 <!--  Image control to display the bitmap  -->
-                <customControls:PicBox
-                    x:Name="ImageControl"
-                    CurrentFileInfo="{Binding FileInfo.Value}"
-                    ImageType="{Binding ImageType.Value}"
-                    Source="{Binding Image.Value}" />
+                <!--  Only the image turns and flips with the tab. The selection, handles and label stay upright  -->
+                <LayoutTransformControl x:Name="ImageTransform">
+                    <LayoutTransformControl.LayoutTransform>
+                        <RotateTransform Angle="{Binding Orientation.Degrees.Value}" />
+                    </LayoutTransformControl.LayoutTransform>
+                    <LayoutTransformControl.RenderTransform>
+                        <ScaleTransform ScaleX="{Binding Orientation.ScaleX.Value}" />
+                    </LayoutTransformControl.RenderTransform>
+                    <customControls:PicBox
+                        x:Name="ImageControl"
+                        CurrentFileInfo="{Binding FileInfo.Value}"
+                        ImageType="{Binding ImageType.Value}"
+                        Source="{Binding Image.Value}" />
+                </LayoutTransformControl>
 
                 <!--  Not rounded to whole units: the selection sits on image pixels, which are fractions of a unit  -->
                 <Canvas

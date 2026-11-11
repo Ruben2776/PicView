@@ -58,12 +58,20 @@ public class InputModeTests
     [InlineData(InputMode.Crop, "ZoomIn", true)]
     [InlineData(InputMode.Crop, "ZoomOut", true)]
     [InlineData(InputMode.Crop, "ResetZoom", true)]
+    [InlineData(InputMode.Crop, "RotateLeft", true)]
+    [InlineData(InputMode.Crop, "RotateRight", true)]
+    [InlineData(InputMode.Crop, "Rotate0", true)]
+    [InlineData(InputMode.Crop, "Rotate90", true)]
+    [InlineData(InputMode.Crop, "Rotate180", true)]
+    [InlineData(InputMode.Crop, "Rotate270", true)]
+    [InlineData(InputMode.Crop, "Flip", true)]
+    [InlineData(InputMode.Dialog, "RotateRight", false)]
     [InlineData(InputMode.Crop, "ResetZoomAndRotations", false)]
     [InlineData(InputMode.Crop, "Next", false)]
     [InlineData(InputMode.Dialog, "ZoomIn", false)]
     [InlineData(InputMode.Renaming, "ResetZoom", false)]
     [InlineData(InputMode.Normal, "ZoomIn", false)]
-    public void Allows_OnlyCropAndTheThreeZoomActions(InputMode mode, string action, bool expected)
+    public void Allows_OnlyCropAndItsZoomAndTurnActions(InputMode mode, string action, bool expected)
     {
         Assert.Equal(expected, mode.Allows(action));
     }

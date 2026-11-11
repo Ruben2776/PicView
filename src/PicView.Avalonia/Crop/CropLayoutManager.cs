@@ -21,8 +21,9 @@ public class CropLayoutManager(CropControl control)
         }
 
         // The window fits the crop before the control lays out, so a size not known yet means there is no image to crop
-        var imageWidth = vm.ImageWidth.CurrentValue;
-        var imageHeight = vm.ImageHeight.CurrentValue;
+        var shown = control.ShownImageRect();
+        var imageWidth = shown.Width;
+        var imageHeight = shown.Height;
         if (double.IsNaN(imageWidth) || double.IsNaN(imageHeight))
         {
             return;
@@ -86,7 +87,7 @@ public class CropLayoutManager(CropControl control)
         }
         
         var vm = tab.ParentWindowContext;
-        var image = new Rect(0, 0, vm.ImageWidth.CurrentValue, vm.ImageHeight.CurrentValue);
+        var image = control.ShownImageRect();
         if (double.IsNaN(image.Width) || double.IsNaN(image.Height))
         {
             return;

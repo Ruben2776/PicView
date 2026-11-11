@@ -66,7 +66,7 @@ public class CropDragHandler(CropControl control)
         
         // Keep the rectangle in the part of the image the view shows
         var clamped = ClampMove(_originalRect, new Point(newLeft, newTop), control.SelectionBounds(),
-            new Rect(0, 0, vm.ImageWidth.CurrentValue, vm.ImageHeight.CurrentValue));
+            control.ShownImageRect());
         newLeft = clamped.X;
         newTop = clamped.Y;
 
