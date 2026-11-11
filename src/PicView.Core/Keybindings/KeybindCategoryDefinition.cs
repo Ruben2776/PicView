@@ -60,6 +60,17 @@ public static class KeybindCategoryDefinition
         StillImageActionNames.Contains(Canonicalize(action), StringComparer.Ordinal);
 
     /// <summary>
+    /// Whether <paramref name="action"/> is a Window Action: its only effect is to open a window of its own, or
+    /// bring it forward when it is open. Blocking Input Modes such as Crop let these run, since the window works
+    /// outside the main view.
+    /// </summary>
+    /// <remarks>A pattern rather than a lookup, since it runs on every Keybind and must not allocate.</remarks>
+    public static bool IsWindowAction(string action) =>
+        Canonicalize(action) is Actions.AboutWindow or Actions.SettingsWindow or Actions.ImageInfoWindow
+            or Actions.EffectsWindow or Actions.ConvertWindow or Actions.KeybindingsWindow
+            or Actions.BatchResizeWindow or Actions.ResizeWindow or Actions.FileAssociationsWindow;
+
+    /// <summary>
     /// Whether <paramref name="action"/> is a Contextual Action.
     /// </summary>
     public static bool IsContextualAction(string action) =>
