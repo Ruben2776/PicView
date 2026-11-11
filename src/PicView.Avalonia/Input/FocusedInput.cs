@@ -17,9 +17,13 @@ public static class FocusedInput
     /// <summary>
     /// Whether <paramref name="focused"/> uses <paramref name="keybind"/> itself: a recording
     /// <see cref="KeybindBox"/> records every key, and a text box edits text with every key except Enter, Escape, and
-    /// chords, which stay Confirm, Cancel, and the window's Keybinds.
+    /// chords, which stay Confirm, Cancel, and the window's Keybinds. On macOS Option without Ctrl or Cmd types text,
+    /// such as Option+S for "ß", so it is no chord there.
     /// </summary>
-    public static bool OwnsKeybind(IInputElement? focused, Keybind keybind)
+    public static bool OwnsKeybind(IInputElement? focused, Keybind keybind) =>
+        OwnsKeybind(focused, keybind, OperatingSystem.IsMacOS());
+
+    internal static bool OwnsKeybind(IInputElement? focused, Keybind keybind, bool isMacOS)
     {
         if (focused is Visual visual &&
             visual.GetSelfAndVisualAncestors().OfType<KeybindBox>().FirstOrDefault() is { } keybindBox)
@@ -27,7 +31,8 @@ public static class FocusedInput
             return keybindBox.IsRecording;
         }
 
-        if (focused is not TextBox textBox || (keybind.Modifiers & ChordModifiers) != KeyModifiers.None)
+        var chordModifiers = isMacOS ? ChordModifiers & ~KeyModifiers.Alt : ChordModifiers;
+        if (focused is not TextBox textBox || (keybind.Modifiers & chordModifiers) != KeyModifiers.None)
         {
             return false;
         }

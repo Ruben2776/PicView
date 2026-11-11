@@ -165,6 +165,18 @@ public class DialogConfirmTests : IDisposable
         Assert.False(FocusedInput.OwnsKeybind(new TextBox(), new Keybind(key, modifiers)));
     }
 
+    [AvaloniaTheory]
+    // Option types text on macOS, such as Option+S for "ß"
+    [InlineData(KeyModifiers.Alt, true, true)]
+    [InlineData(KeyModifiers.Alt | KeyModifiers.Shift, true, true)]
+    [InlineData(KeyModifiers.Alt | KeyModifiers.Meta, true, false)]
+    [InlineData(KeyModifiers.Alt | KeyModifiers.Control, true, false)]
+    [InlineData(KeyModifiers.Alt, false, false)]
+    public void FocusedTextBox_OwnsOptionLettersOnMacOSOnly(KeyModifiers modifiers, bool isMacOS, bool owns)
+    {
+        Assert.Equal(owns, FocusedInput.OwnsKeybind(new TextBox(), new Keybind(Key.S, modifiers), isMacOS));
+    }
+
     [AvaloniaFact]
     public void FocusedMultilineTextBox_OwnsEnter()
     {
