@@ -303,7 +303,11 @@ public static class GetThumbnails
         var aspectRatio = codec.Info.Width / (double)codec.Info.Height;
         var target = new SKImageInfo(Math.Max(1, (int)(aspectRatio * height)), (int)height,
             SKColorType.Bgra8888, SKAlphaType.Premul);
-        var scaled = codec.GetScaledDimensions((float)height / codec.Info.Height);
+        // An icon stores each size as its own picture, and scaling picks the closest one,
+        // so decode the largest, the one the viewer shows, and resize it
+        var scaled = codec.EncodedFormat == SKEncodedImageFormat.Ico
+            ? codec.Info.Size
+            : codec.GetScaledDimensions((float)height / codec.Info.Height);
 
         var bitmap = new WriteableBitmap(new PixelSize(target.Width, target.Height), new Vector(96, 96),
             PixelFormat.Bgra8888, AlphaFormat.Premul);
