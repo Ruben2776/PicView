@@ -270,6 +270,8 @@ public partial class CropControl : UserControl, IZoomScrollTarget
         var pixel = crop.AspectRatio;
         if (Math.Abs(moved.X - selection.X) < pixel && Math.Abs(moved.Y - selection.Y) < pixel)
         {
+            // The handles and the size label are still placed inside what the view now shows, at its scale
+            _layoutManager.UpdateButtonPositions();
             return;
         }
 

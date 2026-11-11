@@ -153,6 +153,25 @@ public class CropControlTests
         });
 
     [AvaloniaFact]
+    public void ViewChanged_WithTheSelectionAtTheTopOfAZoomedView_KeepsTheSizeLabelInView()
+        => WithLaidOutCrop((tab, crop) =>
+        {
+            // The view shows 100 by 75 of the image from 300, 212.5, and the selection touches its top
+            tab.Crop!.SetSelection(320, 213, 40, 30);
+
+            crop.ZoomPanControl.SetView(4, new Point(350, 250));
+
+            // The label is drawn at a quarter of its box, from the box's bottom left
+            var label = crop.SizeBorder.Bounds.Size;
+            var shownTop = Canvas.GetTop(crop.SizeBorder) + label.Height - label.Height / 4;
+            var shownRight = Canvas.GetLeft(crop.SizeBorder) + label.Width / 4;
+            Assert.True(label.Height > 0);
+            Assert.Equal(212.5, shownTop, 6);
+            Assert.True(shownRight <= 400);
+            Assert.True(Canvas.GetLeft(crop.SizeBorder) >= 300);
+        });
+
+    [AvaloniaFact]
     public void ViewChanged_WithTheSelectionInView_LeavesTheSelection()
         => WithLaidOutCrop((tab, crop) =>
         {

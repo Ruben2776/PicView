@@ -108,113 +108,86 @@ public class CropLayoutManager(CropControl control)
         };
     }
 
+    // A handle's box on the canvas; it is drawn at this size on screen whatever the zoom
+    private const double HandleSize = 20;
+
+    // The gap on screen between the top left handle and the size label beside it
+    private const double LabelGap = 2;
+
+    /// <summary>
+    /// Places the eight handles on the selection's corners and sides, and the size label above its top left
+    /// corner, all inside the part of the image the view shows.
+    /// </summary>
     public void UpdateButtonPositions()
     {
-        if (control.DataContext is not TabViewModel tab)
+        if (control.DataContext is not TabViewModel { Crop: { } crop })
         {
             return;
         }
 
-        if (tab.Crop == null)
-        {
-            return;
-        }
-        
-        var selectionX = tab.Crop.SelectionX.Value;
-        var selectionY = tab.Crop.SelectionY.Value;
-        var selectionWidth = tab.Crop.SelectionWidth.Value;
-        var selectionHeight = tab.Crop.SelectionHeight.Value;
-        
-        // Get the bounds of the RootCanvas (the control container)
-        const int rootCanvasLeft = 0;
-        const int rootCanvasTop = 0;
-        var rootCanvasRight = control.RootCanvas.Bounds.Width;
-        var rootCanvasBottom = control.RootCanvas.Bounds.Height;
-        
-        // Calculate the positions for each button
-        var topLeftX = selectionX - control.TopLeftButton.Width / 2;
-        var topLeftY = selectionY - control.TopLeftButton.Height / 2;
-        
-        var topRightX = selectionX + selectionWidth - control.TopRightButton.Width / 2;
-        var topRightY = selectionY - control.TopRightButton.Height / 2;
-        
-        var topMiddleX = selectionX + selectionWidth / 2 - control.TopMiddleButton.Width / 2;
-        var topMiddleY = selectionY - control.TopMiddleButton.Height / 2;
-        
-        var bottomLeftX = selectionX - control.BottomLeftButton.Width / 2;
-        var bottomLeftY = selectionY + selectionHeight - control.BottomLeftButton.Height / 2;
-        
-        var bottomRightX = selectionX + selectionWidth - control.BottomRightButton.Width / 2;
-        var bottomRightY = selectionY + selectionHeight - control.BottomRightButton.Height / 2;
-        
-        var bottomMiddleX = selectionX + selectionWidth / 2 - control.BottomMiddleButton.Width / 2;
-        var bottomMiddleY = selectionY + selectionHeight - control.BottomMiddleButton.Height / 2;
-        
-        var leftMiddleX = selectionX - control.LeftMiddleButton.Width / 2;
-        var leftMiddleY = selectionY + selectionHeight / 2 - control.LeftMiddleButton.Height / 2;
-        
-        var rightMiddleX = selectionX + selectionWidth - control.RightMiddleButton.Width / 2;
-        var rightMiddleY = selectionY + selectionHeight / 2 - control.RightMiddleButton.Height / 2;
-        
-        // Ensure buttons stay within RootCanvas bounds (by clamping positions)
-        topLeftX = Math.Max(rootCanvasLeft, Math.Min(rootCanvasRight - control.TopLeftButton.Width, topLeftX));
-        topLeftY = Math.Max(rootCanvasTop, Math.Min(rootCanvasBottom - control.TopLeftButton.Height, topLeftY));
-        
-        topRightX = Math.Max(rootCanvasLeft, Math.Min(rootCanvasRight - control.TopRightButton.Width, topRightX));
-        topRightY = Math.Max(rootCanvasTop, Math.Min(rootCanvasBottom - control.TopRightButton.Height, topRightY));
-        
-        topMiddleX = Math.Max(rootCanvasLeft, Math.Min(rootCanvasRight - control.TopMiddleButton.Width, topMiddleX));
-        topMiddleY = Math.Max(rootCanvasTop, Math.Min(rootCanvasBottom - control.TopMiddleButton.Height, topMiddleY));
-        
-        bottomLeftX = Math.Max(rootCanvasLeft, Math.Min(rootCanvasRight - control.BottomLeftButton.Width, bottomLeftX));
-        bottomLeftY = Math.Max(rootCanvasTop,
-            Math.Min(rootCanvasBottom - control.BottomLeftButton.Height, bottomLeftY));
-        
-        bottomRightX = Math.Max(rootCanvasLeft,
-            Math.Min(rootCanvasRight - control.BottomRightButton.Width, bottomRightX));
-        bottomRightY = Math.Max(rootCanvasTop,
-            Math.Min(rootCanvasBottom - control.BottomRightButton.Height, bottomRightY));
-        
-        bottomMiddleX = Math.Max(rootCanvasLeft,
-            Math.Min(rootCanvasRight - control.BottomMiddleButton.Width, bottomMiddleX));
-        bottomMiddleY = Math.Max(rootCanvasTop,
-            Math.Min(rootCanvasBottom - control.BottomMiddleButton.Height, bottomMiddleY));
-        
-        leftMiddleX = Math.Max(rootCanvasLeft, Math.Min(rootCanvasRight - control.LeftMiddleButton.Width, leftMiddleX));
-        leftMiddleY = Math.Max(rootCanvasTop,
-            Math.Min(rootCanvasBottom - control.LeftMiddleButton.Height, leftMiddleY));
-        
-        rightMiddleX = Math.Max(rootCanvasLeft,
-            Math.Min(rootCanvasRight - control.RightMiddleButton.Width, rightMiddleX));
-        rightMiddleY = Math.Max(rootCanvasTop,
-            Math.Min(rootCanvasBottom - control.RightMiddleButton.Height, rightMiddleY));
-        
-        // Set the final button positions
-        Canvas.SetLeft(control.TopLeftButton, topLeftX);
-        Canvas.SetTop(control.TopLeftButton, topLeftY);
-        
-        Canvas.SetLeft(control.TopRightButton, topRightX);
-        Canvas.SetTop(control.TopRightButton, topRightY);
-        
-        Canvas.SetLeft(control.TopMiddleButton, topMiddleX);
-        Canvas.SetTop(control.TopMiddleButton, topMiddleY);
-        
-        Canvas.SetLeft(control.BottomLeftButton, bottomLeftX);
-        Canvas.SetTop(control.BottomLeftButton, bottomLeftY);
-        
-        Canvas.SetLeft(control.BottomRightButton, bottomRightX);
-        Canvas.SetTop(control.BottomRightButton, bottomRightY);
-        
-        Canvas.SetLeft(control.BottomMiddleButton, bottomMiddleX);
-        Canvas.SetTop(control.BottomMiddleButton, bottomMiddleY);
-        
-        Canvas.SetLeft(control.LeftMiddleButton, leftMiddleX);
-        Canvas.SetTop(control.LeftMiddleButton, leftMiddleY);
-        
-        Canvas.SetLeft(control.RightMiddleButton, rightMiddleX);
-        Canvas.SetTop(control.RightMiddleButton, rightMiddleY);
-        
-        Canvas.SetLeft(control.SizeBorder, topLeftX + control.TopLeftButton.Bounds.Width + 2);
-        Canvas.SetTop(control.SizeBorder, Math.Max(0, topLeftY - control.TopLeftButton.Bounds.Height));
+        var left = crop.SelectionX.Value;
+        var top = crop.SelectionY.Value;
+        var right = left + crop.SelectionWidth.Value;
+        var bottom = top + crop.SelectionHeight.Value;
+        var centreX = left + crop.SelectionWidth.Value / 2;
+        var centreY = top + crop.SelectionHeight.Value / 2;
+
+        var visible = control.VisibleSurfaceRect();
+        var scale = control.ZoomPanControl.Scale;
+
+        var topLeft = PlaceHandle(new Point(left, top), visible, scale);
+        Place(control.TopLeftButton, topLeft);
+        Place(control.TopMiddleButton, PlaceHandle(new Point(centreX, top), visible, scale));
+        Place(control.TopRightButton, PlaceHandle(new Point(right, top), visible, scale));
+        Place(control.LeftMiddleButton, PlaceHandle(new Point(left, centreY), visible, scale));
+        Place(control.RightMiddleButton, PlaceHandle(new Point(right, centreY), visible, scale));
+        Place(control.BottomLeftButton, PlaceHandle(new Point(left, bottom), visible, scale));
+        Place(control.BottomMiddleButton, PlaceHandle(new Point(centreX, bottom), visible, scale));
+        Place(control.BottomRightButton, PlaceHandle(new Point(right, bottom), visible, scale));
+
+        var handleCentre = new Point(topLeft.X + HandleSize / 2, topLeft.Y + HandleSize / 2);
+        Place(control.SizeBorder, PlaceLabel(handleCentre, control.SizeBorder.Bounds.Size, visible, scale));
     }
+
+    private static void Place(Control element, Point position)
+    {
+        Canvas.SetLeft(element, position.X);
+        Canvas.SetTop(element, position.Y);
+    }
+
+    /// <summary>
+    /// Where a handle's box goes on the canvas so the handle is centred on <paramref name="point"/>, moved inwards
+    /// where it would leave <paramref name="visible"/>. The handle is drawn at one over <paramref name="scale"/>
+    /// of its box about the box's centre, so it keeps its size on screen.
+    /// </summary>
+    internal static Point PlaceHandle(Point point, Rect visible, double scale)
+    {
+        var half = HandleSize / 2 / scale;
+        return new Point(
+            Within(point.X, visible.X + half, visible.Right - half) - HandleSize / 2,
+            Within(point.Y, visible.Y + half, visible.Bottom - half) - HandleSize / 2);
+    }
+
+    /// <summary>
+    /// Where the size label's box goes on the canvas: beside the top left handle, whose centre is
+    /// <paramref name="handleCentre"/>, and above it, moved inwards where it would leave <paramref name="visible"/>.
+    /// The label is drawn at one over <paramref name="scale"/> of <paramref name="label"/> from the bottom left of
+    /// its box, so it keeps its size on screen.
+    /// </summary>
+    internal static Point PlaceLabel(Point handleCentre, Size label, Rect visible, double scale)
+    {
+        var shownWidth = label.Width / scale;
+        var shownHeight = label.Height / scale;
+
+        var shownLeft = Within(handleCentre.X + (HandleSize / 2 + LabelGap) / scale, visible.X,
+            visible.Right - shownWidth);
+        // A handle's height above the handle, or at the top of the view when that is higher up
+        var shownTop = Within(handleCentre.Y - HandleSize * 1.5 / scale, visible.Y, visible.Bottom - shownHeight);
+
+        return new Point(shownLeft, shownTop + shownHeight - label.Height);
+    }
+
+    // The lowest wins when there is no room, so what is placed starts inside the view
+    private static double Within(double value, double lowest, double highest) =>
+        Math.Max(lowest, Math.Min(highest, value));
 }
