@@ -113,6 +113,7 @@ public class TabZoomTests
         Assert.Equal(2, _tab.Zoom.Factor);
     }
 
+#if DEBUG
     [Fact]
     public void Titles_ZoomThenSameFitImage_BuildOncePerImage()
     {
@@ -132,6 +133,7 @@ public class TabZoomTests
         Assert.Equal(3, _tab.Titles.BuildCount);
         Assert.DoesNotContain("%", _tab.Titles.Title, StringComparison.Ordinal);
     }
+#endif
 
     [Fact]
     public void SetFactor_HundredWrites_AllocatesNothing()

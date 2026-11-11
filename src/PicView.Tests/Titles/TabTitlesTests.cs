@@ -265,6 +265,7 @@ public class TabTitlesTests
         Assert.Equal(Expected(files[0], 0, 1).FilePathTitle, _tab.Titles.Title);
     }
 
+#if DEBUG
     [Fact]
     public void SideBySideSetting_Changed_MarksTheTitles()
     {
@@ -295,6 +296,7 @@ public class TabTitlesTests
         _ = _tab.Titles.Title;
         Assert.Equal(1, _tab.Titles.BuildCount);
     }
+#endif
 
     [Fact]
     public void Mark_OnDisplay_ComesAfterTheImageBindable()
