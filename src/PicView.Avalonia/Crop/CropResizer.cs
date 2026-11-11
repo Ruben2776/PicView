@@ -94,9 +94,15 @@ public static class CropResizer
             newHeight = size;
         }
     
-        // Apply bounds constraints
-        ApplyBoundsConstraints(ref newX, ref newY, ref newWidth, ref newHeight, vm.ImageWidth.CurrentValue, vm.ImageHeight.CurrentValue);
-    
+        // Keep the rectangle in the part of the image the view shows
+        var bounds = ResizeBounds(originalRect, control.VisibleSurfaceRect(),
+            new Rect(0, 0, vm.ImageWidth.CurrentValue, vm.ImageHeight.CurrentValue));
+        var constrained = Constrain(new Rect(newX, newY, Math.Max(newWidth, 0), Math.Max(newHeight, 0)), bounds);
+        newX = constrained.X;
+        newY = constrained.Y;
+        newWidth = constrained.Width;
+        newHeight = constrained.Height;
+
         // Update the view model
         try
         {
@@ -114,45 +120,61 @@ public static class CropResizer
         CropResizeMode.TopRight or
         CropResizeMode.BottomLeft or
         CropResizeMode.BottomRight;
-    
-    private static void ApplyBoundsConstraints(ref double x, ref double y, ref double width, ref double height, double maxWidth, double maxHeight)
+
+    /// <summary>
+    /// What a resize may reach: the part of the image the view shows, <paramref name="visible"/>, which is all of it
+    /// until the crop is zoomed in, widened to the selection's own edges as the resize began. An edge already off
+    /// screen then stays where it is while another edge is dragged.
+    /// </summary>
+    internal static Rect ResizeBounds(Rect original, Rect visible, Rect image) =>
+        original.Union(visible).Intersect(image);
+
+    /// <summary>
+    /// <paramref name="wanted"/> kept inside <paramref name="bounds"/> and at least one unit each way. An edge
+    /// pushed past the bounds stops there and the opposite edge stays where it was.
+    /// </summary>
+    internal static Rect Constrain(Rect wanted, Rect bounds)
     {
-        // Ensure we don't go beyond canvas bounds
-        if (x < 0)
+        var x = wanted.X;
+        var y = wanted.Y;
+        var width = wanted.Width;
+        var height = wanted.Height;
+
+        if (x < bounds.X)
         {
-            width += x;
-            x = 0;
+            width -= bounds.X - x;
+            x = bounds.X;
         }
-    
-        if (y < 0)
+
+        if (y < bounds.Y)
         {
-            height += y;
-            y = 0;
+            height -= bounds.Y - y;
+            y = bounds.Y;
         }
-    
-        if (x >= maxWidth)
+
+        if (x >= bounds.Right)
         {
-            x = maxWidth - 1;
+            x = bounds.Right - 1;
         }
-    
-        if (y >= maxHeight)
+
+        if (y >= bounds.Bottom)
         {
-            y = maxHeight - 1;
+            y = bounds.Bottom - 1;
         }
-    
-        // Ensure minimum dimensions
+
         width = Math.Max(width, 1);
         height = Math.Max(height, 1);
-    
-        // Ensure we don't exceed the canvas bounds
-        if (x + width > maxWidth)
+
+        if (x + width > bounds.Right)
         {
-            width = maxWidth - x;
+            width = bounds.Right - x;
         }
-    
-        if (y + height > maxHeight)
+
+        if (y + height > bounds.Bottom)
         {
-            height = maxHeight - y;
+            height = bounds.Bottom - y;
         }
+
+        return new Rect(x, y, width, height);
     }
 }

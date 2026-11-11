@@ -64,10 +64,12 @@ public class CropDragHandler(CropControl control)
         var newLeft = _originalRect.X + delta.X;
         var newTop = _originalRect.Y + delta.Y;
         
-        // Clamp the newLeft and newTop values to keep the rectangle within bounds
-        newLeft = Math.Max(0, Math.Min(vm.ImageWidth.CurrentValue - _originalRect.Width, newLeft));
-        newTop = Math.Max(0, Math.Min(vm.ImageHeight.CurrentValue - _originalRect.Height, newTop));
-        
+        // Keep the rectangle in the part of the image the view shows
+        var clamped = ClampMove(_originalRect, new Point(newLeft, newTop), control.VisibleSurfaceRect(),
+            new Rect(0, 0, vm.ImageWidth.CurrentValue, vm.ImageHeight.CurrentValue));
+        newLeft = clamped.X;
+        newTop = clamped.Y;
+
         // Only proceed if new positions are valid (i.e., not NaN)
         if (double.IsNaN(newLeft) || double.IsNaN(newTop))
         {
@@ -76,6 +78,20 @@ public class CropDragHandler(CropControl control)
         
         // The layout manager places the rectangle and the label from the selection
         tab.Crop.SetSelection(newLeft, newTop, _originalRect.Width, _originalRect.Height);
+    }
+
+    /// <summary>
+    /// Where a selection of <paramref name="selection"/>'s size lands when moved to <paramref name="wanted"/>: inside
+    /// <paramref name="visible"/>, the part of the image the view shows, which is all of it until the crop is zoomed
+    /// in. A side longer than the visible part cannot fit it, so that axis keeps to <paramref name="image"/>.
+    /// </summary>
+    internal static Point ClampMove(Rect selection, Point wanted, Rect visible, Rect image)
+    {
+        var horizontal = selection.Width <= visible.Width ? visible : image;
+        var vertical = selection.Height <= visible.Height ? visible : image;
+        return new Point(
+            Math.Max(horizontal.X, Math.Min(horizontal.Right - selection.Width, wanted.X)),
+            Math.Max(vertical.Y, Math.Min(vertical.Bottom - selection.Height, wanted.Y)));
     }
 
     public void OnDragEnd(object? sender, PointerReleasedEventArgs e)
