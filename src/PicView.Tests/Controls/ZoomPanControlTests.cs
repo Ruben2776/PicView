@@ -160,7 +160,7 @@ public class ZoomPanControlTests
             control.ShowChildAt(2, new Point(100, 75));
 
             Assert.Equal(2, control.Scale);
-            Assert.Equal(new Point(100, 75), control.ViewCentre);
+            Assert.Equal(new Point(100, 75), control.ViewCenter);
             Assert.Equal(new Rect(0, 0, 200, 150), control.VisibleChildRect);
         });
 

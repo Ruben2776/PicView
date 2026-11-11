@@ -402,7 +402,7 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
     /// How far this viewer is zoomed and where it looks, to hand to the tab's crop (ADR-0027).
     /// </summary>
     public ZoomView GetZoomView() =>
-        PendingZoomView ?? ZoomView.From(ZoomPanControl.Scale, ZoomPanControl.ViewCentre, ImageRect());
+        PendingZoomView ?? ZoomView.From(ZoomPanControl.Scale, ZoomPanControl.ViewCenter, ImageRect());
 
     /// <summary>
     /// Shows <paramref name="view"/>, at once when this viewer is shown, else when it is loaded again.

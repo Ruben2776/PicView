@@ -113,17 +113,6 @@ public partial class CropControl : UserControl, IZoomScrollTarget
 
     private static double AtLeast(double view, double image) => double.IsNaN(image) ? view : Math.Max(view, image);
 
-    protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
-    {
-        base.OnAttachedToVisualTree(e);
-
-        // Before the first layout, which the view the crop opens at and its default selection are placed in
-        if (DataContext is TabViewModel tab)
-        {
-            SizeViewPanel(tab.ParentWindowContext);
-        }
-    }
-
     /// <summary>
     /// Makes the zoomed panel at least as large as the view. A view area that is not sized, as while the window
     /// fits the image, leaves the panel to fill the control. An image fitted larger than the view, as a tall image
@@ -339,7 +328,7 @@ public partial class CropControl : UserControl, IZoomScrollTarget
     /// How far this crop is zoomed and where it looks, to hand back to the tab's viewer (ADR-0027).
     /// </summary>
     public ZoomView GetZoomView() =>
-        PendingZoomView ?? ZoomView.From(ZoomPanControl.Scale, ZoomPanControl.ViewCentre, SurfaceRect());
+        PendingZoomView ?? ZoomView.From(ZoomPanControl.Scale, ZoomPanControl.ViewCenter, SurfaceRect());
 
     /// <summary>
     /// Shows <paramref name="view"/>, at once when this crop is shown, else when it is loaded.

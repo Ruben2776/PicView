@@ -15,12 +15,7 @@ public class CropLayoutManager(CropControl control)
 
     public void InitializeLayout(MainWindowViewModel vm)
     {
-        if (control.DataContext is not TabViewModel tab)
-        {
-            return;
-        }
-
-        if (tab.Crop == null)
+        if (control.DataContext is not TabViewModel tab || tab.Crop is null)
         {
             return;
         }
@@ -180,20 +175,20 @@ public class CropLayoutManager(CropControl control)
     }
 
     /// <summary>
-    /// Where the size label's box goes on the canvas: beside the top left handle, whose centre is
-    /// <paramref name="handleCentre"/>, and above it, moved inwards where it would leave <paramref name="visible"/>.
+    /// Where the size label's box goes on the canvas: beside the top left handle, whose center is
+    /// <paramref name="handleCenter"/>, and above it, moved inwards where it would leave <paramref name="visible"/>.
     /// The label is drawn at one over <paramref name="scale"/> of <paramref name="label"/> from the bottom left of
     /// its box, so it keeps its size on screen.
     /// </summary>
-    internal static Point PlaceLabel(Point handleCentre, Size label, Rect visible, double scale)
+    internal static Point PlaceLabel(Point handleCenter, Size label, Rect visible, double scale)
     {
         var shownWidth = label.Width / scale;
         var shownHeight = label.Height / scale;
 
-        var shownLeft = Within(handleCentre.X + (HandleSize / 2 + LabelGap) / scale, visible.X,
+        var shownLeft = Within(handleCenter.X + (HandleSize / 2 + LabelGap) / scale, visible.X,
             visible.Right - shownWidth);
         // A handle's height above the handle, or at the top of the view when that is higher up
-        var shownTop = Within(handleCentre.Y - HandleSize * 1.5 / scale, visible.Y, visible.Bottom - shownHeight);
+        var shownTop = Within(handleCenter.Y - HandleSize * 1.5 / scale, visible.Y, visible.Bottom - shownHeight);
 
         return new Point(shownLeft, shownTop + shownHeight - label.Height);
     }
@@ -217,7 +212,7 @@ public class CropLayoutManager(CropControl control)
     /// </summary>
     internal static Rect SnapInward(Rect visible, double pixel)
     {
-        if (pixel <= 0 || double.IsNaN(pixel))
+        if (pixel is <= 0 or double.NaN)
         {
             return visible;
         }

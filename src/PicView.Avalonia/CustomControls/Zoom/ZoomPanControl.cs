@@ -352,7 +352,7 @@ public class ZoomPanControl : Decorator
     }
 
     /// <summary>The child-space point shown at the centre of the control.</summary>
-    public Point ViewCentre =>
+    public Point ViewCenter =>
         new((Bounds.Width / 2.0 - TranslateX) / Scale, (Bounds.Height / 2.0 - TranslateY) / Scale);
 
     /// <summary>The child-space rectangle the control shows.</summary>
