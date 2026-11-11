@@ -2,6 +2,8 @@ using System.Collections;
 using System.Reflection;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using ImageMagick;
@@ -235,21 +237,40 @@ public class TabViewsTests
         });
 
     // Interactive keeps its routed event handlers in a dictionary keyed by event
-    private static int ClickHandlerCount(Button button)
+    private static int ClickHandlerCount(Button button) => HandlerCount(button, Button.ClickEvent);
+
+    private static int HandlerCount(Interactive control, RoutedEvent routedEvent)
     {
-        for (var type = typeof(Button); type is not null; type = type.BaseType)
+        for (var type = control.GetType(); type is not null; type = type.BaseType)
         {
-            foreach (var field in type.GetFields(BindingFlags.Instance | BindingFlags.NonPublic))
+            foreach (var field in type.GetFields(BindingFlags.Instance | BindingFlags.NonPublic |
+                                                 BindingFlags.DeclaredOnly))
             {
-                if (field.GetValue(button) is IDictionary handlers && handlers.Contains(Button.ClickEvent))
+                if (field.GetValue(control) is IDictionary handlers && handlers.Contains(routedEvent))
                 {
-                    return ((ICollection)handlers[Button.ClickEvent]!).Count;
+                    return ((ICollection)handlers[routedEvent]!).Count;
                 }
             }
         }
 
         return 0;
     }
+
+    [AvaloniaFact]
+    public void Loaded_RaisedAgain_AddsTheViewersWheelAndPinchHandlersOnce()
+        => WithWindow((_, _, tab) =>
+        {
+            // The kept viewer is loaded again each time it is shown after a crop or the menu. Handlers added on
+            // every load made one wheel step zoom twice after one crop, and three times after two
+            tab.SetLoading();
+            var viewer = Assert.IsType<ImageViewer>(ViewOf(tab));
+
+            viewer.RaiseEvent(new RoutedEventArgs(Control.LoadedEvent));
+            viewer.RaiseEvent(new RoutedEventArgs(Control.LoadedEvent));
+
+            Assert.Equal(1, HandlerCount(viewer, InputElement.PointerWheelChangedEvent));
+            Assert.Equal(1, HandlerCount(viewer, InputElement.PinchEvent));
+        });
 
     [AvaloniaFact]
     public async Task SetLoading_OnAThreadPoolThread_ShowsTheViewerOnTheUIThread()

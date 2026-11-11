@@ -20,6 +20,7 @@ namespace PicView.Avalonia.Views.UC;
 public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
 {
     private bool _isInitialized;
+    private bool _isLoadedOnce;
     private DisposableBag _disposables;
     private ScaleTransform? _flipTransform;
     private bool _animatesNextFlip;
@@ -40,10 +41,6 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
 
     private void OnLoaded(object? sender, RoutedEventArgs e)
     {
-        AddHandler(PointerWheelChangedEvent, PreviewOnPointerWheelChanged, RoutingStrategies.Tunnel);
-        AddHandler(PointerTouchPadGestureMagnifyEvent, TouchMagnifyEvent, RoutingStrategies.Bubble);
-        AddHandler(PinchEvent, TouchMagnifyEvent, RoutingStrategies.Bubble);
-
         // A view handed over while this viewer was not shown, as when its tab's crop closes
         if (PendingZoomView is { } pending)
         {
@@ -51,8 +48,21 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
             ShowZoomView(pending);
         }
 
+        // The viewer is kept and loaded again each time it is shown after a crop or the menu, and its handlers
+        // and subscriptions last until it is disposed, so they are made on the first load only. Made on every
+        // load, one wheel step zoomed once more for each time the viewer had been shown again
+        if (_isLoadedOnce)
+        {
+            return;
+        }
+
+        _isLoadedOnce = true;
+        AddHandler(PointerWheelChangedEvent, PreviewOnPointerWheelChanged, RoutingStrategies.Tunnel);
+        AddHandler(PointerTouchPadGestureMagnifyEvent, TouchMagnifyEvent, RoutingStrategies.Bubble);
+        AddHandler(PinchEvent, TouchMagnifyEvent, RoutingStrategies.Bubble);
+
         Dispatcher.UIThread.Post(InitializeImageTransformer, DispatcherPriority.Background);
-        
+
         Dispatcher.UIThread.Post(InitializeMotionPhoto, DispatcherPriority.ApplicationIdle);
     }
 
