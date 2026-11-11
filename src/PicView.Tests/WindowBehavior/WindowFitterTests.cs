@@ -927,7 +927,7 @@ public class WindowFitterTests
         var fits = new List<Fitted>();
         using var listening = fitter.Fits.Subscribe(fits.Add);
 
-        tab.Crop = new CropViewModel(tab.Zoom);
+        tab.Crop = new CropViewModel(tab.Zoom, 2, 2);
         Dispatcher.UIThread.RunJobs();
 
         Assert.NotEmpty(fits);
@@ -947,7 +947,7 @@ public class WindowFitterTests
         tab.Gallery.Switcher.Start(docked: true);
         Dispatcher.UIThread.RunJobs();
         var heightWithGallery = vm.ImageHeight.Value;
-        tab.Crop = new CropViewModel(tab.Zoom);
+        tab.Crop = new CropViewModel(tab.Zoom, 2, 2);
         Dispatcher.UIThread.RunJobs();
         Assert.True(vm.ImageHeight.Value > heightWithGallery);
         var fits = new List<Fitted>();
@@ -970,7 +970,7 @@ public class WindowFitterTests
         tab.Model = Model("a.jpg", 1600, 1200);
         Assert.True(double.IsNaN(vm.ImageWidth.Value));
 
-        tab.Crop = new CropViewModel(tab.Zoom);
+        tab.Crop = new CropViewModel(tab.Zoom, 2, 2);
         Dispatcher.UIThread.RunJobs(DispatcherPriority.Normal);
 
         Assert.False(double.IsNaN(vm.ImageWidth.Value));

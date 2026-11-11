@@ -40,16 +40,9 @@ public class CropLayoutManager(CropControl control)
             ? DefaultSelectionSize
             : (uint)(imageHeight / 2);
         
-        tab.Crop.SetSelectionWidth(originalWidth);
-        tab.Crop.SetSelectionHeight(originalHeight);
-        
-        // // Calculate centered position
-        tab.Crop.SelectionX.Value = Convert.ToInt32((imageWidth - tab.Crop.SelectionWidth.CurrentValue) / 2);
-        tab.Crop.SelectionY.Value = Convert.ToInt32((imageHeight - tab.Crop.SelectionHeight.CurrentValue) / 2);
-        
-        // // Apply the calculated position to the MainRectangle
-        Canvas.SetLeft(control.MainRectangle, tab.Crop.SelectionX.CurrentValue);
-        Canvas.SetTop(control.MainRectangle, tab.Crop.SelectionY.CurrentValue);
+        // Centred in the image
+        tab.Crop.SetSelection((imageWidth - originalWidth) / 2, (imageHeight - originalHeight) / 2, originalWidth,
+            originalHeight);
 
         UpdateLayout();
     }
@@ -58,6 +51,12 @@ public class CropLayoutManager(CropControl control)
     {
         try
         {
+            if (control.DataContext is TabViewModel { Crop: { } crop })
+            {
+                Canvas.SetLeft(control.MainRectangle, crop.SelectionX.Value);
+                Canvas.SetTop(control.MainRectangle, crop.SelectionY.Value);
+            }
+
             UpdateButtonPositions();
             UpdateSurroundingRectangles();
         }
@@ -81,11 +80,11 @@ public class CropLayoutManager(CropControl control)
         
         var vm = tab.ParentWindowContext;
         
-        // Converting to int fixes black border
-        var left = Convert.ToInt32(Canvas.GetLeft(control.MainRectangle));
-        var top = Convert.ToInt32(Canvas.GetTop(control.MainRectangle));
-        var right = Convert.ToInt32(left + tab.Crop.SelectionWidth.CurrentValue);
-        var bottom = Convert.ToInt32(top + tab.Crop.SelectionHeight.CurrentValue);
+        // The selection sits on image pixels, which are fractions of a view unit once the image is fitted smaller
+        var left = tab.Crop.SelectionX.Value;
+        var top = tab.Crop.SelectionY.Value;
+        var right = left + tab.Crop.SelectionWidth.Value;
+        var bottom = top + tab.Crop.SelectionHeight.Value;
         
         // Calculate the positions and sizes for the surrounding rectangles
         // Top Rectangle (above MainRectangle)
@@ -101,14 +100,14 @@ public class CropLayoutManager(CropControl control)
         
         // Left Rectangle (left of MainRectangle)
         control.LeftRectangle.Width = left < 0 ? 0 : left;
-        control.LeftRectangle.Height = tab.Crop.SelectionHeight.CurrentValue;
+        control.LeftRectangle.Height = tab.Crop.SelectionHeight.Value;
         Canvas.SetLeft(control.LeftRectangle, 0);
         Canvas.SetTop(control.LeftRectangle, top);
         
         // Right Rectangle (right of MainRectangle)
         var newRightRectangleWidth = vm.ImageWidth.CurrentValue - right < 0 ? 0 : vm.ImageWidth.CurrentValue - right;
         control.RightRectangle.Width = newRightRectangleWidth;
-        control.RightRectangle.Height = tab.Crop.SelectionHeight.CurrentValue;
+        control.RightRectangle.Height = tab.Crop.SelectionHeight.Value;
         Canvas.SetLeft(control.RightRectangle, right);
         Canvas.SetTop(control.RightRectangle, top);
     }
@@ -125,10 +124,10 @@ public class CropLayoutManager(CropControl control)
             return;
         }
         
-        var selectionX = tab.Crop.SelectionX.CurrentValue;
-        var selectionY = tab.Crop.SelectionY.CurrentValue;
-        var selectionWidth = tab.Crop.SelectionWidth.CurrentValue;
-        var selectionHeight = tab.Crop.SelectionHeight.CurrentValue;
+        var selectionX = tab.Crop.SelectionX.Value;
+        var selectionY = tab.Crop.SelectionY.Value;
+        var selectionWidth = tab.Crop.SelectionWidth.Value;
+        var selectionHeight = tab.Crop.SelectionHeight.Value;
         
         // Get the bounds of the RootCanvas (the control container)
         const int rootCanvasLeft = 0;

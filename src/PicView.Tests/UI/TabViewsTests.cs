@@ -53,7 +53,7 @@ public class TabViewsTests
         {
             tab.Display(BitmapModel("a.jpg"));
             var viewer = ViewOf(tab);
-            tab.Crop = new CropViewModel(tab.Zoom);
+            tab.Crop = new CropViewModel(tab.Zoom, 2, 2);
             Assert.IsType<CropControl>(ViewOf(tab));
             tab.Crop = null;
             Assert.Same(viewer, ViewOf(tab));

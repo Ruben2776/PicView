@@ -32,7 +32,8 @@ public class CropService(TabViewModel tabViewModel, MainWindow mainWindow) : ICr
 
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
-            tabViewModel.Crop = new CropViewModel(tabViewModel.Zoom);
+            tabViewModel.Crop = new CropViewModel(tabViewModel.Zoom, tabViewModel.Model.PixelWidth,
+                tabViewModel.Model.PixelHeight);
         });
 
         IsCropping = true;
@@ -73,13 +74,14 @@ public class CropService(TabViewModel tabViewModel, MainWindow mainWindow) : ICr
             return null;
         }
 
-        var x = Convert.ToInt32(tabViewModel.Crop.SelectionX.CurrentValue / tabViewModel.Crop.AspectRatio);
-        var y = Convert.ToInt32(tabViewModel.Crop.SelectionY.CurrentValue / tabViewModel.Crop.AspectRatio);
-        var rect = new PixelRect(x, y, (int)tabViewModel.Crop.PixelSelectionWidth.CurrentValue, (int)tabViewModel.Crop.PixelSelectionHeight.CurrentValue);
-
-        var croppedBitmap = new CroppedBitmap(sourceBitmap, rect);
+        var croppedBitmap = new CroppedBitmap(sourceBitmap, SelectionOf(tabViewModel.Crop));
         return BitmapHelper.ConvertCroppedBitmapToBitmap(croppedBitmap);
     }
+
+    /// <summary>The crop's selection, which it holds in image pixels.</summary>
+    private static PixelRect SelectionOf(CropViewModel crop) =>
+        new(crop.PixelX.Value, crop.PixelY.Value, (int)crop.PixelSelectionWidth.Value,
+            (int)crop.PixelSelectionHeight.Value);
 
     public void CloseCropControl()
     {
@@ -137,12 +139,7 @@ public class CropService(TabViewModel tabViewModel, MainWindow mainWindow) : ICr
     private (string fileName, FileInfo fileInfo, Bitmap bitmap) CreateNewCroppedImage()
     {
         var fileName = $"{TranslationManager.Translation.Crop} {new Random().Next(9999)}.png";
-        var crop = tabViewModel.Crop!;
-        var x = Convert.ToInt32(crop.SelectionX.CurrentValue / crop.AspectRatio);
-        var y = Convert.ToInt32(crop.SelectionY.CurrentValue / crop.AspectRatio);
-        var width = (int)crop.PixelSelectionWidth.CurrentValue;
-        var height = (int)crop.PixelSelectionHeight.CurrentValue;
-        var croppedBitmap = new CroppedBitmap(tabViewModel.Image.CurrentValue as Bitmap, new PixelRect(x, y, width, height));
+        var croppedBitmap = new CroppedBitmap(tabViewModel.Image.CurrentValue as Bitmap, SelectionOf(tabViewModel.Crop!));
         var bitmap = BitmapHelper.ConvertCroppedBitmapToBitmap(croppedBitmap);
         return (fileName, new FileInfo(fileName), bitmap);
     }
@@ -166,11 +163,8 @@ public class CropService(TabViewModel tabViewModel, MainWindow mainWindow) : ICr
     private static async ValueTask<Bitmap> SaveWithMagickImage(CropViewModel crop, string saveFilePath, FileInfo fileInfo)
     {
         using var image = new MagickImage(fileInfo.FullName);
-        var x = Convert.ToInt32(crop.SelectionX.CurrentValue / crop.AspectRatio);
-        var y = Convert.ToInt32(crop.SelectionY.CurrentValue / crop.AspectRatio);
-        var width = crop.PixelSelectionWidth.CurrentValue;
-        var height = crop.PixelSelectionHeight.CurrentValue;
-        var geometry = new MagickGeometry(x, y, width, height);
+        var geometry = new MagickGeometry(crop.PixelX.Value, crop.PixelY.Value, crop.PixelSelectionWidth.Value,
+            crop.PixelSelectionHeight.Value);
 
         image.Crop(geometry);
         await image.WriteAsync(saveFilePath).ConfigureAwait(false);

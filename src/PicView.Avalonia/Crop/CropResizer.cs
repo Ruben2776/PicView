@@ -100,19 +100,13 @@ public static class CropResizer
         // Update the view model
         try
         {
-            cropViewModel.SelectionX.Value = Convert.ToInt32(newX);
-            cropViewModel.SelectionY.Value = Convert.ToInt32(newY);
-            cropViewModel.SetSelectionWidth(Convert.ToUInt32(newWidth));
-            cropViewModel.SetSelectionHeight(Convert.ToUInt32(newHeight));
+            // The layout manager places the rectangle from the selection
+            cropViewModel.SetSelection(newX, newY, newWidth, newHeight);
         }
         catch (Exception exception)
         {
             DebugHelper.LogDebug(nameof(CropResizer), nameof(Resize), exception);
         }
-    
-        // Update the rectangle position on canvas
-        Canvas.SetLeft(control.MainRectangle, newX);
-        Canvas.SetTop(control.MainRectangle, newY);
     }
     
     private static bool IsCornerMode(CropResizeMode mode) => mode is

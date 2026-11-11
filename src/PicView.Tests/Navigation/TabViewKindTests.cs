@@ -101,7 +101,7 @@ public class TabViewKindTests
     public void Crop_SetAndCleared_IsCropThenImageViewerAgain()
     {
         _tab.Display(Model("a.jpg"));
-        _tab.Crop = new CropViewModel(_tab.Zoom);
+        _tab.Crop = new CropViewModel(_tab.Zoom, 2, 2);
         Assert.Equal(TabViewKind.Crop, _tab.ViewKind.Value);
         _tab.Crop = null;
         Assert.Equal(TabViewKind.ImageViewer, _tab.ViewKind.Value);
@@ -148,7 +148,7 @@ public class TabViewKindTests
     public async Task CloseImageAsync_WhileCropping_StaysCrop()
     {
         _tab.Display(Model("a.jpg"));
-        _tab.Crop = new CropViewModel(_tab.Zoom);
+        _tab.Crop = new CropViewModel(_tab.Zoom, 2, 2);
         await _tab.CloseImageAsync();
         Assert.Equal(TabViewKind.Crop, _tab.ViewKind.Value);
         Assert.NotNull(_tab.FileInfo.Value);

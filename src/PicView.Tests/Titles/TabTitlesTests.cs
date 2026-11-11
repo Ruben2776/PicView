@@ -193,7 +193,7 @@ public class TabTitlesTests
         Browse("a.jpg");
         _tab.Display(Model("a.jpg"));
 
-        _tab.Crop = new CropViewModel(_tab.Zoom);
+        _tab.Crop = new CropViewModel(_tab.Zoom, 2, 2);
 
         Assert.Equal(CropMessage, _tab.Titles.Title);
         Assert.Equal(CropMessage, _tab.Titles.TitleTooltip);
@@ -210,7 +210,7 @@ public class TabTitlesTests
         Browse("a.jpg");
         var model = Model("a.jpg");
         _tab.Display(model);
-        _tab.Crop = new CropViewModel(_tab.Zoom);
+        _tab.Crop = new CropViewModel(_tab.Zoom, 2, 2);
 
         _tab.UpdateShownFile(model.FileInfo!.FullName, Model("b.jpg").FileInfo!);
 
@@ -347,7 +347,7 @@ public class TabTitlesTests
         _tab.Display(Model("a.jpg"));
         var ticket = _tab.SetLoading();
         _tab.EndLoading(ticket);
-        _tab.Crop = new CropViewModel(_tab.Zoom);
+        _tab.Crop = new CropViewModel(_tab.Zoom, 2, 2);
 
         _ = _tab.Titles.Title;
     }
