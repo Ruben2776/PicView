@@ -8,14 +8,17 @@ using PicView.Avalonia.Clipboard;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.FileSystem;
 using PicView.Avalonia.ImageHandling;
+using PicView.Avalonia.ImageTransformations;
 using PicView.Avalonia.WindowBehavior;
 using PicView.Core.DebugTools;
 using PicView.Core.Gallery;
+using PicView.Core.ImageTransformations;
 using PicView.Core.IPlatform;
 using PicView.Core.Localization;
 using PicView.Core.Preloading;
 using PicView.Core.ViewModels;
 using R3;
+using Orientation = PicView.Core.ImageTransformations.Orientation;
 
 namespace PicView.Avalonia.Crop;
 
@@ -33,7 +36,7 @@ public class CropService(TabViewModel tabViewModel, MainWindow mainWindow) : ICr
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
             tabViewModel.Crop = new CropViewModel(tabViewModel.Zoom, tabViewModel.Model.PixelWidth,
-                tabViewModel.Model.PixelHeight);
+                tabViewModel.Model.PixelHeight, tabViewModel.Orientation);
         });
 
         IsCropping = true;
@@ -74,14 +77,33 @@ public class CropService(TabViewModel tabViewModel, MainWindow mainWindow) : ICr
             return null;
         }
 
-        var croppedBitmap = new CroppedBitmap(sourceBitmap, SelectionOf(tabViewModel.Crop));
-        return BitmapHelper.ConvertCroppedBitmapToBitmap(croppedBitmap);
+        return RenderSelection(sourceBitmap, tabViewModel.Crop);
     }
 
-    /// <summary>The crop's selection, which it holds in image pixels.</summary>
-    private static PixelRect SelectionOf(CropViewModel crop) =>
-        new(crop.PixelX.Value, crop.PixelY.Value, (int)crop.PixelSelectionWidth.Value,
-            (int)crop.PixelSelectionHeight.Value);
+    /// <summary>
+    /// The crop's selection of <paramref name="source"/> as shown, with the crop's turn and flip in its pixels.
+    /// </summary>
+    internal static Bitmap RenderSelection(Bitmap source, CropViewModel crop)
+    {
+        var area = crop.SourceSelection;
+        var cut = BitmapHelper.ConvertCroppedBitmapToBitmap(
+            new CroppedBitmap(source, new PixelRect(area.X, area.Y, (int)area.Width, (int)area.Height)));
+        if (crop.Orientation == Orientation.Upright)
+        {
+            return cut;
+        }
+
+        // The turned copy is not disposed by callers, since pasting in PicView can show that same bitmap in a tab
+        var turned = OrientedBitmap.Render(cut, crop.Orientation);
+        cut.Dispose();
+        return turned;
+    }
+
+    /// <summary>
+    /// A crop saved over the tab's own file leaves the file upright, so keeping the tab's turn would turn it twice.
+    /// </summary>
+    internal static bool ShouldResetOrientation(string savedPath, FileInfo? tabFile) =>
+        tabFile is not null && string.Equals(tabFile.FullName, savedPath, StringComparison.Ordinal);
 
     public void CloseCropControl()
     {
@@ -116,10 +138,11 @@ public class CropService(TabViewModel tabViewModel, MainWindow mainWindow) : ICr
         }
         using var busy = tabViewModel.ClaimBusy();
         await SaveImage(fileName, fileInfo, bitmap).ConfigureAwait(false);
-        if (string.Equals(tabViewModel.FileInfo.Value.FullName, fileName, StringComparison.Ordinal))
+        if (ShouldResetOrientation(fileName, tabViewModel.FileInfo.Value))
         {
             var newModel = await GetImageModel.GetImageModelAsync(fileInfo).ConfigureAwait(false);
             tabViewModel.ImageIterator.Cache.Put(tabViewModel.Id, fileInfo, newModel);
+            await Dispatcher.UIThread.InvokeAsync(tabViewModel.Orientation.Reset);
             tabViewModel.Display(newModel, tabViewModel.SecondaryModel);
         }
         
@@ -139,8 +162,7 @@ public class CropService(TabViewModel tabViewModel, MainWindow mainWindow) : ICr
     private (string fileName, FileInfo fileInfo, Bitmap bitmap) CreateNewCroppedImage()
     {
         var fileName = $"{TranslationManager.Translation.Crop} {new Random().Next(9999)}.png";
-        var croppedBitmap = new CroppedBitmap(tabViewModel.Image.CurrentValue as Bitmap, SelectionOf(tabViewModel.Crop!));
-        var bitmap = BitmapHelper.ConvertCroppedBitmapToBitmap(croppedBitmap);
+        var bitmap = RenderSelection((Bitmap)tabViewModel.Image.CurrentValue!, tabViewModel.Crop!);
         return (fileName, new FileInfo(fileName), bitmap);
     }
 
@@ -163,10 +185,7 @@ public class CropService(TabViewModel tabViewModel, MainWindow mainWindow) : ICr
     private static async ValueTask<Bitmap> SaveWithMagickImage(CropViewModel crop, string saveFilePath, FileInfo fileInfo)
     {
         using var image = new MagickImage(fileInfo.FullName);
-        var geometry = new MagickGeometry(crop.PixelX.Value, crop.PixelY.Value, crop.PixelSelectionWidth.Value,
-            crop.PixelSelectionHeight.Value);
-
-        image.Crop(geometry);
+        CropRender.CutAndOrient(image, crop.SourceSelection, crop.Orientation);
         await image.WriteAsync(saveFilePath).ConfigureAwait(false);
         return image.ToWriteableBitmap();
     }

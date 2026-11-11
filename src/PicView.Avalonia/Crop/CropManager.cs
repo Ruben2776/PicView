@@ -1,6 +1,5 @@
 ﻿using PicView.Avalonia.CustomControls;
 using PicView.Core.ImageDecoding;
-using PicView.Core.ImageTransformations;
 using PicView.Core.ViewModels;
 
 namespace PicView.Avalonia.Crop;
@@ -38,27 +37,27 @@ public static class CropManager
         }
         var tab = vm.WindowTabs.ActiveTab.CurrentValue;
         
-        // Only allow cropping of bitmaps, not animated images or SVGs. TODO add support for cropping animated images
-        if (tab.ImageType.CurrentValue is not ImageType.Bitmap || Settings.ImageScaling.ShowImageSideBySide)
+        if (!CanCrop(tab.ImageType.CurrentValue, Settings.ImageScaling.ShowImageSideBySide))
         {
             tab.ShouldCropBeEnabled.Value = false;
             return false;
         }
-        
+
         if (vm.IsEditableTitlebarOpen.CurrentValue)
         {
             return false;
         }
-        
-        if (tab.Orientation.Current.CurrentValue == Orientation.Upright)
-        {
-            tab.ShouldCropBeEnabled.Value = true;
-            return true;
-        }
-        
-        tab.ShouldCropBeEnabled.Value = false;
-        return false;
+
+        tab.ShouldCropBeEnabled.Value = true;
+        return true;
     }
+
+    /// <summary>
+    /// Only still bitmaps can be cropped, not animated images or SVGs, and not two images side by side.
+    /// TODO add support for cropping animated images
+    /// </summary>
+    internal static bool CanCrop(ImageType? imageType, bool isSideBySide) =>
+        imageType is ImageType.Bitmap && !isSideBySide;
 
     /// <summary>
     /// Starts the cropping functionality by setting up the ImageCropperViewModel 
