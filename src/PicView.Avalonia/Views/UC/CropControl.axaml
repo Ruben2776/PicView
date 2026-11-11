@@ -5,10 +5,10 @@
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
     x:DataType="viewModels:TabViewModel"
-    Width="{CompiledBinding ParentWindowContext.ImageWidth.Value, Mode=OneWay}"
-    Height="{CompiledBinding ParentWindowContext.ImageHeight.Value, Mode=OneWay}"
+    Width="{CompiledBinding ParentWindowContext.ScrollViewerWidth.Value, Mode=OneWay}"
+    Height="{CompiledBinding ParentWindowContext.ScrollViewerHeight.Value, Mode=OneWay}"
     Margin="0"
-    ClipToBounds="False">
+    ClipToBounds="True">
     <UserControl.Resources>
         <SolidColorBrush x:Key="Brush0" Color="{DynamicResource MainTextColor}" />
     </UserControl.Resources>
@@ -61,103 +61,115 @@
             </customControls:StyledMenuItem>
         </ContextMenu>
     </UserControl.ContextMenu>
-    <Panel>
-        <!--  Image control to display the bitmap  -->
-        <customControls:PicBox
-            x:Name="ImageControl"
-            CurrentFileInfo="{Binding FileInfo.Value}"
-            ImageType="{Binding ImageType.Value}"
-            Source="{Binding Image.Value}" />
+    <!--  The crop zooms through its own control: Space and a drag pan, a plain drag moves or resizes the selection  -->
+    <customControls:ZoomPanControl x:Name="ZoomPanControl" Host="Crop">
+        <!--  As large as the view, so a zoomed image has the room the viewer gives it  -->
+        <Panel Width="{CompiledBinding ParentWindowContext.ScrollViewerWidth.Value, Mode=OneWay}" Height="{CompiledBinding ParentWindowContext.ScrollViewerHeight.Value, Mode=OneWay}">
+            <!--  The fitted image with the selection drawn over it  -->
+            <Panel
+                x:Name="CropSurface"
+                Width="{CompiledBinding ParentWindowContext.ImageWidth.Value, Mode=OneWay}"
+                Height="{CompiledBinding ParentWindowContext.ImageHeight.Value, Mode=OneWay}"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center">
+                <!--  Image control to display the bitmap  -->
+                <customControls:PicBox
+                    x:Name="ImageControl"
+                    CurrentFileInfo="{Binding FileInfo.Value}"
+                    ImageType="{Binding ImageType.Value}"
+                    Source="{Binding Image.Value}" />
 
-        <Canvas x:Name="RootCanvas" Background="Transparent">
+                <Canvas x:Name="RootCanvas" Background="Transparent">
 
-            <!--  Size Border  -->
-            <Border
-                x:Name="SizeBorder"
-                Padding="8,5"
-                Background="{DynamicResource PopUpBackgroundColor}"
-                BorderBrush="{DynamicResource PopUpMainBorderColor}"
-                BorderThickness="1"
-                CornerRadius="4"
-                IsHitTestVisible="False"
-                ZIndex="2">
-                <TextBlock
-                    Classes="txt"
-                    FontSize="14"
-                    Foreground="{DynamicResource MainTextColor}">
-                    <Run Text="{CompiledBinding ParentWindowContext.Translation.Width.Value, Mode=OneWay}" />
-                    <Run Text=": " />
-                    <Run Text="{CompiledBinding Crop.PixelSelectionWidth.Value, Mode=OneWay}" />
-                    <Run Text=" x " />
-                    <Run Text="{CompiledBinding ParentWindowContext.Translation.Height.Value, Mode=OneWay}" />
-                    <Run Text=": " />
-                    <Run Text="{CompiledBinding Crop.PixelSelectionHeight.Value, Mode=OneWay}" />
-                </TextBlock>
-            </Border>
+                    <!--  Size Border  -->
+                    <Border
+                        x:Name="SizeBorder"
+                        Padding="8,5"
+                        Background="{DynamicResource PopUpBackgroundColor}"
+                        BorderBrush="{DynamicResource PopUpMainBorderColor}"
+                        BorderThickness="1"
+                        CornerRadius="4"
+                        IsHitTestVisible="False"
+                        ZIndex="2">
+                        <TextBlock
+                            Classes="txt"
+                            FontSize="14"
+                            Foreground="{DynamicResource MainTextColor}">
+                            <Run Text="{CompiledBinding ParentWindowContext.Translation.Width.Value, Mode=OneWay}" />
+                            <Run Text=": " />
+                            <Run Text="{CompiledBinding Crop.PixelSelectionWidth.Value, Mode=OneWay}" />
+                            <Run Text=" x " />
+                            <Run Text="{CompiledBinding ParentWindowContext.Translation.Height.Value, Mode=OneWay}" />
+                            <Run Text=": " />
+                            <Run Text="{CompiledBinding Crop.PixelSelectionHeight.Value, Mode=OneWay}" />
+                        </TextBlock>
+                    </Border>
 
-            <!--  Main Rectangle  -->
-            <Border
-                x:Name="MainRectangle"
-                Width="{CompiledBinding Crop.SelectionWidth.Value}"
-                Height="{CompiledBinding Crop.SelectionHeight.Value}"
-                Background="Transparent"
-                BorderBrush="#fff"
-                BorderThickness="2"
-                Cursor="Hand" />
+                    <!--  Main Rectangle  -->
+                    <Border
+                        x:Name="MainRectangle"
+                        Width="{CompiledBinding Crop.SelectionWidth.Value}"
+                        Height="{CompiledBinding Crop.SelectionHeight.Value}"
+                        Background="Transparent"
+                        BorderBrush="#fff"
+                        BorderThickness="2"
+                        Cursor="Hand" />
 
-            <!--  Top Left  -->
-            <Border
-                x:Name="TopLeftButton"
-                Classes="x"
-                Cursor="TopLeftCorner" />
+                    <!--  Top Left  -->
+                    <Border
+                        x:Name="TopLeftButton"
+                        Classes="x"
+                        Cursor="TopLeftCorner" />
 
-            <!--  Top Right  -->
-            <Border
-                x:Name="TopRightButton"
-                Classes="x"
-                Cursor="TopRightCorner" />
+                    <!--  Top Right  -->
+                    <Border
+                        x:Name="TopRightButton"
+                        Classes="x"
+                        Cursor="TopRightCorner" />
 
-            <!--  Top Middle  -->
-            <Border
-                x:Name="TopMiddleButton"
-                Classes="x"
-                Cursor="SizeNorthSouth" />
+                    <!--  Top Middle  -->
+                    <Border
+                        x:Name="TopMiddleButton"
+                        Classes="x"
+                        Cursor="SizeNorthSouth" />
 
-            <!--  Bottom Right  -->
-            <Border
-                x:Name="BottomRightButton"
-                Classes="x"
-                Cursor="BottomRightCorner" />
+                    <!--  Bottom Right  -->
+                    <Border
+                        x:Name="BottomRightButton"
+                        Classes="x"
+                        Cursor="BottomRightCorner" />
 
-            <!--  Bottom Middle  -->
-            <Border
-                x:Name="BottomMiddleButton"
-                Classes="x"
-                Cursor="SizeNorthSouth" />
+                    <!--  Bottom Middle  -->
+                    <Border
+                        x:Name="BottomMiddleButton"
+                        Classes="x"
+                        Cursor="SizeNorthSouth" />
 
-            <!--  Bottom Left  -->
-            <Border
-                x:Name="BottomLeftButton"
-                Classes="x"
-                Cursor="BottomLeftCorner" />
+                    <!--  Bottom Left  -->
+                    <Border
+                        x:Name="BottomLeftButton"
+                        Classes="x"
+                        Cursor="BottomLeftCorner" />
 
-            <!--  Left Middle  -->
-            <Border
-                x:Name="LeftMiddleButton"
-                Classes="x"
-                Cursor="SizeWestEast" />
+                    <!--  Left Middle  -->
+                    <Border
+                        x:Name="LeftMiddleButton"
+                        Classes="x"
+                        Cursor="SizeWestEast" />
 
-            <!--  Right Middle  -->
-            <Border
-                x:Name="RightMiddleButton"
-                Classes="x"
-                Cursor="SizeWestEast" />
+                    <!--  Right Middle  -->
+                    <Border
+                        x:Name="RightMiddleButton"
+                        Classes="x"
+                        Cursor="SizeWestEast" />
 
-            <!--  Surrounding rectangles  -->
-            <Rectangle x:Name="TopRectangle" Fill="#80000000" />
-            <Rectangle x:Name="BottomRectangle" Fill="#80000000" />
-            <Rectangle x:Name="LeftRectangle" Fill="#80000000" />
-            <Rectangle x:Name="RightRectangle" Fill="#80000000" />
-        </Canvas>
-    </Panel>
+                    <!--  Surrounding rectangles  -->
+                    <Rectangle x:Name="TopRectangle" Fill="#80000000" />
+                    <Rectangle x:Name="BottomRectangle" Fill="#80000000" />
+                    <Rectangle x:Name="LeftRectangle" Fill="#80000000" />
+                    <Rectangle x:Name="RightRectangle" Fill="#80000000" />
+                </Canvas>
+            </Panel>
+        </Panel>
+    </customControls:ZoomPanControl>
 </UserControl>

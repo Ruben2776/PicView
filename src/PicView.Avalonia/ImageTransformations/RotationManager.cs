@@ -24,12 +24,16 @@ public static class RotationManager
     
     public static void ResetZoom(MainWindowViewModel vm)
     {
-        if (vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.Value is not ImageViewer imageViewer)
+        switch (vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.Value)
         {
-            return;
+            case ImageViewer imageViewer:
+                imageViewer.ResetZoom(Settings.Zoom.IsZoomAnimated);
+                break;
+            // The crop view zooms too (ADR-0027)
+            case CropControl cropControl:
+                cropControl.ResetZoom();
+                break;
         }
-        
-        imageViewer.ResetZoom(Settings.Zoom.IsZoomAnimated);
     }
 
     /// <param name="quarterTurns">Clockwise quarter turns from upright.</param>

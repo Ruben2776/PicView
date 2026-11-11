@@ -18,6 +18,7 @@ using PicView.Core.Sizing;
 using PicView.Core.ViewModels;
 using PicView.Tests.Navigation;
 using PicView.Tests.WindowBehavior;
+using static PicView.Tests.UI.TabViewsHarness;
 
 namespace PicView.Tests.UI;
 
@@ -149,14 +150,6 @@ public class TabViewsTests
             Assert.Equal(1, ClickHandlerCount(menu.OpenLastFileButton));
         });
 
-    // Loaded is raised by a layout pass, which the headless window runs when asked
-    private static void Settle(TestMainWindow window)
-    {
-        Dispatcher.UIThread.RunJobs();
-        window.UpdateLayout();
-        Dispatcher.UIThread.RunJobs();
-    }
-
     // Interactive keeps its routed event handlers in a dictionary keyed by event
     private static int ClickHandlerCount(Button button)
     {
@@ -182,85 +175,4 @@ public class TabViewsTests
             Dispatcher.UIThread.RunJobs();
             Assert.IsType<ImageViewer>(ViewOf(tab));
         });
-
-    private static object? ViewOf(TabViewModel tab) => tab.Views!.View.Value;
-
-    private static void WithWindow(Action<TestMainWindow, MainWindowViewModel, TabViewModel> test)
-        => WithWindowAsync((window, vm, tab) =>
-        {
-            test(window, vm, tab);
-            return Task.CompletedTask;
-        }).GetAwaiter().GetResult();
-
-    // The gallery view loads its XAML only when the application's DataContext is a CoreViewModel with its navigation
-    private static async Task WithWindowAsync(Func<TestMainWindow, MainWindowViewModel, TabViewModel, Task> test)
-    {
-        var core = new CoreViewModel(null, _ => ValueTask.FromResult(new ImageModel()));
-        core.InitializeNavigation(
-            TestTabServices.For(new SharedImageCache(static f => ValueTask.FromResult(new ImageModel { FileInfo = f })),
-                new MockThumbnailCache(), new MockThumbnailLoader()),
-            new NavigationService(string.CompareOrdinal));
-        var window = new TestMainWindow(new NoOpModeAdapter());
-        var vm = new MainWindowViewModel(core, core.Translation, core.GlobalSettings!, core.GallerySettings);
-        window.DataContext = vm;
-        vm.WindowTabs.SetViewFactory(new TabViews(window));
-        var tab = vm.WindowTabs.ActiveTab.CurrentValue;
-        tab.IsSelected = true;
-        var application = Application.Current!;
-        var previous = application.DataContext;
-        application.DataContext = core;
-        try
-        {
-            window.Show();
-            Dispatcher.UIThread.RunJobs();
-            await test(window, vm, tab);
-        }
-        finally
-        {
-            window.Close();
-            application.DataContext = previous;
-        }
-    }
-
-    private static ImageModel BitmapModel(string name) => new()
-    {
-        FileInfo = new FileInfo(name),
-        Image = new WriteableBitmap(new PixelSize(2, 2), new Vector(96, 96)),
-        PixelWidth = 2,
-        PixelHeight = 2,
-        ImageType = ImageType.Bitmap
-    };
-
-    private sealed class MockThumbnailLoader : IThumbnailLoader
-    {
-        public ValueTask<object?> GetThumbnailAsync(FileInfo file, uint size, CoreViewModel? core = null,
-            MagickImage? magick = null) => ValueTask.FromResult<object?>(null);
-
-        public object? GetExifThumbnail(FileInfo file) => null;
-        public object? GetThumbQuick(FileInfo file, CoreViewModel? core = null) => null;
-    }
-
-    private sealed class MockThumbnailCache : IThumbnailCache
-    {
-        public void Add(uint ownerId, string path, object thumbnail) { }
-
-        public bool TryGet(string path, out object? thumbnail)
-        {
-            thumbnail = null;
-            return false;
-        }
-
-        public void Remove(string path) { }
-        public void RemoveOwner(uint ownerId) { }
-        public bool IsEmpty => true;
-    }
-
-    private sealed class NoOpModeAdapter : IWindowModeAdapter
-    {
-        public bool SkipsInitialNativeState => false;
-
-        public void EnterNativeState(MainWindow window, WindowModeState state)
-        {
-        }
-    }
 }
