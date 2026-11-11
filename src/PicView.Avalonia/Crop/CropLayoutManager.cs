@@ -32,19 +32,29 @@ public class CropLayoutManager(CropControl control)
             return;
         }
 
-        // Set initial width and height for the crop rectangle
-        var originalWidth = imageWidth >= DefaultSelectionSize * 2
-            ? DefaultSelectionSize
-            : (uint)(imageWidth / 2);
-        var originalHeight = imageHeight >= DefaultSelectionSize * 2
-            ? DefaultSelectionSize
-            : (uint)(imageHeight / 2);
-        
-        // Centred in the image
-        tab.Crop.SetSelection((imageWidth - originalWidth) / 2, (imageHeight - originalHeight) / 2, originalWidth,
-            originalHeight);
+        // In the part of the image the view shows, which is all of it unless the crop opened zoomed in
+        var visible = control.VisibleSurfaceRect();
+        if (visible.Width <= 0 || visible.Height <= 0)
+        {
+            visible = new Rect(0, 0, imageWidth, imageHeight);
+        }
+
+        var selection = DefaultSelection(visible);
+        tab.Crop.SetSelection(selection.X, selection.Y, selection.Width, selection.Height);
 
         UpdateLayout();
+    }
+
+    /// <summary>
+    /// The selection a crop opens with: <see cref="DefaultSelectionSize"/> a side, or half of a side of
+    /// <paramref name="visible"/> too short to hold twice that, in the centre of <paramref name="visible"/>.
+    /// </summary>
+    internal static Rect DefaultSelection(Rect visible)
+    {
+        var width = visible.Width >= DefaultSelectionSize * 2 ? DefaultSelectionSize : visible.Width / 2;
+        var height = visible.Height >= DefaultSelectionSize * 2 ? DefaultSelectionSize : visible.Height / 2;
+        return new Rect(visible.X + (visible.Width - width) / 2, visible.Y + (visible.Height - height) / 2, width,
+            height);
     }
 
     public void UpdateLayout()

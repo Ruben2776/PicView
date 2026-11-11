@@ -2,6 +2,7 @@ using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Views.UC;
 using PicView.Core.IPlatform;
+using PicView.Core.Models;
 using PicView.Core.ViewModels;
 using R3;
 
@@ -25,6 +26,9 @@ public sealed class TabViews(MainWindow window) : ITabViewFactory
         private ImageViewer? _viewer;
         private StartUpMenu? _menu;
         private CropControl? _crop;
+
+        // The model the tab showed when its crop opened
+        private ImageModel? _croppedModel;
         private bool _disposed;
 
         public Set(MainWindow window, TabViewModel tab)
@@ -59,7 +63,7 @@ public sealed class TabViews(MainWindow window) : ITabViewFactory
             var kind = _tab.ViewKind.Value;
             if (kind != TabViewKind.Crop)
             {
-                _crop = null;
+                EndCrop();
             }
 
             switch (kind)
@@ -74,10 +78,39 @@ public sealed class TabViews(MainWindow window) : ITabViewFactory
                     _view.Value = _viewer;
                     break;
                 case TabViewKind.Crop:
-                    _crop ??= new CropControl { DataContext = _tab };
+                    if (_crop is null)
+                    {
+                        // The crop opens where the viewer looks (ADR-0027)
+                        _croppedModel = _tab.Model;
+                        _crop = new CropControl(_viewer?.GetZoomView() ?? ZoomView.Fit) { DataContext = _tab };
+                    }
+
                     _view.Value = _crop;
                     break;
             }
+        }
+
+        /// <summary>
+        /// Drops the crop control, handing its zoom back to the viewer when the tab still shows the image the crop
+        /// opened on. A crop saved over the shown file shows a new image, whose zoom is the viewer's own.
+        /// </summary>
+        private void EndCrop()
+        {
+            if (_crop is { } crop && _viewer is { } viewer)
+            {
+                if (ReferenceEquals(_tab.Model, _croppedModel))
+                {
+                    viewer.SetZoomView(crop.GetZoomView());
+                }
+                else
+                {
+                    // The crop wrote the tab's Zoom Factor while it was shown; the viewer writes it from here on
+                    _tab.Zoom.SetFactor(viewer.ZoomPanControl.Scale);
+                }
+            }
+
+            _crop = null;
+            _croppedModel = null;
         }
 
         public void Dispose()
@@ -88,6 +121,7 @@ public sealed class TabViews(MainWindow window) : ITabViewFactory
             _viewer = null;
             _menu = null;
             _crop = null;
+            _croppedModel = null;
             _view.Value = null;
         }
     }

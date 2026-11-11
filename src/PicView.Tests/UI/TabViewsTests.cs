@@ -61,6 +61,71 @@ public class TabViewsTests
         });
 
     [AvaloniaFact]
+    public void Crop_OpenedOnAZoomedViewer_StartsAtTheViewersScale()
+        => WithWindow((_, _, tab) =>
+        {
+            tab.Display(BitmapModel("a.jpg"));
+            var viewer = Assert.IsType<ImageViewer>(ViewOf(tab));
+            viewer.ZoomPanControl.SetScaleImmediate(2);
+
+            tab.Crop = new CropViewModel(tab.Zoom, 2, 2);
+
+            var crop = Assert.IsType<CropControl>(ViewOf(tab));
+            Assert.Equal(2, crop.PendingZoomView!.Value.Scale);
+        });
+
+    [AvaloniaFact]
+    public void Crop_Closed_HandsItsZoomBackToTheViewer()
+        => WithWindow((_, _, tab) =>
+        {
+            tab.Display(BitmapModel("a.jpg"));
+            var viewer = Assert.IsType<ImageViewer>(ViewOf(tab));
+            tab.Crop = new CropViewModel(tab.Zoom, 2, 2);
+            Assert.IsType<CropControl>(ViewOf(tab)).SetZoomView(new ZoomView(3, 0.25, 0.75));
+
+            tab.Crop = null;
+
+            Assert.Equal(new ZoomView(3, 0.25, 0.75), viewer.PendingZoomView);
+        });
+
+    [AvaloniaFact]
+    public void Crop_ClosedAfterTheImageChanged_HandsNothingBack()
+        => WithWindow((_, _, tab) =>
+        {
+            // A crop saved over the shown file displays the new image before the crop closes. With the reset on
+            // image change off, nothing else brings the tab's Zoom Factor back to the viewer's scale
+            Settings.Zoom.ResetZoomOnChange = false;
+            tab.Display(BitmapModel("a.jpg"));
+            var viewer = Assert.IsType<ImageViewer>(ViewOf(tab));
+            tab.Crop = new CropViewModel(tab.Zoom, 2, 2);
+            var crop = Assert.IsType<CropControl>(ViewOf(tab));
+            crop.SetZoomView(new ZoomView(3, 0.5, 0.5));
+            crop.ZoomPanControl.SetScaleImmediate(3);
+            Assert.Equal(3, tab.Zoom.Factor);
+
+            tab.Display(BitmapModel("b.jpg"));
+            tab.Crop = null;
+
+            Assert.Null(viewer.PendingZoomView);
+            Assert.Equal(viewer.ZoomPanControl.Scale, tab.Zoom.Factor);
+        });
+
+    [AvaloniaFact]
+    public void CloseTab_WhileCropping_DoesNotThrow()
+        => WithWindow((_, vm, _) =>
+        {
+            var tab = vm.WindowTabs.CreateTab();
+            tab.Display(BitmapModel("a.jpg"));
+            tab.Crop = new CropViewModel(tab.Zoom, 2, 2);
+            Assert.IsType<CropControl>(tab.Views!.View.Value);
+
+            vm.WindowTabs.CloseTab(tab);
+            Dispatcher.UIThread.RunJobs();
+
+            Assert.Null(tab.Views);
+        });
+
+    [AvaloniaFact]
     public void EndLoading_OnAFreshTab_ShowsTheKeptMenuAgain()
         => WithWindow((_, _, tab) =>
         {

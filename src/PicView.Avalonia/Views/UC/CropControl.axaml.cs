@@ -31,8 +31,14 @@ public partial class CropControl : UserControl, IZoomScrollTarget
     private IDisposable? _imageHeightSubscription;
     private bool _isLoadedOnce;
 
-    public CropControl()
+    public CropControl() : this(ZoomView.Fit)
     {
+    }
+
+    /// <param name="start">The view the crop opens at, taken from the tab's viewer.</param>
+    public CropControl(ZoomView start)
+    {
+        PendingZoomView = start;
         InitializeComponent();
         if (OperatingSystem.IsMacOS())
         {
@@ -73,6 +79,13 @@ public partial class CropControl : UserControl, IZoomScrollTarget
 
     private void OnControlLoaded(object? sender, RoutedEventArgs e)
     {
+        // The view comes first, since the default selection is placed in the part of the image it shows
+        if (PendingZoomView is { } pending)
+        {
+            PendingZoomView = null;
+            ShowZoomView(pending);
+        }
+
         if (!_isLoadedOnce)
         {
             _isLoadedOnce = true;
@@ -241,6 +254,54 @@ public partial class CropControl : UserControl, IZoomScrollTarget
 
     /// <inheritdoc cref="CustomControls.ZoomPanControl.ResetZoom(bool)"/>
     public void ResetZoom() => ZoomPanControl.ResetZoom(false);
+
+    /// <summary>A view taken before this crop is laid out, which it shows when it is loaded.</summary>
+    internal ZoomView? PendingZoomView { get; private set; }
+
+    /// <summary>
+    /// How far this crop is zoomed and where it looks, to hand back to the tab's viewer (ADR-0027).
+    /// </summary>
+    public ZoomView GetZoomView() =>
+        PendingZoomView ?? ZoomView.From(ZoomPanControl.Scale, ZoomPanControl.ViewCentre, SurfaceRect());
+
+    /// <summary>
+    /// Shows <paramref name="view"/>, at once when this crop is shown, else when it is loaded.
+    /// </summary>
+    public void SetZoomView(ZoomView view)
+    {
+        if (IsLoaded)
+        {
+            ShowZoomView(view);
+            return;
+        }
+
+        PendingZoomView = view;
+    }
+
+    private void ShowZoomView(ZoomView view) =>
+        ZoomPanControl.SetView(view.Scale, view.ToChildCentre(SurfaceRect()));
+
+    // Where the crop surface, the fitted image, lies in the zoom control's child, or nothing before the first layout
+    private Rect SurfaceRect() =>
+        ZoomPanControl.Child is { } child && CropSurface.TranslatePoint(default, child) is { } origin
+            ? new Rect(origin, CropSurface.Bounds.Size)
+            : default;
+
+    /// <summary>
+    /// The part of the crop surface the view shows, in the surface's own units: all of it when not zoomed in.
+    /// </summary>
+    internal Rect VisibleSurfaceRect()
+    {
+        var surface = SurfaceRect();
+        var whole = new Rect(surface.Size);
+        if (surface.Width <= 0 || surface.Height <= 0)
+        {
+            return whole;
+        }
+
+        var visible = ZoomPanControl.VisibleChildRect.Translate(new Vector(-surface.X, -surface.Y)).Intersect(whole);
+        return visible.Width > 0 && visible.Height > 0 ? visible : whole;
+    }
 
     private void TouchMagnifyEvent(object? sender, PointerDeltaEventArgs e) =>
         ZoomPanControl.ZoomWithPointerWheelCore(e.Delta.Y > 0, e.GetPosition(ZoomPanControl));

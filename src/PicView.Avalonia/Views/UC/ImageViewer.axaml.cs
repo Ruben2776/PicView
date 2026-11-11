@@ -43,7 +43,14 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
         AddHandler(PointerWheelChangedEvent, PreviewOnPointerWheelChanged, RoutingStrategies.Tunnel);
         AddHandler(PointerTouchPadGestureMagnifyEvent, TouchMagnifyEvent, RoutingStrategies.Bubble);
         AddHandler(PinchEvent, TouchMagnifyEvent, RoutingStrategies.Bubble);
-        
+
+        // A view handed over while this viewer was not shown, as when its tab's crop closes
+        if (PendingZoomView is { } pending)
+        {
+            PendingZoomView = null;
+            ShowZoomView(pending);
+        }
+
         Dispatcher.UIThread.Post(InitializeImageTransformer, DispatcherPriority.Background);
         
         Dispatcher.UIThread.Post(InitializeMotionPhoto, DispatcherPriority.ApplicationIdle);
@@ -376,6 +383,38 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
             ? new Thickness(0, 0, 25, HoverBar.Bounds.Height / 2 + 25)
             : new Thickness(0, 0, 25, 25);
     }
+
+    /// <summary>A view taken while this viewer is not shown, which it shows when it is loaded again.</summary>
+    internal ZoomView? PendingZoomView { get; private set; }
+
+    /// <summary>
+    /// How far this viewer is zoomed and where it looks, to hand to the tab's crop (ADR-0027).
+    /// </summary>
+    public ZoomView GetZoomView() =>
+        PendingZoomView ?? ZoomView.From(ZoomPanControl.Scale, ZoomPanControl.ViewCentre, ImageRect());
+
+    /// <summary>
+    /// Shows <paramref name="view"/>, at once when this viewer is shown, else when it is loaded again.
+    /// </summary>
+    public void SetZoomView(ZoomView view)
+    {
+        if (IsLoaded)
+        {
+            ShowZoomView(view);
+            return;
+        }
+
+        PendingZoomView = view;
+    }
+
+    private void ShowZoomView(ZoomView view) =>
+        ZoomPanControl.SetView(view.Scale, view.ToChildCentre(ImageRect()));
+
+    // Where the fitted image lies in the zoom control's child, or nothing before the first layout
+    private Rect ImageRect() =>
+        ZoomPanControl.Child is { } child && MainBorder.TranslatePoint(default, child) is { } origin
+            ? new Rect(origin, MainBorder.Bounds.Size)
+            : default;
 
     /// <inheritdoc cref="ZoomPanControl.ZoomIn"/>
     public void ZoomIn() =>
