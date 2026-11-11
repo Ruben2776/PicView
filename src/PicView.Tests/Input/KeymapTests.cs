@@ -191,6 +191,18 @@ public class KeymapTests
         Assert.Equal(KeymapResolution.Action("Crop"), keymap.Resolve(new Keybind(Key.C), InputMode.Normal));
     }
 
+    [Theory]
+    [InlineData(InputMode.Crop, true)]
+    [InlineData(InputMode.Dialog, true)]
+    [InlineData(InputMode.Renaming, false)]
+    public void Resolve_WindowActionInBlockingMode_RunsInCropAndDialogOnly(InputMode mode, bool runs)
+    {
+        var keymap = Keymap.FromJson(null, Defaults).Assign(new Keybind(Key.F1), "SettingsWindow");
+
+        Assert.Equal(runs ? KeymapResolution.Action("SettingsWindow") : KeymapResolution.None,
+            keymap.Resolve(new Keybind(Key.F1), mode));
+    }
+
     private const string DefaultsWithMouse = """
                                              {
                                                "Right": "Next",
