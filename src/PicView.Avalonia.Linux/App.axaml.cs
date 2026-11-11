@@ -1,6 +1,5 @@
 using Avalonia;
 using Avalonia.Markup.Xaml;
-using Avalonia.Controls.ApplicationLifetimes;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.Linux.WindowImpl;
 using PicView.Avalonia.StartUp;
@@ -100,26 +99,6 @@ public class App : Application, IPlatformSpecificService
     {
         return false;
         // return LockscreenHelper.SetLockScreenImage(path);
-    }
-
-    public bool CopyFile(string path)
-    {
-        throw new NotImplementedException();
-    }
-
-    public bool CutFile(string path)
-    {
-        throw new NotImplementedException();
-    }
-
-    public async Task CopyImageToClipboard(object bitmap)
-    {
-        throw new NotImplementedException();
-    }
-
-    public async Task<object?> GetImageFromClipboard()
-    {
-        return false;
     }
 
     public async Task<bool> ExtractWithLocalSoftwareAsync(string path, string tempDirectory)
