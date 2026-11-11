@@ -2,6 +2,7 @@
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Layout;
 using Avalonia.Media;
 using PicView.Avalonia.Crop;
 using PicView.Avalonia.CustomControls;
@@ -28,10 +29,7 @@ public partial class CropControl : UserControl, IZoomScrollTarget
 
     // What is drawn over the image at a fixed size on screen, each with the transform that undoes the zoom
     private readonly ScaleTransform[] _constantSize;
-    private IDisposable? _imageWidthSubscription;
-    private IDisposable? _imageHeightSubscription;
-    private IDisposable? _viewWidthSubscription;
-    private IDisposable? _viewHeightSubscription;
+    private DisposableBag _disposables;
     private bool _isLoadedOnce;
 
     /// <param name="start">The view the crop opens at, taken from the tab's viewer.</param>
@@ -102,14 +100,15 @@ public partial class CropControl : UserControl, IZoomScrollTarget
 
         // The Fit Scale changes with the fitted size, as when the window is resized: the selection stays on its pixels
         var window = tab.ParentWindowContext;
-        _imageWidthSubscription = window.ImageWidth.Subscribe(_ => Refit(),
+        window.ImageWidth.Subscribe(_ => Refit(),
             DebugHelper.LogError(nameof(CropControl), nameof(Refit)));
-        _imageHeightSubscription = window.ImageHeight.Subscribe(_ => Refit(),
+        window.ImageHeight.Subscribe(_ => Refit(),
             DebugHelper.LogError(nameof(CropControl), nameof(Refit)));
-        _viewWidthSubscription = window.ScrollViewerWidth.Subscribe(_ => SizeViewPanel(window),
+        window.ScrollViewerWidth.Subscribe(_ => SizeViewPanel(window),
             DebugHelper.LogError(nameof(CropControl), nameof(SizeViewPanel)));
-        _viewHeightSubscription = window.ScrollViewerHeight.Subscribe(_ => SizeViewPanel(window),
-            DebugHelper.LogError(nameof(CropControl), nameof(SizeViewPanel)));
+       window.ScrollViewerHeight.Subscribe(_ => SizeViewPanel(window),
+            DebugHelper.LogError(nameof(CropControl), nameof(SizeViewPanel)))
+           .AddTo(ref _disposables);
     }
 
     private static double AtLeast(double view, double image) => double.IsNaN(image) ? view : Math.Max(view, image);
@@ -140,24 +139,13 @@ public partial class CropControl : UserControl, IZoomScrollTarget
         // A minimum holds when the panel is arranged, where a size it merely asks for is cut to the room there is
         ViewPanel.MinWidth = isWidthKnown ? AtLeast(width, window.ImageWidth.CurrentValue) : 0;
         ViewPanel.MinHeight = isHeightKnown ? AtLeast(height, window.ImageHeight.CurrentValue) : 0;
-        ViewPanel.HorizontalAlignment = isWidthKnown
-            ? global::Avalonia.Layout.HorizontalAlignment.Left
-            : global::Avalonia.Layout.HorizontalAlignment.Stretch;
-        ViewPanel.VerticalAlignment = isHeightKnown
-            ? global::Avalonia.Layout.VerticalAlignment.Top
-            : global::Avalonia.Layout.VerticalAlignment.Stretch;
+        ViewPanel.HorizontalAlignment = isWidthKnown ? HorizontalAlignment.Left : HorizontalAlignment.Stretch;
+        ViewPanel.VerticalAlignment = isHeightKnown ? VerticalAlignment.Top : VerticalAlignment.Stretch;
     }
 
     private void OnControlUnloaded(object? sender, RoutedEventArgs e)
     {
-        _imageWidthSubscription?.Dispose();
-        _imageWidthSubscription = null;
-        _imageHeightSubscription?.Dispose();
-        _imageHeightSubscription = null;
-        _viewWidthSubscription?.Dispose();
-        _viewWidthSubscription = null;
-        _viewHeightSubscription?.Dispose();
-        _viewHeightSubscription = null;
+        _disposables.Dispose();
     }
 
     /// <summary>Places the selection's rectangle, its handles and the dimming from the crop's selection.</summary>
@@ -257,7 +245,7 @@ public partial class CropControl : UserControl, IZoomScrollTarget
         {
             control.Key.PointerPressed += (_, e) => _resizeHandler.OnResizeStart(e);
             control.Key.PointerMoved += (s, e) => _resizeHandler.OnResizeMove(s, e, control.Value);
-            control.Key.PointerMoved += (s, e) => _layoutManager.UpdateLayout();
+            control.Key.PointerMoved += (_, _) => _layoutManager.UpdateLayout();
             control.Key.PointerReleased += _resizeHandler.OnResizeEnd;
         }
     }
@@ -270,7 +258,7 @@ public partial class CropControl : UserControl, IZoomScrollTarget
     /// </summary>
     private void OnScaleChanged(double scale)
     {
-        if (scale <= 0 || double.IsNaN(scale))
+        if (scale is <= 0 or double.NaN)
         {
             return;
         }
@@ -332,11 +320,13 @@ public partial class CropControl : UserControl, IZoomScrollTarget
     private void OnSpaceHeldChanged(bool held)
     {
         RootCanvas.IsHitTestVisible = !held;
-        if (held)
+        if (!held)
         {
-            _dragHandler.Reset();
-            _resizeHandler.Reset();
+            return;
         }
+
+        _dragHandler.Reset();
+        _resizeHandler.Reset();
     }
 
     /// <inheritdoc cref="CustomControls.Zoom.ZoomPanControl.ResetZoom(bool)"/>
@@ -366,7 +356,7 @@ public partial class CropControl : UserControl, IZoomScrollTarget
     }
 
     private void ShowZoomView(ZoomView view) =>
-        ZoomPanControl.SetView(view.Scale, view.ToChildCenter(SurfaceRect()));
+        ZoomPanControl.ShowChildAt(view.Scale, view.ToChildCenter(SurfaceRect()));
 
     // Where the crop surface, the fitted image, lies in the zoom control's child, or nothing before the first layout
     private Rect SurfaceRect() =>
@@ -399,7 +389,7 @@ public partial class CropControl : UserControl, IZoomScrollTarget
         }
 
         var visible = ZoomPanControl.VisibleChildRect.Translate(new Vector(-surface.X, -surface.Y)).Intersect(whole);
-        return visible.Width > 0 && visible.Height > 0 ? visible : whole;
+        return visible is { Width: > 0, Height: > 0 } ? visible : whole;
     }
 
     private void TouchMagnifyEvent(object? sender, PointerDeltaEventArgs e) =>
@@ -425,17 +415,11 @@ public partial class CropControl : UserControl, IZoomScrollTarget
 
     bool IZoomScrollTarget.IsImageTallerThanViewer => false;
 
-    void IZoomScrollTarget.ScrollLine(bool down)
-    {
-    }
+    void IZoomScrollTarget.ScrollLine(bool down) { }
 
-    void IZoomScrollTarget.ScrollToHome()
-    {
-    }
+    void IZoomScrollTarget.ScrollToHome() { }
 
-    void IZoomScrollTarget.ScrollToEnd()
-    {
-    }
+    void IZoomScrollTarget.ScrollToEnd() { }
 
     void IZoomScrollTarget.ZoomIn() => ZoomPanControl.ZoomIn();
 

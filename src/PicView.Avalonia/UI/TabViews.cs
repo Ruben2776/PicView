@@ -20,7 +20,6 @@ public sealed class TabViews(MainWindow window) : ITabViewFactory
 
     private sealed class Set : ITabViews
     {
-        private readonly MainWindow _window;
         private readonly TabViewModel _tab;
         private readonly BindableReactiveProperty<object?> _view = new();
         private readonly IDisposable _following;
@@ -34,7 +33,6 @@ public sealed class TabViews(MainWindow window) : ITabViewFactory
 
         public Set(MainWindow window, TabViewModel tab)
         {
-            _window = window;
             _tab = tab;
             _following = tab.ViewKind.AsObservable().Subscribe(_ => Show());
         }

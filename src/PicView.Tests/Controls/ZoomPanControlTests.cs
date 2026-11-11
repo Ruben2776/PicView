@@ -157,7 +157,7 @@ public class ZoomPanControlTests
     public void SetView_ThenViewCentre_RoundTrips()
         => Hosted(ZoomPanHost.Crop, (_, control, _) =>
         {
-            control.SetView(2, new Point(100, 75));
+            control.ShowChildAt(2, new Point(100, 75));
 
             Assert.Equal(2, control.Scale);
             Assert.Equal(new Point(100, 75), control.ViewCentre);

@@ -227,12 +227,14 @@ public class ZoomPanControl : Decorator
 
     protected override Size ArrangeOverride(Size finalSize)
     {
-        if (_isPanning)
+        if (!_isPanning)
         {
-            // After layout, ensure transforms are constrained
-            ConstrainTranslationToBounds();
-            UpdateChildTransform();
+            return base.ArrangeOverride(finalSize);
         }
+
+        // After layout, ensure transforms are constrained
+        ConstrainTranslationToBounds();
+        UpdateChildTransform();
 
         return base.ArrangeOverride(finalSize);
     }
@@ -358,12 +360,12 @@ public class ZoomPanControl : Decorator
         new(-TranslateX / Scale, -TranslateY / Scale, Bounds.Width / Scale, Bounds.Height / Scale);
 
     /// <summary>
-    /// Shows the child at <paramref name="scale"/> with <paramref name="centre"/>, a child-space point, at the
-    /// centre of the control as far as the bounds allow, without animation. Takes a view from another control.
+    /// Shows the child at <paramref name="scale"/> with <paramref name="center"/>, a child-space point, at the
+    /// center of the control as far as the bounds allow, without animation. Takes a view from another control.
     /// </summary>
-    public void SetView(double scale, Point centre)
+    public void ShowChildAt(double scale, Point center)
     {
-        if (Child == null || double.IsNaN(scale) || double.IsInfinity(scale) || scale <= 0)
+        if (Child is null || double.IsNaN(scale) || double.IsInfinity(scale) || scale <= 0)
         {
             return;
         }
@@ -371,8 +373,8 @@ public class ZoomPanControl : Decorator
         SetTransitions(false);
         SetScale(scale);
         var middle = CenterPoint();
-        TranslateX = middle.X - scale * centre.X;
-        TranslateY = middle.Y - scale * centre.Y;
+        TranslateX = middle.X - scale * center.X;
+        TranslateY = middle.Y - scale * center.Y;
         ConstrainTranslationToBounds();
         UpdateChildTransform();
     }
@@ -757,7 +759,7 @@ public class ZoomPanControl : Decorator
 
     private void UpdatePreviewWindow()
     {
-        if (ZoomPreviewer == null)
+        if (ZoomPreviewer is null)
         {
             return;
         }

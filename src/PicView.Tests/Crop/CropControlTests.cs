@@ -143,7 +143,7 @@ public class CropControlTests
             crop.UpdateSelectionLayout();
 
             // Four times zoom about a point near the bottom right shows 100 by 75 of the image, from 300, 212.5
-            crop.ZoomPanControl.SetView(4, new Point(350, 250));
+            crop.ZoomPanControl.ShowChildAt(4, new Point(350, 250));
 
             Assert.Equal(new Rect(300, 212.5, 100, 75), crop.VisibleSurfaceRect());
             Assert.Equal(300, tab.Crop.SelectionX.Value);
@@ -160,7 +160,7 @@ public class CropControlTests
             // The view shows 100 by 75 of the image from 300, 212.5, and the selection touches its top
             tab.Crop!.SetSelection(320, 213, 40, 30);
 
-            crop.ZoomPanControl.SetView(4, new Point(350, 250));
+            crop.ZoomPanControl.ShowChildAt(4, new Point(350, 250));
 
             // The label is drawn at a quarter of its box, from the box's bottom left
             var label = crop.SizeBorder.Bounds.Size;
@@ -179,7 +179,7 @@ public class CropControlTests
             // Wider than the view shows: its left edge is out of view while its top, bottom and right edges are in
             tab.Crop!.SetSelection(10, 230, 380, 30);
 
-            crop.ZoomPanControl.SetView(4, new Point(350, 250));
+            crop.ZoomPanControl.ShowChildAt(4, new Point(350, 250));
 
             Assert.False(crop.LeftMiddleButton.IsVisible);
             Assert.True(crop.RightMiddleButton.IsVisible);
@@ -188,7 +188,7 @@ public class CropControlTests
             Assert.True(crop.TopMiddleButton.IsVisible);
             Assert.True(crop.BottomMiddleButton.IsVisible);
 
-            crop.ZoomPanControl.SetView(1, new Point(200, 150));
+            crop.ZoomPanControl.ShowChildAt(1, new Point(200, 150));
 
             Assert.True(crop.LeftMiddleButton.IsVisible);
             Assert.True(crop.TopLeftButton.IsVisible);
@@ -215,10 +215,10 @@ public class CropControlTests
         => WithLaidOutCrop((_, crop) =>
         {
             // With scrolling on, an image is fitted taller than the view
-            crop.ZoomPanControl.SetView(2, new Point(200, 0));
+            crop.ZoomPanControl.ShowChildAt(2, new Point(200, 0));
             Assert.Equal(0, crop.VisibleSurfaceRect().Y);
 
-            crop.ZoomPanControl.SetView(2, new Point(200, 600));
+            crop.ZoomPanControl.ShowChildAt(2, new Point(200, 600));
             Assert.Equal(600, crop.VisibleSurfaceRect().Bottom);
         }, imageHeight: 600);
 
@@ -228,7 +228,7 @@ public class CropControlTests
         {
             tab.Crop!.SetSelection(320, 230, 40, 30);
 
-            crop.ZoomPanControl.SetView(4, new Point(350, 250));
+            crop.ZoomPanControl.ShowChildAt(4, new Point(350, 250));
 
             Assert.Equal(320, tab.Crop.SelectionX.Value);
             Assert.Equal(230, tab.Crop.SelectionY.Value);
@@ -240,7 +240,7 @@ public class CropControlTests
         {
             tab.Crop!.SetSelection(10, 10, 300, 200);
 
-            crop.ZoomPanControl.SetView(4, new Point(350, 250));
+            crop.ZoomPanControl.ShowChildAt(4, new Point(350, 250));
 
             Assert.Equal(10, tab.Crop.SelectionX.Value);
             Assert.Equal(10, tab.Crop.SelectionY.Value);

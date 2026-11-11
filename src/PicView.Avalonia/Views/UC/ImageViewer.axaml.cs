@@ -419,7 +419,7 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
     }
 
     private void ShowZoomView(ZoomView view) =>
-        ZoomPanControl.SetView(view.Scale, view.ToChildCenter(ImageRect()));
+        ZoomPanControl.ShowChildAt(view.Scale, view.ToChildCenter(ImageRect()));
 
     // Where the fitted image lies in the zoom control's child, or nothing before the first layout
     private Rect ImageRect() =>
