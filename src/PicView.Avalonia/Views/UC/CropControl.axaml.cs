@@ -369,7 +369,7 @@ public partial class CropControl : UserControl, IZoomScrollTarget
     }
 
     private void ShowZoomView(ZoomView view) =>
-        ZoomPanControl.SetView(view.Scale, view.ToChildCentre(SurfaceRect()));
+        ZoomPanControl.SetView(view.Scale, view.ToChildCenter(SurfaceRect()));
 
     // Where the crop surface, the fitted image, lies in the zoom control's child, or nothing before the first layout
     private Rect SurfaceRect() =>

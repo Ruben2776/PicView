@@ -31,6 +31,6 @@ public readonly record struct ZoomView(double Scale, double CentreX, double Cent
     /// <summary>
     /// The child-space point this view looks at when the image lies at <paramref name="imageRect"/>.
     /// </summary>
-    public Point ToChildCentre(Rect imageRect) =>
+    public Point ToChildCenter(Rect imageRect) =>
         new(imageRect.X + CentreX * imageRect.Width, imageRect.Y + CentreY * imageRect.Height);
 }

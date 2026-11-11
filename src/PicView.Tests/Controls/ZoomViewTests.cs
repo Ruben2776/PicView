@@ -16,11 +16,11 @@ public class ZoomViewTests
 
     [Fact]
     public void ToChildCentre_InASmallerImageRect_KeepsTheFraction()
-        => Assert.Equal(new Point(50, 100), new ZoomView(2, 0.25, 0.5).ToChildCentre(new Rect(0, 0, 200, 200)));
+        => Assert.Equal(new Point(50, 100), new ZoomView(2, 0.25, 0.5).ToChildCenter(new Rect(0, 0, 200, 200)));
 
     [Fact]
     public void ToChildCentre_InAnOffsetImageRect_AddsTheOffset()
-        => Assert.Equal(new Point(110, 120), new ZoomView(2, 0.25, 0.5).ToChildCentre(new Rect(60, 20, 200, 200)));
+        => Assert.Equal(new Point(110, 120), new ZoomView(2, 0.25, 0.5).ToChildCenter(new Rect(60, 20, 200, 200)));
 
     [Fact]
     public void From_AnEmptyImageRect_IsTheCentre()
