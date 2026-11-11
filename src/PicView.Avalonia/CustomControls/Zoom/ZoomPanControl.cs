@@ -215,8 +215,9 @@ public class ZoomPanControl : Decorator
             AddInputHandlers();
         }
 
-        // Show preview window when attached
-        if (ZoomPreviewer is not { IsVisible: false })
+        // Show preview window when attached, which is for a zoomed view only: a view shown again unzoomed, as
+        // after a crop, has nothing to preview
+        if (ZoomPreviewer is not { IsVisible: false } || Scale <= 1)
         {
             return;
         }

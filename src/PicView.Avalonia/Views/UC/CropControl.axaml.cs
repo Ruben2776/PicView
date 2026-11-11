@@ -325,12 +325,6 @@ public partial class CropControl : UserControl, IZoomScrollTarget
     internal ZoomView? PendingZoomView { get; private set; }
 
     /// <summary>
-    /// How far this crop is zoomed and where it looks, to hand back to the tab's viewer (ADR-0027).
-    /// </summary>
-    public ZoomView GetZoomView() =>
-        PendingZoomView ?? ZoomView.From(ZoomPanControl.Scale, ZoomPanControl.ViewCenter, SurfaceRect());
-
-    /// <summary>
     /// Shows <paramref name="view"/>, at once when this crop is shown, else when it is loaded.
     /// </summary>
     public void SetZoomView(ZoomView view)

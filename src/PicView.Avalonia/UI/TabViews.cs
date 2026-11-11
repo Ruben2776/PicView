@@ -90,29 +90,22 @@ public sealed class TabViews(MainWindow window) : ITabViewFactory
         }
 
         /// <summary>
-        /// Drops the crop control, handing its zoom back to the viewer when the tab still shows the image the crop
-        /// opened on. A crop saved over the shown file shows a new image, whose zoom is the viewer's own.
+        /// Drops the crop control. The crop's zoom is its own: the viewer comes back as it was left (ADR-0027),
+        /// or unzoomed when a crop saved over the shown file shows a new image.
         /// </summary>
         private void EndCrop()
         {
-            if (_crop is { } crop && _viewer is { } viewer)
+            if (_crop is not null && _viewer is { } viewer)
             {
-                if (ReferenceEquals(_tab.Model, _croppedModel))
+                // The viewer was not shown when the new image was, so the reset that follows a new image's fit
+                // passed it by
+                if (!ReferenceEquals(_tab.Model, _croppedModel) && Settings.Zoom.ResetZoomOnChange)
                 {
-                    viewer.SetZoomView(crop.GetZoomView());
+                    viewer.ResetZoomSlim();
                 }
-                else
-                {
-                    // The viewer was not shown when the new image was, so the reset that follows a new image's fit
-                    // passed it by
-                    if (Settings.Zoom.ResetZoomOnChange)
-                    {
-                        viewer.ResetZoomSlim();
-                    }
 
-                    // The crop wrote the tab's Zoom Factor while it was shown; the viewer writes it from here on
-                    _tab.Zoom.SetFactor(viewer.ZoomPanControl.Scale);
-                }
+                // The crop wrote the tab's Zoom Factor while it was shown; the viewer writes it from here on
+                _tab.Zoom.SetFactor(viewer.ZoomPanControl.Scale);
             }
 
             _crop = null;

@@ -5,7 +5,7 @@ namespace PicView.Avalonia.CustomControls.Zoom;
 
 /// <summary>
 /// How far a view is zoomed and where it looks: its scale, and the point at the center of the view as a fraction of
-/// the image, 0 to 1 on each axis. A tab's viewer and its crop hand this to each other (ADR-0027); a fraction of the
+/// the image, 0 to 1 on each axis. A tab's viewer hands this to its crop (ADR-0027); a fraction of the
 /// image holds though the two lay the image out at different sizes and places.
 /// </summary>
 [StructLayout(LayoutKind.Auto)]

@@ -78,21 +78,47 @@ public class TabViewsTests
         });
 
     [AvaloniaFact]
-    public void Crop_Closed_HandsItsZoomBackToTheViewer()
-        => WithWindow((_, _, tab) =>
+    public void Crop_ZoomedAndClosed_ReturnsTheViewerToItsOwnZoom()
+        => WithWindow((window, _, tab) =>
         {
+            // The crop's zoom is its own: the viewer comes back as it was left, with no zoom preview
             tab.Display(BitmapModel("a.jpg"));
+            Settle(window);
             var viewer = Assert.IsType<ImageViewer>(ViewOf(tab));
             tab.Crop = new CropViewModel(tab.Zoom, 2, 2);
-            Assert.IsType<CropControl>(ViewOf(tab)).SetZoomView(new ZoomView(3, 0.25, 0.75));
+            Settle(window);
+            Assert.IsType<CropControl>(ViewOf(tab)).ZoomPanControl.SetScaleImmediate(3);
+            Assert.Equal(3, tab.Zoom.Factor);
 
             tab.Crop = null;
+            Settle(window);
 
-            Assert.Equal(new ZoomView(3, 0.25, 0.75), viewer.PendingZoomView);
+            Assert.Equal(1, viewer.ZoomPanControl.Scale);
+            Assert.Equal(1, tab.Zoom.Factor);
+            Assert.False(viewer.ZoomPreview.IsVisible);
         });
 
     [AvaloniaFact]
-    public void Crop_ClosedAfterTheImageChanged_HandsNothingBack()
+    public void Crop_ZoomedAndClosedOnAZoomedViewer_KeepsTheViewersZoom()
+        => WithWindow((window, _, tab) =>
+        {
+            tab.Display(BitmapModel("a.jpg"));
+            Settle(window);
+            var viewer = Assert.IsType<ImageViewer>(ViewOf(tab));
+            viewer.ZoomPanControl.SetScaleImmediate(2);
+            tab.Crop = new CropViewModel(tab.Zoom, 2, 2);
+            Settle(window);
+            Assert.IsType<CropControl>(ViewOf(tab)).ZoomPanControl.SetScaleImmediate(3);
+
+            tab.Crop = null;
+            Settle(window);
+
+            Assert.Equal(2, viewer.ZoomPanControl.Scale);
+            Assert.Equal(2, tab.Zoom.Factor);
+        });
+
+    [AvaloniaFact]
+    public void Crop_ClosedAfterTheImageChanged_WritesTheViewersScaleAsTheZoomFactor()
         => WithWindow((_, _, tab) =>
         {
             // A crop saved over the shown file displays the new image before the crop closes. With the reset on
@@ -109,7 +135,6 @@ public class TabViewsTests
             tab.Display(BitmapModel("b.jpg"));
             tab.Crop = null;
 
-            Assert.Null(viewer.PendingZoomView);
             Assert.Equal(viewer.ZoomPanControl.Scale, tab.Zoom.Factor);
         });
 
@@ -129,7 +154,6 @@ public class TabViewsTests
 
             Assert.Equal(1, viewer.ZoomPanControl.Scale);
             Assert.Equal(1, tab.Zoom.Factor);
-            Assert.Null(viewer.PendingZoomView);
         });
 
     [AvaloniaFact]
