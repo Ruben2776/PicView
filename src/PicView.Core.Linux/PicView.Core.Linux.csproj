@@ -13,6 +13,7 @@
     <OptimizationPreference>Speed</OptimizationPreference>
     <HttpActivityPropagationSupport>false</HttpActivityPropagationSupport>
       
+    <EnablePreviewFeatures>true</EnablePreviewFeatures>
   </PropertyGroup>
     
 

@@ -6,6 +6,7 @@ using PicView.Avalonia.Linux.WindowImpl;
 using PicView.Avalonia.StartUp;
 using PicView.Core.FileSorting;
 using PicView.Core.IPlatform;
+using PicView.Core.Linux.FileFunctions;
 using PicView.Core.ViewModels;
 
 #pragma warning disable CS0618 // Type or member is obsolete
@@ -81,7 +82,8 @@ public class App : Application, IPlatformSpecificService
 
     public void LocateOnDisk(string path)
     {
-        throw new NotImplementedException();
+        // Waits on the file manager's D-Bus reply, and some callers are on the UI thread
+        _ = Task.Run(() => FileExplorer.OpenFolderAndSelectFile(path));
     }
 
     public void ShowFileProperties(string path)
