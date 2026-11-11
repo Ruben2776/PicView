@@ -22,3 +22,7 @@ Before this, `TabViewModel.ZoomLevel` was an `int` bindable written from three p
 - `InitialZoom` is gone; `tab.Zoom.FitScale` replaces it, also for the crop's aspect ratio.
 - `PicView.Core` stays free of Avalonia types: the module is plain R3, and the control's event is wired in the viewer.
 - ADR-0014 and ADR-0015 hold as written; ADR-0015's second build after a reset is gone.
+
+## Note, 2026-11-11
+
+The crop view zooms through its own `ZoomPanControl` (ADR-0027), so the Zoom Factor is written by the shown view's control, the image viewer's or the crop's, and once by the adapter, `TabViews`, when a crop ends without handing its zoom back to the viewer.

@@ -4,7 +4,8 @@ namespace PicView.Core.Sizing;
 
 /// <summary>
 /// A tab's Zoom Level, derived from its two inputs (ADR-0016): the Fit Scale, which the window fitter's Fit writes,
-/// and the Zoom Factor, which the image viewer writes as the user zooms and the tab resets when it publishes an image
+/// and the Zoom Factor, which the shown view's zoom control writes as the user zooms (the image viewer's, or the
+/// crop's, ADR-0027) and the tab resets when it publishes an image
 /// while zoom resets on image change. <see cref="Level"/> notifies only when the percent changes, so the Titles that
 /// subscribe to it mark once per change and never for a same-percent write.
 /// </summary>

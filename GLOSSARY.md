@@ -29,7 +29,7 @@ A generic Action, such as `Confirm`, `Cancel`, `PlayPause` or the arrows `Up`, `
 _Avoid_: Mode action, special key
 
 **Blocking Input Mode**:
-An Input Mode in which only the Actions it handles run; every other Keybind does nothing. Dialog, Renaming and Crop are blocking.
+An Input Mode in which only the Actions it handles run; every other Keybind does nothing. Dialog, Renaming and Crop are blocking. Crop handles its Contextual Actions and the zoom Actions, `ZoomIn`, `ZoomOut` and `ResetZoom`, since the crop view zooms.
 _Avoid_: Modal mode, exclusive mode
 
 **Default Action**:
