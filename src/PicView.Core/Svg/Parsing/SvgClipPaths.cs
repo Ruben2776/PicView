@@ -197,7 +197,7 @@ internal sealed class SvgClipPaths(
 
     private bool TryComputeStyle(SvgElement element, SvgComputedStyle parentStyle, out SvgComputedStyle style)
     {
-        return SvgStyle.TryComputeElement(element, parentStyle, viewport, out style, out var reason) ||
+        return SvgStyle.TryComputeElement(element, document.Css, parentStyle, viewport, out style, out var reason) ||
                Fail(reason!);
     }
 

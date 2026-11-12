@@ -64,7 +64,7 @@ internal sealed record SvgComputedStyle
 ///     The styles of elements in their place in the document, for content that inherits from where it is defined
 ///     rather than where it is used: gradient stops and clip paths. Each element's style is computed once.
 /// </summary>
-internal sealed class SvgContextStyles(SvgViewport viewport, SvgComputedStyle initial)
+internal sealed class SvgContextStyles(SvgViewport viewport, SvgCss css, SvgComputedStyle initial)
 {
     private readonly Dictionary<SvgElement, SvgComputedStyle> _styles = [];
 
@@ -84,7 +84,7 @@ internal sealed class SvgContextStyles(SvgViewport viewport, SvgComputedStyle in
         while (pending.Count > 0)
         {
             var next = pending.Pop();
-            if (!SvgStyle.TryComputeElement(next, style, viewport, out style, out reason))
+            if (!SvgStyle.TryComputeElement(next, css, style, viewport, out style, out reason))
             {
                 return false;
             }
@@ -98,8 +98,8 @@ internal sealed class SvgContextStyles(SvgViewport viewport, SvgComputedStyle in
 
 /// <summary>
 ///     Declares and computes the style properties. An element's declarations are collected lowest precedence first
-///     (presentation attributes, then inline <c>style</c>), each later one replacing an earlier one, then computed
-///     against the parent's style.
+///     (presentation attributes, then CSS rules from <c>style</c> elements, then inline <c>style</c>), each later one
+///     replacing an earlier one, then computed against the parent's style.
 /// </summary>
 internal static class SvgStyle
 {
@@ -142,13 +142,22 @@ internal static class SvgStyle
     };
 
     /// <summary>Declares and computes an element's style against its parent's.</summary>
-    public static bool TryComputeElement(SvgElement element, SvgComputedStyle parent, SvgViewport viewport,
-        out SvgComputedStyle style, out string? reason)
+    public static bool TryComputeElement(SvgElement element, SvgCss css, SvgComputedStyle parent,
+        SvgViewport viewport, out SvgComputedStyle style, out string? reason)
     {
         style = parent;
         var declarations = new Dictionary<string, string>(StringComparer.Ordinal);
-        return TryDeclare(element, declarations, out reason) &&
+        return TryDeclare(element, css, declarations, out reason) &&
                TryCompute(parent, declarations, viewport, out style, out reason);
+    }
+
+    /// <summary>
+    ///     Whether <see cref="TryCompute" /> or the stop code reads the property. Declarations of other properties
+    ///     change nothing, so CSS rules keep only these.
+    /// </summary>
+    public static bool IsStyleProperty(string name)
+    {
+        return PresentationAttributes.Contains(name) || RestrictedProperties.ContainsKey(name);
     }
 
     private static readonly HashSet<string> DisplayValues = new(StringComparer.OrdinalIgnoreCase)
@@ -160,7 +169,8 @@ internal static class SvgStyle
     };
 
     /// <summary>Collects an element's declarations, keyed by lower-case property name, values trimmed.</summary>
-    public static bool TryDeclare(SvgElement element, Dictionary<string, string> declarations, out string? reason)
+    public static bool TryDeclare(SvgElement element, SvgCss css, Dictionary<string, string> declarations,
+        out string? reason)
     {
         reason = null;
         foreach (var (name, value) in element.Attributes)
@@ -171,7 +181,11 @@ internal static class SvgStyle
             }
         }
 
-        // Task 6 adds the CSS rules from <style> blocks here, between the attributes and the inline style.
+        foreach (var (name, value) in css.Match(element))
+        {
+            declarations[name] = value;
+        }
+
         return element.GetAttribute("style") is not { } style || TryAddInlineStyle(style, declarations, out reason);
     }
 

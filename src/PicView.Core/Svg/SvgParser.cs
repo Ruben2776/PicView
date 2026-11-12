@@ -66,7 +66,8 @@ internal sealed class SvgResolver
         _document = document;
         _viewport = viewport;
         _options = options;
-        var contextStyles = new SvgContextStyles(viewport, SvgComputedStyle.Initial(options.CurrentColor));
+        var contextStyles =
+            new SvgContextStyles(viewport, document.Css, SvgComputedStyle.Initial(options.CurrentColor));
         _paintServers = new SvgPaintServers(document, viewport, contextStyles);
         _clipPaths = new SvgClipPaths(document, viewport, contextStyles, this);
     }
@@ -140,9 +141,9 @@ internal sealed class SvgResolver
             return false;
         }
 
-        if (element.Name is "defs" or "linearGradient" or "radialGradient" or "clipPath" or "stop")
+        if (element.Name is "defs" or "linearGradient" or "radialGradient" or "clipPath" or "stop" or "style")
         {
-            // Definitions are never drawn where they stand.
+            // Definitions and style sheets are never drawn where they stand.
             return true;
         }
 
@@ -358,8 +359,8 @@ internal sealed class SvgResolver
 
     private bool TryComputeStyle(SvgElement element, SvgComputedStyle parentStyle, out SvgComputedStyle style)
     {
-        return SvgStyle.TryComputeElement(element, parentStyle, _viewport, out style, out var reason) ||
-               Fail(reason!);
+        return SvgStyle.TryComputeElement(element, _document.Css, parentStyle, _viewport, out style,
+                   out var reason) || Fail(reason!);
     }
 
     /// <summary>The shape's path data; null (with true) for a shape that draws nothing and is skipped.</summary>

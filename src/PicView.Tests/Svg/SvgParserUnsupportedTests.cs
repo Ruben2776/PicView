@@ -24,7 +24,6 @@ public class SvgParserUnsupportedTests
     [InlineData("<svg width='1' height='1'/>", "element:svg")]
     [InlineData("<g><svg width='1' height='1'/></g>", "element:svg")]
     [InlineData("<use href='#a'/>", "reference:a")]
-    [InlineData("<style>rect{}</style>", "element:style")]
     [InlineData("<rect width='1' height='1' clip-path='url(#c)'/>", "reference:c")]
     [InlineData("<rect width='1' height='1' mask='url(#m)'/>", "property:mask")]
     [InlineData("<rect width='1' height='1' marker='url(#m)'/>", "property:marker")]

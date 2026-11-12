@@ -1,3 +1,4 @@
+using System.Text;
 using System.Xml;
 
 namespace PicView.Core.Svg.Parsing;
@@ -51,7 +52,7 @@ internal sealed class SvgDocument
     private static readonly HashSet<string> KnownElements = new(StringComparer.Ordinal)
     {
         "g", "path", "rect", "circle", "ellipse", "line", "polyline", "polygon", "defs", "use", "linearGradient",
-        "radialGradient", "stop", "clipPath"
+        "radialGradient", "stop", "clipPath", "style"
     };
 
     /// <summary>The basic shapes and <c>path</c>.</summary>
@@ -60,10 +61,11 @@ internal sealed class SvgDocument
         "path", "rect", "circle", "ellipse", "line", "polyline", "polygon"
     };
 
-    private SvgDocument(SvgElement root, Dictionary<string, SvgElement> byId)
+    private SvgDocument(SvgElement root, Dictionary<string, SvgElement> byId, SvgCss css)
     {
         Root = root;
         ById = byId;
+        Css = css;
     }
 
     public SvgElement Root { get; }
@@ -71,9 +73,13 @@ internal sealed class SvgDocument
     /// <summary>Elements by <c>id</c>; the first in document order wins.</summary>
     public IReadOnlyDictionary<string, SvgElement> ById { get; }
 
+    /// <summary>The rules of all <c>style</c> elements, wherever they are in the document.</summary>
+    public SvgCss Css { get; }
+
     /// <summary>
     ///     Reads the document into the element tree without recursion. Non-SVG elements and attributes are left out,
-    ///     as are the ignored elements. Gives a reason for malformed XML, an unknown element or too deep nesting.
+    ///     as are the ignored elements. The text of <c>style</c> elements is parsed as CSS. Gives a reason for
+    ///     malformed XML, an unknown element, too deep nesting or CSS beyond the subset.
     /// </summary>
     public static bool TryRead(string svgText, out SvgDocument? document, out string? reason)
     {
@@ -99,13 +105,15 @@ internal sealed class SvgDocument
             XmlResolver = null,
             IgnoreComments = true,
             IgnoreProcessingInstructions = true,
-            IgnoreWhitespace = true
+            // Kept so whitespace between text and CDATA in a style element still separates CSS tokens.
+            IgnoreWhitespace = false
         };
 
         using var text = new StringReader(svgText);
         using var reader = XmlReader.Create(text, settings);
         var byId = new Dictionary<string, SvgElement>(StringComparer.Ordinal);
         var open = new Stack<SvgElement>();
+        var sheets = new List<string>();
         SvgElement? root = null;
 
         var read = reader.Read();
@@ -176,7 +184,16 @@ internal sealed class SvgDocument
                 byId.TryAdd(id, element);
             }
 
-            if (!isEmpty)
+            if (string.Equals(name, "style", StringComparison.Ordinal))
+            {
+                // The reader ends on the style element's end tag (or on the empty element itself).
+                if (!TryReadStyleSheet(reader, element, isEmpty, sheets))
+                {
+                    reason = "css";
+                    return false;
+                }
+            }
+            else if (!isEmpty)
             {
                 open.Push(element);
             }
@@ -190,7 +207,54 @@ internal sealed class SvgDocument
             return false;
         }
 
-        document = new SvgDocument(root, byId);
+        if (!SvgCss.TryParse(sheets, out var css))
+        {
+            reason = "css";
+            return false;
+        }
+
+        document = new SvgDocument(root, byId, css);
+        return true;
+    }
+
+    /// <summary>
+    ///     Reads a <c>style</c> element's text and CDATA as one sheet. False for a <c>type</c> other than
+    ///     <c>text/css</c>, a <c>media</c> other than <c>all</c>, or an element inside it.
+    /// </summary>
+    private static bool TryReadStyleSheet(XmlReader reader, SvgElement style, bool isEmpty, List<string> sheets)
+    {
+        if (style.GetAttribute("type") is { } type &&
+            !type.Trim().Equals("text/css", StringComparison.OrdinalIgnoreCase))
+        {
+            return false;
+        }
+
+        if (style.GetAttribute("media") is { } media && media.Trim() is { Length: > 0 } trimmed &&
+            !trimmed.Equals("all", StringComparison.OrdinalIgnoreCase))
+        {
+            return false;
+        }
+
+        if (isEmpty)
+        {
+            return true;
+        }
+
+        var sheet = new StringBuilder();
+        while (reader.Read() && reader.NodeType != XmlNodeType.EndElement)
+        {
+            switch (reader.NodeType)
+            {
+                case XmlNodeType.Text or XmlNodeType.CDATA or XmlNodeType.Whitespace
+                    or XmlNodeType.SignificantWhitespace:
+                    sheet.Append(reader.Value);
+                    break;
+                case XmlNodeType.Element:
+                    return false;
+            }
+        }
+
+        sheets.Add(sheet.ToString());
         return true;
     }
 

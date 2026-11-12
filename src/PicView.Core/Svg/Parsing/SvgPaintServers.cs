@@ -284,7 +284,7 @@ internal sealed class SvgPaintServers(SvgDocument document, SvgViewport viewport
 
             // One set of declarations gives the stop's style (for currentColor) and its stop properties.
             var declarations = new Dictionary<string, string>(StringComparer.Ordinal);
-            if (!SvgStyle.TryDeclare(stop, declarations, out reason) ||
+            if (!SvgStyle.TryDeclare(stop, document.Css, declarations, out reason) ||
                 !SvgStyle.TryCompute(gradientStyle, declarations, viewport, out var style, out reason))
             {
                 return Fail(reason!);
