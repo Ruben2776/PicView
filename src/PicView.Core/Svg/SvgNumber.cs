@@ -5,18 +5,11 @@ namespace PicView.Core.Svg;
 
 public static class SvgNumber
 {
-    /// <summary>Formats with the invariant culture and up to three decimals; negative zero prints as "0".</summary>
-    public static string Format(double value)
-    {
-        var text = value.ToString("0.###", CultureInfo.InvariantCulture);
-        return string.Equals(text, "-0", StringComparison.Ordinal) ? "0" : text;
-    }
-
     /// <summary>
     ///     The shortest invariant text that parses back to the same double, as a plain decimal without an exponent;
     ///     negative zero prints as "0".
     /// </summary>
-    internal static string FormatRoundTrip(double value)
+    public static string Format(double value)
     {
         if (value == 0)
         {
@@ -31,6 +24,37 @@ public static class SvgNumber
 
         var builder = new StringBuilder(32);
         AppendPlain(builder, text);
+        return builder.ToString();
+    }
+
+    /// <summary>
+    ///     <paramref name="value" /> × 100 for a percentage: the text of <see cref="Format" /> with its decimal point
+    ///     moved two places right, so 0.3 gives "30" and not the "30.000000000000004" that multiplying gives.
+    /// </summary>
+    public static string FormatPercent(double value)
+    {
+        var text = Format(value);
+        var negative = text[0] == '-';
+        var unsigned = negative ? text.AsSpan(1) : text.AsSpan();
+        var point = unsigned.IndexOf('.');
+        var integerDigits = point < 0 ? unsigned : unsigned[..point];
+        var fractionDigits = point < 0 ? ReadOnlySpan<char>.Empty : unsigned[(point + 1)..];
+
+        var builder = new StringBuilder(text.Length + 2);
+        if (negative)
+        {
+            builder.Append('-');
+        }
+
+        var shifted = Math.Min(2, fractionDigits.Length);
+        var whole = (string.Concat(integerDigits, fractionDigits[..shifted]) + new string('0', 2 - shifted))
+            .TrimStart('0');
+        builder.Append(whole.Length == 0 ? "0" : whole);
+        if (fractionDigits.Length > 2)
+        {
+            builder.Append('.').Append(fractionDigits[2..]);
+        }
+
         return builder.ToString();
     }
 

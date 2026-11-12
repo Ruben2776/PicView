@@ -193,7 +193,8 @@ public class SvgParserPaintTests
 
     [Theory]
     [InlineData("1in", "F1 M0,0 H96 V1 H0 Z")]
-    [InlineData("10mm", "F1 M0,0 H37.795 V1 H0 Z")]
+    // 10 × (96 / 25.4) in doubles.
+    [InlineData("10mm", "F1 M0,0 H37.795275590551185 V1 H0 Z")]
     [InlineData("2em", "F1 M0,0 H32 V1 H0 Z")]
     [InlineData("12pt", "F1 M0,0 H16 V1 H0 Z")]
     [InlineData("1pc", "F1 M0,0 H16 V1 H0 Z")]
@@ -223,9 +224,10 @@ public class SvgParserPaintTests
     [Fact]
     public void Parse_PercentRadius_UsesNormalizedDiagonal()
     {
-        // sqrt((30² + 40²) / 2) = 35.355, 10% of it is 3.536
+        // sqrt((30² + 40²) / 2) = 35.355339059327378, 10% of it is 3.5355339059327378 in doubles
         var root = Drawing(Document("<circle r='10%'/>", "width='30' height='40'")).Root;
-        Assert.Equal("F1 M-3.536,0 A3.536,3.536,0,1,0,3.536,0 A3.536,3.536,0,1,0,-3.536,0 Z",
+        Assert.Equal("F1 M-3.5355339059327378,0 A3.5355339059327378,3.5355339059327378,0,1,0,3.5355339059327378,0 " +
+            "A3.5355339059327378,3.5355339059327378,0,1,0,-3.5355339059327378,0 Z",
             Assert.IsType<SvgShape>(Assert.Single(root.Children)).PathData);
     }
 

@@ -25,7 +25,11 @@ public class AxamlValueTests
         Document(SvgToXamlConverterTests.DashSvg),
         Document(SvgToXamlConverterTests.MiterSvg),
         Document(SvgToXamlConverterTests.OneClipSvg),
-        Document(SvgToXamlConverterTests.TwoClipSvg)
+        Document(SvgToXamlConverterTests.TwoClipSvg),
+        // Round-trip numbers: long decimals in a matrix, path data, dashes and percent points.
+        Document("<defs><linearGradient id='g' x1='0.3333333333333333' x2='0.07'><stop offset='0.1'/></linearGradient>" +
+                 "</defs><g transform='scale(0.0004)'><rect width='10.123456789' height='1e-7' fill='url(#g)' " +
+                 "stroke='#000' stroke-width='3' stroke-dasharray='1 2'/></g>")
     };
 
     [AvaloniaTheory]

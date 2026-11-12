@@ -263,6 +263,21 @@ public class SvgToXamlConverterTests
     }
 
     [Fact]
+    public void Convert_ViewBoxScaleBelowAThousandth_WritesTheExactScale()
+    {
+        var text = SvgToXamlConverter.Convert(
+            Document("<rect width='64' height='64'/>", "width='1' height='1' viewBox='0 0 64 64'"), out _);
+        Assert.Contains("<MatrixTransform Matrix=\"0.015625,0,0,0.015625,0,0\" />", text, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Convert_TinyScaleTransform_IsNotWrittenAsZero()
+    {
+        Assert.Contains("<MatrixTransform Matrix=\"0.0004,0,0,0.0004,0,0\" />",
+            Convert("<g transform='scale(0.0004)'><rect width='10' height='10'/></g>"), StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void Convert_Unsupported_ReturnsNullAndReason()
     {
         var text = SvgToXamlConverter.Convert(Document("<text/>"), out var reason);

@@ -121,7 +121,7 @@ internal static class SvgPathData
 
     private static void AppendPoint(StringBuilder builder, double x, double y)
     {
-        builder.Append(SvgNumber.FormatRoundTrip(x)).Append(',').Append(SvgNumber.FormatRoundTrip(y)).Append(',');
+        builder.Append(SvgNumber.Format(x)).Append(',').Append(SvgNumber.Format(y)).Append(',');
     }
 
     public static string Rect(double x, double y, double width, double height, double rx, double ry, bool nonZero)

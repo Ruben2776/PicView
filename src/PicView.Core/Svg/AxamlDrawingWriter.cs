@@ -304,7 +304,7 @@ public static class AxamlDrawingWriter
 
     private static string Coordinate(double value, bool boundingBox)
     {
-        return boundingBox ? SvgNumber.Format(value * 100) + "%" : SvgNumber.Format(value);
+        return boundingBox ? SvgNumber.FormatPercent(value) + "%" : SvgNumber.Format(value);
     }
 
     private static string Point(double x, double y, bool boundingBox)

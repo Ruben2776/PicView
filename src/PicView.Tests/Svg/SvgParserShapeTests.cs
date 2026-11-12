@@ -25,6 +25,26 @@ public class SvgParserShapeTests
             Shape("<ellipse cx='10' cy='10' rx='5' ry='3'/>").PathData);
     }
 
+    private static string TinyShapePath(string body)
+    {
+        var root = Drawing(Document(body, "width='100' height='100' viewBox='0 0 1 1'")).Root;
+        return Assert.IsType<SvgShape>(Assert.Single(root.Children)).PathData;
+    }
+
+    [Fact]
+    public void Parse_RectBelowAThousandth_KeepsEveryDigit()
+    {
+        Assert.Equal("F1 M0.2004,0.1 H0.2008 V0.6 H0.2004 Z",
+            TinyShapePath("<rect x='0.2004' y='0.1' width='0.0004' height='0.5'/>"));
+    }
+
+    [Fact]
+    public void Parse_CircleBelowAThousandth_KeepsItsRadius()
+    {
+        Assert.Equal("F1 M0.4996,0.5 A0.0004,0.0004,0,1,0,0.5004,0.5 A0.0004,0.0004,0,1,0,0.4996,0.5 Z",
+            TinyShapePath("<circle cx='.5' cy='.5' r='.0004'/>"));
+    }
+
     [Fact]
     public void Parse_Line_WritesMoveAndLine()
     {
