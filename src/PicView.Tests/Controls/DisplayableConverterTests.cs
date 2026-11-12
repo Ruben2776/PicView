@@ -2,13 +2,13 @@ using System.Globalization;
 using Avalonia;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
-using Avalonia.Svg.Skia;
 using PicView.Avalonia.Converters;
+using PicView.Core.Svg;
 
 namespace PicView.Tests.Controls;
 
 /// <summary>
-/// The displayable of a shown model: the one place an SvgSource becomes the image the viewer draws.
+/// The displayable of a shown model: the one place an SvgDrawing becomes the image the viewer draws.
 /// </summary>
 [Collection("Sequential")]
 public class DisplayableConverterTests
@@ -16,14 +16,14 @@ public class DisplayableConverterTests
     private readonly DisplayableConverter _converter = new();
 
     [AvaloniaFact]
-    public void Convert_SvgSource_WrapsInSvgImage()
+    public void Convert_SvgDrawing_BuildsDrawingImage()
     {
-        var source = SvgSource.LoadFromSvg("<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1\" height=\"1\"/>");
+        var drawing = new SvgDrawing(1, 1, new SvgGroup(null, 1, null, []));
 
-        var result = _converter.Convert(source, typeof(IImage), null, CultureInfo.InvariantCulture);
+        var result = _converter.Convert(drawing, typeof(IImage), null, CultureInfo.InvariantCulture);
 
-        var image = Assert.IsType<SvgImage>(result);
-        Assert.Same(source, image.Source);
+        var image = Assert.IsType<DrawingImage>(result);
+        Assert.Equal(new Size(1, 1), image.Size);
     }
 
     [AvaloniaFact]

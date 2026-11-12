@@ -1,7 +1,6 @@
 using System.Text;
 using Avalonia;
 using Avalonia.Media.Imaging;
-using Avalonia.Svg.Skia;
 using Avalonia.Threading;
 using ImageMagick;
 using PicView.Avalonia.AnimatedImage.Decoding;
@@ -12,6 +11,7 @@ using PicView.Core.ImageDecoding;
 using PicView.Core.Models;
 using PicView.Core.MotionPhoto;
 using PicView.Core.Navigation.Tiff;
+using PicView.Core.Svg;
 using PicView.Core.ViewModels;
 
 namespace PicView.Avalonia.ImageHandling;
@@ -393,12 +393,20 @@ public static class GetImageModel
 
     private static async ValueTask ProcessSvgAsync(FileInfo fileInfo, ImageModel imageModel, MagickImage magickImage)
     {
-        var svgData = await SvgLoader.GetContentFromSvgFileAsync(fileInfo.FullName).ConfigureAwait(false);
-        var svgSource = SvgSource.LoadFromSvg(svgData);
-        imageModel.PixelWidth = magickImage.Width;
-        imageModel.PixelHeight = magickImage.Height;
-        imageModel.Image = svgSource;
-        imageModel.ImageType = svgSource is not null ? ImageType.Svg : ImageType.Invalid;
+        var image = await SvgImageLoader.LoadAsync(fileInfo, magickImage.Width, magickImage.Height).ConfigureAwait(false);
+        if (image is SvgDrawing drawing)
+        {
+            imageModel.PixelWidth = (uint)Math.Ceiling(drawing.Width);
+            imageModel.PixelHeight = (uint)Math.Ceiling(drawing.Height);
+        }
+        else
+        {
+            imageModel.PixelWidth = magickImage.Width;
+            imageModel.PixelHeight = magickImage.Height;
+        }
+
+        imageModel.Image = image;
+        imageModel.ImageType = image is not null ? ImageType.Svg : ImageType.Invalid;
     }
 
     /// <summary>

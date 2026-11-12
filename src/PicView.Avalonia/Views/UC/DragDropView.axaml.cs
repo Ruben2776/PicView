@@ -2,11 +2,12 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
-using Avalonia.Svg.Skia;
 using PicView.Avalonia.CustomControls;
+using PicView.Avalonia.Svg;
 using PicView.Avalonia.UI;
 using PicView.Core.Localization;
 using PicView.Core.Sizing;
+using PicView.Core.Svg;
 using PicView.Core.ViewModels;
 using MainWindowViewModel = PicView.Core.ViewModels.MainWindowViewModel;
 
@@ -94,7 +95,7 @@ public partial class DragDropView : UserControl
         UpdateContentHolder(image, scale);
     }
 
-    public void UpdateSvgThumbnail(object svg, MainWindow mainWindow)
+    public void UpdateSvgThumbnail(SvgDrawing drawing, MainWindow mainWindow)
     {
         UpdateViewSize(mainWindow);
         if (DataContext is not MainWindowViewModel vm)
@@ -102,16 +103,15 @@ public partial class DragDropView : UserControl
             return;
         }
 
-        var svgSource = SvgSource.Load(svg as string);
-        var svgImage = new SvgImage { Source = svgSource };
-        var scale = CalculateScale(svgImage?.Size.Width ?? MaxSize, svgImage?.Size.Height ?? MaxSize, vm, mainWindow);
+        var image = DrawingImageBuilder.Build(drawing);
+        var scale = CalculateScale(image.Size.Width, image.Size.Height, vm, mainWindow);
 
         ContentHolder.Background = new ImageBrush { Opacity = 0.95 };
         ContentHolder.Child = new Image
         {
-            Source = svgImage,
-            Width = svgImage?.Size.Width * scale ?? MaxSize,
-            Height = svgImage?.Size.Height * scale ?? MaxSize
+            Source = image,
+            Width = image.Size.Width * scale,
+            Height = image.Size.Height * scale
         };
         ContentHolder.IsVisible = true;
     }

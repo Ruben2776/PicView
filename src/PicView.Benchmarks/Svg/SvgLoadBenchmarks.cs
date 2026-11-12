@@ -1,11 +1,10 @@
-using Avalonia.Svg.Skia;
 using BenchmarkDotNet.Attributes;
-using PicView.Avalonia.Svg;
+using PicView.Core.Svg;
 
 namespace PicView.Benchmarks.Svg;
 
 /// <summary>
-/// The SVG load path as it is before the native parser: preprocess the text, then let Svg.Skia parse it.
+/// The SVG load path: read the text, then parse it into a drawing.
 /// </summary>
 [MemoryDiagnoser]
 public class SvgLoadBenchmarks
@@ -16,9 +15,9 @@ public class SvgLoadBenchmarks
     private string _largeMap = null!;
 
     [Params("Icon", "CssExport", "LargeMap")]
-    public string File { get; set; } = "";
+    public string Svg { get; set; } = "";
 
-    private string Path => File switch
+    private string FilePath => Svg switch
     {
         "Icon" => _icon,
         "CssExport" => _cssExport,
@@ -28,7 +27,7 @@ public class SvgLoadBenchmarks
     [GlobalSetup]
     public void Setup()
     {
-        _directory = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "picview-svg-bench-" + Guid.NewGuid().ToString("N"));
+        _directory = Path.Combine(Path.GetTempPath(), "picview-svg-bench-" + Guid.NewGuid().ToString("N"));
         (_icon, _cssExport, _largeMap) = SvgBenchmarkFiles.WriteAll(_directory);
     }
 
@@ -36,9 +35,9 @@ public class SvgLoadBenchmarks
     public void Cleanup() => Directory.Delete(_directory, true);
 
     [Benchmark]
-    public async Task<SvgSource?> Legacy()
+    public async Task<SvgParseResult> Parse()
     {
-        var text = await SvgLoader.GetContentFromSvgFileAsync(Path);
-        return SvgSource.LoadFromSvg(text);
+        var text = await SvgFileReader.ReadAsync(FilePath).ConfigureAwait(false);
+        return SvgParser.Parse(text);
     }
 }
