@@ -46,6 +46,13 @@ internal sealed class SvgResolver
     /// <summary>More nodes than this produced by expanding <c>use</c> makes the file unsupported.</summary>
     public const int MaxExpandedNodes = 1_000_000;
 
+    /// <summary>
+    ///     More characters of path data than this in the shapes drawn through <c>use</c> makes the file unsupported.
+    ///     Expanded shapes share their element's path data string, so this guards against expansion bombs and is not
+    ///     a complexity budget.
+    /// </summary>
+    public const long MaxExpandedPathData = 50_000_000;
+
     private readonly SvgDocument _document;
     private readonly SvgViewport _viewport;
     private readonly SvgParseOptions _options;
@@ -58,8 +65,12 @@ internal sealed class SvgResolver
     /// <summary>How many open frames each element has, to find <c>use</c> cycles.</summary>
     private readonly Dictionary<SvgElement, int> _onPath = [];
 
+    /// <summary>Each shape element's path data, by fill rule, so every <c>use</c> of it shares one string.</summary>
+    private readonly Dictionary<(SvgElement Element, bool NonZero), string?> _pathData = [];
+
     private int _openUses;
     private int _expandedNodes;
+    private long _expandedPathData;
 
     public SvgResolver(SvgDocument document, SvgViewport viewport, SvgParseOptions options)
     {
@@ -218,6 +229,15 @@ internal sealed class SvgResolver
             return true;
         }
 
+        if (_openUses > 0)
+        {
+            _expandedPathData += pathData.Length;
+            if (_expandedPathData > MaxExpandedPathData)
+            {
+                return Fail("expansion");
+            }
+        }
+
         if (!_paintServers.TryResolve(style.Fill, style.FillOpacity, style.Color, out var fill))
         {
             return Fail(_paintServers.Reason!);
@@ -367,8 +387,27 @@ internal sealed class SvgResolver
                    out var reason) || Fail(reason!);
     }
 
-    /// <summary>The shape's path data; null (with true) for a shape that draws nothing and is skipped.</summary>
+    /// <summary>
+    ///     The shape's path data; null (with true) for a shape that draws nothing and is skipped. Worked out once per
+    ///     element and fill rule.
+    /// </summary>
     internal bool TryShapePathData(SvgElement element, bool nonZero, out string? pathData)
+    {
+        if (_pathData.TryGetValue((element, nonZero), out pathData))
+        {
+            return true;
+        }
+
+        if (!TryBuildShapePathData(element, nonZero, out pathData))
+        {
+            return false;
+        }
+
+        _pathData[(element, nonZero)] = pathData;
+        return true;
+    }
+
+    private bool TryBuildShapePathData(SvgElement element, bool nonZero, out string? pathData)
     {
         pathData = null;
         switch (element.Name)

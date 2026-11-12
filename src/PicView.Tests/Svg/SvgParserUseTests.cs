@@ -108,6 +108,42 @@ public class SvgParserUseTests
         Assert.True(stopwatch.Elapsed < TimeSpan.FromSeconds(5), $"took {stopwatch.Elapsed}");
     }
 
+    [Fact]
+    public void Parse_LongPathDoubledSeventeenTimes_IsExpansionQuickly()
+    {
+        // 2^17 instances of a 2,000-segment path: about 1.3 billion characters of path data, in 131,072 nodes.
+        var text = new StringBuilder("<defs><path id='g0' d='M0 0");
+        for (var i = 0; i < 2000; i++)
+        {
+            text.Append(" l1 1");
+        }
+
+        text.Append("'/>");
+        for (var i = 1; i <= 17; i++)
+        {
+            text.Append(CultureInfo.InvariantCulture, $"<g id='g{i}'><use href='#g{i - 1}'/><use href='#g{i - 1}'/></g>");
+        }
+
+        text.Append("</defs><use href='#g17'/>");
+        var svg = Document(text.ToString());
+
+        var stopwatch = Stopwatch.StartNew();
+        var reason = Reason(svg);
+        stopwatch.Stop();
+
+        Assert.Equal("expansion", reason);
+        Assert.True(stopwatch.Elapsed < TimeSpan.FromSeconds(5), $"took {stopwatch.Elapsed}");
+    }
+
+    [Fact]
+    public void Parse_UsesOfOnePath_ShareItsPathData()
+    {
+        var root = Root("<defs><path id='p' d='M0 0 L1 1'/></defs><use href='#p'/><use href='#p' x='2'/>");
+        var first = Assert.IsType<SvgShape>(Assert.Single(Assert.IsType<SvgGroup>(root.Children[0]).Children));
+        var second = Assert.IsType<SvgShape>(Assert.Single(Assert.IsType<SvgGroup>(root.Children[1]).Children));
+        Assert.Same(first.PathData, second.PathData);
+    }
+
     [Theory]
     [InlineData("<rect width='1' height='1' display='none'/>")]
     [InlineData("<rect/>")]

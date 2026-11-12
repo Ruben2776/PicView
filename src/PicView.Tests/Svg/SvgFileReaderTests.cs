@@ -82,6 +82,54 @@ public class SvgFileReaderTests : IDisposable
     }
 
     [Fact]
+    public async Task ReadAsync_GzipLargerThanTheCapWhenDecompressed_ThrowsWithoutDecompressingItAll()
+    {
+        // 100 MB of zeros compress to about 100 KB.
+        using var compressed = new MemoryStream();
+        using (var gz = new GZipStream(compressed, CompressionLevel.Fastest, true))
+        {
+            var zeros = new byte[1024 * 1024];
+            for (var i = 0; i < 100; i++)
+            {
+                gz.Write(zeros);
+            }
+        }
+
+        var path = Write("bomb.svgz", compressed.ToArray());
+        var before = GC.GetTotalAllocatedBytes(true);
+        var watch = System.Diagnostics.Stopwatch.StartNew();
+        await Assert.ThrowsAsync<InvalidDataException>(() =>
+            SvgFileReader.ReadAsync(path, 1024 * 1024, TestContext.Current.CancellationToken));
+        watch.Stop();
+        var allocated = GC.GetTotalAllocatedBytes(true) - before;
+
+        Assert.True(allocated < 30 * 1024 * 1024, $"Allocated {allocated} bytes");
+        Assert.True(watch.ElapsedMilliseconds < 5000, $"Took {watch.ElapsedMilliseconds} ms");
+    }
+
+    [Fact]
+    public async Task ReadAsync_PlainFileLargerThanTheCap_Throws()
+    {
+        var path = Write("big.svg", new byte[2048]);
+        await Assert.ThrowsAsync<InvalidDataException>(() =>
+            SvgFileReader.ReadAsync(path, 1024, TestContext.Current.CancellationToken));
+    }
+
+    [Fact]
+    public async Task ReadAsync_GzipAtTheCap_IsRead()
+    {
+        var text = new string('a', 1024);
+        var path = Write("a.svgz", Gzip(Encoding.UTF8.GetBytes(text)));
+        Assert.Equal(text, await SvgFileReader.ReadAsync(path, 1024, TestContext.Current.CancellationToken));
+    }
+
+    [Fact]
+    public void MaxBytes_Is256MegaBytes()
+    {
+        Assert.Equal(256 * 1024 * 1024, SvgFileReader.MaxBytes);
+    }
+
+    [Fact]
     public async Task ReadAsync_PlainNamedSvgz()
     {
         var path = Write("a.svgz", Encoding.UTF8.GetBytes(Text));
