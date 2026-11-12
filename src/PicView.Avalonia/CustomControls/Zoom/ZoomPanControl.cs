@@ -441,7 +441,7 @@ public class ZoomPanControl : Decorator
         }
 
         // Panning shouldn't happen when moving the window by holding shift
-        if (Host is ZoomPanHost.ImageViewer && e.KeyModifiers == KeyModifiers.Shift)
+        if (e.KeyModifiers is KeyModifiers.Shift)
         {
             return;
         }

@@ -178,13 +178,14 @@ public class CropControlTests
         });
 
     [AvaloniaFact]
-    public void ViewChanged_WithAnEdgeOutOfView_HidesThatEdgesHandles()
+    public void UpdateSelectionLayout_WithAnEdgeOutOfView_HidesThatEdgesHandles()
         => WithLaidOutCrop((tab, crop) =>
         {
-            // Wider than the view shows: its left edge is out of view while its top, bottom and right edges are in
-            tab.Crop!.SetSelection(10, 230, 380, 30);
-
             crop.ZoomPanControl.ShowChildAt(4, new Point(350, 250));
+            // Wider than the view shows: its left edge is out of view while its top, bottom and right edges are in.
+            // Set after the zoom, which would cut it to the view
+            tab.Crop!.SetSelection(10, 230, 380, 30);
+            crop.UpdateSelectionLayout();
 
             Assert.False(crop.LeftMiddleButton.IsVisible);
             Assert.True(crop.RightMiddleButton.IsVisible);
@@ -240,15 +241,31 @@ public class CropControlTests
         });
 
     [AvaloniaFact]
-    public void ViewChanged_WithASelectionLargerThanTheView_LeavesTheSelection()
+    public void ViewChanged_ZoomedInsideTheSelection_CutsTheSelectionToTheView()
         => WithLaidOutCrop((tab, crop) =>
         {
-            tab.Crop!.SetSelection(10, 10, 300, 200);
+            tab.Crop!.SetSelection(250, 150, 150, 150);
+
+            // Shows 100 by 75 from 300, 212.5, whose whole pixels run from 300, 213 to 400, 287
+            crop.ZoomPanControl.ShowChildAt(4, new Point(350, 250));
+
+            Assert.Equal(new PixelArea(300, 213, 100, 74), tab.Crop.SourceSelection);
+            Assert.Equal(300, Canvas.GetLeft(crop.MainRectangle));
+            Assert.Equal(213, Canvas.GetTop(crop.MainRectangle));
+        });
+
+    [AvaloniaFact]
+    public void ViewChanged_WithASelectionWiderThanTheView_KeepsItsEdgeInView()
+        => WithLaidOutCrop((tab, crop) =>
+        {
+            // Its right edge at 390 is in the view, its left edge at 10 is not
+            tab.Crop!.SetSelection(10, 230, 380, 30);
 
             crop.ZoomPanControl.ShowChildAt(4, new Point(350, 250));
 
-            Assert.Equal(10, tab.Crop.SelectionX.Value);
-            Assert.Equal(10, tab.Crop.SelectionY.Value);
+            Assert.Equal(new PixelArea(300, 230, 90, 30), tab.Crop.SourceSelection);
+            Assert.True(crop.LeftMiddleButton.IsVisible);
+            Assert.True(crop.TopLeftButton.IsVisible);
         });
 
     [AvaloniaFact]

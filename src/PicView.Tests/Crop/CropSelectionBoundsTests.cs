@@ -28,6 +28,25 @@ public class CropSelectionBoundsTests
             CropDragHandler.ClampMove(new Rect(150, 100, 100, 50), new Point(-350, -400), Visible, Image));
 
     [Fact]
+    public void ClampIntoView_SelectionThatFits_MovesInAtItsSize()
+        => Assert.Equal(new Rect(300, 50, 100, 50),
+            CropDragHandler.ClampIntoView(new Rect(600, 0, 100, 50), Visible));
+
+    [Fact]
+    public void ClampIntoView_ZoomedInsideTheSelection_CutsItToTheVisiblePart()
+        => Assert.Equal(Visible, CropDragHandler.ClampIntoView(new Rect(0, 0, 1000, 750), Visible));
+
+    [Fact]
+    public void ClampIntoView_SelectionWiderThanTheVisiblePart_KeepsTheEdgeInView()
+        => Assert.Equal(new Rect(100, 60, 250, 100),
+            CropDragHandler.ClampIntoView(new Rect(0, 60, 350, 100), Visible));
+
+    [Fact]
+    public void ClampIntoView_SelectionWiderThanTheVisiblePartAndOutOfView_TakesTheVisibleWidth()
+        => Assert.Equal(new Rect(100, 60, 300, 100),
+            CropDragHandler.ClampIntoView(new Rect(500, 60, 400, 100), Visible));
+
+    [Fact]
     public void ClampMove_SelectionWiderThanTheVisiblePart_MovesWithinTheImageOnThatAxis()
     {
         // A selection made before zooming in cannot fit the visible part, so that axis keeps the image's bounds

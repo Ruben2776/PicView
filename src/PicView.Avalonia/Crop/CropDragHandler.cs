@@ -94,6 +94,31 @@ public class CropDragHandler(CropControl control)
             Math.Max(vertical.Y, Math.Min(vertical.Bottom - selection.Height, wanted.Y)));
     }
 
+    /// <summary>
+    /// Where <paramref name="selection"/> goes when the view changes under it, so all of it lies in
+    /// <paramref name="visible"/>: a side that fits is moved in at its length, as <see cref="ClampMove"/> moves it,
+    /// and a side longer than the visible part is cut to the part of it in view, which keeps an edge already in view
+    /// where it is. A side longer than the visible part with none of it in view takes the whole visible part.
+    /// </summary>
+    internal static Rect ClampIntoView(Rect selection, Rect visible)
+    {
+        var (x, width) = ClampSpan(selection.X, selection.Width, visible.X, visible.Right);
+        var (y, height) = ClampSpan(selection.Y, selection.Height, visible.Y, visible.Bottom);
+        return new Rect(x, y, width, height);
+    }
+
+    private static (double Start, double Length) ClampSpan(double start, double length, double lowest, double highest)
+    {
+        if (length <= highest - lowest)
+        {
+            return (Math.Max(lowest, Math.Min(highest - length, start)), length);
+        }
+
+        var from = Math.Max(lowest, start);
+        var to = Math.Min(highest, start + length);
+        return to > from ? (from, to - from) : (lowest, highest - lowest);
+    }
+
     public void OnDragEnd(object? sender, PointerReleasedEventArgs e)
     {
         Reset();

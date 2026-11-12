@@ -299,7 +299,8 @@ public partial class CropControl : UserControl, IZoomScrollTarget
 
     /// <summary>
     /// Moves the selection into the part of the image the view shows after a zoom or a pan, as a move by hand
-    /// keeps it there. A selection too long for the view on an axis is left where it is on that axis.
+    /// keeps it there. A selection too long for the view on an axis, as when zoomed in beyond it, is cut to the part
+    /// of it the view shows on that axis.
     /// </summary>
     private void KeepSelectionInView()
     {
@@ -317,18 +318,19 @@ public partial class CropControl : UserControl, IZoomScrollTarget
 
         var selection = new Rect(crop.SelectionX.Value, crop.SelectionY.Value, crop.SelectionWidth.Value,
             crop.SelectionHeight.Value);
-        var moved = CropDragHandler.ClampMove(selection, selection.Position, SelectionBounds(), image);
+        var clamped = CropDragHandler.ClampIntoView(selection, SelectionBounds());
 
         // Both lie on whole image pixels, so less than half a pixel apart is the same place
         var pixel = crop.AspectRatio / 2;
-        if (Math.Abs(moved.X - selection.X) < pixel && Math.Abs(moved.Y - selection.Y) < pixel)
+        if (Math.Abs(clamped.X - selection.X) < pixel && Math.Abs(clamped.Y - selection.Y) < pixel &&
+            Math.Abs(clamped.Right - selection.Right) < pixel && Math.Abs(clamped.Bottom - selection.Bottom) < pixel)
         {
             // The handles and the size label are still placed inside what the view now shows, at its scale
             _layoutManager.UpdateButtonPositions();
             return;
         }
 
-        crop.SetSelection(moved.X, moved.Y, selection.Width, selection.Height);
+        crop.SetSelection(clamped.X, clamped.Y, clamped.Width, clamped.Height);
         _layoutManager.UpdateLayout();
     }
 
