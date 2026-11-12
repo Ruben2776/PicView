@@ -289,6 +289,20 @@ public class SvgParserGradientTests
     }
 
     [Fact]
+    public void Parse_StrayStopAndNonStopGradientChild_AreIgnoredAndNotDrawn()
+    {
+        var root = Root(
+            "<stop offset='0.5' stop-color='blue'/>" +
+            "<linearGradient id='g'><stop stop-color='red'/><rect width='5' height='5'/>" +
+            "<stop offset='1' stop-color='lime'/></linearGradient>" +
+            "<rect width='1' height='1' fill='url(#g)'/>");
+        var paint = Assert.IsType<SvgLinearGradientPaint>(Assert.IsType<SvgShape>(Assert.Single(root.Children)).Fill);
+        Assert.Equal(
+            [new SvgGradientStop(0, new SvgColor(255, 255, 0, 0)), new SvgGradientStop(1, new SvgColor(255, 0, 255, 0))],
+            paint.Stops);
+    }
+
+    [Fact]
     public void Parse_GradientOutsideDefs_IsUsable()
     {
         var root = Root($"<linearGradient id='g'>{BlackToWhite}</linearGradient><rect width='1' height='1' fill='url(#g)'/>");

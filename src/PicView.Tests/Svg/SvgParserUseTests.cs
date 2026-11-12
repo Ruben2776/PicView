@@ -108,6 +108,34 @@ public class SvgParserUseTests
         Assert.True(stopwatch.Elapsed < TimeSpan.FromSeconds(5), $"took {stopwatch.Elapsed}");
     }
 
+    [Theory]
+    [InlineData("<rect width='1' height='1' display='none'/>")]
+    [InlineData("<rect/>")]
+    public void Parse_UseDoublingOfLeavesThatDrawNothing_IsExpansion(string leaf)
+    {
+        var text = new StringBuilder("<defs><g id='g0'>");
+        for (var i = 0; i < 1000; i++)
+        {
+            text.Append(leaf);
+        }
+
+        text.Append("</g>");
+        for (var i = 1; i <= 25; i++)
+        {
+            text.Append(CultureInfo.InvariantCulture, $"<g id='g{i}'><use href='#g{i - 1}'/><use href='#g{i - 1}'/></g>");
+        }
+
+        text.Append("</defs><use href='#g25'/>");
+        var svg = Document(text.ToString());
+
+        var stopwatch = Stopwatch.StartNew();
+        var reason = Reason(svg);
+        stopwatch.Stop();
+
+        Assert.Equal("expansion", reason);
+        Assert.True(stopwatch.Elapsed < TimeSpan.FromSeconds(5), $"took {stopwatch.Elapsed}");
+    }
+
     [Fact]
     public void Parse_UseChain300Deep_IsDepth()
     {

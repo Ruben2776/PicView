@@ -260,6 +260,11 @@ internal sealed class SvgPaintServers(SvgDocument document, SvgViewport viewport
     /// </summary>
     private bool TryStops(SvgElement gradient, List<SvgGradientStop> stops)
     {
+        if (!contextStyles.TryGet(gradient, out var gradientStyle, out var reason))
+        {
+            return Fail(reason!);
+        }
+
         var previous = 0d;
         foreach (var stop in gradient.Children)
         {
@@ -277,9 +282,10 @@ internal sealed class SvgPaintServers(SvgDocument document, SvgViewport viewport
             offset = Math.Max(Math.Clamp(offset, 0, 1), previous);
             previous = offset;
 
+            // One set of declarations gives the stop's style (for currentColor) and its stop properties.
             var declarations = new Dictionary<string, string>(StringComparer.Ordinal);
-            if (!SvgStyle.TryDeclare(stop, declarations, out var reason) ||
-                !contextStyles.TryGet(stop, out var style, out reason))
+            if (!SvgStyle.TryDeclare(stop, declarations, out reason) ||
+                !SvgStyle.TryCompute(gradientStyle, declarations, viewport, out var style, out reason))
             {
                 return Fail(reason!);
             }

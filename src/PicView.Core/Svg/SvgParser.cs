@@ -49,11 +49,8 @@ internal sealed class SvgResolver
     private readonly SvgDocument _document;
     private readonly SvgViewport _viewport;
     private readonly SvgParseOptions _options;
-    private readonly SvgContextStyles _contextStyles;
     private readonly SvgPaintServers _paintServers;
-
-    /// <summary>Resolved clip paths; null where a clip path has no shapes and so clips everything away.</summary>
-    private readonly Dictionary<SvgElement, SvgClip?> _clips = [];
+    private readonly SvgClipPaths _clipPaths;
 
     /// <summary>The groups being built, innermost on top.</summary>
     private readonly Stack<Frame> _open = new();
@@ -69,8 +66,9 @@ internal sealed class SvgResolver
         _document = document;
         _viewport = viewport;
         _options = options;
-        _contextStyles = new SvgContextStyles(viewport, SvgComputedStyle.Initial(options.CurrentColor));
-        _paintServers = new SvgPaintServers(document, viewport, _contextStyles);
+        var contextStyles = new SvgContextStyles(viewport, SvgComputedStyle.Initial(options.CurrentColor));
+        _paintServers = new SvgPaintServers(document, viewport, contextStyles);
+        _clipPaths = new SvgClipPaths(document, viewport, contextStyles, this);
     }
 
     public string? Reason { get; private set; }
@@ -131,15 +129,21 @@ internal sealed class SvgResolver
     /// <summary>Adds a shape to <paramref name="parent" />, or opens a frame for a group or <c>use</c>.</summary>
     private bool TryVisit(SvgElement element, Frame parent)
     {
+        if (_open.Count >= SvgDocument.MaxDepth)
+        {
+            return Fail("depth");
+        }
+
+        // Every visit counts, drawn or not, so the guard bounds the work and not only the output.
+        if (!TryCountExpanded(1))
+        {
+            return false;
+        }
+
         if (element.Name is "defs" or "linearGradient" or "radialGradient" or "clipPath" or "stop")
         {
             // Definitions are never drawn where they stand.
             return true;
-        }
-
-        if (_open.Count >= SvgDocument.MaxDepth)
-        {
-            return Fail("depth");
         }
 
         if (element.GetAttribute("pathLength") is not null)
@@ -171,9 +175,9 @@ internal sealed class SvgResolver
         SvgClip? clip = null;
         if (style.ClipPath is { } clipReference)
         {
-            if (!TryClip(clipReference, out clip))
+            if (!_clipPaths.TryResolve(clipReference, out clip))
             {
-                return false;
+                return Fail(_clipPaths.Reason!);
             }
 
             if (clip is null)
@@ -194,7 +198,7 @@ internal sealed class SvgResolver
                 return TryOpenUse(element, style, transform, clip);
             case "g":
                 Open(new Frame(element, style, element.Children, transform, style.Opacity, clip, false));
-                return TryCountExpanded(1);
+                return true;
             default:
                 return Fail("element:" + element.Name);
         }
@@ -221,7 +225,8 @@ internal sealed class SvgResolver
 
         var shape = new SvgShape(pathData, fill, stroke);
         var wrapped = transform is not null || style.Opacity < 1 || clip is not null;
-        if (!TryCountExpanded(wrapped ? 2 : 1))
+        // The visit counted the shape; a wrapping group is one more node.
+        if (wrapped && !TryCountExpanded(1))
         {
             return false;
         }
@@ -259,14 +264,14 @@ internal sealed class SvgResolver
         }
 
         Open(new Frame(use, style, [target], useTransform, style.Opacity, clip, true));
-        return TryCountExpanded(1);
+        return true;
     }
 
     /// <summary>
     ///     The element a <c>use</c> references by <c>href</c> (or <c>xlink:href</c>), with the id it names. Null (with
     ///     true) when the <c>use</c> has no reference and so draws nothing.
     /// </summary>
-    private bool TryUseTarget(SvgElement use, out SvgElement? target, out string id)
+    internal bool TryUseTarget(SvgElement use, out SvgElement? target, out string id)
     {
         target = null;
         id = string.Empty;
@@ -287,7 +292,7 @@ internal sealed class SvgResolver
     }
 
     /// <summary>The <c>use</c>'s transform, applied after its <c>translate(x, y)</c>.</summary>
-    private bool TryUseTransform(SvgElement use, SvgMatrix? transform, out SvgMatrix? result)
+    internal bool TryUseTransform(SvgElement use, SvgMatrix? transform, out SvgMatrix? result)
     {
         result = null;
         if (!TryLength(use, "x", SvgAxis.Horizontal, out var x) || !TryLength(use, "y", SvgAxis.Vertical, out var y))
@@ -300,15 +305,16 @@ internal sealed class SvgResolver
     }
 
     /// <summary>The transform that applies <paramref name="first" />, then <paramref name="then" />; null for identity.</summary>
-    private static SvgMatrix? Combine(SvgMatrix? first, SvgMatrix? then)
+    internal static SvgMatrix? Combine(SvgMatrix? first, SvgMatrix? then)
     {
         var combined = (first ?? SvgMatrix.Identity).Then(then ?? SvgMatrix.Identity);
         return combined.IsIdentity ? null : combined;
     }
 
     /// <summary>
-    ///     Counts nodes produced inside a <c>use</c> expansion. A file whose expansion goes past
-    ///     <see cref="MaxExpandedNodes" /> is unsupported before anything more is built.
+    ///     Counts work inside a <c>use</c> expansion: every element visited, drawn or not, and every wrapping group. A
+    ///     file whose expansion goes past <see cref="MaxExpandedNodes" /> is unsupported before anything more is
+    ///     visited or built.
     /// </summary>
     private bool TryCountExpanded(int nodes)
     {
@@ -350,184 +356,6 @@ internal sealed class SvgResolver
         }
     }
 
-    /// <summary>
-    ///     The clip a <c>clip-path</c> reference names. Null (with true) when the clip path has no shapes, which
-    ///     clips everything away.
-    /// </summary>
-    private bool TryClip(string reference, out SvgClip? clip)
-    {
-        clip = null;
-        if (!reference.StartsWith('#'))
-        {
-            return Fail("reference:" + reference);
-        }
-
-        var id = reference[1..];
-        if (!_document.ById.TryGetValue(id, out var clipPath) ||
-            !string.Equals(clipPath.Name, "clipPath", StringComparison.Ordinal))
-        {
-            return Fail("reference:" + id);
-        }
-
-        if (_clips.TryGetValue(clipPath, out clip))
-        {
-            return true;
-        }
-
-        if (!TryBuildClip(clipPath, out clip))
-        {
-            return false;
-        }
-
-        _clips[clipPath] = clip;
-        return true;
-    }
-
-    /// <summary>
-    ///     A <c>clipPath</c> in user space: each shape, or <c>use</c> of a shape, becomes a clip shape. Its children
-    ///     inherit from the clip path's place in the document, and only their geometry and <c>clip-rule</c> count.
-    /// </summary>
-    private bool TryBuildClip(SvgElement clipPath, out SvgClip? clip)
-    {
-        clip = null;
-        switch (clipPath.GetAttribute("clipPathUnits"))
-        {
-            case null or "userSpaceOnUse":
-                break;
-            case "objectBoundingBox":
-                return Fail("property:clipPathUnits");
-            default:
-                return Fail("value:clipPathUnits");
-        }
-
-        if (!_contextStyles.TryGet(clipPath, out var clipStyle, out var reason))
-        {
-            return Fail(reason!);
-        }
-
-        if (clipStyle.ClipPath is not null)
-        {
-            return Fail("element:clipPath");
-        }
-
-        if (!SvgTransformParser.TryParse(clipPath.GetAttribute("transform"), out var clipTransform))
-        {
-            return Fail("value:transform");
-        }
-
-        var shapes = new List<SvgClipShape>();
-        foreach (var child in clipPath.Children)
-        {
-            if (!TryAddClipChild(child, clipStyle, clipTransform, shapes))
-            {
-                return false;
-            }
-        }
-
-        if (shapes.Count > 0)
-        {
-            clip = new SvgClip(shapes);
-        }
-
-        return true;
-    }
-
-    private bool TryAddClipChild(SvgElement child, SvgComputedStyle clipStyle, SvgMatrix? clipTransform,
-        List<SvgClipShape> into)
-    {
-        if (!string.Equals(child.Name, "use", StringComparison.Ordinal))
-        {
-            return SvgDocument.ShapeElements.Contains(child.Name)
-                ? TryAddClipShape(child, clipStyle, clipTransform, into)
-                : Fail("element:clipPath");
-        }
-
-        if (!TryComputeStyle(child, clipStyle, out var useStyle))
-        {
-            return false;
-        }
-
-        if (useStyle.ClipPath is not null)
-        {
-            return Fail("element:clipPath");
-        }
-
-        if (!useStyle.Displayed)
-        {
-            return true;
-        }
-
-        if (!TryUseTarget(child, out var target, out var id))
-        {
-            return false;
-        }
-
-        if (target is null)
-        {
-            return true;
-        }
-
-        if (string.Equals(target.Name, "g", StringComparison.Ordinal))
-        {
-            return Fail("element:clipPath");
-        }
-
-        if (!SvgDocument.ShapeElements.Contains(target.Name))
-        {
-            return Fail("reference:" + id);
-        }
-
-        if (!SvgTransformParser.TryParse(child.GetAttribute("transform"), out var transform))
-        {
-            return Fail("value:transform");
-        }
-
-        return TryUseTransform(child, transform, out var useTransform) &&
-               TryAddClipShape(target, useStyle, Combine(useTransform, clipTransform), into);
-    }
-
-    /// <summary>Adds a shape's geometry, with its own transform followed by <paramref name="after" />.</summary>
-    private bool TryAddClipShape(SvgElement element, SvgComputedStyle parentStyle, SvgMatrix? after,
-        List<SvgClipShape> into)
-    {
-        if (element.GetAttribute("pathLength") is not null)
-        {
-            return Fail("property:pathLength");
-        }
-
-        if (!TryComputeStyle(element, parentStyle, out var style))
-        {
-            return false;
-        }
-
-        if (style.ClipPath is not null)
-        {
-            return Fail("element:clipPath");
-        }
-
-        if (!style.Displayed || !style.Visible)
-        {
-            return true;
-        }
-
-        if (!SvgTransformParser.TryParse(element.GetAttribute("transform"), out var transform))
-        {
-            return Fail("value:transform");
-        }
-
-        if (!TryShapePathData(element, style.ClipNonZero, out var pathData))
-        {
-            return false;
-        }
-
-        if (pathData is not null)
-        {
-            into.Add(new SvgClipShape(pathData, Combine(transform, after)));
-        }
-
-        return true;
-    }
-
     private bool TryComputeStyle(SvgElement element, SvgComputedStyle parentStyle, out SvgComputedStyle style)
     {
         return SvgStyle.TryComputeElement(element, parentStyle, _viewport, out style, out var reason) ||
@@ -535,7 +363,7 @@ internal sealed class SvgResolver
     }
 
     /// <summary>The shape's path data; null (with true) for a shape that draws nothing and is skipped.</summary>
-    private bool TryShapePathData(SvgElement element, bool nonZero, out string? pathData)
+    internal bool TryShapePathData(SvgElement element, bool nonZero, out string? pathData)
     {
         pathData = null;
         switch (element.Name)
