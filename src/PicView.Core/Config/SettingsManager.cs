@@ -5,6 +5,7 @@ using PicView.Core.Config.ConfigFileManagement;
 using PicView.Core.DebugTools;
 using PicView.Core.FileHandling;
 using PicView.Core.Gallery;
+using PicView.Core.Localization;
 
 namespace PicView.Core.Config;
 
@@ -18,14 +19,11 @@ internal partial class SettingsGenerationContext : JsonSerializerContext;
 public static class SettingsManager
 {
     /// <summary>
-    /// Gets the file path to the currently loaded settings file, if available.
+    /// Gets the path of the settings file in the config folder in use.
     /// </summary>
     /// <remarks>
-    /// This property reflects the full path to the settings file currently in use by the application.
-    /// It is updated when settings are loaded via <see cref="SettingsManager.LoadSettings"/>
-    /// or saved using <see cref="SettingsManager.SaveSettingsAsync"/>. If no settings file is loaded,
-    /// the value will be null. This path can be used to reference the specific configuration file
-    /// being utilized or modified.
+    /// The path is computed from <see cref="ConfigFolders.Current" /> on every read, so it follows a folder switch.
+    /// The file does not have to exist.
     /// </remarks>
     public static string CurrentSettingsPath => (Configuration ??= new SettingsConfiguration()).FilePath;
 
@@ -97,6 +95,10 @@ public static class SettingsManager
     /// <returns>
     /// Whether the settings were successfully saved.
     /// </returns>
+    /// <remarks>
+    /// If the mode is Portable or Roaming and its folder is not the one in use, the settings are written into
+    /// the mode's folder and every other config file is moved there.
+    /// </remarks>
     public static async ValueTask<bool> SaveSettingsAsync()
     {
         if (Settings == null)
@@ -105,8 +107,119 @@ public static class SettingsManager
         }
 
         Configuration ??= new SettingsConfiguration();
-        return await ConfigFileManager.SaveAsync(Configuration, Settings, typeof(AppSettings),
-            SettingsGenerationContext.Default).ConfigureAwait(false);
+        await ConfigFolders.Gate.WaitAsync().ConfigureAwait(false);
+        try
+        {
+            var mode = Settings.StartUp?.ConfigLocation ?? ConfigLocation.Auto;
+            if (mode is ConfigLocation.Portable or ConfigLocation.Roaming)
+            {
+                var target = ConfigFolders.FolderFor(mode);
+                var from = ConfigFolders.Current;
+                if (!ConfigFolders.IsSame(target, from) &&
+                    (mode != ConfigLocation.Portable || FileHelper.IsDirectoryWritable(target)))
+                {
+                    ConfigFolders.SetCurrent(target);
+                    if (!await SaveSettingsUnlockedAsync().ConfigureAwait(false))
+                    {
+                        ConfigFolders.SetCurrent(from);
+                        return false;
+                    }
+
+                    await ConfigFolders.MoveAllAsync(from, target, includeSettings: false).ConfigureAwait(false);
+                    DeleteSettingsFile(from);
+                    return true;
+                }
+            }
+
+            return await SaveSettingsUnlockedAsync().ConfigureAwait(false);
+        }
+        finally
+        {
+            ConfigFolders.Gate.Release();
+        }
+    }
+
+    /// <summary>
+    /// Switches the config location mode, saves it, and moves every config file into the mode's folder.
+    /// </summary>
+    /// <returns>What happened. <see cref="ConfigLocationChange.PortableNotWritable" /> and
+    /// <see cref="ConfigLocationChange.SaveFailed" /> leave the mode and the folder as they were.</returns>
+    public static async Task<ConfigLocationChange> SetConfigLocationAsync(ConfigLocation mode)
+    {
+        // No await before Gate.WaitAsync: a caller that starts this before a save must reach the queue first
+        if (Settings?.StartUp is null)
+        {
+            return ConfigLocationChange.SaveFailed;
+        }
+
+        if (OperatingSystem.IsMacOS() || Settings.StartUp.ConfigLocation == mode)
+        {
+            return ConfigLocationChange.Unchanged;
+        }
+
+        var target = ConfigFolders.FolderFor(mode);
+        if (mode == ConfigLocation.Portable && !FileHelper.IsDirectoryWritable(target))
+        {
+            return ConfigLocationChange.PortableNotWritable;
+        }
+
+        Configuration ??= new SettingsConfiguration();
+        await ConfigFolders.Gate.WaitAsync().ConfigureAwait(false);
+        try
+        {
+            var oldMode = Settings.StartUp.ConfigLocation;
+            var from = ConfigFolders.Current;
+            var moving = !ConfigFolders.IsSame(target, from);
+
+            Settings.StartUp.ConfigLocation = mode;
+            if (moving)
+            {
+                ConfigFolders.SetCurrent(target);
+            }
+
+            if (!await SaveSettingsUnlockedAsync().ConfigureAwait(false))
+            {
+                Settings.StartUp.ConfigLocation = oldMode;
+                ConfigFolders.SetCurrent(from);
+                return ConfigLocationChange.SaveFailed;
+            }
+
+            var ok = true;
+            if (moving)
+            {
+                ok = await ConfigFolders.MoveAllAsync(from, target, includeSettings: false).ConfigureAwait(false);
+                DeleteSettingsFile(from);
+            }
+
+            return ok ? ConfigLocationChange.Changed : ConfigLocationChange.MoveIncomplete;
+        }
+        finally
+        {
+            ConfigFolders.Gate.Release();
+        }
+    }
+
+    /// <summary>
+    /// Writes the settings. The caller must hold <see cref="ConfigFolders.Gate" />.
+    /// </summary>
+    private static Task<bool> SaveSettingsUnlockedAsync() =>
+        ConfigFileManager.SaveUnlockedAsync(Configuration ??= new SettingsConfiguration(), Settings,
+            typeof(AppSettings), SettingsGenerationContext.Default);
+
+    private static void DeleteSettingsFile(string directory)
+    {
+        try
+        {
+            var path = Path.Combine(directory, ConfigFolders.SettingsFileName);
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
+        }
+        catch (Exception ex)
+        {
+            DebugHelper.LogDebug(nameof(SettingsManager), nameof(DeleteSettingsFile), ex);
+        }
     }
 
     /// <summary>
@@ -191,38 +304,52 @@ public static class SettingsManager
     }
 
     /// <summary>
-    /// Resets the application's settings to their default values and removes any existing settings file
-    /// to start with a clean configuration.
+    /// Resets the application's settings to their default values, keeping the config location mode.
     /// </summary>
-    /// <exception cref="IOException">Thrown if an error occurs while attempting to delete the existing settings file.</exception>
-    /// <exception cref="UnauthorizedAccessException">Thrown if access to the settings file is denied during deletion.</exception>
     /// <remarks>
-    /// This method ensures that the default settings are applied and deletes the user settings file if it exists,
-    /// allowing the application configuration to be completely reset.
+    /// In Auto mode, when the other folder has no settings file, the settings file is deleted, so the next start
+    /// behaves like a first run. Otherwise the defaults are written, with the mode kept and the language detected
+    /// from the system, because a deleted file would lose the mode or let a stale copy in the other folder win.
     /// </remarks>
-    public static void ResetDefaults()
+    public static async Task ResetDefaultsAsync()
+    {
+        var mode = Settings?.StartUp?.ConfigLocation ?? ConfigLocation.Auto;
+        SetDefaults();
+
+        if (mode == ConfigLocation.Auto && !HasContent(Path.Combine(ConfigFolders.OtherFolder,
+                ConfigFolders.SettingsFileName)))
+        {
+            try
+            {
+                var path = (Configuration ??= new SettingsConfiguration()).FilePath;
+                if (File.Exists(path))
+                {
+                    File.Delete(path);
+                }
+            }
+            catch (Exception ex)
+            {
+                DebugHelper.LogDebug(nameof(SettingsManager), nameof(ResetDefaultsAsync), ex);
+            }
+
+            return;
+        }
+
+        Settings!.StartUp!.ConfigLocation = mode;
+        Settings.UIProperties!.UserLanguage = TranslationManager.DetermineCorrectLanguage();
+        await SaveSettingsAsync().ConfigureAwait(false);
+    }
+
+    private static bool HasContent(string path)
     {
         try
         {
-            DeleteFileIfExists((Configuration ??= new SettingsConfiguration()).FilePath);
+            var info = new FileInfo(path);
+            return info.Exists && info.Length > 0;
         }
-        catch (Exception ex)
+        catch
         {
-            DebugHelper.LogDebug(nameof(SettingsManager), nameof(ResetDefaults), ex);
-        }
-        finally
-        {
-            SetDefaults();
-        }
-
-        return;
-
-        void DeleteFileIfExists(string path)
-        {
-            if (File.Exists(path))
-            {
-                File.Delete(path);
-            }
+            return false;
         }
     }
 

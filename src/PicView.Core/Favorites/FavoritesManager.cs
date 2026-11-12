@@ -37,7 +37,8 @@ public static class FavoritesManager
     public static IReadOnlyList<FavoriteEntry> AllEntries => _entries?.AsReadOnly() ?? (IReadOnlyList<FavoriteEntry>)[];
 
     /// <summary>
-    ///     Gets the favorites file path with normalized slashes.
+    ///     Gets the path of the favorites file in the config folder in use, or an empty string before
+    ///     <see cref="Initialize()"/>.
     /// </summary>
     public static string CurrentFavoritesFile => _favoritesConfiguration?.FilePath ?? string.Empty;
 

@@ -103,7 +103,8 @@ public static class FileHistoryManager
     }
 
     /// <summary>
-    ///     Gets the file history file path with normalized slashes.
+    ///     Gets the path of the file history file in the config folder in use, or an empty string before the file
+    ///     history is initialized.
     /// </summary>
     public static string CurrentFileHistoryFile => _fileHistoryConfiguration?.FilePath ?? string.Empty;
 

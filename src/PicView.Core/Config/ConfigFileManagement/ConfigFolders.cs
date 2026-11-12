@@ -1,3 +1,4 @@
+using PicView.Core.DebugTools;
 using PicView.Core.FileHandling;
 
 namespace PicView.Core.Config.ConfigFileManagement;
@@ -128,6 +129,59 @@ public static class ConfigFolders
         };
     }
 
+    /// <summary>
+    /// Moves every known config file from <paramref name="from" /> to <paramref name="to" />, overwriting the target.
+    /// An empty source file is deleted instead, so it never replaces a real one. The caller must hold
+    /// <see cref="Gate" />.
+    /// </summary>
+    /// <returns>False if any file failed; the others are still moved.</returns>
+    internal static Task<bool> MoveAllAsync(string from, string to, bool includeSettings)
+    {
+        var ok = true;
+        try
+        {
+            Directory.CreateDirectory(to);
+        }
+        catch (Exception ex)
+        {
+            DebugHelper.LogDebug(nameof(ConfigFolders), nameof(MoveAllAsync), ex);
+            return Task.FromResult(false);
+        }
+
+        foreach (var name in KnownFileNames)
+        {
+            if (!includeSettings && string.Equals(name, SettingsFileName, StringComparison.Ordinal))
+            {
+                continue;
+            }
+
+            var source = Path.Combine(from, name);
+            try
+            {
+                var info = new FileInfo(source);
+                if (!info.Exists)
+                {
+                    continue;
+                }
+
+                if (info.Length == 0)
+                {
+                    info.Delete();
+                    continue;
+                }
+
+                File.Move(source, Path.Combine(to, name), overwrite: true);
+            }
+            catch (Exception ex)
+            {
+                DebugHelper.LogDebug(nameof(ConfigFolders), nameof(MoveAllAsync), ex);
+                ok = false;
+            }
+        }
+
+        return Task.FromResult(ok);
+    }
+
     internal static void SetCurrent(string directory) => _current = directory;
 
     internal static void UseRoots(string localDirectory, string roamingDirectory)
@@ -152,7 +206,7 @@ public static class ConfigFolders
         }
     }
 
-    private static bool IsSame(string a, string b) =>
+    internal static bool IsSame(string a, string b) =>
         string.Equals(Path.TrimEndingDirectorySeparator(a), Path.TrimEndingDirectorySeparator(b),
             OperatingSystem.IsWindows() ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal);
 }
