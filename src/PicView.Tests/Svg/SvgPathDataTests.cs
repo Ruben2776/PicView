@@ -109,6 +109,8 @@ public class SvgPathDataTests
     [InlineData("M,0 0")]
     [InlineData("M0 0 L1e999 1")]
     [InlineData("M0 0 L1 1,")]
+    // The S needs the current point, which is past the largest double.
+    [InlineData("m1e308 0 l1e308 0 S1 1 2 2")]
     public void TryNormalize_Malformed_ReturnsFalse(string d)
     {
         Assert.False(SvgPathData.TryNormalize(d, false, out _));

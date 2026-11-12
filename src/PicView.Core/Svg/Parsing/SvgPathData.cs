@@ -14,7 +14,7 @@ internal static class SvgPathData
     ///     Tokenizes <paramref name="d" /> by the SVG path grammar and writes it back in the model's form, keeping every
     ///     number as written except the forms Avalonia rejects (see <see cref="AppendNumber" />). Each implicit repeat
     ///     gets its own letter. A smooth curve that does not directly follow a curve of its own kind is written as the
-    ///     explicit curve SVG means (see <see cref="AppendLetter" />). False when <paramref name="d" /> does not
+    ///     explicit curve SVG means (see <see cref="TryAppendLetter" />). False when <paramref name="d" /> does not
     ///     tokenize or does not start with a move.
     /// </summary>
     public static bool TryNormalize(string d, bool nonZero, out string pathData)
@@ -68,8 +68,8 @@ internal static class SvgPathData
             do
             {
                 AppendSeparator(builder, ref first);
-                AppendLetter(builder, letter, state);
-                if (!TryAppendArguments(text, ref pos, builder, command, argumentCount, arguments))
+                if (!TryAppendLetter(builder, letter, state) ||
+                    !TryAppendArguments(text, ref pos, builder, command, argumentCount, arguments))
                 {
                     return false;
                 }
@@ -93,35 +93,40 @@ internal static class SvgPathData
     ///     and <c>A</c>, so after any other command, or after a curve of the other kind, its <c>S</c> and <c>T</c>
     ///     would mirror a stale control point. SVG then takes the current point as the first control point, so
     ///     such an <c>S</c> is written as a <c>C</c> and such a <c>T</c> as a <c>Q</c> with that control point. The
-    ///     next smooth curve mirrors the rewritten one's control point, as SVG mirrors the smooth one's.
+    ///     next smooth curve mirrors the rewritten one's control point, as SVG mirrors the smooth one's. False when
+    ///     the current point such a curve needs is not finite.
     /// </summary>
-    private static void AppendLetter(StringBuilder builder, char letter, in PathState state)
+    private static bool TryAppendLetter(StringBuilder builder, char letter, in PathState state)
     {
         switch (letter)
         {
             case 's' when state.Previous is not ('C' or 'c' or 'S' or 's'):
                 builder.Append("c0,0,");
-                return;
+                return true;
             case 't' when state.Previous is not ('Q' or 'q' or 'T' or 't'):
                 builder.Append("q0,0,");
-                return;
+                return true;
             case 'S' when state.Previous is not ('C' or 'c' or 'S' or 's'):
                 builder.Append('C');
-                AppendPoint(builder, state.X, state.Y);
-                return;
+                return TryAppendPoint(builder, state.X, state.Y);
             case 'T' when state.Previous is not ('Q' or 'q' or 'T' or 't'):
                 builder.Append('Q');
-                AppendPoint(builder, state.X, state.Y);
-                return;
+                return TryAppendPoint(builder, state.X, state.Y);
             default:
                 builder.Append(letter);
-                return;
+                return true;
         }
     }
 
-    private static void AppendPoint(StringBuilder builder, double x, double y)
+    private static bool TryAppendPoint(StringBuilder builder, double x, double y)
     {
+        if (!double.IsFinite(x) || !double.IsFinite(y))
+        {
+            return false;
+        }
+
         builder.Append(SvgNumber.Format(x)).Append(',').Append(SvgNumber.Format(y)).Append(',');
+        return true;
     }
 
     public static string Rect(double x, double y, double width, double height, double rx, double ry, bool nonZero)
