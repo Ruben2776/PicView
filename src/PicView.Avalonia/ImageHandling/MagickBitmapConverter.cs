@@ -12,18 +12,21 @@ namespace PicView.Avalonia.ImageHandling;
 /// </summary>
 internal static class MagickBitmapConverter
 {
-    public static WriteableBitmap ToBgraWriteableBitmap(IMagickImage<byte> magickImage)
+    public static WriteableBitmap ToBgraWriteableBitmap(IMagickImage<byte> magickImage) =>
+        ToBgraWriteableBitmap(magickImage, new Vector(96, 96));
+
+    public static WriteableBitmap ToBgraWriteableBitmap(IMagickImage<byte> magickImage, Vector dpi)
     {
         if (!CanCopyDirectly(magickImage))
         {
-            return magickImage.ToWriteableBitmap();
+            return WithDpi(magickImage.ToWriteableBitmap(), dpi);
         }
 
         using var pixels = magickImage.GetPixelsUnsafe();
         var red = pixels.GetChannelIndex(PixelChannel.Red);
         if (red is null)
         {
-            return magickImage.ToWriteableBitmap();
+            return WithDpi(magickImage.ToWriteableBitmap(), dpi);
         }
 
         // Gray images only have one color channel, which Magick reports as red
@@ -33,7 +36,7 @@ internal static class MagickBitmapConverter
 
         var width = magickImage.Width;
         var height = (int)magickImage.Height;
-        var bitmap = new WriteableBitmap(new PixelSize((int)width, height), new Vector(96, 96),
+        var bitmap = new WriteableBitmap(new PixelSize((int)width, height), dpi,
             PixelFormat.Bgra8888, AlphaFormat.Premul);
 
         using var framebuffer = bitmap.Lock();
@@ -43,7 +46,7 @@ internal static class MagickBitmapConverter
             if (source == IntPtr.Zero)
             {
                 bitmap.Dispose();
-                return magickImage.ToWriteableBitmap();
+                return WithDpi(magickImage.ToWriteableBitmap(), dpi);
             }
 
             CopyRow(source, framebuffer.Address + y * framebuffer.RowBytes, (int)width,
@@ -51,6 +54,33 @@ internal static class MagickBitmapConverter
         }
 
         return bitmap;
+    }
+
+    /// <summary>
+    /// <c>ToWriteableBitmap</c> has no DPI parameter, so a non-96 DPI needs a copy of the pixels.
+    /// </summary>
+    private static unsafe WriteableBitmap WithDpi(WriteableBitmap bitmap, Vector dpi)
+    {
+        if (bitmap.Dpi == dpi)
+        {
+            return bitmap;
+        }
+
+        var result = new WriteableBitmap(bitmap.PixelSize, dpi, bitmap.Format ?? PixelFormat.Bgra8888,
+            bitmap.AlphaFormat ?? AlphaFormat.Premul);
+        using (var source = bitmap.Lock())
+        using (var destination = result.Lock())
+        {
+            var rowBytes = Math.Min(source.RowBytes, destination.RowBytes);
+            for (var y = 0; y < source.Size.Height; y++)
+            {
+                Buffer.MemoryCopy((byte*)source.Address + y * source.RowBytes,
+                    (byte*)destination.Address + y * destination.RowBytes, rowBytes, rowBytes);
+            }
+        }
+
+        bitmap.Dispose();
+        return result;
     }
 
     private static bool CanCopyDirectly(IMagickImage<byte> magickImage) =>
