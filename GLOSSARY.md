@@ -29,7 +29,7 @@ A generic Action, such as `Confirm`, `Cancel`, `PlayPause` or the arrows `Up`, `
 _Avoid_: Mode action, special key
 
 **Blocking Input Mode**:
-An Input Mode in which only the Actions it handles run; every other Keybind does nothing. Dialog, Renaming and Crop are blocking. Crop handles its Contextual Actions and the zoom Actions, `ZoomIn`, `ZoomOut` and `ResetZoom`, since the crop view zooms.
+An Input Mode in which only the Actions it handles run; every other Keybind does nothing. Dialog, Renaming and Crop are blocking. Crop handles its Contextual Actions and the zoom Actions, `ZoomIn`, `ZoomOut` and `ResetZoom`, since the crop view zooms. Crop and Dialog also let Window Actions run.
 _Avoid_: Modal mode, exclusive mode
 
 **Default Action**:
@@ -39,6 +39,10 @@ _Avoid_: Enter action, OK button
 **Non-blocking Input Mode**:
 An Input Mode that overrides specific Actions, disallows Actions that need a still image (such as `Crop`), and lets every other Keybind work as usual. Slideshow, Motion Photo, Animated Image and Gallery are non-blocking.
 _Avoid_: Overlay mode, passive mode
+
+**Window Action**:
+An Action whose only effect is to open a window of its own, or bring it forward: About, Settings, Image Information, Effects, Convert, Keybindings, Batch Resize, Resize and File Associations. Crop and Dialog let them run, since the window works outside the main view; an open menu closes as the window opens, and an open pop-up stays. Print is not one, since it may print at once.
+_Avoid_: Tool Window Action, since Settings, About, Keybindings and File Associations are not Tool Windows
 
 ## Windows
 

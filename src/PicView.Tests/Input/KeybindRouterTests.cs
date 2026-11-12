@@ -232,6 +232,50 @@ public class KeybindRouterTests
         Assert.Empty(_calls);
     }
 
+    [AvaloniaFact]
+    public async Task KeyDown_DialogWithTextBoxFocused_LeavesTheTextBoxAPlainWindowKeybind()
+    {
+        _state = Dialog;
+        _keymap = Keymap.Empty.Assign(new Keybind(Key.S), "SettingsWindow");
+
+        await Router().KeyDownAsync(new Keybind(Key.S), new TextBox());
+
+        Assert.Empty(_calls);
+    }
+
+    [AvaloniaFact]
+    public async Task KeyDown_DialogWithTextBoxFocused_RunsAChordedWindowKeybind()
+    {
+        _state = Dialog;
+        _keymap = Keymap.Empty.Assign(new Keybind(Key.S, KeyModifiers.Control), "SettingsWindow");
+
+        await Router().KeyDownAsync(new Keybind(Key.S, KeyModifiers.Control), new TextBox());
+
+        Assert.Equal(["SettingsWindow"], _calls);
+    }
+
+    [Fact]
+    public async Task KeyDown_Cropping_RunsAWindowKeybind()
+    {
+        _state = new InputModeState(IsCropping: true);
+        _keymap = Keymap.Empty.Assign(new Keybind(Key.F1), "SettingsWindow");
+
+        await Router().KeyDownAsync(new Keybind(Key.F1), null);
+
+        Assert.Equal(["SettingsWindow"], _calls);
+    }
+
+    [Fact]
+    public async Task MouseButton_InDialog_DoesNotRunAWindowAction()
+    {
+        _state = Dialog;
+        _keymap = Keymap.Empty.Assign(new Keybind(MouseButton.XButton1), "SettingsWindow");
+
+        await Router().MouseButtonAsync(new Keybind(MouseButton.XButton1));
+
+        Assert.Empty(_calls);
+    }
+
     [Fact]
     public async Task MouseButton_InDialog_DoesNothing()
     {

@@ -148,4 +148,30 @@ public class KeybindCategoryDefinitionTests
 
         Assert.DoesNotContain(functionNames, KeybindCategoryDefinition.IsContextualAction);
     }
+
+    [Fact]
+    public void IsWindowAction_IsTheToolWindowsCategoryAndFileAssociations()
+    {
+        var expected = KeybindCategoryDefinition.GetToolWindowsEntries(new LanguageModel())
+            .Select(e => e.FunctionName)
+            .Append(Actions.FileAssociationsWindow)
+            .Order(StringComparer.Ordinal);
+
+        var windowActions = KeybindCategoryDefinition.ActionNames
+            .Where(KeybindCategoryDefinition.IsWindowAction)
+            .Order(StringComparer.Ordinal);
+
+        Assert.Equal(expected, windowActions);
+    }
+
+    [Theory]
+    [InlineData("Print")]
+    [InlineData("ShowFileProperties")]
+    [InlineData("OpenWith")]
+    [InlineData("Crop")]
+    [InlineData("")]
+    public void IsWindowAction_OtherActions_IsFalse(string action)
+    {
+        Assert.False(KeybindCategoryDefinition.IsWindowAction(action));
+    }
 }

@@ -71,7 +71,16 @@ public class InputModeTests
     [InlineData(InputMode.Dialog, "ZoomIn", false)]
     [InlineData(InputMode.Renaming, "ResetZoom", false)]
     [InlineData(InputMode.Normal, "ZoomIn", false)]
-    public void Allows_OnlyCropAndItsZoomAndTurnActions(InputMode mode, string action, bool expected)
+    [InlineData(InputMode.Crop, "SettingsWindow", true)]
+    [InlineData(InputMode.Crop, "EffectsWindow", true)]
+    [InlineData(InputMode.Crop, "FileAssociationsWindow", true)]
+    [InlineData(InputMode.Dialog, "SettingsWindow", true)]
+    [InlineData(InputMode.Dialog, "AboutWindow", true)]
+    [InlineData(InputMode.Dialog, "Next", false)]
+    [InlineData(InputMode.Renaming, "SettingsWindow", false)]
+    [InlineData(InputMode.Crop, "Print", false)]
+    [InlineData(InputMode.Normal, "SettingsWindow", false)]
+    public void Allows_CropZoomsAndTurnsAndWindowsOpenInCropAndDialog(InputMode mode, string action, bool expected)
     {
         Assert.Equal(expected, mode.Allows(action));
     }

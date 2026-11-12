@@ -21,9 +21,11 @@ public class InputAllocationTests
 
     private static readonly Keybind Right = new(Key.Right);
     private static readonly Keybind Enter = new(Key.Enter);
+    private static readonly Keybind F1 = new(Key.F1);
 
     private static readonly Keymap Keymap = Keymap.Empty
         .Assign(Right, "Next")
+        .Assign(F1, "SettingsWindow")
         .Assign(Enter, "ToggleFullscreen")
         .Assign(Enter, "Confirm")
         .Assign(new Keybind(MouseButton.XButton1), "Prev")
@@ -84,6 +86,15 @@ public class InputAllocationTests
         var router = Router(Claims.Everything);
 
         Assert.Equal(0, AllocatedBytes(() => PressAsync(router, Enter)));
+    }
+
+    [Fact]
+    public void KeyDown_WindowActionInCrop_AllocatesNothing()
+    {
+        _state = new InputModeState(IsCropping: true);
+        var router = Router(Claims.Nothing);
+
+        Assert.Equal(0, AllocatedBytes(() => PressAsync(router, F1)));
     }
 
     [Fact]

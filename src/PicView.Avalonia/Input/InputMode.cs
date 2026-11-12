@@ -81,20 +81,28 @@ public static class InputModeExtensions
     extension(InputMode mode)
     {
         /// <summary>
-        /// Whether only the Actions <paramref name="mode"/> handles may run, with every other Keybind doing nothing.
+        /// Whether only the Actions <paramref name="mode"/> handles or allows may run, with every other Keybind
+        /// doing nothing.
         /// </summary>
         public bool IsBlocking() =>
             mode is InputMode.Dialog or InputMode.Renaming or InputMode.Crop;
 
         /// <summary>
-        /// Whether the blocking <paramref name="mode"/> handles the ordinary <paramref name="action"/>, so it runs
-        /// there: the crop view zooms (ADR-0027) and turns with its tab, so Crop handles the zoom Actions and the
-        /// turn and flip Actions. No other blocking mode handles any.
+        /// Whether the blocking <paramref name="mode"/> lets the ordinary <paramref name="action"/> run there.
+        /// The crop view zooms (ADR-0027) and turns with its tab, so Crop handles the zoom Actions and the turn and
+        /// flip Actions. A window works outside the main view, so Crop and Dialog let Window Actions run (ADR-0029).
+        /// Renaming allows none.
         /// </summary>
         public bool Allows(string action) =>
-            mode is InputMode.Crop && action is Actions.ZoomIn or Actions.ZoomOut or Actions.ResetZoom
-                or Actions.RotateLeft or Actions.RotateRight or Actions.Rotate0 or Actions.Rotate90
-                or Actions.Rotate180 or Actions.Rotate270 or Actions.Flip;
+            mode switch
+            {
+                InputMode.Crop => action is Actions.ZoomIn or Actions.ZoomOut or Actions.ResetZoom
+                                      or Actions.RotateLeft or Actions.RotateRight or Actions.Rotate0
+                                      or Actions.Rotate90 or Actions.Rotate180 or Actions.Rotate270 or Actions.Flip ||
+                                  KeybindCategoryDefinition.IsWindowAction(action),
+                InputMode.Dialog => KeybindCategoryDefinition.IsWindowAction(action),
+                _ => false
+            };
 
         /// <summary>
         /// Whether <paramref name="mode"/> is a non-blocking mode other than Normal, which disallows Actions
