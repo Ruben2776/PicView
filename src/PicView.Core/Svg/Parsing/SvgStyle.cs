@@ -46,9 +46,13 @@ internal sealed record SvgComputedStyle
     /// <summary>The <c>clip-path</c> reference (the text inside <c>url()</c>), or null for none.</summary>
     public string? ClipPath { get; init; }
 
-    public static SvgComputedStyle Initial(SvgColor currentColor)
+    public static SvgComputedStyle Initial(SvgParseOptions options)
     {
-        return new SvgComputedStyle { Color = currentColor };
+        return new SvgComputedStyle
+        {
+            Color = options.CurrentColor,
+            Fill = new SvgPaintValue(SvgPaintKind.Color, options.InitialFill)
+        };
     }
 
     /// <summary>The style a child starts from: the inherited properties, with the others at their initial values.</summary>

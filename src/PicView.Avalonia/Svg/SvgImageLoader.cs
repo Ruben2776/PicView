@@ -26,9 +26,9 @@ internal static class SvgImageLoader
         {
             var text = await SvgFileReader.ReadAsync(fileInfo.FullName).ConfigureAwait(false);
             var options = SvgParseOptions.Default;
-            if (text.Contains(CurrentColorKeyword, StringComparison.OrdinalIgnoreCase))
+            if (UsesCurrentColor(text))
             {
-                options = new SvgParseOptions { CurrentColor = await GetMainTextColorAsync().ConfigureAwait(false) };
+                options = Themed(await GetMainTextColorAsync().ConfigureAwait(false));
             }
 
             var result = SvgParser.Parse(text, options);
@@ -49,6 +49,20 @@ internal static class SvgImageLoader
         DebugHelper.LogDebug(nameof(SvgImageLoader), nameof(LoadAsync), $"{fileInfo.Name}: {reason}");
         return SvgFallback.Render(fileInfo, width, height);
     }
+
+    /// <summary>
+    /// Whether the file is an icon that follows the theme: it names <c>currentColor</c> somewhere. Only then is the
+    /// text color read, and only then do unset fills follow it; other files keep SVG's black.
+    /// </summary>
+    internal static bool UsesCurrentColor(string svgText) =>
+        svgText.Contains(CurrentColorKeyword, StringComparison.OrdinalIgnoreCase);
+
+    /// <summary>
+    /// The options for a file that uses <c>currentColor</c>: both <c>currentColor</c> and an unset fill are the text
+    /// color. In a browser the two are the same color (black), so an icon mixes them freely and they must stay equal.
+    /// </summary>
+    internal static SvgParseOptions Themed(SvgColor textColor) =>
+        new() { CurrentColor = textColor, InitialFill = textColor };
 
     private static async Task<SvgColor> GetMainTextColorAsync()
     {

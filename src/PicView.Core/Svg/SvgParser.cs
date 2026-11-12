@@ -8,6 +8,13 @@ public sealed record SvgParseOptions
 
     /// <summary>The color <c>currentColor</c> means where no <c>color</c> property sets it.</summary>
     public SvgColor CurrentColor { get; init; } = SvgColor.Black;
+
+    /// <summary>
+    /// The fill of a shape where no <c>fill</c> is set or inherited. SVG's own value is black. The viewer sets it
+    /// to its text color for a file that uses <c>currentColor</c>, so the icon's unset fills match what
+    /// <c>currentColor</c> draws, as they do in a browser where both are black.
+    /// </summary>
+    public SvgColor InitialFill { get; init; } = SvgColor.Black;
 }
 
 /// <summary>A parsed drawing, or the reason the file is unsupported (and no drawing).</summary>
@@ -78,7 +85,7 @@ internal sealed class SvgResolver
         _viewport = viewport;
         _options = options;
         var contextStyles =
-            new SvgContextStyles(viewport, document.Css, SvgComputedStyle.Initial(options.CurrentColor));
+            new SvgContextStyles(viewport, document.Css, SvgComputedStyle.Initial(options));
         _paintServers = new SvgPaintServers(document, viewport, contextStyles);
         _clipPaths = new SvgClipPaths(document, viewport, contextStyles, this);
     }
@@ -94,7 +101,7 @@ internal sealed class SvgResolver
             return Fail("property:transform");
         }
 
-        if (!TryComputeStyle(svg, SvgComputedStyle.Initial(_options.CurrentColor), out var style))
+        if (!TryComputeStyle(svg, SvgComputedStyle.Initial(_options), out var style))
         {
             return false;
         }

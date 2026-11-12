@@ -57,6 +57,7 @@ For the large map, parse plus build is about 157 ms against about 301 ms for the
 - Animation elements are ignored, so the static image shows, as before. Text, embedded images, masks, patterns, markers, symbols, nested `svg` and filters fall back to the bitmap, where ImageMagick decides what they look like.
 - `CopyImage` works on a fallback SVG, since the tab then holds a bitmap. Copy AXAML does nothing on a fallback SVG.
 - The ImageMagick ping that selects the SVG path stays as it was.
+- In a file that uses `currentColor`, a shape with no fill set is drawn in the main text color too, not SVG's black. An icon mixes the two freely because in a browser both are black, so they must stay the same color here (Ionicons' `help-sharp.svg` strokes with `currentColor` and leaves its dot's fill unset). A file that never names `currentColor` keeps black, so ordinary artwork is not recolored. This is the user's ruling and the one place the viewer departs from SVG's own colors. Copy AXAML is not themed: it writes black for both. A fallback bitmap is not themed either, since ImageMagick renders it.
 
 ## Not verified
 

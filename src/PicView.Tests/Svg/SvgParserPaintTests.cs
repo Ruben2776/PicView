@@ -134,6 +134,37 @@ public class SvgParserPaintTests
     }
 
     [Fact]
+    public void Parse_UnsetFill_UsesOptionsInitialFill()
+    {
+        var options = new SvgParseOptions { InitialFill = new SvgColor(255, 1, 2, 3) };
+        Assert.Equal(new SvgColor(255, 1, 2, 3), Solid("<rect width='1' height='1'/>", options));
+    }
+
+    [Fact]
+    public void Parse_UnsetFillUnderColorProperty_KeepsInitialFill()
+    {
+        // The initial fill is a color of its own, not currentColor: a color property does not change it
+        var options = new SvgParseOptions { InitialFill = new SvgColor(255, 1, 2, 3) };
+        var root = Root("<g color='blue'><rect width='1' height='1'/></g>", options);
+        var inside = Assert.IsType<SvgShape>(Assert.Single(Assert.IsType<SvgGroup>(root.Children[0]).Children));
+        Assert.Equal(new SvgSolidPaint(new SvgColor(255, 1, 2, 3)), inside.Fill);
+    }
+
+    [Fact]
+    public void Parse_SetFill_IgnoresInitialFill()
+    {
+        var options = new SvgParseOptions { InitialFill = new SvgColor(255, 1, 2, 3) };
+        Assert.Equal(new SvgColor(255, 255, 0, 0), Solid("<rect width='1' height='1' fill='red'/>", options));
+    }
+
+    [Fact]
+    public void Parse_UnsetStroke_StaysNoneWithInitialFill()
+    {
+        var options = new SvgParseOptions { InitialFill = new SvgColor(255, 1, 2, 3) };
+        Assert.Null(Shape("<rect width='1' height='1'/>", options).Stroke);
+    }
+
+    [Fact]
     public void Parse_ColorOnGroup_OverridesCurrentColorForSubtree()
     {
         var options = new SvgParseOptions { CurrentColor = new SvgColor(255, 1, 2, 3) };
