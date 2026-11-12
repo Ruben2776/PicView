@@ -363,6 +363,26 @@ public class SvgPixelTests
     }
 
     [AvaloniaFact]
+    public void SmoothCubic_AfterLine_StartsFromTheCurrentPoint()
+    {
+        // SVG takes the S's first control point at (60,50), so the curve bulges down to y ≈ 68. Mirroring the
+        // cubic's (40,90) about (60,50) would bulge it up through (72,46) instead.
+        var pixels = SvgRender.Pixels(Svg(100, 100, "<path d='M10 50C10 90 40 90 40 50L60 50S90 90 90 50Z'/>"));
+        AssertTransparent(pixels.At(72, 46));
+        AssertPainted(pixels.At(75, 60));
+    }
+
+    [AvaloniaFact]
+    public void SmoothQuadratic_AfterLine_IsAStraightLine()
+    {
+        // SVG takes the T's control point at (60,50): a straight line back along y 50. Mirroring the quadratic's
+        // (25,90) about (60,50) would bulge it up to (95,10), covering (80,42).
+        var pixels = SvgRender.Pixels(Svg(100, 100, "<path d='M10 50Q25 90 40 50L60 50T90 50Z'/>"));
+        AssertTransparent(pixels.At(80, 42));
+        AssertPainted(pixels.At(25, 60));
+    }
+
+    [AvaloniaFact]
     public void Dashes_FourTwoAtWidthTwo_PaintFourAndSkipTwo()
     {
         var pixels = SvgRender.Pixels(Svg(20, 10,

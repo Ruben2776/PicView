@@ -78,7 +78,29 @@ public class SvgPathDataTests
     {
         Assert.True(SvgPathData.TryNormalize("M0,0 C1,1 2,2 3,3 4,4 5,5 6,6 Q1 1 2 2 S3 3 4 4 T5 5 Z", false,
             out var pathData));
-        Assert.Equal("M0,0 C1,1,2,2,3,3 C4,4,5,5,6,6 Q1,1,2,2 S3,3,4,4 T5,5 Z", pathData);
+        // The S follows a Q and the T follows an S, so each starts from the current point.
+        Assert.Equal("M0,0 C1,1,2,2,3,3 C4,4,5,5,6,6 Q1,1,2,2 C2,2,3,3,4,4 Q4,4,5,5 Z", pathData);
+    }
+
+    [Theory]
+    [InlineData("M0 0 C1 1 2 2 3 3 S4 4 5 5 S6 6 7 7", "M0,0 C1,1,2,2,3,3 S4,4,5,5 S6,6,7,7")]
+    [InlineData("M0 0 Q1 1 2 2 T3 3 T4 4", "M0,0 Q1,1,2,2 T3,3 T4,4")]
+    [InlineData("M0 0 L1.5 0 S3 3 4 4 S5 5 6 6", "M0,0 L1.5,0 C1.5,0,3,3,4,4 S5,5,6,6")]
+    [InlineData("M0 0 h1 s2 2 3 3 l1 1 t1 1 t2 2", "M0,0 h1 c0,0,2,2,3,3 l1,1 q0,0,1,1 t2,2")]
+    [InlineData("M1 2 h3 v4 z T5 5", "M1,2 h3 v4 z Q1,2,5,5")]
+    [InlineData("M0 0 a1 1 0 0 1 2 0 S3 3 4 4", "M0,0 a1,1,0,0,1,2,0 C2,0,3,3,4,4")]
+    public void TryNormalize_SmoothCurve_IsExplicitUnlessItFollowsItsOwnKind(string d, string expected)
+    {
+        Assert.True(SvgPathData.TryNormalize(d, false, out var pathData));
+        Assert.Equal(expected, pathData);
+    }
+
+    [Fact]
+    public void TryNormalize_SmoothCurveAfterRelativeCommands_WritesTheExactCurrentPoint()
+    {
+        // 0.2 + 0.1 is 0.30000000000000004 in doubles, which is where Avalonia's own parser puts the point.
+        Assert.True(SvgPathData.TryNormalize("m.1 .2 l.1 .1 T1 1", false, out var pathData));
+        Assert.Equal("m.1,.2 l.1,.1 Q0.2,0.30000000000000004,1,1", pathData);
     }
 
     [Theory]

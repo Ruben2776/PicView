@@ -135,6 +135,28 @@ public class AxamlValueTests
         { "M0 0 q5 10 10 0", 0, 0, 10, 5 },
         { "M0 0 Q5 10 10 0 T20 0", 0, -5, 20, 10 },
         { "M0 0 q5 10 10 0 t10 0", 0, -5, 20, 10 },
+        // Smooth chains: each one mirrors the one before it. Troughs and peaks alternate at ±7.5 and ±5.
+        { "M0 0 C0 10 10 10 10 0 S20 -10 20 0 S30 10 30 0", 0, -7.5, 30, 15 },
+        { "M0 0 Q5 10 10 0 T20 0 T30 0", 0, -5, 30, 10 },
+        // A smooth curve not directly after its own kind takes the current point as its first control point. The
+        // cubic from (20,0) with controls (20,0) and (30,10) peaks at y 4.44, below the first curve's 7.5; a
+        // quadratic with its control at the current point is a straight line.
+        { "M0 0 C0 10 10 10 10 0 L20 0 S30 10 30 0", 0, 0, 30, 7.5 },
+        { "M0 0 c0 10 10 10 10 0 h10 s10 10 10 0", 0, 0, 30, 7.5 },
+        { "M0 0 Q5 10 10 0 L20 0 T30 0", 0, 0, 30, 5 },
+        { "M0 0 Q5 10 10 0 S20 10 20 0", 0, 0, 20, 5 },
+        { "M0 0 C0 10 10 10 10 0 T20 0", 0, 0, 20, 7.5 },
+        { "M0 0 C0 10 10 10 10 0 M20 0 S30 10 30 0", 0, 0, 30, 7.5 },
+        // The first T is a line to (30,10); the second mirrors the line's start (20,0) to (40,20) and peaks at
+        // y 13.33.
+        { "M0 0 Q5 10 10 0 L20 0 T30 10 T40 0", 0, 0, 40, 40.0 / 3 },
+        // After a line, the second S mirrors the rewritten first one: (30,10) about (30,0) to (30,-10).
+        { "M0 0 C0 10 10 10 10 0 L20 0 S30 10 30 0 S40 -10 40 0", 0, -7.5, 40, 15 },
+        // The current point is tracked through H and V, z, relative moves and arcs.
+        { "M0 0 C0 10 10 10 10 0 H20 V5 S30 15 30 5", 0, 0, 30, 5 + 40.0 / 9 },
+        { "M0 0 C0 10 10 10 10 0 Z m20 0 S30 10 30 0", 0, 0, 30, 7.5 },
+        { "M0 0 c0 10 10 10 10 0 m10 0 S30 10 30 0", 0, 0, 30, 7.5 },
+        { "M0 0 C0 10 10 10 10 0 a5 5 0 0 1 10 0 S30 10 30 0", 0, -5, 30, 12.5 },
         // A negative radius is taken as its absolute value: a half circle of radius 5 over the top.
         { "M0 0 A-5 -5 0 0 1 10 0", 0, -5, 10, 5 },
         // A zero radius is a straight line to the end point.

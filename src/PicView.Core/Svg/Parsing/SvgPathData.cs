@@ -1,4 +1,3 @@
-using System.Globalization;
 using System.Text;
 
 namespace PicView.Core.Svg.Parsing;
@@ -14,7 +13,8 @@ internal static class SvgPathData
     /// <summary>
     ///     Tokenizes <paramref name="d" /> by the SVG path grammar and writes it back in the model's form, keeping every
     ///     number as written except the forms Avalonia rejects (see <see cref="AppendNumber" />). Each implicit repeat
-    ///     gets its own letter. False when <paramref name="d" /> does not
+    ///     gets its own letter. A smooth curve that does not directly follow a curve of its own kind is written as the
+    ///     explicit curve SVG means (see <see cref="AppendLetter" />). False when <paramref name="d" /> does not
     ///     tokenize or does not start with a move.
     /// </summary>
     public static bool TryNormalize(string d, bool nonZero, out string pathData)
@@ -35,6 +35,8 @@ internal static class SvgPathData
         }
 
         var first = true;
+        var state = new PathState();
+        Span<double> arguments = stackalloc double[7];
         while (pos < text.Length)
         {
             var command = text[pos];
@@ -49,7 +51,9 @@ internal static class SvgPathData
 
             if (argumentCount == 0)
             {
-                AppendCommand(builder, command, ref first);
+                AppendSeparator(builder, ref first);
+                builder.Append(command);
+                state.Advance(command, arguments);
                 continue;
             }
 
@@ -63,12 +67,14 @@ internal static class SvgPathData
             var letter = command;
             do
             {
-                AppendCommand(builder, letter, ref first);
-                if (!TryAppendArguments(text, ref pos, builder, command, argumentCount))
+                AppendSeparator(builder, ref first);
+                AppendLetter(builder, letter, state);
+                if (!TryAppendArguments(text, ref pos, builder, command, argumentCount, arguments))
                 {
                     return false;
                 }
 
+                state.Advance(letter, arguments);
                 letter = repeatCommand;
                 var comma = SvgScanner.SkipSeparator(text, ref pos);
                 if (comma && (pos >= text.Length || !StartsNumber(text[pos])))
@@ -80,6 +86,42 @@ internal static class SvgPathData
 
         pathData = builder.ToString();
         return true;
+    }
+
+    /// <summary>
+    ///     Appends the command's letter. Avalonia's path parser forgets the previous control point only at <c>Z</c>
+    ///     and <c>A</c>, so after any other command, or after a curve of the other kind, its <c>S</c> and <c>T</c>
+    ///     would mirror a stale control point. SVG then takes the current point as the first control point, so
+    ///     such an <c>S</c> is written as a <c>C</c> and such a <c>T</c> as a <c>Q</c> with that control point. The
+    ///     next smooth curve mirrors the rewritten one's control point, as SVG mirrors the smooth one's.
+    /// </summary>
+    private static void AppendLetter(StringBuilder builder, char letter, in PathState state)
+    {
+        switch (letter)
+        {
+            case 's' when state.Previous is not ('C' or 'c' or 'S' or 's'):
+                builder.Append("c0,0,");
+                return;
+            case 't' when state.Previous is not ('Q' or 'q' or 'T' or 't'):
+                builder.Append("q0,0,");
+                return;
+            case 'S' when state.Previous is not ('C' or 'c' or 'S' or 's'):
+                builder.Append('C');
+                AppendPoint(builder, state.X, state.Y);
+                return;
+            case 'T' when state.Previous is not ('Q' or 'q' or 'T' or 't'):
+                builder.Append('Q');
+                AppendPoint(builder, state.X, state.Y);
+                return;
+            default:
+                builder.Append(letter);
+                return;
+        }
+    }
+
+    private static void AppendPoint(StringBuilder builder, double x, double y)
+    {
+        builder.Append(SvgNumber.FormatRoundTrip(x)).Append(',').Append(SvgNumber.FormatRoundTrip(y)).Append(',');
     }
 
     public static string Rect(double x, double y, double width, double height, double rx, double ry, bool nonZero)
@@ -212,19 +254,19 @@ internal static class SvgPathData
         return char.IsAsciiDigit(c) || c is '+' or '-' or '.';
     }
 
-    private static void AppendCommand(StringBuilder builder, char letter, ref bool first)
+    private static void AppendSeparator(StringBuilder builder, ref bool first)
     {
         if (!first)
         {
             builder.Append(' ');
         }
 
-        builder.Append(letter);
         first = false;
     }
 
+    /// <summary>Appends the command's arguments and stores their values in <paramref name="values" />.</summary>
     private static bool TryAppendArguments(ReadOnlySpan<char> text, ref int pos, StringBuilder builder, char command,
-        int argumentCount)
+        int argumentCount, Span<double> values)
     {
         var isArc = command is 'A' or 'a';
         for (var i = 0; i < argumentCount; i++)
@@ -247,12 +289,14 @@ internal static class SvgPathData
                     return false;
                 }
 
+                values[i] = text[pos] - '0';
                 builder.Append(text[pos]);
                 pos++;
                 continue;
             }
 
-            if (!SvgScanner.TryScanNumber(text, ref pos, out var number) || !SvgScanner.TryConvert(number, out _))
+            if (!SvgScanner.TryScanNumber(text, ref pos, out var number) ||
+                !SvgScanner.TryConvert(number, out values[i]))
             {
                 return false;
             }
@@ -264,80 +308,95 @@ internal static class SvgPathData
     }
 
     /// <summary>
+    ///     The current point and the start of the current subpath, as Avalonia's path parser computes them, and the
+    ///     letter of the last command written.
+    /// </summary>
+    private struct PathState
+    {
+        private double _startX;
+        private double _startY;
+
+        public double X { get; private set; }
+        public double Y { get; private set; }
+        public char Previous { get; private set; }
+
+        /// <summary>Moves past a command with these arguments.</summary>
+        public void Advance(char letter, ReadOnlySpan<double> a)
+        {
+            Previous = letter;
+            switch (letter)
+            {
+                case 'M':
+                    X = a[0];
+                    Y = a[1];
+                    _startX = X;
+                    _startY = Y;
+                    break;
+                case 'm':
+                    X += a[0];
+                    Y += a[1];
+                    _startX = X;
+                    _startY = Y;
+                    break;
+                case 'L' or 'T':
+                    X = a[0];
+                    Y = a[1];
+                    break;
+                case 'l' or 't':
+                    X += a[0];
+                    Y += a[1];
+                    break;
+                case 'H':
+                    X = a[0];
+                    break;
+                case 'h':
+                    X += a[0];
+                    break;
+                case 'V':
+                    Y = a[0];
+                    break;
+                case 'v':
+                    Y += a[0];
+                    break;
+                case 'C':
+                    X = a[4];
+                    Y = a[5];
+                    break;
+                case 'c':
+                    X += a[4];
+                    Y += a[5];
+                    break;
+                case 'S' or 'Q':
+                    X = a[2];
+                    Y = a[3];
+                    break;
+                case 's' or 'q':
+                    X += a[2];
+                    Y += a[3];
+                    break;
+                case 'A':
+                    X = a[5];
+                    Y = a[6];
+                    break;
+                case 'a':
+                    X += a[5];
+                    Y += a[6];
+                    break;
+                case 'Z' or 'z':
+                    X = _startX;
+                    Y = _startY;
+                    break;
+            }
+        }
+    }
+
+    /// <summary>
     ///     Appends a number as written, unless it is in a form Avalonia's path parser rejects: a leading <c>+</c>, a
     ///     trailing <c>.</c> or an exponent. Those are rewritten as plain decimals with the same digits, so the value
     ///     is unchanged.
     /// </summary>
     private static void AppendNumber(StringBuilder builder, ReadOnlySpan<char> number)
     {
-        if (number.IndexOfAny("+eE") < 0 && number[^1] != '.')
-        {
-            builder.Append(number);
-            return;
-        }
-
-        var negative = number[0] == '-';
-        if (number[0] is '+' or '-')
-        {
-            number = number[1..];
-        }
-
-        var exponent = 0;
-        var e = number.IndexOfAny('e', 'E');
-        var exponentText = e >= 0 ? number[(e + 1)..] : ReadOnlySpan<char>.Empty;
-        if (e >= 0)
-        {
-            number = number[..e];
-        }
-
-        var point = number.IndexOf('.');
-        var integerDigits = point < 0 ? number : number[..point];
-        var fractionDigits = point < 0 ? ReadOnlySpan<char>.Empty : number[(point + 1)..];
-        var digits = string.Concat(integerDigits, fractionDigits).TrimStart('0');
-        if (digits.Length == 0)
-        {
-            builder.Append('0');
-            return;
-        }
-
-        // The scanner only leaves an e in the number when digits follow it. An exponent past the int range, with
-        // nonzero digits, can only be finite if it is negative (no string holds 2^31 leading zeros), and then the
-        // number is below the smallest double, so it parses as 0.
-        if (e >= 0 && !int.TryParse(exponentText, NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture,
-                out exponent))
-        {
-            builder.Append('0');
-            return;
-        }
-
-        // The decimal point's place relative to the first significant digit: the number is 0.digits × 10^this.
-        var leadingZeros = integerDigits.Length + fractionDigits.Length - digits.Length;
-        var pointPosition = (long)integerDigits.Length - leadingZeros + exponent;
-
-        // Below 1e-400 a number parses as 0, the same value as "0". A finite number never reaches 1e309, so
-        // pointPosition never exceeds 309 here and the expansion below stays short.
-        if (pointPosition < -400)
-        {
-            builder.Append('0');
-            return;
-        }
-
-        if (negative)
-        {
-            builder.Append('-');
-        }
-
-        if (pointPosition <= 0)
-        {
-            builder.Append("0.").Append('0', (int)-pointPosition).Append(digits);
-        }
-        else if (pointPosition >= digits.Length)
-        {
-            builder.Append(digits).Append('0', (int)(pointPosition - digits.Length));
-        }
-        else
-        {
-            builder.Append(digits.AsSpan(0, (int)pointPosition)).Append('.').Append(digits.AsSpan((int)pointPosition));
-        }
+        SvgNumber.AppendPlain(builder, number);
     }
 }
