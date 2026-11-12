@@ -49,7 +49,7 @@ public static class AxamlDrawingWriter
         if (group.Clip is { } clip)
         {
             Line(sb, depth + 1, "<DrawingGroup.ClipGeometry>");
-            WriteClip(sb, depth + 2, clip.Shapes, clip.Shapes.Count);
+            WriteClip(sb, depth + 2, clip.Shapes, 0, clip.Shapes.Count);
             Line(sb, depth + 1, "</DrawingGroup.ClipGeometry>");
         }
 
@@ -69,21 +69,26 @@ public static class AxamlDrawingWriter
         Line(sb, depth, "</DrawingGroup>");
     }
 
-    /// <summary>Writes the union of the first <paramref name="count" /> shapes, nesting left to right.</summary>
-    private static void WriteClip(StringBuilder sb, int depth, IReadOnlyList<SvgClipShape> shapes, int count)
+    /// <summary>
+    ///     Writes the union of <paramref name="count" /> shapes from <paramref name="start" /> as a balanced tree: the
+    ///     first half, rounded up, on the left, as the builder splits it. The recursion is only log2 of the count deep.
+    /// </summary>
+    private static void WriteClip(StringBuilder sb, int depth, IReadOnlyList<SvgClipShape> shapes, int start,
+        int count)
     {
-        if (count <= 1)
+        if (count == 1)
         {
-            WriteClipShape(sb, depth, shapes[0]);
+            WriteClipShape(sb, depth, shapes[start]);
             return;
         }
 
+        var left = (count + 1) / 2;
         Line(sb, depth, "<CombinedGeometry GeometryCombineMode=\"Union\">");
         Line(sb, depth + 1, "<CombinedGeometry.Geometry1>");
-        WriteClip(sb, depth + 2, shapes, count - 1);
+        WriteClip(sb, depth + 2, shapes, start, left);
         Line(sb, depth + 1, "</CombinedGeometry.Geometry1>");
         Line(sb, depth + 1, "<CombinedGeometry.Geometry2>");
-        WriteClipShape(sb, depth + 2, shapes[count - 1]);
+        WriteClip(sb, depth + 2, shapes, start + left, count - left);
         Line(sb, depth + 1, "</CombinedGeometry.Geometry2>");
         Line(sb, depth, "</CombinedGeometry>");
     }

@@ -37,7 +37,7 @@ public static class DrawingImageBuilder
 
         if (group.Clip is { } clip)
         {
-            result.ClipGeometry = Clip(clip.Shapes, clip.Shapes.Count);
+            result.ClipGeometry = Clip(clip.Shapes, 0, clip.Shapes.Count);
         }
 
         foreach (var child in group.Children)
@@ -56,15 +56,21 @@ public static class DrawingImageBuilder
         return result;
     }
 
-    /// <summary>The union of the first <paramref name="count" /> shapes, nesting left to right.</summary>
-    private static Geometry Clip(IReadOnlyList<SvgClipShape> shapes, int count)
+    /// <summary>
+    /// The union of <paramref name="count" /> shapes from <paramref name="start" />, as a balanced tree: the first
+    /// half, rounded up, on the left. The recursion, and Avalonia's at render, is only log2 of the count deep.
+    /// <see cref="AxamlDrawingWriter" /> splits the same way.
+    /// </summary>
+    private static Geometry Clip(IReadOnlyList<SvgClipShape> shapes, int start, int count)
     {
-        if (count <= 1)
+        if (count == 1)
         {
-            return ClipShape(shapes[0]);
+            return ClipShape(shapes[start]);
         }
 
-        return new CombinedGeometry(GeometryCombineMode.Union, Clip(shapes, count - 1), ClipShape(shapes[count - 1]));
+        var left = (count + 1) / 2;
+        return new CombinedGeometry(GeometryCombineMode.Union, Clip(shapes, start, left),
+            Clip(shapes, start + left, count - left));
     }
 
     private static Geometry ClipShape(SvgClipShape shape)

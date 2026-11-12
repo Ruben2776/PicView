@@ -1,4 +1,6 @@
+using System.Xml.Linq;
 using Avalonia.Media;
+using PicView.Core.Svg;
 using static PicView.Tests.Svg.SvgParserTestHelper;
 
 namespace PicView.Tests.Svg;
@@ -380,6 +382,22 @@ public class SvgPixelTests
         var pixels = SvgRender.Pixels(Svg(100, 100, "<path d='M10 50Q25 90 40 50L60 50T90 50Z'/>"));
         AssertTransparent(pixels.At(80, 42));
         AssertPainted(pixels.At(25, 60));
+    }
+
+    [AvaloniaFact]
+    public void Clip_AThousandShapes_RendersTheirUnionAndWritesAxaml()
+    {
+        var svg = SvgParserClipTests.ManyClipShapes(1000);
+        var pixels = SvgRender.Pixels(svg);
+        AssertColor(Green, pixels.At(0, 2));
+        AssertColor(Green, pixels.At(1000, 2));
+        AssertColor(Green, pixels.At(1998, 2));
+        AssertTransparent(pixels.At(1001, 2));
+        AssertTransparent(pixels.At(1999, 2));
+
+        var text = SvgToXamlConverter.Convert(svg, out var reason);
+        Assert.Null(reason);
+        Assert.Equal(1000, XDocument.Parse(text!).Descendants("StreamGeometry").Count());
     }
 
     [AvaloniaFact]

@@ -155,7 +155,7 @@ public class AxamlDrawingWriterTests
     }
 
     [Fact]
-    public void Write_ThreeClipShapes_NestLeftToRight()
+    public void Write_ThreeClipShapes_AreABalancedTreeWithTheLargerHalfFirst()
     {
         var clip = new SvgClip([new SvgClipShape("A", null), new SvgClipShape("B", null), new SvgClipShape("C", null)]);
         var text = AxamlDrawingWriter.Write(Drawing(new SvgGroup(null, 1, clip, [])));
@@ -186,6 +186,66 @@ public class AxamlDrawingWriterTests
             "  </DrawingImage.Drawing>",
             "</DrawingImage>");
         Assert.Equal(expected, text);
+    }
+
+    [Fact]
+    public void Write_FourClipShapes_AreTwoUnionsOfTwo()
+    {
+        var clip = new SvgClip([
+            new SvgClipShape("A", null), new SvgClipShape("B", null), new SvgClipShape("C", null),
+            new SvgClipShape("D", null)
+        ]);
+        var text = AxamlDrawingWriter.Write(Drawing(new SvgGroup(null, 1, clip, [])));
+        var expected = Lines(
+            "<DrawingImage Viewbox=\"0 0 10 20\">",
+            "  <DrawingImage.Drawing>",
+            "    <DrawingGroup>",
+            "      <DrawingGroup>",
+            "        <DrawingGroup.ClipGeometry>",
+            "          <CombinedGeometry GeometryCombineMode=\"Union\">",
+            "            <CombinedGeometry.Geometry1>",
+            "              <CombinedGeometry GeometryCombineMode=\"Union\">",
+            "                <CombinedGeometry.Geometry1>",
+            "                  <StreamGeometry>A</StreamGeometry>",
+            "                </CombinedGeometry.Geometry1>",
+            "                <CombinedGeometry.Geometry2>",
+            "                  <StreamGeometry>B</StreamGeometry>",
+            "                </CombinedGeometry.Geometry2>",
+            "              </CombinedGeometry>",
+            "            </CombinedGeometry.Geometry1>",
+            "            <CombinedGeometry.Geometry2>",
+            "              <CombinedGeometry GeometryCombineMode=\"Union\">",
+            "                <CombinedGeometry.Geometry1>",
+            "                  <StreamGeometry>C</StreamGeometry>",
+            "                </CombinedGeometry.Geometry1>",
+            "                <CombinedGeometry.Geometry2>",
+            "                  <StreamGeometry>D</StreamGeometry>",
+            "                </CombinedGeometry.Geometry2>",
+            "              </CombinedGeometry>",
+            "            </CombinedGeometry.Geometry2>",
+            "          </CombinedGeometry>",
+            "        </DrawingGroup.ClipGeometry>",
+            "      </DrawingGroup>",
+            "    </DrawingGroup>",
+            "  </DrawingImage.Drawing>",
+            "</DrawingImage>");
+        Assert.Equal(expected, text);
+    }
+
+    [Fact]
+    public void Write_ThousandClipShapes_NestsOnlyTenUnionsDeep()
+    {
+        var shapes = new SvgClipShape[1000];
+        for (var i = 0; i < shapes.Length; i++)
+        {
+            shapes[i] = new SvgClipShape("S" + i, null);
+        }
+
+        var text = AxamlDrawingWriter.Write(Drawing(new SvgGroup(null, 1, new SvgClip(shapes), [])));
+        var document = XDocument.Parse(text);
+        var geometries = document.Descendants("StreamGeometry").ToList();
+        Assert.Equal(shapes.Select(s => s.PathData), geometries.Select(g => g.Value), StringComparer.Ordinal);
+        Assert.Equal(10, geometries.Max(g => g.Ancestors("CombinedGeometry").Count()));
     }
 
     [Fact]

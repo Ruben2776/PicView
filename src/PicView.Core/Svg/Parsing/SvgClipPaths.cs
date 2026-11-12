@@ -12,6 +12,12 @@ internal sealed class SvgClipPaths(
     SvgContextStyles contextStyles,
     SvgResolver resolver)
 {
+    /// <summary>
+    ///     A clip path with more shapes than this makes the file unsupported (<c>clip</c>). The union of its shapes is
+    ///     a tree of combined geometries, and Avalonia recurses through that tree at render.
+    /// </summary>
+    public const int MaxShapes = 1_000;
+
     /// <summary>Resolved clip paths; null where a clip path has no shapes and so clips everything away.</summary>
     private readonly Dictionary<SvgElement, SvgClip?> _clips = [];
 
@@ -187,12 +193,13 @@ internal sealed class SvgClipPaths(
             return Fail(resolver.Reason!);
         }
 
-        if (pathData is not null)
+        if (pathData is null)
         {
-            into.Add(new SvgClipShape(pathData, SvgResolver.Combine(transform, after)));
+            return true;
         }
 
-        return true;
+        into.Add(new SvgClipShape(pathData, SvgResolver.Combine(transform, after)));
+        return into.Count <= MaxShapes || Fail("clip");
     }
 
     private bool TryComputeStyle(SvgElement element, SvgComputedStyle parentStyle, out SvgComputedStyle style)

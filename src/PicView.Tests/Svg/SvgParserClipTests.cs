@@ -1,4 +1,5 @@
 using PicView.Core.Svg;
+using PicView.Core.Svg.Parsing;
 using static PicView.Tests.Svg.SvgParserTestHelper;
 
 namespace PicView.Tests.Svg;
@@ -140,6 +141,44 @@ public class SvgParserClipTests
             "<rect width='1' height='1' clip-path='url(#c)'/>");
         Assert.NotNull(group.Clip);
         Assert.Single(group.Clip.Shapes);
+    }
+
+    /// <summary>A clip path of <paramref name="count" /> 1×4 rects, 2 apart, over a green 2000×4 rect.</summary>
+    internal static string ManyClipShapes(int count)
+    {
+        var rects = new System.Text.StringBuilder();
+        for (var i = 0; i < count; i++)
+        {
+            rects.Append("<rect x='").Append(i * 2).Append("' width='1' height='4'/>");
+        }
+
+        return Document("<clipPath id='c'>" + rects + "</clipPath>" +
+                        "<g clip-path='url(#c)'><rect width='2000' height='4' fill='green'/></g>",
+            "width='2000' height='4'");
+    }
+
+    [Fact]
+    public void Parse_ClipPathWithAThousandShapes_IsSupported()
+    {
+        var result = SvgParser.Parse(ManyClipShapes(SvgClipPaths.MaxShapes));
+        Assert.Null(result.UnsupportedReason);
+        var group = Assert.IsType<SvgGroup>(Assert.Single(result.Drawing!.Root.Children));
+        Assert.Equal(1000, group.Clip!.Shapes.Count);
+    }
+
+    [Fact]
+    public void Parse_ClipPathWithMoreThanAThousandShapes_IsClip()
+    {
+        Assert.Equal("clip", Reason(ManyClipShapes(SvgClipPaths.MaxShapes + 1)));
+    }
+
+    [Fact]
+    public void Parse_UsesInClipPath_CountTowardTheShapeCap()
+    {
+        var uses = string.Concat(Enumerable.Repeat("<use href='#r'/>", SvgClipPaths.MaxShapes + 1));
+        Assert.Equal("clip", Reason(Document("<defs><rect id='r' width='1' height='1'/></defs>" +
+                                             "<clipPath id='c'>" + uses + "</clipPath>" +
+                                             "<rect width='1' height='1' clip-path='url(#c)'/>")));
     }
 
     [Fact]
