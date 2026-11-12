@@ -433,6 +433,11 @@ public class StartUp
     /// Used to remember directory structure upon startup, when <see cref="OpenLastFile"/> and <see cref="Sorting.IncludeSubDirectories"/> are <c>true</c>.
     /// </remarks>
     public string? StartUpDirectory { get; set; } = "";
+
+    /// <summary>
+    /// Where the configuration files are stored. Stored as a number.
+    /// </summary>
+    public ConfigLocation ConfigLocation { get; set; } = ConfigLocation.Auto;
 }
 
 

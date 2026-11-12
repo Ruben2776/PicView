@@ -167,6 +167,28 @@ public static partial class FileHelper
     }
 
     /// <summary>
+    /// Determines whether files can be created in a directory, by creating the directory if needed and opening a
+    /// temporary file that is deleted on close. Leaves no file behind.
+    /// </summary>
+    /// <param name="directory">The directory to probe.</param>
+    /// <returns><c>true</c> if a file could be created in the directory; otherwise, <c>false</c>.</returns>
+    public static bool IsDirectoryWritable(string directory)
+    {
+        try
+        {
+            Directory.CreateDirectory(directory);
+            var probe = Path.Combine(directory, $".picview-write-test-{Guid.NewGuid():N}");
+            using var stream = new FileStream(probe, FileMode.CreateNew, FileAccess.Write, FileShare.None, 1,
+                FileOptions.DeleteOnClose);
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    /// <summary>
     ///     Asynchronously duplicates a file by creating a copy with an incremented number inside parentheses
     ///     to avoid name conflicts, and returns the path of the new file. If any exception occurs, returns an empty string.
     /// </summary>
