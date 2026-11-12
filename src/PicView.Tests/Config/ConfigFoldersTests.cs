@@ -1,7 +1,9 @@
 using System.Text.Json;
 using PicView.Core.Config;
 using PicView.Core.Config.ConfigFileManagement;
+using PicView.Core.Favorites;
 using PicView.Core.FileHandling;
+using PicView.Core.Keybindings;
 
 namespace PicView.Tests.Config;
 
@@ -26,6 +28,8 @@ public class ConfigFoldersTests : IDisposable
         _unwritable = Path.Combine(blocker, "Config");
 
         ConfigFolders.UseRoots(_local, _roaming);
+        KeybindingFunctions.ResetConfiguration();
+        FavoritesManager.Initialize();
         SetDefaults();
     }
 

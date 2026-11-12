@@ -13,12 +13,11 @@ public class ImageInfoWindowConfig() : ConfigFile("ImageInfoWindow.json")
 
     public void Load()
     {
-        CorrectPath ??= ConfigFileManager.ResolveDefaultConfigPath(this);
         try
         {
-            if (File.Exists(CorrectPath))
+            if (File.Exists(FilePath))
             {
-                var jsonString = File.ReadAllBytes(CorrectPath);
+                var jsonString = File.ReadAllBytes(FilePath);
                 if (JsonSerializer.Deserialize(
                         jsonString, typeof(ImageInfoWindowProperties), ImageInfoWindowGenerationContext.Default) is ImageInfoWindowProperties settings)
                 {
@@ -42,8 +41,7 @@ public class ImageInfoWindowConfig() : ConfigFile("ImageInfoWindow.json")
     
     public async Task SaveAsync()
     {
-        CorrectPath = await ConfigFileManager.SaveConfigFileAndReturnPathAsync(this,
-            CorrectPath, WindowProperties, typeof(ImageInfoWindowProperties), ImageInfoWindowGenerationContext.Default).ConfigureAwait(false);
+        await ConfigFileManager.SaveAsync(this, WindowProperties, typeof(ImageInfoWindowProperties), ImageInfoWindowGenerationContext.Default).ConfigureAwait(false);
     }
     
     public class ImageInfoWindowProperties : IWindowProperties

@@ -147,26 +147,6 @@ public static partial class FileHelper
 
 
     /// <summary>
-    /// Determines whether the specified path is writable by attempting to open or create a file with write access.
-    /// </summary>
-    /// <param name="path">The file path to check for write access.</param>
-    /// <returns>
-    /// <c>true</c> if the path is writable; otherwise, <c>false</c>.
-    /// </returns>
-    public static bool IsPathWritable(string path)
-    {
-        try
-        {
-            using var stream = File.Open(path, FileMode.OpenOrCreate, FileAccess.Write);
-            return true;
-        }
-        catch
-        {
-            return false;
-        }
-    }
-
-    /// <summary>
     /// Determines whether files can be created in a directory, by creating the directory if needed and opening a
     /// temporary file that is deleted on close. Leaves no file behind.
     /// </summary>

@@ -14,12 +14,11 @@ public class ConvertWindowConfig() : ConfigFile("ConvertWindow.json")
 
     public async Task LoadAsync()
     {
-        CorrectPath ??= ConfigFileManager.ResolveDefaultConfigPath(this);
         try
         {
-            if (File.Exists(CorrectPath))
+            if (File.Exists(FilePath))
             {
-                var jsonString = await File.ReadAllTextAsync(CorrectPath).ConfigureAwait(false);
+                var jsonString = await File.ReadAllTextAsync(FilePath).ConfigureAwait(false);
                 if (JsonSerializer.Deserialize(
                         jsonString, typeof(ConvertWindowProperties), ConvertWindowGenerationContext.Default) is ConvertWindowProperties settings)
                 {
@@ -63,8 +62,7 @@ public class ConvertWindowConfig() : ConfigFile("ConvertWindow.json")
             }
         }
 
-        CorrectPath = await ConfigFileManager.SaveConfigFileAndReturnPathAsync(this,
-            CorrectPath, WindowProperties, typeof(ConvertWindowProperties), ConvertWindowGenerationContext.Default).ConfigureAwait(false);
+        await ConfigFileManager.SaveAsync(this, WindowProperties, typeof(ConvertWindowProperties), ConvertWindowGenerationContext.Default).ConfigureAwait(false);
     }
 
     public class ConvertWindowProperties : IWindowProperties

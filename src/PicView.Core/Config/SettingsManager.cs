@@ -27,7 +27,7 @@ public static class SettingsManager
     /// the value will be null. This path can be used to reference the specific configuration file
     /// being utilized or modified.
     /// </remarks>
-    public static string? CurrentSettingsPath => Configuration.CorrectPath;
+    public static string CurrentSettingsPath => (Configuration ??= new SettingsConfiguration()).FilePath;
 
     /// <summary>
     /// Gets or sets the current application settings instance, which stores all configurable
@@ -63,11 +63,12 @@ public static class SettingsManager
         try
         {
             Configuration ??= new SettingsConfiguration();
-            var path = ConfigFileManager.ResolveDefaultConfigPath(Configuration);
-            
-            if (File.Exists(path))
+            ConfigFolders.ResolveAtStartup();
+
+            var info = new FileInfo(Configuration.FilePath);
+            if (info.Exists && info.Length > 0)
             {
-                var bytes = File.ReadAllBytes(path);
+                var bytes = File.ReadAllBytes(info.FullName);
                 var settings = JsonSerializer.Deserialize<AppSettings>(
                     bytes, SettingsGenerationContext.Default.AppSettings);
                 LoadedSettingsVersion = settings.Version;
@@ -103,27 +104,9 @@ public static class SettingsManager
             return false;
         }
 
-        if (string.IsNullOrEmpty(Configuration.CorrectPath))
-        {
-            Configuration.CorrectPath = ConfigFileManager.ResolveDefaultConfigPath(Configuration);
-        }
-
-        if (!FileHelper.IsPathWritable(CurrentSettingsPath))
-        {
-            Configuration.CorrectPath = Configuration.RoamingConfigPath;
-        }
-
-        var saveLocation = await ConfigFileManager.SaveConfigFileAndReturnPathAsync(Configuration,
-            CurrentSettingsPath,
-            Settings, typeof(AppSettings), SettingsGenerationContext.Default).ConfigureAwait(false);
-        if (string.IsNullOrWhiteSpace(saveLocation))
-        {
-            DebugHelper.LogDebug(nameof(SettingsManager), nameof(SaveSettingsAsync), "Empty save location");
-            return false;
-        }
-
-        Configuration.CorrectPath = saveLocation;
-        return true;
+        Configuration ??= new SettingsConfiguration();
+        return await ConfigFileManager.SaveAsync(Configuration, Settings, typeof(AppSettings),
+            SettingsGenerationContext.Default).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -221,7 +204,7 @@ public static class SettingsManager
     {
         try
         {
-            DeleteFileIfExists(Configuration.TryGetCurrentUserConfigPath);
+            DeleteFileIfExists((Configuration ??= new SettingsConfiguration()).FilePath);
         }
         catch (Exception ex)
         {

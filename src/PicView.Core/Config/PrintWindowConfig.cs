@@ -14,12 +14,11 @@ public class PrintWindowConfig() : ConfigFile("PrintWindow.json")
 
     public async Task LoadAsync()
     {
-        CorrectPath ??= ConfigFileManager.ResolveDefaultConfigPath(this);
         try
         {
-            if (File.Exists(CorrectPath))
+            if (File.Exists(FilePath))
             {
-                var jsonString = await File.ReadAllTextAsync(CorrectPath).ConfigureAwait(false);
+                var jsonString = await File.ReadAllTextAsync(FilePath).ConfigureAwait(false);
                 if (JsonSerializer.Deserialize(
                         jsonString, typeof(PrintWindowProperties), PrintWindowGenerationContext.Default) is PrintWindowProperties settings)
                 {
@@ -43,8 +42,7 @@ public class PrintWindowConfig() : ConfigFile("PrintWindow.json")
 
     public async Task SaveAsync()
     {
-        CorrectPath = await ConfigFileManager.SaveConfigFileAndReturnPathAsync(this,
-            CorrectPath, WindowProperties, typeof(PrintWindowProperties), PrintWindowGenerationContext.Default).ConfigureAwait(false);
+        await ConfigFileManager.SaveAsync(this, WindowProperties, typeof(PrintWindowProperties), PrintWindowGenerationContext.Default).ConfigureAwait(false);
     }
 
     public class PrintWindowProperties: IWindowProperties

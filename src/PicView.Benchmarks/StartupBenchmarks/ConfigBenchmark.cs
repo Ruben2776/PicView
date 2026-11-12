@@ -66,8 +66,7 @@ public class ConfigBenchmark
         {
             // Load user config (User Profile or Program Path)
             Configuration ??= new SettingsConfiguration();
-            var userPath = ConfigFileManager.ResolveDefaultConfigPath(Configuration);
-            Configuration.CorrectPath = userPath;
+            var userPath = Configuration.FilePath;
 
             if (File.Exists(userPath))
             {
@@ -104,8 +103,7 @@ public class ConfigBenchmark
         {
             // Load user config (User Profile or Program Path)
             Configuration ??= new SettingsConfiguration();
-            var userPath = ConfigFileManager.ResolveDefaultConfigPath(Configuration);
-            Configuration.CorrectPath = userPath;
+            var userPath = Configuration.FilePath;
 
             if (File.Exists(userPath))
             {
@@ -138,8 +136,7 @@ public class ConfigBenchmark
         {
             Configuration ??= new SettingsConfiguration();
 
-            var userPath = ConfigFileManager.ResolveDefaultConfigPath(Configuration);
-            Configuration.CorrectPath = userPath;
+            var userPath = Configuration.FilePath;
 
             if (File.Exists(userPath))
             {
@@ -171,8 +168,7 @@ public class ConfigBenchmark
         {
             Configuration ??= new SettingsConfiguration();
 
-            var userPath = ConfigFileManager.ResolveDefaultConfigPath(Configuration);
-            Configuration.CorrectPath = userPath;
+            var userPath = Configuration.FilePath;
 
             if (File.Exists(userPath))
             {
@@ -204,8 +200,7 @@ public class ConfigBenchmark
         {
             Configuration ??= new SettingsConfiguration();
 
-            var userPath = ConfigFileManager.ResolveDefaultConfigPath(Configuration);
-            Configuration.CorrectPath = userPath;
+            var userPath = Configuration.FilePath;
 
             if (File.Exists(userPath))
             {
@@ -237,8 +232,7 @@ public class ConfigBenchmark
         {
             Configuration ??= new SettingsConfiguration();
 
-            var userPath = ConfigFileManager.ResolveDefaultConfigPath(Configuration);
-            Configuration.CorrectPath = userPath;
+            var userPath = Configuration.FilePath;
 
             if (File.Exists(userPath))
             {
@@ -269,7 +263,7 @@ public class ConfigBenchmark
         try
         {
             Configuration ??= new SettingsConfiguration();
-            var path = ConfigFileManager.ResolveDefaultConfigPath(Configuration);
+            var path = Configuration.FilePath;
             
             if (File.Exists(path))
             {

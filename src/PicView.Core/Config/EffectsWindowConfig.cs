@@ -14,12 +14,11 @@ public class EffectsWindowConfig() : ConfigFile("EffectsWindow.json")
 
     public async Task LoadAsync()
     {
-        CorrectPath ??= ConfigFileManager.ResolveDefaultConfigPath(this);
         try
         {
-            if (File.Exists(CorrectPath))
+            if (File.Exists(FilePath))
             {
-                var jsonString = await File.ReadAllTextAsync(CorrectPath).ConfigureAwait(false);
+                var jsonString = await File.ReadAllTextAsync(FilePath).ConfigureAwait(false);
                 if (JsonSerializer.Deserialize(
                         jsonString, typeof(EffectsWindowProperties), EffectsWindowGenerationContext.Default) is EffectsWindowProperties settings)
                 {
@@ -63,8 +62,7 @@ public class EffectsWindowConfig() : ConfigFile("EffectsWindow.json")
             }
         }
 
-        CorrectPath = await ConfigFileManager.SaveConfigFileAndReturnPathAsync(this,
-            CorrectPath, WindowProperties, typeof(EffectsWindowProperties), EffectsWindowGenerationContext.Default).ConfigureAwait(false);
+        await ConfigFileManager.SaveAsync(this, WindowProperties, typeof(EffectsWindowProperties), EffectsWindowGenerationContext.Default).ConfigureAwait(false);
     }
 
     public class EffectsWindowProperties : IWindowProperties

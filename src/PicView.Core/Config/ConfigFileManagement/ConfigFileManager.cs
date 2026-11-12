@@ -5,22 +5,33 @@ using PicView.Core.FileHandling;
 namespace PicView.Core.Config.ConfigFileManagement;
 
 /// <summary>
-/// Provides functionality to manage configuration files, including saving and retrieving paths for various config file types.
+/// Writes config files into the resolved config folder.
 /// </summary>
 public static class ConfigFileManager
 {
     /// <summary>
-    /// Saves the configuration file to the specified path and returns the resulting file path.
+    /// Saves a config file into the resolved config folder while holding <see cref="ConfigFolders.Gate" />.
     /// </summary>
-    /// <param name="file">The type of configuration file to be saved (e.g., user settings, file history, key bindings).</param>
-    /// <param name="path">The file path where the configuration file should be saved. If null, a default path is resolved based on the configuration type.</param>
-    /// <param name="value">The object containing the configuration data to be saved.</param>
-    /// <param name="inputType">The type of the configuration object to be serialized.</param>
-    /// <param name="context">The JSON serializer context used for serializing the configuration data.</param>
-    /// <returns>The file path where the configuration file was successfully saved, or null if the operation failed.</returns>
-    /// <remarks>If the initial save location is not writable, it attempts to save to the roaming app data directory.</remarks>
-    public static async Task<string?> SaveConfigFileAndReturnPathAsync(ConfigFile file, string? path, object? value,
-        Type inputType, JsonSerializerContext context)
+    /// <returns>True if the file was written; otherwise false.</returns>
+    public static async Task<bool> SaveAsync(ConfigFile file, object? value, Type inputType,
+        JsonSerializerContext context)
+    {
+        await ConfigFolders.Gate.WaitAsync().ConfigureAwait(false);
+        try
+        {
+            return await SaveUnlockedAsync(file, value, inputType, context).ConfigureAwait(false);
+        }
+        finally
+        {
+            ConfigFolders.Gate.Release();
+        }
+    }
+
+    /// <summary>
+    /// Saves a config file. The caller must hold <see cref="ConfigFolders.Gate" />.
+    /// </summary>
+    internal static async Task<bool> SaveUnlockedAsync(ConfigFile file, object? value, Type inputType,
+        JsonSerializerContext context)
     {
         if (value is IWindowProperties windowProps)
         {
@@ -35,77 +46,53 @@ public static class ConfigFileManager
             }
         }
 
-        // If null, try to get the current user file, if exist
-        path ??= GetConfigPath(file);
-
         try
         {
-            if (!FileHelper.IsPathWritable(path))
-            {
-                return await TrySaveRoaming().ConfigureAwait(false);
-            }
-
+            var path = file.FilePath;
+            FileHelper.EnsureDirectoryExists(path);
             await JsonFileHelper.WriteJsonAsync(path, value, inputType, context).ConfigureAwait(false);
-            return path;
-        }
-        catch (UnauthorizedAccessException)
-        {
-            // If unauthorized, try saving to roaming app data
-            try
-            {
-                return await TrySaveRoaming().ConfigureAwait(false);
-            }
-            catch (Exception ex)
-            {
-                DebugHelper.LogDebug(nameof(ConfigFileManager), nameof(SaveConfigFileAndReturnPathAsync), ex);
-                return null;
-            }
+            return true;
         }
         catch (Exception ex)
         {
-            DebugHelper.LogDebug(nameof(ConfigFileManager), nameof(SaveConfigFileAndReturnPathAsync), ex);
-            return null;
-        }
-
-        async Task<string> TrySaveRoaming()
-        {
-            var roamingPath = file.RoamingConfigPath;
-
-            FileHelper.EnsureDirectoryExists(roamingPath);
-            await JsonFileHelper.WriteJsonAsync(roamingPath, value, inputType, context).ConfigureAwait(false);
-
-            return roamingPath;
+            DebugHelper.LogDebug(nameof(ConfigFileManager), nameof(SaveUnlockedAsync), ex);
+            return false;
         }
     }
 
     /// <summary>
-    /// Resolves the default configuration file path based on the specified configuration file type and the operating system in use.
+    /// Writes text to a config file in the resolved config folder while holding <see cref="ConfigFolders.Gate" />.
     /// </summary>
-    /// <param name="file">The type of configuration file for which the default path needs to be resolved (e.g., user settings, file history, key bindings).</param>
-    /// <returns>The resolved default configuration file path as a string.</returns>
-    public static string ResolveDefaultConfigPath(ConfigFile file)
+    /// <returns>True if the file was written; otherwise false.</returns>
+    public static async Task<bool> WriteTextAsync(ConfigFile file, string text)
     {
-        if (OperatingSystem.IsMacOS())
+        await ConfigFolders.Gate.WaitAsync().ConfigureAwait(false);
+        try
         {
-            // On macOS, always use the roaming path. We can't save inside an app bundle.
-            return file.RoamingConfigPath;
+            return await WriteTextUnlockedAsync(file, text).ConfigureAwait(false);
         }
-
-        var path = GetConfigPath(file);
-        
-        return OperatingSystem.IsLinux() ? path.Replace('\\', '/') 
-            : path.Replace("/", "\\", StringComparison.OrdinalIgnoreCase);
+        finally
+        {
+            ConfigFolders.Gate.Release();
+        }
     }
 
-    private static string GetConfigPath(ConfigFile file)
+    /// <summary>
+    /// Writes text to a config file. The caller must hold <see cref="ConfigFolders.Gate" />.
+    /// </summary>
+    internal static async Task<bool> WriteTextUnlockedAsync(ConfigFile file, string text)
     {
-        var currentUserPath = file.TryGetCurrentUserConfigPath;
-        if (currentUserPath != string.Empty)
+        try
         {
-            return currentUserPath;
+            var path = file.FilePath;
+            FileHelper.EnsureDirectoryExists(path);
+            await File.WriteAllTextAsync(path, text).ConfigureAwait(false);
+            return true;
         }
-
-        var localPath = file.LocalConfigPath;
-        return FileHelper.IsPathWritable(localPath) ? localPath : file.RoamingConfigPath;
+        catch (Exception ex)
+        {
+            DebugHelper.LogDebug(nameof(ConfigFileManager), nameof(WriteTextUnlockedAsync), ex);
+            return false;
+        }
     }
 }
