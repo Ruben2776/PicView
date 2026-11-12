@@ -55,6 +55,13 @@ internal sealed class SvgDocument
         "radialGradient", "stop", "clipPath", "style"
     };
 
+    /// <summary>
+    ///     Conditional processing attributes: a browser draws the element only when the condition holds for it, which
+    ///     depends on the browser and the user's languages.
+    /// </summary>
+    private static readonly string[] ConditionalAttributes =
+        ["systemLanguage", "requiredExtensions", "requiredFeatures"];
+
     /// <summary>The basic shapes and <c>path</c>.</summary>
     public static readonly HashSet<string> ShapeElements = new(StringComparer.Ordinal)
     {
@@ -104,7 +111,8 @@ internal sealed class SvgDocument
             DtdProcessing = DtdProcessing.Ignore,
             XmlResolver = null,
             IgnoreComments = true,
-            IgnoreProcessingInstructions = true,
+            // Read so an xml-stylesheet instruction, a link to another file's CSS, is seen.
+            IgnoreProcessingInstructions = false,
             // Kept so whitespace between text and CDATA in a style element still separates CSS tokens.
             IgnoreWhitespace = false
         };
@@ -124,6 +132,12 @@ internal sealed class SvgDocument
                 open.Pop();
                 read = reader.Read();
                 continue;
+            }
+
+            if (IsStyleSheetLink(reader))
+            {
+                reason = "css";
+                return false;
             }
 
             if (reader.NodeType != XmlNodeType.Element)
@@ -150,9 +164,14 @@ internal sealed class SvgDocument
             }
             else if (!inSvgNamespace || IgnoredElements.Contains(name))
             {
-                // Skip moves past the whole element, so it is not followed by Read.
-                reader.Skip();
-                read = !reader.EOF;
+                // A browser applies a style sheet wherever it stands, even in content that is never drawn.
+                if (!TrySkipIgnored(reader))
+                {
+                    reason = "css";
+                    return false;
+                }
+
+                read = reader.Read();
                 continue;
             }
             else if (string.Equals(open.Peek().Name, "clipPath", StringComparison.Ordinal) &&
@@ -170,6 +189,15 @@ internal sealed class SvgDocument
 
             var isEmpty = reader.IsEmptyElement;
             var element = new SvgElement(name, ReadAttributes(reader));
+            foreach (var condition in ConditionalAttributes)
+            {
+                if (element.GetAttribute(condition) is not null)
+                {
+                    reason = "property:" + condition;
+                    return false;
+                }
+            }
+
             if (root is null)
             {
                 root = element;
@@ -217,12 +245,59 @@ internal sealed class SvgDocument
         return true;
     }
 
+    /// <summary>Whether the reader is on an <c>xml-stylesheet</c> processing instruction.</summary>
+    private static bool IsStyleSheetLink(XmlReader reader)
+    {
+        return reader.NodeType == XmlNodeType.ProcessingInstruction &&
+               string.Equals(reader.Name, "xml-stylesheet", StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
+    ///     Moves to the end of the element the reader is on, without recursion. False when the element is, or holds, a
+    ///     <c>style</c> element in any namespace or an <c>xml-stylesheet</c> instruction.
+    /// </summary>
+    private static bool TrySkipIgnored(XmlReader reader)
+    {
+        if (string.Equals(reader.LocalName, "style", StringComparison.Ordinal))
+        {
+            return false;
+        }
+
+        if (reader.IsEmptyElement)
+        {
+            return true;
+        }
+
+        var depth = reader.Depth;
+        while (reader.Read())
+        {
+            if (reader.NodeType == XmlNodeType.EndElement && reader.Depth == depth)
+            {
+                return true;
+            }
+
+            if (IsStyleSheetLink(reader) || (reader.NodeType == XmlNodeType.Element &&
+                                             string.Equals(reader.LocalName, "style", StringComparison.Ordinal)))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     /// <summary>
     ///     Reads a <c>style</c> element's text and CDATA as one sheet. False for a <c>type</c> other than
-    ///     <c>text/css</c>, a <c>media</c> other than <c>all</c>, or an element inside it.
+    ///     <c>text/css</c>, a <c>media</c> other than <c>all</c>, a <c>title</c> (which makes the sheet one a browser
+    ///     may switch off), or an element inside it.
     /// </summary>
     private static bool TryReadStyleSheet(XmlReader reader, SvgElement style, bool isEmpty, List<string> sheets)
     {
+        if (style.GetAttribute("title") is { Length: > 0 })
+        {
+            return false;
+        }
+
         if (style.GetAttribute("type") is { } type &&
             !type.Trim().Equals("text/css", StringComparison.OrdinalIgnoreCase))
         {
@@ -250,6 +325,8 @@ internal sealed class SvgDocument
                     sheet.Append(reader.Value);
                     break;
                 case XmlNodeType.Element:
+                    return false;
+                case XmlNodeType.ProcessingInstruction when IsStyleSheetLink(reader):
                     return false;
             }
         }

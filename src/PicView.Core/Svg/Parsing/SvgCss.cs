@@ -213,7 +213,8 @@ internal sealed class SvgCss
     }
 
     /// <summary>
-    ///     Reads up to <paramref name="end" /> and moves past it, leaving comments out. A selector may not hold a
+    ///     Reads up to <paramref name="end" /> and moves past it, leaving comments out of a selector and putting one
+    ///     space for each in a declaration block. A selector may not hold a
     ///     string, a brace or a semicolon; a declaration block may hold strings (kept with their quotes) but no nested
     ///     block or <c>!</c>. Escapes are not handled anywhere. False when the text ends first.
     /// </summary>
@@ -234,6 +235,12 @@ internal sealed class SvgCss
                     if (!TrySkipComment(text, ref pos))
                     {
                         return false;
+                    }
+
+                    // In a declaration a comment separates tokens, so 1/**/2 is two numbers.
+                    if (inBlock)
+                    {
+                        into.Append(' ');
                     }
 
                     continue;

@@ -34,6 +34,20 @@ public class SvgCssTests
     }
 
     [Fact]
+    public void Parse_CommentInsideADeclaration_SeparatesTokens()
+    {
+        var stroke = ShapeOf(Sheet("path{stroke-dasharray:1/**/2}", "<path d='M0 0h10' stroke='#000'/>")).Stroke;
+        Assert.NotNull(stroke);
+        Assert.Equal([1d, 2d], stroke.DashArray!);
+    }
+
+    [Fact]
+    public void Parse_CommentInsideASelector_IsLeftOut()
+    {
+        Assert.Equal(Red, Fill("rect/**/.a/* note */{fill:red}", Rect));
+    }
+
+    [Fact]
     public void Parse_ClassSelector_Applies()
     {
         Assert.Equal(Red, Fill(".a{fill:red}", Rect));

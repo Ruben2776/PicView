@@ -42,6 +42,105 @@ public class SvgParserUnsupportedTests
     }
 
     [Theory]
+    [InlineData("rotate:45deg", "property:rotate")]
+    [InlineData("scale:2", "property:scale")]
+    [InlineData("translate:10px", "property:translate")]
+    [InlineData("all:initial", "property:all")]
+    [InlineData("offset-path:path('M0 0h10')", "property:offset-path")]
+    [InlineData("mask-image:linear-gradient(red,blue)", "property:mask-image")]
+    [InlineData("mask-mode:luminance", "property:mask-mode")]
+    [InlineData("mask-repeat:no-repeat", "property:mask-repeat")]
+    [InlineData("mask-position:center", "property:mask-position")]
+    [InlineData("mask-clip:border-box", "property:mask-clip")]
+    [InlineData("mask-origin:border-box", "property:mask-origin")]
+    [InlineData("mask-size:cover", "property:mask-size")]
+    [InlineData("mask-composite:add", "property:mask-composite")]
+    [InlineData("mask-type:alpha", "property:mask-type")]
+    [InlineData("mask-border:none", "property:mask-border")]
+    [InlineData("-webkit-mask:none", "property:-webkit-mask")]
+    [InlineData("-webkit-mask-image:none", "property:-webkit-mask-image")]
+    [InlineData("clip:rect(0 1px 1px 0)", "property:clip")]
+    [InlineData("background:red", "property:background")]
+    [InlineData("background-color:red", "property:background-color")]
+    [InlineData("background-image:linear-gradient(red,blue)", "property:background-image")]
+    public void Parse_CssPropertyABrowserApplies_GivesReason(string declaration, string reason)
+    {
+        Assert.Equal(reason, Reason(Document($"<rect width='1' height='1' style=\"{declaration}\"/>")));
+        Assert.Equal(reason, Reason(Document($"<style>rect {{ {declaration} }}</style><rect width='1' height='1'/>")));
+    }
+
+    [Theory]
+    [InlineData("background:red", "property:background")]
+    [InlineData("background-color:#fff", "property:background-color")]
+    public void Parse_BackgroundOnTheRoot_GivesReason(string declaration, string reason)
+    {
+        Assert.Equal(reason, Reason(Document("", $"width='1' height='1' style='{declaration}'")));
+    }
+
+    [Theory]
+    [InlineData("clip:auto")]
+    [InlineData("background:none")]
+    [InlineData("background:transparent")]
+    [InlineData("background-color:transparent")]
+    [InlineData("background-image:none")]
+    public void Parse_NeutralBrowserProperty_IsAccepted(string declaration)
+    {
+        Assert.Single(Root($"<rect width='1' height='1' style='{declaration}'/>").Children);
+    }
+
+    [Theory]
+    [InlineData("systemLanguage='en'", "property:systemLanguage")]
+    [InlineData("requiredExtensions='http://example.com'", "property:requiredExtensions")]
+    [InlineData("requiredFeatures='http://www.w3.org/TR/SVG11/feature#Shape'", "property:requiredFeatures")]
+    public void Parse_ConditionalAttribute_GivesReason(string attribute, string reason)
+    {
+        Assert.Equal(reason, Reason(Document($"<g {attribute}><rect width='1' height='1'/></g>")));
+        Assert.Equal(reason, Reason(Document($"<defs><linearGradient id='g' {attribute}/></defs>")));
+        Assert.Equal(reason, Reason(Document("", $"width='1' height='1' {attribute}")));
+    }
+
+    [Theory]
+    [InlineData("<?xml-stylesheet href='a.css' type='text/css'?>" +
+                "<svg xmlns='http://www.w3.org/2000/svg' width='1' height='1'/>")]
+    [InlineData("<svg xmlns='http://www.w3.org/2000/svg' width='1' height='1'>" +
+                "<?xml-stylesheet href='a.css'?></svg>")]
+    [InlineData("<svg xmlns='http://www.w3.org/2000/svg' width='1' height='1'>" +
+                "<title><?xml-stylesheet href='a.css'?></title></svg>")]
+    [InlineData("<svg xmlns='http://www.w3.org/2000/svg' width='1' height='1'>" +
+                "<style><?xml-stylesheet href='a.css'?></style></svg>")]
+    public void Parse_XmlStyleSheetInstruction_IsCss(string svgText)
+    {
+        Assert.Equal("css", Reason(svgText));
+    }
+
+    [Fact]
+    public void Parse_OtherProcessingInstruction_IsIgnored()
+    {
+        Assert.Single(Drawing("<?other data?>" + Document("<?inkscape x?><rect width='1' height='1'/>")).Root
+            .Children);
+    }
+
+    [Theory]
+    [InlineData("<title><style>rect{fill:red}</style></title>")]
+    [InlineData("<desc><style>rect{fill:red}</style></desc>")]
+    [InlineData("<metadata><x><style>rect{fill:red}</style></x></metadata>")]
+    [InlineData("<f:x xmlns:f='urn:f'><style>rect{fill:red}</style></f:x>")]
+    [InlineData("<f:x xmlns:f='urn:f'><f:style>rect{fill:red}</f:style></f:x>")]
+    [InlineData("<h:style xmlns:h='http://www.w3.org/1999/xhtml'>rect{fill:red}</h:style>")]
+    [InlineData("<style title='alternate'>rect{fill:red}</style>")]
+    public void Parse_StyleSheetABrowserMayApplyDifferently_IsCss(string body)
+    {
+        Assert.Equal("css", Reason(Document(body + "<rect width='1' height='1'/>")));
+    }
+
+    [Fact]
+    public void Parse_StyleWithEmptyTitle_IsRead()
+    {
+        Assert.Equal(new SvgSolidPaint(new SvgColor(255, 255, 0, 0)),
+            Shape("<style title=''>rect{fill:red}</style><rect width='1' height='1'/>").Fill);
+    }
+
+    [Theory]
     [InlineData("<rect style='width:10px;height:10px'/>", "property:width")]
     [InlineData("<rect width='1' style='height:10px'/>", "property:height")]
     [InlineData("<rect width='1' height='1' style='x:1'/>", "property:x")]

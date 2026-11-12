@@ -103,21 +103,49 @@ internal sealed class SvgContextStyles(SvgViewport viewport, SvgCss css, SvgComp
 /// </summary>
 internal static class SvgStyle
 {
-    /// <summary>Properties that make the file unsupported unless they have this neutral value (null: never).</summary>
-    private static readonly Dictionary<string, string?> RestrictedProperties = new(StringComparer.Ordinal)
+    private static readonly string[] None = ["none"];
+    private static readonly string[] Normal = ["normal"];
+    private static readonly string[] NoBackground = ["none", "transparent"];
+
+    /// <summary>Properties that make the file unsupported unless they have a neutral value (null: never).</summary>
+    private static readonly Dictionary<string, string[]?> RestrictedProperties = new(StringComparer.Ordinal)
     {
-        ["filter"] = "none",
-        ["mask"] = "none",
-        ["marker"] = "none",
-        ["marker-start"] = "none",
-        ["marker-mid"] = "none",
-        ["marker-end"] = "none",
-        ["vector-effect"] = "none",
-        ["mix-blend-mode"] = "normal",
-        ["paint-order"] = "normal",
+        ["filter"] = None,
+        ["mask"] = None,
+        ["marker"] = None,
+        ["marker-start"] = None,
+        ["marker-mid"] = None,
+        ["marker-end"] = None,
+        ["vector-effect"] = None,
+        ["mix-blend-mode"] = Normal,
+        ["paint-order"] = Normal,
         ["transform-origin"] = null,
         ["transform-box"] = null,
         ["transform"] = null,
+        // CSS transforms, motion paths and masks a browser applies on top of SVG's own.
+        ["rotate"] = null,
+        ["scale"] = null,
+        ["translate"] = null,
+        ["offset-path"] = null,
+        ["mask-image"] = null,
+        ["mask-mode"] = null,
+        ["mask-repeat"] = null,
+        ["mask-position"] = null,
+        ["mask-clip"] = null,
+        ["mask-origin"] = null,
+        ["mask-size"] = null,
+        ["mask-composite"] = null,
+        ["mask-type"] = null,
+        ["mask-border"] = null,
+        ["-webkit-mask"] = null,
+        ["-webkit-mask-image"] = null,
+        // all resets every property, inherited ones included.
+        ["all"] = null,
+        ["clip"] = ["auto"],
+        // On the root svg a browser paints the background on the canvas.
+        ["background"] = NoBackground,
+        ["background-color"] = NoBackground,
+        ["background-image"] = NoBackground,
         // SVG 2 geometry properties: as attributes they are geometry, as CSS they are not handled.
         ["width"] = null,
         ["height"] = null,
@@ -231,8 +259,7 @@ internal static class SvgStyle
 
         foreach (var (name, neutral) in RestrictedProperties)
         {
-            if (declared.TryGetValue(name, out var value) &&
-                (neutral is null || !value.Equals(neutral, StringComparison.OrdinalIgnoreCase)))
+            if (declared.TryGetValue(name, out var value) && !IsNeutral(value, neutral))
             {
                 reason = "property:" + name;
                 return false;
@@ -463,6 +490,24 @@ internal static class SvgStyle
         }
 
         return true;
+    }
+
+    private static bool IsNeutral(string value, string[]? neutral)
+    {
+        if (neutral is null)
+        {
+            return false;
+        }
+
+        foreach (var candidate in neutral)
+        {
+            if (value.Equals(candidate, StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private static bool Fail(string property, out string reason)
