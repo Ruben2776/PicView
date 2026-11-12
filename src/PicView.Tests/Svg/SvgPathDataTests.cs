@@ -7,12 +7,29 @@ public class SvgPathDataTests
     [Theory]
     [InlineData("M0 0h10v10z", "M0,0 h10 v10 z")]
     [InlineData("M0 0a1 1 0 01.5.5", "M0,0 a1,1,0,0,1,.5,.5")]
-    [InlineData("M10-5.5L.5.5 1e2,3", "M10,-5.5 L.5,.5 L1e2,3")]
+    [InlineData("M10-5.5L.5.5 1e2,3", "M10,-5.5 L.5,.5 L100,3")]
     [InlineData("m1 2 3 4", "m1,2 l3,4")]
     public void TryNormalize_KeepsNumbersAndSeparatesThem(string d, string expected)
     {
         Assert.True(SvgPathData.TryNormalize(d, false, out var pathData));
         Assert.Equal(expected, pathData);
+    }
+
+    [Theory]
+    [InlineData("+5", "5")]
+    [InlineData("5.", "5")]
+    [InlineData("-5.", "-5")]
+    [InlineData("1.5e-3", "0.0015")]
+    [InlineData("-2E+2", "-200")]
+    [InlineData("1.50e1", "15.0")]
+    [InlineData(".5e1", "5")]
+    [InlineData("0012e-1", "1.2")]
+    [InlineData("0e5", "0")]
+    [InlineData("1e-500", "0")]
+    public void TryNormalize_NumberFormAvaloniaRejects_IsRewrittenWithTheSameValue(string number, string written)
+    {
+        Assert.True(SvgPathData.TryNormalize("M" + number + " 0", false, out var pathData));
+        Assert.Equal("M" + written + ",0", pathData);
     }
 
     [Theory]

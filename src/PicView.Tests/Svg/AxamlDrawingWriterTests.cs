@@ -90,7 +90,7 @@ public class AxamlDrawingWriterTests
     [Fact]
     public void Write_GradientStrokeWithDashes_WritesBrushBeforeDashStyle()
     {
-        var gradient = new SvgLinearGradientPaint(0, 0, 1, 1, Stops, SvgGradientUnits.ObjectBoundingBox, null,
+        var gradient = new SvgLinearGradientPaint(0, 0, 1, 1, Stops, SvgGradientUnits.UserSpaceOnUse, null,
             SvgSpreadMethod.Pad, 1);
         var expected = Lines(
             "<DrawingImage Viewbox=\"0 0 10 20\">",
@@ -100,7 +100,7 @@ public class AxamlDrawingWriterTests
             "        <GeometryDrawing.Pen>",
             "          <Pen Thickness=\"2\">",
             "            <Pen.Brush>",
-            "              <LinearGradientBrush StartPoint=\"0%,0%\" EndPoint=\"100%,100%\">",
+            "              <LinearGradientBrush StartPoint=\"0,0\" EndPoint=\"1,1\">",
             "                <GradientStop Offset=\"0\" Color=\"#FFFF0000\" />",
             "                <GradientStop Offset=\"1\" Color=\"#800000FF\" />",
             "              </LinearGradientBrush>",

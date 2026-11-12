@@ -21,24 +21,29 @@ public static class AxamlDrawingWriter
 
     private static void WriteGroup(StringBuilder sb, int depth, SvgGroup group)
     {
-        var tag = new StringBuilder("<DrawingGroup");
-        if (group.Opacity != 1)
+        var hasOpacity = group.Opacity != 1;
+        if (group.Transform is null && !hasOpacity && group.Clip is null && group.Children.Count == 0)
         {
-            Attribute(tag, "Opacity", SvgNumber.Format(group.Opacity));
-        }
-
-        if (group.Transform is null && group.Clip is null && group.Children.Count == 0)
-        {
-            Line(sb, depth, tag.Append(" />").ToString());
+            Line(sb, depth, "<DrawingGroup />");
             return;
         }
 
-        Line(sb, depth, tag.Append('>').ToString());
+        Line(sb, depth, "<DrawingGroup>");
         if (group.Transform is { } transform)
         {
             Line(sb, depth + 1, "<DrawingGroup.Transform>");
             Line(sb, depth + 2, MatrixTag(transform));
             Line(sb, depth + 1, "</DrawingGroup.Transform>");
+        }
+
+        if (hasOpacity)
+        {
+            // An opacity mask composites the group as one layer, as SVG group opacity does; DrawingGroup.Opacity
+            // fades each shape on its own, so overlaps would show through.
+            Line(sb, depth + 1, "<DrawingGroup.OpacityMask>");
+            Line(sb, depth + 2, "<SolidColorBrush Color=\"#FFFFFFFF\" Opacity=\"" + SvgNumber.Format(group.Opacity) +
+                                "\" />");
+            Line(sb, depth + 1, "</DrawingGroup.OpacityMask>");
         }
 
         if (group.Clip is { } clip)
@@ -261,6 +266,12 @@ public static class AxamlDrawingWriter
         if (gradient.Opacity != 1)
         {
             Attribute(tag, "Opacity", SvgNumber.Format(gradient.Opacity));
+        }
+
+        if (gradient.Transform is not null)
+        {
+            // SVG transforms a gradient about the user-space origin; Avalonia's default origin is the shape's corner.
+            Attribute(tag, "TransformOrigin", "0,0");
         }
 
         if (gradient.Transform is null && gradient.Stops.Count == 0)

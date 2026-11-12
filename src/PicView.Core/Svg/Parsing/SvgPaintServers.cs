@@ -138,6 +138,12 @@ internal sealed class SvgPaintServers(SvgDocument document, SvgViewport viewport
             return Fail("value:gradientTransform");
         }
 
+        // Avalonia applies a brush transform in user units, where SVG applies it in bounding-box units.
+        if (transform is not null && units == SvgGradientUnits.ObjectBoundingBox && stops.Count > 1)
+        {
+            return Fail("gradient:transform");
+        }
+
         if (string.Equals(element.Name, "linearGradient", StringComparison.Ordinal))
         {
             if (!TryCoordinate(gradient, "x1", "0%", SvgAxis.Horizontal, units, out var x1) ||
@@ -180,6 +186,12 @@ internal sealed class SvgPaintServers(SvgDocument document, SvgViewport viewport
         if (fr != 0)
         {
             return Fail("property:fr");
+        }
+
+        // SVG 1.1 moves a focal point on or outside the circle onto it; SVG 2 draws a cone. Neither is guessed.
+        if (stops.Count > 1 && r > 0 && Math.Sqrt((fx - cx) * (fx - cx) + (fy - cy) * (fy - cy)) >= r)
+        {
+            return Fail("gradient:focal");
         }
 
         paint = stops.Count switch

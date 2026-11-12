@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text;
 
 namespace PicView.Core.Svg.Parsing;
@@ -12,7 +13,8 @@ internal static class SvgPathData
 
     /// <summary>
     ///     Tokenizes <paramref name="d" /> by the SVG path grammar and writes it back in the model's form, keeping every
-    ///     number as written. Each implicit repeat gets its own letter. False when <paramref name="d" /> does not
+    ///     number as written except the forms Avalonia rejects (see <see cref="AppendNumber" />). Each implicit repeat
+    ///     gets its own letter. False when <paramref name="d" /> does not
     ///     tokenize or does not start with a move.
     /// </summary>
     public static bool TryNormalize(string d, bool nonZero, out string pathData)
@@ -255,9 +257,76 @@ internal static class SvgPathData
                 return false;
             }
 
-            builder.Append(number);
+            AppendNumber(builder, number);
         }
 
         return true;
+    }
+
+    /// <summary>
+    ///     Appends a number as written, unless it is in a form Avalonia's path parser rejects: a leading <c>+</c>, a
+    ///     trailing <c>.</c> or an exponent. Those are rewritten as plain decimals with the same digits, so the value
+    ///     is unchanged.
+    /// </summary>
+    private static void AppendNumber(StringBuilder builder, ReadOnlySpan<char> number)
+    {
+        if (number.IndexOfAny("+eE") < 0 && number[^1] != '.')
+        {
+            builder.Append(number);
+            return;
+        }
+
+        var negative = number[0] == '-';
+        if (number[0] is '+' or '-')
+        {
+            number = number[1..];
+        }
+
+        var exponent = 0;
+        var e = number.IndexOfAny('e', 'E');
+        if (e >= 0)
+        {
+            // The scanner only leaves an e in the number when digits follow it. A finite number with an exponent
+            // past ±400 is zero or rounds to zero.
+            var exponentText = number[(e + 1)..];
+            if (!int.TryParse(exponentText, NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture,
+                    out exponent) || Math.Abs(exponent) > 400)
+            {
+                builder.Append('0');
+                return;
+            }
+
+            number = number[..e];
+        }
+
+        var point = number.IndexOf('.');
+        var integerDigits = point < 0 ? number : number[..point];
+        var fractionDigits = point < 0 ? ReadOnlySpan<char>.Empty : number[(point + 1)..];
+        var digits = string.Concat(integerDigits, fractionDigits).TrimStart('0');
+        var pointPosition = integerDigits.Length + exponent - (integerDigits.Length + fractionDigits.Length -
+                                                               digits.Length);
+        if (digits.Length == 0)
+        {
+            builder.Append('0');
+            return;
+        }
+
+        if (negative)
+        {
+            builder.Append('-');
+        }
+
+        if (pointPosition <= 0)
+        {
+            builder.Append("0.").Append('0', -pointPosition).Append(digits);
+        }
+        else if (pointPosition >= digits.Length)
+        {
+            builder.Append(digits).Append('0', pointPosition - digits.Length);
+        }
+        else
+        {
+            builder.Append(digits.AsSpan(0, pointPosition)).Append('.').Append(digits.AsSpan(pointPosition));
+        }
     }
 }

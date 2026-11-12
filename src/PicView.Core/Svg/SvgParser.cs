@@ -218,10 +218,14 @@ internal sealed class SvgResolver
             return true;
         }
 
-        if (!_paintServers.TryResolve(style.Fill, style.FillOpacity, style.Color, out var fill) ||
-            !TryStroke(style, out var stroke))
+        if (!_paintServers.TryResolve(style.Fill, style.FillOpacity, style.Color, out var fill))
         {
             return Fail(_paintServers.Reason!);
+        }
+
+        if (!TryStroke(style, out var stroke))
+        {
+            return false;
         }
 
         var shape = new SvgShape(pathData, fill, stroke);
@@ -531,11 +535,18 @@ internal sealed class SvgResolver
         stroke = null;
         if (!_paintServers.TryResolve(style.Stroke, style.StrokeOpacity, style.Color, out var paint))
         {
-            return false;
+            return Fail(_paintServers.Reason!);
         }
 
         if (paint is not null && style.StrokeWidth > 0)
         {
+            // SVG measures a bounding-box gradient on a stroke against the fill box; Avalonia uses the stroked
+            // bounds.
+            if (paint is SvgGradientPaint { Units: SvgGradientUnits.ObjectBoundingBox })
+            {
+                return Fail("gradient:stroke");
+            }
+
             stroke = new SvgStroke(paint, style.StrokeWidth, style.LineCap, style.LineJoin, style.MiterLimit,
                 style.DashArray, style.DashOffset);
         }

@@ -10,35 +10,35 @@ public class SvgToXamlConverterTests
     private const string BlackToWhite =
         "<stop offset='0' stop-color='#000'/><stop offset='1' stop-color='#fff' stop-opacity='.5'/>";
 
-    private const string FillAndStrokeSvg =
+    internal const string FillAndStrokeSvg =
         "<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24'>" +
         "<path fill='#1E88E5' d='M4,4 H20 V20 H4 Z'/>" +
         "<path fill='none' fill-rule='evenodd' stroke='#000' stroke-width='2' stroke-linecap='round' d='M2,12 L22,12'/></svg>";
 
-    private const string GroupSvg =
+    internal const string GroupSvg =
         "<g transform='translate(5 6)' opacity='.5'><rect width='10' height='10'/></g>";
 
-    private const string SolidAlphaSvg = "<rect width='10' height='10' fill='#FF0000' fill-opacity='.5'/>";
+    internal const string SolidAlphaSvg = "<rect width='10' height='10' fill='#FF0000' fill-opacity='.5'/>";
 
-    private const string LinearSvg =
+    internal const string LinearSvg =
         "<defs><linearGradient id='g'>" + BlackToWhite + "</linearGradient></defs>" +
         "<rect width='10' height='10' fill='url(#g)'/>";
 
-    private const string RadialSvg =
+    internal const string RadialSvg =
         "<defs><radialGradient id='g' gradientUnits='userSpaceOnUse' cx='50' cy='50' r='40' fx='45' fy='55' " +
         "spreadMethod='reflect' gradientTransform='translate(2 3)'>" + BlackToWhite + "</radialGradient></defs>" +
         "<rect width='10' height='10' fill='url(#g)'/>";
 
-    private const string DashSvg =
+    internal const string DashSvg =
         "<path d='M0,0 L10,0' fill='none' stroke='#000' stroke-width='2' stroke-dasharray='4 2'/>";
 
-    private const string MiterSvg = "<path d='M0,0 L10,0 L10,10' fill='none' stroke='#000'/>";
+    internal const string MiterSvg = "<path d='M0,0 L10,0 L10,10' fill='none' stroke='#000'/>";
 
-    private const string OneClipSvg =
+    internal const string OneClipSvg =
         "<defs><clipPath id='c'><rect width='5' height='5'/></clipPath></defs>" +
         "<g clip-path='url(#c)'><rect width='10' height='10'/></g>";
 
-    private const string TwoClipSvg =
+    internal const string TwoClipSvg =
         "<defs><clipPath id='c'><rect width='5' height='5'/>" +
         "<rect width='2' height='2' transform='translate(1 1)' clip-rule='evenodd'/></clipPath></defs>" +
         "<g clip-path='url(#c)'><rect width='10' height='10'/></g>";
@@ -77,10 +77,13 @@ public class SvgToXamlConverterTests
             "<DrawingImage Viewbox=\"0 0 100 100\">\n" +
             "  <DrawingImage.Drawing>\n" +
             "    <DrawingGroup>\n" +
-            "      <DrawingGroup Opacity=\"0.5\">\n" +
+            "      <DrawingGroup>\n" +
             "        <DrawingGroup.Transform>\n" +
             "          <MatrixTransform Matrix=\"1,0,0,1,5,6\" />\n" +
             "        </DrawingGroup.Transform>\n" +
+            "        <DrawingGroup.OpacityMask>\n" +
+            "          <SolidColorBrush Color=\"#FFFFFFFF\" Opacity=\"0.5\" />\n" +
+            "        </DrawingGroup.OpacityMask>\n" +
             "        <GeometryDrawing Brush=\"#FF000000\" Geometry=\"F1 M0,0 H10 V10 H0 Z\" />\n" +
             "      </DrawingGroup>\n" +
             "    </DrawingGroup>\n" +
@@ -133,7 +136,7 @@ public class SvgToXamlConverterTests
             "    <DrawingGroup>\n" +
             "      <GeometryDrawing Geometry=\"F1 M0,0 H10 V10 H0 Z\">\n" +
             "        <GeometryDrawing.Brush>\n" +
-            "          <RadialGradientBrush Center=\"50,50\" GradientOrigin=\"45,55\" RadiusX=\"40\" RadiusY=\"40\" SpreadMethod=\"Reflect\">\n" +
+            "          <RadialGradientBrush Center=\"50,50\" GradientOrigin=\"45,55\" RadiusX=\"40\" RadiusY=\"40\" SpreadMethod=\"Reflect\" TransformOrigin=\"0,0\">\n" +
             "            <RadialGradientBrush.Transform>\n" +
             "              <MatrixTransform Matrix=\"1,0,0,1,2,3\" />\n" +
             "            </RadialGradientBrush.Transform>\n" +

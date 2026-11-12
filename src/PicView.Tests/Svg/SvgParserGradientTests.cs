@@ -78,7 +78,9 @@ public class SvgParserGradientTests
     [Fact]
     public void Parse_GradientTransform_IsSet()
     {
-        var paint = Linear($"<linearGradient id='g' gradientTransform='rotate(90)'>{BlackToWhite}</linearGradient>");
+        var paint = Linear(
+            $"<linearGradient id='g' gradientUnits='userSpaceOnUse' gradientTransform='rotate(90)'>{BlackToWhite}" +
+            "</linearGradient>");
         Assert.NotNull(paint.Transform);
         var (x, y) = paint.Transform.Value.Apply(1, 0);
         Assert.Equal(0, x, 9);
@@ -226,7 +228,7 @@ public class SvgParserGradientTests
     public void Parse_StrokeGradient_UsesStrokeOpacity()
     {
         var stroke = Shape(
-            $"<defs><linearGradient id='g'>{BlackToWhite}</linearGradient></defs>" +
+            $"<defs><linearGradient id='g' gradientUnits='userSpaceOnUse'>{BlackToWhite}</linearGradient></defs>" +
             "<rect width='10' height='10' stroke='url(#g)' stroke-opacity='0.25'/>").Stroke;
         Assert.NotNull(stroke);
         Assert.Equal(0.25, Assert.IsType<SvgLinearGradientPaint>(stroke.Paint).Opacity);
@@ -307,5 +309,46 @@ public class SvgParserGradientTests
     {
         var root = Root($"<linearGradient id='g'>{BlackToWhite}</linearGradient><rect width='1' height='1' fill='url(#g)'/>");
         Assert.IsType<SvgLinearGradientPaint>(Assert.IsType<SvgShape>(Assert.Single(root.Children)).Fill);
+    }
+
+    [Fact]
+    public void Parse_BoundingBoxGradientWithTransform_IsGradientTransform()
+    {
+        Assert.Equal("gradient:transform",
+            ReasonFor($"<linearGradient id='g' gradientTransform='translate(0.5 0)'>{BlackToWhite}</linearGradient>"));
+    }
+
+    [Fact]
+    public void Parse_BoundingBoxOneStopGradientWithTransform_IsSolid()
+    {
+        Assert.Equal(new SvgSolidPaint(new SvgColor(255, 255, 0, 0)),
+            Fill("<linearGradient id='g' gradientTransform='scale(2)'><stop stop-color='red'/></linearGradient>"));
+    }
+
+    [Theory]
+    [InlineData("<rect width='10' height='10' fill='none' stroke='url(#g)'/>")]
+    [InlineData("<path d='M0 5h10' stroke='url(#g)' stroke-width='4'/>")]
+    public void Parse_BoundingBoxGradientOnStroke_IsGradientStroke(string shape)
+    {
+        Assert.Equal("gradient:stroke",
+            Reason(Document($"<defs><linearGradient id='g'>{BlackToWhite}</linearGradient></defs>{shape}")));
+    }
+
+    [Fact]
+    public void Parse_BoundingBoxGradientOnZeroWidthStroke_IsAccepted()
+    {
+        Assert.Null(Shape($"<defs><linearGradient id='g'>{BlackToWhite}</linearGradient></defs>" +
+                          "<rect width='10' height='10' stroke='url(#g)' stroke-width='0'/>").Stroke);
+    }
+
+    [Theory]
+    [InlineData("fx='1.2'")]
+    [InlineData("fx='1'")]
+    [InlineData("fx='0.1' fy='0.1'")]
+    [InlineData("gradientUnits='userSpaceOnUse' cx='50' cy='50' r='10' fx='65'")]
+    public void Parse_RadialFocalOnOrOutsideTheCircle_IsGradientFocal(string attributes)
+    {
+        Assert.Equal("gradient:focal",
+            ReasonFor($"<radialGradient id='g' {attributes}>{BlackToWhite}</radialGradient>"));
     }
 }
