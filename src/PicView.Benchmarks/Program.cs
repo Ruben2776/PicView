@@ -4,6 +4,7 @@ using PicView.Benchmarks.Gallery;
 using PicView.Benchmarks.Images;
 using PicView.Benchmarks.StartupBenchmarks;
 using PicView.Benchmarks.StringBenchmarks;
+using PicView.Benchmarks.Svg;
 
 /*
 
@@ -16,6 +17,7 @@ dotnet run -c Release --project src/PicView.Benchmarks
 //BenchmarkRunner.Run<PreloadingBenchmark>();
 //BenchmarkRunner.Run<TranslationBenchmarks>();
 BenchmarkRunner.Run<GalleryLoadBenchmarks>();
+//BenchmarkRunner.Run<SvgLoadBenchmarks>();
 //BenchmarkRunner.Run<LanguageBenchmark>();
 //BenchmarkRunner.Run<FileSizeBenchmark>();
 //BenchmarkRunner.Run<ConfigBenchmark>();
