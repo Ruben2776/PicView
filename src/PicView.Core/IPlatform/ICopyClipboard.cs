@@ -16,4 +16,10 @@ public interface ICopyClipboard
     Task<bool> CopyImageAsync(TabViewModel tab);
 
     Task<bool> CopyBase64Async(string? path);
+
+    /// <summary>
+    /// Copies the SVG file at <paramref name="path"/> as Avalonia AXAML <c>DrawingImage</c> text. Returns false and
+    /// leaves the clipboard untouched when the file is missing, cannot be read, or is not a supported SVG.
+    /// </summary>
+    Task<bool> CopyAxamlAsync(string? path);
 }

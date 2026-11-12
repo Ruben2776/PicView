@@ -96,6 +96,16 @@ public class KeybindCategoryDefinitionTests
     }
 
     [Fact]
+    public void GetCopyEntries_CopyAxamlFollowsCopyBase64()
+    {
+        var languageModel = TranslationManager.GetLanguageModel(new CultureInfo("en-US"));
+        var entries = KeybindCategoryDefinition.GetCopyEntries(languageModel);
+        var index = entries.FindIndex(e => e.FunctionName == Actions.CopyBase64);
+        Assert.True(index >= 0);
+        Assert.Equal((Actions.CopyAxaml, "Copy AXAML"), entries[index + 1]);
+    }
+
+    [Fact]
     public void GetCopyEntries_PlatformSpecificCutFile()
     {
         var languageModel = TranslationManager.GetLanguageModel(new CultureInfo("en-US"));

@@ -211,6 +211,7 @@ public static class KeybindCategoryDefinition
                 (Actions.CopyFilePath, t.FileCopyPath ?? string.Empty),
                 (Actions.CopyImage, t.CopyImage ?? string.Empty),
                 (Actions.CopyBase64, (t.Copy ?? "Copy") + " base64"),
+                (Actions.CopyAxaml, (t.Copy ?? "Copy") + " AXAML"),
                 (Actions.Paste, t.FilePaste ?? string.Empty),
                 (Actions.DuplicateFile, t.DuplicateFile ?? string.Empty),
             ]
@@ -221,6 +222,7 @@ public static class KeybindCategoryDefinition
                 (Actions.CopyFilePath, t.FileCopyPath ?? string.Empty),
                 (Actions.CopyImage, t.CopyImage ?? string.Empty),
                 (Actions.CopyBase64, (t.Copy ?? "Copy") + " base64"),
+                (Actions.CopyAxaml, (t.Copy ?? "Copy") + " AXAML"),
                 (Actions.Paste, t.FilePaste ?? string.Empty),
                 (Actions.DuplicateFile, t.DuplicateFile ?? string.Empty),
             ];

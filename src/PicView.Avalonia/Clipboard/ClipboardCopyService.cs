@@ -6,6 +6,7 @@ using PicView.Avalonia.ImageTransformations;
 using PicView.Core.DebugTools;
 using PicView.Core.ImageTransformations;
 using PicView.Core.IPlatform;
+using PicView.Core.Svg;
 using PicView.Core.ViewModels;
 
 namespace PicView.Avalonia.Clipboard;
@@ -154,5 +155,33 @@ public class ClipboardCopyService(
             DebugHelper.LogDebug(nameof(ClipboardCopyService), nameof(CopyBase64Async), ex);
         }
         return false;
+    }
+
+    public async Task<bool> CopyAxamlAsync(string? path)
+    {
+        if (string.IsNullOrWhiteSpace(path) || clipboard is null || !File.Exists(path))
+        {
+            return false;
+        }
+
+        try
+        {
+            var svgText = await SvgFileReader.ReadAsync(path).ConfigureAwait(false);
+            var axaml = SvgToXamlConverter.Convert(svgText, out _);
+            if (string.IsNullOrEmpty(axaml))
+            {
+                return false;
+            }
+
+            await clipboard.ClearAsync().ConfigureAwait(false);
+            await clipboard.SetTextAsync(axaml).ConfigureAwait(false);
+            onCopied?.Invoke();
+            return true;
+        }
+        catch (Exception ex)
+        {
+            DebugHelper.LogDebug(nameof(ClipboardCopyService), nameof(CopyAxamlAsync), ex);
+            return false;
+        }
     }
 }

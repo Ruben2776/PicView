@@ -287,4 +287,69 @@ public class ClipboardCopyServiceTests
         Assert.False(result);
         Assert.Null(platform.LastCutFilePath);
     }
+
+    [AvaloniaFact]
+    public async Task CopyAxamlAsync_ConvertibleSvg_CopiesDrawingImageText()
+    {
+        var path = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName() + ".svg");
+        await File.WriteAllTextAsync(path, Svg.SvgToXamlConverterTests.FillAndStrokeSvg, TestContext.Current.CancellationToken);
+        try
+        {
+            var window = new Window();
+            var copiedInvoked = false;
+            var service = new ClipboardCopyService(window.Clipboard, onCopied: () => copiedInvoked = true);
+
+            var result = await service.CopyAxamlAsync(path);
+
+            Assert.True(result);
+            Assert.True(copiedInvoked);
+            var text = await window.Clipboard!.TryGetTextAsync();
+            Assert.StartsWith("<DrawingImage Viewbox=\"0 0 24 24\">", text);
+        }
+        finally
+        {
+            File.Delete(path);
+        }
+    }
+
+    [AvaloniaFact]
+    public async Task CopyAxamlAsync_UnsupportedSvg_ReturnsFalseAndLeavesClipboard()
+    {
+        var path = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName() + ".svg");
+        await File.WriteAllTextAsync(path, "<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24'><text/></svg>",
+            TestContext.Current.CancellationToken);
+        try
+        {
+            var window = new Window();
+            await window.Clipboard!.SetTextAsync("before");
+            var copiedInvoked = false;
+            var service = new ClipboardCopyService(window.Clipboard, onCopied: () => copiedInvoked = true);
+
+            var result = await service.CopyAxamlAsync(path);
+
+            Assert.False(result);
+            Assert.False(copiedInvoked);
+            Assert.Equal("before", await window.Clipboard.TryGetTextAsync());
+        }
+        finally
+        {
+            File.Delete(path);
+        }
+    }
+
+    [AvaloniaTheory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("does-not-exist.svg")]
+    public async Task CopyAxamlAsync_NullOrMissingPath_ReturnsFalse(string? path)
+    {
+        var window = new Window();
+        var copiedInvoked = false;
+        var service = new ClipboardCopyService(window.Clipboard, onCopied: () => copiedInvoked = true);
+
+        var result = await service.CopyAxamlAsync(path);
+
+        Assert.False(result);
+        Assert.False(copiedInvoked);
+    }
 }

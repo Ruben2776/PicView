@@ -170,6 +170,7 @@ public class FunctionsMapper : IActionRunner
             Actions.CopyFilePath => CopyFilePath,
             Actions.CopyImage => CopyImage,
             Actions.CopyBase64 => CopyBase64,
+            Actions.CopyAxaml => CopyAxaml,
             Actions.DuplicateFile => DuplicateFile,
             Actions.CutFile => CutFile,
             Actions.Paste => Paste,
@@ -652,6 +653,18 @@ public class FunctionsMapper : IActionRunner
         }
         await _mainWindow.ClipboardCopyService
             .CopyBase64Async(_vm.WindowTabs.ActiveTab.CurrentValue?.FileInfo?.CurrentValue?.FullName)
+            .ConfigureAwait(false);
+    }
+
+    /// <inheritdoc cref="ICopyClipboard.CopyAxamlAsync(string)" />
+    private async ValueTask CopyAxaml()
+    {
+        if (_mainWindow.ClipboardCopyService is null)
+        {
+            return;
+        }
+        await _mainWindow.ClipboardCopyService
+            .CopyAxamlAsync(_vm.WindowTabs.ActiveTab.CurrentValue?.FileInfo?.CurrentValue?.FullName)
             .ConfigureAwait(false);
     }
 

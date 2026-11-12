@@ -6,6 +6,7 @@
     x:DataType="viewModels:MainWindowViewModel"
     xmlns="https://github.com/avaloniaui"
     xmlns:buttons="clr-namespace:PicView.Avalonia.Views.UC.Buttons"
+    xmlns:converters="clr-namespace:PicView.Avalonia.Converters"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
     xmlns:keybindings="using:PicView.Core.Keybindings"
     xmlns:uc="clr-namespace:PicView.Avalonia.Views.UC"
@@ -934,6 +935,22 @@
                         <TextBlock>
                             <Run Text="{Binding Translation.Copy.Value, Mode=OneWay}" />
                             <Run Text=" base64" />
+                        </TextBlock>
+                    </MenuItem.Header>
+                    <MenuItem.Icon>
+                        <Path Classes="CopyPath" />
+                    </MenuItem.Icon>
+                </customControls:StyledMenuItem>
+
+                <!--  Copy AXAML, only for a converted SVG  -->
+                <customControls:StyledMenuItem
+                    Command="{Binding RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.CopyAxaml}"
+                    IsVisible="{Binding WindowTabs.ActiveTab.Value.Image.Value, Converter={x:Static converters:IsSvgDrawingConverter.Instance}, FallbackValue=False, Mode=OneWay}">
+                    <MenuItem.Header>
+                        <TextBlock>
+                            <Run Text="{Binding Translation.Copy.Value, Mode=OneWay}" />
+                            <Run Text=" AXAML" />
                         </TextBlock>
                     </MenuItem.Header>
                     <MenuItem.Icon>
