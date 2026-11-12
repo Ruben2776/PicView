@@ -81,6 +81,11 @@ internal sealed class SvgResolver(SvgViewport viewport, SvgParseOptions options)
 
     private bool TryWalk(SvgElement element, SvgComputedStyle parentStyle, List<SvgNode> into)
     {
+        if (element.GetAttribute("pathLength") is not null)
+        {
+            return Fail("property:pathLength");
+        }
+
         if (!TryComputeStyle(element, parentStyle, out var style))
         {
             return false;
@@ -182,6 +187,16 @@ internal sealed class SvgResolver(SvgViewport viewport, SvgParseOptions options)
                     return true;
                 }
 
+                if (!double.IsFinite(x + width))
+                {
+                    return Fail("value:width");
+                }
+
+                if (!double.IsFinite(y + height))
+                {
+                    return Fail("value:height");
+                }
+
                 var hasRx = element.GetAttribute("rx") is not null;
                 var hasRy = element.GetAttribute("ry") is not null;
                 if (hasRx && !hasRy)
@@ -205,6 +220,11 @@ internal sealed class SvgResolver(SvgViewport viewport, SvgParseOptions options)
                     return false;
                 }
 
+                if (!double.IsFinite(cx - r) || !double.IsFinite(cx + r))
+                {
+                    return Fail("value:r");
+                }
+
                 if (r > 0)
                 {
                     pathData = SvgPathData.Circle(cx, cy, r, nonZero);
@@ -220,6 +240,11 @@ internal sealed class SvgResolver(SvgViewport viewport, SvgParseOptions options)
                     !TrySize(element, "ry", SvgAxis.Vertical, out var ry))
                 {
                     return false;
+                }
+
+                if (!double.IsFinite(cx - rx) || !double.IsFinite(cx + rx))
+                {
+                    return Fail("value:rx");
                 }
 
                 if (rx > 0 && ry > 0)

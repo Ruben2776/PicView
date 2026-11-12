@@ -127,6 +127,10 @@ public class SvgParserShapeTests
     [InlineData("<rect width='abc' height='1'/>", "value:width")]
     [InlineData("<polygon points='0,0 1'/>", "value:points")]
     [InlineData("<polygon points='0,0 1,a'/>", "value:points")]
+    [InlineData("<rect x='1e308' width='1e308' height='1'/>", "value:width")]
+    [InlineData("<rect width='1' y='1e308' height='1e308'/>", "value:height")]
+    [InlineData("<circle cx='-1e308' r='1e308'/>", "value:r")]
+    [InlineData("<ellipse cx='1e308' rx='1e308' ry='1'/>", "value:rx")]
     public void Parse_InvalidShapeValue_GivesReason(string body, string reason)
     {
         Assert.Equal(reason, Reason(Document(body)));

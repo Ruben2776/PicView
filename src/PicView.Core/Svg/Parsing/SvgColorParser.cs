@@ -147,7 +147,8 @@ internal static class SvgColorParser
 
     /// <summary>
     ///     The inside of <c>rgb(</c>: three channels and an optional alpha, separated by commas, or by spaces with a
-    ///     slash before the alpha. Channels are numbers (0 to 255) or percentages; alpha is a number or percentage.
+    ///     slash before the alpha. Channels are all numbers (0 to 255) or all percentages; alpha is a number or
+    ///     percentage.
     /// </summary>
     private static bool TryParseRgb(ReadOnlySpan<char> inner, out SvgColor color)
     {
@@ -207,7 +208,9 @@ internal static class SvgColorParser
             }
         }
 
-        if (count < 3 || (!commas && count == 4 && slashAt != 3))
+        // The three channels are all numbers or all percentages; the alpha may be either.
+        if (count < 3 || (!commas && count == 4 && slashAt != 3) || percent[0] != percent[1] ||
+            percent[1] != percent[2])
         {
             return false;
         }

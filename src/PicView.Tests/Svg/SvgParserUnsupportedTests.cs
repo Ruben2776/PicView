@@ -48,6 +48,36 @@ public class SvgParserUnsupportedTests
     }
 
     [Theory]
+    [InlineData("<rect style='width:10px;height:10px'/>", "property:width")]
+    [InlineData("<rect width='1' style='height:10px'/>", "property:height")]
+    [InlineData("<rect width='1' height='1' style='x:1'/>", "property:x")]
+    [InlineData("<rect width='1' height='1' style='y:1'/>", "property:y")]
+    [InlineData("<rect width='1' height='1' style='rx:1'/>", "property:rx")]
+    [InlineData("<rect width='1' height='1' style='ry:1'/>", "property:ry")]
+    [InlineData("<circle style='r:5'/>", "property:r")]
+    [InlineData("<circle r='5' style='cx:1'/>", "property:cx")]
+    [InlineData("<circle r='5' style='cy:1'/>", "property:cy")]
+    [InlineData("<path style=\"d:path('M0 0h10')\"/>", "property:d")]
+    public void Parse_GeometryPropertyInCss_GivesReason(string body, string reason)
+    {
+        Assert.Equal(reason, Reason(Document(body)));
+    }
+
+    [Fact]
+    public void Parse_GeometryAttributes_AreHandled()
+    {
+        Assert.Equal("F1 M1,2 H11 V12 H1 Z",
+            Assert.IsType<SvgShape>(Assert.Single(
+                Root("<rect x='1' y='2' width='10' height='10' rx='0'/>").Children)).PathData);
+    }
+
+    [Fact]
+    public void Parse_PathLength_GivesReason()
+    {
+        Assert.Equal("property:pathLength", Reason(Document("<path pathLength='10' d='M0 0h10'/>")));
+    }
+
+    [Theory]
     [InlineData("filter='none'")]
     [InlineData("mask='none'")]
     [InlineData("marker='none' marker-start='none' marker-mid='none' marker-end='none'")]
@@ -109,20 +139,31 @@ public class SvgParserUnsupportedTests
     }
 
     [Fact]
-    public void Parse_NestingWithinLimit_IsAccepted()
+    public void Parse_RootWith255NestedGroups_256ElementsDeep_Parses()
+    {
+        Assert.Single(Root(NestedGroups(255)).Children);
+    }
+
+    [Fact]
+    public void Parse_RootWith256NestedGroups_257ElementsDeep_IsDepth()
+    {
+        Assert.Equal("depth", Reason(Document(NestedGroups(256))));
+    }
+
+    private static string NestedGroups(int count)
     {
         var text = new StringBuilder();
-        for (var i = 0; i < 255; i++)
+        for (var i = 0; i < count; i++)
         {
             text.Append("<g>");
         }
 
-        for (var i = 0; i < 255; i++)
+        for (var i = 0; i < count; i++)
         {
             text.Append("</g>");
         }
 
-        Assert.Single(Root(text.ToString()).Children);
+        return text.ToString();
     }
 
     [Fact]

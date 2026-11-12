@@ -179,7 +179,7 @@ internal readonly record struct SvgViewport(
 
         var parts = text.Split([' ', '\t', '\r', '\n'], StringSplitOptions.RemoveEmptyEntries);
         var index = 0;
-        if (index < parts.Length && parts[index].Equals("defer", StringComparison.OrdinalIgnoreCase))
+        if (index < parts.Length && string.Equals(parts[index], "defer", StringComparison.Ordinal))
         {
             index++;
         }
@@ -190,14 +190,14 @@ internal readonly record struct SvgViewport(
         }
 
         var align = parts[index++];
-        if (align.Equals("none", StringComparison.OrdinalIgnoreCase))
+        if (string.Equals(align, "none", StringComparison.Ordinal))
         {
             alignX = null;
             alignY = null;
         }
         else if (align.Length == 8 &&
                  TryAlign(align.AsSpan(0, 4), 'x', out var x) &&
-                 TryAlign(align.AsSpan(4, 4), 'y', out var y))
+                 TryAlign(align.AsSpan(4, 4), 'Y', out var y))
         {
             alignX = x;
             alignY = y;
@@ -209,11 +209,11 @@ internal readonly record struct SvgViewport(
 
         if (index < parts.Length)
         {
-            if (parts[index].Equals("slice", StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(parts[index], "slice", StringComparison.Ordinal))
             {
                 slice = true;
             }
-            else if (!parts[index].Equals("meet", StringComparison.OrdinalIgnoreCase))
+            else if (!string.Equals(parts[index], "meet", StringComparison.Ordinal))
             {
                 return false;
             }
@@ -224,24 +224,25 @@ internal readonly record struct SvgViewport(
         return index == parts.Length;
     }
 
+    /// <summary>One half of an align value, matched with exact case: <c>xMin</c> … <c>xMax</c>, <c>YMin</c> … <c>YMax</c>.</summary>
     private static bool TryAlign(ReadOnlySpan<char> part, char axis, out double fraction)
     {
         fraction = 0;
-        if (char.ToLowerInvariant(part[0]) != axis)
+        if (part[0] != axis)
         {
             return false;
         }
 
         var position = part[1..];
-        if (position.Equals("Min", StringComparison.OrdinalIgnoreCase))
+        if (position.SequenceEqual("Min"))
         {
             fraction = 0;
         }
-        else if (position.Equals("Mid", StringComparison.OrdinalIgnoreCase))
+        else if (position.SequenceEqual("Mid"))
         {
             fraction = 0.5;
         }
-        else if (position.Equals("Max", StringComparison.OrdinalIgnoreCase))
+        else if (position.SequenceEqual("Max"))
         {
             fraction = 1;
         }

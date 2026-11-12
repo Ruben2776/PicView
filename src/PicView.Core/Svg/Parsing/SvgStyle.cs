@@ -72,7 +72,18 @@ internal static class SvgStyle
         ["paint-order"] = "normal",
         ["transform-origin"] = null,
         ["transform-box"] = null,
-        ["transform"] = null
+        ["transform"] = null,
+        // SVG 2 geometry properties: as attributes they are geometry, as CSS they are not handled.
+        ["width"] = null,
+        ["height"] = null,
+        ["x"] = null,
+        ["y"] = null,
+        ["cx"] = null,
+        ["cy"] = null,
+        ["r"] = null,
+        ["rx"] = null,
+        ["ry"] = null,
+        ["d"] = null
     };
 
     /// <summary>Attributes read as style properties. <c>transform</c> is not one: as an attribute it is geometry.</summary>

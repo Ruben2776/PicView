@@ -124,6 +124,9 @@ public class SvgParserViewportTests
     [Theory]
     [InlineData("width='10' height='10' viewBox='0 0 10'", "value:viewBox")]
     [InlineData("width='10' height='10' viewBox='0 0 10 10' preserveAspectRatio='middle'", "value:preserveAspectRatio")]
+    [InlineData("width='10' height='10' viewBox='0 0 10 10' preserveAspectRatio='xminymin'", "value:preserveAspectRatio")]
+    [InlineData("width='10' height='10' viewBox='0 0 10 10' preserveAspectRatio='None'", "value:preserveAspectRatio")]
+    [InlineData("width='10' height='10' viewBox='0 0 10 10' preserveAspectRatio='xMidYMid Slice'", "value:preserveAspectRatio")]
     public void Parse_InvalidViewportAttribute_GivesReason(string rootAttributes, string reason)
     {
         Assert.Equal(reason, Reason(Document("", rootAttributes)));

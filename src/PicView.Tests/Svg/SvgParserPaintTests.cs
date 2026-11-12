@@ -242,6 +242,8 @@ public class SvgParserPaintTests
     [InlineData("opacity='half'", "value:opacity")]
     [InlineData("stroke-width='-1'", "value:stroke-width")]
     [InlineData("color='notacolor'", "value:color")]
+    [InlineData("fill='rgb(10%, 20, 30)'", "value:fill")]
+    [InlineData("stroke='rgba(10, 20%, 30, 0.5)'", "value:stroke")]
     public void Parse_UnknownKeywordValue_GivesReason(string attribute, string reason)
     {
         Assert.Equal(reason, Reason(Document($"<rect width='1' height='1' {attribute}/>")));
