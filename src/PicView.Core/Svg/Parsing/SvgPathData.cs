@@ -284,18 +284,9 @@ internal static class SvgPathData
 
         var exponent = 0;
         var e = number.IndexOfAny('e', 'E');
+        var exponentText = e >= 0 ? number[(e + 1)..] : ReadOnlySpan<char>.Empty;
         if (e >= 0)
         {
-            // The scanner only leaves an e in the number when digits follow it. A finite number with an exponent
-            // past ±400 is zero or rounds to zero.
-            var exponentText = number[(e + 1)..];
-            if (!int.TryParse(exponentText, NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture,
-                    out exponent) || Math.Abs(exponent) > 400)
-            {
-                builder.Append('0');
-                return;
-            }
-
             number = number[..e];
         }
 
@@ -303,9 +294,29 @@ internal static class SvgPathData
         var integerDigits = point < 0 ? number : number[..point];
         var fractionDigits = point < 0 ? ReadOnlySpan<char>.Empty : number[(point + 1)..];
         var digits = string.Concat(integerDigits, fractionDigits).TrimStart('0');
-        var pointPosition = integerDigits.Length + exponent - (integerDigits.Length + fractionDigits.Length -
-                                                               digits.Length);
         if (digits.Length == 0)
+        {
+            builder.Append('0');
+            return;
+        }
+
+        // The scanner only leaves an e in the number when digits follow it. An exponent past the int range, with
+        // nonzero digits, can only be finite if it is negative (no string holds 2^31 leading zeros), and then the
+        // number is below the smallest double, so it parses as 0.
+        if (e >= 0 && !int.TryParse(exponentText, NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture,
+                out exponent))
+        {
+            builder.Append('0');
+            return;
+        }
+
+        // The decimal point's place relative to the first significant digit: the number is 0.digits × 10^this.
+        var leadingZeros = integerDigits.Length + fractionDigits.Length - digits.Length;
+        var pointPosition = (long)integerDigits.Length - leadingZeros + exponent;
+
+        // Below 1e-400 a number parses as 0, the same value as "0". A finite number never reaches 1e309, so
+        // pointPosition never exceeds 309 here and the expansion below stays short.
+        if (pointPosition < -400)
         {
             builder.Append('0');
             return;
@@ -318,15 +329,15 @@ internal static class SvgPathData
 
         if (pointPosition <= 0)
         {
-            builder.Append("0.").Append('0', -pointPosition).Append(digits);
+            builder.Append("0.").Append('0', (int)-pointPosition).Append(digits);
         }
         else if (pointPosition >= digits.Length)
         {
-            builder.Append(digits).Append('0', pointPosition - digits.Length);
+            builder.Append(digits).Append('0', (int)(pointPosition - digits.Length));
         }
         else
         {
-            builder.Append(digits.AsSpan(0, pointPosition)).Append('.').Append(digits.AsSpan(pointPosition));
+            builder.Append(digits.AsSpan(0, (int)pointPosition)).Append('.').Append(digits.AsSpan((int)pointPosition));
         }
     }
 }

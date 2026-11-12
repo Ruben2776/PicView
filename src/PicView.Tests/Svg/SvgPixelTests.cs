@@ -276,13 +276,90 @@ public class SvgPixelTests
             "<path d='M12,10 H18' stroke='red' stroke-width='2'/></g>"));
         AssertPainted(pixels.At(18, 4));
         AssertPainted(pixels.At(21, 4));
-        AssertTransparent(pixels.At(16, 4));
-        AssertTransparent(pixels.At(23, 4));
+        // The edges fall on pixel boundaries, so the neighbors just outside get no anti-aliasing.
+        AssertTransparent(pixels.At(17, 4));
+        AssertTransparent(pixels.At(22, 4));
 
         AssertPainted(pixels.At(30, 9));
         AssertPainted(pixels.At(30, 10));
-        AssertTransparent(pixels.At(30, 7));
-        AssertTransparent(pixels.At(30, 12));
+        AssertTransparent(pixels.At(30, 8));
+        AssertTransparent(pixels.At(30, 11));
+    }
+
+    [AvaloniaFact]
+    public void Gradient_BoundingBoxFillWithStroke_UsesTheFillBox()
+    {
+        // The fill box is x 50..150; the stroked bounds would be x 30..170. Pixel center 71.5 is 21.5/100 of the
+        // way on the fill box (red ≈ 55) and 41.5/140 on the stroked bounds (red ≈ 76). The stroke covers only
+        // x 30..70 on the left, so (71,50) shows the fill.
+        var pixels = SvgRender.Pixels(Svg(200, 100,
+            "<defs><linearGradient id='g'>" + BlackToWhite + "</linearGradient></defs>" +
+            "<rect x='50' y='10' width='100' height='80' fill='url(#g)' stroke='#000' stroke-width='40'/>"));
+        AssertNear(55, pixels.At(71, 50).R);
+    }
+
+    [AvaloniaFact]
+    public void Gradient_UserSpaceOnStroke_IsMeasuredFromTheDrawingOrigin()
+    {
+        // x1=0 x2=100 on a line from x=50: pixel center 75.5 gives red ≈ 193; from the line's start it would be 65.
+        var pixels = SvgRender.Pixels(Svg(100, 10,
+            "<defs><linearGradient id='g' gradientUnits='userSpaceOnUse' x1='0' x2='100'>" + BlackToWhite +
+            "</linearGradient></defs>" +
+            "<path d='M50,5 H100' stroke='url(#g)' stroke-width='4'/>"));
+        AssertNear(193, pixels.At(75, 5).R);
+    }
+
+    [AvaloniaFact]
+    public void GroupOpacity_StrokedChild_FadesTheWholeStrokeOnce()
+    {
+        // The stroke reaches x 5..35, outside the fill x 10..30; fill and stroke overlap at x 10..15.
+        var pixels = SvgRender.Pixels(Svg(40, 40,
+            "<g opacity='0.5'><rect x='10' y='10' width='20' height='20' fill='red' stroke='red' " +
+            "stroke-width='10'/></g>"));
+        var strokeOnly = pixels.At(6, 20);
+        AssertNear(128, strokeOnly.A);
+        AssertColor(strokeOnly, pixels.At(12, 20), 2);
+        AssertColor(strokeOnly, pixels.At(20, 20), 2);
+    }
+
+    [AvaloniaFact]
+    public void GroupOpacity_TransformedChild_IsFadedWhereTheChildIsDrawn()
+    {
+        var pixels = SvgRender.Pixels(Svg(80, 20,
+            "<g opacity='0.5'><rect width='10' height='10' fill='red'/>" +
+            "<g transform='translate(50 5)'><rect width='20' height='10' fill='red'/></g></g>"));
+        AssertNear(128, pixels.At(5, 5).A);
+        AssertNear(128, pixels.At(65, 10).A);
+    }
+
+    [AvaloniaFact]
+    public void RadialGradient_FocalInsideOnWideRect_FollowsTheFocalCone()
+    {
+        // In bounding-box units on a 100x50 rect: F = (0.3,0.5), C = (0.5,0.5), r = 0.5; P = ((x+.5)/100, (y+.5)/50).
+        // t solves |P - F - t(C - F)| = t·r.
+        // (80,25): P - F = (.505,.01), t ≈ 0.721, red ≈ 184.
+        // (10,25): P - F = (-.195,.01), t ≈ 0.650, red ≈ 166.
+        // (50,5):  P - F = (.205,-.39), .21t² + .082t - .194 = 0, t ≈ 0.786, red ≈ 200.
+        var pixels = SvgRender.Pixels(Svg(100, 50,
+            "<defs><radialGradient id='g' fx='0.3'>" + BlackToWhite + "</radialGradient></defs>" +
+            "<rect width='100' height='50' fill='url(#g)'/>"));
+        AssertNear(184, pixels.At(80, 25).R);
+        AssertNear(166, pixels.At(10, 25).R);
+        AssertNear(200, pixels.At(50, 5).R);
+    }
+
+    [AvaloniaFact]
+    public void Clip_ThreeShapes_KeepsTheirUnion()
+    {
+        var pixels = SvgRender.Pixels(Svg(30, 10,
+            "<defs><clipPath id='c'><rect width='6' height='10'/><rect x='12' width='6' height='10'/>" +
+            "<rect x='24' width='6' height='10'/></clipPath></defs>" +
+            "<g clip-path='url(#c)'><rect width='30' height='10' fill='green'/></g>"));
+        AssertColor(Green, pixels.At(3, 5));
+        AssertColor(Green, pixels.At(15, 5));
+        AssertColor(Green, pixels.At(27, 5));
+        AssertTransparent(pixels.At(9, 5));
+        AssertTransparent(pixels.At(21, 5));
     }
 
     [AvaloniaFact]

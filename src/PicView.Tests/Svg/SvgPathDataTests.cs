@@ -32,6 +32,31 @@ public class SvgPathDataTests
         Assert.Equal("M" + written + ",0", pathData);
     }
 
+    [Fact]
+    public void TryNormalize_TinyMantissaWithLargeExponent_KeepsTheValue()
+    {
+        // 1e-101 × 1e401 = 1e300.
+        var number = "0." + new string('0', 100) + "1e401";
+        Assert.True(SvgPathData.TryNormalize("M" + number + " 0", false, out var pathData));
+        Assert.Equal("M1" + new string('0', 300) + ",0", pathData);
+    }
+
+    [Theory]
+    [InlineData("1e-320")]
+    [InlineData("123.456e-310")]
+    [InlineData("-9.99e307")]
+    [InlineData("0.00012e300")]
+    [InlineData("1e-330")]
+    [InlineData("1e-99999999999")]
+    public void TryNormalize_ExponentForm_IsRewrittenWithTheSameDouble(string number)
+    {
+        Assert.True(SvgPathData.TryNormalize("M" + number + " 0", false, out var pathData));
+        var written = pathData[1..pathData.IndexOf(',', StringComparison.Ordinal)];
+        Assert.DoesNotContain("e", written, StringComparison.OrdinalIgnoreCase);
+        Assert.Equal(double.Parse(number, System.Globalization.CultureInfo.InvariantCulture),
+            double.Parse(written, System.Globalization.CultureInfo.InvariantCulture));
+    }
+
     [Theory]
     [InlineData("M0 0 X 5")]
     [InlineData("M 1")]
