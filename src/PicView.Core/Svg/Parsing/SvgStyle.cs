@@ -9,9 +9,13 @@ internal enum SvgPaintKind
     CurrentColor
 }
 
-/// <summary>A specified paint before opacity: none, a color, or <c>currentColor</c> (resolved at the shape).</summary>
+/// <summary>
+///     A specified paint before opacity: none, a color, or <c>currentColor</c> (resolved at the shape). With a
+///     <see cref="Server" /> reference (the text inside <c>url()</c>), the kind and color are the fallback used when the
+///     reference does not lead to a paint server.
+/// </summary>
 [StructLayout(LayoutKind.Auto)]
-internal readonly record struct SvgPaintValue(SvgPaintKind Kind, SvgColor Color)
+internal readonly record struct SvgPaintValue(SvgPaintKind Kind, SvgColor Color, string? Server = null)
 {
     public static SvgPaintValue None { get; } = new(SvgPaintKind.None, default);
 }
@@ -33,10 +37,14 @@ internal sealed record SvgComputedStyle
     public IReadOnlyList<double>? DashArray { get; init; }
     public double DashOffset { get; init; }
     public bool Visible { get; init; } = true;
+    public bool ClipNonZero { get; init; } = true;
 
     // Not inherited.
     public double Opacity { get; init; } = 1;
     public bool Displayed { get; init; } = true;
+
+    /// <summary>The <c>clip-path</c> reference (the text inside <c>url()</c>), or null for none.</summary>
+    public string? ClipPath { get; init; }
 
     public static SvgComputedStyle Initial(SvgColor currentColor)
     {
@@ -46,7 +54,45 @@ internal sealed record SvgComputedStyle
     /// <summary>The style a child starts from: the inherited properties, with the others at their initial values.</summary>
     public SvgComputedStyle Inherited()
     {
-        return this with { Opacity = 1, Displayed = true };
+        return Opacity == 1 && Displayed && ClipPath is null
+            ? this
+            : this with { Opacity = 1, Displayed = true, ClipPath = null };
+    }
+}
+
+/// <summary>
+///     The styles of elements in their place in the document, for content that inherits from where it is defined
+///     rather than where it is used: gradient stops and clip paths. Each element's style is computed once.
+/// </summary>
+internal sealed class SvgContextStyles(SvgViewport viewport, SvgComputedStyle initial)
+{
+    private readonly Dictionary<SvgElement, SvgComputedStyle> _styles = [];
+
+    public bool TryGet(SvgElement element, out SvgComputedStyle style, out string? reason)
+    {
+        reason = null;
+        var pending = new Stack<SvgElement>();
+        SvgElement? current = element;
+        SvgComputedStyle? known = null;
+        while (current is not null && !_styles.TryGetValue(current, out known))
+        {
+            pending.Push(current);
+            current = current.Parent;
+        }
+
+        style = known ?? initial;
+        while (pending.Count > 0)
+        {
+            var next = pending.Pop();
+            if (!SvgStyle.TryComputeElement(next, style, viewport, out style, out reason))
+            {
+                return false;
+            }
+
+            _styles[next] = style;
+        }
+
+        return true;
     }
 }
 
@@ -66,7 +112,6 @@ internal static class SvgStyle
         ["marker-start"] = "none",
         ["marker-mid"] = "none",
         ["marker-end"] = "none",
-        ["clip-path"] = "none",
         ["vector-effect"] = "none",
         ["mix-blend-mode"] = "normal",
         ["paint-order"] = "normal",
@@ -92,8 +137,19 @@ internal static class SvgStyle
         "fill", "stroke", "color", "fill-rule", "opacity", "fill-opacity", "stroke-opacity", "stroke-width",
         "stroke-linecap", "stroke-linejoin", "stroke-miterlimit", "stroke-dasharray", "stroke-dashoffset",
         "display", "visibility", "filter", "mask", "marker", "marker-start", "marker-mid", "marker-end", "clip-path",
-        "vector-effect", "mix-blend-mode", "paint-order", "transform-origin", "transform-box"
+        "clip-rule", "stop-color", "stop-opacity", "vector-effect", "mix-blend-mode", "paint-order",
+        "transform-origin", "transform-box"
     };
+
+    /// <summary>Declares and computes an element's style against its parent's.</summary>
+    public static bool TryComputeElement(SvgElement element, SvgComputedStyle parent, SvgViewport viewport,
+        out SvgComputedStyle style, out string? reason)
+    {
+        style = parent;
+        var declarations = new Dictionary<string, string>(StringComparer.Ordinal);
+        return TryDeclare(element, declarations, out reason) &&
+               TryCompute(parent, declarations, viewport, out style, out reason);
+    }
 
     private static readonly HashSet<string> DisplayValues = new(StringComparer.OrdinalIgnoreCase)
     {
@@ -205,6 +261,38 @@ internal static class SvgStyle
             }
 
             style = style with { Stroke = paint };
+        }
+
+        if (declared.TryGetValue("clip-path", out text))
+        {
+            if (text.Equals("none", StringComparison.OrdinalIgnoreCase))
+            {
+                style = style with { ClipPath = null };
+            }
+            else if (TryParseUrl(text, out var reference, out var end) && end == text.Length)
+            {
+                style = style with { ClipPath = reference };
+            }
+            else
+            {
+                return Fail("clip-path", out reason);
+            }
+        }
+
+        if (declared.TryGetValue("clip-rule", out text))
+        {
+            if (text.Equals("nonzero", StringComparison.OrdinalIgnoreCase))
+            {
+                style = style with { ClipNonZero = true };
+            }
+            else if (text.Equals("evenodd", StringComparison.OrdinalIgnoreCase))
+            {
+                style = style with { ClipNonZero = false };
+            }
+            else
+            {
+                return Fail("clip-rule", out reason);
+            }
         }
 
         if (declared.TryGetValue("fill-rule", out text))
@@ -369,7 +457,70 @@ internal static class SvgStyle
         return false;
     }
 
+    /// <summary>
+    ///     A paint: <c>none</c>, <c>currentColor</c>, a color, or <c>url(reference)</c> optionally followed by one of
+    ///     those as the fallback.
+    /// </summary>
     private static bool TryParsePaint(string text, out SvgPaintValue paint)
+    {
+        paint = SvgPaintValue.None;
+        if (!TryParseUrl(text, out var server, out var end))
+        {
+            return TryParsePlainPaint(text, out paint);
+        }
+
+        var fallback = text[end..].Trim();
+        if (fallback.Length == 0)
+        {
+            paint = SvgPaintValue.None with { Server = server };
+            return true;
+        }
+
+        if (!TryParsePlainPaint(fallback, out var plain))
+        {
+            return false;
+        }
+
+        paint = plain with { Server = server };
+        return true;
+    }
+
+    /// <summary>
+    ///     Reads <c>url(reference)</c> at the start of <paramref name="text" />: the reference without quotes, and the
+    ///     position after the closing parenthesis. False when the text does not start with a well-formed url.
+    /// </summary>
+    public static bool TryParseUrl(string text, out string reference, out int end)
+    {
+        reference = string.Empty;
+        end = 0;
+        if (!text.StartsWith("url(", StringComparison.OrdinalIgnoreCase))
+        {
+            return false;
+        }
+
+        var close = text.IndexOf(')', 4);
+        if (close < 0)
+        {
+            return false;
+        }
+
+        var inner = text.AsSpan(4, close - 4).Trim();
+        if (inner.Length >= 2 && (inner[0] == '\'' || inner[0] == '"') && inner[^1] == inner[0])
+        {
+            inner = inner[1..^1].Trim();
+        }
+
+        if (inner.IsEmpty)
+        {
+            return false;
+        }
+
+        reference = inner.ToString();
+        end = close + 1;
+        return true;
+    }
+
+    private static bool TryParsePlainPaint(string text, out SvgPaintValue paint)
     {
         paint = SvgPaintValue.None;
         if (text.Equals("none", StringComparison.OrdinalIgnoreCase))
@@ -393,7 +544,7 @@ internal static class SvgStyle
     }
 
     /// <summary>A number or a percentage, clamped to 0 to 1.</summary>
-    private static bool TryParseOpacity(string text, out double opacity)
+    public static bool TryParseOpacity(string text, out double opacity)
     {
         opacity = 1;
         var span = text.AsSpan();

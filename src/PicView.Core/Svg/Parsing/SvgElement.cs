@@ -2,18 +2,32 @@ using System.Xml;
 
 namespace PicView.Core.Svg.Parsing;
 
-/// <summary>An element of the light tree: an SVG-namespace element with its unprefixed attributes.</summary>
+/// <summary>
+///     An element of the light tree: an SVG-namespace element with its unprefixed attributes (and <c>xlink:href</c>
+///     as <c>href</c>).
+/// </summary>
 internal sealed class SvgElement(string name, Dictionary<string, string> attributes)
 {
+    private readonly List<SvgElement> _children = [];
+
     public string Name { get; } = name;
 
     public IReadOnlyDictionary<string, string> Attributes { get; } = attributes;
 
-    public List<SvgElement> Children { get; } = [];
+    public IReadOnlyList<SvgElement> Children => _children;
+
+    /// <summary>The parent element; null for the root.</summary>
+    public SvgElement? Parent { get; private set; }
 
     public string? GetAttribute(string attributeName)
     {
         return Attributes.GetValueOrDefault(attributeName);
+    }
+
+    public void AddChild(SvgElement child)
+    {
+        child.Parent = this;
+        _children.Add(child);
     }
 }
 
@@ -21,6 +35,8 @@ internal sealed class SvgElement(string name, Dictionary<string, string> attribu
 internal sealed class SvgDocument
 {
     public const string SvgNamespace = "http://www.w3.org/2000/svg";
+
+    public const string XLinkNamespace = "http://www.w3.org/1999/xlink";
 
     /// <summary>Elements nested deeper than this make the file unsupported.</summary>
     public const int MaxDepth = 256;
@@ -34,7 +50,14 @@ internal sealed class SvgDocument
     /// <summary>SVG elements the resolver handles (other than the root <c>svg</c>).</summary>
     private static readonly HashSet<string> KnownElements = new(StringComparer.Ordinal)
     {
-        "g", "path", "rect", "circle", "ellipse", "line", "polyline", "polygon"
+        "g", "path", "rect", "circle", "ellipse", "line", "polyline", "polygon", "defs", "use", "linearGradient",
+        "radialGradient", "stop", "clipPath"
+    };
+
+    /// <summary>The basic shapes and <c>path</c>.</summary>
+    public static readonly HashSet<string> ShapeElements = new(StringComparer.Ordinal)
+    {
+        "path", "rect", "circle", "ellipse", "line", "polyline", "polygon"
     };
 
     private SvgDocument(SvgElement root, Dictionary<string, SvgElement> byId)
@@ -124,6 +147,13 @@ internal sealed class SvgDocument
                 read = !reader.EOF;
                 continue;
             }
+            else if (string.Equals(open.Peek().Name, "clipPath", StringComparison.Ordinal) &&
+                     !ShapeElements.Contains(name) && !string.Equals(name, "use", StringComparison.Ordinal))
+            {
+                // A clipPath holds only shapes and use of shapes.
+                reason = "element:clipPath";
+                return false;
+            }
             else if (!KnownElements.Contains(name))
             {
                 reason = "element:" + name;
@@ -138,7 +168,7 @@ internal sealed class SvgDocument
             }
             else
             {
-                open.Peek().Children.Add(element);
+                open.Peek().AddChild(element);
             }
 
             if (element.GetAttribute("id") is { } id)
@@ -174,6 +204,12 @@ internal sealed class SvgDocument
                 if (reader.NamespaceURI.Length == 0)
                 {
                     attributes[reader.LocalName] = reader.Value;
+                }
+                else if (string.Equals(reader.NamespaceURI, XLinkNamespace, StringComparison.Ordinal) &&
+                         string.Equals(reader.LocalName, "href", StringComparison.Ordinal))
+                {
+                    // A plain href wins over xlink:href, whichever comes first.
+                    attributes.TryAdd("href", reader.Value);
                 }
             } while (reader.MoveToNextAttribute());
 
