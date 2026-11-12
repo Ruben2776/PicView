@@ -1,9 +1,12 @@
-﻿namespace PicView.Core.Svg;
+﻿using System.Runtime.InteropServices;
+
+namespace PicView.Core.Svg;
 
 /// <summary>
 ///     A 2D affine matrix in Avalonia's row-vector layout, so SVG <c>matrix(a b c d e f)</c> is
 ///     <c>new SvgMatrix(a, b, c, d, e, f)</c>.
 /// </summary>
+[StructLayout(LayoutKind.Auto)]
 public readonly record struct SvgMatrix(double M11, double M12, double M21, double M22, double OffsetX, double OffsetY)
 {
     public static SvgMatrix Identity { get; } = new(1, 0, 0, 1, 0, 0);

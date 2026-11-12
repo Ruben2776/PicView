@@ -1,4 +1,6 @@
-﻿namespace PicView.Core.Svg;
+﻿using System.Runtime.InteropServices;
+
+namespace PicView.Core.Svg;
 
 /// <summary>A parsed SVG: its size in user units and the root group of drawing nodes.</summary>
 public sealed record SvgDrawing(double Width, double Height, SvgGroup Root);
@@ -15,6 +17,7 @@ public abstract record SvgPaint;
 /// <summary>A solid paint; its opacity is folded into the color's alpha.</summary>
 public sealed record SvgSolidPaint(SvgColor Color) : SvgPaint;
 
+[StructLayout(LayoutKind.Auto)]
 public readonly record struct SvgGradientStop(double Offset, SvgColor Color);
 
 public enum SvgGradientUnits

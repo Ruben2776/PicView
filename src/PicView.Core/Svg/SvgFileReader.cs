@@ -41,4 +41,3 @@ public static class SvgFileReader
         return Encoding.UTF8.GetString(bytes);
     }
 }
-
