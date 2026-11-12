@@ -6,6 +6,7 @@ using PicView.Avalonia.ImageTransformations;
 using PicView.Core.DebugTools;
 using PicView.Core.ImageTransformations;
 using PicView.Core.IPlatform;
+using PicView.Core.Svg;
 using PicView.Core.ViewModels;
 
 namespace PicView.Avalonia.Clipboard;
@@ -23,10 +24,20 @@ public class ClipboardCopyService(
             return false;
         }
 
+#pragma warning disable MA0004
+        // The clipboard and onCopied must be used on the UI thread, so a call from elsewhere, like after a file is
+        // read, is moved there
+        if (!Dispatcher.UIThread.CheckAccess())
+        {
+            return await Dispatcher.UIThread.InvokeAsync(() => CopyTextAsync(text));
+        }
+
         try
         {
-            await clipboard.ClearAsync().ConfigureAwait(false);
-            await clipboard.SetTextAsync(text).ConfigureAwait(false);
+            // Continuations stay on the UI thread
+            await clipboard.ClearAsync();
+            await clipboard.SetTextAsync(text);
+#pragma warning restore MA0004
             onCopied?.Invoke();
             return true;
         }
@@ -141,18 +152,42 @@ public class ClipboardCopyService(
             var bytes = await File.ReadAllBytesAsync(path).ConfigureAwait(false);
             var base64 = Convert.ToBase64String(bytes);
 
-            if (!string.IsNullOrEmpty(base64))
-            {
-                await clipboard.ClearAsync().ConfigureAwait(false);
-                await clipboard.SetTextAsync(base64).ConfigureAwait(false);
-                onCopied?.Invoke();
-                return true;
-            }
+            // The read may have finished on a thread pool thread; CopyTextAsync moves to the UI thread
+            return await CopyTextAsync(base64).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
             DebugHelper.LogDebug(nameof(ClipboardCopyService), nameof(CopyBase64Async), ex);
         }
         return false;
+    }
+
+    public async Task<bool> CopyAxamlAsync(string? path)
+    {
+        if (string.IsNullOrWhiteSpace(path) || clipboard is null || !IsSvgFile(path) || !File.Exists(path))
+        {
+            return false;
+        }
+
+        try
+        {
+            var svgText = await SvgFileReader.ReadAsync(path).ConfigureAwait(false);
+            var axaml = SvgToXamlConverter.Convert(svgText, out _);
+            // An unsupported SVG gives no text, which CopyTextAsync turns down without touching the clipboard. The
+            // read may have finished on a thread pool thread; CopyTextAsync moves to the UI thread.
+            return await CopyTextAsync(axaml).ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            DebugHelper.LogDebug(nameof(ClipboardCopyService), nameof(CopyAxamlAsync), ex);
+            return false;
+        }
+    }
+
+    private static bool IsSvgFile(string path)
+    {
+        var extension = Path.GetExtension(path);
+        return extension.Equals(".svg", StringComparison.OrdinalIgnoreCase) ||
+               extension.Equals(".svgz", StringComparison.OrdinalIgnoreCase);
     }
 }

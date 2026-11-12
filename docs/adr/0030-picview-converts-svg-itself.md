@@ -1,0 +1,65 @@
+# PicView Converts SVG Itself
+
+PicView parses SVG with its own code. The `Svg.Controls.Skia.Avalonia` package, `SvgLoader` and `SvgSource.LoadFromSvg` are gone, and so is the `SvgImage` they produced. `SvgParser` in `PicView.Core` reads SVG text into `SvgDrawing`, a neutral model with no Avalonia types in it: groups, shapes, paints, strokes and clips, fully resolved, with the viewBox and `preserveAspectRatio` already applied as the root group's transform. `AxamlDrawingWriter` in Core writes the same model as AXAML `DrawingImage` text, which the **Copy AXAML** Action puts on the clipboard for a converted SVG. `DrawingImageBuilder` in `PicView.Avalonia` builds a `DrawingImage` from the model, with `Viewbox` set to the SVG's viewport so content outside it is cut.
+
+The parser works from an allow-list. It converts shapes, `g`, `defs`, `use`, transforms, solid colors, linear and radial gradients, `clipPath` in user-space units, the paint and stroke properties, and `<style>` blocks with a small selector subset (element, class, id, compound and comma lists). Any element, property or CSS construct it does not handle makes the whole file unsupported, with a reason string such as `element:text`, `property:filter`, `value:d`, `css`, `size`, `depth` or `expansion`. An unsupported or malformed file is never drawn in part: ImageMagick renders it to a bitmap with a transparent background, supersampled to at least 2048 px on the long side (capped at 8192), carrying a DPI that makes its `Size` the SVG's own size. That bitmap keeps `ImageType.Svg`, so crop stays off, saving skips effects and nothing that asks "is this an SVG" changes its answer. Only when ImageMagick fails too is the image `Invalid`. The reason is written with `DebugHelper.LogDebug`; the user sees the image.
+
+Pixel tests against Avalonia's Skia renderer settled how these constructs map, and made some of them unsupported rather than approximate:
+
+- User-space gradients draw exactly once the brush's `TransformOrigin` is `0,0` absolute.
+- Unsupported (the file takes the bitmap fallback): an object-bounding-box gradient with a `gradientTransform` (`gradient:transform`); an object-bounding-box gradient on a stroke, which Avalonia measures on the stroked bounds (`gradient:stroke`); a radial gradient whose focal point is on or outside its circle (`gradient:focal`).
+- Group opacity: `DrawingGroup.Opacity` fades each child separately, so overlapping children show through each other. Group opacity maps to `DrawingGroup.OpacityMask` holding a white `SolidColorBrush` at that opacity, in the builder and the writer. It costs one layer per group with opacity on each redraw.
+- Avalonia's path parser throws on `+5`, `5.` and exponent numbers, so `SvgPathData` rewrites them as plain decimals of the same value.
+- Avalonia's path parser forgets the previous control point only at `Z` and `A`, so after a line, a move or a curve of the other kind its `S` and `T` mirror a stale control point, where SVG takes the current point. `SvgPathData` tracks the current point and writes such an `S` as a `C` and such a `T` as a `Q` with that first control point, in exact coordinates. A smooth curve directly after its own kind is left as written; the next one mirrors the rewritten curve as SVG mirrors the smooth one.
+- Every number the parser computes, in basic-shape path data, matrices and the writer's attributes, is written as the shortest text that parses back to the same double, never in exponent form. The spec's three decimals made tiny shapes approximate or empty and made the AXAML differ from the built image. Bounding-box percents move the decimal point instead of multiplying by 100, so 0.3 is `30%`.
+- A clip path's shapes are combined as a balanced tree of unions, larger half first, in the builder and the writer, because Avalonia recurses through nested `CombinedGeometry` at render and a chain of a few thousand overflowed the stack.
+- CSS-declared geometry properties (`width`, `height`, `x`, `y`, `cx`, `cy`, `r`, `rx`, `ry`, `d`) and the `pathLength` attribute make a file unsupported.
+- Input that changes what a browser draws makes a file unsupported too, though it changes nothing in the model: the CSS properties `rotate`, `scale`, `translate`, `all`, `offset-path`, the `mask-*` and `-webkit-mask` properties, `clip` other than `auto` and `background`, `background-color` and `background-image` other than `none` or `transparent` (`property:<name>`); the attributes `systemLanguage`, `requiredExtensions` and `requiredFeatures` on any element (`property:<name>`); an `xml-stylesheet` processing instruction, a `style` element inside `title`, `desc`, `metadata` or foreign content, and a `style` element with a `title` (`css`). A comment inside a CSS declaration separates tokens, as in a browser.
+
+There is no complexity budget, by the user's ruling: a supported SVG stays vector whatever its size. The only limits are safety guards, not a size policy: element nesting deeper than 256 levels is `depth`; more than 1,000,000 elements visited while expanding `use`, or more than 50,000,000 characters of path data drawn through `use`, is `expansion` (every `use` of a shape shares its element's path data string, so no drawing that is not built to explode comes near it); a clip path of more than 1,000 shapes is `clip`; a viewport wider or taller than 10,000,000 px is `size`; and a file, or its gzip content, of more than 256 MB is not read (the reader throws before decompressing past the cap, and the loader takes the bitmap fallback).
+
+Where the work happens follows ADR-0014. `GetImageModel` reads and parses off the UI thread and sets the model's image to the `SvgDrawing`. `DisplayableConverter` builds the `DrawingImage` at the binding, on the UI thread, where the `SvgImage` wrap used to be. A `GeometryDrawing` made inside `Task.Run` throws `InvalidOperationException` when its `Geometry` is read on the UI thread, because every `AvaloniaObject` belongs to the thread that made it (checked on Avalonia 12.1.6 for that one read). So Core cannot hand the viewer a finished `DrawingImage`, and the build cannot move off the UI thread without changing the model.
+
+## Measured
+
+Windows 10, AMD Ryzen 7 9800X3D, Release. The first table is BenchmarkDotNet; the second is a `Stopwatch` median in a headless test. The three files are generated by `SvgBenchmarkFiles`: an icon, a CSS-styled export of 200 shapes, and a map of 20,000 paths.
+
+The old path is `SvgLoader.GetContentFromSvgFileAsync` plus `SvgSource.LoadFromSvg`, which includes building the Skia picture. The new `Parse` benchmark covers reading and parsing only; the `DrawingImage` is built separately, on the UI thread, below. The two columns are therefore not the same work, and their sum is the fair comparison.
+
+| File | Old mean | Old allocated | New parse mean (StdDev) | New parse allocated |
+|---|---|---|---|---|
+| Icon | 269.6 us | 46.46 KB | 173.4 us (3.2 us) | 16.76 KB |
+| CssExport | 2,403.8 us | 3,006.43 KB | 573.0 us (2.5 us) | 783.76 KB |
+| LargeMap | 300,718.6 us (StdDev about 25 ms, bimodal) | 218,645.49 KB | 33,602.9 us (573.3 us) | 40,459.27 KB |
+
+`DrawingImageBuilder.Build` on the UI thread, median of 20 runs after 3 warm-up runs, in a headless Avalonia test, and the first render of the finished image into a `RenderTargetBitmap` at its own size (a `DrawingImage` replays every shape on each redraw):
+
+| File | Build median | First render |
+|---|---|---|
+| Icon | 0.006 ms | 15.1 ms (includes first-use setup) |
+| CssExport | 1.7 ms | 10.9 ms |
+| LargeMap | 123.4 ms (range 65 to 166 ms) | 175.3 ms |
+
+For the large map, parse plus build is about 157 ms against about 301 ms for the old path, but the build holds the UI thread for 123 ms. That is the cost of having no complexity budget, and of the build having to happen on the UI thread. The timings are one machine, one run each.
+
+## Considered Options
+
+- **Core writes AXAML text and the viewer loads it with `AvaloniaRuntimeXamlLoader`.** One back end, since the text the user copies is the text the viewer shows. But it parses markup at runtime on every image, would put the runtime loader in the viewer's load path, and still ends in an `AvaloniaObject` that must be made on the UI thread. The model and two back ends cost more code and avoid the markup round trip.
+- **XML straight to `DrawingImage` on the UI thread, with no neutral model.** The least code, but the parse would run on the UI thread, which showing the image must not wait for, and `PicView.Core` could not hold the parser or the writer, so the AXAML text would need a second parser. With the model, parsing runs off the thread and only construction is left on it.
+- **A complexity budget that sends big files to the bitmap fallback.** It would bound the redraw cost of a huge SVG. Ruled out by the user: every supported SVG stays vector.
+- **Keeping the package** and writing only the AXAML converter. The point of this change is owning the code path so it can be optimized later; speed parity was the bar, and the new path meets it.
+
+## Consequences
+
+- A construct the parser does not know makes the whole file a bitmap, never a partial vector. Adding one means teaching the parser, the builder and the writer together, with a pixel test.
+- A very large supported SVG redraws slowly, since the `DrawingImage` replays every shape on the UI thread, and it holds the UI thread while it is built (123 ms for 20,000 paths). Anything that makes this matter later (a budget, caching a rendered bitmap while zooming, a cheaper build) is a new decision.
+- `PicView.Core` stays free of Avalonia types: the model, parser and writer are Core; the `DrawingImage` is built in `PicView.Avalonia` at the binding. This replaces ADR-0014's wording about `SvgImage`; its rule stands.
+- Animation elements are ignored, so the static image shows, as before. Text, embedded images, masks, patterns, markers, symbols, nested `svg` and filters fall back to the bitmap, where ImageMagick decides what they look like.
+- `CopyImage` works on a fallback SVG, since the tab then holds a bitmap. Copy AXAML does nothing on a fallback SVG.
+- The ImageMagick ping that selects the SVG path stays as it was.
+- In a file that uses `currentColor`, a shape with no fill set is drawn in the main text color too, not SVG's black. An icon mixes the two freely because in a browser both are black, so they must stay the same color here (Ionicons' `help-sharp.svg` strokes with `currentColor` and leaves its dot's fill unset). A file that never names `currentColor` keeps black, so ordinary artwork is not recolored. This is the user's ruling and the one place the viewer departs from SVG's own colors. Copy AXAML is not themed: it writes black for both. A fallback bitmap is not themed either, since ImageMagick renders it.
+
+## Not verified
+
+- ImageMagick's SVG fallback was checked on Windows only. Whether Magick.NET's renderer handles filters and text on Linux and macOS is unchecked.
+- Nothing was checked in the running app by hand: real SVG files, zooming into one, dragging an SVG onto the window, pasting Copy AXAML output into an Avalonia resource dictionary, and a `currentColor` icon in the light and dark themes. The AXAML text is tested by feeding each attribute value to Avalonia's own parsers, not by loading the whole fragment.

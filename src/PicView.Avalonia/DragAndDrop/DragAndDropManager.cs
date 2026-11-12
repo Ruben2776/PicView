@@ -8,10 +8,13 @@ using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.Navigation;
+using PicView.Avalonia.Svg;
 using PicView.Avalonia.Views.UC;
+using PicView.Core.DebugTools;
 using PicView.Core.FileHandling;
 using PicView.Core.ProcessHandling;
 using PicView.Core.Sizing;
+using PicView.Core.Svg;
 using PicView.Core.ViewModels;
 using PicView.Core.Models;
 
@@ -217,11 +220,38 @@ public static class DragAndDropManager
         if (ext.Equals(".svg", StringComparison.InvariantCultureIgnoreCase) ||
             ext.Equals(".svgz", StringComparison.InvariantCultureIgnoreCase))
         {
-            await Dispatcher.UIThread.InvokeAsync(() => _dragDropView?.UpdateSvgThumbnail(fileInfo.FullName, mainWindow));
+            var svg = await Task.Run(() => LoadSvgAsync(fileInfo)).ConfigureAwait(false);
+            if (svg is SvgDrawing drawing)
+            {
+                await Dispatcher.UIThread.InvokeAsync(() => _dragDropView?.UpdateSvgThumbnail(drawing, mainWindow));
+            }
+            else if (svg is Bitmap bitmap)
+            {
+                await Dispatcher.UIThread.InvokeAsync(() => _dragDropView?.UpdateThumbnail(bitmap, mainWindow));
+            }
+
             return;
         }
 
         await LoadAndShowThumbnail(fileInfo, mainWindow).ConfigureAwait(false);
+    }
+
+    private static async Task<object?> LoadSvgAsync(FileInfo fileInfo)
+    {
+        uint width, height;
+        try
+        {
+            using var magickImage = GetImage.CreateAndPingMagickImage(fileInfo);
+            width = magickImage.Width;
+            height = magickImage.Height;
+        }
+        catch (Exception e)
+        {
+            DebugHelper.LogDebug(nameof(DragAndDropManager), nameof(LoadSvgAsync), e);
+            return null;
+        }
+
+        return await SvgImageLoader.LoadAsync(fileInfo, width, height).ConfigureAwait(false);
     }
 
     private static async Task LoadAndShowThumbnail(FileInfo fileInfo, MainWindow mainWindow)
