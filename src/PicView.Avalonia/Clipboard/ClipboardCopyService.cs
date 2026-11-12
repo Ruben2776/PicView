@@ -24,10 +24,20 @@ public class ClipboardCopyService(
             return false;
         }
 
+#pragma warning disable MA0004
+        // The clipboard and onCopied must be used on the UI thread, so a call from elsewhere, like after a file is
+        // read, is moved there
+        if (!Dispatcher.UIThread.CheckAccess())
+        {
+            return await Dispatcher.UIThread.InvokeAsync(() => CopyTextAsync(text));
+        }
+
         try
         {
-            await clipboard.ClearAsync().ConfigureAwait(false);
-            await clipboard.SetTextAsync(text).ConfigureAwait(false);
+            // Continuations stay on the UI thread
+            await clipboard.ClearAsync();
+            await clipboard.SetTextAsync(text);
+#pragma warning restore MA0004
             onCopied?.Invoke();
             return true;
         }
@@ -142,13 +152,8 @@ public class ClipboardCopyService(
             var bytes = await File.ReadAllBytesAsync(path).ConfigureAwait(false);
             var base64 = Convert.ToBase64String(bytes);
 
-            if (!string.IsNullOrEmpty(base64))
-            {
-                await clipboard.ClearAsync().ConfigureAwait(false);
-                await clipboard.SetTextAsync(base64).ConfigureAwait(false);
-                onCopied?.Invoke();
-                return true;
-            }
+            // The read may have finished on a thread pool thread; CopyTextAsync moves to the UI thread
+            return await CopyTextAsync(base64).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
@@ -168,15 +173,9 @@ public class ClipboardCopyService(
         {
             var svgText = await SvgFileReader.ReadAsync(path).ConfigureAwait(false);
             var axaml = SvgToXamlConverter.Convert(svgText, out _);
-            if (string.IsNullOrEmpty(axaml))
-            {
-                return false;
-            }
-
-            await clipboard.ClearAsync().ConfigureAwait(false);
-            await clipboard.SetTextAsync(axaml).ConfigureAwait(false);
-            onCopied?.Invoke();
-            return true;
+            // An unsupported SVG gives no text, which CopyTextAsync turns down without touching the clipboard. The
+            // read may have finished on a thread pool thread; CopyTextAsync moves to the UI thread.
+            return await CopyTextAsync(axaml).ConfigureAwait(false);
         }
         catch (Exception ex)
         {

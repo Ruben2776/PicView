@@ -126,6 +126,70 @@ public class ClipboardCopyServiceTests
         Assert.True(copiedOnUIThread);
     }
 
+    [AvaloniaFact]
+    public async Task CopyTextAsync_FromBackgroundThread_CopiesItOnTheUIThread()
+    {
+        var window = new Window();
+        bool? copiedOnUIThread = null;
+        var service = new ClipboardCopyService(window.Clipboard,
+            onCopied: () => copiedOnUIThread = Dispatcher.UIThread.CheckAccess());
+
+        var result = await Task.Run(() => service.CopyTextAsync("text"));
+
+        Assert.True(result);
+        Assert.True(copiedOnUIThread);
+        Assert.Equal("text", await window.Clipboard!.TryGetTextAsync());
+    }
+
+    [AvaloniaFact]
+    public async Task CopyBase64Async_FromBackgroundThread_CopiesItOnTheUIThread()
+    {
+        var path = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName() + ".bin");
+        await File.WriteAllBytesAsync(path, [1, 2, 3], TestContext.Current.CancellationToken);
+        try
+        {
+            var window = new Window();
+            bool? copiedOnUIThread = null;
+            var service = new ClipboardCopyService(window.Clipboard,
+                onCopied: () => copiedOnUIThread = Dispatcher.UIThread.CheckAccess());
+
+            var result = await Task.Run(() => service.CopyBase64Async(path));
+
+            Assert.True(result);
+            Assert.True(copiedOnUIThread);
+            Assert.Equal("AQID", await window.Clipboard!.TryGetTextAsync());
+        }
+        finally
+        {
+            File.Delete(path);
+        }
+    }
+
+    [AvaloniaFact]
+    public async Task CopyAxamlAsync_FromBackgroundThread_CopiesItOnTheUIThread()
+    {
+        // Reading the file can finish on a thread pool thread, which is the same as being called from one
+        var path = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName() + ".svg");
+        await File.WriteAllTextAsync(path, Svg.SvgToXamlConverterTests.FillAndStrokeSvg, TestContext.Current.CancellationToken);
+        try
+        {
+            var window = new Window();
+            bool? copiedOnUIThread = null;
+            var service = new ClipboardCopyService(window.Clipboard,
+                onCopied: () => copiedOnUIThread = Dispatcher.UIThread.CheckAccess());
+
+            var result = await Task.Run(() => service.CopyAxamlAsync(path));
+
+            Assert.True(result);
+            Assert.True(copiedOnUIThread);
+            Assert.StartsWith("<DrawingImage Viewbox=\"0 0 24 24\">", await window.Clipboard!.TryGetTextAsync());
+        }
+        finally
+        {
+            File.Delete(path);
+        }
+    }
+
     private const int Black = unchecked((int)0xFF000000);
     private const int Red = unchecked((int)0xFFFF0000);
 
