@@ -198,7 +198,13 @@ internal sealed class SvgClipPaths(
             return true;
         }
 
-        into.Add(new SvgClipShape(pathData, SvgResolver.Combine(transform, after)));
+        var combined = SvgResolver.Combine(transform, after);
+        if (combined is { IsFinite: false })
+        {
+            return Fail("value:transform");
+        }
+
+        into.Add(new SvgClipShape(pathData, combined));
         return into.Count <= MaxShapes || Fail("clip");
     }
 

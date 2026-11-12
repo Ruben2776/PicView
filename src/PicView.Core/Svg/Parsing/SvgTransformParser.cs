@@ -8,7 +8,7 @@ internal static class SvgTransformParser
 {
     /// <summary>
     ///     Parses a transform list. <paramref name="transform" /> is null for an empty list or one that comes to the
-    ///     identity. False when the list does not parse.
+    ///     identity. False when the list does not parse or the matrix it comes to has a member that is not finite.
     /// </summary>
     public static bool TryParse(ReadOnlySpan<char> text, out SvgMatrix? transform)
     {
@@ -46,6 +46,11 @@ internal static class SvgTransformParser
             {
                 return false;
             }
+        }
+
+        if (!total.IsFinite)
+        {
+            return false;
         }
 
         if (!total.IsIdentity)

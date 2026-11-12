@@ -184,6 +184,12 @@ internal sealed class SvgResolver
             return Fail("value:transform");
         }
 
+        if (transform is { Determinant: 0 })
+        {
+            // A singular transform flattens the element onto a line or a point, so SVG draws none of it.
+            return true;
+        }
+
         SvgClip? clip = null;
         if (style.ClipPath is { } clipReference)
         {
@@ -246,6 +252,12 @@ internal sealed class SvgResolver
         if (!TryStroke(style, out var stroke))
         {
             return false;
+        }
+
+        if (fill is null && stroke is null)
+        {
+            // It paints nothing. In a clip path the same shape still counts: clip geometry ignores paint.
+            return true;
         }
 
         var shape = new SvgShape(pathData, fill, stroke);
@@ -326,6 +338,11 @@ internal sealed class SvgResolver
         }
 
         result = Combine(new SvgMatrix(1, 0, 0, 1, x, y), transform);
+        if (result is { IsFinite: false })
+        {
+            return Fail("value:transform");
+        }
+
         return true;
     }
 
@@ -584,6 +601,24 @@ internal sealed class SvgResolver
             if (paint is SvgGradientPaint { Units: SvgGradientUnits.ObjectBoundingBox })
             {
                 return Fail("gradient:stroke");
+            }
+
+            // Avalonia measures dashes in multiples of the width, so each must stay finite when divided by it.
+            var unit = style.StrokeWidth;
+            if (style.DashArray is { } dashes)
+            {
+                foreach (var dash in dashes)
+                {
+                    if (!double.IsFinite(dash / unit))
+                    {
+                        return Fail("value:stroke-dasharray");
+                    }
+                }
+
+                if (!double.IsFinite(style.DashOffset / unit))
+                {
+                    return Fail("value:stroke-dashoffset");
+                }
             }
 
             stroke = new SvgStroke(paint, style.StrokeWidth, style.LineCap, style.LineJoin, style.MiterLimit,

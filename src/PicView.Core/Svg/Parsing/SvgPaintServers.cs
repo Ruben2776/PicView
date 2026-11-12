@@ -133,7 +133,9 @@ internal sealed class SvgPaintServers(SvgDocument document, SvgViewport viewport
                 return Fail("value:spreadMethod");
         }
 
-        if (!SvgTransformParser.TryParse(gradient.Get("gradientTransform"), out var transform))
+        // A singular transform leaves the gradient without a direction to vary in.
+        if (!SvgTransformParser.TryParse(gradient.Get("gradientTransform"), out var transform) ||
+            transform is { Determinant: 0 })
         {
             return Fail("value:gradientTransform");
         }

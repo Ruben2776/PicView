@@ -13,6 +13,13 @@ public readonly record struct SvgMatrix(double M11, double M12, double M21, doub
 
     public bool IsIdentity => M11 == 1 && M12 == 0 && M21 == 0 && M22 == 1 && OffsetX == 0 && OffsetY == 0;
 
+    /// <summary>Whether every member is a finite number.</summary>
+    public bool IsFinite => double.IsFinite(M11) && double.IsFinite(M12) && double.IsFinite(M21) &&
+                            double.IsFinite(M22) && double.IsFinite(OffsetX) && double.IsFinite(OffsetY);
+
+    /// <summary>Zero when the matrix maps the plane onto a line or a point.</summary>
+    public double Determinant => M11 * M22 - M12 * M21;
+
     /// <summary>Returns the matrix that applies this matrix to a point first, then <paramref name="next" />.</summary>
     public SvgMatrix Then(SvgMatrix next)
     {

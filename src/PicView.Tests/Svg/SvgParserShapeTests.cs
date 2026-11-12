@@ -25,6 +25,27 @@ public class SvgParserShapeTests
             Shape("<ellipse cx='10' cy='10' rx='5' ry='3'/>").PathData);
     }
 
+    [Theory]
+    [InlineData("<rect width='1' height='1' fill='none'/>")]
+    [InlineData("<rect width='1' height='1' fill='none' stroke='red' stroke-width='0'/>")]
+    [InlineData("<rect width='1' height='1' fill='url(#missing) none'/>")]
+    [InlineData("<g opacity='.5'><rect width='1' height='1' fill='none'/></g>")]
+    public void Parse_ShapeThatPaintsNothing_IsLeftOut(string body)
+    {
+        var root = Root(body);
+        Assert.DoesNotContain(root.Children, node => node is SvgShape);
+        Assert.All(root.Children, node => Assert.Empty(Assert.IsType<SvgGroup>(node).Children));
+    }
+
+    [Fact]
+    public void Parse_ShapeThatPaintsNothing_StillCountsInAClipPath()
+    {
+        var group = Assert.IsType<SvgGroup>(Assert.Single(Root(
+            "<clipPath id='c'><rect width='5' height='5' fill='none'/></clipPath>" +
+            "<g clip-path='url(#c)'><rect width='10' height='10'/></g>").Children));
+        Assert.Single(group.Clip!.Shapes);
+    }
+
     private static string TinyShapePath(string body)
     {
         var root = Drawing(Document(body, "width='100' height='100' viewBox='0 0 1 1'")).Root;

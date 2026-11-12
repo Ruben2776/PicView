@@ -182,6 +182,69 @@ public class SvgParserUnsupportedTests
         Assert.Single(Root($"<rect width='1' height='1' {attributes}/>").Children);
     }
 
+    [Theory]
+    [InlineData("<g transform='scale(1e300) scale(1e300)'><rect width='1' height='1'/></g>", "value:transform")]
+    [InlineData("<rect width='1' height='1' transform='matrix(1e308 0 0 1 0 0) translate(1e308)'/>",
+        "value:transform")]
+    [InlineData("<defs><rect id='r' width='1' height='1'/></defs><use href='#r' x='1e308' transform='translate(1e308)'/>",
+        "value:transform")]
+    [InlineData("<clipPath id='c' transform='scale(1e300)'><rect width='1' height='1' transform='scale(1e300)'/>" +
+                "</clipPath><rect width='1' height='1' clip-path='url(#c)'/>", "value:transform")]
+    [InlineData("<linearGradient id='g' gradientUnits='userSpaceOnUse' gradientTransform='scale(1e300) scale(1e300)'>" +
+                "<stop/><stop offset='1'/></linearGradient><rect width='1' height='1' fill='url(#g)'/>", "value:gradientTransform")]
+    [InlineData("<linearGradient id='g' gradientUnits='userSpaceOnUse' gradientTransform='scale(0)'>" +
+                "<stop/><stop offset='1'/></linearGradient><rect width='1' height='1' fill='url(#g)'/>", "value:gradientTransform")]
+    [InlineData("<linearGradient id='g' gradientUnits='userSpaceOnUse' gradientTransform='matrix(1 2 2 4 0 0)'>" +
+                "<stop/><stop offset='1'/></linearGradient><rect width='1' height='1' fill='url(#g)'/>", "value:gradientTransform")]
+    [InlineData("<path d='M0 0h1' stroke='#000' stroke-width='1e-300' stroke-dasharray='1e10 1'/>",
+        "value:stroke-dasharray")]
+    [InlineData("<path d='M0 0h1' stroke='#000' stroke-width='1e-300' stroke-dasharray='1e-300' " +
+                "stroke-dashoffset='1e10'/>", "value:stroke-dashoffset")]
+    public void Parse_NonFiniteOrSingularMatrixOrDashes_GivesReason(string body, string reason)
+    {
+        Assert.Equal(reason, Reason(Document(body)));
+    }
+
+    [Theory]
+    [InlineData("scale(0)")]
+    [InlineData("scale(1 0)")]
+    [InlineData("matrix(1 2 2 4 5 6)")]
+    public void Parse_SingularTransform_DropsTheSubtree(string transform)
+    {
+        var root = Root($"<g transform='{transform}'><rect width='1' height='1'/></g>" +
+                        $"<rect width='1' height='1' transform='{transform}'/>" +
+                        "<defs><rect id='r' width='1' height='1'/></defs>" +
+                        $"<use href='#r' transform='{transform}'/>");
+        Assert.Empty(root.Children);
+    }
+
+    [Fact]
+    public void Parse_HugeWidth_IsSize()
+    {
+        Assert.Equal("size", Reason(Document("", "width='1e300' height='10'")));
+    }
+
+    [Theory]
+    [InlineData("width='10000001' height='10'")]
+    [InlineData("width='10' height='10000001'")]
+    [InlineData("viewBox='0 0 20000000 1'")]
+    public void Parse_ViewportAboveTenMillionPixels_IsSize(string rootAttributes)
+    {
+        Assert.Equal("size", Reason(Document("", rootAttributes)));
+    }
+
+    [Fact]
+    public void Parse_ViewportOfTenMillionPixels_IsSupported()
+    {
+        Assert.Equal(10_000_000, Drawing(Document("", "width='10000000' height='1'")).Width);
+    }
+
+    [Fact]
+    public void Parse_ViewBoxTransformNotFinite_IsViewBox()
+    {
+        Assert.Equal("value:viewBox", Reason(Document("", "width='1000' height='1000' viewBox='1e300 0 1e-300 1e-300'")));
+    }
+
     [Fact]
     public void Parse_TruncatedXml_IsXml()
     {

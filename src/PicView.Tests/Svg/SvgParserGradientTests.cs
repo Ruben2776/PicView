@@ -182,7 +182,8 @@ public class SvgParserGradientTests
     [Fact]
     public void Parse_NoStops_IsNoPaint()
     {
-        Assert.Null(Fill("<linearGradient id='g'/>", "url(#g) red"));
+        // A stroke keeps the shape, which is left out when it paints nothing.
+        Assert.Null(Fill("<linearGradient id='g'/>", "url(#g) red", "stroke='#000'"));
     }
 
     [Fact]
@@ -194,7 +195,7 @@ public class SvgParserGradientTests
     [Fact]
     public void Parse_MissingServerWithoutFallback_IsNoPaint()
     {
-        Assert.Null(Fill("", "url(#missing)"));
+        Assert.Null(Fill("", "url(#missing)", "stroke='#000'"));
     }
 
     [Fact]

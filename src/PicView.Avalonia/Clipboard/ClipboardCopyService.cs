@@ -159,7 +159,7 @@ public class ClipboardCopyService(
 
     public async Task<bool> CopyAxamlAsync(string? path)
     {
-        if (string.IsNullOrWhiteSpace(path) || clipboard is null || !File.Exists(path))
+        if (string.IsNullOrWhiteSpace(path) || clipboard is null || !IsSvgFile(path) || !File.Exists(path))
         {
             return false;
         }
@@ -183,5 +183,12 @@ public class ClipboardCopyService(
             DebugHelper.LogDebug(nameof(ClipboardCopyService), nameof(CopyAxamlAsync), ex);
             return false;
         }
+    }
+
+    private static bool IsSvgFile(string path)
+    {
+        var extension = Path.GetExtension(path);
+        return extension.Equals(".svg", StringComparison.OrdinalIgnoreCase) ||
+               extension.Equals(".svgz", StringComparison.OrdinalIgnoreCase);
     }
 }

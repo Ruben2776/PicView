@@ -338,6 +338,33 @@ public class ClipboardCopyServiceTests
     }
 
     [AvaloniaTheory]
+    [InlineData(".png", false)]
+    [InlineData(".svg.txt", false)]
+    [InlineData(".SVG", true)]
+    [InlineData(".Svgz", true)]
+    public async Task CopyAxamlAsync_ByExtension_CopiesOnlySvgFiles(string extension, bool copies)
+    {
+        // The file holds a convertible SVG whatever it is named, so only the extension decides.
+        var path = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName() + extension);
+        await File.WriteAllTextAsync(path, Svg.SvgToXamlConverterTests.FillAndStrokeSvg, TestContext.Current.CancellationToken);
+        try
+        {
+            var window = new Window();
+            var copiedInvoked = false;
+            var service = new ClipboardCopyService(window.Clipboard, onCopied: () => copiedInvoked = true);
+
+            var result = await service.CopyAxamlAsync(path);
+
+            Assert.Equal(copies, result);
+            Assert.Equal(copies, copiedInvoked);
+        }
+        finally
+        {
+            File.Delete(path);
+        }
+    }
+
+    [AvaloniaTheory]
     [InlineData(null)]
     [InlineData("")]
     [InlineData("does-not-exist.svg")]

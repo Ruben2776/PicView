@@ -22,6 +22,9 @@ internal readonly record struct SvgViewport(
     double PercentWidth,
     double PercentHeight)
 {
+    /// <summary>A width or height above this many pixels makes the file unsupported (<c>size</c>).</summary>
+    public const double MaxSize = 10_000_000;
+
     public double PercentBasis(SvgAxis axis)
     {
         return axis switch
@@ -103,6 +106,12 @@ internal readonly record struct SvgViewport(
             return false;
         }
 
+        if (!transform.IsFinite)
+        {
+            reason = "value:viewBox";
+            return false;
+        }
+
         viewport = new SvgViewport(w, h, transform.IsIdentity ? null : transform, viewBoxWidth.Value,
             viewBoxHeight.Value);
         return true;
@@ -110,7 +119,7 @@ internal readonly record struct SvgViewport(
 
     private static bool IsUsable(double value)
     {
-        return double.IsFinite(value) && value > 0;
+        return value is > 0 and <= MaxSize;
     }
 
     /// <summary>A missing or percentage dimension is null; it is then derived from the viewBox.</summary>

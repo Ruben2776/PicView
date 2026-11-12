@@ -41,7 +41,9 @@ internal static class SvgImageLoader
         }
         catch (Exception e)
         {
-            reason = e.Message;
+            // The exception itself, for its message and stack; its type goes with the file name below.
+            DebugHelper.LogDebug(nameof(SvgImageLoader), nameof(LoadAsync), e);
+            reason = e.GetType().Name;
         }
 
         DebugHelper.LogDebug(nameof(SvgImageLoader), nameof(LoadAsync), $"{fileInfo.Name}: {reason}");

@@ -28,7 +28,8 @@ public class SvgParserPaintTests
     [Fact]
     public void Parse_FillNone_HasNoFill()
     {
-        Assert.Null(Shape("<rect width='1' height='1' fill='none'/>").Fill);
+        // A stroke keeps the shape, which is left out when it paints nothing.
+        Assert.Null(Shape("<rect width='1' height='1' fill='none' stroke='#000'/>").Fill);
     }
 
     [Fact]
