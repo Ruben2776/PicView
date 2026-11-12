@@ -18,18 +18,15 @@
         x:Name="ParentBorder">
         <DockPanel>
             <Border
-                Background="{StaticResource WindowSecondaryBackgroundColor}"
-                BorderBrush="{DynamicResource MainBorderColor}"
+                Background="{StaticResource WindowTitleBackgroundColor}"
+                BorderBrush="{DynamicResource TitleBarButtonBorder}"
                 BorderThickness="0,0,0,1"
                 DockPanel.Dock="Top"
                 Height="{StaticResource TopBorderHeight}"
                 VerticalAlignment="Top">
-                <DockPanel
-                    LastChildFill="True"
-                    Margin="0,-1,-1,0"
-                    VerticalAlignment="Top">
+                <DockPanel LastChildFill="True" VerticalAlignment="Top">
                     <Border
-                        Background="{DynamicResource WindowSecondaryBackgroundColor}"
+                        Background="{DynamicResource WindowLogoColor}"
                         DockPanel.Dock="Left"
                         x:Name="LogoBorder">
                         <Image
@@ -40,10 +37,10 @@
                     </Border>
 
                     <customControls:IconButton
-                        Background="{DynamicResource WindowSecondaryBackgroundColor}"
-                        BorderBrush="{DynamicResource MainBorderColor}"
+                        Background="{DynamicResource WindowButtonBackgroundColor}"
+                        BorderBrush="{DynamicResource TitleBarButtonBorder}"
                         BorderThickness="0,0,1,0"
-                        Classes="noBorderHover"
+                        Classes="WindowToolButtonHover"
                         DockPanel.Dock="Left"
                         Foreground="{DynamicResource MainTextColor}"
                         Icon="{StaticResource HomeImage}"
@@ -57,8 +54,7 @@
                         DockPanel.Dock="Left"
                         x:Name="GoBackBorder">
                         <customControls:IconButton
-                            Background="{DynamicResource WindowSecondaryBackgroundColor}"
-                            Classes="noBorderHover"
+                            Classes="WindowToolButtonHover"
                             Data="{StaticResource ArrowLeftGeometry}"
                             Foreground="{DynamicResource MainTextColor}"
                             IconHeight="12"
@@ -69,13 +65,12 @@
 
                     <Border
                         Background="{DynamicResource WindowButtonBackgroundColor}"
-                        BorderBrush="{DynamicResource MainBorderColor}"
+                        BorderBrush="{DynamicResource TitleBarButtonBorder}"
                         BorderThickness="0,0,1,0"
                         DockPanel.Dock="Left"
                         x:Name="GoForwardBorder">
                         <customControls:IconButton
-                            Background="{DynamicResource WindowSecondaryBackgroundColor}"
-                            Classes="noBorderHover"
+                            Classes="WindowToolButtonHover"
                             Data="{StaticResource ArrowRightGeometry}"
                             Foreground="{DynamicResource MainTextColor}"
                             IconHeight="12"
@@ -103,7 +98,7 @@
 
                     <customControls:IconButton
                         Background="{DynamicResource WindowButtonBackgroundColor}"
-                        BorderBrush="{DynamicResource MainBorderColor}"
+                        BorderBrush="{DynamicResource TitleBarButtonBorder}"
                         BorderThickness="1,0,1,0"
                         Classes="hover"
                         Click="Minimize"
@@ -120,7 +115,7 @@
                     <buttons:SettingsMenuButton DockPanel.Dock="Right" x:Name="SettingsButton" />
 
                     <TextBlock
-                        Background="Transparent"
+                        Background="{DynamicResource TitleBarBackgroundColor}"
                         Classes="txt"
                         Foreground="{DynamicResource MainTextColor}"
                         LineHeight="{StaticResource TopBorderHeight}"
@@ -133,7 +128,7 @@
                 </DockPanel>
             </Border>
 
-            <main:SettingsView Background="{DynamicResource WindowBackgroundColor}" x:Name="SettingsView" />
+            <main:SettingsView Background="{DynamicResource WindowMainBackgroundColor}" x:Name="SettingsView" />
 
         </DockPanel>
     </Border>
