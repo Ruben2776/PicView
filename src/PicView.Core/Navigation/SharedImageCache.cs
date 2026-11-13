@@ -114,6 +114,38 @@ public sealed class SharedImageCache
     }
 
     /// <summary>
+    /// Runs <paramref name="use"/> on the model of <paramref name="file"/> if it is in memory and finished loading,
+    /// holding a reference to it for the length of the call so it is not disposed while <paramref name="use"/> reads
+    /// it. <paramref name="use"/> must not keep the model or its image.
+    /// </summary>
+    /// <returns><see langword="false"/> when the file is not in memory or still loading.</returns>
+    public bool TryUseReady<TResult>(FileInfo file, Func<ImageModel, TResult> use, out TResult? result)
+    {
+        PreLoadValue? value;
+        // Disposal runs under this lock, so a value that is not disposed here stays undisposed while it is referenced
+        lock (_disposalLock)
+        {
+            if (!_pathLookup.TryGetValue(file.FullName, out value) || value.IsLoading || value.IsDisposed)
+            {
+                result = default;
+                return false;
+            }
+
+            value.AddReference();
+        }
+
+        try
+        {
+            result = use(value.ImageModel);
+            return true;
+        }
+        finally
+        {
+            Release(value);
+        }
+    }
+
+    /// <summary>
     /// Stores an already loaded <paramref name="model"/> for <paramref name="file"/>, replacing any cached image of
     /// the file, and gives <paramref name="ownerId"/> a reference to it.
     /// </summary>

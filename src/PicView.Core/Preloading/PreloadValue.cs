@@ -18,6 +18,11 @@ internal sealed class PreLoadValue
     /// Marks the value disposed, returning <see langword="false"/> if it already was.
     /// </summary>
     public bool TryMarkDisposed() => Interlocked.Exchange(ref _isDisposed, 1) is 0;
+
+    /// <summary>
+    /// Whether <see cref="TryMarkDisposed"/> has run.
+    /// </summary>
+    public bool IsDisposed => Volatile.Read(ref _isDisposed) is not 0;
     
     /// <summary>
     /// Initializes a new instance of the <see cref="PreLoadValue"/> class.

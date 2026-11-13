@@ -142,6 +142,38 @@ public class SharedImageCacheTests
     }
 
     [Fact]
+    public void TryUseReady_ImageReleasedDuringUse_IsNotDisposedUntilTheUseEnds()
+    {
+        var files = Files(1);
+        _cache.SetFiles(Owner, files);
+        var model = new ImageModel { FileInfo = files[0], Image = new ProbeImage() };
+        _cache.Put(Owner, files[0], model);
+
+        var used = _cache.TryUseReady(files[0], m =>
+        {
+            _cache.ReleaseOwner(Owner);
+            _cache.ForceDisposalQueue();
+            return Probe(m).IsDisposed;
+        }, out var disposedDuringUse);
+        _cache.ForceDisposalQueue();
+
+        Assert.True(used);
+        Assert.False(disposedDuringUse);
+        Assert.True(Probe(model).IsDisposed);
+    }
+
+    [Fact]
+    public void TryUseReady_FileNotInMemory_DoesNotCallUse()
+    {
+        var called = false;
+
+        var used = _cache.TryUseReady(Files(1)[0], _ => called = true, out _);
+
+        Assert.False(used);
+        Assert.False(called);
+    }
+
+    [Fact]
     public void Put_ReplacesCachedImage_AndDisposesThePreviousOne()
     {
         var files = Files(1);
