@@ -2,9 +2,13 @@
     x:Class="PicView.Avalonia.Views.UC.FileHistoryItem"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="clr-namespace:PicView.Avalonia.Converters"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
     xmlns:vm="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
     x:DataType="vm:FileHistoryEntryViewModel">
+    <UserControl.Resources>
+        <converters:DisplayableConverter x:Key="DisplayableConverter" />
+    </UserControl.Resources>
     <UserControl.Styles>
 
         <!--  Style for current item  -->
@@ -103,6 +107,7 @@
                             MaxWidth="250"
                             HorizontalAlignment="Center"
                             Source="{CompiledBinding GetThumbnail^,
+                                                     Converter={StaticResource DisplayableConverter},
                                                      TargetNullValue={StaticResource LogoImage}}" />
                         <TextBlock
                             Classes="txt"
