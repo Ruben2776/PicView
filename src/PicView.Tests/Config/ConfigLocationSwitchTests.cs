@@ -1,8 +1,12 @@
 using System.Globalization;
+using System.Runtime.Versioning;
+using System.Security.AccessControl;
+using System.Security.Principal;
 using System.Text.Json;
 using PicView.Core.Config;
 using PicView.Core.Config.ConfigFileManagement;
 using PicView.Core.Favorites;
+using PicView.Core.FileHandling;
 using PicView.Core.Keybindings;
 
 namespace PicView.Tests.Config;
@@ -234,20 +238,50 @@ public class ConfigLocationSwitchTests : IDisposable
         Assert.Equal(_roaming, ConfigFolders.Current);
     }
 
+    private static Task<bool> SaveResizeAsync() => ConfigFileManager.SaveAsync(new ResizeWindowConfig(),
+        new ResizeWindowConfig.ResizeWindowProperties(), typeof(ResizeWindowConfig.ResizeWindowProperties),
+        ResizeWindowGenerationContext.Default);
+
+    /// <summary>
+    /// Denies the current user creating files and folders in <paramref name="directory" />, so it is not writable
+    /// while the files in it can still be moved out. Dispose the result to allow it again.
+    /// </summary>
+    [SupportedOSPlatform("windows")]
+    private static IDisposable DenyCreatingFiles(string directory)
+    {
+        var info = new DirectoryInfo(directory);
+        var rule = new FileSystemAccessRule(WindowsIdentity.GetCurrent().User!,
+            FileSystemRights.CreateFiles | FileSystemRights.CreateDirectories, AccessControlType.Deny);
+        var security = info.GetAccessControl();
+        security.AddAccessRule(rule);
+        info.SetAccessControl(security);
+        return new Restore(() =>
+        {
+            var current = info.GetAccessControl();
+            current.RemoveAccessRule(rule);
+            info.SetAccessControl(current);
+        });
+    }
+
+    private sealed class Restore(Action restore) : IDisposable
+    {
+        public void Dispose() => restore();
+    }
+
     [Fact]
     public async Task SaveAsync_AutoAndTargetUnwritable_FallsBackAndMovesEverything()
     {
-        if (OperatingSystem.IsMacOS()) { return; }
+        if (!OperatingSystem.IsWindows()) { return; }
         Assert.Equal(ConfigLocation.Auto, Settings!.StartUp!.ConfigLocation);
-        ConfigFolders.UseRoots(_unwritable, _roaming);
-        ConfigFolders.SetCurrent(_local);
-        var resizePath = Path.Combine(_local, "ResizeWindow.json");
-        File.Delete(resizePath);
-        Directory.CreateDirectory(resizePath);
+        // A new file has to be created, which the deny rule blocks; the seeded files stay in _local
+        File.Delete(Path.Combine(_local, "ResizeWindow.json"));
 
-        var saved = await ConfigFileManager.SaveAsync(new ResizeWindowConfig(),
-            new ResizeWindowConfig.ResizeWindowProperties(), typeof(ResizeWindowConfig.ResizeWindowProperties),
-            ResizeWindowGenerationContext.Default);
+        bool saved;
+        using (DenyCreatingFiles(_local))
+        {
+            Assert.False(FileHelper.IsDirectoryWritable(_local));
+            saved = await SaveResizeAsync();
+        }
 
         Assert.True(saved);
         Assert.Equal(_roaming, ConfigFolders.Current);
@@ -255,6 +289,62 @@ public class ConfigLocationSwitchTests : IDisposable
         Assert.True(File.Exists(Path.Combine(_roaming, "keybindings.json")));
         Assert.True(File.Exists(Path.Combine(_roaming, ConfigFolders.SettingsFileName)));
         Assert.False(File.Exists(Path.Combine(_local, "keybindings.json")));
+    }
+
+    [Fact]
+    public async Task SaveAsync_AutoFallbackRetryFails_RestoresFolder()
+    {
+        if (!OperatingSystem.IsWindows()) { return; }
+        File.Delete(Path.Combine(_local, "ResizeWindow.json"));
+        Directory.CreateDirectory(Path.Combine(_roaming, "ResizeWindow.json"));
+
+        bool saved;
+        using (DenyCreatingFiles(_local))
+        {
+            saved = await SaveResizeAsync();
+        }
+
+        Assert.False(saved);
+        Assert.Equal(_local, ConfigFolders.Current);
+    }
+
+    [Fact]
+    public async Task SaveAsync_AutoAndTransientWriteFailure_DoesNotMove()
+    {
+        if (OperatingSystem.IsMacOS()) { return; }
+        Assert.Equal(ConfigLocation.Auto, Settings!.StartUp!.ConfigLocation);
+        var resizePath = Path.Combine(_local, "ResizeWindow.json");
+        File.Delete(resizePath);
+        Directory.CreateDirectory(resizePath);
+
+        Assert.False(await SaveResizeAsync());
+
+        Assert.Equal(_local, ConfigFolders.Current);
+        Assert.True(File.Exists(Path.Combine(_local, "keybindings.json")));
+        Assert.Empty(Directory.GetFiles(_roaming));
+    }
+
+    [Fact]
+    public async Task SaveAsync_AutoInRoamingAndTransientWriteFailure_DoesNotMoveToLocal()
+    {
+        // Auto picks the writable local folder, so a failure in roaming must not be taken as roaming being unusable
+        if (OperatingSystem.IsMacOS()) { return; }
+        foreach (var file in Directory.GetFiles(_local))
+        {
+            File.Delete(file);
+        }
+
+        Seed(_roaming);
+        ConfigFolders.SetCurrent(_roaming);
+        var resizePath = Path.Combine(_roaming, "ResizeWindow.json");
+        File.Delete(resizePath);
+        Directory.CreateDirectory(resizePath);
+
+        Assert.False(await SaveResizeAsync());
+
+        Assert.Equal(_roaming, ConfigFolders.Current);
+        Assert.True(File.Exists(Path.Combine(_roaming, "keybindings.json")));
+        Assert.Empty(Directory.GetFiles(_local));
     }
 
     [Fact]

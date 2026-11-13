@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Reflection;
 using Avalonia;
 using Avalonia.Controls;
@@ -658,11 +659,20 @@ public class AppLifecycleTests : IAsyncDisposable
         await app.MainWindows.CloseAsync(main);
         var exitsWhileOpen = _exits;
         Assert.Single(_provider.BatchResizeWindows).Close();
-        await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Background);
+        // App Shutdown saves files with asynchronous writes, so it can end after more than one dispatcher pass
+        var waited = Stopwatch.StartNew();
+        while (_exits == 0 && waited.Elapsed < WaitLimit)
+        {
+            await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Background);
+            if (_exits == 0)
+            {
+                await Task.Delay(10);
+            }
+        }
 
         Assert.True(aboutClosed);
         Assert.Equal(0, exitsWhileOpen);
-        Assert.Equal(1, _exits);
+        Assert.True(_exits == 1, $"App Shutdown ran {_exits} times within {WaitLimit.TotalSeconds}s; expected once");
         Assert.Null(_core.BatchResize);
     }
 

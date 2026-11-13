@@ -10,10 +10,10 @@ public static class ConfigFolders
 {
     public const string SettingsFileName = "UserSettings.json";
 
-    private static readonly string DefaultLocalDirectory =
+    private static string DefaultLocalDirectory =
         Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config");
 
-    private static readonly string DefaultRoamingDirectory = Path.Combine(
+    private static string DefaultRoamingDirectory = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Ruben2776", "PicView", "Config");
 
     private static readonly Lock ResolveLock = new();
@@ -192,6 +192,17 @@ public static class ConfigFolders
     }
 
     internal static void ResetRoots() => UseRoots(DefaultLocalDirectory, DefaultRoamingDirectory);
+
+    /// <summary>
+    /// Changes the folders <see cref="ResetRoots" /> returns to, and uses them now. Lets the tests keep every config
+    /// write out of the real folders.
+    /// </summary>
+    internal static void UseDefaultRoots(string localDirectory, string roamingDirectory)
+    {
+        DefaultLocalDirectory = localDirectory;
+        DefaultRoamingDirectory = roamingDirectory;
+        ResetRoots();
+    }
 
     private static bool HasContent(string path)
     {

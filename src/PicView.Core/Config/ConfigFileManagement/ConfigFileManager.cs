@@ -28,8 +28,8 @@ public static class ConfigFileManager
     }
 
     /// <summary>
-    /// Saves a config file. The caller must hold <see cref="ConfigFolders.Gate" />. In Auto mode a failed write
-    /// moves every config file to the folder Auto picks now and retries once.
+    /// Saves a config file. The caller must hold <see cref="ConfigFolders.Gate" />. In Auto mode, a failed write in a folder
+    /// that is no longer writable moves every config file to the folder Auto picks now and retries once.
     /// </summary>
     internal static async Task<bool> SaveUnlockedAsync(ConfigFile file, object? value, Type inputType,
         JsonSerializerContext context)
@@ -52,12 +52,18 @@ public static class ConfigFileManager
             return true;
         }
 
-        if (!await TryAutoFallbackAsync(file).ConfigureAwait(false))
+        if (await TryAutoFallbackAsync(file).ConfigureAwait(false) is not { } previous)
         {
             return false;
         }
 
-        return await TrySaveAsync(file, value, inputType, context).ConfigureAwait(false);
+        if (await TrySaveAsync(file, value, inputType, context).ConfigureAwait(false))
+        {
+            return true;
+        }
+
+        ConfigFolders.SetCurrent(previous);
+        return false;
     }
 
     private static async Task<bool> TrySaveAsync(ConfigFile file, object? value, Type inputType,
@@ -78,33 +84,40 @@ public static class ConfigFileManager
     }
 
     /// <summary>
-    /// After a failed write in Auto mode, moves every config file to the folder Auto picks now and makes it
-    /// <see cref="ConfigFolders.Current" />. The caller must hold <see cref="ConfigFolders.Gate" />.
+    /// After a failed write in Auto mode, when the folder in use is no longer writable, moves every config file to the
+    /// folder Auto picks now and makes it <see cref="ConfigFolders.Current" />. A failure in a folder that is still
+    /// writable, such as a locked file, moves nothing. The caller must hold <see cref="ConfigFolders.Gate" />.
     /// </summary>
-    /// <returns>True if the folder changed and the write should be retried once.</returns>
-    private static async Task<bool> TryAutoFallbackAsync(ConfigFile file)
+    /// <returns>The folder in use before the fallback, so a failed retry can go back to it; or null when there was
+    /// no fallback and the write should not be retried.</returns>
+    private static async Task<string?> TryAutoFallbackAsync(ConfigFile file)
     {
         if (file.PathOverride is not null)
         {
-            return false;
+            return null;
         }
 
         var mode = SettingsManager.Settings?.StartUp?.ConfigLocation ?? ConfigLocation.Auto;
         if (mode != ConfigLocation.Auto)
         {
-            return false;
+            return null;
         }
 
         var from = ConfigFolders.Current;
+        if (FileHelper.IsDirectoryWritable(from))
+        {
+            return null;
+        }
+
         var to = ConfigFolders.FolderFor(ConfigLocation.Auto);
         if (ConfigFolders.IsSame(from, to))
         {
-            return false;
+            return null;
         }
 
         await ConfigFolders.MoveAllAsync(from, to, includeSettings: true).ConfigureAwait(false);
         ConfigFolders.SetCurrent(to);
-        return true;
+        return from;
     }
 
     /// <summary>
@@ -125,8 +138,8 @@ public static class ConfigFileManager
     }
 
     /// <summary>
-    /// Writes text to a config file. The caller must hold <see cref="ConfigFolders.Gate" />. In Auto mode a failed
-    /// write moves every config file to the folder Auto picks now and retries once.
+    /// Writes text to a config file. The caller must hold <see cref="ConfigFolders.Gate" />. In Auto mode, a failed
+    /// write in a folder that is no longer writable moves every config file to the folder Auto picks now and retries once.
     /// </summary>
     internal static async Task<bool> WriteTextUnlockedAsync(ConfigFile file, string text)
     {
@@ -135,12 +148,18 @@ public static class ConfigFileManager
             return true;
         }
 
-        if (!await TryAutoFallbackAsync(file).ConfigureAwait(false))
+        if (await TryAutoFallbackAsync(file).ConfigureAwait(false) is not { } previous)
         {
             return false;
         }
 
-        return await TryWriteTextAsync(file, text).ConfigureAwait(false);
+        if (await TryWriteTextAsync(file, text).ConfigureAwait(false))
+        {
+            return true;
+        }
+
+        ConfigFolders.SetCurrent(previous);
+        return false;
     }
 
     private static async Task<bool> TryWriteTextAsync(ConfigFile file, string text)
