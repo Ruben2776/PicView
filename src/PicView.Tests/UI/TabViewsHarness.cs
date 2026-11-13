@@ -10,6 +10,7 @@ using PicView.Core.Models;
 using PicView.Core.Navigation;
 using PicView.Core.Navigation.Interfaces;
 using PicView.Core.Sizing;
+using PicView.Core.Thumbnailing;
 using PicView.Core.ViewModels;
 using PicView.Tests.Navigation;
 using PicView.Tests.WindowBehavior;
@@ -39,12 +40,15 @@ internal static class TabViewsHarness
             return Task.CompletedTask;
         }).GetAwaiter().GetResult();
 
-    // The gallery view loads its XAML only when the application's DataContext is a CoreViewModel with its navigation
-    public static async Task WithWindowAsync(Func<TestMainWindow, MainWindowViewModel, TabViewModel, Task> test)
+    // The gallery view loads its XAML only when the application's DataContext is a CoreViewModel with its navigation.
+    // Thumbnails give none unless the test makes its own from the shared cache
+    public static async Task WithWindowAsync(Func<TestMainWindow, MainWindowViewModel, TabViewModel, Task> test,
+        Func<SharedImageCache, Thumbnails>? thumbnails = null)
     {
         var core = new CoreViewModel(null, _ => ValueTask.FromResult(new ImageModel()));
+        var cache = new SharedImageCache(static f => ValueTask.FromResult(new ImageModel { FileInfo = f }));
         core.InitializeNavigation(
-            TestTabServices.For(new SharedImageCache(static f => ValueTask.FromResult(new ImageModel { FileInfo = f })), null),
+            TestTabServices.For(cache, thumbnails?.Invoke(cache)),
             new NavigationService(string.CompareOrdinal));
         var window = new TestMainWindow(new NoOpModeAdapter());
         var vm = new MainWindowViewModel(core, core.Translation, core.GlobalSettings!, core.GallerySettings);

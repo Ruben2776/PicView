@@ -61,6 +61,29 @@ internal sealed class ThumbnailStore
     }
 
     /// <summary>
+    /// Has <paramref name="owner"/> keep the thumbnail of <paramref name="path"/> as well, if one is still kept.
+    /// </summary>
+    public void AddOwner(uint owner, string path)
+    {
+        lock (_lock)
+        {
+            if (!_entries.TryGetValue(path, out var entry))
+            {
+                return;
+            }
+
+            entry.Owners.Add(owner);
+            if (!_pathsByOwner.TryGetValue(owner, out var paths))
+            {
+                paths = [];
+                _pathsByOwner[owner] = paths;
+            }
+
+            paths.Add(path);
+        }
+    }
+
+    /// <summary>
     /// Drops the thumbnail of <paramref name="path"/> whoever keeps it, e.g., after the file changed.
     /// </summary>
     public void Remove(string path)

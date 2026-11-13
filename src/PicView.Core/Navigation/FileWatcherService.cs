@@ -244,8 +244,9 @@ public class FileWatcherService(
         }
 
         var stalePath = kind is FolderChangeKind.Renamed ? oldFullPath ?? fullPath : fullPath;
-        thumbnails?.Forget(stalePath);
+        // The image first, so a thumbnail made after the thumbnail is forgotten does not scale the old image down
         _cache.Invalidate(stalePath);
+        thumbnails?.Forget(stalePath);
 
         // A rename reaches every history before any tab follows it. The tab that shows the file records it under its new
         // name, which a history that doesn't know the name yet takes for a new view, dropping its entries after the cursor

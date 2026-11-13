@@ -261,8 +261,9 @@ public class TabOwnershipTests
         tabs.ActiveTab.Value.Initialize();
         var first = tabs.ActiveTab.Value;
         var second = tabs.CreateTab();
-        thumbnails.Keep(first.Id, "first.jpg", new object(), 100);
-        thumbnails.Keep(second.Id, "second.jpg", new object(), 100);
+        thumbnails.Keep(first.Id, new FileInfo("first.jpg").FullName, new object(), 100);
+        thumbnails.Keep(second.Id, new FileInfo("second.jpg").FullName, new object(), 100);
+        Assert.NotNull(await thumbnails.GetQuickAsync(new FileInfo("first.jpg"), 100));
 
         tabs.TearDown();
         tabs.TearDown();

@@ -23,6 +23,9 @@ public sealed class Thumbnails
     private readonly ThumbnailStore _store = new();
     private readonly SemaphoreSlim _slots;
 
+    // Counts the files forgotten, so a thumbnail made from a file's old image while it was forgotten is not kept
+    private long _forgotten;
+
     /// <param name="decoder">Turns files and images into bitmaps.</param>
     /// <param name="images">The images already decoded, whose still images are scaled down instead of decoded.</param>
     /// <param name="slots">How many files may decode at once; by default half the processors, from 2 to 4.</param>
@@ -73,7 +76,7 @@ public sealed class Thumbnails
         {
             if (owner is { } id)
             {
-                _store.Add(id, file.FullName, kept!, keptHeight);
+                _store.AddOwner(id, file.FullName);
             }
 
             return ValueTask.FromResult(kept);
@@ -92,7 +95,11 @@ public sealed class Thumbnails
     /// <summary>
     /// Drops the thumbnail of <paramref name="path"/> whoever keeps it, e.g., after the file changed or was deleted.
     /// </summary>
-    public void Forget(string path) => _store.Remove(path);
+    public void Forget(string path)
+    {
+        Interlocked.Increment(ref _forgotten);
+        _store.Remove(path);
+    }
 
     /// <summary>
     /// Drops every thumbnail only <paramref name="owner"/> keeps, e.g., when its tab closes.
@@ -102,6 +109,7 @@ public sealed class Thumbnails
     private async Task<object?> MakeAsync(FileInfo file, uint height, uint? owner, CancellationToken ct)
     {
         await _slots.WaitAsync(ct).ConfigureAwait(false);
+        var forgotten = Interlocked.Read(ref _forgotten);
         object? thumbnail;
         try
         {
@@ -113,7 +121,9 @@ public sealed class Thumbnails
             _slots.Release();
         }
 
-        if (thumbnail is not null && owner is { } id)
+        // A file forgotten while this one was made may be this file, changed on disk: what was read is then stale.
+        // Forgetting is rare, so any one skips keeping rather than tracking which file it was
+        if (thumbnail is not null && owner is { } id && Interlocked.Read(ref _forgotten) == forgotten)
         {
             _store.Add(id, file.FullName, thumbnail, height);
         }

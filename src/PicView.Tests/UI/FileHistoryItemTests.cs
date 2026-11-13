@@ -1,12 +1,14 @@
 using Avalonia.Controls;
-using Avalonia.Media;
+using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
+using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.Views.UC;
 using PicView.Core.ImageDecoding;
 using PicView.Core.Localization;
 using PicView.Core.Models;
 using PicView.Core.Svg;
+using PicView.Core.Thumbnailing;
 using PicView.Core.ViewModels;
 using static PicView.Tests.UI.TabViewsHarness;
 
@@ -27,10 +29,11 @@ public class FileHistoryItemTests : IDisposable
     public void Dispose() => File.Delete(_path);
 
     [AvaloniaFact]
-    public void Tooltip_CachedSvg_ShowsDrawingImage()
-        => WithWindow((_, vm, tab) =>
+    public Task Tooltip_SvgFileWithItsDrawingInMemory_ShowsABitmapThumbnail()
+        => WithWindowAsync(async (_, vm, tab) =>
         {
-            // The open SVG and its preloaded neighbors are in the shared cache as the parsed drawing
+            // The open SVG and its preloaded neighbors are in the shared cache as the parsed drawing, which a
+            // Thumbnail never hands out: the file is made into a bitmap instead
             var file = new FileInfo(_path);
             vm.WindowTabs.SharedCache!.Put(tab.Id, file, new ImageModel
             {
@@ -43,6 +46,7 @@ public class FileHistoryItemTests : IDisposable
             using var entry = new FileHistoryEntryViewModel();
             entry.Initialize(_path, file.Name, isPinned: false, isCurrentItem: true, index: 0, vm);
             var item = new FileHistoryItem { DataContext = entry };
+            var made = await entry.GetThumbnail;
 
             // The tooltip's content takes its DataContext when it opens
             var tip = Assert.IsType<StackPanel>(ToolTip.GetTip(item.FindControl<Button>("MainButton")!));
@@ -50,6 +54,7 @@ public class FileHistoryItemTests : IDisposable
             Dispatcher.UIThread.RunJobs();
 
             var thumb = Assert.IsType<ThumbImage>(tip.Children[0]);
-            Assert.IsType<DrawingImage>(thumb.Source);
-        });
+            Assert.IsAssignableFrom<Bitmap>(made);
+            Assert.Same(made, thumb.Source);
+        }, cache => new Thumbnails(new AvaloniaThumbnailDecoder(null), cache));
 }

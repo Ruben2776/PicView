@@ -91,7 +91,8 @@ public class GalleryFollowsFilesTests : IDisposable
         await WaitUntilLoadedAsync(tab, "a.jpg", "b.jpg");
         Hide(tab);
 
-        _thumbnails.Keep(tab.Id, "kept.jpg", new object(), 100);
+        _thumbnails.Keep(tab.Id, new FileInfo("kept.jpg").FullName, new object(), 100);
+        Assert.True(await IsKeptAsync("kept.jpg"));
 
         tab.ImageIterator.Initialize(await FilesAsync(Path.Combine("other", "c.jpg")));
         await IdleAsync(tab);
@@ -659,7 +660,8 @@ public class GalleryFollowsFilesTests : IDisposable
     {
         Settings.Gallery.HideGalleryAtFileCount = 3;
         var tab = await LoadedTabAsync("a.jpg", "c.jpg");
-        _thumbnails.Keep(tab.Id, "kept.jpg", new object(), 100);
+        _thumbnails.Keep(tab.Id, new FileInfo("kept.jpg").FullName, new object(), 100);
+        Assert.True(await IsKeptAsync("kept.jpg"));
 
         tab.ImageIterator.Insert((await FilesAsync("b.jpg"))[0], string.CompareOrdinal);
         await IdleAsync(tab);

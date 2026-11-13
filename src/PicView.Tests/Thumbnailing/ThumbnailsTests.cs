@@ -144,7 +144,12 @@ public class ThumbnailsTests
         var requests = Enumerable.Range(0, 6)
             .Select(i => thumbnails.GetAsync(File($"{i}.jpg"), 200, Tab).AsTask())
             .ToArray();
-        await Task.Delay(100, TestContext.Current.CancellationToken);
+        // Hold the decodes until both slots are taken, so a missing throttle would show as a third
+        var deadline = DateTime.UtcNow.AddSeconds(5);
+        while (_decoder.MostDecodesInFlight < 2 && DateTime.UtcNow < deadline)
+        {
+            await Task.Delay(5, TestContext.Current.CancellationToken);
+        }
         gate.Set();
         await Task.WhenAll(requests);
 
@@ -225,6 +230,27 @@ public class ThumbnailsTests
         await _thumbnails.GetAsync(file, 200, OtherTab);
 
         _thumbnails.Forget(file.FullName);
+        await _thumbnails.GetAsync(file, 200, Tab);
+
+        Assert.Equal(2, _decoder.Calls.Count(c => c == "decode:a.jpg"));
+    }
+
+    [Fact]
+    public async Task Forget_WhileTheFileDecodes_TheStaleThumbnailIsNotKept()
+    {
+        var file = File("a.jpg");
+        using var gate = new ManualResetEventSlim(false);
+        _decoder.DecodeGate = gate;
+        var making = _thumbnails.GetAsync(file, 200, Tab).AsTask();
+        var deadline = DateTime.UtcNow.AddSeconds(5);
+        while (_decoder.MostDecodesInFlight < 1 && DateTime.UtcNow < deadline)
+        {
+            await Task.Delay(5, TestContext.Current.CancellationToken);
+        }
+
+        _thumbnails.Forget(file.FullName);
+        gate.Set();
+        Assert.NotNull(await making);
         await _thumbnails.GetAsync(file, 200, Tab);
 
         Assert.Equal(2, _decoder.Calls.Count(c => c == "decode:a.jpg"));
