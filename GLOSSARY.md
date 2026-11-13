@@ -94,7 +94,7 @@ The file of the image a tab shows, and the file of the one beside it when viewin
 _Avoid_: Current file, active file
 
 **Stand-in**:
-An image a tab shows in place of its model's image without changing what it shows: a thumbnail while the next image loads, or an Effects Render. It is never recorded, and the tab publishes no change for it.
+An image a tab shows in place of its model's image without changing what it shows: a Quick Thumbnail while the next image loads, or an Effects Render. It is never recorded, and the tab publishes no change for it.
 _Avoid_: Placeholder, preview image
 
 **Source**:
@@ -138,6 +138,14 @@ _Avoid_: Last entry, current entry
 **Side-by-Side Pair**:
 Two images a tab shows beside each other when Side-by-Side is on: the shown image and its partner, the next image in the list. Going to the last image, whether by opening it, jumping to it, reloading it or turning Side-by-Side on, shows the pair that ends with it: the image before it and the last image. With looping, the last image pairs with the first instead. Only a list of one image shows alone. Paired navigation moves by two images at a time and always ends on a full pair. The gallery marks both images of the pair.
 _Avoid_: Dual view, two-up, double view
+
+**Thumbnail**:
+A bitmap of a file no taller than a height asked for, never the full image: a Gallery Item's, a File History entry's, or a drag preview's. A tab keeps the ones it asks for until it closes, File History keeps its own for the whole run, and a drag preview keeps none. Only the tallest one asked for is kept for each file, and it serves every request up to its height. When the file's image is already in memory as a still image, it is scaled down instead of read again.
+_Avoid_: Thumb, preview (for the bitmap)
+
+**Quick Thumbnail**:
+A Thumbnail that is there at once or not at all: one kept already, or else one the OS shell or the file's EXIF data has ready. It never decodes the image and is never kept, so it may be absent. A Stand-in shows one.
+_Avoid_: Fast thumbnail, quick preview
 
 ## Archives
 
