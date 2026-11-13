@@ -377,3 +377,5 @@ Build/mac-release/
 
 # Superpowers skill output (plans and specs), kept local
 docs/superpowers/
+
+/src/.claude/settings.local.json
