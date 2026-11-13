@@ -611,27 +611,35 @@ public class GalleryCoordinator : IDisposable
         await ThumbnailSlots.WaitAsync(cancellationToken).ConfigureAwait(false);
         try
         {
-            var thumb = await _thumbnailLoader
-                .GetThumbnailAsync(file, item.ThumbnailHeight, _tab.ParentWindowContext?.Core)
-                .ConfigureAwait(false);
-            if (thumb is not null)
-            {
-                _thumbnailCache.Add(_tab.Id, file.FullName, thumb);
-            }
-
-            // Detection reads the file again up to three times, so skip it while the badges are hidden
-            if (Settings.Gallery.ShowMotionPhotoBadges)
-            {
-                item.IsMotionPhoto.Value = MotionPhotoDetector.TryDetect(
-                    file, item.Details?.XmpPacket, fastMode: true) is not null;
-            }
-
-            return thumb;
+            // The gallery asks from the UI thread, during layout, and a free slot does not leave it: the wait above
+            // completes at once. Making a thumbnail reads the file and can block for seconds, so it runs on the
+            // thread pool
+            return await Task.Run(() => MakeThumbnailAsync(item, file), cancellationToken).ConfigureAwait(false);
         }
         finally
         {
             ThumbnailSlots.Release();
         }
+    }
+
+    private async Task<object?> MakeThumbnailAsync(GalleryItemViewModel item, FileInfo file)
+    {
+        var thumb = await _thumbnailLoader
+            .GetThumbnailAsync(file, item.ThumbnailHeight, _tab.ParentWindowContext?.Core)
+            .ConfigureAwait(false);
+        if (thumb is not null)
+        {
+            _thumbnailCache.Add(_tab.Id, file.FullName, thumb);
+        }
+
+        // Detection reads the file again up to three times, so skip it while the badges are hidden
+        if (Settings.Gallery.ShowMotionPhotoBadges)
+        {
+            item.IsMotionPhoto.Value = MotionPhotoDetector.TryDetect(
+                file, item.Details?.XmpPacket, fastMode: true) is not null;
+        }
+
+        return thumb;
     }
 
     private static double ThumbnailHeight()

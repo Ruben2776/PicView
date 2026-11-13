@@ -574,6 +574,36 @@ public class GalleryFollowsFilesTests : IDisposable
         Assert.Equal(item.FileInfo!.FullName, Assert.Single(cache.Added));
     }
 
+    [Fact]
+    public async Task LoadThumbnailAsync_WithAFreeSlot_MakesTheThumbnailOffTheCallersThread()
+    {
+        // The gallery asks for a thumbnail from the UI thread, during layout, and making one can block for seconds
+        var loader = new CallerRecordingThumbnailLoader();
+        var tab = new TabViewModel(null!, TestTabServices.For(_cache, new StoringThumbnailCache(), loader))
+        {
+            Model = new ImageModel { FileInfo = new FileInfo(Path.Combine(_directory, "shown.jpg")) }
+        };
+        tab.Initialize();
+        Show(tab);
+        tab.ImageIterator.Initialize(await FilesAsync("a.jpg"));
+        await WaitUntilLoadedAsync(tab, "a.jpg");
+        var item = tab.Gallery.GalleryItems[0];
+
+        CallerRecordingThumbnailLoader.IsCallersThread = true;
+        ValueTask<object?> pending;
+        try
+        {
+            pending = item.LoadThumbnailAsync(TestContext.Current.CancellationToken);
+        }
+        finally
+        {
+            CallerRecordingThumbnailLoader.IsCallersThread = false;
+        }
+        await pending;
+
+        Assert.False(loader.RanOnCallersThread);
+    }
+
     #region File limit
 
     [Fact]
@@ -793,6 +823,25 @@ public class GalleryFollowsFilesTests : IDisposable
     {
         public ValueTask<object?> GetThumbnailAsync(FileInfo file, uint size, CoreViewModel? core = null,
             MagickImage? magick = null) => ValueTask.FromResult<object?>(thumbnail);
+        public object? GetExifThumbnail(FileInfo file) => null;
+        public object? GetThumbQuick(FileInfo file, CoreViewModel? core = null) => null;
+    }
+
+    /// <summary>Records whether it was asked for a thumbnail on the thread that marked itself as the caller.</summary>
+    private sealed class CallerRecordingThumbnailLoader : IThumbnailLoader
+    {
+        [ThreadStatic]
+        public static bool IsCallersThread;
+
+        public bool? RanOnCallersThread { get; private set; }
+
+        public ValueTask<object?> GetThumbnailAsync(FileInfo file, uint size, CoreViewModel? core = null,
+            MagickImage? magick = null)
+        {
+            RanOnCallersThread = IsCallersThread;
+            return ValueTask.FromResult<object?>(new object());
+        }
+
         public object? GetExifThumbnail(FileInfo file) => null;
         public object? GetThumbQuick(FileInfo file, CoreViewModel? core = null) => null;
     }
