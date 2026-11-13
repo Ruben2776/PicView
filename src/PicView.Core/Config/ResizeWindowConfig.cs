@@ -14,12 +14,11 @@ public class ResizeWindowConfig() : ConfigFile("ResizeWindow.json")
 
     public async Task LoadAsync()
     {
-        CorrectPath ??= ConfigFileManager.ResolveDefaultConfigPath(this);
         try
         {
-            if (File.Exists(CorrectPath))
+            if (File.Exists(FilePath))
             {
-                var jsonString = await File.ReadAllTextAsync(CorrectPath).ConfigureAwait(false);
+                var jsonString = await File.ReadAllTextAsync(FilePath).ConfigureAwait(false);
                 if (JsonSerializer.Deserialize(
                         jsonString, typeof(ResizeWindowProperties), ResizeWindowGenerationContext.Default) is ResizeWindowProperties settings)
                 {
@@ -63,8 +62,7 @@ public class ResizeWindowConfig() : ConfigFile("ResizeWindow.json")
             }
         }
 
-        CorrectPath = await ConfigFileManager.SaveConfigFileAndReturnPathAsync(this,
-            CorrectPath, WindowProperties, typeof(ResizeWindowProperties), ResizeWindowGenerationContext.Default).ConfigureAwait(false);
+        await ConfigFileManager.SaveAsync(this, WindowProperties, typeof(ResizeWindowProperties), ResizeWindowGenerationContext.Default).ConfigureAwait(false);
     }
 
     public class ResizeWindowProperties : IWindowProperties

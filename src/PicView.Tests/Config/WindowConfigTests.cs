@@ -20,7 +20,7 @@ public class WindowConfigTests
         config.WindowProperties.Top = 20;
         await config.SaveAsync();
 
-        var loaded = new ResizeWindowConfig { CorrectPath = config.CorrectPath };
+        var loaded = new ResizeWindowConfig();
         await loaded.LoadAsync();
 
         Assert.NotNull(loaded.WindowProperties);
@@ -42,7 +42,7 @@ public class WindowConfigTests
         config.WindowProperties.Top = 20;
         await config.SaveAsync();
 
-        var loaded = new ConvertWindowConfig { CorrectPath = config.CorrectPath };
+        var loaded = new ConvertWindowConfig();
         await loaded.LoadAsync();
 
         Assert.NotNull(loaded.WindowProperties);
@@ -55,9 +55,9 @@ public class WindowConfigTests
     {
         var config = new ResizeWindowConfig();
         using var backup = new ConfigFileBackup(config);
-        config.CorrectPath = config.RoamingConfigPath;
-        Directory.CreateDirectory(Path.GetDirectoryName(config.CorrectPath)!);
-        await File.WriteAllTextAsync(config.CorrectPath, "{ not json");
+        config.PathOverride = config.RoamingConfigPath;
+        Directory.CreateDirectory(Path.GetDirectoryName(config.PathOverride!)!);
+        await File.WriteAllTextAsync(config.PathOverride!, "{ not json");
 
         await config.LoadAsync();
 

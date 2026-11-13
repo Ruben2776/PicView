@@ -103,12 +103,10 @@ public static class FileHistoryManager
     }
 
     /// <summary>
-    ///     Gets the file history file path with normalized slashes.
+    ///     Gets the path of the file history file in the config folder in use, or an empty string before the file
+    ///     history is initialized.
     /// </summary>
-    public static string CurrentFileHistoryFile =>
-        (_fileHistoryConfiguration?.TryGetCurrentUserConfigPath is { Length: > 0 } userPath
-            ? userPath
-            : _fileHistoryConfiguration?.CorrectPath ?? string.Empty).Replace("/", "\\");
+    public static string CurrentFileHistoryFile => _fileHistoryConfiguration?.FilePath ?? string.Empty;
 
     /// <summary>
     ///     Initializes the file history by loading entries from the history file. Paths added before the load finished go
@@ -117,8 +115,7 @@ public static class FileHistoryManager
     public static void Initialize()
     {
         _fileHistoryConfiguration = new FileHistoryConfiguration();
-        _fileHistoryConfiguration.CorrectPath = ConfigFileManager.ResolveDefaultConfigPath(_fileHistoryConfiguration);
-        ReplaceEntries(LoadFromFile(_fileHistoryConfiguration.TryGetCurrentUserConfigPath));
+        ReplaceEntries(LoadFromFile(_fileHistoryConfiguration.FilePath));
     }
 
     /// <summary>
@@ -128,7 +125,7 @@ public static class FileHistoryManager
     {
         _fileHistoryConfiguration = new FileHistoryConfiguration
         {
-            CorrectPath = configPath
+            PathOverride = configPath
         };
         ReplaceEntries(LoadFromFile(configPath));
     }
@@ -468,11 +465,7 @@ public static class FileHistoryManager
     {
         try
         {
-            if (string.IsNullOrWhiteSpace(_fileHistoryConfiguration?.CorrectPath))
-            {
-                _fileHistoryConfiguration ??= new FileHistoryConfiguration();
-                _fileHistoryConfiguration.CorrectPath = ConfigFileManager.ResolveDefaultConfigPath(_fileHistoryConfiguration);
-            }
+            _fileHistoryConfiguration ??= new FileHistoryConfiguration();
 
             // Create a new sorted list with pinned entries first (max 5), then unpinned entries (max MaxHistoryEntries)
             var sortedEntries = new List<Entry>();
@@ -495,10 +488,8 @@ public static class FileHistoryManager
                 Entries = sortedEntries,
                 IsSortingDescending = IsSortingDescending
             };
-            _fileHistoryConfiguration.CorrectPath = 
-                await ConfigFileManager.SaveConfigFileAndReturnPathAsync(_fileHistoryConfiguration,
-                _fileHistoryConfiguration.CorrectPath, historyEntries, typeof(FileHistoryEntries), FileHistoryGenerationContext.Default)
-                    .ConfigureAwait(false);
+            await ConfigFileManager.SaveAsync(_fileHistoryConfiguration, historyEntries, typeof(FileHistoryEntries),
+                FileHistoryGenerationContext.Default).ConfigureAwait(false);
         }
         catch (Exception ex)
         {

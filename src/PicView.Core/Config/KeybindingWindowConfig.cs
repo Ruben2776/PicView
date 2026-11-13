@@ -14,12 +14,11 @@ public class KeybindingWindowConfig() : ConfigFile("KeybindingWindowConfig.json"
 
     public void Load()
     {
-        CorrectPath ??= ConfigFileManager.ResolveDefaultConfigPath(this);
         try
         {
-            if (File.Exists(CorrectPath))
+            if (File.Exists(FilePath))
             {
-                var jsonBytes = File.ReadAllBytes(CorrectPath);
+                var jsonBytes = File.ReadAllBytes(FilePath);
                 if (JsonSerializer.Deserialize(
                         jsonBytes, typeof(KeybindingWindowProperties),
                         KeybindingsWindowGenerationContext.Default) is KeybindingWindowProperties settings)
@@ -44,8 +43,7 @@ public class KeybindingWindowConfig() : ConfigFile("KeybindingWindowConfig.json"
 
     public async Task SaveAsync()
     {
-        CorrectPath = await ConfigFileManager.SaveConfigFileAndReturnPathAsync(this,
-            CorrectPath, WindowProperties, typeof(KeybindingWindowProperties),
+        await ConfigFileManager.SaveAsync(this, WindowProperties, typeof(KeybindingWindowProperties),
             KeybindingsWindowGenerationContext.Default).ConfigureAwait(false);
     }
 

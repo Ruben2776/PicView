@@ -13,12 +13,11 @@ public class SettingsWindowConfig() : ConfigFile("SettingsWindow.json")
 
     public void Load()
     {
-        CorrectPath ??= ConfigFileManager.ResolveDefaultConfigPath(this);
         try
         {
-            if (File.Exists(CorrectPath))
+            if (File.Exists(FilePath))
             {
-                var bytes = File.ReadAllBytes(CorrectPath);
+                var bytes = File.ReadAllBytes(FilePath);
                 if (JsonSerializer.Deserialize(
                         bytes, typeof(SettingsWindowProperties), SettingsWindowGenerationContext.Default) is SettingsWindowProperties settings)
                 {
@@ -42,8 +41,7 @@ public class SettingsWindowConfig() : ConfigFile("SettingsWindow.json")
     
     public async Task SaveAsync()
     {
-        CorrectPath = await ConfigFileManager.SaveConfigFileAndReturnPathAsync(this,
-            CorrectPath, WindowProperties, typeof(SettingsWindowProperties), SettingsWindowGenerationContext.Default)
+        await ConfigFileManager.SaveAsync(this, WindowProperties, typeof(SettingsWindowProperties), SettingsWindowGenerationContext.Default)
             .ConfigureAwait(false);
     }
     

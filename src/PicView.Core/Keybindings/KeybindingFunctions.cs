@@ -4,58 +4,35 @@ namespace PicView.Core.Keybindings;
 
 public static class KeybindingFunctions
 {
-    private static string? _configPathOverride;
-
     public static KeyBindingsConfiguration? KeyBindingsConfiguration { get; private set; }
-    public static string CurrentKeybindingsPath => KeyBindingsConfiguration?.CorrectPath ?? string.Empty;
+    public static string CurrentKeybindingsPath => KeyBindingsConfiguration?.FilePath ?? string.Empty;
 
     /// <summary>
     /// Reads and writes keybindings at an explicit file path (local-substitutable seam for testing).
     /// </summary>
-    internal static void UseConfigPath(string configPath)
-    {
-        _configPathOverride = configPath;
-        KeyBindingsConfiguration = new KeyBindingsConfiguration { CorrectPath = configPath };
-    }
+    internal static void UseConfigPath(string configPath) =>
+        KeyBindingsConfiguration = new KeyBindingsConfiguration { PathOverride = configPath };
+
+    /// <summary>
+    /// Forgets the keybindings configuration, including any path override (test seam).
+    /// </summary>
+    internal static void ResetConfiguration() => KeyBindingsConfiguration = null;
 
     public static async Task SaveKeyBindingsFile(string json)
     {
-        try
-        {
-            KeyBindingsConfiguration ??= new KeyBindingsConfiguration();
-            if (string.IsNullOrEmpty(KeyBindingsConfiguration.CorrectPath))
-            {
-                KeyBindingsConfiguration.CorrectPath = ConfigFileManager.ResolveDefaultConfigPath(KeyBindingsConfiguration);
-            }
-            var writer = new StreamWriter(CurrentKeybindingsPath);
-            await using (writer.ConfigureAwait(false))
-            {
-                await writer.WriteAsync(json).ConfigureAwait(false);
-            }
-        }
-        catch (UnauthorizedAccessException)
-        {
-            var writer = new StreamWriter(KeyBindingsConfiguration.RoamingConfigPath);
-            await using (writer.ConfigureAwait(false))
-            {
-                await writer.WriteAsync(json).ConfigureAwait(false);
-            }
-        }
+        KeyBindingsConfiguration ??= new KeyBindingsConfiguration();
+        await ConfigFileManager.WriteTextAsync(KeyBindingsConfiguration, json).ConfigureAwait(false);
     }
 
     public static byte[]? SetKeyBindingsFileAndReturnBytes()
     {
-        var path = _configPathOverride
-                   ?? ConfigFileManager.ResolveDefaultConfigPath(KeyBindingsConfiguration ??= new KeyBindingsConfiguration());
         KeyBindingsConfiguration ??= new KeyBindingsConfiguration();
-        if (!File.Exists(path))
+        var info = new FileInfo(KeyBindingsConfiguration.FilePath);
+        if (!info.Exists || info.Length == 0)
         {
             return null;
         }
 
-        var text = File.ReadAllBytes(path);
-        
-        KeyBindingsConfiguration.CorrectPath = path;
-        return text;
+        return File.ReadAllBytes(info.FullName);
     }
 }

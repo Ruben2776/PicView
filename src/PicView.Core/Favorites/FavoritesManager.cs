@@ -37,12 +37,10 @@ public static class FavoritesManager
     public static IReadOnlyList<FavoriteEntry> AllEntries => _entries?.AsReadOnly() ?? (IReadOnlyList<FavoriteEntry>)[];
 
     /// <summary>
-    ///     Gets the favorites file path with normalized slashes.
+    ///     Gets the path of the favorites file in the config folder in use, or an empty string before
+    ///     <see cref="Initialize()"/>.
     /// </summary>
-    public static string CurrentFavoritesFile =>
-        (_favoritesConfiguration?.TryGetCurrentUserConfigPath is { Length: > 0 } userPath
-            ? userPath
-            : _favoritesConfiguration?.CorrectPath ?? string.Empty).Replace('/', '\\');
+    public static string CurrentFavoritesFile => _favoritesConfiguration?.FilePath ?? string.Empty;
 
     /// <summary>
     ///     Initializes the favorites by loading entries from the default favorites configuration file.
@@ -50,9 +48,8 @@ public static class FavoritesManager
     public static void Initialize()
     {
         _favoritesConfiguration = new FavoritesConfiguration();
-        _favoritesConfiguration.CorrectPath = ConfigFileManager.ResolveDefaultConfigPath(_favoritesConfiguration);
         _entries = [];
-        LoadFromFile(_favoritesConfiguration.TryGetCurrentUserConfigPath);
+        LoadFromFile(_favoritesConfiguration.FilePath);
     }
 
     /// <summary>
@@ -62,7 +59,7 @@ public static class FavoritesManager
     {
         _favoritesConfiguration = new FavoritesConfiguration
         {
-            CorrectPath = configPath
+            PathOverride = configPath
         };
         _entries = [];
         if (File.Exists(configPath))
@@ -245,20 +242,14 @@ public static class FavoritesManager
     {
         try
         {
-            if (string.IsNullOrWhiteSpace(_favoritesConfiguration?.CorrectPath))
-            {
-                _favoritesConfiguration ??= new FavoritesConfiguration();
-                _favoritesConfiguration.CorrectPath = ConfigFileManager.ResolveDefaultConfigPath(_favoritesConfiguration);
-            }
+            _favoritesConfiguration ??= new FavoritesConfiguration();
 
             var favoritesEntries = new FavoritesEntries
             {
                 Entries = _entries ?? []
             };
-            _favoritesConfiguration.CorrectPath =
-                await ConfigFileManager.SaveConfigFileAndReturnPathAsync(_favoritesConfiguration,
-                _favoritesConfiguration.CorrectPath, favoritesEntries, typeof(FavoritesEntries), FavoritesGenerationContext.Default)
-                    .ConfigureAwait(false);
+            await ConfigFileManager.SaveAsync(_favoritesConfiguration, favoritesEntries, typeof(FavoritesEntries),
+                FavoritesGenerationContext.Default).ConfigureAwait(false);
         }
         catch (Exception ex)
         {

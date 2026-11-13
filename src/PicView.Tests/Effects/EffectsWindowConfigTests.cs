@@ -40,14 +40,13 @@ public class EffectsWindowConfigTests
             Left = 60
         };
 
-        var path = await ConfigFileManager.SaveConfigFileAndReturnPathAsync(
-            config,
-            null,
-            props,
+        var saved = await ConfigFileManager.SaveAsync(config, props,
             typeof(EffectsWindowConfig.EffectsWindowProperties),
             EffectsWindowGenerationContext.Default);
 
-        Assert.NotNull(path);
+        Assert.True(saved);
+        var json = await File.ReadAllTextAsync(config.FilePath);
+        Assert.DoesNotContain("Infinity", json);
         Assert.Null(props.Width);
         Assert.Null(props.Height);
     }

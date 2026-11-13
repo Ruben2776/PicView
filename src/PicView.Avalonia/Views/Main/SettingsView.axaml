@@ -48,6 +48,40 @@
                         Source="{StaticResource ResetImage}" />
                 </MenuItem.Icon>
             </customControls:StyledMenuItem>
+            <Separator IsVisible="{CompiledBinding GlobalSettings.CanChooseConfigLocation}" />
+            <customControls:StyledMenuItem
+                Command="{CompiledBinding MainWindows.ActiveWindow.Value.RunActionCommand}"
+                CommandParameter="{x:Static keybindings:Actions.SetConfigLocationAuto}"
+                Foreground="{DynamicResource MainTextColor}"
+                GroupName="ConfigLocation"
+                Header="{CompiledBinding Translation.Auto.Value,
+                                         Mode=OneWay}"
+                IsChecked="{CompiledBinding GlobalSettings.IsConfigAuto.Value,
+                                            Mode=OneWay}"
+                IsVisible="{CompiledBinding GlobalSettings.CanChooseConfigLocation}"
+                ToggleType="Radio" />
+            <customControls:StyledMenuItem
+                Command="{CompiledBinding MainWindows.ActiveWindow.Value.RunActionCommand}"
+                CommandParameter="{x:Static keybindings:Actions.SetConfigLocationPortable}"
+                Foreground="{DynamicResource MainTextColor}"
+                GroupName="ConfigLocation"
+                Header="{CompiledBinding Translation.Portable.Value,
+                                         Mode=OneWay}"
+                IsChecked="{CompiledBinding GlobalSettings.IsConfigPortable.Value,
+                                            Mode=OneWay}"
+                IsVisible="{CompiledBinding GlobalSettings.CanChooseConfigLocation}"
+                ToggleType="Radio" />
+            <customControls:StyledMenuItem
+                Command="{CompiledBinding MainWindows.ActiveWindow.Value.RunActionCommand}"
+                CommandParameter="{x:Static keybindings:Actions.SetConfigLocationRoaming}"
+                Foreground="{DynamicResource MainTextColor}"
+                GroupName="ConfigLocation"
+                Header="{CompiledBinding Translation.Roaming.Value,
+                                         Mode=OneWay}"
+                IsChecked="{CompiledBinding GlobalSettings.IsConfigRoaming.Value,
+                                            Mode=OneWay}"
+                IsVisible="{CompiledBinding GlobalSettings.CanChooseConfigLocation}"
+                ToggleType="Radio" />
             <Separator />
             <MenuItem
                 x:Name="CloseItem"

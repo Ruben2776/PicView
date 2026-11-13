@@ -321,6 +321,9 @@ public class LanguageModel
     public string? PlayPause { get; set; }
     public string? Portrait { get; set; }
     public string? PortraitSoft { get; set; }
+    public string? Portable { get; set; }
+    public string? PortableNotWritable { get; set; }
+    public string? Roaming { get; set; }
     public string? Posterize { get; set; }
     public string? PresetDescription { get; set; }
     public string? Presets { get; set; }

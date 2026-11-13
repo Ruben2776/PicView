@@ -14,11 +14,13 @@ using PicView.Avalonia.Navigation;
 using PicView.Avalonia.Printing;
 using PicView.Avalonia.Wallpaper;
 using PicView.Avalonia.WindowBehavior;
+using PicView.Core.Config;
 using PicView.Core.DebugTools;
 using PicView.Core.Favorites;
 using PicView.Core.FileHistory;
 using PicView.Core.FileSorting;
 using PicView.Core.IPlatform;
+using PicView.Core.Localization;
 using PicView.Core.Keybindings;
 using PicView.Core.Navigation;
 using PicView.Avalonia.StartUp;
@@ -239,6 +241,9 @@ public class FunctionsMapper : IActionRunner
             Actions.Minimize => Minimize,
             Actions.OpenCloseDockedGallery => OpenCloseDockedGallery,
             Actions.ResetSettings => ResetSettings,
+            Actions.SetConfigLocationAuto => () => SetConfigLocation(ConfigLocation.Auto),
+            Actions.SetConfigLocationPortable => () => SetConfigLocation(ConfigLocation.Portable),
+            Actions.SetConfigLocationRoaming => () => SetConfigLocation(ConfigLocation.Roaming),
             Actions.ToggleBottomToolbar => ToggleBottomToolbar,
             Actions.ToggleConstrainBackgroundColor => ToggleConstrainBackgroundColor,
             Actions.ToggleFileHistory => ToggleFileHistory,
@@ -861,6 +866,28 @@ public class FunctionsMapper : IActionRunner
         if (_mainWindow.Lifecycle is { } lifecycle)
         {
             await SettingsUpdater.ResetSettings(lifecycle).ConfigureAwait(false);
+        }
+    }
+
+    /// <inheritdoc cref="SettingsManager.SetConfigLocationAsync" />
+    private async ValueTask SetConfigLocation(ConfigLocation mode)
+    {
+        var result = await SettingsManager.SetConfigLocationAsync(mode).ConfigureAwait(false);
+
+        // Always resync, so a radio the user clicked snaps back to the mode in use
+        await Dispatcher.UIThread.InvokeAsync(() => _vm.GlobalSettings.SyncConfigLocation(Settings.StartUp.ConfigLocation));
+
+        var message = result switch
+        {
+            ConfigLocationChange.PortableNotWritable => TranslationManager.Translation.PortableNotWritable,
+            ConfigLocationChange.SaveFailed or ConfigLocationChange.MoveIncomplete => TranslationManager.Translation.UnexpectedError,
+            _ => null
+        };
+        if (message is not null)
+        {
+            // Not awaited: the tooltip stays up for seconds and must not keep the action command busy
+            Dispatcher.UIThread.Post(() =>
+                _ = TooltipHelper.ShowTooltipMessageAsync(message, true, _mainWindow, TimeSpan.FromSeconds(4)));
         }
     }
 

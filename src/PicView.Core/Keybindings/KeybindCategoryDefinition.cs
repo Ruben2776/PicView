@@ -33,6 +33,7 @@ public static class KeybindCategoryDefinition
         Actions.SetAsWallpaperTiled, Actions.ShowFavoritesFile, Actions.ShowKeybindingsFile, Actions.ShowRecentHistoryFile,
         Actions.ShowSettingsFile, Actions.SortFilesByLastWriteTime,
         Actions.CloseWindow, Actions.Minimize, Actions.OpenCloseDockedGallery, Actions.ResetSettings,
+        Actions.SetConfigLocationAuto, Actions.SetConfigLocationPortable, Actions.SetConfigLocationRoaming,
         Actions.ToggleBottomToolbar, Actions.ToggleConstrainBackgroundColor,
         Actions.ToggleFileHistory, Actions.ToggleHoverBar, Actions.ToggleOpeningInSameWindow,
         Actions.ToggleShowFullPathInTitleBar, Actions.ToggleSubdirectories, Actions.ToggleTaskbarProgress,

@@ -89,6 +89,30 @@ public class GlobalSettingsViewModel
 
     public BindableReactiveProperty<int> GalleryMouseWheelBehavior { get; } = new((int)Settings.Gallery.GalleryMouseWheelBehavior);
 
+    // Set by hand, not through a converter (macOS NativeMenu cannot bind a converted radio state)
+    public BindableReactiveProperty<bool> IsConfigAuto { get; } = new(false);
+
+    public BindableReactiveProperty<bool> IsConfigPortable { get; } = new(false);
+
+    public BindableReactiveProperty<bool> IsConfigRoaming { get; } = new(false);
+
+    /// <summary>macOS always uses the roaming folder, so the mode items are hidden there.</summary>
+    public bool CanChooseConfigLocation { get; } = !OperatingSystem.IsMacOS();
+
+    /// <summary>
+    /// Checks exactly one of the three mode flags, and re-announces all three, so a radio the user clicked
+    /// snaps back even when the stored mode did not change.
+    /// </summary>
+    public void SyncConfigLocation(ConfigLocation mode)
+    {
+        IsConfigAuto.Value = mode == ConfigLocation.Auto;
+        IsConfigPortable.Value = mode == ConfigLocation.Portable;
+        IsConfigRoaming.Value = mode == ConfigLocation.Roaming;
+        IsConfigAuto.ForceNotify();
+        IsConfigPortable.ForceNotify();
+        IsConfigRoaming.ForceNotify();
+    }
+
     /// <summary>The save loop in flight, completed when idle. For tests.</summary>
     internal Task Saving => _saving;
 
@@ -114,6 +138,8 @@ public class GlobalSettingsViewModel
         ShowFadeButtons = new(Settings.UIProperties.ShowAltInterfaceButtons);
         // Built before the first window rewrites a negative stored margin, so it gives the same margin that window does
         WindowMargin = new(Settings.WindowProperties.Margin < 0 ? NegativeMarginReplacement : Settings.WindowProperties.Margin);
+
+        SyncConfigLocation(Settings.StartUp.ConfigLocation);
 
         Follow(IsLooping, value => Settings.UIProperties.Looping = value, rephrases: true);
         Follow(IsSideBySide, value => Settings.ImageScaling.ShowImageSideBySide = value);
