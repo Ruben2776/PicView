@@ -1,3 +1,4 @@
+using PicView.Core.Thumbnailing;
 using PicView.Core.IPlatform;
 using PicView.Core.Navigation.Interfaces;
 using PicView.Core.ViewModels;
@@ -10,8 +11,7 @@ namespace PicView.Core.Navigation;
 /// </summary>
 public sealed record TabServices(
     SharedImageCache Cache,
-    IThumbnailCache ThumbnailCache,
-    IThumbnailLoader ThumbnailLoader,
+    Thumbnails Thumbnails,
     IFileWatcherService Watcher,
     IImageModelLoader ImageLoader,
     IPlatformSpecificService Platform,

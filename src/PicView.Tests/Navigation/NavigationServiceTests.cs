@@ -13,7 +13,6 @@ namespace PicView.Tests.Navigation;
 public class NavigationServiceTests : IDisposable
 {
     private readonly SharedImageCache _cache;
-    private readonly MockThumbnailLoader _mockThumbnailLoader;
     private readonly NavigationService _navigationService;
     private readonly string _testDirectory;
 
@@ -26,7 +25,6 @@ public class NavigationServiceTests : IDisposable
         Directory.CreateDirectory(_testDirectory);
 
         _cache = new SharedImageCache(file => ValueTask.FromResult(new ImageModel { FileInfo = file }));
-        _mockThumbnailLoader = new MockThumbnailLoader();
 
         _navigationService = new NavigationService(string.CompareOrdinal);
     }
@@ -80,31 +78,14 @@ public class NavigationServiceTests : IDisposable
     private TabViewModel CreateTab()
     {
         var dummyParent = new MainWindowViewModel(null!, null!, null!, null!);
-        var tab = new TabViewModel(dummyParent, TestTabServices.For(_cache, new MockThumbnailCache(), _mockThumbnailLoader));
+        var tab = new TabViewModel(dummyParent, TestTabServices.For(_cache, null));
         // Initialize with mocks to avoid null refs
         tab.Initialize();
         tab.ImageIterator.Initialize([]);
         return tab;
     }
 
-    private class MockThumbnailLoader : IThumbnailLoader
-    {
-        public ValueTask<object?> GetThumbnailAsync(FileInfo file, uint size, CoreViewModel? core = null, MagickImage? magick = null) =>
-            ValueTask.FromResult<object?>(null);
 
-        public object? GetExifThumbnail(FileInfo file) => null;
-        public object? GetThumbQuick(FileInfo file, CoreViewModel? core = null) => null;
-    }
-
-    private class MockThumbnailCache : IThumbnailCache
-    {
-        public void Add(uint ownerId, string path, object thumbnail) { }
-        public bool TryGet(string path, out object? thumbnail) { thumbnail = null; return false; }
-        public void Remove(string path) { }
-        public void RemoveOwner(uint ownerId) { }
-        public void Clear() { }
-        public bool IsEmpty => true;
-    }
 
     private class MockFrameProvider : FrameProvider
     {

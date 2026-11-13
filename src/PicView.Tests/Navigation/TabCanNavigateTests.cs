@@ -23,8 +23,7 @@ public class TabCanNavigateTests
         ObservableSystem.DefaultFrameProvider = new MockFrameProvider();
         SetDefaults();
         _tab = new TabViewModel(null!,
-            TestTabServices.For(new SharedImageCache(f => ValueTask.FromResult(Model(f.Name))!), new ThumbnailCache(),
-                new MockThumbnailLoader()));
+            TestTabServices.For(new SharedImageCache(f => ValueTask.FromResult(Model(f.Name))!)));
     }
 
     private static ImageModel Model(string name) => new()
@@ -243,16 +242,6 @@ public class TabCanNavigateTests
         Assert.Equal(typeof(IReadOnlyBindableReactiveProperty<bool>), backwards);
     }
 
-    private sealed class MockThumbnailLoader : IThumbnailLoader
-    {
-        public ValueTask<object?> GetThumbnailAsync(FileInfo file, CoreViewModel core) => ValueTask.FromResult<object?>(null);
-
-        public ValueTask<object?> GetThumbnailAsync(FileInfo file, uint size, CoreViewModel? core = null,
-            MagickImage? magick = null) => ValueTask.FromResult<object?>(null);
-
-        public object? GetExifThumbnail(FileInfo file) => null;
-        public object? GetThumbQuick(FileInfo file, CoreViewModel? core = null) => null;
-    }
 
     private sealed class MockFrameProvider : FrameProvider
     {

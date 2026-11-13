@@ -1,5 +1,5 @@
 using PicView.Core.FileHistory;
-using PicView.Core.Thumbnails;
+using PicView.Core.Thumbnailing;
 using R3;
 
 namespace PicView.Core.ViewModels;
@@ -18,7 +18,26 @@ public class FileHistoryEntryViewModel : IDisposable
     public ReactiveCommand<Unit> UnpinCommand { get; } = new();
     public ReactiveCommand<Unit> RemoveCommand { get; } = new();
     
-    public Task<object?> GetThumbnail => ThumbnailHelper.GetThumbnailAsync(FilePath.CurrentValue, _vm);  
+    /// <summary>The height of the thumbnail an entry shows.</summary>
+    private const uint ThumbnailHeight = 150;
+
+    private Task<object?>? _thumbnail;
+
+    /// <summary>
+    /// The entry's thumbnail, started the first time it is read and kept for the app, since the entry belongs to no tab.
+    /// </summary>
+    public Task<object?> GetThumbnail => _thumbnail ??= LoadThumbnailAsync();
+
+    private async Task<object?> LoadThumbnailAsync()
+    {
+        var file = new FileInfo(FilePath.CurrentValue);
+        if (_vm.WindowTabs.SharedThumbnails is not { } thumbnails || !file.Exists)
+        {
+            return null;
+        }
+
+        return await thumbnails.GetAsync(file, ThumbnailHeight, Thumbnails.AppOwner).ConfigureAwait(false);
+    }
     
     public void Initialize(string path, string fileName, bool isPinned, bool isCurrentItem, int index, MainWindowViewModel vm)
     {

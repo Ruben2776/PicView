@@ -44,7 +44,7 @@ public class ResizeImageViewModelTests
         // A converted file shows through the tab's Load, which needs the services
         var core = new CoreViewModel(null, file => ValueTask.FromResult(new ImageModel { FileInfo = file }));
         core.InitializeNavigation(
-            TestTabServices.For(core.SharedCache, core.SharedThumbnailCache, new TestTabServices.NoThumbnailLoader()),
+            TestTabServices.For(core.SharedCache, null),
             new NavigationService(string.CompareOrdinal));
         var mainVm = new MainWindowViewModel(core, translations, globalSettings, gallerySettings);
 

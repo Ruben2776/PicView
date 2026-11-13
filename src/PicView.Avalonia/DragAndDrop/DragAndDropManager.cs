@@ -266,9 +266,11 @@ public static class DragAndDropManager
         }
         else
         {
-            // Generate thumbnail
-            thumb = await GetThumbnails.GetThumbAsync(fileInfo, SizeDefaults.WindowMinSize - 30, core)
-                .ConfigureAwait(false);
+            // A thumbnail first, kept by no one since the drag is brief
+            thumb = core.SharedThumbnails is { } thumbnails
+                ? await thumbnails.GetAsync(fileInfo, (uint)(SizeDefaults.WindowMinSize - 30), owner: null)
+                    .ConfigureAwait(false) as Bitmap
+                : null;
             await Dispatcher.UIThread.InvokeAsync(() => _dragDropView?.UpdateThumbnail(thumb, mainWindow));
             
             // Load full image in background

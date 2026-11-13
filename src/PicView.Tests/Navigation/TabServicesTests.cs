@@ -94,7 +94,7 @@ public class TabServicesTests
         Assert.Same(first, core.Services);
         Assert.Same(firstNavigation, core.SharedNavigationService);
         Assert.Same(first.Watcher, core.SharedFileWatcher);
-        Assert.Same(first.ThumbnailLoader, core.SharedThumbnailLoader);
+        Assert.Same(first.Thumbnails, core.SharedThumbnails);
     }
 
     [Fact]
@@ -105,7 +105,7 @@ public class TabServicesTests
         Assert.Null(core.Services);
         Assert.Null(core.SharedNavigationService);
         Assert.Null(core.SharedFileWatcher);
-        Assert.Null(core.SharedThumbnailLoader);
+        Assert.Null(core.SharedThumbnails);
     }
 
     private static CoreViewModel CreateCore() =>
@@ -113,7 +113,7 @@ public class TabServicesTests
             new GlobalSettingsViewModel(static () => ValueTask.FromResult(true)));
 
     private static TabServices ServicesFor(CoreViewModel core) =>
-        new(core.SharedCache, core.SharedThumbnailCache, new MockThumbnailLoader(), new MockFileWatcherService(),
+        new(core.SharedCache, TestTabServices.NoThumbnails(core.SharedCache), new MockFileWatcherService(),
             new MockImageModelLoader(), core.PlatformService!, core.GlobalSettings);
 
     private static NavigationService NavigationFor(CoreViewModel core, TabServices services) =>
@@ -144,14 +144,6 @@ public class TabServicesTests
         }
     }
 
-    private sealed class MockThumbnailLoader : IThumbnailLoader
-    {
-        public ValueTask<object?> GetThumbnailAsync(FileInfo file, uint size, CoreViewModel? core = null, MagickImage? magick = null) =>
-            ValueTask.FromResult<object?>(null);
-
-        public object? GetExifThumbnail(FileInfo file) => null;
-        public object? GetThumbQuick(FileInfo file, CoreViewModel? core = null) => null;
-    }
 
     private sealed class MockPlatformSpecificService : IPlatformSpecificService
     {

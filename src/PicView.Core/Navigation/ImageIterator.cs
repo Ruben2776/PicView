@@ -1,3 +1,4 @@
+using PicView.Core.Thumbnailing;
 using PicView.Core.ArchiveHandling;
 using PicView.Core.FileSorting;
 using PicView.Core.Models;
@@ -8,15 +9,14 @@ namespace PicView.Core.Navigation;
 
 /// <param name="filesChanged">Hears every change to the file list, in order, while the list is locked. The gallery
 /// follows the list through it (ADR-0010), so it must not call back into the iterator.</param>
-public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, IThumbnailLoader thumbnailLoader, TabViewModel tab,
+public class ImageIterator(SharedImageCache cache, Thumbnails thumbnails, TabViewModel tab,
     Action<FileListChange>? filesChanged = null) : IImageIterator
 {
     public SharedImageCache Cache { get; } = cache ?? throw new ArgumentNullException(nameof(cache));
     public string? CurrentDirectory => Files.Count > 0 ? Files[0].DirectoryName : null;
 
-    private readonly IThumbnailCache _thumbCache = thumbCache ?? throw new ArgumentNullException(nameof(thumbCache));
+    private readonly Thumbnails _thumbnails = thumbnails ?? throw new ArgumentNullException(nameof(thumbnails));
     private readonly TabViewModel _tab = tab ?? throw new ArgumentNullException(nameof(tab));
-    private readonly IThumbnailLoader _thumbnailLoader = thumbnailLoader ?? throw new ArgumentNullException(nameof(thumbnailLoader));
     private DateTime _lastRepeatTime = DateTime.MinValue;
 
     private readonly Lock _filesLock = new();
@@ -375,7 +375,8 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
             {
                 await Task.Run(async () =>
                 {
-                    var thumb = GetThumbnail(targetFile);
+                    var thumb = await _thumbnails.GetQuickAsync(targetFile, Thumbnails.GalleryHeight)
+                        .ConfigureAwait(false);
                     if (IsTargetActive(targetFile))
                     {
                         _tab.ShowStandIn(thumb);
@@ -778,11 +779,6 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
         }
         Cache.Preload(_tab.Id, Files[CurrentIndex], IsReversed, _tab.GetTabCancellation().Token);
     }
-
-    private object? GetThumbnail(FileInfo file) =>
-        !_thumbCache.IsEmpty && _thumbCache.TryGet(file.FullName, out var cachedThumb)
-            ? cachedThumb
-            : _thumbnailLoader.GetThumbQuick(file, _tab.ParentWindowContext?.Core);
 
     #endregion
 

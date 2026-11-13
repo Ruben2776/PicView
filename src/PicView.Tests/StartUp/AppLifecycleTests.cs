@@ -1343,7 +1343,7 @@ public class AppLifecycleTests : IAsyncDisposable
         var watcher = new RecordingWatcher();
         // Composed before App Start, which keeps them, so the test sees what the startup open watches
         _core.InitializeNavigation(
-            TestTabServices.For(_core.SharedCache, _core.SharedThumbnailCache, new TestTabServices.NoThumbnailLoader(),
+            TestTabServices.For(_core.SharedCache, null,
                 watcher, platform: new NoPlatform()),
             new NavigationService(string.CompareOrdinal));
         var app = CreateApp();

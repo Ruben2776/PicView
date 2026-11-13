@@ -9,6 +9,7 @@ using PicView.Core.Navigation;
 using PicView.Core.Navigation.Interfaces;
 using PicView.Core.ViewModels;
 using R3;
+using PicView.Core.Thumbnailing;
 
 namespace PicView.Benchmarks.Gallery;
 
@@ -74,7 +75,7 @@ public class GalleryLoadBenchmarks
     public void CreateTab()
     {
         _tab?.Dispose();
-        _tab = new TabViewModel(null!, new TabServices(Cache, new NoThumbnailCache(), new NoThumbnailLoader(),
+        _tab = new TabViewModel(null!, new TabServices(Cache, new Thumbnails(new NoThumbnailDecoder(), Cache),
             new NoFileWatcher(), new NoImageModelLoader(), new OrdinalPlatform(),
             new GlobalSettingsViewModel(static () => ValueTask.FromResult(true))))
         {
@@ -130,21 +131,11 @@ public class GalleryLoadBenchmarks
         public override void Register(IFrameRunnerWorkItem callback) => callback.MoveNext(0);
     }
 
-    private sealed class NoThumbnailCache : IThumbnailCache
+    private sealed class NoThumbnailDecoder : IThumbnailDecoder
     {
-        public void Add(uint ownerId, string path, object thumbnail) { }
-        public bool TryGet(string path, out object? thumbnail) { thumbnail = null; return false; }
-        public void Remove(string path) { }
-        public void RemoveOwner(uint ownerId) { }
-        public bool IsEmpty => true;
-    }
-
-    private sealed class NoThumbnailLoader : IThumbnailLoader
-    {
-        public ValueTask<object?> GetThumbnailAsync(FileInfo file, uint size, CoreViewModel? core = null,
-            MagickImage? magick = null) => ValueTask.FromResult<object?>(null);
-        public object? GetExifThumbnail(FileInfo file) => null;
-        public object? GetThumbQuick(FileInfo file, CoreViewModel? core = null) => null;
+        public object? GetReadyMade(FileInfo file, uint height) => null;
+        public object? Decode(FileInfo file, uint height) => null;
+        public object? ScaleDown(object image, uint height) => null;
     }
 
     private sealed class NoFileWatcher : IFileWatcherService

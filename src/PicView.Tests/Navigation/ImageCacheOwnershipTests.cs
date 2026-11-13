@@ -30,7 +30,7 @@ public class ImageCacheOwnershipTests
 
         var core = new CoreViewModel(null, LoadProbe);
         core.InitializeNavigation(
-            TestTabServices.For(core.SharedCache, core.SharedThumbnailCache, new MockThumbnailLoader()),
+            TestTabServices.For(core.SharedCache, null),
             navigation: null!);
         _cache = core.SharedCache;
         _tabs = new MainWindowViewModel(core, core.Translation, core.GlobalSettings!, core.GallerySettings)
@@ -87,12 +87,6 @@ public class ImageCacheOwnershipTests
         public void Dispose() => IsDisposed = true;
     }
 
-    private sealed class MockThumbnailLoader : IThumbnailLoader
-    {
-        public ValueTask<object?> GetThumbnailAsync(FileInfo file, uint size, CoreViewModel? core = null, MagickImage? magick = null) => ValueTask.FromResult<object?>(null);
-        public object? GetExifThumbnail(FileInfo file) => null;
-        public object? GetThumbQuick(FileInfo file, CoreViewModel? core = null) => null;
-    }
 
     private sealed class MockFrameProvider : FrameProvider
     {

@@ -1,9 +1,10 @@
-using ImageMagick;
 using PicView.Core.FileSorting;
 using PicView.Core.IPlatform;
 using PicView.Core.Models;
 using PicView.Core.Navigation;
 using PicView.Core.Navigation.Interfaces;
+using PicView.Core.Thumbnailing;
+using PicView.Tests.Thumbnailing;
 using PicView.Core.ViewModels;
 
 namespace PicView.Tests.Navigation;
@@ -14,24 +15,18 @@ namespace PicView.Tests.Navigation;
 /// </summary>
 public static class TestTabServices
 {
-    public static TabServices For(SharedImageCache cache, IThumbnailCache thumbnails, IThumbnailLoader thumbnailLoader,
+    public static TabServices For(SharedImageCache cache, Thumbnails? thumbnails = null,
         IFileWatcherService? watcher = null, IImageModelLoader? imageLoader = null,
         IPlatformSpecificService? platform = null, GlobalSettingsViewModel? globalSettings = null) =>
-        new(cache, thumbnails, thumbnailLoader, watcher ?? new NoFileWatcher(), imageLoader ?? new NoImageModelLoader(),
-            platform ?? new OrdinalPlatform(),
+        new(cache, thumbnails ?? NoThumbnails(cache), watcher ?? new NoFileWatcher(),
+            imageLoader ?? new NoImageModelLoader(), platform ?? new OrdinalPlatform(),
             globalSettings ?? new GlobalSettingsViewModel(static () => ValueTask.FromResult(true)));
 
     /// <summary>
-    /// Gives no thumbnails, for a suite whose tabs need a thumbnail loader but show no gallery.
+    /// Thumbnails that are never given, for a suite whose tabs need them but show no gallery.
     /// </summary>
-    public sealed class NoThumbnailLoader : IThumbnailLoader
-    {
-        public ValueTask<object?> GetThumbnailAsync(FileInfo file, uint size, CoreViewModel? core = null,
-            MagickImage? magick = null) => ValueTask.FromResult<object?>(null);
-
-        public object? GetExifThumbnail(FileInfo file) => null;
-        public object? GetThumbQuick(FileInfo file, CoreViewModel? core = null) => null;
-    }
+    public static Thumbnails NoThumbnails(SharedImageCache cache) =>
+        new(new FakeThumbnailDecoder { HasReadyMade = false, CanDecode = false, CanScaleDown = false }, cache);
 
     // Watches nothing
     private sealed class NoFileWatcher : IFileWatcherService

@@ -44,8 +44,7 @@ internal static class TabViewsHarness
     {
         var core = new CoreViewModel(null, _ => ValueTask.FromResult(new ImageModel()));
         core.InitializeNavigation(
-            TestTabServices.For(new SharedImageCache(static f => ValueTask.FromResult(new ImageModel { FileInfo = f })),
-                new MockThumbnailCache(), new MockThumbnailLoader()),
+            TestTabServices.For(new SharedImageCache(static f => ValueTask.FromResult(new ImageModel { FileInfo = f })), null),
             new NavigationService(string.CompareOrdinal));
         var window = new TestMainWindow(new NoOpModeAdapter());
         var vm = new MainWindowViewModel(core, core.Translation, core.GlobalSettings!, core.GallerySettings);
@@ -78,29 +77,7 @@ internal static class TabViewsHarness
         ImageType = ImageType.Bitmap
     };
 
-    private sealed class MockThumbnailLoader : IThumbnailLoader
-    {
-        public ValueTask<object?> GetThumbnailAsync(FileInfo file, uint size, CoreViewModel? core = null,
-            MagickImage? magick = null) => ValueTask.FromResult<object?>(null);
 
-        public object? GetExifThumbnail(FileInfo file) => null;
-        public object? GetThumbQuick(FileInfo file, CoreViewModel? core = null) => null;
-    }
-
-    private sealed class MockThumbnailCache : IThumbnailCache
-    {
-        public void Add(uint ownerId, string path, object thumbnail) { }
-
-        public bool TryGet(string path, out object? thumbnail)
-        {
-            thumbnail = null;
-            return false;
-        }
-
-        public void Remove(string path) { }
-        public void RemoveOwner(uint ownerId) { }
-        public bool IsEmpty => true;
-    }
 
     private sealed class NoOpModeAdapter : IWindowModeAdapter
     {

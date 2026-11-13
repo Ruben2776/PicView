@@ -1,3 +1,5 @@
+using PicView.Avalonia.ImageHandling;
+using PicView.Core.Thumbnailing;
 using System.Diagnostics;
 using System.Runtime;
 using Avalonia;
@@ -344,16 +346,16 @@ public sealed class AppLifecycle
         }
 
         var imageLoader = new AvaloniaImageModelLoader(_core);
-        var thumbnailLoader = new AvaloniaThumbnailLoader();
+        var thumbnails = new Thumbnails(new AvaloniaThumbnailDecoder(platform), _core.SharedCache);
         // A rename the watcher reports reaches the history of every tab of every window before any tab follows it
-        var fileWatcher = new FileWatcherService(platform.CompareStrings, _core.SharedCache, _core.SharedThumbnailCache,
+        var fileWatcher = new FileWatcherService(platform.CompareStrings, _core.SharedCache, thumbnails,
             fileRenamed: (oldPath, newPath) => FileRenames.Follow(_core, oldPath, newPath),
             folderRenamed: (oldFolder, newFolder) => FileRenames.FollowFolder(_core, oldFolder, newFolder));
         // Every tab's watch follows the setting
         _ = _core.GlobalSettings.IsIncludingSubdirectories.Skip(1).Subscribe(_ => fileWatcher.RestartWatches());
         var navigation = new NavigationService(platform.CompareStrings);
         _core.InitializeNavigation(
-            new TabServices(_core.SharedCache, _core.SharedThumbnailCache, thumbnailLoader, fileWatcher, imageLoader,
+            new TabServices(_core.SharedCache, thumbnails, fileWatcher, imageLoader,
                 platform, _core.GlobalSettings),
             navigation);
     }

@@ -83,7 +83,7 @@ public class GetImageTests : IDisposable
 
         using var stream = File.OpenRead(path);
         using var expected = Bitmap.DecodeToHeight(stream, (int)height);
-        using var actual = await GetThumbnails.GetThumbAsync(new FileInfo(path), height);
+        using var actual = GetThumbnails.Decode(new FileInfo(path), height);
 
         Assert.NotNull(actual);
         Assert.Equal(expected.PixelSize, actual.PixelSize);
@@ -104,7 +104,7 @@ public class GetImageTests : IDisposable
         magickImage.AutoOrient();
         magickImage.Thumbnail(new MagickGeometry(0, 100));
         using var expected = magickImage.ToWriteableBitmap();
-        using var actual = await GetThumbnails.GetThumbAsync(new FileInfo(path), 100);
+        using var actual = GetThumbnails.Decode(new FileInfo(path), 100);
 
         Assert.NotNull(actual);
         Assert.Equal(PixelFormat.Bgra8888, actual.Format);
@@ -125,7 +125,7 @@ public class GetImageTests : IDisposable
             image.Write(path, format);
         }
 
-        using var actual = await GetThumbnails.GetThumbAsync(new FileInfo(path), 100);
+        using var actual = GetThumbnails.Decode(new FileInfo(path), 100);
 
         Assert.NotNull(actual);
         Assert.Equal(new PixelSize(133, 100), actual.PixelSize);
@@ -150,7 +150,7 @@ public class GetImageTests : IDisposable
             File.WriteAllText(path, svg);
         }
 
-        using var actual = await GetThumbnails.GetThumbAsync(new FileInfo(path), 100);
+        using var actual = GetThumbnails.Decode(new FileInfo(path), 100);
 
         Assert.NotNull(actual);
         Assert.Equal(new PixelSize(200, 100), actual.PixelSize);
@@ -165,7 +165,7 @@ public class GetImageTests : IDisposable
         var path = CreateIcon((256, MagickColors.White), (128, MagickColors.Black), (48, MagickColors.Red));
 
         using var viewed = GetImage.GetSkBitmap(new FileInfo(path));
-        using var actual = await GetThumbnails.GetThumbAsync(new FileInfo(path), height);
+        using var actual = GetThumbnails.Decode(new FileInfo(path), height);
 
         Assert.NotNull(viewed);
         Assert.Equal(new PixelSize(256, 256), viewed.PixelSize);

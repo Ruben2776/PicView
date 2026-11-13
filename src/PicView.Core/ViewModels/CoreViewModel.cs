@@ -1,3 +1,4 @@
+using PicView.Core.Thumbnailing;
 using PicView.Core.IPlatform;
 using PicView.Core.Models;
 using PicView.Core.Navigation;
@@ -13,7 +14,6 @@ public class CoreViewModel(
     // Shared Services
     public IPlatformSpecificService? PlatformService { get; } = platformSpecificService;
     public SharedImageCache SharedCache { get; } = new(imageLoader);
-    public ThumbnailCache SharedThumbnailCache { get; } = new();
 
     /// <summary>
     /// The services every tab of every Main Window is created with, set once. Null until
@@ -21,7 +21,7 @@ public class CoreViewModel(
     /// </summary>
     public TabServices? Services { get; private set; }
     public INavigationService? SharedNavigationService { get; private set; }
-    public IThumbnailLoader? SharedThumbnailLoader => Services?.ThumbnailLoader;
+    public Thumbnails? SharedThumbnails => Services?.Thumbnails;
     public IFileWatcherService? SharedFileWatcher => Services?.Watcher;
 
     /// <summary>

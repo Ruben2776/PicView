@@ -4,6 +4,7 @@ using PicView.Core.ImageDecoding;
 using PicView.Core.Localization;
 using PicView.Core.Models;
 using PicView.Core.Navigation;
+using PicView.Core.Thumbnailing;
 using PicView.Core.Navigation.Interfaces;
 using PicView.Core.Navigation.Tiff;
 using PicView.Core.ViewModels;
@@ -21,7 +22,8 @@ public class FileWatcherServiceTests : IDisposable
     private readonly FileWatcherService _service;
     private readonly FakeFolderEvents _folderEvents = new();
     private readonly SharedImageCache _cache;
-    private readonly MockThumbnailCache _mockThumbnailCache;
+    // Gives no thumbnails of its own, so a thumbnail it returns is one that is kept
+    private readonly Thumbnails _thumbnails;
     private readonly string _testDirectory;
 
     // A test sets these to see the renames the watcher hands on before any tab follows them
@@ -40,9 +42,9 @@ public class FileWatcherServiceTests : IDisposable
         Directory.CreateDirectory(_testDirectory);
 
         _cache = new SharedImageCache(static f => ValueTask.FromResult(new ImageModel { FileInfo = f }));
-        _mockThumbnailCache = new MockThumbnailCache();
+        _thumbnails = TestTabServices.NoThumbnails(_cache);
         // Use default ordinal comparison for tests
-        _service = new FileWatcherService((s1, s2) => string.CompareOrdinal(s1, s2), _cache, _mockThumbnailCache,
+        _service = new FileWatcherService((s1, s2) => string.CompareOrdinal(s1, s2), _cache, _thumbnails,
             _folderEvents,
             fileRenamed: (oldPath, newPath) => _fileRenamed?.Invoke(oldPath, newPath),
             folderRenamed: (oldFolder, newFolder) => _folderRenamed?.Invoke(oldFolder, newFolder));
@@ -179,12 +181,13 @@ public class FileWatcherServiceTests : IDisposable
         var file = new FileInfo(filePath);
         var tab = CreateTab(_testDirectory, [file], file);
         _cache.Put(tab.Id, file, new ImageModel { FileInfo = file });
+        _thumbnails.Keep(tab.Id, filePath, new object(), 100);
 
         // Act
         Watch(tab).RaiseChanged("change.jpg");
 
         // Assert
-        await WaitUntilAsync(() => _mockThumbnailCache.RemovedPaths.Contains(filePath));
+        await WaitUntilAsync(() => !IsKept(filePath));
         Assert.Single(tab.ImageIterator.Files);
         Assert.False(_cache.TryGetReady(file, out _), "The stale image should no longer be served");
     }
@@ -247,6 +250,7 @@ public class FileWatcherServiceTests : IDisposable
         var files = Files("test1.jpg", "test2.jpg", "test3.jpg");
         var tab = CreateTab(_testDirectory, files, files[0]);
         _cache.Put(tab.Id, files[0], new ImageModel { FileInfo = files[0] });
+        _thumbnails.Keep(tab.Id, files[0].FullName, new object(), 100);
 
         // Act
         Watch(tab).RaiseDeleted("test1.jpg");
@@ -255,7 +259,7 @@ public class FileWatcherServiceTests : IDisposable
         await WaitUntilAsync(() => tab.ImageIterator.Files.Count == 2);
         Assert.DoesNotContain(tab.ImageIterator.Files, f => f.FullName == files[0].FullName);
         Assert.False(_cache.TryGetReady(files[0], out _), "The stale image should no longer be served");
-        Assert.Contains(files[0].FullName, _mockThumbnailCache.RemovedPaths);
+        Assert.False(IsKept(files[0].FullName), "The stale thumbnail should no longer be served");
     }
 
     [Fact]
@@ -304,6 +308,7 @@ public class FileWatcherServiceTests : IDisposable
         var newPath = Path.Combine(_testDirectory, "new.jpg");
         var tab = CreateTab(_testDirectory, files, files[0]);
         _cache.Put(tab.Id, files[0], new ImageModel { FileInfo = files[0] });
+        _thumbnails.Keep(tab.Id, files[0].FullName, new object(), 100);
 
         // Act
         Watch(tab).RaiseRenamed("old.jpg", "new.jpg");
@@ -312,7 +317,7 @@ public class FileWatcherServiceTests : IDisposable
         await WaitUntilAsync(() => tab.Model.FileInfo?.FullName == newPath);
         Assert.Equal(newPath, Assert.Single(tab.ImageIterator.Files).FullName);
         Assert.False(_cache.TryGetReady(files[0], out _), "The stale image should no longer be served");
-        Assert.Contains(files[0].FullName, _mockThumbnailCache.RemovedPaths);
+        Assert.False(IsKept(files[0].FullName), "The stale thumbnail should no longer be served");
     }
 
     [Fact]
@@ -517,7 +522,7 @@ public class FileWatcherServiceTests : IDisposable
     {
         // Arrange: the watcher PicView uses, on a real folder
         using var service = new FileWatcherService((s1, s2) => string.CompareOrdinal(s1, s2), _cache,
-            _mockThumbnailCache);
+            _thumbnails);
         var existingFile = new FileInfo(Path.Combine(_testDirectory, "existing.jpg"));
         var tab = new TabViewModel(null!, ServicesWith(_cache, service));
         tab.Model = new ImageModel { FileInfo = existingFile };
@@ -606,7 +611,7 @@ public class FileWatcherServiceTests : IDisposable
         Directory.CreateDirectory(subfolder);
         var files = await FilesOnDiskAsync("a.jpg", Path.Combine("sub", "b.jpg"));
         using var service = new FileWatcherService((s1, s2) => string.CompareOrdinal(s1, s2), _cache,
-            _mockThumbnailCache);
+            _thumbnails);
         var tab = new TabViewModel(null!, ServicesWith(_cache, service));
         tab.Model = new ImageModel { FileInfo = files[0] };
         tab.Initialize();
@@ -766,7 +771,7 @@ public class FileWatcherServiceTests : IDisposable
         var file = new FileInfo(Path.Combine(folder, "a.jpg"));
         await File.WriteAllTextAsync(file.FullName, "dummy content", TestContext.Current.CancellationToken);
         using var service = new FileWatcherService((s1, s2) => string.CompareOrdinal(s1, s2), _cache,
-            _mockThumbnailCache);
+            _thumbnails);
         var tab = new TabViewModel(null!, ServicesWith(_cache, service));
         tab.Model = new ImageModel { FileInfo = file };
         tab.Initialize();
@@ -815,7 +820,7 @@ public class FileWatcherServiceTests : IDisposable
         var file = new FileInfo(Path.Combine(folder, "a.jpg"));
         await File.WriteAllTextAsync(file.FullName, "dummy content", TestContext.Current.CancellationToken);
         using var service = new FileWatcherService((s1, s2) => string.CompareOrdinal(s1, s2), _cache,
-            _mockThumbnailCache);
+            _thumbnails);
         var actionRunner = new Input.RecordingActionRunner();
         var tab = new TabViewModel(WindowWith(actionRunner), ServicesWith(_cache, service));
         tab.Model = new ImageModel { FileInfo = file };
@@ -841,7 +846,7 @@ public class FileWatcherServiceTests : IDisposable
                 ? new ImageModel { FileInfo = f, Image = new object() }
                 : new ImageModel { FileInfo = f, ImageType = ImageType.Invalid }));
         using var service = new FileWatcherService((s1, s2) => string.CompareOrdinal(s1, s2), cache,
-            _mockThumbnailCache);
+            _thumbnails);
         var actionRunner = new Input.RecordingActionRunner();
         var files = await FilesOnDiskAsync(Enumerable.Range(1, 30).Select(i => $"{i:D2}.jpg").ToArray());
         var tab = new TabViewModel(WindowWith(actionRunner), ServicesWith(cache, service));
@@ -861,9 +866,13 @@ public class FileWatcherServiceTests : IDisposable
         Assert.Null(tab.ImageIterator);
     }
 
+    // Whether a thumbnail of the path is kept: the suite's thumbnails give none of their own
+    private bool IsKept(string path) =>
+        _thumbnails.GetQuickAsync(new FileInfo(path), 100).AsTask().GetAwaiter().GetResult() is not null;
+
     // A tab's services with the suite's fakes and the given cache and watcher
     private TabServices ServicesWith(SharedImageCache cache, IFileWatcherService watcher) =>
-        TestTabServices.For(cache, _mockThumbnailCache, new MockThumbnailLoader(), watcher);
+        TestTabServices.For(cache, null, watcher);
 
     private static MainWindowViewModel WindowWith(Input.RecordingActionRunner actionRunner) =>
         new(null!, null!, null!, null!, null!) { ActionRunner = actionRunner };
@@ -1005,23 +1014,7 @@ public class FileWatcherServiceTests : IDisposable
         }
     }
 
-    private class MockThumbnailLoader : IThumbnailLoader
-    {
-        public ValueTask<object?> GetThumbnailAsync(FileInfo file, uint size, CoreViewModel? core = null, MagickImage? magick = null) => ValueTask.FromResult<object?>(null);
-        public object? GetExifThumbnail(FileInfo file) => null;
-        public object? GetThumbQuick(FileInfo file, CoreViewModel? core = null) => null;
-    }
 
-    private class MockThumbnailCache : IThumbnailCache
-    {
-        public List<string> RemovedPaths { get; } = new();
-
-        public void Add(uint ownerId, string path, object thumbnail) { }
-        public bool TryGet(string path, out object? thumbnail) { thumbnail = null; return false; }
-        public void Remove(string path) => RemovedPaths.Add(path);
-        public void RemoveOwner(uint ownerId) { }
-        public bool IsEmpty => true;
-    }
 
     private class MockFrameProvider : FrameProvider
     {

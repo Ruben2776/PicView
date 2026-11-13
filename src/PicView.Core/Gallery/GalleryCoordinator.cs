@@ -1,3 +1,4 @@
+using PicView.Core.Thumbnailing;
 using PicView.Core.DebugTools;
 using PicView.Core.MotionPhoto;
 using PicView.Core.Navigation;
@@ -16,12 +17,6 @@ namespace PicView.Core.Gallery;
 public class GalleryCoordinator : IDisposable
 {
     /// <summary>
-    /// Shared by every gallery, so thumbnail loading never puts more than a few reads on the disk at once.
-    /// Without a cap each realized item starts its own read, the thread pool grows to match, and the disk thrashes.
-    /// </summary>
-    private static readonly SemaphoreSlim ThumbnailSlots = new(Math.Clamp(Environment.ProcessorCount / 2, 2, 4));
-
-    /// <summary>
     /// How many files on each side of the current image a load reads before it adds the items.
     /// </summary>
     private const int NeighborsEachSide = 20;
@@ -32,8 +27,7 @@ public class GalleryCoordinator : IDisposable
     private const int BatchSize = 20;
 
     private readonly TabViewModel _tab;
-    private readonly IThumbnailLoader _thumbnailLoader;
-    private readonly IThumbnailCache _thumbnailCache;
+    private readonly Thumbnails _thumbnails;
     private readonly IDisposable _shownSubscription;
 
     private readonly Lock _queueLock = new();
@@ -59,11 +53,10 @@ public class GalleryCoordinator : IDisposable
     /// </summary>
     private bool _isOverLimit;
 
-    public GalleryCoordinator(TabViewModel tab, IThumbnailLoader thumbnailLoader, IThumbnailCache thumbnailCache)
+    public GalleryCoordinator(TabViewModel tab, Thumbnails thumbnails)
     {
         _tab = tab;
-        _thumbnailLoader = thumbnailLoader;
-        _thumbnailCache = thumbnailCache;
+        _thumbnails = thumbnails;
         _shownSubscription = tab.Gallery.Switcher.Mode
             .Select(mode => mode is not GalleryMode.Closed)
             .DistinctUntilChanged()
@@ -272,7 +265,7 @@ public class GalleryCoordinator : IDisposable
         item.IsMotionPhoto.Value = old.IsMotionPhoto.Value;
         if (old.Image.Value is { } thumbnail)
         {
-            _thumbnailCache.Add(_tab.Id, file.FullName, thumbnail);
+            _thumbnails.Keep(_tab.Id, file.FullName, thumbnail, old.ThumbnailHeight);
         }
         Gallery.GalleryItems[index] = item;
     }
@@ -384,7 +377,7 @@ public class GalleryCoordinator : IDisposable
         {
             Gallery.GalleryItems.Clear();
         }
-        _thumbnailCache.RemoveOwner(_tab.Id);
+        _thumbnails.Release(_tab.Id);
     }
 
     /// <summary>
@@ -595,58 +588,35 @@ public class GalleryCoordinator : IDisposable
     }
 
     /// <summary>
-    /// Loads <paramref name="item"/>'s thumbnail when the item is shown: the cached one, or one the thumbnail loader
-    /// makes once a slot is free, which the cache then holds. The motion photo badge is detected along with it.
+    /// Loads <paramref name="item"/>'s thumbnail when the item is shown, which the tab then keeps. The motion photo
+    /// badge is detected along with it.
     /// </summary>
     /// <returns>The thumbnail, or null when the file gives none.</returns>
     internal async ValueTask<object?> LoadThumbnailAsync(GalleryItemViewModel item, CancellationToken cancellationToken)
     {
         var file = item.FileInfo!;
-        if (_thumbnailCache.TryGet(file.FullName, out var cached) && cached is not null)
+        // Items that scroll out of view cancel while they wait for their turn, so the decoding goes to what is visible
+        var request = _thumbnails.GetAsync(file, item.ThumbnailHeight, _tab.Id, cancellationToken);
+        if (request.IsCompleted)
         {
-            return cached;
+            // A kept thumbnail, which comes back at once, on the caller's thread
+            return request.Result;
         }
 
-        // Items that scroll out of view cancel while they wait, so the slots go to what is visible
-        await ThumbnailSlots.WaitAsync(cancellationToken).ConfigureAwait(false);
-        try
-        {
-            // The gallery asks from the UI thread, during layout, and a free slot does not leave it: the wait above
-            // completes at once. Making a thumbnail reads the file and can block for seconds, so it runs on the
-            // thread pool
-            return await Task.Run(() => MakeThumbnailAsync(item, file), cancellationToken).ConfigureAwait(false);
-        }
-        finally
-        {
-            ThumbnailSlots.Release();
-        }
-    }
+        var thumbnail = await request.ConfigureAwait(false);
 
-    private async Task<object?> MakeThumbnailAsync(GalleryItemViewModel item, FileInfo file)
-    {
-        var thumb = await _thumbnailLoader
-            .GetThumbnailAsync(file, item.ThumbnailHeight, _tab.ParentWindowContext?.Core)
-            .ConfigureAwait(false);
-        if (thumb is not null)
-        {
-            _thumbnailCache.Add(_tab.Id, file.FullName, thumb);
-        }
-
-        // Detection reads the file again up to three times, so skip it while the badges are hidden
+        // Off the UI thread now. Detection reads the file again up to three times, so skip it while the badges are
+        // hidden
         if (Settings.Gallery.ShowMotionPhotoBadges)
         {
             item.IsMotionPhoto.Value = MotionPhotoDetector.TryDetect(
                 file, item.Details?.XmpPacket, fastMode: true) is not null;
         }
 
-        return thumb;
+        return thumbnail;
     }
 
-    private static double ThumbnailHeight()
-    {
-        var maxHeight = Math.Max(Settings.Gallery.DockedGalleryItemSize, Settings.Gallery.ExpandedGalleryItemSize);
-        return maxHeight <= 0 ? GalleryDefaults.DefaultDockedGalleryHeight : maxHeight;
-    }
+    private static double ThumbnailHeight() => Thumbnails.GalleryHeight;
 
     #endregion
 

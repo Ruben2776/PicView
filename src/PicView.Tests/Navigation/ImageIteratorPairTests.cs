@@ -22,7 +22,7 @@ public class ImageIteratorPairTests
         SetDefaults();
 
         var cache = new SharedImageCache(f => ValueTask.FromResult(new ImageModel { FileInfo = f }));
-        _tab = new TabViewModel(null!, TestTabServices.For(cache, new ThumbnailCache(), new TestTabServices.NoThumbnailLoader()));
+        _tab = new TabViewModel(null!, TestTabServices.For(cache, null));
         _tab.Initialize();
         _iterator = (ImageIterator)_tab.ImageIterator!;
         // Published, as the settings window sets it

@@ -27,8 +27,7 @@ public class ViewHistoryRecordingTests : IDisposable
         Directory.CreateDirectory(_folder);
         FileHistoryManager.Initialize(Path.Combine(_folder, "history.json"));
         _tab = new TabViewModel(null!,
-            TestTabServices.For(new SharedImageCache(file => ValueTask.FromResult(new ImageModel { FileInfo = file })),
-                new MockThumbnailCache(), new MockThumbnailLoader()));
+            TestTabServices.For(new SharedImageCache(file => ValueTask.FromResult(new ImageModel { FileInfo = file })), null));
     }
 
     public void Dispose()
@@ -382,7 +381,7 @@ public class ViewHistoryRecordingTests : IDisposable
         var cache = new SharedImageCache(file => file.Name == "b.jpg"
             ? new ValueTask<ImageModel>(slow.Task)
             : ValueTask.FromResult(new ImageModel { FileInfo = file }));
-        var iterator = new ImageIterator(cache, new MockThumbnailCache(), new MockThumbnailLoader(), _tab);
+        var iterator = new ImageIterator(cache, TestTabServices.NoThumbnails(cache), _tab);
         iterator.Initialize(files);
         var cts = new CancellationTokenSource();
 
@@ -408,7 +407,7 @@ public class ViewHistoryRecordingTests : IDisposable
         // Each load decodes the TIFF anew, at its first page, as a reload does
         var cache = new SharedImageCache(file =>
             ValueTask.FromResult(file.Name == "t.tif" ? TiffModel(file.FullName, pageCount: 3) : Model(file.FullName)));
-        var iterator = new ImageIterator(cache, new MockThumbnailCache(), new MockThumbnailLoader(), _tab);
+        var iterator = new ImageIterator(cache, TestTabServices.NoThumbnails(cache), _tab);
         iterator.Initialize(files, 1);
         await iterator.IterateToIndexAsync(1, new CancellationTokenSource());
         _tab.ShowPage(1);
@@ -545,22 +544,7 @@ public class ViewHistoryRecordingTests : IDisposable
         return window.WindowTabs.ActiveTab.Value;
     }
 
-    private class MockThumbnailLoader : IThumbnailLoader
-    {
-        public ValueTask<object?> GetThumbnailAsync(FileInfo file, uint size, CoreViewModel? core = null, MagickImage? magick = null) => ValueTask.FromResult<object?>(null);
-        public object? GetExifThumbnail(FileInfo file) => null;
-        public object? GetThumbQuick(FileInfo file, CoreViewModel? core = null) => null;
-    }
 
-    private class MockThumbnailCache : IThumbnailCache
-    {
-        public void Add(uint ownerId, string path, object thumbnail) { }
-        public bool TryGet(string path, out object? thumbnail) { thumbnail = null; return false; }
-        public void Remove(string path) { }
-        public void RemoveOwner(uint ownerId) { }
-        public void Clear() { }
-        public bool IsEmpty => true;
-    }
 
     private class MockFrameProvider : FrameProvider
     {

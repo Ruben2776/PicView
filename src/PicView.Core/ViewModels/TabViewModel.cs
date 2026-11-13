@@ -1,3 +1,4 @@
+using PicView.Core.Thumbnailing;
 using PicView.Core.ArchiveHandling;
 using PicView.Core.DebugTools;
 using PicView.Core.FileHistory;
@@ -552,8 +553,8 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
 
     private TabLoad? _load;
 
-    // The cache the tab owns thumbnails in, which it leaves when it closes or becomes fresh
-    public IThumbnailCache? ThumbnailCache => Services?.ThumbnailCache;
+    // Makes and keeps the tab's thumbnails, which it releases when it closes or becomes fresh
+    public Thumbnails? Thumbnails => Services?.Thumbnails;
 
     private readonly IFileWatcherService? _fileWatcherService = services?.Watcher;
     
@@ -841,8 +842,8 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
             throw new InvalidOperationException("The tab has no services");
         }
         GalleryCoordinator?.Dispose();
-        GalleryCoordinator = new Gallery.GalleryCoordinator(this, Services.ThumbnailLoader, Services.ThumbnailCache);
-        ImageIterator = new ImageIterator(Services.Cache, Services.ThumbnailCache, Services.ThumbnailLoader, this,
+        GalleryCoordinator = new Gallery.GalleryCoordinator(this, Services.Thumbnails);
+        ImageIterator = new ImageIterator(Services.Cache, Services.Thumbnails, this,
             GalleryCoordinator.FilesChanged);
         FollowSettings();
         DeriveCanNavigate();
@@ -860,8 +861,8 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
             throw new InvalidOperationException("The tab has no services");
         }
         var cache = Services.Cache;
-        GalleryCoordinator ??= new Gallery.GalleryCoordinator(this, Services.ThumbnailLoader, Services.ThumbnailCache);
-        ImageIterator ??= new ImageIterator(cache, Services.ThumbnailCache, Services.ThumbnailLoader, this,
+        GalleryCoordinator ??= new Gallery.GalleryCoordinator(this, Services.Thumbnails);
+        ImageIterator ??= new ImageIterator(cache, Services.Thumbnails, this,
             GalleryCoordinator.FilesChanged);
         FollowSettings();
         DeriveCanNavigate();
@@ -922,7 +923,7 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
     {
         _fileWatcherService?.Unwatch(this);
         ResetNavigationCts();
-        ThumbnailCache?.RemoveOwner(Id);
+        Thumbnails?.Release(Id);
         DisposeImageIterator();
         Display(new ImageModel());
         _hasLostItsFiles = true;
@@ -990,7 +991,7 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
         // First, so a load still running stops at its next check instead of showing into a disposed tab
         Volatile.Write(ref _isDisposed, true);
         _fileWatcherService?.Unwatch(this);
-        ThumbnailCache?.RemoveOwner(Id);
+        Thumbnails?.Release(Id);
 
         ImageIterator?.Dispose();
         _archiveStateSubscription?.Dispose();

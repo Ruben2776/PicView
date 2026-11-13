@@ -46,7 +46,7 @@ public class ImageIteratorFileListTests : IDisposable
             _loaded.Enqueue(f.Name);
             return ValueTask.FromResult(new ImageModel { FileInfo = f, Image = new ProbeImage() });
         });
-        _tab = new TabViewModel(null!, TestTabServices.For(_cache, new ThumbnailCache(), new MockThumbnailLoader()),
+        _tab = new TabViewModel(null!, TestTabServices.For(_cache, null),
             _extraction.Writer);
         _tab.Initialize();
         _iterator = (ImageIterator)_tab.ImageIterator!;
@@ -279,7 +279,7 @@ public class ImageIteratorFileListTests : IDisposable
         var cache = new SharedImageCache(file => file.Name == "e.jpg"
             ? new ValueTask<ImageModel>(held.Task)
             : ValueTask.FromResult(new ImageModel { FileInfo = file, Image = new ProbeImage() }));
-        var iterator = new ImageIterator(cache, new ThumbnailCache(), new MockThumbnailLoader(), _tab);
+        var iterator = new ImageIterator(cache, TestTabServices.NoThumbnails(cache), _tab);
         var c = File("c.jpg");
         var e = File("e.jpg");
         iterator.Initialize([c, File("d.jpg"), e, File("f.jpg")], 0);
@@ -303,7 +303,7 @@ public class ImageIteratorFileListTests : IDisposable
         var cache = new SharedImageCache(file => file.Name == "c.jpg"
             ? new ValueTask<ImageModel>(held.Task)
             : ValueTask.FromResult(new ImageModel { FileInfo = file, Image = new ProbeImage() }));
-        var iterator = new ImageIterator(cache, new ThumbnailCache(), new MockThumbnailLoader(), _tab);
+        var iterator = new ImageIterator(cache, TestTabServices.NoThumbnails(cache), _tab);
         var b = File("b.jpg");
         var c = File("c.jpg");
         iterator.Initialize([b, c, File("d.jpg")], 0);
@@ -355,7 +355,7 @@ public class ImageIteratorFileListTests : IDisposable
         var cache = new SharedImageCache(file => file.Name == "c.jpg"
             ? new ValueTask<ImageModel>(held.Task)
             : ValueTask.FromResult(new ImageModel { FileInfo = file, Image = new ProbeImage() }));
-        var iterator = new ImageIterator(cache, new ThumbnailCache(), new MockThumbnailLoader(), _tab);
+        var iterator = new ImageIterator(cache, TestTabServices.NoThumbnails(cache), _tab);
         var b = File("b.jpg");
         iterator.Initialize([b, File("c.jpg")], 0);
         _tab.Display(new ImageModel { FileInfo = b, Image = new ProbeImage() });
@@ -621,7 +621,7 @@ public class ImageIteratorFileListTests : IDisposable
         // The tab reads an archive of twelve pages, whose second page is written until the test lets it, so the
         // extraction of the pages after the start runs on
         var writer = new HeldEntryWriter("img_02.jpg");
-        var tab = new TabViewModel(null!, TestTabServices.For(_cache, new ThumbnailCache(), new MockThumbnailLoader()),
+        var tab = new TabViewModel(null!, TestTabServices.For(_cache, null),
             writer);
         tab.Initialize();
         var iterator = tab.ImageIterator!;
@@ -739,12 +739,6 @@ public class ImageIteratorFileListTests : IDisposable
         public void Dispose() => IsDisposed = true;
     }
 
-    private sealed class MockThumbnailLoader : IThumbnailLoader
-    {
-        public ValueTask<object?> GetThumbnailAsync(FileInfo file, uint size, CoreViewModel? core = null, MagickImage? magick = null) => ValueTask.FromResult<object?>(null);
-        public object? GetExifThumbnail(FileInfo file) => null;
-        public object? GetThumbQuick(FileInfo file, CoreViewModel? core = null) => null;
-    }
 
     private sealed class MockFrameProvider : FrameProvider
     {

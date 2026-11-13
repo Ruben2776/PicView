@@ -249,24 +249,27 @@ public class TabOwnershipTests
     }
 
     [Fact]
-    public void TearDown_CalledTwice_ReleasesEachTabOnce()
+    public async Task TearDown_CalledTwice_ReleasesEachTabOnce()
     {
         var watcher = new RecordingFileWatcher();
+        // Gives no thumbnails of its own, so a thumbnail it returns is one a tab keeps
+        var thumbnails = TestTabServices.NoThumbnails(_core.SharedCache);
         _core.InitializeNavigation(
-            TestTabServices.For(_core.SharedCache, _core.SharedThumbnailCache, new MockThumbnailLoader(), watcher),
+            TestTabServices.For(_core.SharedCache, thumbnails, watcher),
             navigation: null!);
         var tabs = CreateWindow().WindowTabs;
         tabs.ActiveTab.Value.Initialize();
         var first = tabs.ActiveTab.Value;
         var second = tabs.CreateTab();
-        _core.SharedThumbnailCache.Add(first.Id, "first.jpg", new object());
-        _core.SharedThumbnailCache.Add(second.Id, "second.jpg", new object());
+        thumbnails.Keep(first.Id, "first.jpg", new object(), 100);
+        thumbnails.Keep(second.Id, "second.jpg", new object(), 100);
 
         tabs.TearDown();
         tabs.TearDown();
 
         Assert.Equal([first, second], watcher.Unwatched);
-        Assert.True(_core.SharedThumbnailCache.IsEmpty);
+        Assert.Null(await thumbnails.GetQuickAsync(new FileInfo("first.jpg"), 100));
+        Assert.Null(await thumbnails.GetQuickAsync(new FileInfo("second.jpg"), 100));
     }
 
     [Fact]
@@ -274,7 +277,7 @@ public class TabOwnershipTests
     {
         var watcher = new RecordingFileWatcher();
         _core.InitializeNavigation(
-            TestTabServices.For(_core.SharedCache, _core.SharedThumbnailCache, new MockThumbnailLoader(), watcher),
+            TestTabServices.For(_core.SharedCache, null, watcher),
             navigation: null!);
 
         var first = CreateWindow().WindowTabs;
@@ -283,7 +286,7 @@ public class TabOwnershipTests
         Assert.Same(watcher, first.ActiveTab.Value.Services?.Watcher);
         Assert.Same(first.ActiveTab.Value.Services, second.ActiveTab.Value.Services);
         Assert.Same(first.SharedCache, second.SharedCache);
-        Assert.Same(first.SharedThumbnailLoader, second.SharedThumbnailLoader);
+        Assert.Same(first.SharedThumbnails, second.SharedThumbnails);
     }
 
     [Fact]
@@ -427,10 +430,4 @@ public class TabOwnershipTests
         public void RestartWatches() { }
     }
 
-    private sealed class MockThumbnailLoader : IThumbnailLoader
-    {
-        public ValueTask<object?> GetThumbnailAsync(FileInfo file, uint size, CoreViewModel? core = null, MagickImage? magick = null) => ValueTask.FromResult<object?>(null);
-        public object? GetExifThumbnail(FileInfo file) => null;
-        public object? GetThumbQuick(FileInfo file, CoreViewModel? core = null) => null;
-    }
 }

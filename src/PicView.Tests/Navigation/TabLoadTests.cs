@@ -24,7 +24,6 @@ public class TabLoadTests : IDisposable
     private readonly MockImageModelLoader _mockImageModelLoader;
     private readonly SharedImageCache _cache;
     private readonly MockFileWatcherService _mockFileWatcherService;
-    private readonly MockThumbnailLoader _mockThumbnailLoader;
     private readonly string _testDirectory;
 
     // Bounds each wait on a held load, so a failing test fails instead of hanging the run
@@ -73,7 +72,6 @@ public class TabLoadTests : IDisposable
             return new ValueTask<ImageModel>(_held.Task);
         });
         _mockFileWatcherService = new MockFileWatcherService();
-        _mockThumbnailLoader = new MockThumbnailLoader();
     }
 
     public void Dispose()
@@ -1312,7 +1310,7 @@ public class TabLoadTests : IDisposable
         var core = new CoreViewModel(platform, file => ValueTask.FromResult(new ImageModel { FileInfo = file }),
             new GlobalSettingsViewModel(static () => ValueTask.FromResult(true)));
         core.InitializeNavigation(
-            new TabServices(core.SharedCache, core.SharedThumbnailCache, _mockThumbnailLoader, _mockFileWatcherService,
+            new TabServices(core.SharedCache, TestTabServices.NoThumbnails(core.SharedCache), _mockFileWatcherService,
                 _mockImageModelLoader, platform, core.GlobalSettings),
             new NavigationService(platform.CompareStrings));
         var vm = new MainWindowViewModel(core, null!, null!, null!);
@@ -1430,7 +1428,7 @@ public class TabLoadTests : IDisposable
         bool withIterator = true)
     {
         var dummyParent = parentVm ?? new MainWindowViewModel(null!, null!, null!, null!);
-        var services = new TabServices(cache ?? _cache, new MockThumbnailCache(), _mockThumbnailLoader,
+        var services = new TabServices(cache ?? _cache, TestTabServices.NoThumbnails(cache ?? _cache),
             watcher ?? _mockFileWatcherService, _mockImageModelLoader, platform ?? new MockPlatformSpecificService(),
             new GlobalSettingsViewModel(static () => ValueTask.FromResult(true)));
         var tab = new TabViewModel(dummyParent, services, writer);
@@ -1581,29 +1579,7 @@ public class TabLoadTests : IDisposable
         }
     }
 
-    private class MockThumbnailLoader : IThumbnailLoader
-    {
-        public int GetThumbnailAsyncCalledCount { get; private set; }
 
-        public ValueTask<object?> GetThumbnailAsync(FileInfo file, uint size, CoreViewModel? core = null, MagickImage? magick = null)
-        {
-            GetThumbnailAsyncCalledCount++;
-            return ValueTask.FromResult<object?>(null);
-        }
-
-        public object? GetExifThumbnail(FileInfo file) => null;
-        public object? GetThumbQuick(FileInfo file, CoreViewModel? core = null) => null;
-    }
-
-    private class MockThumbnailCache : IThumbnailCache
-    {
-        public void Add(uint ownerId, string path, object thumbnail) { }
-        public bool TryGet(string path, out object? thumbnail) { thumbnail = null; return false; }
-        public void Remove(string path) { }
-        public void RemoveOwner(uint ownerId) { }
-        public void Clear() { }
-        public bool IsEmpty => true;
-    }
 
     private class MockPlatformSpecificService : IPlatformSpecificService
     {

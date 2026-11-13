@@ -8,8 +8,10 @@ using PicView.Core.Localization;
 using PicView.Core.Models;
 using PicView.Core.Navigation;
 using PicView.Core.Navigation.Interfaces;
+using PicView.Core.Thumbnailing;
 using PicView.Core.ViewModels;
 using PicView.Tests.Navigation;
+using PicView.Tests.Thumbnailing;
 using R3;
 
 namespace PicView.Tests.Gallery;
@@ -22,7 +24,8 @@ namespace PicView.Tests.Gallery;
 public class GalleryFollowsFilesTests : IDisposable
 {
     private readonly SharedImageCache _cache = new(static f => ValueTask.FromResult(new ImageModel { FileInfo = f }));
-    private readonly RecordingThumbnailCache _thumbnails = new();
+    // Gives no thumbnails of its own, so a thumbnail it returns is one a tab keeps
+    private readonly Thumbnails _thumbnails;
     private readonly string _directory = Path.Combine(Path.GetTempPath(), "PicViewGalleryTests_" + Guid.NewGuid());
 
     public GalleryFollowsFilesTests()
@@ -31,6 +34,7 @@ public class GalleryFollowsFilesTests : IDisposable
         SetDefaults();
         TranslationManager.LoadLanguage("en");
         Directory.CreateDirectory(_directory);
+        _thumbnails = TestTabServices.NoThumbnails(_cache);
     }
 
     [Fact]
@@ -87,11 +91,13 @@ public class GalleryFollowsFilesTests : IDisposable
         await WaitUntilLoadedAsync(tab, "a.jpg", "b.jpg");
         Hide(tab);
 
+        _thumbnails.Keep(tab.Id, "kept.jpg", new object(), 100);
+
         tab.ImageIterator.Initialize(await FilesAsync(Path.Combine("other", "c.jpg")));
         await IdleAsync(tab);
 
         Assert.Empty(tab.Gallery.GalleryItems);
-        Assert.Contains(tab.Id, _thumbnails.RemovedOwners);
+        Assert.False(await IsKeptAsync("kept.jpg"));
         Show(tab);
         await WaitUntilLoadedAsync(tab, "c.jpg");
     }
@@ -351,7 +357,7 @@ public class GalleryFollowsFilesTests : IDisposable
     public async Task FilesListed_TheChangeCarriesTheCurrentIndex()
     {
         var changes = new List<FileListChange>();
-        using var iterator = new ImageIterator(_cache, _thumbnails, new MockThumbnailLoader(), CreateTab(), changes.Add);
+        using var iterator = new ImageIterator(_cache, TestTabServices.NoThumbnails(_cache), CreateTab(), changes.Add);
 
         iterator.Initialize(await FilesAsync("a.jpg", "b.jpg", "c.jpg"), 2);
 
@@ -554,11 +560,10 @@ public class GalleryFollowsFilesTests : IDisposable
     }
 
     [Fact]
-    public async Task LoadThumbnailAsync_OfALoadedItem_GivesTheLoaderThumbnailAndCachesIt()
+    public async Task LoadThumbnailAsync_OfALoadedItem_GivesTheMadeThumbnailAndKeepsIt()
     {
-        var thumb = new object();
-        var cache = new StoringThumbnailCache();
-        var tab = new TabViewModel(null!, TestTabServices.For(_cache, cache, new FixedThumbnailLoader(thumb)))
+        var decoder = new FakeThumbnailDecoder();
+        var tab = new TabViewModel(null!, TestTabServices.For(_cache, new Thumbnails(decoder, _cache)))
         {
             Model = new ImageModel { FileInfo = new FileInfo(Path.Combine(_directory, "shown.jpg")) }
         };
@@ -569,17 +574,19 @@ public class GalleryFollowsFilesTests : IDisposable
         var item = tab.Gallery.GalleryItems[0];
 
         var loaded = await item.LoadThumbnailAsync(TestContext.Current.CancellationToken);
+        var again = await item.LoadThumbnailAsync(TestContext.Current.CancellationToken);
 
-        Assert.Same(thumb, loaded);
-        Assert.Equal(item.FileInfo!.FullName, Assert.Single(cache.Added));
+        Assert.Equal("decode", Assert.IsType<FakeThumbnail>(loaded).Source);
+        Assert.Same(loaded, again);
+        Assert.Single(decoder.Calls, "decode:a.jpg");
     }
 
     [Fact]
     public async Task LoadThumbnailAsync_WithAFreeSlot_MakesTheThumbnailOffTheCallersThread()
     {
         // The gallery asks for a thumbnail from the UI thread, during layout, and making one can block for seconds
-        var loader = new CallerRecordingThumbnailLoader();
-        var tab = new TabViewModel(null!, TestTabServices.For(_cache, new StoringThumbnailCache(), loader))
+        var decoder = new CallerRecordingThumbnailDecoder();
+        var tab = new TabViewModel(null!, TestTabServices.For(_cache, new Thumbnails(decoder, _cache)))
         {
             Model = new ImageModel { FileInfo = new FileInfo(Path.Combine(_directory, "shown.jpg")) }
         };
@@ -589,7 +596,7 @@ public class GalleryFollowsFilesTests : IDisposable
         await WaitUntilLoadedAsync(tab, "a.jpg");
         var item = tab.Gallery.GalleryItems[0];
 
-        CallerRecordingThumbnailLoader.IsCallersThread = true;
+        CallerRecordingThumbnailDecoder.IsCallersThread = true;
         ValueTask<object?> pending;
         try
         {
@@ -597,11 +604,11 @@ public class GalleryFollowsFilesTests : IDisposable
         }
         finally
         {
-            CallerRecordingThumbnailLoader.IsCallersThread = false;
+            CallerRecordingThumbnailDecoder.IsCallersThread = false;
         }
         await pending;
 
-        Assert.False(loader.RanOnCallersThread);
+        Assert.False(decoder.RanOnCallersThread);
     }
 
     #region File limit
@@ -652,6 +659,7 @@ public class GalleryFollowsFilesTests : IDisposable
     {
         Settings.Gallery.HideGalleryAtFileCount = 3;
         var tab = await LoadedTabAsync("a.jpg", "c.jpg");
+        _thumbnails.Keep(tab.Id, "kept.jpg", new object(), 100);
 
         tab.ImageIterator.Insert((await FilesAsync("b.jpg"))[0], string.CompareOrdinal);
         await IdleAsync(tab);
@@ -659,7 +667,7 @@ public class GalleryFollowsFilesTests : IDisposable
         Assert.Equal(GalleryMode.Closed, tab.Gallery.ShownMode.Value);
         Assert.Empty(tab.Gallery.GalleryItems);
         Assert.Equal(GalleryLoadingState.NotLoaded, tab.Gallery.LoadingState);
-        Assert.Contains(tab.Id, _thumbnails.RemovedOwners);
+        Assert.False(await IsKeptAsync("kept.jpg"));
     }
 
     [Fact]
@@ -681,7 +689,7 @@ public class GalleryFollowsFilesTests : IDisposable
 
     private TabViewModel CreateTab()
     {
-        var tab = new TabViewModel(null!, TestTabServices.For(_cache, _thumbnails, new MockThumbnailLoader()))
+        var tab = new TabViewModel(null!, TestTabServices.For(_cache, _thumbnails))
         {
             Model = new ImageModel { FileInfo = new FileInfo(Path.Combine(_directory, "shown.jpg")) }
         };
@@ -788,62 +796,27 @@ public class GalleryFollowsFilesTests : IDisposable
         }
     }
 
-    private sealed class RecordingThumbnailCache : IThumbnailCache
-    {
-        public List<uint> RemovedOwners { get; } = [];
+    // Whether a thumbnail of the path is kept: the suite's thumbnails give none of their own
+    private async Task<bool> IsKeptAsync(string path) =>
+        await _thumbnails.GetQuickAsync(new FileInfo(path), 100) is not null;
 
-        public void Add(uint ownerId, string path, object thumbnail) { }
-        public bool TryGet(string path, out object? thumbnail) { thumbnail = null; return false; }
-        public void Remove(string path) { }
-        public void RemoveOwner(uint ownerId) => RemovedOwners.Add(ownerId);
-        public bool IsEmpty => true;
-    }
-
-    private sealed class MockThumbnailLoader : IThumbnailLoader
-    {
-        public ValueTask<object?> GetThumbnailAsync(FileInfo file, uint size, CoreViewModel? core = null, MagickImage? magick = null) => ValueTask.FromResult<object?>(null);
-        public object? GetExifThumbnail(FileInfo file) => null;
-        public object? GetThumbQuick(FileInfo file, CoreViewModel? core = null) => null;
-    }
-
-    /// <summary>Keeps the paths of the thumbnails added to it.</summary>
-    private sealed class StoringThumbnailCache : IThumbnailCache
-    {
-        public List<string> Added { get; } = [];
-
-        public void Add(uint ownerId, string path, object thumbnail) => Added.Add(path);
-        public bool TryGet(string path, out object? thumbnail) { thumbnail = null; return false; }
-        public void Remove(string path) { }
-        public void RemoveOwner(uint ownerId) { }
-        public bool IsEmpty => Added.Count is 0;
-    }
-
-    /// <summary>Gives the same thumbnail for every file.</summary>
-    private sealed class FixedThumbnailLoader(object thumbnail) : IThumbnailLoader
-    {
-        public ValueTask<object?> GetThumbnailAsync(FileInfo file, uint size, CoreViewModel? core = null,
-            MagickImage? magick = null) => ValueTask.FromResult<object?>(thumbnail);
-        public object? GetExifThumbnail(FileInfo file) => null;
-        public object? GetThumbQuick(FileInfo file, CoreViewModel? core = null) => null;
-    }
-
-    /// <summary>Records whether it was asked for a thumbnail on the thread that marked itself as the caller.</summary>
-    private sealed class CallerRecordingThumbnailLoader : IThumbnailLoader
+    /// <summary>Records whether it was asked to decode on the thread that marked itself as the caller.</summary>
+    private sealed class CallerRecordingThumbnailDecoder : IThumbnailDecoder
     {
         [ThreadStatic]
         public static bool IsCallersThread;
 
         public bool? RanOnCallersThread { get; private set; }
 
-        public ValueTask<object?> GetThumbnailAsync(FileInfo file, uint size, CoreViewModel? core = null,
-            MagickImage? magick = null)
+        public object? GetReadyMade(FileInfo file, uint height) => null;
+
+        public object? Decode(FileInfo file, uint height)
         {
             RanOnCallersThread = IsCallersThread;
-            return ValueTask.FromResult<object?>(new object());
+            return new object();
         }
 
-        public object? GetExifThumbnail(FileInfo file) => null;
-        public object? GetThumbQuick(FileInfo file, CoreViewModel? core = null) => null;
+        public object? ScaleDown(object image, uint height) => null;
     }
 
     private sealed class MockFrameProvider : FrameProvider

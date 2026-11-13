@@ -11,17 +11,19 @@ using PicView.Avalonia.Svg;
 using PicView.Core.DebugTools;
 using PicView.Core.FileHandling;
 using PicView.Core.ImageReading;
-using PicView.Core.ViewModels;
+using PicView.Core.IPlatform;
 using SkiaSharp;
 
 namespace PicView.Avalonia.ImageHandling;
 
 public static class GetThumbnails
 {
-    public static ValueTask<Bitmap?> GetThumbAsync(FileInfo fileInfo, uint height, CoreViewModel? core = null, MagickImage? magick = null) =>
-        ValueTask.FromResult(GetThumb(fileInfo, height, core, magick));
-
-    private static Bitmap? GetThumb(FileInfo fileInfo, uint height, CoreViewModel? core, MagickImage? magick)
+    /// <summary>
+    /// Makes a thumbnail of <paramref name="fileInfo"/> no taller than <paramref name="height"/>: the shell's when
+    /// <paramref name="platform"/> has one, else the EXIF thumbnail when it is tall enough, else a decode of the file.
+    /// Blocks while it reads the file.
+    /// </summary>
+    public static Bitmap? Decode(FileInfo fileInfo, uint height, IPlatformSpecificService? platform = null)
     {
         try
         {
@@ -30,54 +32,39 @@ public static class GetThumbnails
                 return null;
             }
 
-            if (core is not null && fileInfo.IsCommon() && (OperatingSystem.IsWindows() || OperatingSystem.IsMacOS()))
+            if (platform is not null && fileInfo.IsCommon() && (OperatingSystem.IsWindows() || OperatingSystem.IsMacOS()))
             {
-                var shellThumb = GetShellThumb(fileInfo.FullName, 0, (int)height, core);
+                var shellThumb = GetShellThumb(fileInfo.FullName, 0, (int)height, platform);
                 if (shellThumb is not null)
                 {
                     return shellThumb;
                 }
             }
 
-            var shouldDisposeMagick = false;
-            try
-            {
-                if (magick is null)
-                {
-                    shouldDisposeMagick = true;
-                    magick = new MagickImage();
+            using var magick = new MagickImage();
 #pragma warning disable MA0042
-                    // ReSharper disable once MethodHasAsyncOverload
-                    magick.Ping(fileInfo, CreatePingSettings());
+            // ReSharper disable once MethodHasAsyncOverload
+            magick.Ping(fileInfo, CreatePingSettings());
 #pragma warning restore MA0042
-                }
 
-                var profile = magick.GetExifProfile();
-                if (profile is null)
-                {
-                    return CreateThumb(magick, fileInfo, height);
-                }
-
-                using var thumbnail = profile.CreateThumbnail();
-                if (thumbnail is null || thumbnail.Height < height)
-                {
-                    return CreateThumb(magick, fileInfo, height);
-                }
-
-                thumbnail.AutoOrient();
-                return MagickBitmapConverter.ToBgraWriteableBitmap(thumbnail);
-            }
-            finally
+            var profile = magick.GetExifProfile();
+            if (profile is null)
             {
-                if (shouldDisposeMagick)
-                {
-                    magick.Dispose();
-                }
+                return CreateThumb(magick, fileInfo, height);
             }
+
+            using var thumbnail = profile.CreateThumbnail();
+            if (thumbnail is null || thumbnail.Height < height)
+            {
+                return CreateThumb(magick, fileInfo, height);
+            }
+
+            thumbnail.AutoOrient();
+            return MagickBitmapConverter.ToBgraWriteableBitmap(thumbnail);
         }
         catch (Exception e)
         {
-            DebugHelper.LogDebug(nameof(GetThumbnails), nameof(GetThumbAsync), e);
+            DebugHelper.LogDebug(nameof(GetThumbnails), nameof(Decode), e);
             if (!fileInfo.IsCommon())
             {
                 return null;
@@ -88,27 +75,26 @@ public static class GetThumbnails
             }
             catch (Exception exception)
             {
-                DebugHelper.LogDebug(nameof(GetThumbnails), nameof(GetThumbAsync), exception);
+                DebugHelper.LogDebug(nameof(GetThumbnails), nameof(Decode), exception);
                 return null;
             }
         }
     }
 
     /// <summary>
-    /// Tries to get shell thumbnail or exif thumbnail if available, otherwise returns null.
+    /// The thumbnail the OS shell or the file's EXIF data already has, without decoding the image; null if neither has
+    /// one.
     /// </summary>
-    public static Bitmap? GetThumbQuick(FileInfo fileInfo, CoreViewModel? core = null)
+    public static Bitmap? GetReadyMade(FileInfo fileInfo, uint height, IPlatformSpecificService? platform = null)
     {
-        var height = Settings.Gallery.DockedGalleryItemSize > Settings.Gallery.ExpandedGalleryItemSize ?
-            Settings.Gallery.DockedGalleryItemSize : Settings.Gallery.ExpandedGalleryItemSize;
-        if (core is not null && fileInfo.IsCommon() && (OperatingSystem.IsWindows() || OperatingSystem.IsMacOS()))
+        if (platform is not null && fileInfo.IsCommon() && (OperatingSystem.IsWindows() || OperatingSystem.IsMacOS()))
         {
-            return GetShellThumb(fileInfo.FullName, 0, (int)height, core) ?? GetExifThumb(fileInfo.FullName);
+            return GetShellThumb(fileInfo.FullName, 0, (int)height, platform) ?? GetExifThumb(fileInfo.FullName);
         }
         return GetExifThumb(fileInfo.FullName);
     }
 
-    public static WriteableBitmap? GetExifThumb(string path)
+    private static WriteableBitmap? GetExifThumb(string path)
     {
         using var magick = new MagickImage();
         try
@@ -142,13 +128,11 @@ public static class GetThumbnails
     /// On macOS, this uses ImageIO (CGImageSource).
     /// Returns null on unsupported platforms or on failure.
     /// </summary>
-    public static WriteableBitmap? GetShellThumb(string path, int width, int height, CoreViewModel core)
+    private static WriteableBitmap? GetShellThumb(string path, int width, int height, IPlatformSpecificService platform)
     {
         try
         {
-            var platformService = core.PlatformService;
-
-            var pixels = platformService.GetShellThumbnail(path, width, height,
+            var pixels = platform.GetShellThumbnail(path, width, height,
                 out var pixelWidth, out var pixelHeight);
 
             if (pixels is null || pixelWidth <= 0 || pixelHeight <= 0)

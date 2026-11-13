@@ -88,8 +88,7 @@ public class SlideshowTests
 
         // Two files and at the first, so the slideshow has somewhere to go
         var tab = new TabViewModel(null!,
-            TestTabServices.For(new SharedImageCache(f => ValueTask.FromResult(new ImageModel { FileInfo = f })),
-                new ThumbnailCache(), new MockThumbnailLoader()));
+            TestTabServices.For(new SharedImageCache(f => ValueTask.FromResult(new ImageModel { FileInfo = f })), null));
         tab.Initialize();
         tab.ImageIterator!.Initialize([new FileInfo("a.jpg"), new FileInfo("b.jpg")]);
 
@@ -130,17 +129,6 @@ public class SlideshowTests
             WindowModeSwitcher.SetNativeState(window, state.Mode);
     }
 
-    private sealed class MockThumbnailLoader : IThumbnailLoader
-    {
-        public ValueTask<object?> GetThumbnailAsync(FileInfo file, CoreViewModel core) =>
-            ValueTask.FromResult<object?>(null);
-
-        public ValueTask<object?> GetThumbnailAsync(FileInfo file, uint size, CoreViewModel? core = null,
-            MagickImage? magick = null) => ValueTask.FromResult<object?>(null);
-
-        public object? GetExifThumbnail(FileInfo file) => null;
-        public object? GetThumbQuick(FileInfo file, CoreViewModel? core = null) => null;
-    }
 
     private sealed class MockFrameProvider : FrameProvider
     {

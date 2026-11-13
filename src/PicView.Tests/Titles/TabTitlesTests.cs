@@ -27,8 +27,7 @@ public class TabTitlesTests
         SetDefaults();
         TranslationManager.LoadLanguage("en");
         _tab = new TabViewModel(null!,
-            TestTabServices.For(new SharedImageCache(f => ValueTask.FromResult(Model(f.Name))!), new ThumbnailCache(),
-                new MockThumbnailLoader()));
+            TestTabServices.For(new SharedImageCache(f => ValueTask.FromResult(Model(f.Name))!)));
     }
 
     private static string Loading => TranslationManager.Translation.Loading!;
@@ -398,16 +397,6 @@ public class TabTitlesTests
         Assert.False(last);
     }
 
-    private sealed class MockThumbnailLoader : IThumbnailLoader
-    {
-        public ValueTask<object?> GetThumbnailAsync(FileInfo file, CoreViewModel core) => ValueTask.FromResult<object?>(null);
-
-        public ValueTask<object?> GetThumbnailAsync(FileInfo file, uint size, CoreViewModel? core = null,
-            MagickImage? magick = null) => ValueTask.FromResult<object?>(null);
-
-        public object? GetExifThumbnail(FileInfo file) => null;
-        public object? GetThumbQuick(FileInfo file, CoreViewModel? core = null) => null;
-    }
 
     private sealed class MockFrameProvider : FrameProvider
     {

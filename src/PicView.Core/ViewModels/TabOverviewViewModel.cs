@@ -1,3 +1,4 @@
+using PicView.Core.Thumbnailing;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using PicView.Core.FileSorting;
@@ -25,7 +26,7 @@ public class TabOverviewViewModel
     private CoreViewModel? Core => _parentVm?.Core;
     public INavigationService? SharedNavigation => Core?.SharedNavigationService;
     public SharedImageCache? SharedCache => Core?.Services?.Cache;
-    public IThumbnailLoader? SharedThumbnailLoader => Core?.Services?.ThumbnailLoader;
+    public Thumbnails? SharedThumbnails => Core?.Services?.Thumbnails;
 
     private readonly ReactiveProperty<bool> _isTabStripShown = new(false);
 

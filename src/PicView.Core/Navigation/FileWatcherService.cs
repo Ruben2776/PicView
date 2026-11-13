@@ -1,3 +1,4 @@
+using PicView.Core.Thumbnailing;
 using System.Collections.Concurrent;
 using PicView.Core.DebugTools;
 using PicView.Core.FileHandling;
@@ -23,7 +24,7 @@ namespace PicView.Core.Navigation;
 public class FileWatcherService(
     Func<string, string, int> stringComparer,
     SharedImageCache cache,
-    IThumbnailCache? thumbnailCache = null,
+    Thumbnails? thumbnails = null,
     IFolderEvents? folderEvents = null,
     Action<string, string>? fileRenamed = null,
     Action<string, string>? folderRenamed = null)
@@ -243,7 +244,7 @@ public class FileWatcherService(
         }
 
         var stalePath = kind is FolderChangeKind.Renamed ? oldFullPath ?? fullPath : fullPath;
-        thumbnailCache?.Remove(stalePath);
+        thumbnails?.Forget(stalePath);
         _cache.Invalidate(stalePath);
 
         // A rename reaches every history before any tab follows it. The tab that shows the file records it under its new

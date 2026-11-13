@@ -18,7 +18,6 @@ public class TiffNavigationTests : IDisposable
     private readonly Dictionary<string, ImageModel> _models = new();
     private readonly TabViewModel _tab;
     private readonly List<FileInfo> _files;
-    private readonly MockThumbnailCache _mockThumbnailCache;
 
     public TiffNavigationTests()
     {
@@ -37,9 +36,8 @@ public class TiffNavigationTests : IDisposable
 
         _cache = new SharedImageCache(f =>
             ValueTask.FromResult(_models.TryGetValue(f.FullName, out var model) ? model : new ImageModel { FileInfo = f }));
-        _mockThumbnailCache = new MockThumbnailCache();
         _tab = new TabViewModel(null!);
-        _iterator = new ImageIterator(_cache, _mockThumbnailCache, new MockThumbnailLoader(), _tab);
+        _iterator = new ImageIterator(_cache, TestTabServices.NoThumbnails(_cache), _tab);
         _iterator.Initialize(_files);
     }
 
@@ -260,7 +258,7 @@ public class TiffNavigationTests : IDisposable
         // The TIFF is the last page extracted so far, and more are coming: a tab whose archive is still extracting
         using var extraction = new HeldExtraction();
         var tab = new TabViewModel(null!, null, extraction.Writer);
-        var iterator = new ImageIterator(_cache, _mockThumbnailCache, new MockThumbnailLoader(), tab);
+        var iterator = new ImageIterator(_cache, TestTabServices.NoThumbnails(_cache), tab);
         var tiffModel = CreateTiffModel(_files[1], 3);
         iterator.Initialize([_files[0], _files[1]], 1);
         tab.Model = tiffModel;
@@ -334,22 +332,7 @@ public class TiffNavigationTests : IDisposable
 
     private void SetModel(int index, ImageModel model) => _models[_files[index].FullName] = model;
 
-    private class MockThumbnailLoader : IThumbnailLoader
-    {
-        public ValueTask<object?> GetThumbnailAsync(FileInfo file, uint size, CoreViewModel? core = null, MagickImage? magick = null) => ValueTask.FromResult<object?>(null);
-        public object? GetExifThumbnail(FileInfo file) => null;
-        public object? GetThumbQuick(FileInfo file, CoreViewModel? core = null) => null;
-    }
     
-    private class MockThumbnailCache : IThumbnailCache
-    {
-        public void Add(uint ownerId, string path, object thumbnail) { }
-        public bool TryGet(string path, out object? thumbnail) { thumbnail = null; return false; }
-        public void Remove(string path) { }
-        public void RemoveOwner(uint ownerId) { }
-        public void Clear() { }
-        public bool IsEmpty => true;
-    }
 
     private class MockFrameProvider : FrameProvider
     {

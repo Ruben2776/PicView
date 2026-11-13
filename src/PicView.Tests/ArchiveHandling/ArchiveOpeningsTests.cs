@@ -441,8 +441,7 @@ public class ArchiveOpeningsTests : IDisposable
     private TabViewModel CreateTab(IArchiveEntryWriter? writer = null)
     {
         var services = TestTabServices.For(
-            new SharedImageCache(file => ValueTask.FromResult(new ImageModel { FileInfo = file })),
-            new MockThumbnailCache(), new MockThumbnailLoader());
+            new SharedImageCache(file => ValueTask.FromResult(new ImageModel { FileInfo = file })), null);
         var tab = new TabViewModel(new MainWindowViewModel(null!, null!, null!, null!), services, writer);
         tab.Initialize();
         tab.ImageIterator!.Initialize([]);
@@ -465,24 +464,5 @@ public class ArchiveOpeningsTests : IDisposable
         return zip;
     }
 
-    private sealed class MockThumbnailLoader : IThumbnailLoader
-    {
-        public ValueTask<object?> GetThumbnailAsync(FileInfo file, CoreViewModel core) => ValueTask.FromResult<object?>(null);
 
-        public ValueTask<object?> GetThumbnailAsync(FileInfo file, uint size, CoreViewModel? core = null,
-            MagickImage? magick = null) => ValueTask.FromResult<object?>(null);
-
-        public object? GetExifThumbnail(FileInfo file) => null;
-        public object? GetThumbQuick(FileInfo file, CoreViewModel? core = null) => null;
-    }
-
-    private sealed class MockThumbnailCache : IThumbnailCache
-    {
-        public void Add(uint ownerId, string path, object thumbnail) { }
-        public bool TryGet(string path, out object? thumbnail) { thumbnail = null; return false; }
-        public void Remove(string path) { }
-        public void RemoveOwner(uint ownerId) { }
-        public void Clear() { }
-        public bool IsEmpty => true;
-    }
 }

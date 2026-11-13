@@ -28,8 +28,7 @@ public class TabBusyClaimTests : IDisposable
     }
 
     private static TabViewModel NewTab() =>
-        new(null!, TestTabServices.For(new SharedImageCache(_ => ValueTask.FromResult(new ImageModel())!),
-            new ThumbnailCache(), new MockThumbnailLoader()));
+        new(null!, TestTabServices.For(new SharedImageCache(_ => ValueTask.FromResult(new ImageModel())!)));
 
     public void Dispose() => _tab.Dispose();
 
@@ -166,14 +165,6 @@ public class TabBusyClaimTests : IDisposable
         Assert.Null(thrown);
     }
 
-    private sealed class MockThumbnailLoader : IThumbnailLoader
-    {
-        public ValueTask<object?> GetThumbnailAsync(FileInfo file, uint size, CoreViewModel? core = null,
-            MagickImage? magick = null) => ValueTask.FromResult<object?>(null);
-
-        public object? GetExifThumbnail(FileInfo file) => null;
-        public object? GetThumbQuick(FileInfo file, CoreViewModel? core = null) => null;
-    }
 
     private sealed class MockFrameProvider : FrameProvider
     {

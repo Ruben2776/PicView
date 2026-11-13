@@ -56,7 +56,7 @@ public class GalleryItemViewModel : IDisposable
     internal uint ThumbnailHeight { get; init; }
 
     /// <summary>
-    /// Loads the item's thumbnail: the cached one, or one made for <see cref="ThumbnailHeight"/> once a slot is free.
+    /// Loads the item's thumbnail: the kept one, or one made for <see cref="ThumbnailHeight"/> when its turn comes.
     /// </summary>
     /// <returns>The thumbnail, or null for an item outside a gallery or a file that gives none.</returns>
     public ValueTask<object?> LoadThumbnailAsync(CancellationToken cancellationToken) =>
