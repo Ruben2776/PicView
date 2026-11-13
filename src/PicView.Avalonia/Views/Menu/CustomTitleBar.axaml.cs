@@ -1,5 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Chrome;
+using Avalonia.Input;
 using PicView.Avalonia.Crop;
 using PicView.Avalonia.CustomControls;
 using PicView.Core.Conversion;
@@ -23,6 +25,12 @@ public partial class CustomTitleBar : MainTitleBar
         {
             InitializeEventHandlers();
         };
+
+        if (OperatingSystem.IsWindows() && OperatingSystem.IsWindowsVersionAtLeast(10, 0, 22000))
+        {
+            // Setting this allows hovering over the buttons on Win11 to show the window resize options
+            WindowDecorationProperties.SetElementRole(FullscreenButton, WindowDecorationsElementRole.MaximizeButton);
+        }
     }
     
     private void InitializeEventHandlers()
