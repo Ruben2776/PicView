@@ -204,7 +204,7 @@ public static class GetThumbnails
             case MagickFormat.Svgz:
                 // A bitmap, not the viewer's DrawingImage: that would be built on the UI thread and replay every
                 // shape while the gallery scrolls
-                return SvgFallback.RenderThumb(fileInfo, magick.Height, height);
+                return SvgFallback.RenderThumb(fileInfo, magick.Width, magick.Height, height);
             default:
             {
                 var rawPreviewThumb = GetRawPreviewThumb(magick, height);
