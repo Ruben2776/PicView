@@ -1,14 +1,12 @@
 ﻿<UserControl
     x:Class="PicView.Avalonia.Views.UC.Buttons.SettingsMenuButton"
+    x:DataType="viewModels:CoreViewModel"
     xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
     xmlns:keybindings="using:PicView.Core.Keybindings"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
-    x:DataType="viewModels:CoreViewModel">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <customControls:IconButton
-        x:Name="SettingsButton"
-        Width="30"
         Background="{DynamicResource WindowButtonBackgroundColor}"
         Classes="WindowToolButtonHover"
         ClickMode="Press"
@@ -16,35 +14,74 @@
         Icon="{StaticResource MenuImage}"
         IconHeight="12"
         IconWidth="12"
-        IsRepeatEnabled="False">
+        IsRepeatEnabled="False"
+        Width="30"
+        x:Name="SettingsButton">
         <customControls:IconButton.Flyout>
             <MenuFlyout FlyoutPresenterClasses="noCornerRadius" Placement="Bottom">
                 <customControls:StyledMenuItem
-                    x:Name="UserSettingsItem"
                     Command="{CompiledBinding MainWindows.ActiveWindow.Value.RunActionCommand}"
                     CommandParameter="{x:Static keybindings:Actions.ShowSettingsFile}"
                     Foreground="{DynamicResource MainTextColor}"
-                    Header="UserSettings.json">
+                    Header="UserSettings.json"
+                    x:Name="UserSettingsItem">
                     <MenuItem.Icon>
                         <Image
-                            Width="12"
                             Height="12"
-                            Source="{StaticResource BracesImage}" />
+                            Source="{StaticResource BracesImage}"
+                            Width="12" />
                     </MenuItem.Icon>
                 </customControls:StyledMenuItem>
                 <customControls:StyledMenuItem
-                    x:Name="KeybindingsItem"
                     Command="{CompiledBinding MainWindows.ActiveWindow.Value.RunActionCommand}"
                     CommandParameter="{x:Static keybindings:Actions.ShowKeybindingsFile}"
                     Foreground="{DynamicResource MainTextColor}"
-                    Header="keybindings.json">
+                    Header="keybindings.json"
+                    x:Name="KeybindingsItem">
                     <MenuItem.Icon>
                         <Image
-                            Width="12"
                             Height="12"
-                            Source="{StaticResource BracesImage}" />
+                            Source="{StaticResource BracesImage}"
+                            Width="12" />
                     </MenuItem.Icon>
                 </customControls:StyledMenuItem>
+
+                <Separator IsVisible="{CompiledBinding GlobalSettings.CanChooseConfigLocation}" />
+                <customControls:StyledMenuItem
+                    Command="{CompiledBinding MainWindows.ActiveWindow.Value.RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.SetConfigLocationAuto}"
+                    Foreground="{DynamicResource MainTextColor}"
+                    GroupName="ConfigLocation"
+                    Header="{CompiledBinding Translation.Auto.Value,
+                                             Mode=OneWay}"
+                    IsChecked="{CompiledBinding GlobalSettings.IsConfigAuto.Value,
+                                                Mode=OneWay}"
+                    IsVisible="{CompiledBinding GlobalSettings.CanChooseConfigLocation}"
+                    ToggleType="Radio" />
+                <customControls:StyledMenuItem
+                    Command="{CompiledBinding MainWindows.ActiveWindow.Value.RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.SetConfigLocationPortable}"
+                    Foreground="{DynamicResource MainTextColor}"
+                    GroupName="ConfigLocation"
+                    Header="{CompiledBinding Translation.Portable.Value,
+                                             Mode=OneWay}"
+                    IsChecked="{CompiledBinding GlobalSettings.IsConfigPortable.Value,
+                                                Mode=OneWay}"
+                    IsVisible="{CompiledBinding GlobalSettings.CanChooseConfigLocation}"
+                    ToggleType="Radio" />
+                <customControls:StyledMenuItem
+                    Command="{CompiledBinding MainWindows.ActiveWindow.Value.RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.SetConfigLocationRoaming}"
+                    Foreground="{DynamicResource MainTextColor}"
+                    GroupName="ConfigLocation"
+                    Header="{CompiledBinding Translation.Roaming.Value,
+                                             Mode=OneWay}"
+                    IsChecked="{CompiledBinding GlobalSettings.IsConfigRoaming.Value,
+                                                Mode=OneWay}"
+                    IsVisible="{CompiledBinding GlobalSettings.CanChooseConfigLocation}"
+                    ToggleType="Radio" />
+                <Separator IsVisible="{CompiledBinding GlobalSettings.CanChooseConfigLocation}" />
+
                 <customControls:StyledMenuItem
                     Command="{CompiledBinding MainWindows.ActiveWindow.Value.RunActionCommand}"
                     CommandParameter="{x:Static keybindings:Actions.ResetSettings}"
@@ -53,9 +90,9 @@
                                              Mode=OneWay}">
                     <MenuItem.Icon>
                         <Image
-                            Width="12"
                             Height="12"
-                            Source="{StaticResource ResetImage}" />
+                            Source="{StaticResource ResetImage}"
+                            Width="12" />
                     </MenuItem.Icon>
                 </customControls:StyledMenuItem>
             </MenuFlyout>
