@@ -135,9 +135,15 @@ public static class ConfigFolders
     /// <see cref="Gate" />.
     /// </summary>
     /// <returns>False if any file failed; the others are still moved.</returns>
-    internal static Task<bool> MoveAllAsync(string from, string to, bool includeSettings)
+    internal static Task<bool> MoveAllAsync(string from, string to, bool includeSettings) =>
+        Task.FromResult(MoveAll(from, to, includeSettings, out _));
+
+    /// <inheritdoc cref="MoveAllAsync" />
+    /// <param name="moved">How many files were moved into <paramref name="to" />.</param>
+    internal static bool MoveAll(string from, string to, bool includeSettings, out int moved)
     {
         var ok = true;
+        moved = 0;
         try
         {
             Directory.CreateDirectory(to);
@@ -145,7 +151,7 @@ public static class ConfigFolders
         catch (Exception ex)
         {
             DebugHelper.LogDebug(nameof(ConfigFolders), nameof(MoveAllAsync), ex);
-            return Task.FromResult(false);
+            return false;
         }
 
         foreach (var name in KnownFileNames)
@@ -171,6 +177,7 @@ public static class ConfigFolders
                 }
 
                 File.Move(source, Path.Combine(to, name), overwrite: true);
+                moved++;
             }
             catch (Exception ex)
             {
@@ -179,7 +186,49 @@ public static class ConfigFolders
             }
         }
 
-        return Task.FromResult(ok);
+        return ok;
+    }
+
+    /// <summary>
+    /// Copies every known config file other than the settings file that is missing or empty in <see cref="Current" />
+    /// but has content in <see cref="OtherFolder" />. Older versions looked each file up on its own, so an upgraded
+    /// install can have its files split across both folders. Never moves or deletes anything in the other folder.
+    /// Does nothing on macOS, which only uses the roaming folder.
+    /// </summary>
+    internal static void AdoptMissingFiles()
+    {
+        if (OperatingSystem.IsMacOS())
+        {
+            return;
+        }
+
+        var current = Current;
+        var other = OtherFolder;
+        foreach (var name in KnownFileNames)
+        {
+            if (string.Equals(name, SettingsFileName, StringComparison.Ordinal))
+            {
+                continue;
+            }
+
+            try
+            {
+                var source = Path.Combine(other, name);
+                var target = Path.Combine(current, name);
+                if (!HasContent(source) || HasContent(target))
+                {
+                    continue;
+                }
+
+                Directory.CreateDirectory(current);
+                // The target is missing or empty here, so overwriting never replaces a real file
+                File.Copy(source, target, overwrite: true);
+            }
+            catch (Exception ex)
+            {
+                DebugHelper.LogDebug(nameof(ConfigFolders), nameof(AdoptMissingFiles), ex);
+            }
+        }
     }
 
     internal static void SetCurrent(string directory) => _current = directory;

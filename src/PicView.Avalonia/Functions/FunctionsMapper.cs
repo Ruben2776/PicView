@@ -885,8 +885,9 @@ public class FunctionsMapper : IActionRunner
         };
         if (message is not null)
         {
-            await Dispatcher.UIThread.InvokeAsync(() =>
-                TooltipHelper.ShowTooltipMessageAsync(message, true, _mainWindow, TimeSpan.FromSeconds(4)));
+            // Not awaited: the tooltip stays up for seconds and must not keep the action command busy
+            Dispatcher.UIThread.Post(() =>
+                _ = TooltipHelper.ShowTooltipMessageAsync(message, true, _mainWindow, TimeSpan.FromSeconds(4)));
         }
     }
 

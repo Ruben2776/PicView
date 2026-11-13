@@ -52,7 +52,7 @@ public static class ConfigFileManager
             return true;
         }
 
-        if (await TryAutoFallbackAsync(file).ConfigureAwait(false) is not { } previous)
+        if (TryAutoFallback(file) is not { } fallback)
         {
             return false;
         }
@@ -62,8 +62,28 @@ public static class ConfigFileManager
             return true;
         }
 
-        ConfigFolders.SetCurrent(previous);
+        fallback.RestoreAfterFailedRetry();
         return false;
+    }
+
+    /// <summary>
+    /// A fallback that made the folder Auto picks now <see cref="ConfigFolders.Current" />.
+    /// </summary>
+    /// <param name="Previous">The folder in use before the fallback.</param>
+    /// <param name="MovedAny">Whether any file was moved out of <paramref name="Previous" />.</param>
+    private readonly record struct AutoFallback(string Previous, bool MovedAny)
+    {
+        /// <summary>
+        /// After a failed retry, goes back to the previous folder only when no file was moved out of it. Once files
+        /// were moved, the new folder is where they are, so it stays <see cref="ConfigFolders.Current" />.
+        /// </summary>
+        public void RestoreAfterFailedRetry()
+        {
+            if (!MovedAny)
+            {
+                ConfigFolders.SetCurrent(Previous);
+            }
+        }
     }
 
     private static async Task<bool> TrySaveAsync(ConfigFile file, object? value, Type inputType,
@@ -88,9 +108,9 @@ public static class ConfigFileManager
     /// folder Auto picks now and makes it <see cref="ConfigFolders.Current" />. A failure in a folder that is still
     /// writable, such as a locked file, moves nothing. The caller must hold <see cref="ConfigFolders.Gate" />.
     /// </summary>
-    /// <returns>The folder in use before the fallback, so a failed retry can go back to it; or null when there was
-    /// no fallback and the write should not be retried.</returns>
-    private static async Task<string?> TryAutoFallbackAsync(ConfigFile file)
+    /// <returns>The fallback, so a failed retry can go back when nothing was moved; or null when there was no
+    /// fallback and the write should not be retried.</returns>
+    private static AutoFallback? TryAutoFallback(ConfigFile file)
     {
         if (file.PathOverride is not null)
         {
@@ -115,9 +135,9 @@ public static class ConfigFileManager
             return null;
         }
 
-        await ConfigFolders.MoveAllAsync(from, to, includeSettings: true).ConfigureAwait(false);
+        ConfigFolders.MoveAll(from, to, includeSettings: true, out var moved);
         ConfigFolders.SetCurrent(to);
-        return from;
+        return new AutoFallback(from, moved > 0);
     }
 
     /// <summary>
@@ -148,7 +168,7 @@ public static class ConfigFileManager
             return true;
         }
 
-        if (await TryAutoFallbackAsync(file).ConfigureAwait(false) is not { } previous)
+        if (TryAutoFallback(file) is not { } fallback)
         {
             return false;
         }
@@ -158,7 +178,7 @@ public static class ConfigFileManager
             return true;
         }
 
-        ConfigFolders.SetCurrent(previous);
+        fallback.RestoreAfterFailedRetry();
         return false;
     }
 

@@ -206,11 +206,23 @@ public class ConfigLocationSwitchTests : IDisposable
         await FavoritesManager.AddAsync(favoriteFolder);
 
         await ConfigFolders.Gate.WaitAsync(TestContext.Current.CancellationToken);
-        var sw = SetConfigLocationAsync(ConfigLocation.Roaming);
-        var fav = FavoritesManager.SaveToFileAsync();
-        Assert.False(sw.IsCompleted || fav.IsCompleted);
-        ConfigFolders.Gate.Release();
+        Task<ConfigLocationChange> sw;
+        Task fav;
+        bool queued;
+        try
+        {
+            // Both are started while the gate is held, so the switch is first in the queue
+            sw = SetConfigLocationAsync(ConfigLocation.Roaming);
+            fav = FavoritesManager.SaveToFileAsync();
+            queued = !(sw.IsCompleted || fav.IsCompleted);
+        }
+        finally
+        {
+            ConfigFolders.Gate.Release();
+        }
+
         await Task.WhenAll(sw, fav);
+        Assert.True(queued);
 
         Assert.Contains("favorite", File.ReadAllText(Path.Combine(_roaming, "Favorites.json")));
         Assert.False(File.Exists(Path.Combine(_local, "Favorites.json")));
@@ -292,8 +304,9 @@ public class ConfigLocationSwitchTests : IDisposable
     }
 
     [Fact]
-    public async Task SaveAsync_AutoFallbackRetryFails_RestoresFolder()
+    public async Task SaveAsync_AutoFallbackRetryFailsAfterMove_KeepsNewFolder()
     {
+        // The files were moved, so the new folder is where they are now; going back would point at an empty folder
         if (!OperatingSystem.IsWindows()) { return; }
         File.Delete(Path.Combine(_local, "ResizeWindow.json"));
         Directory.CreateDirectory(Path.Combine(_roaming, "ResizeWindow.json"));
@@ -305,7 +318,29 @@ public class ConfigLocationSwitchTests : IDisposable
         }
 
         Assert.False(saved);
+        Assert.Equal(_roaming, ConfigFolders.Current);
+        Assert.True(File.Exists(Path.Combine(_roaming, "keybindings.json")));
+        Assert.True(File.Exists(Path.Combine(_roaming, ConfigFolders.SettingsFileName)));
+    }
+
+    [Fact]
+    public async Task SaveAsync_AutoFallbackMovesNothingAndRetryFails_RestoresFolder()
+    {
+        if (!OperatingSystem.IsWindows()) { return; }
+        // The roaming folder cannot be created, so nothing moves and the files stay in _local
+        ConfigFolders.UseRoots(_local, _unwritable);
+        ConfigFolders.SetCurrent(_local);
+        File.Delete(Path.Combine(_local, "ResizeWindow.json"));
+
+        bool saved;
+        using (DenyCreatingFiles(_local))
+        {
+            saved = await SaveResizeAsync();
+        }
+
+        Assert.False(saved);
         Assert.Equal(_local, ConfigFolders.Current);
+        Assert.True(File.Exists(Path.Combine(_local, "keybindings.json")));
     }
 
     [Fact]
@@ -402,5 +437,113 @@ public class ConfigLocationSwitchTests : IDisposable
 
         Assert.True(File.Exists(Path.Combine(_local, ConfigFolders.SettingsFileName)));
         Assert.Equal(_local, ConfigFolders.ResolveAtStartup());
+    }
+
+    [Fact]
+    public async Task ResetDefaultsAsync_AutoModeInRoamingWithLocalWritable_WritesDefaultsInsteadOfDeleting()
+    {
+        // Auto picks the writable local folder for a new file, so deleting the roaming one would strand the rest
+        if (OperatingSystem.IsMacOS()) { return; }
+        ClearFiles(_local);
+        Seed(_roaming);
+        LoadSettings();
+        Assert.Equal(_roaming, ConfigFolders.Current);
+
+        await ResetDefaultsAsync();
+
+        Assert.True(File.Exists(Path.Combine(_roaming, ConfigFolders.SettingsFileName)));
+        Assert.Equal(_roaming, ConfigFolders.ResolveAtStartup());
+    }
+
+    private static void ClearFiles(string dir)
+    {
+        foreach (var file in Directory.GetFiles(dir))
+        {
+            File.Delete(file);
+        }
+    }
+
+    [Fact]
+    public void LoadSettings_SettingsOnlyInRoamingAndOtherFilesLocal_AdoptsMissingFiles()
+    {
+        if (OperatingSystem.IsMacOS()) { return; }
+        ClearFiles(_local);
+        File.WriteAllText(Path.Combine(_roaming, ConfigFolders.SettingsFileName),
+            JsonSerializer.Serialize(GetDefaults(), SettingsGenerationContext.Default.AppSettings));
+        File.WriteAllText(Path.Combine(_local, "keybindings.json"), ContentFor("keybindings.json"));
+        File.WriteAllText(Path.Combine(_local, "Favorites.json"), ContentFor("Favorites.json"));
+        // An empty copy in the folder in use is replaced too
+        File.WriteAllText(Path.Combine(_roaming, "FileHistory.json"), "");
+        File.WriteAllText(Path.Combine(_local, "FileHistory.json"), ContentFor("FileHistory.json"));
+
+        Assert.True(LoadSettings());
+
+        Assert.Equal(_roaming, ConfigFolders.Current);
+        foreach (var name in new[] { "keybindings.json", "Favorites.json", "FileHistory.json" })
+        {
+            Assert.Equal(ContentFor(name), File.ReadAllText(Path.Combine(_roaming, name)));
+            Assert.Equal(ContentFor(name), File.ReadAllText(Path.Combine(_local, name)));
+        }
+
+        Assert.False(File.Exists(Path.Combine(_roaming, "ResizeWindow.json")));
+    }
+
+    [Fact]
+    public void LoadSettings_FileInBothFolders_KeepsCurrentCopy()
+    {
+        if (OperatingSystem.IsMacOS()) { return; }
+        File.WriteAllText(Path.Combine(_roaming, "keybindings.json"), "{\"other\":1}");
+
+        LoadSettings();
+
+        Assert.Equal(_local, ConfigFolders.Current);
+        Assert.Equal(ContentFor("keybindings.json"), File.ReadAllText(Path.Combine(_local, "keybindings.json")));
+        Assert.Equal("{\"other\":1}", File.ReadAllText(Path.Combine(_roaming, "keybindings.json")));
+    }
+
+    [Fact]
+    public void LoadSettings_OtherCopyEmpty_DoesNotAdopt()
+    {
+        if (OperatingSystem.IsMacOS()) { return; }
+        File.Delete(Path.Combine(_local, "Favorites.json"));
+        File.WriteAllText(Path.Combine(_roaming, "Favorites.json"), "");
+
+        LoadSettings();
+
+        Assert.Equal(_local, ConfigFolders.Current);
+        Assert.False(File.Exists(Path.Combine(_local, "Favorites.json")));
+        Assert.True(File.Exists(Path.Combine(_roaming, "Favorites.json")));
+    }
+
+    [Fact]
+    public async Task SaveSettingsAsync_SettingsFileMovedByAnotherInstance_FollowsToOtherFolder()
+    {
+        if (OperatingSystem.IsMacOS()) { return; }
+        Assert.Equal(_local, ConfigFolders.Current);
+
+        // Another instance switched to Roaming: its settings file is in roaming and the local one is gone
+        var other = GetDefaults();
+        other.StartUp!.ConfigLocation = ConfigLocation.Roaming;
+        File.WriteAllText(Path.Combine(_roaming, ConfigFolders.SettingsFileName),
+            JsonSerializer.Serialize(other, SettingsGenerationContext.Default.AppSettings));
+        File.Delete(Path.Combine(_local, ConfigFolders.SettingsFileName));
+
+        Assert.True(await SaveSettingsAsync());
+
+        Assert.Equal(_roaming, ConfigFolders.Current);
+        Assert.Equal(ConfigLocation.Roaming, Settings!.StartUp!.ConfigLocation);
+        Assert.Equal(ConfigLocation.Roaming, ReadMode(_roaming));
+        Assert.False(File.Exists(Path.Combine(_local, ConfigFolders.SettingsFileName)));
+    }
+
+    [Fact]
+    public void AppSettings_ConfigLocationRoaming_SerializesAsNumber()
+    {
+        var settings = GetDefaults();
+        settings.StartUp!.ConfigLocation = ConfigLocation.Roaming;
+
+        var json = JsonSerializer.Serialize(settings, SettingsGenerationContext.Default.AppSettings);
+
+        Assert.Contains("\"ConfigLocation\": 2", json);
     }
 }

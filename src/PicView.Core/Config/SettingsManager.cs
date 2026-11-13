@@ -50,6 +50,12 @@ public static class SettingsManager
     private static SettingsConfiguration? Configuration { get; set; }
 
     /// <summary>
+    /// Whether the settings file was in <see cref="ConfigFolders.Current" /> when the settings were loaded or last
+    /// saved. When it was, and it is gone now, another instance moved it.
+    /// </summary>
+    private static volatile bool _settingsFileLoaded;
+
+    /// <summary>
     /// Loads application settings synchronously from a file or initializes them to default if loading fails.
     /// </summary>
     /// <returns>
@@ -61,7 +67,9 @@ public static class SettingsManager
         try
         {
             Configuration ??= new SettingsConfiguration();
+            _settingsFileLoaded = false;
             ConfigFolders.ResolveAtStartup();
+            ConfigFolders.AdoptMissingFiles();
 
             var info = new FileInfo(Configuration.FilePath);
             if (info.Exists && info.Length > 0)
@@ -86,6 +94,7 @@ public static class SettingsManager
             return false;
         }
 
+        _settingsFileLoaded = true;
         return true;
     }
 
@@ -98,6 +107,14 @@ public static class SettingsManager
     /// <remarks>
     /// If the mode is Portable or Roaming and its folder is not the one in use, the settings are written into
     /// the mode's folder and every other config file is moved there.
+    /// <para>
+    /// If another instance switched the folder, the settings file is gone from the folder in use and is in the other
+    /// one. The save then follows it there and takes over that file's mode, instead of writing the old folder back.
+    /// Every config file path is computed from <see cref="ConfigFolders.Current" />, so the saves that run after this
+    /// one (the keymap and file history, which <c>SharedFiles.SaveAsync</c> saves after the settings) follow too.
+    /// Saves that ran before it, such as a window's size saved when the window closed or favorites saved when they
+    /// changed, have already been written into the old folder and are not moved.
+    /// </para>
     /// </remarks>
     public static async ValueTask<bool> SaveSettingsAsync()
     {
@@ -110,6 +127,8 @@ public static class SettingsManager
         await ConfigFolders.Gate.WaitAsync().ConfigureAwait(false);
         try
         {
+            FollowSettingsMovedByAnotherInstance();
+
             var mode = Settings.StartUp?.ConfigLocation ?? ConfigLocation.Auto;
             if (mode is ConfigLocation.Portable or ConfigLocation.Roaming)
             {
@@ -202,9 +221,65 @@ public static class SettingsManager
     /// <summary>
     /// Writes the settings. The caller must hold <see cref="ConfigFolders.Gate" />.
     /// </summary>
-    private static Task<bool> SaveSettingsUnlockedAsync() =>
-        ConfigFileManager.SaveUnlockedAsync(Configuration ??= new SettingsConfiguration(), Settings,
-            typeof(AppSettings), SettingsGenerationContext.Default);
+    private static async Task<bool> SaveSettingsUnlockedAsync()
+    {
+        var saved = await ConfigFileManager.SaveUnlockedAsync(Configuration ??= new SettingsConfiguration(), Settings,
+            typeof(AppSettings), SettingsGenerationContext.Default).ConfigureAwait(false);
+        if (saved)
+        {
+            _settingsFileLoaded = true;
+        }
+
+        return saved;
+    }
+
+    /// <summary>
+    /// When the settings file was in the folder in use but another instance has since moved it to the other folder,
+    /// makes the other folder <see cref="ConfigFolders.Current" /> and takes over the mode written in that file.
+    /// Moves nothing. The caller must hold <see cref="ConfigFolders.Gate" />.
+    /// </summary>
+    private static void FollowSettingsMovedByAnotherInstance()
+    {
+        if (!_settingsFileLoaded || OperatingSystem.IsMacOS() || Settings?.StartUp is null)
+        {
+            return;
+        }
+
+        try
+        {
+            if (File.Exists(Path.Combine(ConfigFolders.Current, ConfigFolders.SettingsFileName)))
+            {
+                return;
+            }
+
+            var other = ConfigFolders.OtherFolder;
+            var otherSettings = Path.Combine(other, ConfigFolders.SettingsFileName);
+            if (!HasContent(otherSettings))
+            {
+                return;
+            }
+
+            ConfigFolders.SetCurrent(other);
+            try
+            {
+                var bytes = File.ReadAllBytes(otherSettings);
+                var settings = JsonSerializer.Deserialize(bytes, SettingsGenerationContext.Default.AppSettings);
+                if (settings?.StartUp is { } startUp)
+                {
+                    Settings.StartUp.ConfigLocation = startUp.ConfigLocation;
+                }
+            }
+            catch (Exception ex)
+            {
+                // Keep the mode in memory
+                DebugHelper.LogDebug(nameof(SettingsManager), nameof(FollowSettingsMovedByAnotherInstance), ex);
+            }
+        }
+        catch (Exception ex)
+        {
+            DebugHelper.LogDebug(nameof(SettingsManager), nameof(FollowSettingsMovedByAnotherInstance), ex);
+        }
+    }
 
     private static void DeleteSettingsFile(string directory)
     {
@@ -225,7 +300,11 @@ public static class SettingsManager
     /// <summary>
     /// Sets the application's settings to their default values.
     /// </summary>
-    public static void SetDefaults() => Settings = GetDefaults();
+    public static void SetDefaults()
+    {
+        Settings = GetDefaults();
+        _settingsFileLoaded = false;
+    }
 
     /// <summary>
     /// Initializes and returns an instance of the default application settings.
@@ -307,17 +386,20 @@ public static class SettingsManager
     /// Resets the application's settings to their default values, keeping the config location mode.
     /// </summary>
     /// <remarks>
-    /// In Auto mode, when the other folder has no settings file, the settings file is deleted, so the next start
-    /// behaves like a first run. Otherwise the defaults are written, with the mode kept and the language detected
-    /// from the system, because a deleted file would lose the mode or let a stale copy in the other folder win.
+    /// In Auto mode, when the other folder has no settings file and the folder in use is the one Auto picks for a
+    /// first run, the settings file is deleted, so the next start behaves like a first run. Otherwise the defaults are
+    /// written, with the mode kept and the language detected from the system, because a deleted file would lose the
+    /// mode, let a stale copy in the other folder win, or make the next start pick the other folder and leave the
+    /// other config files behind.
     /// </remarks>
     public static async Task ResetDefaultsAsync()
     {
         var mode = Settings?.StartUp?.ConfigLocation ?? ConfigLocation.Auto;
         SetDefaults();
 
-        if (mode == ConfigLocation.Auto && !HasContent(Path.Combine(ConfigFolders.OtherFolder,
-                ConfigFolders.SettingsFileName)))
+        if (mode == ConfigLocation.Auto &&
+            !HasContent(Path.Combine(ConfigFolders.OtherFolder, ConfigFolders.SettingsFileName)) &&
+            ConfigFolders.IsSame(ConfigFolders.Current, ConfigFolders.FolderFor(ConfigLocation.Auto)))
         {
             try
             {
