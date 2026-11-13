@@ -42,6 +42,43 @@ public class SvgFallbackTests : IDisposable
     }
 
     [AvaloniaFact]
+    public void RenderThumb_Svg_IsRequestedHeight()
+    {
+        using var bitmap = SvgFallback.RenderThumb(WriteTemp(FilterAndTextSvg), 100, 50, 120);
+        Assert.NotNull(bitmap);
+        Assert.Equal(new global::Avalonia.PixelSize(240, 120), bitmap.PixelSize);
+        // 96 DPI like every other thumbnail, so its size is its pixel size
+        Assert.Equal(120, bitmap.Size.Height, 1);
+        Assert.True(HasVisiblePixel(bitmap));
+        Assert.Equal(0, AlphaAt(bitmap, 0, 0));
+    }
+
+    [AvaloniaFact]
+    public void RenderThumb_UnknownSvgHeight_IsRequestedHeight()
+    {
+        using var bitmap = SvgFallback.RenderThumb(WriteTemp(FilterAndTextSvg), 0, 0, 120);
+        Assert.NotNull(bitmap);
+        Assert.Equal(120, bitmap.PixelSize.Height);
+    }
+
+    [AvaloniaFact]
+    public void RenderThumb_NotAnSvg_ReturnsNull() =>
+        Assert.Null(SvgFallback.RenderThumb(WriteTemp("not svg"), 10, 10, 120));
+
+    [AvaloniaFact]
+    public void RenderThumb_VeryWideSvg_CapsLongSide()
+    {
+        // A few bytes can ask for any size: at height 200 this divider would be 400,000 pixels wide
+        const string divider = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"20000\" height=\"10\">" +
+                               "<rect width=\"20000\" height=\"10\" fill=\"red\"/></svg>";
+
+        using var bitmap = SvgFallback.RenderThumb(WriteTemp(divider), 20000, 10, 200);
+
+        Assert.NotNull(bitmap);
+        Assert.Equal(SvgFallback.MinLongSide, bitmap.PixelSize.Width);
+    }
+
+    [AvaloniaFact]
     public void Render_NotAnSvg_ReturnsNull() => Assert.Null(SvgFallback.Render(WriteTemp("not svg"), 10, 10));
 
     private FileInfo WriteTemp(string content)

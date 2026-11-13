@@ -2,11 +2,15 @@
     x:Class="PicView.Avalonia.Views.UC.ZoomPreviewer"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="clr-namespace:PicView.Avalonia.Converters"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
     xmlns:keybindings="using:PicView.Core.Keybindings"
     xmlns:vm="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
     x:DataType="vm:TabViewModel"
     Focusable="False">
+    <UserControl.Resources>
+        <converters:DisplayableConverter x:Key="DisplayableConverter" />
+    </UserControl.Resources>
     <Border
         x:Name="MainBorder"
         Background="{DynamicResource PopUpBackgroundColor}"
@@ -72,14 +76,16 @@
                             CurrentFileInfo="{Binding FileInfo.Value}"
                             DockPanel.Dock="Left"
                             ImageType="{Binding ImageType.Value}"
-                            Source="{CompiledBinding Image.Value}" />
+                            Source="{CompiledBinding Image.Value,
+                                                     Converter={StaticResource DisplayableConverter}}" />
                         <customControls:PicBox
                             x:Name="SecondaryOverlayImage"
                             CurrentFileInfo="{Binding SecondaryFileInfo.Value}"
                             DockPanel.Dock="Right"
                             ImageType="{Binding SecondaryImageType.Value}"
                             IsVisible="{CompiledBinding ParentWindowContext.GlobalSettings.IsSideBySide.Value}"
-                            Source="{CompiledBinding SecondaryImage.Value}" />
+                            Source="{CompiledBinding SecondaryImage.Value,
+                                                     Converter={StaticResource DisplayableConverter}}" />
                     </DockPanel>
                     <Canvas x:Name="OverlayCanvas">
                         <Rectangle

@@ -7,6 +7,7 @@ using ImageMagick;
 using Orientation = ImageMagick.OrientationType;
 #endif
 using ImageMagick.Formats;
+using PicView.Avalonia.Svg;
 using PicView.Core.DebugTools;
 using PicView.Core.FileHandling;
 using PicView.Core.ImageReading;
@@ -201,7 +202,9 @@ public static class GetThumbnails
         
             case MagickFormat.Svg:
             case MagickFormat.Svgz:
-                return null;
+                // A bitmap, not the viewer's DrawingImage: that would be built on the UI thread and replay every
+                // shape while the gallery scrolls
+                return SvgFallback.RenderThumb(fileInfo, magick.Width, magick.Height, height);
             default:
             {
                 var rawPreviewThumb = GetRawPreviewThumb(magick, height);

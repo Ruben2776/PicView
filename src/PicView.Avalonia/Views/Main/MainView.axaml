@@ -13,6 +13,7 @@
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <UserControl.Resources>
+        <converters:DisplayableConverter x:Key="DisplayableConverter" />
 
         <ContextMenu x:Key="MainContextMenu">
 
@@ -1108,6 +1109,7 @@
                                     DockPanel.Dock="Bottom"
                                     HorizontalAlignment="Center"
                                     Source="{CompiledBinding Image.Value,
+                                                             Converter={StaticResource DisplayableConverter},
                                                              TargetNullValue={StaticResource LogoImage}}" />
                             </DockPanel>
                         </ToolTip.Tip>

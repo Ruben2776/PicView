@@ -27,6 +27,30 @@ public class DisplayableConverterTests
     }
 
     [AvaloniaFact]
+    public void Convert_SameDrawingTwice_ReturnsSameImage()
+    {
+        // Every binding that shows the drawing (viewer, zoom previewer, tab tooltip) has its own converter
+        var drawing = new SvgDrawing(1, 1, new SvgGroup(null, 1, null, []));
+
+        var first = new DisplayableConverter().Convert(drawing, typeof(IImage), null, CultureInfo.InvariantCulture);
+        var second = new DisplayableConverter().Convert(drawing, typeof(IImage), null, CultureInfo.InvariantCulture);
+
+        Assert.IsType<DrawingImage>(first);
+        Assert.Same(first, second);
+    }
+
+    [AvaloniaFact]
+    public void Convert_DifferentDrawings_ReturnsDifferentImages()
+    {
+        // SvgDrawing is a record: equal values must still be different images, since they are different files
+        var root = new SvgGroup(null, 1, null, []);
+        var first = _converter.Convert(new SvgDrawing(1, 1, root), typeof(IImage), null, CultureInfo.InvariantCulture);
+        var second = _converter.Convert(new SvgDrawing(1, 1, root), typeof(IImage), null, CultureInfo.InvariantCulture);
+
+        Assert.NotSame(first, second);
+    }
+
+    [AvaloniaFact]
     public void Convert_Bitmap_PassesThrough()
     {
         using var bitmap = new WriteableBitmap(new PixelSize(1, 1), new Vector(96, 96));
