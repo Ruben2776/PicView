@@ -132,6 +132,31 @@ public class GetImageTests : IDisposable
     }
 
     [AvaloniaTheory]
+    [InlineData("svg")]
+    [InlineData("svgz")]
+    public async Task GetThumbAsync_Svg_ReturnsThumbnailAtHeight(string extension)
+    {
+        const string svg = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"200\" height=\"100\">" +
+                           "<rect x=\"10\" y=\"10\" width=\"80\" height=\"80\" fill=\"red\"/></svg>";
+        var path = Path.Combine(_directory, $"shape.{extension}");
+        if (extension == "svgz")
+        {
+            using var file = File.Create(path);
+            using var gzip = new System.IO.Compression.GZipStream(file, System.IO.Compression.CompressionLevel.Fastest);
+            gzip.Write(System.Text.Encoding.UTF8.GetBytes(svg));
+        }
+        else
+        {
+            File.WriteAllText(path, svg);
+        }
+
+        using var actual = await GetThumbnails.GetThumbAsync(new FileInfo(path), 100);
+
+        Assert.NotNull(actual);
+        Assert.Equal(new PixelSize(200, 100), actual.PixelSize);
+    }
+
+    [AvaloniaTheory]
     [InlineData(100u)] // 128 is the closest stored size
     [InlineData(40u)] // 48 is the closest stored size
     public async Task GetThumbAsync_IconWithDifferentPicturePerSize_ShowsTheFrameTheViewerShows(uint height)

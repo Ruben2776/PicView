@@ -42,6 +42,30 @@ public class SvgFallbackTests : IDisposable
     }
 
     [AvaloniaFact]
+    public void RenderThumb_Svg_IsRequestedHeight()
+    {
+        using var bitmap = SvgFallback.RenderThumb(WriteTemp(FilterAndTextSvg), 50, 120);
+        Assert.NotNull(bitmap);
+        Assert.Equal(new global::Avalonia.PixelSize(240, 120), bitmap.PixelSize);
+        // 96 DPI like every other thumbnail, so its size is its pixel size
+        Assert.Equal(120, bitmap.Size.Height, 1);
+        Assert.True(HasVisiblePixel(bitmap));
+        Assert.Equal(0, AlphaAt(bitmap, 0, 0));
+    }
+
+    [AvaloniaFact]
+    public void RenderThumb_UnknownSvgHeight_IsRequestedHeight()
+    {
+        using var bitmap = SvgFallback.RenderThumb(WriteTemp(FilterAndTextSvg), 0, 120);
+        Assert.NotNull(bitmap);
+        Assert.Equal(120, bitmap.PixelSize.Height);
+    }
+
+    [AvaloniaFact]
+    public void RenderThumb_NotAnSvg_ReturnsNull() =>
+        Assert.Null(SvgFallback.RenderThumb(WriteTemp("not svg"), 10, 120));
+
+    [AvaloniaFact]
     public void Render_NotAnSvg_ReturnsNull() => Assert.Null(SvgFallback.Render(WriteTemp("not svg"), 10, 10));
 
     private FileInfo WriteTemp(string content)
