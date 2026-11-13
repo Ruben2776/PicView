@@ -101,7 +101,7 @@ public partial class FileAssociationWindow : GenericWindow
             var brush = UIHelper.GetBrush("SecondaryTextColor");
 
             // Create group header checkbox
-            var groupCheckBox = new CheckBox
+            var groupCheckBox = new FileTypeCheckBox
             {
                 Classes = { "altHover", "y", "changeColor" },
                 Tag = fileTypeGroup,
@@ -144,7 +144,7 @@ public partial class FileAssociationWindow : GenericWindow
             // Create checkboxes for each file type item in the group
             foreach (var fileType in fileTypeGroup.FileTypes)
             {
-                var fileCheckBox = new CheckBox
+                var fileCheckBox = new FileTypeCheckBox
                 {
                     Classes = { "altHover", "x", "changeColor" },
                     Tag = fileType,
@@ -189,6 +189,9 @@ public partial class FileAssociationWindow : GenericWindow
                     .Subscribe(isVisible => { fileCheckBox.IsVisible = isVisible; })
                     .AddTo(_disposables);
             }
+
+            // A group's default is selected, even when its file types are mixed
+            UpdateGroupCheckboxState(fileTypeGroup);
         }
     }
 
@@ -275,9 +278,8 @@ public partial class FileAssociationWindow : GenericWindow
                 }
             }
 
-            // Also update the group checkbox
-            var groupCheckBox = checkBoxes.FirstOrDefault(x => x.Tag == group);
-            groupCheckBox?.IsChecked = group.IsSelected.Value;
+            // Also update the group checkbox, from its file types rather than the group's default
+            UpdateGroupCheckboxState(group);
         }
     }
 
@@ -298,15 +300,37 @@ public partial class FileAssociationWindow : GenericWindow
                 checkBox.IsVisible = searchText.Contains(filterText, StringComparison.InvariantCultureIgnoreCase);
             }
         }
-        
+
         if (DataContext is not CoreViewModel core)
         {
             return;
         }
-        
+
         foreach (var group in core.AssociationsViewModel.FileTypeGroups)
         {
             UpdateGroupCheckboxState(group);
+        }
+    }
+
+    /// <summary>
+    /// A file type starts as <c>null</c> (leave the association unchanged), which looks unselected,
+    /// and a group is <c>null</c> when its file types are mixed.
+    /// A two-state <see cref="CheckBox"/> toggles <c>null</c> to <c>false</c>, so a click would deselect it;
+    /// this one selects it instead.
+    /// </summary>
+    private sealed class FileTypeCheckBox : CheckBox
+    {
+        protected override Type StyleKeyOverride => typeof(CheckBox);
+
+        protected override void Toggle()
+        {
+            if (IsChecked is null && !IsThreeState)
+            {
+                SetCurrentValue(IsCheckedProperty, true);
+                return;
+            }
+
+            base.Toggle();
         }
     }
 }
