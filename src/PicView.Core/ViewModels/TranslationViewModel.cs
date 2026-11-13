@@ -242,6 +242,10 @@ public class TranslationViewModel
         PresetDescription.Value = t.PresetDescription;
         Presets.Value = t.Presets;
         PressKey.Value = t.PressKey;
+        Auto.Value = t.Auto;
+        Portable.Value = t.Portable;
+        PortableNotWritable.Value = t.PortableNotWritable;
+        Roaming.Value = t.Roaming;
         Posterize.Value = t.Posterize;
         PrevArchive.Value = t.PrevArchive;
         PrevFolder.Value = t.PrevFolder;
@@ -618,6 +622,10 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> Pixels { get; } = new();
     public BindableReactiveProperty<string?> PlayPause { get; } = new();
     public BindableReactiveProperty<string?> Posterize { get; } = new();
+    public BindableReactiveProperty<string?> Auto { get; } = new();
+    public BindableReactiveProperty<string?> Portable { get; } = new();
+    public BindableReactiveProperty<string?> PortableNotWritable { get; } = new();
+    public BindableReactiveProperty<string?> Roaming { get; } = new();
     public BindableReactiveProperty<string?> PresetDescription { get; } = new();
     public BindableReactiveProperty<string?> Presets { get; } = new();
     public BindableReactiveProperty<string?> PressKey { get; } = new();

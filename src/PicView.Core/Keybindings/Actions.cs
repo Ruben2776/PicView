@@ -157,4 +157,7 @@ public static class Actions
     public const string ShowKeybindingsFile = nameof(ShowKeybindingsFile);
     public const string ShowRecentHistoryFile = nameof(ShowRecentHistoryFile);
     public const string ShowFavoritesFile = nameof(ShowFavoritesFile);
+    public const string SetConfigLocationAuto = nameof(SetConfigLocationAuto);
+    public const string SetConfigLocationPortable = nameof(SetConfigLocationPortable);
+    public const string SetConfigLocationRoaming = nameof(SetConfigLocationRoaming);
 }
