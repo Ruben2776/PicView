@@ -20,6 +20,8 @@ public static class GalleryDefaults
     
     public const int BorderTopAndBottomThickness = 2;
     public const int BorderSideThickness = 1;
-    public static double GetDockedGalleryWidth(double itemSize) => itemSize + BorderTopAndBottomThickness + SizeDefaults.HorizontalScrollbarSize;
-    public static double GetDockedGalleryHeight(double itemSize) => itemSize + BorderSideThickness + SizeDefaults.VerticalScrollbarSize;
+    /// <summary>Width of a gallery docked left or right: items, a side border and the vertical scrollbar.</summary>
+    public static double GetDockedGalleryWidth(double itemSize) => itemSize + BorderSideThickness + SizeDefaults.VerticalScrollbarSize;
+    /// <summary>Height of a gallery docked top or bottom: items, the top/bottom border and the horizontal scrollbar.</summary>
+    public static double GetDockedGalleryHeight(double itemSize) => itemSize + BorderTopAndBottomThickness + SizeDefaults.HorizontalScrollbarSize;
 }

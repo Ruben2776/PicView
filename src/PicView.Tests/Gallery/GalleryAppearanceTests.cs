@@ -51,9 +51,10 @@ public class GalleryAppearanceTests
             Assert.Equal(expected, a.Extent);
         }
 
-        Assert.Equal(itemSize + 1 + 30,
-            GalleryAppearance.For(GalleryMode.Docked, GalleryDockPosition.Top, inputs).Extent);
+        // Top/bottom docks scroll horizontally (22px scrollbar), left/right docks vertically (30px scrollbar)
         Assert.Equal(itemSize + 2 + 22,
+            GalleryAppearance.For(GalleryMode.Docked, GalleryDockPosition.Top, inputs).Extent);
+        Assert.Equal(itemSize + 1 + 30,
             GalleryAppearance.For(GalleryMode.Docked, GalleryDockPosition.Left, inputs).Extent);
     }
 
