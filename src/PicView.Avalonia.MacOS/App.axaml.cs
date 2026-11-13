@@ -121,7 +121,7 @@ public class App : Application, IPlatformSpecificService
 
     public int CompareStrings(string str1, string str2)
     {
-        return string.CompareOrdinal(str1, str2);
+        return NaturalStringComparer.Compare(str1, str2);
     }
 
     public void OpenWith(string path)
