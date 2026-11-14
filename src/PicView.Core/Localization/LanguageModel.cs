@@ -450,6 +450,7 @@ public class LanguageModel
     public string? StrobeReturnLightDetected { get; set; }
     public string? StrobeReturnLightNotDetected { get; set; }
     public string? Subject { get; set; }
+    public string? SvgImage { get; set; }
     public string? Temperature { get; set; }
     public string? TabManagement { get; set; }
     public string? Theme { get; set; }
