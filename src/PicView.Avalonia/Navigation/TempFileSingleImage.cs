@@ -103,7 +103,9 @@ internal static class TempFileSingleImage
             Image = image,
             PixelWidth = width,
             PixelHeight = height,
-            ImageType = ImageType.Svg
+            ImageType = ImageType.Svg,
+            // Not as FileInfo, which would make the tab browse the temp folder: only so the source can be read again
+            SvgSourcePath = fileInfo.FullName
         };
     }
 

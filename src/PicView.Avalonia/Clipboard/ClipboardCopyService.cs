@@ -162,6 +162,13 @@ public class ClipboardCopyService(
         return false;
     }
 
+    /// <summary>
+    /// The SVG file behind what <paramref name="tab"/> shows: its file, or for a Single Image drawn from SVG code,
+    /// such as a pasted one, the temp file that holds the code. Null when there is neither.
+    /// </summary>
+    internal static string? SvgPathOf(TabViewModel? tab) =>
+        tab?.FileInfo.CurrentValue?.FullName ?? tab?.Model.SvgSourcePath;
+
     public async Task<bool> CopyAxamlAsync(string? path)
     {
         if (string.IsNullOrWhiteSpace(path) || clipboard is null || !SvgFileReader.HasSvgExtension(path) || !File.Exists(path))

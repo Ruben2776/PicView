@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Reflection;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input.Platform;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
@@ -1048,6 +1049,53 @@ public class AppLifecycleTests : IAsyncDisposable
         {
             Settings.UIProperties.IsTaskbarProgressEnabled = wasEnabled;
         }
+    }
+
+    [AvaloniaFact]
+    public async Task PasteText_SvgMarkup_CanBeCopiedAsAxaml()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var window = app.MainWindows.Open[0];
+        var vm = ViewModelOf(window);
+        var tab = vm.WindowTabs.ActiveTab.CurrentValue;
+        var service = new ClipboardPasteService(clipboard: null, window, _core);
+        var copy = new ClipboardCopyService(window.Clipboard);
+        Application.Current!.DataContext = _core;
+        try
+        {
+            await service.PasteTextAsync(
+                "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><rect width='10' height='10' fill='red'/></svg>",
+                vm);
+
+            var path = ClipboardCopyService.SvgPathOf(tab);
+            var copied = await copy.CopyAxamlAsync(path);
+
+            Assert.NotNull(path);
+            Assert.Null(tab.Model.FileInfo);
+            Assert.True(copied);
+            Assert.StartsWith("<DrawingImage Viewbox=\"0 0 24 24\">", await window.Clipboard!.TryGetTextAsync());
+        }
+        finally
+        {
+            Application.Current.DataContext = null;
+        }
+    }
+
+    [AvaloniaFact]
+    public async Task SvgPathOf_FileAndNoImage_ReturnsTheFileAndNull()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var tab = ViewModelOf(app.MainWindows.Open[0]).WindowTabs.ActiveTab.CurrentValue;
+        var file = new FileInfo(Path.Combine(_folder, "icon.svg"));
+
+        var withoutImage = ClipboardCopyService.SvgPathOf(tab);
+        tab.Display(new ImageModel { FileInfo = file, SvgSourcePath = "ignored.svg" });
+
+        Assert.Null(withoutImage);
+        Assert.Null(ClipboardCopyService.SvgPathOf(null));
+        Assert.Equal(file.FullName, ClipboardCopyService.SvgPathOf(tab));
     }
 
     [AvaloniaFact]

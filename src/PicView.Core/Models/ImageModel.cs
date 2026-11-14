@@ -15,7 +15,13 @@ public class ImageModel : IDisposable
     public ImageType ImageType { get; set; }
     public TiffNavigationInfo? TiffNavigation { get; set; }
     public MotionPhotoInfo? MotionPhoto { get; set; }
-    
+
+    /// <summary>
+    /// The SVG file a Single Image was drawn from, when the model names no <see cref="FileInfo"/>: the temp file
+    /// that holds pasted SVG code. It is there to read the SVG's source again, never to browse from.
+    /// </summary>
+    public string? SvgSourcePath { get; set; }
+
     public void Dispose()
     {
         if (Image is IDisposable img)
