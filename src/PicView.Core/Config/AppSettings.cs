@@ -310,6 +310,12 @@ public class ImageScaling
     /// When enabled, the application shows two images next to each other for comparison purposes.
     /// </summary>
     public bool ShowImageSideBySide { get; set; } = false;
+
+    /// <summary>
+    /// Specifies whether the next image is stacked on the current one and blended in Difference, so the two can be
+    /// compared. Never on together with <see cref="ShowImageSideBySide"/>.
+    /// </summary>
+    public bool ShowComparison { get; set; } = false;
 }
 
 public class Zoom

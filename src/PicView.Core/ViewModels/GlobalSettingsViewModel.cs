@@ -7,7 +7,7 @@ using R3;
 namespace PicView.Core.ViewModels;
 
 /// <summary>
-/// The fourteen toggled settings publish their changes (ADR-0020): each is a bindable over its stored value, and the
+/// The fifteen toggled settings publish their changes (ADR-0020): each is a bindable over its stored value, and the
 /// write-through here is the one writer of that stored value, followed by one coalesced save.
 /// </summary>
 public class GlobalSettingsViewModel
@@ -20,6 +20,12 @@ public class GlobalSettingsViewModel
     public BindableReactiveProperty<bool> IsLooping { get; }
 
     public BindableReactiveProperty<bool> IsSideBySide { get; }
+
+    /// <summary>Comparison mode: the next image stacked on the current one in Difference. Never on with side-by-side.</summary>
+    public BindableReactiveProperty<bool> IsComparing { get; }
+
+    /// <summary>Whether a tab shows a pair: side-by-side or comparison is on.</summary>
+    public ReadOnlyReactiveProperty<bool> IsShowingPair { get; }
 
     public BindableReactiveProperty<bool> IsScrollingEnabled { get; }
 
@@ -122,7 +128,16 @@ public class GlobalSettingsViewModel
         _save = save ?? SaveSettingsAsync;
 
         IsLooping = new BindableReactiveProperty<bool>(Settings.UIProperties.Looping);
+        // A settings file with both on (hand-edited, or from an older build): comparison wins
+        if (Settings.ImageScaling.ShowComparison)
+        {
+            Settings.ImageScaling.ShowImageSideBySide = false;
+        }
         IsSideBySide = new BindableReactiveProperty<bool>(Settings.ImageScaling.ShowImageSideBySide);
+        IsComparing = new BindableReactiveProperty<bool>(Settings.ImageScaling.ShowComparison);
+        IsShowingPair = IsSideBySide.CombineLatest(IsComparing, static (sideBySide, comparing) => sideBySide || comparing)
+            .DistinctUntilChanged()
+            .ToReadOnlyReactiveProperty();
         IsScrollingEnabled = new BindableReactiveProperty<bool>(Settings.Zoom.ScrollEnabled);
         IsZoomedToFit = new BindableReactiveProperty<bool>(Settings.ImageScaling.ZoomToFit);
         IsIncludingSubdirectories = new BindableReactiveProperty<bool>(Settings.Sorting.IncludeSubDirectories);
@@ -157,6 +172,11 @@ public class GlobalSettingsViewModel
         Follow(ShowHoverBar, value => Settings.UIProperties.ShowHoverNavigationBar = value, rephrases: true);
         Follow(ShowFadeButtons, value => Settings.UIProperties.ShowAltInterfaceButtons = value);
         Follow(WindowMargin, value => Settings.WindowProperties.Margin = value);
+        Follow(IsComparing, value => Settings.ImageScaling.ShowComparison = value);
+
+        // Side-by-side and comparison are never on together: turning one on turns the other off
+        IsComparing.Where(static on => on).Subscribe(_ => IsSideBySide.Value = false);
+        IsSideBySide.Where(static on => on).Subscribe(_ => IsComparing.Value = false);
     }
 
     /// <summary>

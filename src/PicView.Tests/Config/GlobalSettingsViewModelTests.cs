@@ -1,4 +1,4 @@
-using PicView.Core.Gallery;
+﻿using PicView.Core.Gallery;
 using PicView.Core.Localization;
 using PicView.Core.ViewModels;
 using R3;
@@ -6,7 +6,7 @@ using R3;
 namespace PicView.Tests.Config;
 
 /// <summary>
-/// The fourteen toggled settings publish their changes (ADR-0020): each writes its stored value before any
+/// The fifteen toggled settings publish their changes (ADR-0020): each writes its stored value before any
 /// subscriber hears of it, and a change saves the settings once, however many land during a save.
 /// </summary>
 [Collection("Sequential")]
@@ -32,6 +32,7 @@ public class GlobalSettingsViewModelTests
     {
         { "Looping", s => s.IsLooping, () => Settings.UIProperties.Looping },
         { "SideBySide", s => s.IsSideBySide, () => Settings.ImageScaling.ShowImageSideBySide },
+        { "Comparison", s => s.IsComparing, () => Settings.ImageScaling.ShowComparison },
         { "Scrolling", s => s.IsScrollingEnabled, () => Settings.Zoom.ScrollEnabled },
         { "ZoomToFit", s => s.IsZoomedToFit, () => Settings.ImageScaling.ZoomToFit },
         { "Subdirectories", s => s.IsIncludingSubdirectories, () => Settings.Sorting.IncludeSubDirectories },
@@ -91,6 +92,73 @@ public class GlobalSettingsViewModelTests
         Assert.True(settings.IsLooping.Value);
         Assert.True(Settings.UIProperties.Looping);
         Assert.Equal(0, _saves);
+    }
+
+    [Fact]
+    public void IsComparing_TurnedOn_TurnsSideBySideOff()
+    {
+        var settings = New();
+        settings.IsSideBySide.Value = true;
+
+        settings.IsComparing.Value = true;
+
+        Assert.False(settings.IsSideBySide.Value);
+        Assert.False(Settings.ImageScaling.ShowImageSideBySide);
+    }
+
+    [Fact]
+    public void IsSideBySide_TurnedOn_TurnsComparingOff()
+    {
+        var settings = New();
+        settings.IsComparing.Value = true;
+
+        settings.IsSideBySide.Value = true;
+
+        Assert.False(settings.IsComparing.Value);
+        Assert.False(Settings.ImageScaling.ShowComparison);
+    }
+
+    [Fact]
+    public void IsShowingPair_EitherOn_IsTrue()
+    {
+        var settings = New();
+        Assert.False(settings.IsShowingPair.CurrentValue);
+
+        settings.IsSideBySide.Value = true;
+        Assert.True(settings.IsShowingPair.CurrentValue);
+
+        settings.IsComparing.Value = true;
+        Assert.True(settings.IsShowingPair.CurrentValue);
+
+        settings.IsComparing.Value = false;
+        Assert.False(settings.IsShowingPair.CurrentValue);
+    }
+
+    [Fact]
+    public void IsShowingPair_SwitchingSideBySideToComparing_NeverEmitsFalse()
+    {
+        var settings = New();
+        settings.IsSideBySide.Value = true;
+        var emitted = new List<bool>();
+        using var _ = settings.IsShowingPair.Skip(1).Subscribe(emitted.Add);
+
+        settings.IsComparing.Value = true;
+
+        Assert.DoesNotContain(false, emitted);
+        Assert.True(settings.IsShowingPair.CurrentValue);
+    }
+
+    [Fact]
+    public void Constructor_BothStoredOn_ComparisonWins()
+    {
+        Settings.ImageScaling.ShowImageSideBySide = true;
+        Settings.ImageScaling.ShowComparison = true;
+
+        var settings = New();
+
+        Assert.True(settings.IsComparing.Value);
+        Assert.False(settings.IsSideBySide.Value);
+        Assert.False(Settings.ImageScaling.ShowImageSideBySide);
     }
 
     [Fact]
