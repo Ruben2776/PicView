@@ -67,6 +67,8 @@
   "ColorRepresentation": "ייצוג צבע",
   "ColorTone": "גוון צבע",
   "Comment": "תגובה",
+  "Comparison": "השוואה",
+  "ComparisonTooltip": "הצב את התמונה מעל הבאה והצג את ההבדל ביניהן",
   "CompressedBitsPixel": "סיביות דחוסות לפיקסל",
   "Compression": "דחיסה",
   "ConstrainBackgroundToImage": "הגבל צבע רקע לתמונה",

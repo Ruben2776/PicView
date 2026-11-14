@@ -67,6 +67,8 @@
   "ColorRepresentation": "Representació del color",
   "ColorTone": "Tonalitat del color",
   "Comment": "Comentari",
+  "Comparison": "Comparació",
+  "ComparisonTooltip": "Superposa la imatge amb la següent i mostra'n la diferència",
   "CompressedBitsPixel": "Bits comprimits per píxel",
   "Compression": "Compressió",
   "ConstrainBackgroundToImage": "Limitar el color de fons a la imatge",

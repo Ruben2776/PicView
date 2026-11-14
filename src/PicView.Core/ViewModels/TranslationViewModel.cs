@@ -71,6 +71,8 @@ public class TranslationViewModel
         ColorPickerToolTooltip.Value = t.ColorPickerToolTooltip;
         ColorRepresentation.Value = t.ColorRepresentation;
         Comment.Value = t.Comment;
+        Comparison.Value = t.Comparison;
+        ComparisonTooltip.Value = t.ComparisonTooltip;
         CompressedBitsPixel.Value = t.CompressedBitsPixel;
         Compression.Value = t.Compression;
         ConstrainBackgroundToImage.Value = t.ConstrainBackgroundToImage;
@@ -453,6 +455,8 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> ColorPickerToolTooltip { get; } = new();
     public BindableReactiveProperty<string?> ColorRepresentation { get; } = new();
     public BindableReactiveProperty<string?> Comment { get; } = new();
+    public BindableReactiveProperty<string?> Comparison { get; } = new();
+    public BindableReactiveProperty<string?> ComparisonTooltip { get; } = new();
     public BindableReactiveProperty<string?> CompressedBitsPixel { get; } = new();
     public BindableReactiveProperty<string?> Compression { get; } = new();
     public BindableReactiveProperty<string?> ConstrainBackgroundToImage { get; } = new();

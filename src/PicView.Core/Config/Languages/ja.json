@@ -67,6 +67,8 @@
   "ColorRepresentation": "色彩表現",
   "ColorTone": "色調",
   "Comment": "コメント",
+  "Comparison": "比較",
+  "ComparisonTooltip": "画像を次の画像に重ねて差分を表示",
   "CompressedBitsPixel": "圧縮されたピクセルあたりのビット数",
   "Compression": "圧縮",
   "ConstrainBackgroundToImage": "背景色を画像に制限する",

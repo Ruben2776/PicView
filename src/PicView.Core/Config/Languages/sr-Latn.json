@@ -67,6 +67,8 @@
   "ColorRepresentation": "Predstavljanje boje",
   "ColorTone": "Ton boje",
   "Comment": "Komentar",
+  "Comparison": "Poređenje",
+  "ComparisonTooltip": "Preklopi sliku sa sledećom i prikaži razliku",
   "CompressedBitsPixel": "Kompresovani bitovi po pikselu",
   "Compression": "Kompresija",
   "ConstrainBackgroundToImage": "Ograniči boju pozadine na sliku",

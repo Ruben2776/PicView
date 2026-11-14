@@ -67,6 +67,8 @@
   "ColorRepresentation": "Kleurenrepresentatie",
   "ColorTone": "Kleurtoon",
   "Comment": "Opmerking",
+  "Comparison": "Vergelijking",
+  "ComparisonTooltip": "Leg de afbeelding over de volgende en toon het verschil",
   "CompressedBitsPixel": "Gecomprimeerde bits per pixel",
   "Compression": "Compressie",
   "ConstrainBackgroundToImage": "Beperk achtergrondkleur tot afbeelding",

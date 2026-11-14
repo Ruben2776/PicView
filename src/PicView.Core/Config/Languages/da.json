@@ -67,6 +67,8 @@
   "ColorRepresentation": "Farverepræsentation",
   "ColorTone": "Farve Tone",
   "Comment": "Kommentar",
+  "Comparison": "Sammenligning",
+  "ComparisonTooltip": "Læg billedet oven på det næste og vis forskellen",
   "CompressedBitsPixel": "Komprimerede bits pr. pixel",
   "Compression": "Kompression",
   "ConstrainBackgroundToImage": "Begræns baggrundsfarve til billedet",

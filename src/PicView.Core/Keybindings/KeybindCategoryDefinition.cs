@@ -162,6 +162,7 @@ public static class KeybindCategoryDefinition
     public static List<(string FunctionName, string DisplayName)> GetImageControlEntries(LanguageModel t) =>
     [
         (Actions.SideBySide, t.SideBySide ?? string.Empty),
+        (Actions.Comparison, t.Comparison ?? string.Empty),
         (Actions.ZoomToFit, t.ZoomToFit ?? string.Empty),
         (Actions.Flip, t.Flip ?? string.Empty),
         (Actions.Crop, t.Crop ?? string.Empty),

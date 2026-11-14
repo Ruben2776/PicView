@@ -67,6 +67,8 @@
   "ColorRepresentation": "Color representation",
   "ColorTone": "Color Tone",
   "Comment": "Comment",
+  "Comparison": "Comparison",
+  "ComparisonTooltip": "Stack the image on the next one and show their difference",
   "CompressedBitsPixel": "Compressed bits per pixel",
   "Compression": "Compression",
   "ConstrainBackgroundToImage": "Constrain background color to image",

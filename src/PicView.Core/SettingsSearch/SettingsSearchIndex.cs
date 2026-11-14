@@ -141,6 +141,10 @@ public static class SettingsSearchIndex
         {
             list.Add(new SettingsSearchItem(t.SideBySide, data.ImageSideBySideSearchTags));
         }
+        if (t.Comparison != null)
+        {
+            list.Add(new SettingsSearchItem(t.Comparison, data.ImageComparisonSearchTags));
+        }
         if (t.ImageAliasing != null)
         {
             list.Add(new SettingsSearchItem(t.ImageAliasing, data.ImageScalingSearchTags));

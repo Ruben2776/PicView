@@ -232,6 +232,7 @@ public class FunctionsMapper : IActionRunner
             // Misc
             Actions.ChangeBackground => ChangeBackground,
             Actions.SideBySide => SideBySide,
+            Actions.Comparison => Comparison,
             Actions.Slideshow => Slideshow,
             Actions.ColorPicker => ColorPicker,
             Actions.Restart => Restart,
@@ -714,6 +715,8 @@ public class FunctionsMapper : IActionRunner
         await BackgroundManager.ChangeBackgroundAsync(_vm).ConfigureAwait(false);
 
     private ValueTask SideBySide() => ToggleHelper.Toggle(_vm.GlobalSettings.IsSideBySide);
+
+    private ValueTask Comparison() => ToggleHelper.Toggle(_vm.GlobalSettings.IsComparing);
 
     /// <inheritdoc cref="Core.Navigation.Interfaces.IImageIterator.ReloadAsync"/>
     private async ValueTask Reload()

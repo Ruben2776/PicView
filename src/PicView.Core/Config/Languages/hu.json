@@ -67,6 +67,8 @@
   "ColorRepresentation": "Színes ábrázolás",
   "ColorTone": "Színtónus",
   "Comment": "Megjegyzés",
+  "Comparison": "Összehasonlítás",
+  "ComparisonTooltip": "A kép ráhelyezése a következőre, és a különbség megjelenítése",
   "CompressedBitsPixel": "Tömörített bitek pixelenként",
   "Compression": "Tömörítés",
   "ConstrainBackgroundToImage": "Háttérszín igazítása a képhez",

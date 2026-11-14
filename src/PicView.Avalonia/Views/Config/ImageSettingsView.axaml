@@ -45,6 +45,19 @@
 
         </Border>
 
+        <!--  Comparison  -->
+        <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.ImageComparisonSearchTags}" Classes="searchBorder">
+            <customControls:TextToggleButton
+                x:Name="ComparisonToggleButton"
+                Classes="MenuItemHover settingsToggleButton"
+                Command="{CompiledBinding MainWindows.ActiveWindow.Value.RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.Comparison}"
+                IsChecked="{CompiledBinding GlobalSettings.IsComparing.Value, Mode=OneWay}"
+                Text="{CompiledBinding Translation.Comparison.Value,
+                                       Mode=OneWay}"
+                ToolTip.Tip="{CompiledBinding Translation.ComparisonTooltip.Value,
+                                              Mode=OneWay}" />
+        </Border>
+
         <!--  Autoplay motion photos  -->
         <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.MotionPhotoSearchTags}" Classes="searchBorder">
             <customControls:TextToggleButton

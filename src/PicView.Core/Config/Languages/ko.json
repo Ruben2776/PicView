@@ -67,6 +67,8 @@
   "ColorRepresentation": "색상 표현",
   "ColorTone": "색조",
   "Comment": "주석",
+  "Comparison": "비교",
+  "ComparisonTooltip": "이미지를 다음 이미지 위에 겹쳐 차이를 표시",
   "CompressedBitsPixel": "픽셀당 압축 비트",
   "Compression": "압축",
   "ConstrainBackgroundToImage": "배경색을 이미지에만 적용",

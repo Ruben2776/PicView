@@ -67,6 +67,8 @@
   "ColorRepresentation": "Цветовое представление",
   "ColorTone": "Цветовой тон",
   "Comment": "Комментарий",
+  "Comparison": "Сравнение",
+  "ComparisonTooltip": "Наложить изображение на следующее и показать разницу",
   "CompressedBitsPixel": "Сжатые биты на пиксель",
   "Compression": "Сжатие",
   "ConstrainBackgroundToImage": "Ограничить цвет фона изображением",

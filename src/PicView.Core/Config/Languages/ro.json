@@ -67,6 +67,8 @@
   "ColorRepresentation": "Reprezentare color",
   "ColorTone": "Ton de culoare",
   "Comment": "Comentariu",
+  "Comparison": "Comparare",
+  "ComparisonTooltip": "Suprapune imaginea peste următoarea și arată diferența",
   "CompressedBitsPixel": "Biți compresați pe pixel",
   "Compression": "Compresie",
   "ConstrainBackgroundToImage": "Restricționează culoarea de fundal la imagine",

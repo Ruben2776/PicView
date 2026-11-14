@@ -67,6 +67,8 @@
   "ColorRepresentation": "تمثيل الألوان",
   "ColorTone": "درجة اللون",
   "Comment": "تعليق",
+  "Comparison": "مقارنة",
+  "ComparisonTooltip": "مطابقة الصورة مع التالية وإظهار الفرق بينهما",
   "CompressedBitsPixel": "البتات المضغوطة لكل بكسل",
   "Compression": "الضغط",
   "ConstrainBackgroundToImage": "حصر لون الخلفية بالصورة",

@@ -67,6 +67,8 @@
   "ColorRepresentation": "Predstavitev barve",
   "ColorTone": "Barvni odtenek",
   "Comment": "Komentar",
+  "Comparison": "Primerjava",
+  "ComparisonTooltip": "Prekrij sliko z naslednjo in prikaži razliko",
   "CompressedBitsPixel": "Komprimirani biti na pixel",
   "Compression": "Kompresija",
   "ConstrainBackgroundToImage": "Omeji barvo ozadja na sliko",

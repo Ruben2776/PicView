@@ -67,6 +67,8 @@
   "ColorRepresentation": "颜色表示",
   "ColorTone": "色调",
   "Comment": "评论",
+  "Comparison": "比较",
+  "ComparisonTooltip": "将图像叠加在下一张上并显示差异",
   "CompressedBitsPixel": "压缩位像素",
   "Compression": "压缩",
   "ConstrainBackgroundToImage": "将背景颜色限制为图像区域",

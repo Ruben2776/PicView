@@ -67,6 +67,8 @@
   "ColorRepresentation": "Renk gösterimi",
   "ColorTone": "Renk Tonu",
   "Comment": "Yorum",
+  "Comparison": "Karşılaştırma",
+  "ComparisonTooltip": "Görüntüyü sonrakinin üzerine yerleştir ve farkı göster",
   "CompressedBitsPixel": "Piksel başına sıkıştırılmış bit",
   "Compression": "Sıkıştırma",
   "ConstrainBackgroundToImage": "Arka plan rengini yalnızca görselle sınırla",
