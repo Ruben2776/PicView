@@ -7,6 +7,7 @@ using PicView.Core.ImageDecoding;
 using PicView.Core.IPlatform;
 using PicView.Core.Localization;
 using PicView.Core.Models;
+using PicView.Core.Svg;
 using PicView.Core.ViewModels;
 
 namespace PicView.Avalonia.Clipboard;
@@ -16,6 +17,8 @@ public class ClipboardPasteService(
     MainWindow? mainWindow = null,
     CoreViewModel? core = null) : IPasteClipboard
 {
+    private const char ByteOrderMark = (char)0xFEFF;
+
     public async ValueTask<bool> PasteAsync(MainWindowViewModel vm)
     {
         if (clipboard is null)
@@ -45,7 +48,7 @@ public class ClipboardPasteService(
                 return pasted;
             }
 
-            // 2. Try to paste text (URLs, file paths, base64)
+            // 2. Try to paste text (URLs, file paths, base64, SVG code)
             var text = await clipboard.TryGetTextAsync().ConfigureAwait(false);
             if (!string.IsNullOrWhiteSpace(text))
             {
@@ -122,6 +125,11 @@ public class ClipboardPasteService(
             return true;
         }
 
+        if (await PasteSvgCodeAsync(text, vm).ConfigureAwait(false))
+        {
+            return true;
+        }
+
         var activeCore = core ?? vm.Core;
         if (activeCore is null)
         {
@@ -129,6 +137,36 @@ public class ClipboardPasteService(
         }
 
         return (await SourceOpener.OpenAsync(mainWindow, activeCore, text).ConfigureAwait(false)).IsLoaded;
+    }
+
+    /// <summary>
+    /// Shows <paramref name="text"/> as an image when it is SVG code that can be drawn. The code goes through a
+    /// temp file, so it is read and drawn exactly as an SVG file is, and shows as a Single Image.
+    /// </summary>
+    private static async ValueTask<bool> PasteSvgCodeAsync(string text, MainWindowViewModel vm)
+    {
+        if (!SvgFileReader.LooksLikeSvg(text))
+        {
+            return false;
+        }
+
+        try
+        {
+            // Deleted with the other temp files when the app closes
+            var path = TempFileManager.GetNewTempFilePath("clipboard.svg");
+            // An XML declaration must be the very first thing in the file, and copied text often starts with a
+            // line break or a byte order mark
+            var code = text.Trim().TrimStart(ByteOrderMark).TrimStart();
+            await File.WriteAllTextAsync(path, code).ConfigureAwait(false);
+            return await TempFileSingleImage
+                .ShowAsync(vm, new FileInfo(path), TranslationManager.Translation?.SvgImage ?? "SVG")
+                .ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            DebugHelper.LogDebug(nameof(ClipboardPasteService), nameof(PasteSvgCodeAsync), ex);
+            return false;
+        }
     }
 
     public async ValueTask<bool> PasteImageAsync(MainWindowViewModel vm)

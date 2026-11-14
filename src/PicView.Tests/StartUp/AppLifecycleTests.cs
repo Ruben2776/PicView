@@ -8,6 +8,8 @@ using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Avalonia.Threading;
 using ImageMagick;
+using PicView.Avalonia.Clipboard;
+using PicView.Core.Svg;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Interfaces;
 using PicView.Avalonia.Printing;
@@ -913,6 +915,94 @@ public class AppLifecycleTests : IAsyncDisposable
             Assert.Same(pasted, tab.Model);
             Assert.Equal(SingleImageType.Clipboard, tab.SingleImageType);
             Assert.Equal(2, tab.ViewHistory.Count);
+        }
+        finally
+        {
+            Application.Current.DataContext = null;
+        }
+    }
+
+    [AvaloniaFact]
+    public async Task PasteText_SvgMarkup_ShowsItAsATempFileSingleImageTitledSvgImage()
+    {
+        TranslationManager.LoadLanguage("en");
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var window = app.MainWindows.Open[0];
+        var vm = ViewModelOf(window);
+        var tab = vm.WindowTabs.ActiveTab.CurrentValue;
+        var service = new ClipboardPasteService(clipboard: null, window, _core);
+        const string svg = "<svg xmlns='http://www.w3.org/2000/svg' width='40' height='20'>" +
+                           "<rect x='5' y='5' width='10' height='10' fill='red'/></svg>";
+        Application.Current!.DataContext = _core;
+        try
+        {
+            var pasted = await service.PasteTextAsync(svg, vm);
+
+            Assert.True(pasted);
+            Assert.Equal(SingleImageType.TempFile, tab.SingleImageType);
+            Assert.IsType<SvgDrawing>(tab.Model.Image);
+            Assert.Equal(40u, tab.Model.PixelWidth);
+            Assert.Null(tab.Model.FileInfo);
+            Assert.Equal("SVG image", TranslationManager.Translation.SvgImage);
+            Assert.Equal("SVG image", tab.Titles.TabTitle);
+            Assert.Contains("SVG image", tab.Titles.WindowTitle);
+            Assert.Null(tab.ImageIterator);
+        }
+        finally
+        {
+            Application.Current.DataContext = null;
+        }
+    }
+
+    [AvaloniaFact]
+    public async Task PasteText_SvgMarkupWithXmlDeclarationAndWhitespace_ShowsIt()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var window = app.MainWindows.Open[0];
+        var vm = ViewModelOf(window);
+        var tab = vm.WindowTabs.ActiveTab.CurrentValue;
+        var service = new ClipboardPasteService(clipboard: null, window, _core);
+        const string svg = """
+
+                             <?xml version='1.0' encoding='UTF-8'?>
+                           <!-- copied -->
+                           <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><circle cx='12' cy='12' r='6'/></svg>
+
+                           """;
+        Application.Current!.DataContext = _core;
+        try
+        {
+            Assert.True(await service.PasteTextAsync(svg, vm));
+            Assert.Equal(SingleImageType.TempFile, tab.SingleImageType);
+            Assert.IsType<SvgDrawing>(tab.Model.Image);
+        }
+        finally
+        {
+            Application.Current.DataContext = null;
+        }
+    }
+
+    [AvaloniaTheory]
+    [InlineData("<div><svg")]
+    [InlineData("<div><svg width='10' height='10'></div>")]
+    [InlineData("<svg></svg>")]
+    public async Task PasteText_MarkupThatCannotBeDrawn_DoesNotShowASingleImage(string text)
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var window = app.MainWindows.Open[0];
+        var vm = ViewModelOf(window);
+        var tab = vm.WindowTabs.ActiveTab.CurrentValue;
+        var service = new ClipboardPasteService(clipboard: null, window, _core);
+        Application.Current!.DataContext = _core;
+        try
+        {
+            var pasted = await service.PasteTextAsync(text, vm);
+
+            Assert.False(pasted);
+            Assert.Equal(SingleImageType.None, tab.SingleImageType);
         }
         finally
         {
