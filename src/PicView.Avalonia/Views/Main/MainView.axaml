@@ -959,11 +959,22 @@
                     </MenuItem.Icon>
                 </customControls:StyledMenuItem>
 
-                <!--  Copy SVG source, for any .svg or .svgz file  -->
-                <customControls:StyledMenuItem
-                    Command="{Binding RunActionCommand}"
-                    CommandParameter="{x:Static keybindings:Actions.CopySvg}"
-                    IsVisible="{Binding WindowTabs.ActiveTab.Value.FileInfo.Value, Converter={x:Static converters:IsSvgFileConverter.Instance}, FallbackValue=False, Mode=OneWay}">
+                <!--  Copy SVG source, for any .svg or .svgz file, and for an SVG that is no file, such as pasted SVG code  -->
+                <customControls:StyledMenuItem Command="{Binding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.CopySvg}">
+                    <customControls:StyledMenuItem.IsVisible>
+                        <MultiBinding Converter="{x:Static BoolConverters.Or}" FallbackValue="False">
+                            <Binding
+                                Converter="{x:Static converters:IsSvgFileConverter.Instance}"
+                                FallbackValue="False"
+                                Mode="OneWay"
+                                Path="WindowTabs.ActiveTab.Value.FileInfo.Value" />
+                            <Binding
+                                Converter="{x:Static converters:IsSvgImageTypeConverter.Instance}"
+                                FallbackValue="False"
+                                Mode="OneWay"
+                                Path="WindowTabs.ActiveTab.Value.ImageType.Value" />
+                        </MultiBinding>
+                    </customControls:StyledMenuItem.IsVisible>
                     <MenuItem.Header>
                         <TextBlock>
                             <Run Text="{Binding Translation.Copy.Value, Mode=OneWay}" />

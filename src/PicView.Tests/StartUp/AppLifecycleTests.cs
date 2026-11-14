@@ -1098,6 +1098,37 @@ public class AppLifecycleTests : IAsyncDisposable
         Assert.Equal(file.FullName, ClipboardCopyService.SvgPathOf(tab));
     }
 
+    [AvaloniaTheory]
+    [InlineData(Actions.CopySvg, "<svg xmlns=")]
+    [InlineData(Actions.CopyAxaml, "<DrawingImage ")]
+    public async Task PasteText_SvgMarkup_TheCopyActionCopiesItsSource(string action, string expectedStart)
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var window = app.MainWindows.Open[0];
+        var vm = ViewModelOf(window);
+        var tab = vm.WindowTabs.ActiveTab.CurrentValue;
+        var service = new ClipboardPasteService(clipboard: null, window, _core);
+        window.SetClipboardCopyService(_platform);
+        Application.Current!.DataContext = _core;
+        try
+        {
+            await service.PasteTextAsync(
+                "  <?xml version='1.0'?><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><rect width='10' height='10' fill='red'/></svg>",
+                vm);
+            await window.Clipboard!.SetTextAsync("before");
+
+            await vm.ActionRunner!.Run(action);
+
+            Assert.Equal(ImageType.Svg, tab.ImageType.Value);
+            Assert.StartsWith(expectedStart, await window.Clipboard.TryGetTextAsync());
+        }
+        finally
+        {
+            Application.Current.DataContext = null;
+        }
+    }
+
     [AvaloniaFact]
     public async Task PasteText_SvgMarkupDeclaringUtf16_ShowsIt()
     {
