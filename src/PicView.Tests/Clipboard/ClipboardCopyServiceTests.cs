@@ -1,4 +1,6 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.IO.Compression;
+using System.Runtime.InteropServices;
+using System.Text;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input.Platform;
@@ -8,7 +10,7 @@ using Avalonia.Threading;
 using PicView.Avalonia.Clipboard;
 using PicView.Core.IPlatform;
 using PicView.Core.ViewModels;
-using Xunit;
+using PicView.Tests.Svg;
 
 namespace PicView.Tests.Clipboard;
 
@@ -170,7 +172,7 @@ public class ClipboardCopyServiceTests
     {
         // Reading the file can finish on a thread pool thread, which is the same as being called from one
         var path = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName() + ".svg");
-        await File.WriteAllTextAsync(path, Svg.SvgToXamlConverterTests.FillAndStrokeSvg, TestContext.Current.CancellationToken);
+        await File.WriteAllTextAsync(path, SvgToXamlConverterTests.FillAndStrokeSvg, TestContext.Current.CancellationToken);
         try
         {
             var window = new Window();
@@ -356,7 +358,7 @@ public class ClipboardCopyServiceTests
     public async Task CopyAxamlAsync_ConvertibleSvg_CopiesDrawingImageText()
     {
         var path = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName() + ".svg");
-        await File.WriteAllTextAsync(path, Svg.SvgToXamlConverterTests.FillAndStrokeSvg, TestContext.Current.CancellationToken);
+        await File.WriteAllTextAsync(path, SvgToXamlConverterTests.FillAndStrokeSvg, TestContext.Current.CancellationToken);
         try
         {
             var window = new Window();
@@ -410,7 +412,7 @@ public class ClipboardCopyServiceTests
     {
         // The file holds a convertible SVG whatever it is named, so only the extension decides.
         var path = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName() + extension);
-        await File.WriteAllTextAsync(path, Svg.SvgToXamlConverterTests.FillAndStrokeSvg, TestContext.Current.CancellationToken);
+        await File.WriteAllTextAsync(path, SvgToXamlConverterTests.FillAndStrokeSvg, TestContext.Current.CancellationToken);
         try
         {
             var window = new Window();
@@ -439,6 +441,99 @@ public class ClipboardCopyServiceTests
         var service = new ClipboardCopyService(window.Clipboard, onCopied: () => copiedInvoked = true);
 
         var result = await service.CopyAxamlAsync(path);
+
+        Assert.False(result);
+        Assert.False(copiedInvoked);
+    }
+
+    [AvaloniaFact]
+    public async Task CopySvgAsync_UnsupportedSvg_CopiesSourceTextUnchanged()
+    {
+        // Text the SVG parser does not support still copies, character for character
+        const string source = "<?xml version=\"1.0\"?>\r\n<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24'>\n  <text>Hi</text>\n</svg>\n";
+        var path = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName() + ".svg");
+        await File.WriteAllTextAsync(path, source, TestContext.Current.CancellationToken);
+        try
+        {
+            var window = new Window();
+            var copiedInvoked = false;
+            var service = new ClipboardCopyService(window.Clipboard, onCopied: () => copiedInvoked = true);
+
+            var result = await service.CopySvgAsync(path);
+
+            Assert.True(result);
+            Assert.True(copiedInvoked);
+            Assert.Equal(source, await window.Clipboard!.TryGetTextAsync());
+        }
+        finally
+        {
+            File.Delete(path);
+        }
+    }
+
+    [AvaloniaFact]
+    public async Task CopySvgAsync_Svgz_CopiesDecompressedSourceText()
+    {
+        var source = SvgToXamlConverterTests.FillAndStrokeSvg;
+        var path = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName() + ".svgz");
+        await using (var file = File.Create(path))
+        await using (var gzip = new GZipStream(file, CompressionLevel.Optimal))
+        {
+            await gzip.WriteAsync(Encoding.UTF8.GetBytes(source), TestContext.Current.CancellationToken);
+        }
+
+        try
+        {
+            var window = new Window();
+            var service = new ClipboardCopyService(window.Clipboard);
+
+            var result = await service.CopySvgAsync(path);
+
+            Assert.True(result);
+            Assert.Equal(source, await window.Clipboard!.TryGetTextAsync());
+        }
+        finally
+        {
+            File.Delete(path);
+        }
+    }
+
+    [AvaloniaTheory]
+    [InlineData(".png", false)]
+    [InlineData(".svg.txt", false)]
+    [InlineData(".SVG", true)]
+    public async Task CopySvgAsync_ByExtension_CopiesOnlySvgFiles(string extension, bool copies)
+    {
+        var path = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName() + extension);
+        await File.WriteAllTextAsync(path, SvgToXamlConverterTests.FillAndStrokeSvg, TestContext.Current.CancellationToken);
+        try
+        {
+            var window = new Window();
+            var copiedInvoked = false;
+            var service = new ClipboardCopyService(window.Clipboard, onCopied: () => copiedInvoked = true);
+
+            var result = await service.CopySvgAsync(path);
+
+            Assert.Equal(copies, result);
+            Assert.Equal(copies, copiedInvoked);
+        }
+        finally
+        {
+            File.Delete(path);
+        }
+    }
+
+    [AvaloniaTheory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("does-not-exist.svg")]
+    public async Task CopySvgAsync_NullOrMissingPath_ReturnsFalse(string? path)
+    {
+        var window = new Window();
+        var copiedInvoked = false;
+        var service = new ClipboardCopyService(window.Clipboard, onCopied: () => copiedInvoked = true);
+
+        var result = await service.CopySvgAsync(path);
 
         Assert.False(result);
         Assert.False(copiedInvoked);

@@ -8,10 +8,11 @@ using PicView.Avalonia.FileSystem;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.ImageTransformations;
 using PicView.Avalonia.Input;
-using PicView.Avalonia.SettingsManagement;
-using PicView.Avalonia.UI;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.Printing;
+using PicView.Avalonia.SettingsManagement;
+using PicView.Avalonia.StartUp;
+using PicView.Avalonia.UI;
 using PicView.Avalonia.Wallpaper;
 using PicView.Avalonia.WindowBehavior;
 using PicView.Core.Config;
@@ -20,10 +21,9 @@ using PicView.Core.Favorites;
 using PicView.Core.FileHistory;
 using PicView.Core.FileSorting;
 using PicView.Core.IPlatform;
-using PicView.Core.Localization;
 using PicView.Core.Keybindings;
+using PicView.Core.Localization;
 using PicView.Core.Navigation;
-using PicView.Avalonia.StartUp;
 using PicView.Core.ViewModels;
 
 namespace PicView.Avalonia.Functions;
@@ -173,6 +173,7 @@ public class FunctionsMapper : IActionRunner
             Actions.CopyImage => CopyImage,
             Actions.CopyBase64 => CopyBase64,
             Actions.CopyAxaml => CopyAxaml,
+            Actions.CopySvg => CopySvg,
             Actions.DuplicateFile => DuplicateFile,
             Actions.CutFile => CutFile,
             Actions.Paste => Paste,
@@ -673,6 +674,18 @@ public class FunctionsMapper : IActionRunner
             .ConfigureAwait(false);
     }
 
+    /// <inheritdoc cref="ICopyClipboard.CopySvgAsync(string)" />
+    private async ValueTask CopySvg()
+    {
+        if (_mainWindow.ClipboardCopyService is null)
+        {
+            return;
+        }
+        await _mainWindow.ClipboardCopyService
+            .CopySvgAsync(_vm.WindowTabs.ActiveTab.CurrentValue?.FileInfo?.CurrentValue?.FullName)
+            .ConfigureAwait(false);
+    }
+
     /// <inheritdoc cref="FileManager.DuplicateFileAsync(string, string, MainWindowViewModel, MainWindow)" />
     private async ValueTask DuplicateFile()
     {
@@ -872,7 +885,7 @@ public class FunctionsMapper : IActionRunner
     /// <inheritdoc cref="SettingsManager.SetConfigLocationAsync" />
     private async ValueTask SetConfigLocation(ConfigLocation mode)
     {
-        var result = await SettingsManager.SetConfigLocationAsync(mode).ConfigureAwait(false);
+        var result = await SetConfigLocationAsync(mode).ConfigureAwait(false);
 
         // Always resync, so a radio the user clicked snaps back to the mode in use
         await Dispatcher.UIThread.InvokeAsync(() => _vm.GlobalSettings.SyncConfigLocation(Settings.StartUp.ConfigLocation));

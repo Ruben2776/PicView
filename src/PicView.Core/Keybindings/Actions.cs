@@ -94,6 +94,7 @@ public static class Actions
     public const string CopyImage = nameof(CopyImage);
     public const string CopyBase64 = nameof(CopyBase64);
     public const string CopyAxaml = nameof(CopyAxaml);
+    public const string CopySvg = nameof(CopySvg);
     public const string Paste = nameof(Paste);
     public const string DuplicateFile = nameof(DuplicateFile);
 
