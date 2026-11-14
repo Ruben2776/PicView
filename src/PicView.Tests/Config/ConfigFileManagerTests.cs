@@ -43,7 +43,7 @@ public class ConfigFileManagerTests : IDisposable
 
     private static Task<bool> SaveResizeAsync() => ConfigFileManager.SaveAsync(new ResizeWindowConfig(),
         new ResizeWindowConfig.ResizeWindowProperties(), typeof(ResizeWindowConfig.ResizeWindowProperties),
-        ResizeWindowGenerationContext.Default);
+        RememberedWindowGenerationContext.Default);
 
     [Fact]
     public async Task SaveAsync_WritesIntoCurrentFolder()

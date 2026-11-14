@@ -220,8 +220,7 @@ public class WindowInitializer(IWindowProvider provider, MainWindow mainWindow) 
 
         vm.ResizeImageViewModel ??= new ResizeImageViewModel();
         var config = new ResizeWindowConfig();
-        // Back on the UI thread, which opens the window
-        await config.LoadAsync().ConfigureAwait(true);
+        config.Load();
         await _toolWindows.OpenAsync(SecondaryWindowKind.SingleImageResize, new SecondaryWindowSpec(
             factory => factory.CreateSingleImageResizeWindow(vm), WindowOwner.MainWindowExceptMacOS)
         {

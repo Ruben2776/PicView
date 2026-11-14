@@ -252,7 +252,7 @@ public class ConfigLocationSwitchTests : IDisposable
 
     private static Task<bool> SaveResizeAsync() => ConfigFileManager.SaveAsync(new ResizeWindowConfig(),
         new ResizeWindowConfig.ResizeWindowProperties(), typeof(ResizeWindowConfig.ResizeWindowProperties),
-        ResizeWindowGenerationContext.Default);
+        RememberedWindowGenerationContext.Default);
 
     /// <summary>
     /// Denies the current user creating files and folders in <paramref name="directory" />, so it is not writable
