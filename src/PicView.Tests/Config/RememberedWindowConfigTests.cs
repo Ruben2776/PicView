@@ -7,7 +7,8 @@ public sealed class RememberedWindowConfigTests : IDisposable
     private static readonly string[] Configs =
         ["BatchResize", "Convert", "Effects", "ImageInfo", "Keybinding", "Print", "Resize", "Settings"];
 
-    private static readonly string[] Scenarios = ["RoundTrip", "MissingFile", "CorruptFile", "EmptyFile", "NonFiniteSize"];
+    private static readonly string[] Scenarios =
+        ["RoundTrip", "BomFile", "MissingFile", "CorruptFile", "EmptyFile", "NonFiniteSize"];
 
     private readonly string _tempDir = Path.Combine(Path.GetTempPath(), "PicViewTests", Guid.NewGuid().ToString("N"));
 
@@ -58,6 +59,29 @@ public sealed class RememberedWindowConfigTests : IDisposable
             _ => throw new ArgumentOutOfRangeException(nameof(config), config, null)
         };
         await check;
+    }
+
+    /// <summary>
+    /// A remembered window whose properties are missing from the shared context would load defaults and fail to save
+    /// without an error, and one missing from <see cref="Configs" /> would not be checked by the theory.
+    /// </summary>
+    [Fact]
+    public void RememberedWindowConfigs_EveryOne_IsInTheContextAndTheTheory()
+    {
+        var configTypes = typeof(RememberedWindowConfig<>).Assembly.GetTypes()
+            .Where(type => !type.IsAbstract && type.BaseType is { IsGenericType: true } baseType &&
+                           baseType.GetGenericTypeDefinition() == typeof(RememberedWindowConfig<>))
+            .ToList();
+
+        foreach (var type in configTypes)
+        {
+            var propertiesType = type.BaseType!.GetGenericArguments()[0];
+            Assert.True(RememberedWindowGenerationContext.Default.GetTypeInfo(propertiesType) is not null,
+                $"{propertiesType.Name} is not in {nameof(RememberedWindowGenerationContext)}.");
+        }
+
+        Assert.Equal(Configs.Select(name => name + "WindowConfig").Order(StringComparer.Ordinal),
+            configTypes.Select(type => type.Name).Order(StringComparer.Ordinal));
     }
 
     [Fact]
@@ -120,24 +144,46 @@ public sealed class RememberedWindowConfigTests : IDisposable
         await File.WriteAllTextAsync(config.PathOverride!, """
             {
               "IsQualityEnabled": true,
+              "Quality": 75,
               "Conversion": "Webp",
-              "KeepAspectRatio": true,
+              "Compression": "Lossless",
+              "Resize": "Percentage",
+              "KeepAspectRatio": false,
+              "Thumbnails": [ { "Subfolder": "tiny", "Size": "Height", "Value": 64 } ],
               "ConvertToIndex": 2,
+              "CompressionIndex": 1,
+              "ResizeIndex": 3,
+              "GenerateThumbnailsIndex": 4,
               "Top": 30,
               "Left": 40,
               "Width": 700,
               "Height": 500,
-              "Maximized": false,
+              "Maximized": true,
             }
             """);
 
         config.Load();
 
         var properties = config.WindowProperties!;
+        Assert.Equal(30, properties.Top);
         Assert.Equal(40, properties.Left);
         Assert.Equal(700, properties.Width);
+        Assert.Equal(500, properties.Height);
+        Assert.True(properties.Maximized);
+        Assert.True(properties.IsQualityEnabled);
+        Assert.Equal(75u, properties.Quality);
         Assert.Equal("Webp", properties.Conversion);
+        Assert.Equal("Lossless", properties.Compression);
+        Assert.Equal("Percentage", properties.Resize);
+        Assert.False(properties.KeepAspectRatio);
+        var thumbnail = Assert.Single(properties.Thumbnails!);
+        Assert.Equal("tiny", thumbnail.Subfolder);
+        Assert.Equal("Height", thumbnail.Size);
+        Assert.Equal(64, thumbnail.Value);
         Assert.Equal(2, properties.ConvertToIndex);
+        Assert.Equal(1, properties.CompressionIndex);
+        Assert.Equal(3, properties.ResizeIndex);
+        Assert.Equal(4, properties.GenerateThumbnailsIndex);
     }
 
     [Fact]
@@ -149,6 +195,9 @@ public sealed class RememberedWindowConfigTests : IDisposable
 
         var json = await File.ReadAllTextAsync(config.PathOverride!);
         Assert.DoesNotContain("ConvertToIndex", json);
+        Assert.DoesNotContain("CompressionIndex", json);
+        Assert.DoesNotContain("ResizeIndex", json);
+        Assert.DoesNotContain("GenerateThumbnailsIndex", json);
     }
 
     private TConfig Prepare<TConfig>(TConfig config) where TConfig : Core.Config.ConfigFileManagement.ConfigFile
@@ -192,6 +241,17 @@ public sealed class RememberedWindowConfigTests : IDisposable
                 Assert.Equal(640, loaded.WindowProperties.Width);
                 Assert.Equal(480, loaded.WindowProperties.Height);
                 Assert.True(loaded.WindowProperties.Maximized);
+                return;
+            }
+            case "BomFile":
+            {
+                // A file hand-edited by a tool that writes a byte-order mark still loads
+                await File.WriteAllTextAsync(config.PathOverride, """{"Left": 40, "Top": 50}""",
+                    new System.Text.UTF8Encoding(encoderShouldEmitUTF8Identifier: true));
+                config.Load();
+                Assert.NotNull(config.WindowProperties);
+                Assert.Equal(40, config.WindowProperties.Left);
+                Assert.Equal(50, config.WindowProperties.Top);
                 return;
             }
             case "MissingFile":

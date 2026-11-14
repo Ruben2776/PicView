@@ -45,8 +45,14 @@ public abstract class RememberedWindowConfig<T>(string configFileName) : ConfigF
         {
             if (File.Exists(FilePath))
             {
-                var bytes = File.ReadAllBytes(FilePath);
-                WindowProperties = JsonSerializer.Deserialize(bytes, TypeInfo) ?? new T();
+                ReadOnlySpan<byte> json = File.ReadAllBytes(FilePath);
+                // A hand-edited file may start with a byte-order mark, which the reader does not skip itself
+                if (json.StartsWith("﻿"u8))
+                {
+                    json = json[3..];
+                }
+
+                WindowProperties = JsonSerializer.Deserialize(json, TypeInfo) ?? new T();
                 return;
             }
         }
