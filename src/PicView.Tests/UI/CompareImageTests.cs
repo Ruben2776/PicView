@@ -3,6 +3,7 @@ using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Views.UC;
+using PicView.Core.ImageDecoding;
 using static PicView.Tests.UI.TabViewsHarness;
 
 namespace PicView.Tests.UI;
@@ -42,6 +43,20 @@ public class CompareImageTests
         Assert.True(compare.IsVisible);
         Assert.Equal(BitmapBlendingMode.Difference, compare.BlendMode);
         Assert.Equal(Stretch.Fill, compare.Stretch);
+    });
+
+    [AvaloniaFact]
+    public void CompareImage_AnimatedPartner_IsNotAnimated() => WithWindow((window, vm, tab) =>
+    {
+        // An animation draws its frames without the blend, so it would cover the main image instead of diffing it
+        vm.GlobalSettings.IsComparing.Value = true;
+        var partner = BitmapModel("b.gif");
+        partner.ImageType = ImageType.AnimatedGif;
+
+        tab.Display(BitmapModel("a.jpg"), partner);
+        Settle(window);
+
+        Assert.NotEqual(ImageType.AnimatedGif, CompareImageOf(tab).ImageType);
     });
 
     private static PicBox CompareImageOf(PicView.Core.ViewModels.TabViewModel tab)

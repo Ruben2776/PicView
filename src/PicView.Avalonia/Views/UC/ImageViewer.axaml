@@ -52,12 +52,12 @@
                                         ImageType="{Binding ImageType.Value}"
                                         Source="{CompiledBinding Image.Value,
                                                                  Converter={StaticResource DisplayableConverter}}" />
-                                    <!--  Comparison: the partner stacked on the main image in Difference. Hidden, so not measured or drawn, while off  -->
+                                    <!--  Comparison: the partner stacked on the main image in Difference. Hidden, so not measured or drawn, while off.
+                                          No ImageType: an animation draws its frames without the blend, so only the first frame is compared  -->
                                     <customControls:PicBox
                                         x:Name="CompareImage"
                                         BlendMode="Difference"
                                         CurrentFileInfo="{Binding SecondaryFileInfo.Value}"
-                                        ImageType="{Binding SecondaryImageType.Value}"
                                         IsVisible="{CompiledBinding ParentWindowContext.GlobalSettings.IsComparing.Value}"
                                         Source="{CompiledBinding SecondaryImage.Value,
                                                                  Converter={StaticResource DisplayableConverter}}"
