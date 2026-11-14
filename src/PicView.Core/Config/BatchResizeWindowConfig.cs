@@ -1,58 +1,12 @@
-﻿using System.Text.Json;
 using System.Text.Json.Serialization;
-using PicView.Core.Config.ConfigFileManagement;
 
 namespace PicView.Core.Config;
 
-[JsonSourceGenerationOptions(AllowTrailingCommas = true, WriteIndented = true)]
-[JsonSerializable(typeof(BatchResizeWindowConfig.BatchResizeWindowProperties))]
-internal partial class BatchResizeWindowGenerationContext : JsonSerializerContext;
-public class BatchResizeWindowConfig() : ConfigFile("BatchResizeWindow.json")
+public sealed class BatchResizeWindowConfig()
+    : RememberedWindowConfig<BatchResizeWindowConfig.BatchResizeWindowProperties>("BatchResizeWindow.json")
 {
-    public BatchResizeWindowProperties? WindowProperties { get; private set;  }
-
-    public async Task LoadAsync()
+    public class BatchResizeWindowProperties : RememberedWindowProperties
     {
-        try
-        {
-            if (File.Exists(FilePath))
-            {
-                var jsonString = await File.ReadAllTextAsync(FilePath).ConfigureAwait(false);
-                if (JsonSerializer.Deserialize(
-                        jsonString, typeof(BatchResizeWindowProperties), BatchResizeWindowGenerationContext.Default) is BatchResizeWindowProperties settings)
-                {
-                    WindowProperties = settings;
-                }
-                else
-                {
-                    WindowProperties = new BatchResizeWindowProperties();
-                } 
-            }
-            else
-            {
-                WindowProperties = new BatchResizeWindowProperties();
-            }
-        }
-        catch
-        {
-            WindowProperties = new BatchResizeWindowProperties();
-        }
-    }
-    
-    public async Task SaveAsync()
-    {
-        await ConfigFileManager.SaveAsync(this, WindowProperties, typeof(BatchResizeWindowProperties), BatchResizeWindowGenerationContext.Default).ConfigureAwait(false);
-    }
-    
-    public class BatchResizeWindowProperties : IWindowProperties
-    {
-        public int? Top { get; set; }
-        public int? Left { get; set; }
-        public double? Width { get; set; }
-        public double? Height { get; set; }
-        public bool Maximized { get; set; }
-        
-        
         public bool IsQualityEnabled { get; set; }
 
         public uint? Quality { get; set; }
@@ -99,6 +53,3 @@ public class BatchResizeWindowConfig() : ConfigFile("BatchResizeWindow.json")
         public double Value { get; set; }
     }
 }
-
-
-

@@ -196,7 +196,7 @@ public class WindowInitializer(IWindowProvider provider, MainWindow mainWindow) 
         if (core.Effects.WindowConfig is null)
         {
             core.Effects.WindowConfig = new EffectsWindowConfig();
-            await core.Effects.WindowConfig.LoadAsync().ConfigureAwait(false);
+            core.Effects.WindowConfig.Load();
         }
 
         var config = core.Effects.WindowConfig;
@@ -250,8 +250,7 @@ public class WindowInitializer(IWindowProvider provider, MainWindow mainWindow) 
         }
 
         var config = new BatchResizeWindowConfig();
-        // Back on the UI thread, which reads the Main Window's tab
-        await config.LoadAsync().ConfigureAwait(true);
+        config.Load();
         var batch = new BatchResizeViewModel(FilePicker.SelectDirectory, FilePicker.SelectFile,
             core.PlatformService.GetFiles, core.PlatformService.LocateOnDisk,
             config.WindowProperties ?? new BatchResizeWindowConfig.BatchResizeWindowProperties());
@@ -296,8 +295,7 @@ public class WindowInitializer(IWindowProvider provider, MainWindow mainWindow) 
     public async ValueTask ShowConvertWindow()
     {
         var config = new ConvertWindowConfig();
-        // Back on the UI thread, which opens the window
-        await config.LoadAsync().ConfigureAwait(true);
+        config.Load();
         await _toolWindows.OpenAsync(SecondaryWindowKind.Convert, new SecondaryWindowSpec(
             factory => factory.CreateConvertWindow(), WindowOwner.MainWindowExceptMacOS)
         {
@@ -333,7 +331,7 @@ public class WindowInitializer(IWindowProvider provider, MainWindow mainWindow) 
     {
         // The window opens at its remembered size and place, so this small file is the only thing read before it shows
         var config = new PrintWindowConfig();
-        await config.LoadAsync().ConfigureAwait(false);
+        config.Load();
 
         var preview = new PrintPreviewViewModel { PrintWindowConfig = config };
         await _toolWindows.OpenAsync(SecondaryWindowKind.PrintPreview, new SecondaryWindowSpec(

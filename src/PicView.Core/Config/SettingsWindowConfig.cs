@@ -1,61 +1,10 @@
-﻿using System.Text.Json;
-using System.Text.Json.Serialization;
-using PicView.Core.Config.ConfigFileManagement;
-
 namespace PicView.Core.Config;
 
-[JsonSourceGenerationOptions(AllowTrailingCommas = true, WriteIndented = true)]
-[JsonSerializable(typeof(SettingsWindowConfig.SettingsWindowProperties))]
-internal partial class SettingsWindowGenerationContext : JsonSerializerContext;
-public class SettingsWindowConfig() : ConfigFile("SettingsWindow.json")
+public sealed class SettingsWindowConfig()
+    : RememberedWindowConfig<SettingsWindowConfig.SettingsWindowProperties>("SettingsWindow.json")
 {
-    public SettingsWindowProperties? WindowProperties { get; private set;  }
-
-    public void Load()
+    public class SettingsWindowProperties : RememberedWindowProperties
     {
-        try
-        {
-            if (File.Exists(FilePath))
-            {
-                var bytes = File.ReadAllBytes(FilePath);
-                if (JsonSerializer.Deserialize(
-                        bytes, typeof(SettingsWindowProperties), SettingsWindowGenerationContext.Default) is SettingsWindowProperties settings)
-                {
-                    WindowProperties = settings;
-                }
-                else
-                {
-                    WindowProperties = new SettingsWindowProperties();
-                } 
-            }
-            else
-            {
-                WindowProperties = new SettingsWindowProperties();
-            }
-        }
-        catch
-        {
-            WindowProperties = new SettingsWindowProperties();
-        }
-    }
-    
-    public async Task SaveAsync()
-    {
-        await ConfigFileManager.SaveAsync(this, WindowProperties, typeof(SettingsWindowProperties), SettingsWindowGenerationContext.Default)
-            .ConfigureAwait(false);
-    }
-    
-    public class SettingsWindowProperties : IWindowProperties
-    {
-        public int? Top { get; set; }
-        public int? Left { get; set; }
-        public double? Width { get; set; }
-        public double? Height { get; set; }
-        public bool Maximized { get; set; }
-        
         public int LastTab { get; set; }
     }
 }
-
-
-

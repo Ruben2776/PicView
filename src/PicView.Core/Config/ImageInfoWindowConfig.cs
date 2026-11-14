@@ -1,58 +1,14 @@
-﻿using System.Text.Json;
-using System.Text.Json.Serialization;
-using PicView.Core.Config.ConfigFileManagement;
-
 namespace PicView.Core.Config;
 
-[JsonSourceGenerationOptions(AllowTrailingCommas = true, WriteIndented = true)]
-[JsonSerializable(typeof(ImageInfoWindowConfig.ImageInfoWindowProperties))]
-internal partial class ImageInfoWindowGenerationContext : JsonSerializerContext;
-public class ImageInfoWindowConfig() : ConfigFile("ImageInfoWindow.json")
+public sealed class ImageInfoWindowConfig()
+    : RememberedWindowConfig<ImageInfoWindowConfig.ImageInfoWindowProperties>("ImageInfoWindow.json")
 {
-    public ImageInfoWindowProperties? WindowProperties { get; private set;  }
-
-    public void Load()
+    public class ImageInfoWindowProperties : RememberedWindowProperties
     {
-        try
+        public ImageInfoWindowProperties()
         {
-            if (File.Exists(FilePath))
-            {
-                var jsonString = File.ReadAllBytes(FilePath);
-                if (JsonSerializer.Deserialize(
-                        jsonString, typeof(ImageInfoWindowProperties), ImageInfoWindowGenerationContext.Default) is ImageInfoWindowProperties settings)
-                {
-                    WindowProperties = settings;
-                }
-                else
-                {
-                    WindowProperties = new ImageInfoWindowProperties();
-                } 
-            }
-            else
-            {
-                WindowProperties = new ImageInfoWindowProperties();
-            }
+            Width = 850;
+            Height = 495;
         }
-        catch
-        {
-            WindowProperties = new ImageInfoWindowProperties();
-        }
-    }
-    
-    public async Task SaveAsync()
-    {
-        await ConfigFileManager.SaveAsync(this, WindowProperties, typeof(ImageInfoWindowProperties), ImageInfoWindowGenerationContext.Default).ConfigureAwait(false);
-    }
-    
-    public class ImageInfoWindowProperties : IWindowProperties
-    {
-        public int? Top { get; set; }
-        public int? Left { get; set; }
-        public double? Width { get; set; } = 850;
-        public double? Height { get; set; } = 495;
-        public bool Maximized { get; set; }
     }
 }
-
-
-

@@ -56,11 +56,11 @@ public sealed class PrintJobStarter(
     /// <summary>
     /// Reads the remembered Print Settings from the Print window's config file.
     /// </summary>
-    public static async Task<PrintWindowProperties?> ReadRememberedAsync()
+    public static Task<PrintWindowProperties?> ReadRememberedAsync()
     {
         var config = new PrintWindowConfig();
-        await config.LoadAsync().ConfigureAwait(false);
-        return config.WindowProperties;
+        config.Load();
+        return Task.FromResult(config.WindowProperties);
     }
 
     private async Task SendNowAsync(MainWindowViewModel vm, bool toSaveAsPdf)

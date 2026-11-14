@@ -9,7 +9,14 @@ namespace PicView.Core.Config;
 /// The serializer for every remembered window's properties. A new remembered window adds its properties type here.
 /// </summary>
 [JsonSourceGenerationOptions(AllowTrailingCommas = true, WriteIndented = true)]
+[JsonSerializable(typeof(BatchResizeWindowConfig.BatchResizeWindowProperties))]
+[JsonSerializable(typeof(ConvertWindowConfig.ConvertWindowProperties))]
+[JsonSerializable(typeof(EffectsWindowConfig.EffectsWindowProperties))]
+[JsonSerializable(typeof(ImageInfoWindowConfig.ImageInfoWindowProperties))]
+[JsonSerializable(typeof(KeybindingWindowConfig.KeybindingWindowProperties))]
+[JsonSerializable(typeof(PrintWindowConfig.PrintWindowProperties))]
 [JsonSerializable(typeof(ResizeWindowConfig.ResizeWindowProperties))]
+[JsonSerializable(typeof(SettingsWindowConfig.SettingsWindowProperties))]
 internal partial class RememberedWindowGenerationContext : JsonSerializerContext;
 
 /// <summary>

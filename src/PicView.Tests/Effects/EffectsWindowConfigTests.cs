@@ -9,7 +9,7 @@ public class EffectsWindowConfigTests
     public async Task EffectsWindowConfig_SaveAsync_WithNaNAndInfinity_DoesNotThrowAndSanitizesValues()
     {
         var config = new EffectsWindowConfig();
-        await config.LoadAsync();
+        config.Load();
 
         Assert.NotNull(config.WindowProperties);
         config.WindowProperties.Width = double.NaN;
@@ -42,7 +42,7 @@ public class EffectsWindowConfigTests
 
         var saved = await ConfigFileManager.SaveAsync(config, props,
             typeof(EffectsWindowConfig.EffectsWindowProperties),
-            EffectsWindowGenerationContext.Default);
+            RememberedWindowGenerationContext.Default);
 
         Assert.True(saved);
         var json = await File.ReadAllTextAsync(config.FilePath);
