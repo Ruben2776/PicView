@@ -682,7 +682,7 @@ public class FunctionsMapper : IActionRunner
             return;
         }
         await _mainWindow.ClipboardCopyService
-            .CopyAxamlAsync(_vm.WindowTabs.ActiveTab.CurrentValue?.FileInfo?.CurrentValue?.FullName)
+            .CopyAxamlAsync(ClipboardCopyService.SvgPathOf(_vm.WindowTabs.ActiveTab.CurrentValue))
             .ConfigureAwait(false);
     }
 
