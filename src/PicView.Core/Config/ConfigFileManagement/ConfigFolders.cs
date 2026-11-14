@@ -10,10 +10,9 @@ public static class ConfigFolders
 {
     public const string SettingsFileName = "UserSettings.json";
 
-    private static string DefaultLocalDirectory =
-        Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config");
+    private static string _defaultLocalDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config");
 
-    private static string DefaultRoamingDirectory = Path.Combine(
+    private static string _defaultRoamingDirectory = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Ruben2776", "PicView", "Config");
 
     private static readonly Lock ResolveLock = new();
@@ -42,10 +41,10 @@ public static class ConfigFolders
     ];
 
     /// <summary>The folder next to the executable.</summary>
-    public static string LocalDirectory { get; private set; } = DefaultLocalDirectory;
+    public static string LocalDirectory { get; private set; } = _defaultLocalDirectory;
 
     /// <summary>The roaming application data folder.</summary>
-    public static string RoamingDirectory { get; private set; } = DefaultRoamingDirectory;
+    public static string RoamingDirectory { get; private set; } = _defaultRoamingDirectory;
 
     /// <summary>
     /// The resolved config folder. Resolves it on first read.
@@ -240,7 +239,7 @@ public static class ConfigFolders
         _current = null;
     }
 
-    internal static void ResetRoots() => UseRoots(DefaultLocalDirectory, DefaultRoamingDirectory);
+    internal static void ResetRoots() => UseRoots(_defaultLocalDirectory, _defaultRoamingDirectory);
 
     /// <summary>
     /// Changes the folders <see cref="ResetRoots" /> returns to, and uses them now. Lets the tests keep every config
@@ -248,8 +247,8 @@ public static class ConfigFolders
     /// </summary>
     internal static void UseDefaultRoots(string localDirectory, string roamingDirectory)
     {
-        DefaultLocalDirectory = localDirectory;
-        DefaultRoamingDirectory = roamingDirectory;
+        _defaultLocalDirectory = localDirectory;
+        _defaultRoamingDirectory = roamingDirectory;
         ResetRoots();
     }
 
