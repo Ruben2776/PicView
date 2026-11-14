@@ -278,6 +278,18 @@ public class TabTitlesTests
     }
 
     [Fact]
+    public void ComparisonSetting_Changed_MarksTheTitles()
+    {
+        _ = _tab.Titles.Title;
+        Assert.Equal(1, _tab.Titles.BuildCount);
+
+        _tab.Services!.GlobalSettings.IsComparing.Value = true;
+        _ = _tab.Titles.Title;
+
+        Assert.Equal(2, _tab.Titles.BuildCount);
+    }
+
+    [Fact]
     public void Titles_AreBuiltOnRead_OnceAcrossMarks()
     {
         Browse("a.jpg");
@@ -296,6 +308,23 @@ public class TabTitlesTests
         Assert.Equal(1, _tab.Titles.BuildCount);
     }
 #endif
+
+    [Fact]
+    public void Comparing_WithASecondary_TitleNamesBoth()
+    {
+        var files = Browse("a.jpg", "b.jpg");
+        foreach (var file in files)
+        {
+            Directory.CreateDirectory(file.DirectoryName!);
+            File.WriteAllBytes(file.FullName, [0]);
+        }
+        _tab.Services!.GlobalSettings.IsComparing.Value = true;
+
+        _tab.Display(Model("a.jpg"), Model("b.jpg"));
+
+        Assert.Contains("a.jpg", _tab.Titles.Title);
+        Assert.Contains("b.jpg", _tab.Titles.Title);
+    }
 
     [Fact]
     public void Mark_OnDisplay_ComesAfterTheImageBindable()

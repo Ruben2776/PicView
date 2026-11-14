@@ -37,7 +37,7 @@ public static class CropManager
         }
         var tab = vm.WindowTabs.ActiveTab.CurrentValue;
         
-        if (!CanCrop(tab.ImageType.CurrentValue, Settings.ImageScaling.ShowImageSideBySide))
+        if (!CanCrop(tab.ImageType.CurrentValue, tab.PairSettings().ShowsPair))
         {
             tab.ShouldCropBeEnabled.Value = false;
             return false;
@@ -56,8 +56,8 @@ public static class CropManager
     /// Only still bitmaps can be cropped, not animated images or SVGs, and not two images side by side.
     /// TODO add support for cropping animated images
     /// </summary>
-    internal static bool CanCrop(ImageType? imageType, bool isSideBySide) =>
-        imageType is ImageType.Bitmap && !isSideBySide;
+    internal static bool CanCrop(ImageType? imageType, bool isShowingPair) =>
+        imageType is ImageType.Bitmap && !isShowingPair;
 
     /// <summary>
     /// Starts the cropping functionality by setting up the ImageCropperViewModel 

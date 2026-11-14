@@ -52,7 +52,7 @@ public sealed class TabTitles : INotifyPropertyChanged, IDisposable
             tab.Zoom.Level.Subscribe(_ => Mark()),
             tab.NavigationIndex.Subscribe(_ => Mark()),
             tab.MaxIndex.Subscribe(_ => Mark()),
-            tab.Services?.GlobalSettings.IsSideBySide.Skip(1).Subscribe(_ => Mark()) ?? Disposable.Empty,
+            tab.Services?.GlobalSettings.IsShowingPair.Skip(1).Subscribe(_ => Mark()) ?? Disposable.Empty,
             tab.Services?.GlobalSettings.IsShowingFullPathInTitleBar.Skip(1).Subscribe(_ => Mark()) ?? Disposable.Empty);
         SaysLoading = Observable.Create<bool, TabTitles>(this, static (observer, titles) =>
         {
@@ -283,13 +283,13 @@ public sealed class TabTitles : INotifyPropertyChanged, IDisposable
         {
             var count = iterator.Files.Count;
             var first = new ImageTitleInfo(file, width, height, iterator.CurrentIndex, count);
-            var sideBySide = Settings.ImageScaling.ShowImageSideBySide && secondary?.FileInfo is not null;
+            var showsPair = _tab.PairSettings().ShowsPair && secondary?.FileInfo is not null;
             WindowTitles titles;
             if (model.TiffNavigation is { } tiff)
             {
                 titles = ImageTitleFormatter.GenerateTiffTitleStrings(first, zoom, tiff.CurrentPage, tiff.PageCount);
             }
-            else if (sideBySide)
+            else if (showsPair)
             {
                 var second = new ImageTitleInfo(secondary!.FileInfo!, secondary.PixelWidth, secondary.PixelHeight,
                     iterator.SecondaryCurrentIndex, count);
@@ -303,7 +303,7 @@ public sealed class TabTitles : INotifyPropertyChanged, IDisposable
             _title = Settings.UIProperties.ShowFullPathInTitleBar ? titles.FilePathTitle : titles.BaseTitle;
             _windowTitle = titles.TitleWithAppName;
             _titleTooltip = titles.FilePathTitle;
-            _tabTitle = sideBySide
+            _tabTitle = showsPair
                 ? StringExtensions.CombineWithSeparator(file.Name, secondary!.FileInfo!.Name)
                 : file.Name;
         }
