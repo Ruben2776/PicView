@@ -11,6 +11,14 @@ public static class SvgFileReader
     /// </summary>
     internal const int MaxBytes = 256 * 1024 * 1024;
 
+    /// <summary>True when <paramref name="path" /> ends in .svg or .svgz, in any letter case.</summary>
+    public static bool HasSvgExtension(string path)
+    {
+        var extension = Path.GetExtension(path.AsSpan());
+        return extension.Equals(".svg", StringComparison.OrdinalIgnoreCase) ||
+               extension.Equals(".svgz", StringComparison.OrdinalIgnoreCase);
+    }
+
     /// <summary>
     ///     Reads an SVG file as text. Decides by content, not extension: gzip data is decompressed, then a UTF-8,
     ///     UTF-16 LE or UTF-16 BE byte order mark selects the encoding, and no mark means UTF-8. Throws an
