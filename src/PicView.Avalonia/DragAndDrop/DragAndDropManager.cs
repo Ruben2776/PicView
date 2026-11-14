@@ -325,7 +325,9 @@ public static class DragAndDropManager
         if (TempFileManager.IsInTempFolder(path) && mainWindow.DataContext is MainWindowViewModel vm)
         {
             var fileInfo = new FileInfo(path);
-            if (await TempFileSingleImage.ShowAsync(vm, fileInfo, fileInfo.Name).ConfigureAwait(false))
+            // As a bitmap also for an SVG, so that saving, copying and printing the dropped image keep working
+            if (await TempFileSingleImage.ShowAsync(vm, fileInfo, fileInfo.Name, svgAsDrawing: false)
+                    .ConfigureAwait(false))
             {
                 return;
             }

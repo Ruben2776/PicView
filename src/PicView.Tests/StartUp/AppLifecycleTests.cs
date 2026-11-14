@@ -984,6 +984,61 @@ public class AppLifecycleTests : IAsyncDisposable
         }
     }
 
+    [AvaloniaFact]
+    public async Task PasteText_SvgMarkupDeclaringUtf16_ShowsIt()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var window = app.MainWindows.Open[0];
+        var vm = ViewModelOf(window);
+        var tab = vm.WindowTabs.ActiveTab.CurrentValue;
+        var service = new ClipboardPasteService(clipboard: null, window, _core);
+        // The text of an SVG file saved as UTF-16: the clipboard holds the decoded text, declaration included
+        const string svg = "<?xml version='1.0' encoding='UTF-16' standalone='no'?>" +
+                           "<svg xmlns='http://www.w3.org/2000/svg' width='40' height='20'>" +
+                           "<rect x='5' y='5' width='10' height='10' fill='red'/></svg>";
+        Application.Current!.DataContext = _core;
+        try
+        {
+            Assert.True(await service.PasteTextAsync(svg, vm));
+            Assert.IsType<SvgDrawing>(tab.Model.Image);
+        }
+        finally
+        {
+            Application.Current.DataContext = null;
+        }
+    }
+
+    [AvaloniaFact]
+    public async Task TempFileSingleImage_ShowAsyncWithATab_ShowsInThatTabEvenWhenAnotherIsActive()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var vm = ViewModelOf(app.MainWindows.Open[0]);
+        var started = vm.WindowTabs.ActiveTab.CurrentValue;
+        var other = vm.WindowTabs.CreateTab();
+        vm.WindowTabs.SelectTab(other);
+        var path = TempFileManager.GetNewTempFilePath("tab.svg");
+        await File.WriteAllTextAsync(path,
+            "<svg xmlns='http://www.w3.org/2000/svg' width='40' height='20'><rect width='10' height='10'/></svg>",
+            TestContext.Current.CancellationToken);
+        Application.Current!.DataContext = _core;
+        try
+        {
+            Assert.NotSame(started, vm.WindowTabs.ActiveTab.CurrentValue);
+
+            Assert.True(await TempFileSingleImage.ShowAsync(vm, new FileInfo(path), "Pasted", started));
+
+            Assert.Equal(SingleImageType.TempFile, started.SingleImageType);
+            Assert.IsType<SvgDrawing>(started.Model.Image);
+            Assert.Equal(SingleImageType.None, other.SingleImageType);
+        }
+        finally
+        {
+            Application.Current.DataContext = null;
+        }
+    }
+
     [AvaloniaTheory]
     [InlineData("<div><svg")]
     [InlineData("<div><svg width='10' height='10'></div>")]

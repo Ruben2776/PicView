@@ -20,9 +20,10 @@ public static class SvgFileReader
     }
 
     /// <summary>
-    ///     Whether <paramref name="text" /> looks like SVG markup: after leading whitespace and a byte order mark it
-    ///     starts with <c>&lt;</c>, and it has an <c>&lt;svg</c> tag somewhere, in any letter case. A cheap gate, not
-    ///     validation: whether the text can be drawn is for the parser to say.
+    ///     Whether <paramref name="text" /> looks like SVG markup: its root element is <c>svg</c>, in any letter case,
+    ///     after any leading whitespace, byte order mark, XML declaration, comments and DOCTYPE. So an HTML fragment
+    ///     with an svg element inside it is not SVG markup. A cheap gate, not validation: whether the text can be
+    ///     drawn is for the parser to say.
     /// </summary>
     public static bool LooksLikeSvg(string? text)
     {
@@ -37,28 +38,54 @@ public static class SvgFileReader
             return false;
         }
 
-        const string tag = "<svg";
+        // Past what may come before the root element: the XML declaration, comments and a DOCTYPE
         while (true)
         {
-            var index = span.IndexOf(tag, StringComparison.OrdinalIgnoreCase);
-            if (index < 0)
+            int end;
+            if (span.StartsWith("<?", StringComparison.Ordinal))
+            {
+                end = EndOf(span, "?>");
+            }
+            else if (span.StartsWith("<!--", StringComparison.Ordinal))
+            {
+                end = EndOf(span, "-->");
+            }
+            else if (span.StartsWith("<!DOCTYPE", StringComparison.OrdinalIgnoreCase))
+            {
+                // An internal subset, in square brackets, has declarations of its own that end in >
+                var subset = span.IndexOf('[');
+                var close = span.IndexOf('>');
+                end = subset >= 0 && subset < close ? EndOf(span, "]>") : close < 0 ? -1 : close + 1;
+            }
+            else
+            {
+                break;
+            }
+
+            if (end < 0)
             {
                 return false;
             }
 
-            span = span[(index + tag.Length)..];
-            if (span.IsEmpty)
-            {
-                return false;
-            }
-
-            // The tag name ends here, so <svgfoo> is not an svg tag
-            var next = span[0];
-            if (next is '>' or '/' || char.IsWhiteSpace(next))
-            {
-                return true;
-            }
+            span = span[end..].TrimStart();
         }
+
+        const string tag = "<svg";
+        if (!span.StartsWith(tag, StringComparison.OrdinalIgnoreCase) || span.Length == tag.Length)
+        {
+            return false;
+        }
+
+        // The tag name ends here, so <svgfoo> is not an svg tag
+        var next = span[tag.Length];
+        return next is '>' or '/' || char.IsWhiteSpace(next);
+    }
+
+    /// <summary>The index just past the first <paramref name="terminator" />, or -1 when there is none.</summary>
+    private static int EndOf(ReadOnlySpan<char> span, string terminator)
+    {
+        var index = span.IndexOf(terminator, StringComparison.Ordinal);
+        return index < 0 ? -1 : index + terminator.Length;
     }
 
     /// <summary>
