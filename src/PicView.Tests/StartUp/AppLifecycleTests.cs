@@ -985,6 +985,72 @@ public class AppLifecycleTests : IAsyncDisposable
     }
 
     [AvaloniaFact]
+    public async Task PasteText_SvgMarkupAfterAFile_StopsTheTaskbarProgress()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var window = app.MainWindows.Open[0];
+        var vm = ViewModelOf(window);
+        var tab = vm.WindowTabs.ActiveTab.CurrentValue;
+        var file = Path.Combine(_folder, "viewed.png");
+        using (var image = new MagickImage(MagickColors.Red, 4, 3))
+        {
+            await image.WriteAsync(file, MagickFormat.Png, TestContext.Current.CancellationToken);
+        }
+
+        var service = new ClipboardPasteService(clipboard: null, window, _core);
+        var wasEnabled = Settings.UIProperties.IsTaskbarProgressEnabled;
+        Settings.UIProperties.IsTaskbarProgressEnabled = true;
+        Application.Current!.DataContext = _core;
+        try
+        {
+            await SourceOpener.OpenAsync(window, _core, file);
+            UpdateImage.SetTaskbarProgress(vm, tab);
+            var shownForTheFile = _platform.IsTaskbarProgressShown;
+
+            await service.PasteTextAsync(
+                "<svg xmlns='http://www.w3.org/2000/svg' width='40' height='20'><rect width='10' height='10'/></svg>",
+                vm);
+            Dispatcher.UIThread.RunJobs();
+
+            Assert.True(shownForTheFile);
+            Assert.Equal(SingleImageType.TempFile, tab.SingleImageType);
+            Assert.False(_platform.IsTaskbarProgressShown);
+        }
+        finally
+        {
+            Application.Current.DataContext = null;
+            Settings.UIProperties.IsTaskbarProgressEnabled = wasEnabled;
+        }
+    }
+
+    [AvaloniaFact]
+    public async Task SetTaskbarProgress_SingleImageInABackgroundTab_LeavesTheProgressAlone()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var vm = ViewModelOf(app.MainWindows.Open[0]);
+        var background = vm.WindowTabs.ActiveTab.CurrentValue;
+        vm.WindowTabs.SelectTab(vm.WindowTabs.CreateTab());
+        background.DisplaySingleImage(new ImageModel { Image = new object() }, SingleImageType.Clipboard, "Pasted");
+        var wasEnabled = Settings.UIProperties.IsTaskbarProgressEnabled;
+        Settings.UIProperties.IsTaskbarProgressEnabled = true;
+        try
+        {
+            Dispatcher.UIThread.RunJobs();
+            var before = _platform.IsTaskbarProgressShown;
+
+            UpdateImage.SetTaskbarProgress(vm, background);
+
+            Assert.Equal(before, _platform.IsTaskbarProgressShown);
+        }
+        finally
+        {
+            Settings.UIProperties.IsTaskbarProgressEnabled = wasEnabled;
+        }
+    }
+
+    [AvaloniaFact]
     public async Task PasteText_SvgMarkupDeclaringUtf16_ShowsIt()
     {
         var app = CreateApp();
@@ -1799,8 +1865,11 @@ public class AppLifecycleTests : IAsyncDisposable
     /// </summary>
     private sealed class NoPlatform : IPlatformSpecificService
     {
-        public void SetTaskbarProgress(ulong progress, ulong maximum) { }
-        public void StopTaskbarProgress() { }
+        /// <summary>Whether the last taskbar call left a progress showing; null before any call.</summary>
+        public bool? IsTaskbarProgressShown { get; private set; }
+
+        public void SetTaskbarProgress(ulong progress, ulong maximum) => IsTaskbarProgressShown = true;
+        public void StopTaskbarProgress() => IsTaskbarProgressShown = false;
         public void SetCursorPos(int x, int y) { }
         public void DisableScreensaver() { }
         public void EnableScreensaver() { }

@@ -14,10 +14,29 @@ namespace PicView.Avalonia.Navigation;
 /// </summary>
 public static class UpdateImage
 {
+    /// <summary>
+    /// Shows how far <paramref name="tab"/> is through its files on the taskbar. A Single Image is one of no
+    /// files, so showing one in the active tab takes the progress of the files before it away.
+    /// </summary>
     internal static void SetTaskbarProgress(MainWindowViewModel vm, TabViewModel tab)
     {
-        if (Settings.UIProperties.IsTaskbarProgressEnabled && vm.Core.PlatformService is { } platform &&
-            tab.ImageIterator is { CurrentIndex: > -1 } iterator && iterator.Files.Count > 0)
+        if (!Settings.UIProperties.IsTaskbarProgressEnabled || vm.Core.PlatformService is not { } platform)
+        {
+            return;
+        }
+
+        // By the Single Image and not by a missing iterator: the tab drops its iterator only after it shows the image
+        if (tab.SingleImageType is not SingleImageType.None)
+        {
+            if (ReferenceEquals(tab, vm.WindowTabs.ActiveTab.CurrentValue))
+            {
+                platform.StopTaskbarProgress();
+            }
+
+            return;
+        }
+
+        if (tab.ImageIterator is { CurrentIndex: > -1 } iterator && iterator.Files.Count > 0)
         {
             platform.SetTaskbarProgress((ulong)iterator.CurrentIndex, (ulong)iterator.Files.Count);
         }
