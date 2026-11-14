@@ -135,5 +135,24 @@ public class SvgFileReaderTests : IDisposable
         var path = Write("a.svgz", Encoding.UTF8.GetBytes(Text));
         Assert.Equal(Text, await SvgFileReader.ReadAsync(path, TestContext.Current.CancellationToken));
     }
-}
 
+    [Theory]
+    [InlineData("<svg xmlns='http://www.w3.org/2000/svg'></svg>", true)]
+    [InlineData("  \r\n<svg></svg>", true)]
+    [InlineData("\uFEFF<svg></svg>", true)]
+    [InlineData("<?xml version='1.0'?><svg></svg>", true)]
+    [InlineData("<!DOCTYPE svg><!-- c --><SVG></SVG>", true)]
+    [InlineData("<div><svg></svg></div>", true)]
+    [InlineData("<svg/>", true)]
+    [InlineData("https://example.com/a.svg", false)]
+    [InlineData(@"C:\Pictures\<svg>.png", false)]
+    [InlineData("<html><body></body></html>", false)]
+    [InlineData("<svgfoo></svgfoo>", false)]
+    [InlineData("<svg", false)]
+    [InlineData("", false)]
+    [InlineData(null, false)]
+    public void LooksLikeSvg_Text_ReturnsExpected(string? text, bool expected)
+    {
+        Assert.Equal(expected, SvgFileReader.LooksLikeSvg(text));
+    }
+}

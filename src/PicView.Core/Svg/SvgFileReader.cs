@@ -20,6 +20,48 @@ public static class SvgFileReader
     }
 
     /// <summary>
+    ///     Whether <paramref name="text" /> looks like SVG markup: after leading whitespace and a byte order mark it
+    ///     starts with <c>&lt;</c>, and it has an <c>&lt;svg</c> tag somewhere, in any letter case. A cheap gate, not
+    ///     validation: whether the text can be drawn is for the parser to say.
+    /// </summary>
+    public static bool LooksLikeSvg(string? text)
+    {
+        if (string.IsNullOrEmpty(text))
+        {
+            return false;
+        }
+
+        var span = text.AsSpan().TrimStart().TrimStart('\uFEFF').TrimStart();
+        if (span.IsEmpty || span[0] != '<')
+        {
+            return false;
+        }
+
+        const string tag = "<svg";
+        while (true)
+        {
+            var index = span.IndexOf(tag, StringComparison.OrdinalIgnoreCase);
+            if (index < 0)
+            {
+                return false;
+            }
+
+            span = span[(index + tag.Length)..];
+            if (span.IsEmpty)
+            {
+                return false;
+            }
+
+            // The tag name ends here, so <svgfoo> is not an svg tag
+            var next = span[0];
+            if (next is '>' or '/' || char.IsWhiteSpace(next))
+            {
+                return true;
+            }
+        }
+    }
+
+    /// <summary>
     ///     Reads an SVG file as text. Decides by content, not extension: gzip data is decompressed, then a UTF-8,
     ///     UTF-16 LE or UTF-16 BE byte order mark selects the encoding, and no mark means UTF-8. Throws an
     ///     <see cref="InvalidDataException" /> when the file or its decompressed content is larger than
