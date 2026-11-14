@@ -39,9 +39,14 @@ public static class UpdateImage
     /// Shows <paramref name="model"/> as the active tab's Single Image. Showing a kept Single Image again passes back the
     /// model it kept, never a copy, since View History finds the entry by that instance.
     /// </summary>
-    public static void SetSingleImage(MainWindowViewModel vm, ImageModel model, SingleImageType type, string title)
+    /// <param name="tab">
+    /// The tab to show it in when that is not simply the active one: a load that takes a while passes the tab it
+    /// started in, so switching tabs meanwhile does not send the image to another tab.
+    /// </param>
+    public static void SetSingleImage(MainWindowViewModel vm, ImageModel model, SingleImageType type, string title,
+        TabViewModel? tab = null)
     {
-        var tabViewModel = vm.WindowTabs.ActiveTab.CurrentValue;
+        var tabViewModel = tab ?? vm.WindowTabs.ActiveTab.CurrentValue;
 
         // The window's fitter follows the new image, and its viewer follows that Fit (ADR-0026)
         tabViewModel.DisplaySingleImage(model, type, title);

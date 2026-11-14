@@ -17,18 +17,21 @@ namespace PicView.Avalonia.Navigation;
 internal static class TempFileSingleImage
 {
     /// <summary>
-    /// Loads <paramref name="fileInfo"/> and shows it in the active tab under <paramref name="title"/>. Returns
-    /// false, showing nothing, when the file could not be loaded.
+    /// Loads <paramref name="fileInfo"/> and shows it under <paramref name="title"/>. Returns false, showing
+    /// nothing, when the file could not be loaded.
     /// </summary>
-    public static async ValueTask<bool> ShowAsync(MainWindowViewModel vm, FileInfo fileInfo, string title)
+    /// <param name="tab">The tab to show it in; the tab that is active once the file has loaded when null.</param>
+    /// <param name="svgAsDrawing">See <see cref="LoadAsync"/>.</param>
+    public static async ValueTask<bool> ShowAsync(MainWindowViewModel vm, FileInfo fileInfo, string title,
+        TabViewModel? tab = null, bool svgAsDrawing = true)
     {
-        var model = await LoadAsync(fileInfo).ConfigureAwait(false);
+        var model = await LoadAsync(fileInfo, svgAsDrawing).ConfigureAwait(false);
         if (model is null)
         {
             return false;
         }
 
-        UpdateImage.SetSingleImage(vm, model, SingleImageType.TempFile, title);
+        UpdateImage.SetSingleImage(vm, model, SingleImageType.TempFile, title, tab);
         return true;
     }
 
@@ -36,11 +39,15 @@ internal static class TempFileSingleImage
     /// The file as a model that no longer depends on it: an SVG as its drawing, or as the fallback bitmap when the
     /// parser does not support it, and any other file as a bitmap. Null when the file could not be loaded.
     /// </summary>
-    internal static async ValueTask<ImageModel?> LoadAsync(FileInfo fileInfo)
+    /// <param name="svgAsDrawing">
+    /// False loads an SVG as a bitmap like any other file. A drawing stays sharp when zoomed, but with no file
+    /// behind it, it cannot yet be saved, copied as an image or printed, which a bitmap can.
+    /// </param>
+    internal static async ValueTask<ImageModel?> LoadAsync(FileInfo fileInfo, bool svgAsDrawing = true)
     {
         try
         {
-            if (SvgFileReader.HasSvgExtension(fileInfo.Name))
+            if (svgAsDrawing && SvgFileReader.HasSvgExtension(fileInfo.Name))
             {
                 return await LoadSvgModelAsync(fileInfo).ConfigureAwait(false);
             }

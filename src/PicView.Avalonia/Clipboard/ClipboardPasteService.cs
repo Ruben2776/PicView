@@ -125,7 +125,7 @@ public class ClipboardPasteService(
             return true;
         }
 
-        if (await PasteSvgCodeAsync(text, vm).ConfigureAwait(false))
+        if (await PasteSvgCodeAsync(text, vm, tab).ConfigureAwait(false))
         {
             return true;
         }
@@ -143,7 +143,7 @@ public class ClipboardPasteService(
     /// Shows <paramref name="text"/> as an image when it is SVG code that can be drawn. The code goes through a
     /// temp file, so it is read and drawn exactly as an SVG file is, and shows as a Single Image.
     /// </summary>
-    private static async ValueTask<bool> PasteSvgCodeAsync(string text, MainWindowViewModel vm)
+    private static async ValueTask<bool> PasteSvgCodeAsync(string text, MainWindowViewModel vm, TabViewModel tab)
     {
         if (!SvgFileReader.LooksLikeSvg(text))
         {
@@ -156,10 +156,12 @@ public class ClipboardPasteService(
             var path = TempFileManager.GetNewTempFilePath("clipboard.svg");
             // An XML declaration must be the very first thing in the file, and copied text often starts with a
             // line break or a byte order mark
-            var code = text.Trim().TrimStart(ByteOrderMark).TrimStart();
+            var code = WithoutXmlDeclaration(text.Trim().TrimStart(ByteOrderMark).TrimStart());
             await File.WriteAllTextAsync(path, code).ConfigureAwait(false);
+
+            // Into the tab the paste started in, which may no longer be the active one when the file has loaded
             return await TempFileSingleImage
-                .ShowAsync(vm, new FileInfo(path), TranslationManager.Translation?.SvgImage ?? "SVG")
+                .ShowAsync(vm, new FileInfo(path), TranslationManager.Translation?.SvgImage ?? "SVG", tab)
                 .ConfigureAwait(false);
         }
         catch (Exception ex)
@@ -167,6 +169,25 @@ public class ClipboardPasteService(
             DebugHelper.LogDebug(nameof(ClipboardPasteService), nameof(PasteSvgCodeAsync), ex);
             return false;
         }
+    }
+
+    /// <summary>
+    /// The code without its leading XML declaration. The declaration names the encoding of the file the code was
+    /// copied from, such as UTF-16, which is not the encoding the temp file is written in, and a file that
+    /// contradicts its own declaration is rejected. The declaration is optional, and without it the file is UTF-8.
+    /// </summary>
+    internal static string WithoutXmlDeclaration(string code)
+    {
+        const string start = "<?xml";
+        const string end = "?>";
+        if (!code.StartsWith(start, StringComparison.OrdinalIgnoreCase) || code.Length == start.Length ||
+            !char.IsWhiteSpace(code[start.Length]))
+        {
+            return code;
+        }
+
+        var endIndex = code.IndexOf(end, StringComparison.Ordinal);
+        return endIndex < 0 ? code : code[(endIndex + end.Length)..].TrimStart();
     }
 
     public async ValueTask<bool> PasteImageAsync(MainWindowViewModel vm)

@@ -73,6 +73,20 @@ public class TempFileSingleImageTests : IDisposable
     }
 
     [AvaloniaFact]
+    public async Task LoadAsync_SvgNotAsDrawing_ReturnsBitmapModel()
+    {
+        using var model = await TempFileSingleImage.LoadAsync(Write("g.svg",
+            Document("<rect x='5' y='5' width='10' height='10' fill='red'/>", Viewport)), svgAsDrawing: false);
+
+        Assert.NotNull(model);
+        Assert.IsAssignableFrom<Bitmap>(model.Image);
+        Assert.Equal(ImageType.Bitmap, model.ImageType);
+        Assert.Equal(40u, model.PixelWidth);
+        Assert.Equal(20u, model.PixelHeight);
+        Assert.Null(model.FileInfo);
+    }
+
+    [AvaloniaFact]
     public async Task LoadAsync_SvgDeletedAfterLoading_KeepsItsImage()
     {
         var file = Write("gone-later.svg",
