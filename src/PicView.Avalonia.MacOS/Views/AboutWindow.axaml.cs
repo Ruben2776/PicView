@@ -19,6 +19,6 @@ public partial class AboutWindow : GenericWindow, IPlatformSpecificUpdate
     
     public async Task HandlePlatformUpdate(UpdateInfo updateInfo, string tempPath)
     {
-        await MacUpdateHelper.HandleMacOSUpdate(updateInfo, tempPath);
+        await MacUpdateHelper.HandleMacOSUpdate(updateInfo, tempPath).ConfigureAwait(false);
     }
 }

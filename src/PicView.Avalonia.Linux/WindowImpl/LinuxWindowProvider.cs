@@ -1,13 +1,13 @@
 ﻿using Avalonia.Controls;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Interfaces;
-using PicView.Avalonia.Printing;
 using PicView.Avalonia.Linux.PlatformUpdate;
-using PicView.Avalonia.Linux.Views;
 using PicView.Avalonia.Linux.Printing;
+using PicView.Avalonia.Linux.Views;
+using PicView.Avalonia.Printing;
+using PicView.Core.Config;
 using PicView.Core.Update;
 using PicView.Core.ViewModels;
-using PicView.Core.Config;
 
 namespace PicView.Avalonia.Linux.WindowImpl;
 
@@ -41,6 +41,6 @@ public class LinuxWindowProvider : IWindowProvider
 
     public async Task HandlePlatformUpdate(UpdateInfo updateInfo, string tempPath)
     {
-        await LinuxUpdateHelper.HandleLinuxUpdate(updateInfo, tempPath);
+        await LinuxUpdateHelper.HandleLinuxUpdate(updateInfo, tempPath).ConfigureAwait(false);
     }
 }

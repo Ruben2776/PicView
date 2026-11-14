@@ -5,7 +5,6 @@ using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.Threading;
 using PicView.Avalonia.UI;
-using PicView.Avalonia.Views.UC;
 using PicView.Core.MacOS.AppLaunching;
 using PicView.Core.MacOS.FileAssociation;
 using PicView.Core.ViewModels;
@@ -63,9 +62,9 @@ public partial class OpenWithView : Window
             Close();
         };
 
-        Task.Run(async () =>
+        _ = Task.Run(async () =>
         {
-            var apps = await GetAssociatedFiles.GetAssociatedFilesAsync(_filePath);
+            var apps = await GetAssociatedFiles.GetAssociatedFilesAsync(_filePath).ConfigureAwait(true);
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
                 foreach (var app in apps)
@@ -89,7 +88,7 @@ public partial class OpenWithView : Window
                     btn.Click += async (_, _) =>
                     {
                         _isLaunchingApp = true; // Prevent deactivated event from closing
-                        await AppLauncher.LaunchAppWithFileAsync(app.Path, _filePath);
+                        await AppLauncher.LaunchAppWithFileAsync(app.Path, _filePath).ConfigureAwait(true);
                         Close(); // Close the window after launching the app
                     };
 

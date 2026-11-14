@@ -119,25 +119,25 @@ public class GlobalSettingsViewModel
     /// <param name="save">Saves the settings; null means <see cref="SettingsManager.SaveSettingsAsync"/>.</param>
     public GlobalSettingsViewModel(Func<ValueTask<bool>>? save = null)
     {
-        _save = save ?? SettingsManager.SaveSettingsAsync;
+        _save = save ?? SaveSettingsAsync;
 
-        IsLooping = new(Settings.UIProperties.Looping);
-        IsSideBySide = new(Settings.ImageScaling.ShowImageSideBySide);
-        IsScrollingEnabled = new(Settings.Zoom.ScrollEnabled);
-        IsZoomedToFit = new(Settings.ImageScaling.ZoomToFit);
-        IsIncludingSubdirectories = new(Settings.Sorting.IncludeSubDirectories);
-        IsFileHistoryEnabled = new(Settings.Navigation.IsFileHistoryEnabled);
-        IsShowingFullPathInTitleBar = new(Settings.UIProperties.ShowFullPathInTitleBar);
-        IsShowingTaskbarProgress = new(Settings.UIProperties.IsTaskbarProgressEnabled);
-        IsOpeningInSameWindow = new(Settings.UIProperties.OpenInSameWindow);
-        IsConstrainingBackgroundColor = new(Settings.UIProperties.IsConstrainBackgroundColorEnabled);
-        IsTopMost = new(Settings.WindowProperties.TopMost);
-        ShowInterface = new(Settings.UIProperties.ShowInterface);
-        ShowBottomBar = new(Settings.UIProperties.ShowBottomNavBar);
-        ShowHoverBar = new(Settings.UIProperties.ShowHoverNavigationBar);
-        ShowFadeButtons = new(Settings.UIProperties.ShowAltInterfaceButtons);
+        IsLooping = new BindableReactiveProperty<bool>(Settings.UIProperties.Looping);
+        IsSideBySide = new BindableReactiveProperty<bool>(Settings.ImageScaling.ShowImageSideBySide);
+        IsScrollingEnabled = new BindableReactiveProperty<bool>(Settings.Zoom.ScrollEnabled);
+        IsZoomedToFit = new BindableReactiveProperty<bool>(Settings.ImageScaling.ZoomToFit);
+        IsIncludingSubdirectories = new BindableReactiveProperty<bool>(Settings.Sorting.IncludeSubDirectories);
+        IsFileHistoryEnabled = new BindableReactiveProperty<bool>(Settings.Navigation.IsFileHistoryEnabled);
+        IsShowingFullPathInTitleBar = new BindableReactiveProperty<bool>(Settings.UIProperties.ShowFullPathInTitleBar);
+        IsShowingTaskbarProgress = new BindableReactiveProperty<bool>(Settings.UIProperties.IsTaskbarProgressEnabled);
+        IsOpeningInSameWindow = new BindableReactiveProperty<bool>(Settings.UIProperties.OpenInSameWindow);
+        IsConstrainingBackgroundColor = new BindableReactiveProperty<bool>(Settings.UIProperties.IsConstrainBackgroundColorEnabled);
+        IsTopMost = new BindableReactiveProperty<bool>(Settings.WindowProperties.TopMost);
+        ShowInterface = new BindableReactiveProperty<bool>(Settings.UIProperties.ShowInterface);
+        ShowBottomBar = new BindableReactiveProperty<bool>(Settings.UIProperties.ShowBottomNavBar);
+        ShowHoverBar = new BindableReactiveProperty<bool>(Settings.UIProperties.ShowHoverNavigationBar);
+        ShowFadeButtons = new BindableReactiveProperty<bool>(Settings.UIProperties.ShowAltInterfaceButtons);
         // Built before the first window rewrites a negative stored margin, so it gives the same margin that window does
-        WindowMargin = new(Settings.WindowProperties.Margin < 0 ? NegativeMarginReplacement : Settings.WindowProperties.Margin);
+        WindowMargin = new BindableReactiveProperty<double>(Settings.WindowProperties.Margin < 0 ? NegativeMarginReplacement : Settings.WindowProperties.Margin);
 
         SyncConfigLocation(Settings.StartUp.ConfigLocation);
 

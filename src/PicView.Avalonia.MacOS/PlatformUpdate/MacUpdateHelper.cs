@@ -1,8 +1,9 @@
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Threading;
 using PicView.Avalonia.StartUp;
-using PicView.Avalonia.WindowBehavior;
+using PicView.Avalonia.UI;
 using PicView.Core.DebugTools;
 using PicView.Core.Update;
 using PicView.Core.ViewModels;
@@ -20,13 +21,13 @@ public static class MacUpdateHelper
     public static async Task HandleMacOSUpdate(UpdateInfo updateInfo, string tempPath)
     {
         // Determine architecture - Apple Silicon (ARM) vs Intel
-        var isArm = System.Runtime.InteropServices.RuntimeInformation.ProcessArchitecture == 
-            System.Runtime.InteropServices.Architecture.Arm64;
+        var isArm = RuntimeInformation.ProcessArchitecture == 
+            Architecture.Arm64;
         
         // Select appropriate download URL based on architecture
         var downloadUrl = isArm ? updateInfo.MacArm64 : updateInfo.MacIntel;
         
-        await DownloadAndOpenDmg(downloadUrl, tempPath);
+        await DownloadAndOpenDmg(downloadUrl, tempPath).ConfigureAwait(false);
     }
     
     /// <summary>
@@ -47,7 +48,7 @@ public static class MacUpdateHelper
             }
             
             // Download the DMG file
-            await UpdateManager.DownloadUpdateFile(core, downloadUrl, tempFilePath);
+            await UpdateManager.DownloadUpdateFile(core, downloadUrl, tempFilePath).ConfigureAwait(false);
             
             // Open the DMG file
             var process = new Process
@@ -63,10 +64,10 @@ public static class MacUpdateHelper
             process.Start();
             
             // Give some time for the DMG to mount before exiting
-            await Task.Delay(1000);
+            await Task.Delay(1000).ConfigureAwait(false);
             
             // Close the application
-            await AppLifecycle.Current?.ShutdownAsync();
+            await (AppLifecycle.Current?.ShutdownAsync()).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
@@ -76,7 +77,7 @@ public static class MacUpdateHelper
                 (Application.Current?.DataContext as CoreViewModel)?.MainWindows.ActiveWindow.CurrentValue);
             if (vm is not null)
             {
-                UI.TooltipHelper.ShowTooltipMessage(vm, $"Failed to download or open update: {ex.Message}");
+                TooltipHelper.ShowTooltipMessage(vm, $"Failed to download or open update: {ex.Message}");
             }
         }
     }

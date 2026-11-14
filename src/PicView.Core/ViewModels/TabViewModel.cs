@@ -1,17 +1,18 @@
-using PicView.Core.Thumbnailing;
 using PicView.Core.ArchiveHandling;
 using PicView.Core.DebugTools;
 using PicView.Core.FileHistory;
-using PicView.Core.Models;
-using PicView.Core.Navigation;
-using PicView.Core.Navigation.Interfaces;
-using PicView.Core.Navigation.Tiff;
-using PicView.Core.Titles;
+using PicView.Core.Gallery;
 using PicView.Core.Generators;
 using PicView.Core.ImageDecoding;
 using PicView.Core.ImageTransformations;
 using PicView.Core.IPlatform;
+using PicView.Core.Models;
+using PicView.Core.Navigation;
+using PicView.Core.Navigation.Interfaces;
+using PicView.Core.Navigation.Tiff;
 using PicView.Core.Sizing;
+using PicView.Core.Thumbnailing;
+using PicView.Core.Titles;
 using R3;
 
 namespace PicView.Core.ViewModels;
@@ -199,7 +200,7 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
     private void UpdateGalleryHidden() =>
         Gallery.Switcher.SetHidden(_crop is not null || _singleImageType is not SingleImageType.None);
     
-    public Gallery.GalleryCoordinator? GalleryCoordinator { get; private set; }
+    public GalleryCoordinator? GalleryCoordinator { get; private set; }
     
     #endregion
     
@@ -545,7 +546,7 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
             {
                 throw new InvalidOperationException("The tab has no services");
             }
-            LazyInitializer.EnsureInitialized(ref _load, () => new TabLoad(this, services));
+            LazyInitializer.EnsureInitialized(ref _load, () => new TabLoad(this, Services));
 
             return _load;
         }
@@ -633,14 +634,14 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
                 {
                     await iterator.ReloadAsync(clearCache: false).ConfigureAwait(false);
                 }
-            }, AwaitOperation.Sequential),
-            settings.IsIncludingSubdirectories.Skip(1).SubscribeAwait(async (_, _) =>
+            }),
+            settings.IsIncludingSubdirectories.Skip(1).SubscribeAwait(async (_, x) =>
             {
                 if (ImageIterator is { Files.Count: > 0 } && FileInfo.CurrentValue is { } file)
                 {
-                    await Task.Run(() => Load.LoadAsync(file.FullName, new LoadOptions(Relist: true)).AsTask()).ConfigureAwait(false);
+                    await Task.Run(() => Load.LoadAsync(file.FullName, new LoadOptions(Relist: true)).AsTask(), x).ConfigureAwait(false);
                 }
-            }, AwaitOperation.Sequential));
+            }));
     }
 
     /// <summary>
@@ -842,7 +843,7 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
             throw new InvalidOperationException("The tab has no services");
         }
         GalleryCoordinator?.Dispose();
-        GalleryCoordinator = new Gallery.GalleryCoordinator(this, Services.Thumbnails);
+        GalleryCoordinator = new GalleryCoordinator(this, Services.Thumbnails);
         ImageIterator = new ImageIterator(Services.Cache, Services.Thumbnails, this,
             GalleryCoordinator.FilesChanged);
         FollowSettings();
@@ -861,7 +862,7 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
             throw new InvalidOperationException("The tab has no services");
         }
         var cache = Services.Cache;
-        GalleryCoordinator ??= new Gallery.GalleryCoordinator(this, Services.Thumbnails);
+        GalleryCoordinator ??= new GalleryCoordinator(this, Services.Thumbnails);
         ImageIterator ??= new ImageIterator(cache, Services.Thumbnails, this,
             GalleryCoordinator.FilesChanged);
         FollowSettings();

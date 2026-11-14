@@ -2,7 +2,6 @@
 using System.Text.Json.Serialization;
 using BenchmarkDotNet.Attributes;
 using PicView.Core.Config;
-using PicView.Core.Config.ConfigFileManagement;
 using PicView.Core.DebugTools;
 
 namespace PicView.Benchmarks.StartupBenchmarks;
@@ -21,7 +20,7 @@ public class ConfigBenchmark
     [Benchmark]
     public async ValueTask Initial()
     {
-        await LoadSettingsAsync();
+        await LoadSettingsAsync().ConfigureAwait(false);
     }
 
     [Benchmark]
@@ -51,13 +50,13 @@ public class ConfigBenchmark
     [Benchmark]
     public async ValueTask ReadAllBytesAsync()
     {
-        await LoadSettingsBytesAsync();
+        await LoadSettingsBytesAsync().ConfigureAwait(false);
     }
 
     [Benchmark]
     public async ValueTask ReadAllLinesAsync()
     {
-        await LoadSettingsLinesAsync();
+        await LoadSettingsLinesAsync().ConfigureAwait(false);
     }
 
     public static async ValueTask<bool> LoadSettingsAsync()
@@ -70,12 +69,15 @@ public class ConfigBenchmark
 
             if (File.Exists(userPath))
             {
-                await using var userStream = File.OpenRead(userPath);
-                if (userStream.Length > 0)
+                var userStream = File.OpenRead(userPath);
+                await using (userStream.ConfigureAwait(false))
+                {
+                    if (userStream.Length > 0)
                 {
                     var settings = await JsonSerializer.DeserializeAsync<AppSettings>(
                         userStream, SettingsGenerationContext.Default.AppSettings).ConfigureAwait(false);
                     Settings = EnsureSettings(settings);
+                }
                 }
             }
 
@@ -204,7 +206,7 @@ public class ConfigBenchmark
 
             if (File.Exists(userPath))
             {
-                var bytes = await File.ReadAllBytesAsync(userPath);
+                var bytes = await File.ReadAllBytesAsync(userPath).ConfigureAwait(false);
                 var settings = JsonSerializer.Deserialize<AppSettings>(
                     bytes, SettingsGenerationContext.Default.AppSettings);
                 Settings = EnsureSettings(settings);
@@ -236,7 +238,7 @@ public class ConfigBenchmark
 
             if (File.Exists(userPath))
             {
-                var json = await File.ReadAllTextAsync(userPath);
+                var json = await File.ReadAllTextAsync(userPath).ConfigureAwait(false);
                 var settings = JsonSerializer.Deserialize<AppSettings>(
                     json, SettingsGenerationContext.Default.AppSettings);
                 Settings = EnsureSettings(settings);

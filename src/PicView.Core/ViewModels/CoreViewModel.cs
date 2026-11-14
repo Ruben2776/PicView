@@ -1,8 +1,8 @@
-using PicView.Core.Thumbnailing;
 using PicView.Core.IPlatform;
 using PicView.Core.Models;
 using PicView.Core.Navigation;
 using PicView.Core.Navigation.Interfaces;
+using PicView.Core.Thumbnailing;
 
 namespace PicView.Core.ViewModels;
 
@@ -41,7 +41,7 @@ public class CoreViewModel(
     // --- Globally Shared State ---
     public TranslationViewModel Translation { get; } = new();
     /// <summary>The settings every tab follows; a test hands in one with a fake save.</summary>
-    public GlobalSettingsViewModel GlobalSettings { get; } = globalSettings ?? new();
+    public GlobalSettingsViewModel GlobalSettings { get; } = globalSettings ?? new GlobalSettingsViewModel();
     public GallerySharedSettingsViewModel GallerySettings { get; } = new();
     public KeybindingsViewModel? Keybindings { get; set; }
     public SettingsViewModel? SettingsViewModel { get; set; } // Single settings window

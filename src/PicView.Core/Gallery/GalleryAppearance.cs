@@ -17,6 +17,7 @@ public readonly record struct GalleryInsets(double Left, double Top, double Righ
 /// <summary>
 ///     The settings a gallery's appearance depends on, passed in so <see cref="GalleryAppearance.For" /> stays pure.
 /// </summary>
+[StructLayout(LayoutKind.Auto)]
 public readonly record struct GalleryAppearanceInputs(
     double DockedItemSize,
     double ExpandedItemSize,
@@ -28,6 +29,7 @@ public readonly record struct GalleryAppearanceInputs(
 ///     How a gallery looks in a given mode and dock position. <see cref="Extent" /> is the docked thickness,
 ///     <see cref="double.NaN" /> when the gallery fills its parent, and 0 when closed.
 /// </summary>
+[StructLayout(LayoutKind.Auto)]
 public readonly record struct GalleryAppearance(
     GalleryMode Mode,
     GalleryDockPosition Dock,

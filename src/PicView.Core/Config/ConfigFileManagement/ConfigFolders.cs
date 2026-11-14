@@ -86,23 +86,29 @@ public static class ConfigFolders
             var hasLocal = HasContent(localSettings);
             var hasRoaming = HasContent(roamingSettings);
 
-            if (hasLocal && hasRoaming)
+            switch (hasLocal)
             {
-                resolved = File.GetLastWriteTimeUtc(roamingSettings) > File.GetLastWriteTimeUtc(localSettings)
-                    ? RoamingDirectory
-                    : LocalDirectory;
-            }
-            else if (hasLocal)
-            {
-                resolved = LocalDirectory;
-            }
-            else if (hasRoaming)
-            {
-                resolved = RoamingDirectory;
-            }
-            else
-            {
-                resolved = FileHelper.IsDirectoryWritable(LocalDirectory) ? LocalDirectory : RoamingDirectory;
+                case true when hasRoaming:
+                    resolved = File.GetLastWriteTimeUtc(roamingSettings) > File.GetLastWriteTimeUtc(localSettings)
+                        ? RoamingDirectory
+                        : LocalDirectory;
+                    break;
+                case true:
+                    resolved = LocalDirectory;
+                    break;
+                default:
+                {
+                    if (hasRoaming)
+                    {
+                        resolved = RoamingDirectory;
+                    }
+                    else
+                    {
+                        resolved = FileHelper.IsDirectoryWritable(LocalDirectory) ? LocalDirectory : RoamingDirectory;
+                    }
+
+                    break;
+                }
             }
         }
 
@@ -257,7 +263,7 @@ public static class ConfigFolders
         try
         {
             var info = new FileInfo(path);
-            return info.Exists && info.Length > 0;
+            return info is { Exists: true, Length: > 0 };
         }
         catch
         {

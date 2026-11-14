@@ -52,7 +52,7 @@ internal sealed class ThumbnailStore
             entry.Owners.Add(owner);
             if (!_pathsByOwner.TryGetValue(owner, out var paths))
             {
-                paths = [];
+                paths = new HashSet<string>(StringComparer.Ordinal);
                 _pathsByOwner[owner] = paths;
             }
 
@@ -75,7 +75,7 @@ internal sealed class ThumbnailStore
             entry.Owners.Add(owner);
             if (!_pathsByOwner.TryGetValue(owner, out var paths))
             {
-                paths = [];
+                paths = new HashSet<string>(StringComparer.Ordinal);
                 _pathsByOwner[owner] = paths;
             }
 

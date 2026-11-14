@@ -1,13 +1,13 @@
 ﻿using Avalonia.Controls;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Interfaces;
-using PicView.Avalonia.Printing;
 using PicView.Avalonia.MacOS.PlatformUpdate;
-using PicView.Avalonia.MacOS.Views;
 using PicView.Avalonia.MacOS.Printing;
+using PicView.Avalonia.MacOS.Views;
+using PicView.Avalonia.Printing;
+using PicView.Core.Config;
 using PicView.Core.Update;
 using PicView.Core.ViewModels;
-using PicView.Core.Config;
 
 namespace PicView.Avalonia.MacOS.WindowImpl;
 
@@ -41,6 +41,6 @@ public class MacWindowProvider : IWindowProvider
 
     public async Task HandlePlatformUpdate(UpdateInfo updateInfo, string tempPath)
     {
-        await MacUpdateHelper.HandleMacOSUpdate(updateInfo, tempPath);
+        await MacUpdateHelper.HandleMacOSUpdate(updateInfo, tempPath).ConfigureAwait(false);
     }
 }
