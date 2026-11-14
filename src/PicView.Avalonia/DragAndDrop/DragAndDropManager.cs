@@ -8,15 +8,12 @@ using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.Navigation;
-using PicView.Avalonia.Svg;
 using PicView.Avalonia.Views.UC;
-using PicView.Core.DebugTools;
 using PicView.Core.FileHandling;
 using PicView.Core.ProcessHandling;
 using PicView.Core.Sizing;
 using PicView.Core.Svg;
 using PicView.Core.ViewModels;
-using PicView.Core.Models;
 
 namespace PicView.Avalonia.DragAndDrop;
 
@@ -220,7 +217,7 @@ public static class DragAndDropManager
         if (ext.Equals(".svg", StringComparison.InvariantCultureIgnoreCase) ||
             ext.Equals(".svgz", StringComparison.InvariantCultureIgnoreCase))
         {
-            var svg = await Task.Run(() => LoadSvgAsync(fileInfo)).ConfigureAwait(false);
+            var svg = await Task.Run(() => TempFileSingleImage.LoadSvgAsync(fileInfo).AsTask()).ConfigureAwait(false);
             if (svg is SvgDrawing drawing)
             {
                 await Dispatcher.UIThread.InvokeAsync(() => _dragDropView?.UpdateSvgThumbnail(drawing, mainWindow));
@@ -234,24 +231,6 @@ public static class DragAndDropManager
         }
 
         await LoadAndShowThumbnail(fileInfo, mainWindow).ConfigureAwait(false);
-    }
-
-    private static async Task<object?> LoadSvgAsync(FileInfo fileInfo)
-    {
-        uint width, height;
-        try
-        {
-            using var magickImage = GetImage.CreateAndPingMagickImage(fileInfo);
-            width = magickImage.Width;
-            height = magickImage.Height;
-        }
-        catch (Exception e)
-        {
-            DebugHelper.LogDebug(nameof(DragAndDropManager), nameof(LoadSvgAsync), e);
-            return null;
-        }
-
-        return await SvgImageLoader.LoadAsync(fileInfo, width, height).ConfigureAwait(false);
     }
 
     private static async Task LoadAndShowThumbnail(FileInfo fileInfo, MainWindow mainWindow)
@@ -340,26 +319,18 @@ public static class DragAndDropManager
 
     private static async ValueTask LoadSupportedFile(MainWindow mainWindow, string path, CoreViewModel core)
     {
-        // If dropping a file from a browser, some browsers might add it as a file in a temporary directory
-        // and delete it right after (which would cause the file watcher to delete it as well (along with showing 
-        // unnecessary files)
-        // TODO: Add for macOS and add unit tests
-        if (OperatingSystem.IsWindows())
+        // A file dropped from a browser may sit in the temp folder and be deleted right after, which the file
+        // watcher would follow, and browsing it would show the folder's unrelated files. So it is shown as a
+        // Single Image held in memory. A file that cannot be loaded that way is opened as usual.
+        if (TempFileManager.IsInTempFolder(path) && mainWindow.DataContext is MainWindowViewModel vm)
         {
-            // We need to determine if the path is a temporary file, since it might be deleted shortly after
-            // Normalize paths by removing trailing slashes
-            var tempPath = Path.GetTempPath().TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
-            var dirName = Path.GetDirectoryName(path)?.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
-
-            // Use OrdinalIgnoreCase for Windows paths
-            if (dirName is not null && dirName.StartsWith(tempPath, StringComparison.OrdinalIgnoreCase))
+            var fileInfo = new FileInfo(path);
+            if (await TempFileSingleImage.ShowAsync(vm, fileInfo, fileInfo.Name).ConfigureAwait(false))
             {
-                var fileInfo = new FileInfo(path);
-                var image = await GetImage.GetNonStandardBitmapAsync(fileInfo).ConfigureAwait(false);
-                UpdateImage.SetSingleImage(mainWindow.DataContext as MainWindowViewModel, image, SingleImageType.TempFile, fileInfo.Name);
                 return;
             }
         }
+
         await SourceOpener.OpenAsync(mainWindow, core, path).ConfigureAwait(false);
     }
 
