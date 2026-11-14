@@ -122,7 +122,7 @@ public static class QuickLoad
         tab.Gallery.Switcher.Start(Settings.Gallery.IsGalleryDocked);
 
         LoadResult result;
-        if (tab.PairSettings().SideBySide)
+        if (tab.PairSettings().ShowsPair)
         {
             // Listed once, to find the image beside the opened one; the tab's Load browses the same files
             var listFrom = rootDirectory is null ? fileInfo : new FileInfo(rootDirectory);
@@ -210,8 +210,8 @@ public static class QuickLoad
         MainWindowViewModel vm, TabViewModel tab, FileInfo fileInfo, List<FileInfo> files, string? rootDirectory)
     {
         var index = SideBySidePair.IndexOf(files, fileInfo) ?? 0;
-        var (sideBySide, looping) = tab.PairSettings();
-        var (primary, partner) = SideBySidePair.PairAt(index, files.Count, sideBySide, looping);
+        var (showsPair, looping) = tab.PairSettings();
+        var (primary, partner) = SideBySidePair.PairAt(index, files.Count, showsPair, looping);
 
         // Without another image there is no pair to size or show, so the image loads as a single one
         if (partner is not { } partnerIndex)

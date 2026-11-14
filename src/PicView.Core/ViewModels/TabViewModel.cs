@@ -596,8 +596,8 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
         var partner = -1;
         if (SecondaryModel is not null)
         {
-            var (sideBySide, looping) = PairSettings();
-            partner = SideBySidePair.PairAt(NavigationIndex.CurrentValue, MaxIndex.CurrentValue, sideBySide, looping)
+            var (showsPair, looping) = PairSettings();
+            partner = SideBySidePair.PairAt(NavigationIndex.CurrentValue, MaxIndex.CurrentValue, showsPair, looping)
                 .Partner ?? -1;
         }
 
@@ -607,15 +607,18 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
     private IDisposable? _settingsSubscription;
 
     /// <summary>
-    /// Side-by-Side and looping as the tab's settings publish them, or the stored settings for a tab without them.
+    /// Whether a pair is shown (side-by-side or comparison) and looping, as the tab's settings publish them, or the
+    /// stored settings for a tab without them.
     /// </summary>
-    public (bool SideBySide, bool Looping) PairSettings() => Services?.GlobalSettings is { } settings
-        ? (settings.IsSideBySide.CurrentValue, settings.IsLooping.CurrentValue)
-        : (Settings.ImageScaling.ShowImageSideBySide, Settings.UIProperties.Looping);
+    public (bool ShowsPair, bool Looping) PairSettings() => Services?.GlobalSettings is { } settings
+        ? (settings.IsShowingPair.CurrentValue, settings.IsLooping.CurrentValue)
+        : (Settings.ImageScaling.ShowImageSideBySide || Settings.ImageScaling.ShowComparison,
+            Settings.UIProperties.Looping);
 
     /// <summary>
-    /// Follows the global settings the tab reads, once: Looping derives Next and Prev again, side by side derives them
-    /// and has the shown file iterated to again, and including subdirectories lists the folder again.
+    /// Follows the global settings the tab reads, once: Looping derives Next and Prev again, showing a pair (side-by-side
+    /// or comparison) derives them and has the shown file iterated to again, and including subdirectories lists the
+    /// folder again.
     /// </summary>
     private void FollowSettings()
     {
@@ -627,7 +630,7 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
         _settingsSubscription = Disposable.Combine(
             settings.IsLooping.Skip(1).Subscribe(_ => DeriveCanNavigate()),
             // The pair is derived from the files, so the shown file is iterated to again, as a pair or alone
-            settings.IsSideBySide.Skip(1).SubscribeAwait(async (_, _) =>
+            settings.IsShowingPair.Skip(1).SubscribeAwait(async (_, _) =>
             {
                 DeriveCanNavigate();
                 if (ImageIterator is { Files.Count: > 0 } iterator)
@@ -647,7 +650,8 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
     /// <summary>
     /// Whether Next and Prev run, derived from the tab's own state (ADR-0017): no iterator or a crop means neither; a
     /// list of one and nothing extracting means neither; else forwards needs an image ahead (a pair when side-by-side
-    /// is on), or looping, or an extraction still listing pages; backwards needs an image behind, or looping.
+    /// or comparison is on), or looping, or an extraction still listing pages; backwards needs an image behind, or
+    /// looping.
     /// </summary>
     private void DeriveCanNavigate()
     {
@@ -671,8 +675,8 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
             }
             else
             {
-                var (sideBySide, looping) = PairSettings();
-                forwards = SideBySidePair.CanNavigateForwards(index, count, extracting, sideBySide, looping);
+                var (showsPair, looping) = PairSettings();
+                forwards = SideBySidePair.CanNavigateForwards(index, count, extracting, showsPair, looping);
                 backwards = looping || index > 0;
             }
         }

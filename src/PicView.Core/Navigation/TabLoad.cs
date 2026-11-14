@@ -366,8 +366,8 @@ public sealed class TabLoad
             return LoadResult.Failed();
         }
 
-        var (isSideBySide, looping) = _tab.PairSettings();
-        if (!isSideBySide)
+        var (showsPair, looping) = _tab.PairSettings();
+        if (!showsPair)
         {
             _tab.Display(model);
             run.IsShown = true;
@@ -382,14 +382,14 @@ public sealed class TabLoad
 
         var index = SideBySidePair.IndexOf(retrieved, file) ?? 0;
         // The opened file shows in the pair that holds it, so the last file shows beside the one before it (ADR-0024)
-        var (primary, partner) = SideBySidePair.PairAt(index, retrieved.Count, isSideBySide, looping);
+        var (primary, partner) = SideBySidePair.PairAt(index, retrieved.Count, showsPair, looping);
         var iterator = EnsureIterator();
         iterator.Initialize(retrieved, primary);
 
         // The image of the pair that is not the opened file, and where it is
         ImageModel? otherModel = null;
         var otherIndex = -1;
-        if (isSideBySide)
+        if (showsPair)
         {
             if (partner is { } partnerIndex)
             {

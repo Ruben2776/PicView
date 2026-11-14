@@ -318,8 +318,8 @@ public class ImageIterator(SharedImageCache cache, Thumbnails thumbnails, TabVie
             return;
         }
 
-        var (sideBySide, looping) = PairSettings();
-        var (iteration, isReversed) = sideBySide
+        var (showsPair, looping) = PairSettings();
+        var (iteration, isReversed) = showsPair
             ? SideBySidePair.Navigate(from.Index, from.Files.Length, navigateTo, skipAmount, looping)
             : IterationHelper.GetIteration(from.Index, from.Files.Length, navigateTo, skipAmount);
         IsReversed = isReversed;
@@ -335,19 +335,19 @@ public class ImageIterator(SharedImageCache cache, Thumbnails thumbnails, TabVie
         ShowAtAsync(Volatile.Read(ref _files), index, ct);
 
     /// <summary>
-    /// Shows what a tab shows at <paramref name="index"/>: the image there alone, or with Side-by-Side on, the pair that
-    /// holds it (ADR-0024).
+    /// Shows what a tab shows at <paramref name="index"/>: the image there alone, or with a pair shown (side-by-side or
+    /// comparison), the pair that holds it (ADR-0024).
     /// </summary>
     private ValueTask ShowAtAsync(FileInfo[] files, int index, CancellationTokenSource ct)
     {
-        var (sideBySide, looping) = PairSettings();
-        var (primary, partner) = SideBySidePair.PairAt(index, files.Length, sideBySide, looping);
+        var (showsPair, looping) = PairSettings();
+        var (primary, partner) = SideBySidePair.PairAt(index, files.Length, showsPair, looping);
         return partner is { } secondary
             ? ShowPairAsync(files, primary, secondary, ct)
             : ShowAloneAsync(files, primary, ct);
     }
 
-    private (bool SideBySide, bool Looping) PairSettings() =>
+    private (bool ShowsPair, bool Looping) PairSettings() =>
         _tab.PairSettings();
 
     /// <param name="files">The list <paramref name="index"/> counts in. The file there is shown wherever it is in the
@@ -551,8 +551,8 @@ public class ImageIterator(SharedImageCache cache, Thumbnails thumbnails, TabVie
             return;
         }
 
-        var (sideBySide, looping) = PairSettings();
-        var (iteration, isReversed) = sideBySide
+        var (showsPair, looping) = PairSettings();
+        var (iteration, isReversed) = showsPair
             ? SideBySidePair.Navigate(from.Index, from.Files.Length, to, SkipAmount.One, looping)
             : IterationHelper.GetIteration(from.Index, from.Files.Length, to, SkipAmount.One);
         IsReversed = isReversed;
@@ -621,7 +621,7 @@ public class ImageIterator(SharedImageCache cache, Thumbnails thumbnails, TabVie
 
         // How far past the shown file Next goes: to the next file, or to the second of the next pair
         var step = IterationHelper.SkipAmountToInt(skipAmount);
-        var reach = PairSettings().SideBySide ? step * 2 + 1 : step;
+        var reach = PairSettings().ShowsPair ? step * 2 + 1 : step;
         if (shown.Index + reach < shown.Files.Length || HasNextTiffPage(skipAmount))
         {
             return ValueTask.FromResult<(int, FileInfo[])?>(shown);

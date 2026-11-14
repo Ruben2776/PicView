@@ -163,8 +163,8 @@ public sealed class ArchiveOpenings
             // extract, such as a corrupt entry, is left out for the page after it
             // The other page of the pair that holds the start page: the page after it, or before it when the start is
             // the last page (ADR-0024)
-            var (sideBySide, looping) = _tab.PairSettings();
-            var (primary, partnerIndex) = SideBySidePair.PairAt(start, keys.Length, sideBySide, looping);
+            var (showsPair, looping) = _tab.PairSettings();
+            var (primary, partnerIndex) = SideBySidePair.PairAt(start, keys.Length, showsPair, looping);
             int? partner = partnerIndex is { } p ? primary == start ? p : primary : null;
             var extracted = new List<string>();
             var end = start;
