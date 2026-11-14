@@ -52,6 +52,16 @@
                                         ImageType="{Binding ImageType.Value}"
                                         Source="{CompiledBinding Image.Value,
                                                                  Converter={StaticResource DisplayableConverter}}" />
+                                    <!--  Comparison: the partner stacked on the main image in Difference. Hidden, so not measured or drawn, while off  -->
+                                    <customControls:PicBox
+                                        x:Name="CompareImage"
+                                        BlendMode="Difference"
+                                        CurrentFileInfo="{Binding SecondaryFileInfo.Value}"
+                                        ImageType="{Binding SecondaryImageType.Value}"
+                                        IsVisible="{CompiledBinding ParentWindowContext.GlobalSettings.IsComparing.Value}"
+                                        Source="{CompiledBinding SecondaryImage.Value,
+                                                                 Converter={StaticResource DisplayableConverter}}"
+                                        Stretch="Fill" />
                                     <uc:MotionPhotoView x:Name="MotionPhotoView" />
                                 </Grid>
                                 <Grid DockPanel.Dock="Right" IsVisible="{CompiledBinding ParentWindowContext.GlobalSettings.IsSideBySide.Value}">

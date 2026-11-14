@@ -187,8 +187,10 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
         // base64 images never go through file-based detection, so their MotionPhoto metadata
         // is always null and the overlays hide themselves. Images downloaded from a URL live
         // in a real temp file and intentionally behave like any local file.
-        MotionPhotoView.OnImageChanged(tabViewModel.Model);
-        SecondaryMotionPhotoView.OnImageChanged(tabViewModel.SecondaryModel);
+        // While comparing, no motion photo plays: a clip would cover the blended pair
+        var comparing = Settings.ImageScaling.ShowComparison;
+        MotionPhotoView.OnImageChanged(comparing ? null : tabViewModel.Model);
+        SecondaryMotionPhotoView.OnImageChanged(comparing ? null : tabViewModel.SecondaryModel);
         UpdateMotionPhotoBadgePositions();
     }
 
