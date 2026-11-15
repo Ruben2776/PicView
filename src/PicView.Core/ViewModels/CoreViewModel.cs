@@ -9,7 +9,8 @@ namespace PicView.Core.ViewModels;
 public class CoreViewModel(
     IPlatformSpecificService? platformSpecificService,
     Func<FileInfo, ValueTask<ImageModel>> imageLoader,
-    GlobalSettingsViewModel? globalSettings = null)
+    GlobalSettingsViewModel? globalSettings = null,
+    Func<ValueTask<bool>>? saveGallerySettings = null)
 {
     // Shared Services
     public IPlatformSpecificService? PlatformService { get; } = platformSpecificService;
@@ -42,7 +43,8 @@ public class CoreViewModel(
     public TranslationViewModel Translation { get; } = new();
     /// <summary>The settings every tab follows; a test hands in one with a fake save.</summary>
     public GlobalSettingsViewModel GlobalSettings { get; } = globalSettings ?? new GlobalSettingsViewModel();
-    public GallerySharedSettingsViewModel GallerySettings { get; } = new();
+    /// <summary>The gallery settings every tab follows; a test hands in a save that writes no file.</summary>
+    public GallerySharedSettingsViewModel GallerySettings { get; } = new(saveGallerySettings);
     public KeybindingsViewModel? Keybindings { get; set; }
     public SettingsViewModel? SettingsViewModel { get; set; } // Single settings window
     public AboutViewModel? AboutView { get; set; } // Single about window
