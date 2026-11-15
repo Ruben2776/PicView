@@ -603,6 +603,7 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
         SplitOverlay.PointerReleased += OnSplitPointerReleased;
         SplitOverlay.PointerCaptureLost += OnSplitPointerCaptureLost;
         SplitHandle.KeyDown += OnSplitHandleKeyDown;
+        HoverBar.SizeChanged += OnHoverBarSizeChanged;
 
         UpdateCompareBarMargin();
         UpdateComparisonBadges();
@@ -936,10 +937,15 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
         SyncedRightBadgeText.Text = string.IsNullOrEmpty(rightName) ? rightLabel : $"{rightLabel} · {rightName}";
     }
 
+    private void OnHoverBarSizeChanged(object? sender, SizeChangedEventArgs e) =>
+        UpdateCompareBarMargin();
+
     private void UpdateCompareBarMargin()
     {
-        var gs = _tab.ParentWindowContext.GlobalSettings;
-        var bottom = gs.ShowHoverBar.CurrentValue ? 74d : 18d;
+        var hoverVisible = HoverBar.IsVisible && HoverBar.Bounds.Height > 0;
+        var bottom = hoverVisible
+            ? HoverBar.Bounds.Height + HoverBar.Margin.Bottom + 12d
+            : 18d;
         CompareBar.Margin = new Thickness(0, 0, 0, bottom);
     }
 
@@ -1101,6 +1107,7 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
         SplitOverlay.PointerReleased -= OnSplitPointerReleased;
         SplitOverlay.PointerCaptureLost -= OnSplitPointerCaptureLost;
         SplitHandle.KeyDown -= OnSplitHandleKeyDown;
+        HoverBar.SizeChanged -= OnHoverBarSizeChanged;
         CompareBar.Dispose();
         ZoomPanControl.ScaleChanged -= OnScaleChanged;
         RemoveHandler(PointerWheelChangedEvent, PreviewOnPointerWheelChanged);
