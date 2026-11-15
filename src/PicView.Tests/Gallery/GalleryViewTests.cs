@@ -250,6 +250,34 @@ public class GalleryViewTests
         }, startHidden: true, duringLoad: tab => tab.Gallery.Switcher.SetHidden(false));
     }
 
+    [AvaloniaFact]
+    public void DisplayModeButtons_Toggled_SwapWhichOneShows()
+    {
+        WithShownDockedGallery((core, _, view, _) =>
+        {
+            var toggle = core.GallerySettings.ToggleExpandedDisplayModeCommand;
+            var toTiles = view.FindControl<IconButton>("ToTilesButton")!;
+            var toColumns = view.FindControl<IconButton>("ToColumnsButton")!;
+            Assert.Same(toggle, toTiles.Command);
+            Assert.Same(toggle, toColumns.Command);
+            Assert.True(toTiles.IsVisible);
+            Assert.False(toColumns.IsVisible);
+
+            toggle.Execute(Unit.Default);
+            Dispatcher.UIThread.RunJobs();
+
+            Assert.Equal(GalleryDisplayMode.Masonry, core.GallerySettings.ExpandedGalleryDisplayMode.Value);
+            Assert.False(toTiles.IsVisible);
+            Assert.True(toColumns.IsVisible);
+
+            toggle.Execute(Unit.Default);
+            Dispatcher.UIThread.RunJobs();
+
+            Assert.True(toTiles.IsVisible);
+            Assert.False(toColumns.IsVisible);
+        });
+    }
+
     // Shown in a window, so the view loads, with a tab started docked at the bottom and a few items. duringLoad runs
     // as the view loads, when it sizes itself to nothing before it follows the switcher
     private static void WithShownDockedGallery(Action<CoreViewModel, Window, GalleryView, VirtualizingGallery> test,

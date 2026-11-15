@@ -114,4 +114,60 @@ public class GalleryAppearanceTests
             Assert.True(double.IsNaN(a.ItemWidth));
         }
     }
+
+    private static readonly GalleryStretchMode[] Stretches =
+    [
+        GalleryStretchMode.Uniform, GalleryStretchMode.UniformToFill, GalleryStretchMode.Square,
+        GalleryStretchMode.FillSquare
+    ];
+
+    [Theory]
+    [InlineData(GalleryDisplayMode.Masonry)]
+    [InlineData(GalleryDisplayMode.Rows)]
+    public void For_ExpandedTiles_ScrollsVerticallyAndFillsWhateverTheStretch(GalleryDisplayMode displayMode)
+    {
+        var columns = GalleryAppearance.For(GalleryMode.Expanded, GalleryDockPosition.Bottom, Inputs);
+        foreach (var stretch in Stretches)
+        {
+            var a = GalleryAppearance.For(GalleryMode.Expanded, GalleryDockPosition.Bottom,
+                Inputs with { ExpandedStretch = stretch, ExpandedDisplayMode = displayMode });
+
+            Assert.Equal(displayMode, a.DisplayMode);
+            Assert.False(a.ScrollsHorizontally);
+            Assert.True(double.IsNaN(a.ItemWidth));
+            Assert.Equal(GalleryStretchMode.UniformToFill, a.Stretch);
+            // Everything else is the Columns record: item height 150, margin (15, 40, 15, 5), wraps
+            Assert.Equal(columns with { ScrollsHorizontally = false }, a with { DisplayMode = GalleryDisplayMode.Columns });
+        }
+    }
+
+    [Theory]
+    [InlineData(GalleryMode.Docked)]
+    [InlineData(GalleryMode.Closed)]
+    public void For_DockedOrClosed_IsTheSameRecordInEveryDisplayMode(GalleryMode mode)
+    {
+        foreach (var dock in Edges)
+        {
+            var columns = GalleryAppearance.For(mode, dock, Inputs);
+
+            Assert.Equal(GalleryDisplayMode.Columns, columns.DisplayMode);
+            Assert.Equal(columns, GalleryAppearance.For(mode, dock, Inputs with { ExpandedDisplayMode = GalleryDisplayMode.Masonry }));
+            Assert.Equal(columns, GalleryAppearance.For(mode, dock, Inputs with { ExpandedDisplayMode = GalleryDisplayMode.Rows }));
+        }
+    }
+
+    [Fact]
+    public void For_ExpandedColumnsOrUnknownDisplayMode_KeepsTheSavedStretchAndScrollsHorizontally()
+    {
+        var inputs = Inputs with { ExpandedStretch = GalleryStretchMode.FillSquare };
+
+        var a = GalleryAppearance.For(GalleryMode.Expanded, GalleryDockPosition.Bottom, inputs);
+
+        Assert.Equal(GalleryDisplayMode.Columns, a.DisplayMode);
+        Assert.True(a.ScrollsHorizontally);
+        Assert.Equal(a.ItemHeight, a.ItemWidth);
+        Assert.Equal(GalleryStretchMode.FillSquare, a.Stretch);
+        Assert.Equal(a, GalleryAppearance.For(GalleryMode.Expanded, GalleryDockPosition.Bottom,
+            inputs with { ExpandedDisplayMode = (GalleryDisplayMode)7 }));
+    }
 }

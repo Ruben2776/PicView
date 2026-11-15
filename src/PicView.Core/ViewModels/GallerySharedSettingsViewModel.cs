@@ -7,7 +7,75 @@ namespace PicView.Core.ViewModels;
 
 public class GallerySharedSettingsViewModel
 {
+    private readonly Func<ValueTask<bool>> _save;
+    private Task _saving = Task.CompletedTask;
     private bool _isInitialized;
+
+    /// <param name="save">Saves the settings; null means <see cref="SettingsManager.SaveSettingsAsync"/>.</param>
+    public GallerySharedSettingsViewModel(Func<ValueTask<bool>>? save = null)
+    {
+        _save = save ?? SaveSettingsAsync;
+        ExpandedGalleryDisplayMode =
+            new BindableReactiveProperty<GalleryDisplayMode>(Settings.Gallery.ExpandedGalleryDisplayMode);
+
+        // The write-through subscribes first, so a later subscriber that reads the record sees the new value (ADR-0020)
+        ExpandedGalleryDisplayMode.Skip(1).Subscribe(mode =>
+        {
+            Settings.Gallery.ExpandedGalleryDisplayMode = mode;
+            if (GalleryDisplayModes.ShowsTiles(mode))
+            {
+                Settings.Gallery.RowsWasLastUsedDisplayMode = mode is GalleryDisplayMode.Rows;
+            }
+
+            _saving = SaveAsync();
+        }, DebugHelper.LogError(nameof(GallerySharedSettingsViewModel), nameof(ExpandedGalleryDisplayMode)));
+
+        IsExpandedDisplayModeColumns = ExpandedGalleryDisplayMode
+            .Select(static mode => mode is GalleryDisplayMode.Columns)
+            .ToReadOnlyBindableReactiveProperty();
+        IsExpandedDisplayModeMasonry = ExpandedGalleryDisplayMode
+            .Select(static mode => mode is GalleryDisplayMode.Masonry)
+            .ToReadOnlyBindableReactiveProperty();
+        IsExpandedDisplayModeRows = ExpandedGalleryDisplayMode
+            .Select(static mode => mode is GalleryDisplayMode.Rows)
+            .ToReadOnlyBindableReactiveProperty();
+        IsExpandedDisplayModeTiles = ExpandedGalleryDisplayMode
+            .Select(GalleryDisplayModes.ShowsTiles)
+            .ToReadOnlyBindableReactiveProperty();
+
+        SetExpandedDisplayModeCommand.Subscribe(mode =>
+        {
+            ExpandedGalleryDisplayMode.Value = GalleryDisplayModes.Validate(mode);
+        }, DebugHelper.LogError(nameof(GallerySharedSettingsViewModel), nameof(SetExpandedDisplayModeCommand)));
+
+        ToggleExpandedDisplayModeCommand.Subscribe(_ =>
+        {
+            ExpandedGalleryDisplayMode.Value = GalleryDisplayModes.Toggle(ExpandedGalleryDisplayMode.Value,
+                Settings.Gallery.RowsWasLastUsedDisplayMode);
+        }, DebugHelper.LogError(nameof(GallerySharedSettingsViewModel), nameof(ToggleExpandedDisplayModeCommand)));
+    }
+
+    /// <summary>The save in flight, completed when idle. For tests.</summary>
+    internal Task Saving => _saving;
+
+    /// <summary>
+    /// The Expanded Gallery's display mode, app-wide. Only the two display mode commands write it, and it writes
+    /// through to the settings record and saves (ADR-0020).
+    /// </summary>
+    public BindableReactiveProperty<GalleryDisplayMode> ExpandedGalleryDisplayMode { get; }
+
+    /// <summary>Sets the display mode; an unknown value sets Columns.</summary>
+    public ReactiveCommand<GalleryDisplayMode> SetExpandedDisplayModeCommand { get; } = new();
+
+    /// <summary>Goes from Columns to the last used tile mode, and from a tile mode back to Columns.</summary>
+    public ReactiveCommand<Unit> ToggleExpandedDisplayModeCommand { get; } = new();
+
+    public IReadOnlyBindableReactiveProperty<bool> IsExpandedDisplayModeColumns { get; }
+    public IReadOnlyBindableReactiveProperty<bool> IsExpandedDisplayModeMasonry { get; }
+    public IReadOnlyBindableReactiveProperty<bool> IsExpandedDisplayModeRows { get; }
+
+    /// <summary>Whether the display mode shows tiles, which is Masonry and Rows.</summary>
+    public IReadOnlyBindableReactiveProperty<bool> IsExpandedDisplayModeTiles { get; }
 
     public ReactiveCommand<GalleryStretchMode> SetDockedStretchModeCommand { get; } = new();
     public ReactiveCommand<GalleryStretchMode> SetExpandedStretchModeCommand { get; } = new();
@@ -157,6 +225,18 @@ public class GallerySharedSettingsViewModel
                     await SaveSettingsAsync().ConfigureAwait(false);
                 }
             }, DebugHelper.LogError(nameof(GallerySharedSettingsViewModel), nameof(GalleryLineSpacing)));
+    }
+
+    private async Task SaveAsync()
+    {
+        try
+        {
+            await _save().ConfigureAwait(false);
+        }
+        catch (Exception e)
+        {
+            DebugHelper.LogDebug(nameof(GallerySharedSettingsViewModel), nameof(SaveAsync), e);
+        }
     }
 
     private void ToggleGalleryVisibilitySubscription()

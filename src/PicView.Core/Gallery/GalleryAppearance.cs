@@ -23,7 +23,8 @@ public readonly record struct GalleryAppearanceInputs(
     double ExpandedItemSize,
     GalleryStretchMode DockedStretch,
     GalleryStretchMode ExpandedStretch,
-    double ItemSpacing);
+    double ItemSpacing,
+    GalleryDisplayMode ExpandedDisplayMode = GalleryDisplayMode.Columns);
 
 /// <summary>
 ///     How a gallery looks in a given mode and dock position. <see cref="Extent" /> is the docked thickness,
@@ -50,6 +51,12 @@ public readonly record struct GalleryAppearance(
     ///     Expanded Gallery the thickness it gets back if it returns to docked. 0 when closed.
     /// </summary>
     public double DockedExtent { get; init; }
+
+    /// <summary>
+    ///     How the gallery arranges its items. Columns unless the gallery is Expanded, so a Docked or Closed record is
+    ///     equal in every display mode and nothing is re-applied to it.
+    /// </summary>
+    public GalleryDisplayMode DisplayMode { get; init; }
 
     public static GalleryAppearance For(GalleryMode shownMode, GalleryDockPosition dock, GalleryAppearanceInputs inputs)
     {
@@ -81,20 +88,23 @@ public readonly record struct GalleryAppearance(
                     DockedExtent = dockedExtent
                 };
             case GalleryMode.Expanded:
+                var displayMode = GalleryDisplayModes.Validate(inputs.ExpandedDisplayMode);
+                var tiles = GalleryDisplayModes.ShowsTiles(displayMode);
                 return new GalleryAppearance(
                     shownMode, dock, true,
                     GalleryOrientation.Vertical,
-                    true,
+                    !tiles,
                     true,
                     inputs.ExpandedItemSize,
-                    ItemWidthFor(inputs.ExpandedStretch, inputs.ExpandedItemSize),
-                    inputs.ExpandedStretch,
+                    tiles ? double.NaN : ItemWidthFor(inputs.ExpandedStretch, inputs.ExpandedItemSize),
+                    tiles ? GalleryStretchMode.UniformToFill : inputs.ExpandedStretch,
                     inputs.ItemSpacing,
                     new GalleryInsets(15, 40, 15, 5),
                     GalleryInsets.Zero,
                     double.NaN)
                 {
-                    DockedExtent = DockedExtentFor(dock, inputs.DockedItemSize)
+                    DockedExtent = DockedExtentFor(dock, inputs.DockedItemSize),
+                    DisplayMode = displayMode
                 };
             default:
                 return new GalleryAppearance(

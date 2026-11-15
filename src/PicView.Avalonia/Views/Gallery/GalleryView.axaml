@@ -177,12 +177,15 @@
             <!--  To masonry button  -->
             <customControls:IconButton
                 Classes="galleryShape"
+                Command="{CompiledBinding ParentWindowContext.GallerySettings.ToggleExpandedDisplayModeCommand}"
                 Foreground="{StaticResource MainTextColor}"
                 HorizontalAlignment="Stretch"
                 Icon="{StaticResource GalleryToVerticalImage}"
                 IconHeight="18"
                 IconWidth="18"
-                VerticalAlignment="Stretch">
+                IsVisible="{CompiledBinding ParentWindowContext.GallerySettings.IsExpandedDisplayModeColumns.Value}"
+                VerticalAlignment="Stretch"
+                x:Name="ToTilesButton">
                 <customControls:IconButton.Template>
                     <ControlTemplate TargetType="customControls:IconButton">
                         <Panel>
@@ -204,12 +207,15 @@
             <!--  To columns button  -->
             <customControls:IconButton
                 Classes="galleryShape"
+                Command="{CompiledBinding ParentWindowContext.GallerySettings.ToggleExpandedDisplayModeCommand}"
                 Foreground="{StaticResource MainTextColor}"
                 HorizontalAlignment="Stretch"
                 Icon="{StaticResource ToGalleryHorizontalImage}"
                 IconHeight="18"
                 IconWidth="18"
-                VerticalAlignment="Stretch">
+                IsVisible="{CompiledBinding ParentWindowContext.GallerySettings.IsExpandedDisplayModeTiles.Value}"
+                VerticalAlignment="Stretch"
+                x:Name="ToColumnsButton">
                 <customControls:IconButton.Template>
                     <ControlTemplate TargetType="customControls:IconButton">
                         <Panel>
