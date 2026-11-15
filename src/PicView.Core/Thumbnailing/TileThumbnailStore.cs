@@ -75,21 +75,46 @@ internal sealed class TileThumbnailStore(long budgetInBytes)
     {
         lock (_lock)
         {
-            RemoveNode(path);
+            AddNode(path, thumbnail, height, bytes);
+        }
+    }
 
-            var node = new LinkedListNode<Entry>(new Entry(path, thumbnail, height, bytes));
-            _order.AddFirst(node);
-            _nodes[path] = node;
-            _bytes += bytes;
-            if (bytes > 0)
+    /// <summary>
+    /// Like <see cref="Add"/>, but keeps nothing when the thumbnail kept for <paramref name="path"/> was made for at
+    /// least <paramref name="height"/>, so the tallest is kept.
+    /// </summary>
+    /// <returns>Whether <paramref name="thumbnail"/> was kept.</returns>
+    public bool AddIfTaller(string path, object thumbnail, uint height, long bytes)
+    {
+        lock (_lock)
+        {
+            if (_nodes.TryGetValue(path, out var existing) && existing.Value.Height >= height)
             {
-                GC.AddMemoryPressure(bytes);
+                return false;
             }
 
-            while (_bytes > budgetInBytes && _order.Last is { } last && last != node)
-            {
-                RemoveNode(last.Value.Path);
-            }
+            AddNode(path, thumbnail, height, bytes);
+            return true;
+        }
+    }
+
+    // The caller holds the lock
+    private void AddNode(string path, object thumbnail, uint height, long bytes)
+    {
+        RemoveNode(path);
+
+        var node = new LinkedListNode<Entry>(new Entry(path, thumbnail, height, bytes));
+        _order.AddFirst(node);
+        _nodes[path] = node;
+        _bytes += bytes;
+        if (bytes > 0)
+        {
+            GC.AddMemoryPressure(bytes);
+        }
+
+        while (_bytes > budgetInBytes && _order.Last is { } last && last != node)
+        {
+            RemoveNode(last.Value.Path);
         }
     }
 
