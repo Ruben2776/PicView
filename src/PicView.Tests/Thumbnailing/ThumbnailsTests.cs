@@ -434,4 +434,23 @@ public class ThumbnailsTests
         await first;
         Assert.DoesNotContain("decode-full:b.jpg", _decoder.Calls);
     }
+
+    [Fact]
+    public async Task GetTileAsync_ShorterMakeFinishesAfterTaller_TheTallerStaysKept()
+    {
+        var file = File("a.jpg");
+        using var gate = new ManualResetEventSlim();
+        _decoder.DecodeGate = gate;
+        var shorter = _thumbnails.GetTileAsync(file, 400).AsTask();
+        await WaitUntil(() => _decoder.Calls.Contains("decode-full:a.jpg"));
+        _decoder.DecodeGate = null; // the taller make is not held, so it finishes first
+        var taller = Fake(await _thumbnails.GetTileAsync(file, 600));
+
+        gate.Set();
+
+        Assert.Equal(400u, Fake(await shorter).Height);
+        Assert.True(_thumbnails.TryGetKept(file, out var kept, out var height));
+        Assert.Equal(600u, height);
+        Assert.Same(taller, kept);
+    }
 }

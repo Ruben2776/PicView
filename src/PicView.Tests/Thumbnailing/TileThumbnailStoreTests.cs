@@ -78,4 +78,30 @@ public class TileThumbnailStoreTests
         _store.Remove("missing"); // nothing, no throw
         _store.Move("missing", "x"); // nothing, no throw
     }
+
+    [Fact]
+    public void AddIfTaller_KeptIsAsTallOrTaller_KeepsTheKeptAndCountsNothingMore()
+    {
+        _store.Add("a", "TALL", 600, 100);
+
+        Assert.False(_store.AddIfTaller("a", "SHORT", 400, 50));
+        Assert.False(_store.AddIfTaller("a", "SAME", 600, 100));
+
+        Assert.True(_store.TryGet("a", out var kept, out var height));
+        Assert.Equal("TALL", kept);
+        Assert.Equal(600u, height);
+        Assert.Equal(100, _store.Bytes);
+    }
+
+    [Fact]
+    public void AddIfTaller_NothingKeptOrKeptIsShorter_Keeps()
+    {
+        Assert.True(_store.AddIfTaller("a", "SHORT", 400, 50));
+        Assert.True(_store.AddIfTaller("a", "TALL", 600, 100));
+
+        Assert.True(_store.TryGet("a", out var kept, out var height));
+        Assert.Equal("TALL", kept);
+        Assert.Equal(600u, height);
+        Assert.Equal(100, _store.Bytes);
+    }
 }

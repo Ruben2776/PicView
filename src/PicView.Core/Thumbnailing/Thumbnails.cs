@@ -185,7 +185,7 @@ public sealed class Thumbnails
         {
             if (tile)
             {
-                _tiles.Add(file.FullName, thumbnail, height, _decoder.SizeInBytes(thumbnail));
+                _tiles.AddIfTaller(file.FullName, thumbnail, height, _decoder.SizeInBytes(thumbnail));
             }
             else if (owner is { } id)
             {
