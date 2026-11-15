@@ -220,6 +220,35 @@ public class FileWatcherServiceTests : IDisposable
     }
 
     [Fact]
+    public async Task OnFileChanged_ShownFileStoredOnItsSide_FollowsTheUprightSize()
+    {
+        // Arrange: stored 2 wide and 3 tall, shown turned a quarter, so upright it is 3 wide and 2 tall
+        var filePath = Path.Combine(_testDirectory, "turned.jpg");
+        using (var image = new MagickImage(MagickColors.Red, 2, 3))
+        {
+            var exif = new ExifProfile();
+            exif.SetValue(ExifTag.Orientation, (ushort)6);
+            image.SetProfile(exif);
+            image.Orientation = ImageMagick.Orientation.RightTop;
+            await image.WriteAsync(filePath, TestContext.Current.CancellationToken);
+        }
+        var file = new FileInfo(filePath);
+        var tab = CreateTab(_testDirectory, [file], file);
+        tab.ImageIterator!.Initialize([file], 0);
+        tab.IsSelected = true;
+        var changes = new ConcurrentQueue<ShownChange>();
+        using var subscription = tab.Shown.Subscribe(changes.Enqueue);
+
+        // Act
+        Watch(tab).RaiseChanged("turned.jpg");
+
+        // Assert: the model's size is the upright one, as the viewer sets it when it decodes the file
+        await WaitUntilAsync(() => changes.Contains(ShownChange.File));
+        Assert.Equal(3u, tab.Model.PixelWidth);
+        Assert.Equal(2u, tab.Model.PixelHeight);
+    }
+
+    [Fact]
     public async Task OnFileChanged_UnshownFile_LeavesShownModelAlone()
     {
         // Arrange

@@ -36,6 +36,35 @@ public sealed class GalleryFileDetailsTests : IDisposable
         Assert.Contains("x:xmpmeta", details.XmpPacket);
     }
 
+    [Theory]
+    [InlineData(1, Orientation.TopLeft, 64u, 48u)]
+    [InlineData(2, Orientation.TopRight, 64u, 48u)]
+    [InlineData(3, Orientation.BottomRight, 64u, 48u)]
+    [InlineData(4, Orientation.BottomLeft, 64u, 48u)]
+    [InlineData(5, Orientation.LeftTop, 48u, 64u)]
+    [InlineData(6, Orientation.RightTop, 48u, 64u)]
+    [InlineData(7, Orientation.RightBottom, 48u, 64u)]
+    [InlineData(8, Orientation.LeftBottom, 48u, 64u)]
+    public void Read_JpegWithExifOrientation_GivesTheUprightSize(int exifOrientation, Orientation orientation,
+        uint width, uint height)
+    {
+        // Stored 64 wide and 48 tall
+        var file = WriteImage($"turned{exifOrientation}.jpg", MagickFormat.Jpeg, 64, 48, image =>
+        {
+            // Magick writes the tag only with both an EXIF profile and the property set
+            var exif = new ExifProfile();
+            exif.SetValue(ExifTag.Orientation, (ushort)exifOrientation);
+            image.SetProfile(exif);
+            image.Orientation = orientation;
+        });
+
+        var details = GalleryFileDetails.Read(file);
+
+        Assert.NotNull(details);
+        Assert.Equal(width, details.PixelWidth);
+        Assert.Equal(height, details.PixelHeight);
+    }
+
     [Fact]
     public void Read_TgaWithoutSignature_GivesItsSize()
     {
