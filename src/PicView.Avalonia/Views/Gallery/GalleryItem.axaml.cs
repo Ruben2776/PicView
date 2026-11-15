@@ -272,16 +272,29 @@ public partial class GalleryItem : NavigateAbleItem
         }
 
         _sharpenCts = null;
-        if (cancelled)
+        if (thumbnail is null && !cancelled)
         {
-            // Not shown, so the next rest asks again, from the kept Tile Thumbnail if it was made meanwhile
-            TileHeightAsked = _tileHeightAskedBefore;
+            // The file gives none at that height, so it is not asked for again
             return;
         }
 
-        if (thumbnail is null || !ReferenceEquals(DataContext, vm))
+        // Only a tile shows a Tile Thumbnail: the gallery may have left Masonry and Rows, for Columns or docked
+        var panel = this.FindAncestorOfType<VirtualizingGallery>();
+        if (thumbnail is null || panel is null || !NavigateAbleItemsViewer.ShowsTiles(panel) ||
+            !ReferenceEquals(DataContext, vm))
         {
+            // Cancelled while it waited for its turn, or not shown: a later rest asks again, and one is due if the
+            // item is still a tile on screen
+            TileHeightAsked = _tileHeightAskedBefore;
+            this.FindAncestorOfType<NavigateAbleItemsViewer>()?.RequestTileSharpen();
             return;
+        }
+
+        // A make that finished after a new rest began is still this item's, made for a height it asked for, so it is
+        // shown. If the tile needs more by now, the shown height says so, and the rest after it asks for the taller one
+        if (cancelled)
+        {
+            this.FindAncestorOfType<NavigateAbleItemsViewer>()?.RequestTileSharpen();
         }
 
         // A small thumbnail still on its way must not land over the sharp one. The small one is not disposed: the
