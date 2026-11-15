@@ -17,6 +17,7 @@ dotnet run -c Release --project src/PicView.Benchmarks
 //BenchmarkRunner.Run<PreloadingBenchmark>();
 //BenchmarkRunner.Run<TranslationBenchmarks>();
 BenchmarkRunner.Run<GalleryLoadBenchmarks>();
+//BenchmarkRunner.Run<GalleryLayoutBenchmarks>();
 //BenchmarkRunner.Run<SvgLoadBenchmarks>();
 //BenchmarkRunner.Run<LanguageBenchmark>();
 //BenchmarkRunner.Run<FileSizeBenchmark>();
