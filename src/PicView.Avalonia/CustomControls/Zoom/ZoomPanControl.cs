@@ -43,6 +43,11 @@ public class ZoomPanControl : Decorator
     /// </summary>
     public bool IsSpaceHeld { get; private set; }
 
+    /// <summary>
+    /// Temporarily blocks pointer-drag panning (e.g. while picking alignment anchor points).
+    /// </summary>
+    public bool SuspendPanning { get; set; }
+
     /// <summary>Raised when <see cref="IsSpaceHeld"/> changed, with the new value.</summary>
     public event Action<bool>? SpaceHeldChanged;
 
@@ -386,7 +391,7 @@ public class ZoomPanControl : Decorator
 
     private void HandleResetZoomOrStartPanning(object? sender, PointerPressedEventArgs e)
     {
-        if (Child == null)
+        if (Child == null || SuspendPanning)
         {
             return;
         }

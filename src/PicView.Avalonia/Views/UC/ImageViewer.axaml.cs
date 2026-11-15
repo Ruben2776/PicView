@@ -564,6 +564,7 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
         gs.IsComparisonSplitHorizontal.Subscribe(_ => UpdateSplitClipAndOverlay()).AddTo(ref _disposables);
         gs.IsComparisonBlinkFast.Subscribe(_ => UpdateBlinkTimer()).AddTo(ref _disposables);
         gs.ComparisonBlinkInterval.Subscribe(_ => UpdateBlinkTimer()).AddTo(ref _disposables);
+        _tab.ParentWindowContext.WindowTabs.ActiveTab.Subscribe(_ => UpdateBlinkTimer()).AddTo(ref _disposables);
         gs.IsComparisonStretchFill.Subscribe(_ => ApplyComparisonVisuals()).AddTo(ref _disposables);
         gs.ShowHoverBar.Subscribe(_ => UpdateCompareBarMargin()).AddTo(ref _disposables);
         _tab.IsComparisonSwapped.Subscribe(_ => UpdateComparisonBadges()).AddTo(ref _disposables);
@@ -576,8 +577,17 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
                 CompareImage.RenderTransform = null;
             }
         }).AddTo(ref _disposables);
-        _tab.IsAligning.Subscribe(aligning => CompareHostGrid.Cursor = aligning ? CrossCursor : null)
-            .AddTo(ref _disposables);
+        _tab.IsAligning.Subscribe(aligning =>
+        {
+            CompareHostGrid.Cursor = aligning ? CrossCursor : null;
+            ZoomPanControl.SuspendPanning = aligning;
+            AlignMarkersCanvas.Children.Clear();
+            if (aligning && _tab.HasAlignment.Value)
+            {
+                CompareImage.RenderTransform = null;
+                _tab.HasAlignment.Value = false;
+            }
+        }).AddTo(ref _disposables);
         gs.IsSideBySideSyncedActive.AsObservable().Subscribe(active =>
         {
             if (active)
@@ -822,7 +832,8 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
     private void UpdateBlinkTimer()
     {
         var gs = _tab.ParentWindowContext.GlobalSettings;
-        if (!gs.IsComparing.CurrentValue || gs.ComparisonMode.CurrentValue != ComparisonMode.Blink)
+        var isTabActive = _tab.IsSelected || ReferenceEquals(_tab.ParentWindowContext.WindowTabs.ActiveTab.CurrentValue, _tab);
+        if (!isTabActive || !gs.IsComparing.CurrentValue || gs.ComparisonMode.CurrentValue != ComparisonMode.Blink)
         {
             StopBlinkTimer();
             return;
@@ -981,14 +992,17 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
         {
             case 1:
                 _alignA1 = pt;
+                AddAlignMarker(pt, "A1", isSecondary: false);
                 _tab.AlignmentStep.Value = 2;
                 break;
             case 2:
                 _alignB1 = pt;
+                AddAlignMarker(pt, "B1", isSecondary: true);
                 _tab.AlignmentStep.Value = 3;
                 break;
             case 3:
                 _alignA2 = pt;
+                AddAlignMarker(pt, "A2", isSecondary: false);
                 _tab.AlignmentStep.Value = 4;
                 break;
             case 4:
@@ -1006,12 +1020,39 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
                     _tab.HasAlignment.Value = true;
                 }
 
+                AlignMarkersCanvas.Children.Clear();
                 _tab.IsAligning.Value = false;
                 _tab.AlignmentStep.Value = 0;
                 break;
         }
 
         e.Handled = true;
+    }
+
+    private void AddAlignMarker(Point pt, string label, bool isSecondary)
+    {
+        var fill = isSecondary ? Color.Parse("#FFEC4899") : Color.Parse("#FF38BDF8");
+        var marker = new Border
+        {
+            Width = 20,
+            Height = 20,
+            CornerRadius = new CornerRadius(10),
+            Background = new SolidColorBrush(fill, 0.88),
+            BorderBrush = Brushes.White,
+            BorderThickness = new Thickness(1.5),
+            Child = new TextBlock
+            {
+                Text = label,
+                FontSize = 9,
+                FontWeight = FontWeight.Bold,
+                Foreground = Brushes.White,
+                HorizontalAlignment = global::Avalonia.Layout.HorizontalAlignment.Center,
+                VerticalAlignment = global::Avalonia.Layout.VerticalAlignment.Center
+            }
+        };
+        Canvas.SetLeft(marker, pt.X - 10);
+        Canvas.SetTop(marker, pt.Y - 10);
+        AlignMarkersCanvas.Children.Add(marker);
     }
 
     private void OnSplitHandleKeyDown(object? sender, KeyEventArgs e)
