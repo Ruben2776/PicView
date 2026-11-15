@@ -268,6 +268,17 @@ public class Gallery
     public GalleryStretchMode DockedGalleryStretchMode { get; set; } = GalleryStretchMode.UniformToFill;
 
     /// <summary>
+    /// How the Expanded Gallery arranges its items. App-wide; the Docked Gallery ignores it.
+    /// </summary>
+    public GalleryDisplayMode ExpandedGalleryDisplayMode { get; set; } = GalleryDisplayMode.Columns;
+
+    /// <summary>
+    /// Whether Rows (true) or Masonry (false) was the last used of the two,
+    /// which is where the Expanded Gallery's switch button goes from Columns.
+    /// </summary>
+    public bool RowsWasLastUsedDisplayMode { get; set; }
+
+    /// <summary>
     /// Determines whether gallery thumbnails of motion photos display the motion photo badge.
     /// </summary>
     public bool ShowMotionPhotoBadges { get; set; } = false;
