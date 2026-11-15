@@ -604,6 +604,7 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
         SplitOverlay.PointerCaptureLost += OnSplitPointerCaptureLost;
         SplitHandle.KeyDown += OnSplitHandleKeyDown;
         HoverBar.SizeChanged += OnHoverBarSizeChanged;
+        MainPanel.PointerMoved += OnMainPanelPointerMoved;
 
         UpdateCompareBarMargin();
         UpdateComparisonBadges();
@@ -923,8 +924,13 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
         return new Rect((bounds.Width - w) * 0.5, (bounds.Height - h) * 0.5, w, h);
     }
 
-    private void OnSyncedScaleChanged(double scale) =>
-        _tab.Zoom.SetFactor(scale);
+    private void OnSyncedScaleChanged(double scale)
+    {
+        if (_tab.ParentWindowContext.GlobalSettings.IsSideBySideSyncedActive.Value)
+        {
+            _tab.Zoom.SetFactor(scale);
+        }
+    }
 
     private void UpdateComparisonBadges()
     {
@@ -936,6 +942,9 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
         SyncedLeftBadgeText.Text = string.IsNullOrEmpty(leftName) ? leftLabel : $"{leftLabel} · {leftName}";
         SyncedRightBadgeText.Text = string.IsNullOrEmpty(rightName) ? rightLabel : $"{rightLabel} · {rightName}";
     }
+
+    private void OnMainPanelPointerMoved(object? sender, PointerEventArgs e) =>
+        CompareBar.NotifyUserActivity();
 
     private void OnHoverBarSizeChanged(object? sender, SizeChangedEventArgs e) =>
         UpdateCompareBarMargin();
@@ -1108,6 +1117,7 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
         SplitOverlay.PointerCaptureLost -= OnSplitPointerCaptureLost;
         SplitHandle.KeyDown -= OnSplitHandleKeyDown;
         HoverBar.SizeChanged -= OnHoverBarSizeChanged;
+        MainPanel.PointerMoved -= OnMainPanelPointerMoved;
         CompareBar.Dispose();
         ZoomPanControl.ScaleChanged -= OnScaleChanged;
         RemoveHandler(PointerWheelChangedEvent, PreviewOnPointerWheelChanged);

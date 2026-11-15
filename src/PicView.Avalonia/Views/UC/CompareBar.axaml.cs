@@ -1,6 +1,8 @@
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
+using Avalonia.Threading;
 using Avalonia.VisualTree;
 using PicView.Avalonia.FileSystem;
 using PicView.Avalonia.ImageHandling;
@@ -14,6 +16,8 @@ namespace PicView.Avalonia.Views.UC;
 public partial class CompareBar : UserControl, IDisposable
 {
     private DisposableBag _subscriptions;
+    private DispatcherTimer? _autoHideTimer;
+    private bool _isBarPinned;
 
     public CompareBar()
     {
@@ -21,12 +25,80 @@ public partial class CompareBar : UserControl, IDisposable
         DataContextChanged += (_, _) => SubscribeToTab();
         AttachedToVisualTree += (_, _) => SubscribeToTab();
         DetachedFromVisualTree += (_, _) => Dispose();
+        PointerMoved += (_, _) => NotifyUserActivity();
     }
 
     public void Dispose()
     {
+        StopAutoHideTimer();
         _subscriptions.Dispose();
         _subscriptions = default;
+    }
+
+    public void NotifyUserActivity()
+    {
+        if (!IsVisible)
+        {
+            return;
+        }
+
+        Opacity = 1;
+        IsHitTestVisible = true;
+        if (_isBarPinned)
+        {
+            StopAutoHideTimer();
+            return;
+        }
+
+        RestartAutoHideTimer();
+    }
+
+    private void RestartAutoHideTimer()
+    {
+        if (_autoHideTimer is null)
+        {
+            _autoHideTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(3) };
+            _autoHideTimer.Tick += OnAutoHideTick;
+        }
+
+        _autoHideTimer.Stop();
+        _autoHideTimer.Start();
+    }
+
+    private void StopAutoHideTimer()
+    {
+        if (_autoHideTimer is not null)
+        {
+            _autoHideTimer.Stop();
+            _autoHideTimer.Tick -= OnAutoHideTick;
+            _autoHideTimer = null;
+        }
+    }
+
+    private void OnAutoHideTick(object? sender, EventArgs e)
+    {
+        _autoHideTimer?.Stop();
+        if (!_isBarPinned && IsVisible && !IsPointerOver)
+        {
+            Opacity = 0;
+            IsHitTestVisible = false;
+        }
+    }
+
+    private void OnBarPinClick(object? sender, RoutedEventArgs e)
+    {
+        _isBarPinned = !_isBarPinned;
+        BarPinButton.Classes.Set("active", _isBarPinned);
+        if (_isBarPinned)
+        {
+            StopAutoHideTimer();
+            Opacity = 1;
+            IsHitTestVisible = true;
+        }
+        else
+        {
+            RestartAutoHideTimer();
+        }
     }
 
     private void SubscribeToTab()
@@ -41,7 +113,18 @@ public partial class CompareBar : UserControl, IDisposable
         }
 
         tab.ParentWindowContext.GlobalSettings.IsShowingPair
-            .Subscribe(visible => IsVisible = visible)
+            .Subscribe(visible =>
+            {
+                IsVisible = visible;
+                if (visible)
+                {
+                    NotifyUserActivity();
+                }
+                else
+                {
+                    StopAutoHideTimer();
+                }
+            })
             .AddTo(ref _subscriptions);
 
         tab.Zoom.Level

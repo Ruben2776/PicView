@@ -80,6 +80,22 @@
         CornerRadius="22">
         <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
         <StackPanel Orientation="Horizontal" Spacing="6">
+            <!--  Pin CompareBar (prevent 3s auto-hide)  -->
+            <Button
+                x:Name="BarPinButton"
+                Classes="compareIconBtn"
+                Click="OnBarPinClick"
+                ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.ComparisonPin.Value}">
+                <Path
+                    Width="13"
+                    Height="13"
+                    Data="M10.5,3.5 L4.5,9.5 A2.5,2.5 0 0,0 8,13 L14,7 A4,4 0 0,0 8.5,1.5 L2.5,7.5 A5.5,5.5 0 0,0 10.3,15.3 L15,10.5"
+                    Stretch="Uniform"
+                    StrokeLineCap="Round"
+                    StrokeJoin="Round"
+                    StrokeThickness="1.4" />
+            </Button>
+
             <!--  Mode Segmented Pill  -->
             <Border
                 Padding="2"
