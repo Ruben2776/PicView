@@ -34,6 +34,8 @@ public class GalleryLayoutTests
         ItemWidth: double.NaN, ItemSpacing: 10, LineSpacing: 10, WrapHeightOverride: double.NaN,
         DisplayMode: GalleryDisplayMode.Masonry);
 
+    private static readonly GalleryLayoutOptions Rows = Masonry with { DisplayMode = GalleryDisplayMode.Rows };
+
     private static object?[] SevenTiles() =>
     [
         Item(100, 100), Item(200, 100), Item(100, 200), Item(100, 100), Item(100, 100), new GalleryItemViewModel(),
@@ -604,6 +606,178 @@ public class GalleryLayoutTests
 
         var before = GC.GetAllocatedBytesForCurrentThread();
         layout.Calculate(items, Masonry, new Size(1000, 500));
+
+        Assert.Equal(0L, GC.GetAllocatedBytesForCurrentThread() - before);
+    }
+
+    private static object?[] SevenInRows() =>
+    [
+        Item(300, 200), Item(300, 200), Item(300, 200), Item(100, 100), Item(200, 100), Item(100, 100),
+        new GalleryItemViewModel()
+    ];
+
+    // At the target height, 150, a 3:2 item is 225 wide, a square 150 and a 2:1 item 300
+    [Fact]
+    public void Calculate_Rows_ScalesEachFullRowToEndAtTheWidthAndKeepsTheLastRowAtTheTargetHeight()
+    {
+        var layout = new GalleryLayout();
+        layout.Calculate(SevenInRows(), Rows, new Size(430, 500));
+        Assert.Equal(
+        [
+            // 225 + 10 + 225 is past 430, so both are (430 − 10) / 3 = 140 high
+            new Rect(0, 0, 210, 140), new Rect(220, 0, 210, 140),
+            // 225 + 10 + 150 fits and the 2:1 item goes past: (430 − 20) / 4.5 = 91.11 high, so 136.67 and 91.11 wide,
+            // and the last item takes what is left of its 182.22
+            new Rect(0, 150, 137, 91), new Rect(147, 150, 91, 91), new Rect(248, 150, 182, 91),
+            // not filled: the target height, from the left. An item not read yet is a square
+            new Rect(0, 251, 150, 150), new Rect(160, 251, 150, 150)
+        ], layout.Bounds);
+        Assert.Equal(new Size(430, 401), layout.Extent);
+        Assert.True(layout.ScrollsVertically);
+    }
+
+    [Theory]
+    [InlineData(310)]
+    [InlineData(310.9)] // the part of a pixel is left over
+    public void Calculate_RowsThatEndExactlyAtTheWidth_StayOpenUntilAnItemGoesPastIt(double width)
+    {
+        var layout = new GalleryLayout();
+        layout.Calculate(Squares(2), Rows, new Size(width, 500)); // 150 + 10 + 150 is not wider than 310
+        Assert.Equal([new Rect(0, 0, 150, 150), new Rect(160, 0, 150, 150)], layout.Bounds);
+        Assert.Equal(new Size(width, 150), layout.Extent);
+
+        layout.Calculate(Squares(3), Rows, new Size(width, 500)); // the third stays in the row: (310 − 20) / 3 = 96.67
+        Assert.Equal([new Rect(0, 0, 97, 97), new Rect(107, 0, 97, 97), new Rect(214, 0, 96, 97)], layout.Bounds);
+        Assert.Equal(new Size(width, 97), layout.Extent); // no row follows, so no spacing under it
+    }
+
+    [Fact]
+    public void Calculate_RowsExtremeAspectRatios_ClampsThemToFourAndOneThird()
+    {
+        var layout = new GalleryLayout();
+        layout.Calculate([Item(4000, 100), Item(100, 2000)], Rows, new Size(430, 500));
+        // 4:1 is 600 wide at 150: a row of its own, 430 / 4 = 107.5 high, which rounds to the even 108. 1:3 is 50 wide
+        Assert.Equal([new Rect(0, 0, 430, 108), new Rect(0, 118, 50, 150)], layout.Bounds);
+        Assert.Equal(new Size(430, 268), layout.Extent);
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(double.PositiveInfinity)]
+    public void Calculate_RowsWithoutAUsableWidth_PlacesOneRowAtTheTargetHeight(double width)
+    {
+        var layout = new GalleryLayout();
+        layout.Calculate([Item(200, 100), Item(100, 100)], Rows, new Size(width, 500));
+        Assert.Equal([new Rect(0, 0, 300, 150), new Rect(310, 0, 150, 150)], layout.Bounds);
+        Assert.Equal(new Size(460, 150), layout.Extent);
+    }
+
+    [Fact]
+    public void Calculate_RowsWrapWidthOverride_WrapsAtItNotAtTheAvailableWidth()
+    {
+        var layout = new GalleryLayout();
+        layout.Calculate(Squares(3), Rows with { WrapWidthOverride = 310 }, new Size(1000, 500));
+        Assert.Equal<double>([0, 107, 214], layout.Bounds.Select(bounds => bounds.X).ToArray());
+        Assert.Equal(new Size(310, 97), layout.Extent);
+    }
+
+    // At 125%, 344 is 430 device pixels, a spacing of 10 is 12.5, which rounds to 12, and the target height, 187.5,
+    // rounds to the even 188. Two 3:2 items are 282 + 12 + 282 there: (430 − 12) / 3 = 139.33 high, 209 wide each
+    [Fact]
+    public void Calculate_RowsAtAFractionalScale_PutsWidthsHeightsAndGapsOnWholeDevicePixels()
+    {
+        var layout = new GalleryLayout();
+        layout.Calculate([Item(300, 200), Item(300, 200), Item(100, 100)], Rows with { LayoutScale = 1.25 },
+            new Size(344, 500));
+        Assert.Equal<double>([0, 221, 0], DevicePixels(layout.Bounds.Select(bounds => bounds.X), 1.25));
+        Assert.Equal<double>([0, 0, 151], DevicePixels(layout.Bounds.Select(bounds => bounds.Y), 1.25)); // 139 + 12
+        Assert.Equal<double>([209, 209, 188], DevicePixels(layout.Bounds.Select(bounds => bounds.Width), 1.25));
+        Assert.Equal<double>([139, 139, 188], DevicePixels(layout.Bounds.Select(bounds => bounds.Height), 1.25));
+        Assert.Equal(339, DevicePixels(layout.Extent.Height, 1.25)); // 151 + 188
+        Assert.Equal(344, layout.Extent.Width);
+    }
+
+    [Theory]
+    [InlineData(1)]
+    [InlineData(1.25)]
+    [InlineData(1.5)]
+    [InlineData(2)]
+    [InlineData(2.5)]
+    public void Calculate_RowsVariedItemsAtAnyScale_EndsEveryFullRowAtTheWidthOnDevicePixels(double scale)
+    {
+        var layout = new GalleryLayout();
+        layout.Calculate(Varied(300), Rows with { LayoutScale = scale }, new Size(1000, 500));
+        var bounds = layout.Bounds;
+
+        AssertOnDevicePixels(bounds, scale);
+        for (var i = 1; i < bounds.Count; i++)
+        {
+            Assert.True(bounds[i].Y >= bounds[i - 1].Y, $"Item {i} starts above item {i - 1}");
+        }
+
+        var rows = bounds.GroupBy(rect => rect.Y).Select(row => row.ToArray()).ToArray();
+        Assert.Equal(57, rows.Length);
+        foreach (var row in rows[..^1])
+        {
+            Assert.Equal(0, row[0].X);
+            Assert.Equal(DevicePixels(1000, scale), DevicePixels(row[^1].Right, scale));
+            Assert.All(row, rect => Assert.Equal(row[0].Height, rect.Height));
+            Assert.True(DevicePixels(row[0].Height, scale) <= Math.Round(150 * scale));
+            for (var i = 1; i < row.Length; i++)
+            {
+                Assert.Equal(Math.Round(10 * scale), DevicePixels(row[i].X - row[i - 1].Right, scale));
+            }
+        }
+
+        var last = rows[^1]; // the last two items are both 1:3 after the clamp and do not fill a row
+        Assert.Equal(2, last.Length);
+        Assert.All(last, rect => Assert.Equal(Math.Round(150 * scale), DevicePixels(rect.Height, scale)));
+        Assert.Equal(last[0].Bottom, layout.Extent.Height, 6);
+    }
+
+    // The design: ItemSpacing is the gap between the items of a row, LineSpacing the gap between rows
+    [Fact]
+    public void Calculate_RowsWithDifferentSpacings_PutsItemSpacingBetweenItemsAndLineSpacingBetweenRows()
+    {
+        var layout = new GalleryLayout();
+        layout.Calculate(Squares(4), Rows with { ItemSpacing = 6, LineSpacing = 20 }, new Size(306, 500));
+        // 150 + 6 + 150 is not wider than 306, and the third stays in the row: (306 - 12) / 3 = 98 high
+        Assert.Equal([new Rect(0, 0, 98, 98), new Rect(104, 0, 98, 98), new Rect(208, 0, 98, 98),
+            new Rect(0, 118, 150, 150)], layout.Bounds);
+        Assert.Equal(new Size(306, 268), layout.Extent);
+    }
+
+    // The seven's tops in 430 are 0, 0, 150, 150, 150, 251, 251
+    [Theory]
+    [InlineData(75, 0)]   // as near 0 as 150: the lowest index
+    [InlineData(76, 2)]   // the first item of the second row
+    [InlineData(200, 2)]
+    [InlineData(201, 5)]
+    [InlineData(5000, 5)]
+    public void IndexNearest_Rows_PicksTheFirstItemOfTheRowWhoseTopIsNearest(double position, int expected)
+    {
+        var layout = new GalleryLayout();
+        layout.Calculate(SevenInRows(), Rows, new Size(430, 500));
+        Assert.Equal(expected, layout.IndexNearest(position));
+    }
+
+    [Fact]
+    public void IndicesIn_RowsAreaOverTheSecondRow_ReturnsThatRow()
+    {
+        var layout = new GalleryLayout();
+        layout.Calculate(SevenInRows(), Rows, new Size(430, 500));
+        Assert.Equal((2, 4), layout.IndicesIn(new Rect(0, 145, 430, 10))); // 145 to 155: the first row ends at 140
+    }
+
+    [Fact]
+    public void Calculate_RowsCalculatedAgain_AllocatesNothing()
+    {
+        var items = Squares(500);
+        var layout = new GalleryLayout();
+        layout.Calculate(items, Rows, new Size(1000, 500));
+
+        var before = GC.GetAllocatedBytesForCurrentThread();
+        layout.Calculate(items, Rows, new Size(1000, 500));
 
         Assert.Equal(0L, GC.GetAllocatedBytesForCurrentThread() - before);
     }

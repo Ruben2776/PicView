@@ -26,6 +26,9 @@ public class GalleryLayoutBenchmarks
     private static readonly GalleryLayoutOptions MasonryOptions =
         ColumnsOptions with { DisplayMode = GalleryDisplayMode.Masonry };
 
+    private static readonly GalleryLayoutOptions RowsOptions =
+        ColumnsOptions with { DisplayMode = GalleryDisplayMode.Rows };
+
     private static readonly Size DockedSize = new(1920, GalleryDefaults.DefaultDockedGalleryHeight);
     private static readonly Size ExpandedSize = new(1890, 1000);
 
@@ -70,6 +73,14 @@ public class GalleryLayoutBenchmarks
     public Size Masonry()
     {
         _layout.Calculate(_items, MasonryOptions, ExpandedSize);
+        return _layout.Extent;
+    }
+
+    /// <summary>The Expanded Gallery in Rows.</summary>
+    [Benchmark]
+    public Size Rows()
+    {
+        _layout.Calculate(_items, RowsOptions, ExpandedSize);
         return _layout.Extent;
     }
 }
