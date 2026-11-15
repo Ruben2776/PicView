@@ -208,9 +208,16 @@ public class GallerySharedSettingsViewModel
             .Skip(1)
             .SubscribeAwait(async (x, _) =>
             {
-                if (Math.Abs(Settings.Gallery.ItemSpacing - x) > 0.001)
+                // A spacing below the minimum is not accepted: the slider is put back on the accepted one
+                var accepted = GalleryDefaults.AcceptedItemSpacing(x);
+                if (Math.Abs(accepted - x) > 0.001)
                 {
-                    Settings.Gallery.ItemSpacing = x;
+                    GalleryItemSpacing.Value = accepted;
+                }
+
+                if (Math.Abs(Settings.Gallery.ItemSpacing - accepted) > 0.001)
+                {
+                    Settings.Gallery.ItemSpacing = accepted;
                     await SaveSettingsAsync().ConfigureAwait(false);
                 }
             }, DebugHelper.LogError(nameof(GallerySharedSettingsViewModel), nameof(GalleryItemSpacing)));
@@ -219,9 +226,16 @@ public class GallerySharedSettingsViewModel
             .Skip(1)
             .SubscribeAwait(async (x, _) =>
             {
-                if (Math.Abs(Settings.Gallery.LineSpacing - x) > 0.001)
+                // A spacing below the minimum is not accepted: the slider is put back on the accepted one
+                var accepted = GalleryDefaults.AcceptedLineSpacing(x);
+                if (Math.Abs(accepted - x) > 0.001)
                 {
-                    Settings.Gallery.LineSpacing = x;
+                    GalleryLineSpacing.Value = accepted;
+                }
+
+                if (Math.Abs(Settings.Gallery.LineSpacing - accepted) > 0.001)
+                {
+                    Settings.Gallery.LineSpacing = accepted;
                     await SaveSettingsAsync().ConfigureAwait(false);
                 }
             }, DebugHelper.LogError(nameof(GallerySharedSettingsViewModel), nameof(GalleryLineSpacing)));

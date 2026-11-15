@@ -13,6 +13,21 @@ public static class GalleryDefaults
     public const int MaxDockedGalleryItemHeight = 150;
     public const int MinDockedGalleryItemHeight = 40;
     
+    /// <summary>The smallest gap between gallery items; below it the items look as if they overlap.</summary>
+    public const double MinItemSpacing = 5;
+    /// <summary>The smallest gap between gallery lines; below it the items look as if they overlap.</summary>
+    public const double MinLineSpacing = 8;
+    public const double MaxItemSpacing = 70;
+    public const double MaxLineSpacing = 70;
+
+    /// <summary>The item spacing that is accepted for <paramref name="value"/>: the nearest one in range.</summary>
+    public static double AcceptedItemSpacing(double value) =>
+        double.IsNaN(value) ? MinItemSpacing : Math.Clamp(value, MinItemSpacing, MaxItemSpacing);
+
+    /// <summary>The line spacing that is accepted for <paramref name="value"/>: the nearest one in range.</summary>
+    public static double AcceptedLineSpacing(double value) =>
+        double.IsNaN(value) ? MinLineSpacing : Math.Clamp(value, MinLineSpacing, MaxLineSpacing);
+
     public const double VeryFastAnimationSpeed = 0.25;
     public const double FastAnimationSpeed = 0.35;
     public const double MediumAnimationSpeed = 0.5;

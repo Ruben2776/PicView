@@ -450,6 +450,9 @@ public static class SettingsManager
         {
             existingSettings.Gallery.DockedGalleryItemSize = GalleryDefaults.DefaultDockedGalleryHeight;
         }
+
+        existingSettings.Gallery.ItemSpacing = GalleryDefaults.AcceptedItemSpacing(existingSettings.Gallery.ItemSpacing);
+        existingSettings.Gallery.LineSpacing = GalleryDefaults.AcceptedLineSpacing(existingSettings.Gallery.LineSpacing);
         
         if (existingSettings.Version < 3.0)
         {
