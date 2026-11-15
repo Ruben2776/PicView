@@ -9,6 +9,12 @@
     xmlns:gallerySettings="clr-namespace:PicView.Core.Gallery;assembly=PicView.Core"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <customControls:GalleryAnimationControl.Styles>
+        <!--  Masonry and Rows: the vertical scroll bar starts below the 85x60 button cluster at the top right  -->
+        <Style Selector=":is(customControls|GalleryAnimationControl).tiles customControls|NavigateAbleItemsViewer /template/ customControls|AutoScrollViewer#PART_ScrollViewer /template/ ScrollBar#PART_VerticalScrollBar">
+            <Setter Property="Margin" Value="0,60,0,0" />
+        </Style>
+    </customControls:GalleryAnimationControl.Styles>
     <Panel>
 
         <Panel.ContextMenu>
