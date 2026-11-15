@@ -9,7 +9,7 @@ namespace PicView.Tests.Thumbnailing;
 /// <summary>
 /// Makes real bitmaps a gallery item can show, without reading any file, and records what it was asked as
 /// <see cref="FakeThumbnailDecoder"/> does. Every bitmap is the height asked for and half as wide again. Decoding
-/// without the ready-made sources can be turned off, or held until a test lets it go.
+/// without the ready-made sources can be turned off, capped, or held until a test lets it go, and so can decoding.
 /// </summary>
 public sealed class BitmapThumbnailDecoder : IThumbnailDecoder
 {
@@ -17,11 +17,24 @@ public sealed class BitmapThumbnailDecoder : IThumbnailDecoder
 
     public bool CanDecodeFull { get; set; } = true;
 
+    public bool HasReadyMade { get; set; } = true;
+
     /// <summary>
     /// When set, <see cref="DecodeWithoutReadyMade"/> waits for it before it returns, so a test can hold a Tile
     /// Thumbnail in its slot.
     /// </summary>
     public ManualResetEventSlim? DecodeFullGate { get; set; }
+
+    /// <summary>
+    /// When set, <see cref="Decode"/> waits for it before it returns, so a test can hold a small thumbnail in its slot.
+    /// </summary>
+    public ManualResetEventSlim? DecodeGate { get; set; }
+
+    /// <summary>
+    /// When set, <see cref="DecodeWithoutReadyMade"/> gives a bitmap no taller than this, as a source that gives less
+    /// than it was asked for does.
+    /// </summary>
+    public uint? FullHeightCap { get; set; }
 
     public ConcurrentQueue<string> Calls { get; } = new();
 
@@ -31,7 +44,7 @@ public sealed class BitmapThumbnailDecoder : IThumbnailDecoder
     public object? GetReadyMade(FileInfo file, uint height)
     {
         Calls.Enqueue($"ready:{file.Name}");
-        return Bitmap(height);
+        return HasReadyMade ? Bitmap(height) : null;
     }
 
     public object? Decode(FileInfo file, uint height)
@@ -40,6 +53,7 @@ public sealed class BitmapThumbnailDecoder : IThumbnailDecoder
         try
         {
             Calls.Enqueue($"decode:{file.Name}");
+            DecodeGate?.Wait(TimeSpan.FromSeconds(10));
             return Bitmap(height);
         }
         finally
@@ -55,7 +69,7 @@ public sealed class BitmapThumbnailDecoder : IThumbnailDecoder
         {
             Calls.Enqueue($"decode-full:{file.Name}");
             DecodeFullGate?.Wait(TimeSpan.FromSeconds(10));
-            return CanDecodeFull ? Bitmap(height) : null;
+            return CanDecodeFull ? Bitmap(FullHeightCap is { } cap ? Math.Min(height, cap) : height) : null;
         }
         finally
         {
