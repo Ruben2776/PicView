@@ -72,6 +72,7 @@ public class NavigateAbleItemsViewer : ItemsControl
     public NavigateAbleItemsViewer()
     {
         AddHandler(PointerWheelChangedEvent, OnPointerWheelChanged, RoutingStrategies.Direct | RoutingStrategies.Tunnel);
+        TileRestTimer = new DispatcherTileRestTimer(OnTileRestElapsed);
     }
 
     protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
@@ -85,6 +86,14 @@ public class NavigateAbleItemsViewer : ItemsControl
         base.OnDetachedFromVisualTree(e);
         _viewportSubscription?.Dispose();
         _viewportSubscription = null;
+        TileRestTimer.Stop();
+        CancelTileSharpening();
+    }
+
+    protected override void OnSizeChanged(SizeChangedEventArgs e)
+    {
+        base.OnSizeChanged(e);
+        RestartTileRest();
     }
 
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
@@ -145,11 +154,24 @@ public class NavigateAbleItemsViewer : ItemsControl
         {
             return;
         }
-        _ = galleryItem.LoadImage(vm).ConfigureAwait(false);
+
+        // Read from the panel: a recycled item is not in it yet, and the tile style may not be applied yet
+        var isTile = ItemsPanelRoot is VirtualizingGallery gallery && ShowsTiles(gallery);
+        _ = galleryItem.LoadImage(vm, isTile).ConfigureAwait(false);
+        if (isTile)
+        {
+            RequestTileSharpen();
+        }
     }
 
     protected override void ClearContainerForItemOverride(Control container)
     {
+        // Before the base clears the container, which takes the item's data context, the view model it unloads
+        if (container is ContentPresenter { Child: GalleryItem galleryItem })
+        {
+            galleryItem.UnloadImage();
+        }
+
         base.ClearContainerForItemOverride(container);
         if (container is not ContentPresenter { Child: NavigateAbleItem navItem })
         {
@@ -157,10 +179,6 @@ public class NavigateAbleItemsViewer : ItemsControl
         }
         navItem.SetCurrent(false);
         navItem.SetSelected(false);
-        if (navItem is GalleryItem galleryItem)
-        {
-            galleryItem.UnloadImage();
-        }
     }
     #endregion
 
@@ -422,8 +440,132 @@ public class NavigateAbleItemsViewer : ItemsControl
     }
 
     // The Expanded Gallery's Masonry and Rows; the side-docked strip also scrolls vertically, but keeps the column rules
-    private static bool IsInVerticalDisplayMode(VirtualizingGallery gallery) =>
+    private static bool IsInVerticalDisplayMode(VirtualizingGallery gallery) => ShowsTiles(gallery);
+
+    /// <summary>Whether the panel shows tiles: it is expanded, in Masonry or Rows.</summary>
+    internal static bool ShowsTiles(VirtualizingGallery gallery) =>
         gallery.IsExpanded && GalleryDisplayModes.ShowsTiles(gallery.DisplayMode);
+
+    #endregion
+
+    #region Tile Sharpening
+
+    /// <summary>
+    /// Starts the rest period again, as when the user scrolled or resized the view, or changed the item size or the
+    /// display mode. Sharpening requests still waiting for their turn are cancelled, so only what is on screen once the
+    /// view rests is decoded.
+    /// </summary>
+    public void RestartTileRest()
+    {
+        CancelTileSharpening();
+        TileRestTimer.Stop();
+        if (ItemsPanelRoot is VirtualizingGallery gallery && ShowsTiles(gallery))
+        {
+            TileRestTimer.Start();
+        }
+    }
+
+    /// <summary>
+    /// Starts the rest period unless it runs, as when a tile was loaded or the panel laid out again: neither is the
+    /// user moving the view, so neither postpones sharpening.
+    /// </summary>
+    public void RequestTileSharpen()
+    {
+        if (!TileRestTimer.IsEnabled && ItemsPanelRoot is VirtualizingGallery gallery && ShowsTiles(gallery))
+        {
+            TileRestTimer.Start();
+        }
+    }
+
+    /// <summary>
+    /// The view rested: every realized tile that shows something shorter than it needs, and was not asked for that
+    /// height already, asks for its Tile Thumbnail, nearest the middle of the view first.
+    /// </summary>
+    internal void OnTileRestElapsed()
+    {
+        TileRestTimer.Stop();
+        if (ItemsPanelRoot is not VirtualizingGallery gallery || !ShowsTiles(gallery))
+        {
+            return;
+        }
+
+        var viewMiddle = ViewMiddleIn(gallery);
+        var realizedItems = gallery.RealizedItems;
+        for (var i = 0; i < realizedItems.Count; i++)
+        {
+            var realized = realizedItems[i];
+            if (GetNavigateAbleItem(realized.Element) is not GalleryItem { DataContext: GalleryItemViewModel vm } item)
+            {
+                continue;
+            }
+
+            var needed = gallery.TileThumbnailHeightFor(realized.Index);
+            if (needed is 0 || needed <= vm.TileHeightShown || needed <= item.TileHeightAsked ||
+                gallery.GetItemBounds(realized.Index) is not { } bounds)
+            {
+                continue;
+            }
+
+            var distance = Point.Distance(bounds.Center, viewMiddle);
+            _tilesToSharpen.Add(new TileToSharpen(distance, item, vm, needed));
+        }
+
+        if (_tilesToSharpen.Count is 0)
+        {
+            return;
+        }
+
+        _tilesToSharpen.Sort(TileToSharpen.NearestFirst);
+        _tileSharpenCts ??= new CancellationTokenSource();
+        var token = _tileSharpenCts.Token;
+        foreach (var tile in _tilesToSharpen)
+        {
+            _ = tile.Item.SharpenAsync(tile.Vm, tile.Height, token);
+        }
+
+        _tilesToSharpen.Clear();
+    }
+
+    /// <summary>The rest timer. A test replaces it with one on its own clock.</summary>
+    internal ITileRestTimer TileRestTimer { get; set; }
+
+    private readonly List<TileToSharpen> _tilesToSharpen = [];
+
+    /// <summary>Cancels the sharpening requests of the rest period; null until the view first rests.</summary>
+    private CancellationTokenSource? _tileSharpenCts;
+
+    private void CancelTileSharpening()
+    {
+        if (_tileSharpenCts is null)
+        {
+            return;
+        }
+
+        _tileSharpenCts.Cancel();
+        _tileSharpenCts.Dispose();
+        _tileSharpenCts = null;
+    }
+
+    // The middle of the view in the panel's coordinates. The scroll viewer scrolls over the panel's margin too
+    private Point ViewMiddleIn(VirtualizingGallery gallery)
+    {
+        if (_scrollViewer is null)
+        {
+            return default;
+        }
+
+        var offset = _scrollViewer.Offset;
+        var viewport = _scrollViewer.Viewport;
+        var margin = gallery.Margin;
+        return new Point(offset.X - margin.Left + viewport.Width / 2, offset.Y - margin.Top + viewport.Height / 2);
+    }
+
+    private readonly record struct TileToSharpen(double Distance, GalleryItem Item, GalleryItemViewModel Vm,
+        uint Height)
+    {
+        public static readonly Comparison<TileToSharpen> NearestFirst =
+            static (a, b) => a.Distance.CompareTo(b.Distance);
+    }
 
     #endregion
 
