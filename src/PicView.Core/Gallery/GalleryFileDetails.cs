@@ -1,10 +1,11 @@
 using ImageMagick;
 using PicView.Core.DebugTools;
+using PicView.Core.Exif;
 
 namespace PicView.Core.Gallery;
 
 /// <summary>
-/// What a gallery item reads from its file: the image's pixel size, and its XMP packet for the motion photo badge.
+/// What a gallery item reads from its file: the image's upright pixel size (the size it is shown at, with width and height swapped for a file whose EXIF orientation is a quarter turn), and its XMP packet for the motion photo badge.
 /// A class, so an item holds it as one reference that another thread replaces whole: a reader never pairs a width
 /// from one read with a height from another.
 /// </summary>
@@ -18,7 +19,8 @@ public sealed record GalleryFileDetails(uint PixelWidth, uint PixelHeight, strin
     /// <summary>
     /// Pings <paramref name="file"/> for its details.
     /// </summary>
-    /// <returns>The details, or null when the file could not be read as an image.</returns>
+    /// <returns>The details, with the upright pixel size (width and height swapped for a file whose EXIF orientation
+    /// is a quarter turn), or null when the file could not be read as an image.</returns>
     public static GalleryFileDetails? Read(FileInfo file)
     {
         try
@@ -42,7 +44,9 @@ public sealed record GalleryFileDetails(uint PixelWidth, uint PixelHeight, strin
                 xmpPacket = System.Text.Encoding.UTF8.GetString(data);
             }
 
-            return new GalleryFileDetails(magick.Width, magick.Height, xmpPacket);
+            return IsQuarterTurned(magick)
+                ? new GalleryFileDetails(magick.Height, magick.Width, xmpPacket)
+                : new GalleryFileDetails(magick.Width, magick.Height, xmpPacket);
         }
         catch (Exception ex)
         {
@@ -52,6 +56,16 @@ public sealed record GalleryFileDetails(uint PixelWidth, uint PixelHeight, strin
             return null;
         }
     }
+
+    /// <summary>
+    /// Whether the EXIF orientation of the already pinged <paramref name="magick"/> is a quarter turn, which stores
+    /// the file lying on its side.
+    /// </summary>
+    private static bool IsQuarterTurned(MagickImage magick) =>
+        ExifOrientationHelper.GetImageOrientation(magick) is ExifOrientation.MirrorHorizontalRotate270Cw
+            or ExifOrientation.Rotate90Cw
+            or ExifOrientation.MirrorHorizontalRotate90Cw
+            or ExifOrientation.Rotated270Cw;
 
     /// <summary>
     /// Whether the raw coder reads <paramref name="file"/>'s format, going by its extension.
