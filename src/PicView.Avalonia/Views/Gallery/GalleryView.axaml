@@ -20,6 +20,21 @@
             <Setter Property="BorderBrush" Value="{DynamicResource GalleryItemBorderColor}" />
             <Setter Property="BorderThickness" Value="1" />
         </Style>
+        <!--  Masonry and Rows: the panel sizes each item, which is a rounded, borderless tile  -->
+        <Style Selector=":is(gallery|GalleryView).tiles customControls|NavigateAbleItem.galleryItem">
+            <Setter Property="Width" Value="NaN" />
+            <Setter Property="Height" Value="NaN" />
+            <Setter Property="Margin" Value="0" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="gallery:GalleryItem.IsTile" Value="True" />
+        </Style>
+        <!--  Clips the thumbnail to the corners, and keeps the theme's 2 px context-menu border from pushing it inwards  -->
+        <Style Selector=":is(gallery|GalleryView).tiles customControls|NavigateAbleItem.galleryItem /template/ Border#border">
+            <Setter Property="ClipToBounds" Value="True" />
+            <Setter Property="BorderThickness" Value="0" />
+        </Style>
         <!--  Masonry and Rows: the vertical scroll bar starts below the 85x60 button cluster at the top right  -->
         <Style Selector=":is(customControls|GalleryAnimationControl).tiles customControls|NavigateAbleItemsViewer /template/ customControls|AutoScrollViewer#PART_ScrollViewer /template/ ScrollBar#PART_VerticalScrollBar">
             <Setter Property="Margin" Value="0,60,0,0" />

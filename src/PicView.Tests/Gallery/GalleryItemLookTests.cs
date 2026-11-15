@@ -1,10 +1,14 @@
 using System.Diagnostics;
 using Avalonia;
+using Avalonia.Animation;
+using Avalonia.Animation.Easings;
 using Avalonia.Controls;
 using Avalonia.Controls.Presenters;
 using Avalonia.Headless;
 using Avalonia.Layout;
 using Avalonia.Media;
+using Avalonia.Media.Imaging;
+using Avalonia.Platform;
 using Avalonia.Styling;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
@@ -74,6 +78,7 @@ public class GalleryItemLookTests
     /// Results (Release, microseconds per container, median of five runs, then the five):
     /// before the look moved to styles: 1946.1 (1977.1, 1946.1, 1790.6, 2026.4, 1932.8)
     /// after the base style (Task 12): 1984.5 (2025.8, 1984.5, 1842.6, 1925.3, 2032.7)
+    /// after the tile look (Task 13): 1884.3 (2146.0, 1854.1, 1884.3, 2033.0, 1825.0)
     /// </summary>
     [AvaloniaFact]
     public void Docked_RealizingContainers_ReportsTimePerContainer()
@@ -129,13 +134,170 @@ public class GalleryItemLookTests
         }));
     }
 
+    [AvaloniaFact]
+    public void Masonry_Item_IsARoundedBorderlessTileFilledByItsThumbnail()
+    {
+        WithMasonry((_, _, view, panel) =>
+        {
+            var container = panel.RealizedItems.Single(x => x.Index == 0).Element;
+            var item = ItemAt(panel, 0);
+            var image = item.FindControl<ThumbImage>("GalleryImage")!;
+            var border = TemplateBorderOf(item);
+
+            Assert.Contains("tiles", view.Classes);
+            Assert.True(item.IsTile);
+            Assert.True(double.IsNaN(item.Width));
+            Assert.True(double.IsNaN(item.Height));
+            Assert.Equal(new Thickness(0), item.Margin);
+            Assert.Equal(new Thickness(0), item.Padding);
+            Assert.Equal(new Thickness(0), item.BorderThickness);
+            Assert.Equal(new CornerRadius(8), item.CornerRadius);
+            Assert.Equal(new CornerRadius(8), border.CornerRadius);
+            Assert.Equal(new Thickness(0), border.BorderThickness);
+            Assert.True(border.ClipToBounds);
+            // The item is exactly where the panel placed it, and the thumbnail covers all of it
+            Assert.Equal(panel.GetItemBounds(0)!.Value, container.Bounds);
+            Assert.Equal(new Rect(container.Bounds.Size), item.Bounds);
+            Assert.Equal(Stretch.UniformToFill, image.Stretch);
+            Assert.Equal(item.Bounds.Size, image.Bounds.Size);
+            // The thumbnail was there when the item was realized, so it shows at once
+            Assert.Null(image.Transitions);
+        }, items => items[0].Image.Value = Thumbnail());
+    }
+
+    [AvaloniaFact]
+    public void Masonry_MarkedItems_ShowARingAndTheOthersNone()
+    {
+        WithMasonry((tab, window, view, panel) =>
+        {
+            var (first, second, third) = (ItemAt(panel, 0), ItemAt(panel, 1), ItemAt(panel, 2));
+            var accent = ResourceColor("AccentColor");
+            var secondary = ResourceColor("SecondaryAccentColor");
+            var thumbnailPanel = ContentPanelOf(third).Bounds;
+
+            // Index 0 is current: its ring lies over the thumbnail
+            var ring = Assert.IsType<Border>(RingOf(first));
+            Assert.Same(ring, ContentPanelOf(first).Children[^1]);
+            Assert.Equal(new Thickness(2), ring.BorderThickness);
+            Assert.Equal(new CornerRadius(8), ring.CornerRadius);
+            Assert.False(ring.IsHitTestVisible);
+            Assert.Equal(accent, ColorOf(ring.BorderBrush));
+            Assert.Null(RingOf(second));
+            Assert.Equal(2, ContentPanelOf(second).Children.Count);
+
+            // Selected, and with its context menu open: the secondary accent, on the tile's edge, thumbnail unmoved
+            tab.Gallery.SelectedGalleryItemIndex.Value = 1;
+            third.SetContextMenuOpen(true);
+            RenderFrame(window);
+            Assert.Equal(secondary, ColorOf(RingOf(second)!.BorderBrush));
+            Assert.Equal(secondary, ColorOf(RingOf(third)!.BorderBrush));
+            Assert.Equal(new Rect(third.Bounds.Size), RingOf(third)!.Bounds);
+            Assert.Equal(new Thickness(0), TemplateBorderOf(third).BorderThickness);
+            Assert.Equal(thumbnailPanel, ContentPanelOf(third).Bounds);
+
+            // Current wins over selected, and the partner of a pair is current too
+            tab.Gallery.SelectedGalleryItemIndex.Value = 0;
+            view.FindControl<NavigateAbleItemsViewer>("GalleryItemsControl")!.PartnerItemIndex = 1;
+            Assert.Equal(accent, ColorOf(RingOf(first)!.BorderBrush));
+            Assert.Equal(accent, ColorOf(RingOf(second)!.BorderBrush));
+
+            // No mark left: the ring is removed, not hidden
+            third.SetContextMenuOpen(false);
+            Assert.Null(RingOf(third));
+            Assert.Equal(2, ContentPanelOf(third).Children.Count);
+        });
+    }
+
+    [AvaloniaFact]
+    public void TilesClassRemovedAndAdded_RealizedItems_FollowAtOnce()
+    {
+        WithMasonry((_, window, view, panel) =>
+        {
+            var item = ItemAt(panel, 0);
+
+            view.Classes.Remove("tiles");
+            RenderFrame(window);
+
+            Assert.Same(item, ItemAt(panel, 0));
+            Assert.False(item.IsTile);
+            Assert.Equal(new Thickness(1), item.Margin);
+            Assert.Equal(new Thickness(1), item.Padding);
+            Assert.Equal(new Thickness(1), item.BorderThickness);
+            Assert.Equal(new CornerRadius(0), item.CornerRadius);
+            Assert.Equal(panel.ItemHeight, item.Height);
+            Assert.False(TemplateBorderOf(item).ClipToBounds);
+            Assert.Null(RingOf(item));
+            Assert.Equal(8, item.GetVisualDescendants().Count());
+
+            view.Classes.Add("tiles");
+            RenderFrame(window);
+
+            Assert.True(double.IsNaN(item.Height));
+            Assert.Equal(new CornerRadius(8), item.CornerRadius);
+            Assert.NotNull(RingOf(item));
+        });
+    }
+
+    [AvaloniaTheory]
+    [InlineData(true, GalleryDisplayMode.Masonry, true)]
+    [InlineData(true, GalleryDisplayMode.Rows, true)]
+    [InlineData(true, GalleryDisplayMode.Columns, false)]
+    [InlineData(false, GalleryDisplayMode.Masonry, false)]
+    public void ThumbnailArrivingAfterTheItemIsShown_FadesInOnlyInTiles(bool expanded, GalleryDisplayMode displayMode,
+        bool fades)
+    {
+        WithShownGallery(expanded, (_, _, _, panel) =>
+        {
+            var item = ItemAt(panel, 1);
+            var image = item.FindControl<ThumbImage>("GalleryImage")!;
+
+            ((GalleryItemViewModel)item.DataContext!).Image.Value = Thumbnail();
+            Dispatcher.UIThread.RunJobs();
+
+            Assert.NotNull(image.Source);
+            if (!fades)
+            {
+                Assert.Null(image.Transitions);
+                return;
+            }
+
+            Assert.Collection(image.Transitions!,
+                x =>
+                {
+                    var opacity = Assert.IsType<DoubleTransition>(x);
+                    Assert.Equal(Visual.OpacityProperty, opacity.Property);
+                    Assert.Equal(TimeSpan.FromSeconds(0.32), opacity.Duration);
+                    Assert.IsType<CubicEaseOut>(opacity.Easing);
+                },
+                x =>
+                {
+                    var scale = Assert.IsType<TransformOperationsTransition>(x);
+                    Assert.Equal(Visual.RenderTransformProperty, scale.Property);
+                    Assert.Equal(TimeSpan.FromSeconds(0.36), scale.Duration);
+                    Assert.IsType<CubicEaseOut>(scale.Easing);
+                });
+        }, displayMode: displayMode);
+    }
+
+    private static void WithMasonry(Action<TabViewModel, Window, GalleryView, VirtualizingGallery> test,
+        Action<GalleryItemViewModel[]>? prepareItems = null) =>
+        WithShownGallery(expanded: true, test, displayMode: GalleryDisplayMode.Masonry, prepareItems: prepareItems);
+
+    private static WriteableBitmap Thumbnail() =>
+        new(new PixelSize(40, 20), new Vector(96, 96), PixelFormat.Bgra8888, AlphaFormat.Premul);
+
+    private static Border? RingOf(GalleryItem item) =>
+        ContentPanelOf(item).Children.OfType<Border>().SingleOrDefault(x => x.Name == "TileRing");
+
     // Shown in a window, with items that have no thumbnails. Docked at the bottom, or the Expanded Gallery reached
     // without animation: expanded and hidden before the view loads, then shown, as when a Single Image ends
     private static void WithShownGallery(bool expanded,
         Action<TabViewModel, Window, GalleryView, VirtualizingGallery> test, Action<GalleryView>? beforeShow = null,
-        int itemCount = 3)
+        int itemCount = 3, GalleryDisplayMode displayMode = GalleryDisplayMode.Columns,
+        Action<GalleryItemViewModel[]>? prepareItems = null)
     {
         Settings.Gallery.DockPosition = GalleryDockPosition.Bottom;
+        Settings.Gallery.ExpandedGalleryDisplayMode = displayMode;
         var core = new CoreViewModel(null, _ => ValueTask.FromResult(new ImageModel()));
         var window = new TestMainWindow(new NoOpModeAdapter());
         var vm = new MainWindowViewModel(core, core.Translation, core.GlobalSettings!, core.GallerySettings);
@@ -160,8 +322,10 @@ public class GalleryItemLookTests
             var view = new GalleryView { DataContext = tab };
             view.Initialize(tab);
             beforeShow?.Invoke(view);
-            tab.Gallery.GalleryItems.AddRange(Enumerable.Range(0, itemCount)
-                .Select(i => new GalleryItemViewModel { FileInfo = new FileInfo($"{i:D4}.jpg") }).ToArray());
+            var items = Enumerable.Range(0, itemCount)
+                .Select(i => new GalleryItemViewModel { FileInfo = new FileInfo($"{i:D4}.jpg") }).ToArray();
+            prepareItems?.Invoke(items);
+            tab.Gallery.GalleryItems.AddRange(items);
             window.Content = new DockPanel { Children = { view } };
             window.Show();
             Dispatcher.UIThread.RunJobs();

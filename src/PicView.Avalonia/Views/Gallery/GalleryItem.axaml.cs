@@ -1,10 +1,14 @@
 ﻿using Avalonia;
+using Avalonia.Animation;
+using Avalonia.Animation.Easings;
 using Avalonia.Controls;
 using Avalonia.Controls.Presenters;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.LogicalTree;
+using Avalonia.Markup.Xaml.MarkupExtensions;
 using Avalonia.Media;
+using Avalonia.Media.Transformation;
 using Avalonia.Styling;
 using PicView.Avalonia.Clipboard;
 using PicView.Avalonia.CustomControls;
@@ -19,12 +23,108 @@ namespace PicView.Avalonia.Views.Gallery;
 
 public partial class GalleryItem : NavigateAbleItem
 {
+    /// <summary>Whether the item is a Masonry or Rows tile. Only the tile style in GalleryView.axaml writes it.</summary>
+    public static readonly StyledProperty<bool> IsTileProperty =
+        AvaloniaProperty.Register<GalleryItem, bool>(nameof(IsTile));
+
+    private static readonly DoubleTransition ThumbnailOpacityTransition = new()
+        { Property = OpacityProperty, Duration = TimeSpan.FromSeconds(0.32), Easing = new CubicEaseOut() };
+    private static readonly TransformOperationsTransition ThumbnailScaleTransition = new()
+        { Property = RenderTransformProperty, Duration = TimeSpan.FromSeconds(0.36), Easing = new CubicEaseOut() };
+    private static readonly TransformOperations ThumbnailStartScale = TransformOperations.Parse("scale(1.04)");
+    private static readonly TransformOperations ThumbnailEndScale = TransformOperations.Parse("scale(1)");
+
     private CancellationTokenSource? _loadCts;
     private ContextMenu? _contextMenu;
+    private Border? _ring;
+    private string? _ringBrushKey;
+
+    static GalleryItem()
+    {
+        // Nothing runs for an item that never becomes a tile
+        IsTileProperty.Changed.AddClassHandler<GalleryItem>((item, _) => item.OnIsTileChanged());
+    }
 
     public GalleryItem()
     {
         InitializeComponent();
+    }
+
+    public bool IsTile
+    {
+        get => GetValue(IsTileProperty);
+        set => SetValue(IsTileProperty, value);
+    }
+
+    protected override void OnMarkChanged() => UpdateRing();
+
+    private void OnIsTileChanged()
+    {
+        if (IsTile)
+        {
+            GalleryImage.PropertyChanged += OnThumbnailChanged;
+        }
+        else
+        {
+            GalleryImage.PropertyChanged -= OnThumbnailChanged;
+        }
+
+        UpdateRing();
+    }
+
+    // The ring exists only while a tile is marked: Docked and Columns items never get one
+    private void UpdateRing()
+    {
+        var brushKey = !IsTile ? null
+            : IsCurrent ? "AccentColor"
+            : IsSelected || IsContextMenuOpen ? "SecondaryAccentColor"
+            : null;
+        var panel = (Panel)GalleryImage.Parent!;
+        if (brushKey is null)
+        {
+            if (_ring is not null)
+            {
+                panel.Children.Remove(_ring);
+                _ring = null;
+                _ringBrushKey = null;
+            }
+            return;
+        }
+
+        if (_ring is null)
+        {
+            _ring = new Border
+            {
+                Name = "TileRing",
+                BorderThickness = new Thickness(2),
+                CornerRadius = new CornerRadius(8),
+                IsHitTestVisible = false
+            };
+            panel.Children.Add(_ring);
+        }
+
+        if (_ringBrushKey != brushKey)
+        {
+            _ringBrushKey = brushKey;
+            _ring.Bind(Border.BorderBrushProperty, new DynamicResourceExtension(brushKey));
+        }
+    }
+
+    private void OnThumbnailChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
+    {
+        // A thumbnail that is there before the item is first arranged shows at once
+        if (e.Property != Image.SourceProperty || e.OldValue is not null || e.NewValue is null || Bounds.Width <= 0)
+        {
+            return;
+        }
+
+        var image = GalleryImage;
+        image.Transitions = null;
+        image.Opacity = 0;
+        image.RenderTransform = ThumbnailStartScale;
+        image.Transitions = [ThumbnailOpacityTransition, ThumbnailScaleTransition];
+        image.Opacity = 1;
+        image.RenderTransform = ThumbnailEndScale;
     }
 
     private void InitContextMenu()
