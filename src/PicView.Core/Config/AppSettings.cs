@@ -321,6 +321,14 @@ public class ImageScaling
     /// Specifies the active stacked comparison mode when <see cref="ShowComparison"/> is enabled.
     /// </summary>
     public ComparisonMode ComparisonMode { get; set; } = ComparisonMode.Difference;
+
+    public double ComparisonOverlayOpacity { get; set; } = 0.5;
+    public double ComparisonSplitRatio { get; set; } = 0.5;
+    public bool IsComparisonSplitHorizontal { get; set; } = false;
+    public bool IsComparisonBlinkFast { get; set; } = true;
+    public double ComparisonBlinkInterval { get; set; } = 1.0;
+    public bool IsSideBySideSynced { get; set; } = false;
+    public bool IsComparisonStretchFill { get; set; } = true;
 }
 
 public enum ComparisonMode

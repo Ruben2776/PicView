@@ -507,5 +507,13 @@
   "_2Star": "2 звезды",
   "_3Star": "3 звезды",
   "_4Star": "4 звезды",
-  "_5Star": "5 звезды"
+  "_5Star": "5 звезды",
+  "ComparisonPin": "Закрепить A",
+  "ComparisonStretch": "Растянуть по размеру",
+  "ComparisonAlign": "Выровнять по 2 точкам",
+  "ComparisonAlignReset": "Сбросить выравнивание",
+  "ComparisonAlignStepA1": "Нажмите 1-ю точку на A",
+  "ComparisonAlignStepB1": "Нажмите 1-ю точку на B",
+  "ComparisonAlignStepA2": "Нажмите 2-ю точку на A",
+  "ComparisonAlignStepB2": "Нажмите 2-ю точку на B"
 }

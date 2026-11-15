@@ -233,6 +233,13 @@ public class FunctionsMapper : IActionRunner
             Actions.ChangeBackground => ChangeBackground,
             Actions.SideBySide => SideBySide,
             Actions.Comparison => Comparison,
+            Actions.ComparisonSwap => ComparisonSwap,
+            Actions.ComparisonPin => ComparisonPin,
+            Actions.ComparisonModeNext => ComparisonModeNext,
+            Actions.ComparisonModeOverlay => ComparisonModeOverlay,
+            Actions.ComparisonModeSplit => ComparisonModeSplit,
+            Actions.ComparisonModeBlink => ComparisonModeBlink,
+            Actions.ComparisonModeDifference => ComparisonModeDifference,
             Actions.Slideshow => Slideshow,
             Actions.ColorPicker => ColorPicker,
             Actions.Restart => Restart,
@@ -717,6 +724,38 @@ public class FunctionsMapper : IActionRunner
     private ValueTask SideBySide() => ToggleHelper.Toggle(_vm.GlobalSettings.IsSideBySide);
 
     private ValueTask Comparison() => ToggleHelper.Toggle(_vm.GlobalSettings.IsComparing);
+
+    private ValueTask ComparisonSwap()
+    {
+        _vm.WindowTabs.ActiveTab.CurrentValue.SwapComparisonPair();
+        return ValueTask.CompletedTask;
+    }
+
+    private ValueTask ComparisonPin()
+    {
+        _vm.WindowTabs.ActiveTab.CurrentValue.ToggleComparisonPin();
+        return ValueTask.CompletedTask;
+    }
+
+    private ValueTask ComparisonModeNext()
+    {
+        var gs = _vm.GlobalSettings;
+        gs.ComparisonMode.Value = (ComparisonMode)(((int)gs.ComparisonMode.CurrentValue + 1) % 4);
+        gs.IsComparing.Value = true;
+        return ValueTask.CompletedTask;
+    }
+
+    private ValueTask ComparisonModeOverlay() => SetComparisonMode(ComparisonMode.Overlay);
+    private ValueTask ComparisonModeSplit() => SetComparisonMode(ComparisonMode.Split);
+    private ValueTask ComparisonModeBlink() => SetComparisonMode(ComparisonMode.Blink);
+    private ValueTask ComparisonModeDifference() => SetComparisonMode(ComparisonMode.Difference);
+
+    private ValueTask SetComparisonMode(ComparisonMode mode)
+    {
+        _vm.GlobalSettings.ComparisonMode.Value = mode;
+        _vm.GlobalSettings.IsComparing.Value = true;
+        return ValueTask.CompletedTask;
+    }
 
     /// <inheritdoc cref="Core.Navigation.Interfaces.IImageIterator.ReloadAsync"/>
     private async ValueTask Reload()

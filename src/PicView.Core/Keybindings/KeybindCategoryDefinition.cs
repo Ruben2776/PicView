@@ -163,6 +163,13 @@ public static class KeybindCategoryDefinition
     [
         (Actions.SideBySide, t.SideBySide ?? string.Empty),
         (Actions.Comparison, t.Comparison ?? string.Empty),
+        (Actions.ComparisonSwap, t.ComparisonSwap ?? "Swap A/B"),
+        (Actions.ComparisonPin, t.ComparisonPin ?? "Pin A"),
+        (Actions.ComparisonModeNext, "Next comparison mode"),
+        (Actions.ComparisonModeOverlay, t.ComparisonOverlay ?? "Overlay"),
+        (Actions.ComparisonModeSplit, t.ComparisonSplit ?? "Split"),
+        (Actions.ComparisonModeBlink, t.ComparisonBlink ?? "Blink"),
+        (Actions.ComparisonModeDifference, t.ComparisonDifference ?? "Difference"),
         (Actions.ZoomToFit, t.ZoomToFit ?? string.Empty),
         (Actions.Flip, t.Flip ?? string.Empty),
         (Actions.Crop, t.Crop ?? string.Empty),

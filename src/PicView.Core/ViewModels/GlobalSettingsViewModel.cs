@@ -32,15 +32,16 @@ public class GlobalSettingsViewModel
     public IReadOnlyBindableReactiveProperty<bool> IsBlinkMode { get; }
     public IReadOnlyBindableReactiveProperty<bool> IsDifferenceMode { get; }
 
-    public BindableReactiveProperty<bool> IsSideBySideSynced { get; } = new(false);
+    public BindableReactiveProperty<bool> IsSideBySideSynced { get; }
     public IReadOnlyBindableReactiveProperty<bool> IsSideBySideSyncedActive { get; }
     public IReadOnlyBindableReactiveProperty<bool> IsSideBySideStandardActive { get; }
 
-    public BindableReactiveProperty<double> ComparisonOverlayOpacity { get; } = new(0.5);
-    public BindableReactiveProperty<double> ComparisonSplitRatio { get; } = new(0.5);
-    public BindableReactiveProperty<bool> IsComparisonSplitHorizontal { get; } = new(false);
-    public BindableReactiveProperty<bool> IsComparisonBlinkFast { get; } = new(true);
-    public BindableReactiveProperty<double> ComparisonBlinkInterval { get; } = new(1.0);
+    public BindableReactiveProperty<double> ComparisonOverlayOpacity { get; }
+    public BindableReactiveProperty<double> ComparisonSplitRatio { get; }
+    public BindableReactiveProperty<bool> IsComparisonSplitHorizontal { get; }
+    public BindableReactiveProperty<bool> IsComparisonBlinkFast { get; }
+    public BindableReactiveProperty<double> ComparisonBlinkInterval { get; }
+    public BindableReactiveProperty<bool> IsComparisonStretchFill { get; }
     public BindableReactiveProperty<bool> IsComparisonSwapped { get; } = new(false);
 
     /// <summary>Whether a tab shows a pair: side-by-side or comparison is on.</summary>
@@ -155,6 +156,13 @@ public class GlobalSettingsViewModel
         IsSideBySide = new BindableReactiveProperty<bool>(Settings.ImageScaling.ShowImageSideBySide);
         IsComparing = new BindableReactiveProperty<bool>(Settings.ImageScaling.ShowComparison);
         ComparisonMode = new BindableReactiveProperty<ComparisonMode>(Settings.ImageScaling.ComparisonMode);
+        IsSideBySideSynced = new BindableReactiveProperty<bool>(Settings.ImageScaling.IsSideBySideSynced);
+        ComparisonOverlayOpacity = new BindableReactiveProperty<double>(Settings.ImageScaling.ComparisonOverlayOpacity);
+        ComparisonSplitRatio = new BindableReactiveProperty<double>(Settings.ImageScaling.ComparisonSplitRatio);
+        IsComparisonSplitHorizontal = new BindableReactiveProperty<bool>(Settings.ImageScaling.IsComparisonSplitHorizontal);
+        IsComparisonBlinkFast = new BindableReactiveProperty<bool>(Settings.ImageScaling.IsComparisonBlinkFast);
+        ComparisonBlinkInterval = new BindableReactiveProperty<double>(Settings.ImageScaling.ComparisonBlinkInterval);
+        IsComparisonStretchFill = new BindableReactiveProperty<bool>(Settings.ImageScaling.IsComparisonStretchFill);
         IsOverlayMode = IsComparing.CombineLatest(ComparisonMode, static (comparing, mode) => comparing && mode == Config.ComparisonMode.Overlay)
             .DistinctUntilChanged()
             .ToReadOnlyBindableReactiveProperty();
@@ -212,6 +220,13 @@ public class GlobalSettingsViewModel
         Follow(WindowMargin, value => Settings.WindowProperties.Margin = value);
         Follow(IsComparing, value => Settings.ImageScaling.ShowComparison = value);
         Follow(ComparisonMode, value => Settings.ImageScaling.ComparisonMode = value);
+        Follow(IsSideBySideSynced, value => Settings.ImageScaling.IsSideBySideSynced = value);
+        Follow(ComparisonOverlayOpacity, value => Settings.ImageScaling.ComparisonOverlayOpacity = value);
+        Follow(ComparisonSplitRatio, value => Settings.ImageScaling.ComparisonSplitRatio = value);
+        Follow(IsComparisonSplitHorizontal, value => Settings.ImageScaling.IsComparisonSplitHorizontal = value);
+        Follow(IsComparisonBlinkFast, value => Settings.ImageScaling.IsComparisonBlinkFast = value);
+        Follow(ComparisonBlinkInterval, value => Settings.ImageScaling.ComparisonBlinkInterval = value);
+        Follow(IsComparisonStretchFill, value => Settings.ImageScaling.IsComparisonStretchFill = value);
 
         // Side-by-side and comparison are never on together: turning one on turns the other off
         IsComparing.Where(static on => on).Subscribe(_ => IsSideBySide.Value = false);
