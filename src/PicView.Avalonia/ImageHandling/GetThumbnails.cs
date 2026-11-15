@@ -89,6 +89,48 @@ public static class GetThumbnails
     }
 
     /// <summary>
+    /// Reads <paramref name="fileInfo"/> and makes a thumbnail <paramref name="height"/> tall, never from the OS shell
+    /// or the file's EXIF thumbnail, which are made at sizes of their own. A RAW file's embedded preview is still used
+    /// when it is at least <paramref name="height"/> tall. The thumbnail is upright. Blocks while it reads the file.
+    /// </summary>
+    public static Bitmap? DecodeWithoutReadyMade(FileInfo fileInfo, uint height)
+    {
+        try
+        {
+            if (fileInfo is null)
+            {
+                return null;
+            }
+
+            using var magick = new MagickImage();
+#pragma warning disable MA0042
+            // ReSharper disable once MethodHasAsyncOverload
+            magick.Ping(fileInfo, CreatePingSettings());
+#pragma warning restore MA0042
+
+            return CreateThumb(magick, fileInfo, height);
+        }
+        catch (Exception e)
+        {
+            DebugHelper.LogDebug(nameof(GetThumbnails), nameof(DecodeWithoutReadyMade), e);
+            if (!fileInfo.IsCommon())
+            {
+                return null;
+            }
+
+            try
+            {
+                return GetSkBitmapThumb(fileInfo, height);
+            }
+            catch (Exception exception)
+            {
+                DebugHelper.LogDebug(nameof(GetThumbnails), nameof(DecodeWithoutReadyMade), exception);
+                return null;
+            }
+        }
+    }
+
+    /// <summary>
     /// The thumbnail the OS shell or the file's EXIF data already has, without decoding the image; null if neither has
     /// one.
     /// </summary>

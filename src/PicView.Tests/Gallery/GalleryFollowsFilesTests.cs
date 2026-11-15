@@ -818,6 +818,10 @@ public class GalleryFollowsFilesTests : IDisposable
             return new object();
         }
 
+        public object? DecodeWithoutReadyMade(FileInfo file, uint height) => null;
+
+        public long SizeInBytes(object thumbnail) => 0;
+
         public object? ScaleDown(object image, uint height) => null;
     }
 

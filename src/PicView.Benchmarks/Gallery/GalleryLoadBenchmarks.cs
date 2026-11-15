@@ -135,6 +135,8 @@ public class GalleryLoadBenchmarks
     {
         public object? GetReadyMade(FileInfo file, uint height) => null;
         public object? Decode(FileInfo file, uint height) => null;
+        public object? DecodeWithoutReadyMade(FileInfo file, uint height) => null;
+        public long SizeInBytes(object thumbnail) => 0;
         public object? ScaleDown(object image, uint height) => null;
     }
 

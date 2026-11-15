@@ -18,6 +18,9 @@ public sealed class FakeThumbnailDecoder : IThumbnailDecoder
     public bool CanDecode { get; set; } = true;
     public bool CanScaleDown { get; set; } = true;
 
+    /// <summary>What <see cref="SizeInBytes"/> counts for each pixel of a thumbnail's height.</summary>
+    public long BytesPerHeight { get; set; } = 1000;
+
     /// <summary>
     /// When set, <see cref="Decode"/> waits for it before it returns, so a test can hold decodes in flight.
     /// </summary>
@@ -57,6 +60,29 @@ public sealed class FakeThumbnailDecoder : IThumbnailDecoder
             Interlocked.Decrement(ref _decodesInFlight);
         }
     }
+
+    public object? DecodeWithoutReadyMade(FileInfo file, uint height)
+    {
+        Calls.Enqueue($"decode-full:{file.Name}");
+        var inFlight = Interlocked.Increment(ref _decodesInFlight);
+        int most;
+        do
+        {
+            most = Volatile.Read(ref _mostDecodesInFlight);
+        } while (inFlight > most && Interlocked.CompareExchange(ref _mostDecodesInFlight, inFlight, most) != most);
+
+        try
+        {
+            DecodeGate?.Wait(TimeSpan.FromSeconds(10));
+            return CanDecode ? new FakeThumbnail("decode-full", file.FullName, height) : null;
+        }
+        finally
+        {
+            Interlocked.Decrement(ref _decodesInFlight);
+        }
+    }
+
+    public long SizeInBytes(object thumbnail) => thumbnail is FakeThumbnail fake ? BytesPerHeight * fake.Height : 0;
 
     public object? ScaleDown(object image, uint height)
     {

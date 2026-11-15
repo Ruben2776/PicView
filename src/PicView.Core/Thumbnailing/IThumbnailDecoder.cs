@@ -17,6 +17,17 @@ public interface IThumbnailDecoder
     object? Decode(FileInfo file, uint height);
 
     /// <summary>
+    /// Reads the file and makes a thumbnail <paramref name="height"/> tall, never from the OS shell or the file's EXIF
+    /// thumbnail.
+    /// </summary>
+    object? DecodeWithoutReadyMade(FileInfo file, uint height);
+
+    /// <summary>
+    /// The memory the pixels of <paramref name="thumbnail"/> take; 0 when it is not one of this decoder's bitmaps.
+    /// </summary>
+    long SizeInBytes(object thumbnail);
+
+    /// <summary>
     /// A new bitmap of <paramref name="image"/>, an already decoded still image, no taller than
     /// <paramref name="height"/>; null when it cannot scale it. Must not keep or dispose <paramref name="image"/>.
     /// </summary>
