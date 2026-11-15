@@ -8,6 +8,7 @@ using Avalonia.Interactivity;
 using Avalonia.LogicalTree;
 using Avalonia.Markup.Xaml.MarkupExtensions;
 using Avalonia.Media;
+using Avalonia.Media.Imaging;
 using Avalonia.Media.Transformation;
 using Avalonia.Styling;
 using Avalonia.Threading;
@@ -159,14 +160,10 @@ public partial class GalleryItem : NavigateAbleItem
     internal bool IsSharpening => _sharpenCts is not null;
 
     /// <summary>
-    /// Shows <paramref name="vm"/>'s thumbnail. A Masonry or Rows tile shows a kept one at once, a Tile Thumbnail before
-    /// a small one, and asks for nothing; failing that, and in the Docked Gallery and Columns, it loads the small one.
+    /// Shows <paramref name="vm"/>'s thumbnail. A Masonry or Rows tile shows a kept Tile Thumbnail at once, even in place
+    /// of a small one it holds, and has its tab keep the small one too; else it shows a kept small one at once. Failing
+    /// that, and in the Docked Gallery and Columns, it loads the small one.
     /// </summary>
-    public Task LoadImage(GalleryItemViewModel vm) =>
-        LoadImage(vm, this.FindAncestorOfType<VirtualizingGallery>() is { } panel &&
-                      NavigateAbleItemsViewer.ShowsTiles(panel));
-
-    /// <inheritdoc cref="LoadImage(GalleryItemViewModel)" />
     /// <param name="vm">The item to show.</param>
     /// <param name="isTile">
     /// Whether the item is in an expanded Masonry or Rows panel, which the caller reads from the panel: a recycled item
@@ -174,19 +171,43 @@ public partial class GalleryItem : NavigateAbleItem
     /// </param>
     internal async Task LoadImage(GalleryItemViewModel vm, bool isTile)
     {
+        if (isTile && vm.TileHeightShown is 0 && vm.TryGetKeptThumbnail(out var kept, out var tileHeight) &&
+            kept is not null)
+        {
+            if (tileHeight > 0 && !HasFewerPixelRows(kept, vm.Image.Value))
+            {
+                // Sharp at once, as after the Docked Gallery, where the item took its small one. The tab still keeps
+                // the small one, made the ordinary way, so the motion photo badge is detected and the tile does not go
+                // empty once the tier lets go of this one. One the tab keeps already is served at once, decoding nothing
+                vm.Image.Value = kept;
+                vm.TileHeightShown = tileHeight;
+                await LoadSmallThumbnailAsync(vm, isTile, show: false).ConfigureAwait(false);
+                return;
+            }
+
+            if (vm.Image.Value is not IImage)
+            {
+                vm.Image.Value = kept;
+            }
+
+            return;
+        }
+
         // Fast-path: If the image is already loaded, skip
         if (vm.Image.Value is IImage)
         {
             return;
         }
 
-        if (isTile && vm.TryGetKeptThumbnail(out var kept, out var tileHeight) && kept is not null)
-        {
-            vm.Image.Value = kept;
-            vm.TileHeightShown = tileHeight;
-            return;
-        }
+        await LoadSmallThumbnailAsync(vm, isTile, show: true).ConfigureAwait(false);
+    }
 
+    /// <summary>
+    /// Loads the small thumbnail of <paramref name="vm"/>, which the tab then keeps, and shows it if
+    /// <paramref name="show"/> unless the item shows a Tile Thumbnail by then. Unloading the item cancels it.
+    /// </summary>
+    private async Task LoadSmallThumbnailAsync(GalleryItemViewModel vm, bool isTile, bool show)
+    {
         // ReSharper disable once MethodHasAsyncOverload
 #pragma warning disable MA0042
         _loadCts?.Cancel();
@@ -197,11 +218,33 @@ public partial class GalleryItem : NavigateAbleItem
         try
         {
             var thumb = await vm.LoadThumbnailAsync(token).ConfigureAwait(false);
-        
+
             // Ensure the user hasn't scrolled past this item while we were loading
-            if (!token.IsCancellationRequested && thumb is not null)
+            if (!show || token.IsCancellationRequested || thumb is null)
             {
-                vm.Image.Value = thumb;
+                return;
+            }
+
+            if (!isTile)
+            {
+                // The Docked Gallery and Columns, as before Tile Thumbnails. A Tile Thumbnail shown after a switch to
+                // Masonry or Rows stays
+                if (vm.TileHeightShown is 0)
+                {
+                    vm.Image.Value = thumb;
+                }
+
+                return;
+            }
+
+            // A tile decides on the UI thread, where a Tile Thumbnail lands, so the small one never lands over it
+            if (Dispatcher.UIThread.CheckAccess())
+            {
+                ShowSmallThumbnail(vm, thumb, token);
+            }
+            else
+            {
+                await Dispatcher.UIThread.InvokeAsync(() => ShowSmallThumbnail(vm, thumb, token));
             }
         }
         catch (OperationCanceledException)
@@ -211,6 +254,23 @@ public partial class GalleryItem : NavigateAbleItem
         catch (Exception ex)
         {
             DebugHelper.LogDebug(nameof(GalleryItem), nameof(LoadImage), ex);
+        }
+    }
+
+    /// <summary>
+    /// Whether <paramref name="thumbnail"/> is a bitmap of fewer pixels in height than the bitmap
+    /// <paramref name="shown"/>, so showing it in its place would make the item softer.
+    /// </summary>
+    private static bool HasFewerPixelRows(object? thumbnail, object? shown) =>
+        thumbnail is Bitmap bitmap && shown is Bitmap shownBitmap &&
+        bitmap.PixelSize.Height < shownBitmap.PixelSize.Height;
+
+    // On the UI thread. A Tile Thumbnail that came first stays: the small one is then only kept for the tab
+    private static void ShowSmallThumbnail(GalleryItemViewModel vm, object thumbnail, CancellationToken token)
+    {
+        if (!token.IsCancellationRequested && vm.TileHeightShown is 0)
+        {
+            vm.Image.Value = thumbnail;
         }
     }
 
@@ -290,6 +350,13 @@ public partial class GalleryItem : NavigateAbleItem
             return;
         }
 
+        if (HasFewerPixelRows(thumbnail, vm.Image.Value))
+        {
+            // The source gave less than the item shows, as a small image's small thumbnail, enlarged, can be. The item
+            // keeps what it shows, and the height counts as asked for, so it is not asked for again
+            return;
+        }
+
         // A make that finished after a new rest began is still this item's, made for a height it asked for, so it is
         // shown. If the tile needs more by now, the shown height says so, and the rest after it asks for the taller one
         if (cancelled)
@@ -297,9 +364,8 @@ public partial class GalleryItem : NavigateAbleItem
             this.FindAncestorOfType<NavigateAbleItemsViewer>()?.RequestTileSharpen();
         }
 
-        // A small thumbnail still on its way must not land over the sharp one. The small one is not disposed: the
-        // tab's store still keeps it
-        _loadCts?.Cancel();
+        // A small thumbnail still on its way is not cancelled, so the tab keeps it, and it does not land over this one,
+        // as TileHeightShown says the item shows a Tile Thumbnail. The small one shown is not disposed: the tab keeps it
         vm.Image.Value = thumbnail;
         vm.TileHeightShown = height;
     }

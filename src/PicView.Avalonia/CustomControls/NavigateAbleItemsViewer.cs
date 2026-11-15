@@ -6,6 +6,7 @@ using Avalonia.Controls.Presenters;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using PicView.Avalonia.Views.Gallery;
 using PicView.Core.DebugTools;
@@ -28,6 +29,9 @@ public class NavigateAbleItemsViewer : ItemsControl
     private AutoScrollViewer? _scrollViewer;
 
     private IDisposable? _viewportSubscription;
+
+    // Whether the viewer is on the visual tree, where a rest can sharpen its tiles
+    private bool _isAttached;
 
     protected override Type StyleKeyOverride => typeof(NavigateAbleItemsViewer);
 
@@ -81,8 +85,16 @@ public class NavigateAbleItemsViewer : ItemsControl
         _scrollViewer = e.NameScope.Find<AutoScrollViewer>("PART_ScrollViewer");
     }
 
+    protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        base.OnAttachedToVisualTree(e);
+        _isAttached = true;
+    }
+
     protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
     {
+        // First, so the sharpening cancelled below, and the items unloaded after, start no rest
+        _isAttached = false;
         base.OnDetachedFromVisualTree(e);
         _viewportSubscription?.Dispose();
         _viewportSubscription = null;
@@ -467,11 +479,12 @@ public class NavigateAbleItemsViewer : ItemsControl
 
     /// <summary>
     /// Starts the rest period unless it runs, as when a tile was loaded or the panel laid out again: neither is the
-    /// user moving the view, so neither postpones sharpening.
+    /// user moving the view, so neither postpones sharpening. A viewer off the visual tree starts nothing.
     /// </summary>
     public void RequestTileSharpen()
     {
-        if (!TileRestTimer.IsEnabled && ItemsPanelRoot is VirtualizingGallery gallery && ShowsTiles(gallery))
+        if (!TileRestTimer.IsEnabled && _isAttached && ItemsPanelRoot is VirtualizingGallery gallery &&
+            ShowsTiles(gallery))
         {
             TileRestTimer.Start();
         }
@@ -501,7 +514,7 @@ public class NavigateAbleItemsViewer : ItemsControl
 
             var needed = gallery.TileThumbnailHeightFor(realized.Index);
             if (needed is 0 || needed <= vm.TileHeightShown || needed <= item.TileHeightAsked ||
-                gallery.GetItemBounds(realized.Index) is not { } bounds)
+                SmallThumbnailIsTallEnough(vm, needed) || gallery.GetItemBounds(realized.Index) is not { } bounds)
             {
                 continue;
             }
@@ -525,6 +538,14 @@ public class NavigateAbleItemsViewer : ItemsControl
 
         _tilesToSharpen.Clear();
     }
+
+    /// <summary>
+    /// Whether the item shows a small thumbnail with at least <paramref name="needed"/> pixels in height, as when the tile
+    /// is shorter than the gallery height or the image is small. A Tile Thumbnail is compared by the height it was made
+    /// for instead, which <see cref="GalleryItemViewModel.TileHeightShown"/> holds.
+    /// </summary>
+    private static bool SmallThumbnailIsTallEnough(GalleryItemViewModel vm, uint needed) =>
+        vm is { TileHeightShown: 0, Image.Value: Bitmap bitmap } && bitmap.PixelSize.Height >= needed;
 
     /// <summary>The rest timer. A test replaces it with one on its own clock.</summary>
     internal ITileRestTimer TileRestTimer { get; set; }

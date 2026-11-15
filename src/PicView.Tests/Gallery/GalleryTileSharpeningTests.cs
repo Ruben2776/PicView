@@ -33,6 +33,7 @@ public sealed class GalleryTileSharpeningTests : IDisposable
 {
     private readonly BitmapThumbnailDecoder _decoder = new();
     private readonly FakeRestTimer _timer = new();
+    private Thumbnails? _thumbnails;
     private Window? _window;
     private CoreViewModel? _core;
     private TabViewModel? _tab;
@@ -48,11 +49,14 @@ public sealed class GalleryTileSharpeningTests : IDisposable
         ObservableSystem.DefaultFrameProvider = new MockFrameProvider();
         SetDefaults();
         TranslationManager.Init();
+        // So a Quick Thumbnail is only ever a kept one
+        _decoder.HasReadyMade = false;
     }
 
     public void Dispose()
     {
         _decoder.DecodeFullGate?.Set();
+        _decoder.DecodeGate?.Set();
         _window?.Close();
         if (_dataContextSet)
         {
@@ -341,21 +345,280 @@ public sealed class GalleryTileSharpeningTests : IDisposable
         Assert.DoesNotContain(_decoder.Calls, c => c.StartsWith("decode-full:", StringComparison.Ordinal));
     }
 
+    [AvaloniaFact]
+    public void Tile_NeedingLessThanItsSmallThumbnail_IsNotAskedForATileThumbnail()
+    {
+        // 6:1 images in tiles clamped to 4:1: a Masonry tile is a quarter as tall as its column is wide
+        Show(pixelWidth: 6000, pixelHeight: 1000);
+        var small = Shown(0);
+        Assert.InRange(Needed(0), 1u, Thumbnails.GalleryHeight - 1);
+
+        Rest();
+
+        Assert.Same(small, Shown(0));
+        Assert.Equal(0u, Item(0).TileHeightShown);
+        Assert.DoesNotContain(_decoder.Calls, c => c.StartsWith("decode-full:", StringComparison.Ordinal));
+    }
+
+    [AvaloniaFact]
+    public void Tile_OfAnImageSmallerThanItsSmallThumbnail_IsNotReplacedByAShorterBitmap()
+    {
+        // The shape of an SVG, whose nominal size caps the height it needs
+        Show(pixelWidth: 24, pixelHeight: 24);
+        var small = Shown(0);
+        Assert.Equal(24u, Needed(0));
+
+        Rest();
+
+        Assert.Same(small, Shown(0));
+        Assert.Equal((int)Thumbnails.GalleryHeight, Shown(0).PixelSize.Height);
+        Assert.DoesNotContain(_decoder.Calls, c => c.StartsWith("decode-full:", StringComparison.Ordinal));
+    }
+
+    [AvaloniaFact]
+    public void Tile_WhoseTileThumbnailComesBackShorterThanWhatItShows_KeepsWhatItShowsAndIsNotAskedAgain()
+    {
+        // A source that gives less than it is asked for
+        _decoder.FullHeightCap = Thumbnails.GalleryHeight - 50;
+        Show();
+        var small = Shown(0);
+
+        Rest();
+        Relayout();
+        Rest();
+
+        Assert.Same(small, Shown(0));
+        Assert.Equal(1, CallsFor("decode-full", 0));
+    }
+
+    [AvaloniaFact]
+    public void Tile_ShownAtOnceFromTheTier_StillGetsItsSmallThumbnailKeptForItsTab()
+    {
+        Show(itemCount: 60);
+        Rest();
+        var sharp = Shown(0);
+        var needed = Needed(0);
+
+        // New view models while the tier still holds the file, as after leaving the folder and coming back
+        ShowTheFolderAgain();
+        Assert.Same(sharp, Shown(0)); // at once, before any rest
+        Assert.Equal(needed, Item(0).TileHeightShown);
+        SettleSharpening();
+
+        Assert.True(SettlesWithin(() => _decoder.InFlight is 0 && KeepsSmallThumbnailOf(0)),
+            "The tab keeps no small thumbnail of the tile");
+        Assert.Equal(2, CallsFor("decode", 0));
+        Assert.Same(sharp, Shown(0));
+        Assert.Equal(needed, Item(0).TileHeightShown);
+
+        // Scrolling back and forth makes it no more
+        ScrollToEnd();
+        ScrollToStart();
+        SettleSharpening();
+        Assert.Equal(2, CallsFor("decode", 0));
+        Assert.Same(sharp, Shown(0));
+    }
+
+    [AvaloniaFact]
+    public void Tile_SharpenedWhileItsSmallThumbnailWaitsForASlot_StillGetsItKept()
+    {
+        // One slot, held by a small thumbnail at the gate, so the others wait for it. The tier holds every file
+        _decoder.DecodeGate = new ManualResetEventSlim(false);
+        Show(GalleryDisplayMode.Columns, slots: 1, keepTileThumbnailsAt: 2000, waitForSmallThumbnails: false);
+        Settle(() => _decoder.Calls.Any(c => c.StartsWith("decode:", StringComparison.Ordinal)));
+        var subject = _panel!.RealizedItems.Select(x => x.Index).First(i => CallsFor("decode", i) is 0);
+        var container = ItemAt(subject);
+
+        // Its container stays, so it is sharpened from the tier at the rest, before its small one has a slot
+        SwitchDisplayModeTo(GalleryDisplayMode.Masonry);
+        Assert.Same(container, ItemAt(subject));
+        FireRest();
+        Assert.True(Item(subject).TileHeightShown > 0);
+        var sharp = Shown(subject);
+
+        _decoder.DecodeGate.Set();
+
+        Assert.True(SettlesWithin(() => _decoder.InFlight is 0 && KeepsSmallThumbnailOf(subject)),
+            "The small thumbnail was never made");
+        SettleSharpening();
+        Assert.Same(sharp, Shown(subject));
+        Assert.True(Item(subject).TileHeightShown > 0);
+    }
+
+    [AvaloniaFact]
+    public void Tiles_BackFromTheDockedGallery_ShowTheirKeptTileThumbnailsAtOnce()
+    {
+        Show(GalleryDisplayMode.Rows, dockedFirst: true);
+        Rest();
+        var sharp = Shown(0);
+        var fullDecodes = _decoder.Calls.Count(c => c.StartsWith("decode-full:", StringComparison.Ordinal));
+
+        _tab!.Gallery.Switcher.ToggleExpanded();
+        Settle(() => !_panel!.IsExpanded && !_view!.IsInAnimation);
+        SettleSmallThumbnails();
+        Assert.Contains(_panel!.RealizedItems, x => x.Index == 0);
+        Assert.Equal((int)Thumbnails.GalleryHeight, Shown(0).PixelSize.Height); // docked, it shows its small one
+
+        _tab.Gallery.Switcher.ToggleExpanded();
+        Settle(() => _panel!.IsExpanded && !_view!.IsInAnimation);
+        SettleSmallThumbnails();
+
+        // with no rest
+        Assert.Same(sharp, Shown(0));
+        Assert.Equal(Needed(0), Item(0).TileHeightShown);
+        Assert.Equal(fullDecodes, _decoder.Calls.Count(c => c.StartsWith("decode-full:", StringComparison.Ordinal)));
+    }
+
+    [AvaloniaFact]
+    public void Tiles_BackFromColumns_ShowTheirKeptTileThumbnailsAtOnce()
+    {
+        Show(GalleryDisplayMode.Rows, itemCount: 60);
+        Rest();
+        var sharp = Shown(0);
+        var fullDecodes = _decoder.Calls.Count(c => c.StartsWith("decode-full:", StringComparison.Ordinal));
+
+        SwitchDisplayModeTo(GalleryDisplayMode.Columns);
+        SettleSmallThumbnails();
+        SwitchDisplayModeTo(GalleryDisplayMode.Rows);
+        SettleSmallThumbnails();
+
+        // with no rest
+        Assert.Same(sharp, Shown(0));
+        Assert.Equal(Needed(0), Item(0).TileHeightShown);
+        Assert.Equal(fullDecodes, _decoder.Calls.Count(c => c.StartsWith("decode-full:", StringComparison.Ordinal)));
+    }
+
+    [AvaloniaFact]
+    public void RequestTileSharpen_ViewerDetached_StartsNoRest()
+    {
+        Show();
+        Rest();
+        Assert.False(_timer.IsEnabled);
+
+        _window!.Content = null;
+        Dispatcher.UIThread.RunJobs();
+        _viewer!.RequestTileSharpen();
+
+        Assert.False(_timer.IsEnabled);
+    }
+
+    [AvaloniaFact]
+    public void Resizing_JustBeforeTheRest_PostponesSharpeningByAFullDelay()
+    {
+        Show();
+        AdvanceBy(GalleryDefaults.TileSharpenDelayMilliseconds - 50);
+
+        _window!.Width += 100;
+        Dispatcher.UIThread.RunJobs();
+        RenderFrame();
+        SettleSmallThumbnails();
+        AdvanceBy(100); // past the first delay
+        SettleSharpening();
+        Assert.Equal(0u, Item(0).TileHeightShown);
+        Assert.DoesNotContain(_decoder.Calls, c => c.StartsWith("decode-full:", StringComparison.Ordinal));
+
+        AdvanceBy(GalleryDefaults.TileSharpenDelayMilliseconds - 100 + 1); // a full delay after the resize
+        SettleSharpening();
+        Assert.Equal(Needed(0), Item(0).TileHeightShown);
+    }
+
+    [AvaloniaFact]
+    public void Rest_AsksTheTileNearestTheMiddleOfTheViewFirst()
+    {
+        // One slot, so the decodes run in the order they were asked for
+        Show(slots: 1);
+        var scrollViewer = ScrollViewer;
+        var margin = _panel!.Margin;
+        var middle = new Point(scrollViewer.Offset.X - margin.Left + scrollViewer.Viewport.Width / 2,
+            scrollViewer.Offset.Y - margin.Top + scrollViewer.Viewport.Height / 2);
+        var distanceByName = _panel.RealizedItems.ToDictionary(x => Item(x.Index).FileInfo!.Name,
+            x => Point.Distance(_panel.GetItemBounds(x.Index)!.Value.Center, middle), StringComparer.Ordinal);
+        var nearest = distanceByName.MinBy(x => x.Value).Key;
+        Assert.NotEqual(_panel.RealizedItems[0].Index, _items.ToList().FindIndex(x =>
+            string.Equals(x.FileInfo!.Name, nearest, StringComparison.Ordinal))); // not simply the first realized
+
+        Rest();
+
+        var asked = _decoder.Calls.Where(c => c.StartsWith("decode-full:", StringComparison.Ordinal))
+            .Select(c => c["decode-full:".Length..]).ToList();
+        Assert.Equal(distanceByName.Count, asked.Count);
+        Assert.Equal(nearest, asked[0]);
+        for (var i = 1; i < asked.Count; i++)
+        {
+            Assert.True(distanceByName[asked[i - 1]] <= distanceByName[asked[i]]);
+        }
+    }
+
+    [AvaloniaFact]
+    public void SizesArriving_AfterAScrollWhileThePanelHoldsAnItem_DoNotPostponeSharpening()
+    {
+        // The items above the view have no details yet, so their sizes arriving move everything below them
+        Show(itemCount: 60, slots: 64, withoutDetails: [0, 1, 2]);
+        ScrollBy(1500);
+        Assert.DoesNotContain(_panel!.RealizedItems, x => x.Index <= 2);
+        var offsetBefore = ScrollViewer.Offset.Y;
+
+        // every 100 ms, three times: one off-screen item's details, without scrolling
+        for (var i = 0; i < 3; i++)
+        {
+            AdvanceBy(100);
+            SetDetails(i, 6000, 4000);
+        }
+        SettleSharpening();
+
+        Assert.NotEqual(offsetBefore, ScrollViewer.Offset.Y); // the panel held its item, so it moved the view
+        var subject = NearestTheMiddle();
+        Assert.True(Needed(subject) > Thumbnails.GalleryHeight);
+        Assert.Equal(Needed(subject), Item(subject).TileHeightShown); // sharp one delay after the scroll
+    }
+
     #region Harness
+
+    private int NearestTheMiddle()
+    {
+        var scrollViewer = ScrollViewer;
+        var margin = _panel!.Margin;
+        var middle = new Point(scrollViewer.Offset.X - margin.Left + scrollViewer.Viewport.Width / 2,
+            scrollViewer.Offset.Y - margin.Top + scrollViewer.Viewport.Height / 2);
+        return _panel.RealizedItems.MinBy(x => Point.Distance(_panel.GetItemBounds(x.Index)!.Value.Center, middle))
+            .Index;
+    }
+
+    /// <summary>Runs the jobs until <paramref name="condition"/> holds, for at most two seconds.</summary>
+    private bool SettlesWithin(Func<bool> condition)
+    {
+        var deadline = DateTime.UtcNow.AddSeconds(2);
+        while (DateTime.UtcNow < deadline)
+        {
+            Dispatcher.UIThread.RunJobs();
+            RenderFrame();
+            if (condition())
+            {
+                return true;
+            }
+
+            Thread.Sleep(1);
+        }
+
+        return condition();
+    }
 
     /// <summary>
     /// Shows the tab's gallery in a window, expanded in <paramref name="mode"/> or docked at the bottom, with items whose
     /// details are 6000 x 4000 and whose thumbnails come from <see cref="_decoder"/> through the tab's
-    /// <see cref="Thumbnails"/>. Returns once the first layout's small thumbnails have landed.
+    /// <see cref="Thumbnails"/>. Returns once the first layout's small thumbnails have landed, unless
+    /// <paramref name="waitForSmallThumbnails"/> is false.
     /// </summary>
     private void Show(GalleryDisplayMode mode = GalleryDisplayMode.Masonry, int itemCount = 12, double scale = 1,
         double width = 800, double height = 600, bool docked = false, int slots = 0, int[]? withoutDetails = null,
-        bool keepSmallThumbnails = false, bool dockedFirst = false)
+        bool keepSmallThumbnails = false, bool dockedFirst = false, uint pixelWidth = 6000, uint pixelHeight = 4000,
+        uint keepTileThumbnailsAt = 0, bool waitForSmallThumbnails = true)
     {
         Settings.Gallery.DockPosition = GalleryDockPosition.Bottom;
         Settings.Gallery.ExpandedGalleryDisplayMode = mode;
         var cache = new SharedImageCache(static f => ValueTask.FromResult(new ImageModel { FileInfo = f }));
         var thumbnails = new Thumbnails(_decoder, cache, slots);
+        _thumbnails = thumbnails;
         _core = new CoreViewModel(null, _ => ValueTask.FromResult(new ImageModel()),
             saveGallerySettings: static () => ValueTask.FromResult(true));
         _core.InitializeNavigation(TestTabServices.For(cache, thumbnails), new NavigationService(string.CompareOrdinal));
@@ -403,12 +666,19 @@ public sealed class GalleryTileSharpeningTests : IDisposable
         {
             if (withoutDetails is null || !withoutDetails.Contains(i))
             {
-                _items[i].SetDetails(new GalleryFileDetails(6000, 4000, null));
+                _items[i].SetDetails(new GalleryFileDetails(pixelWidth, pixelHeight, null));
             }
 
             if (keepSmallThumbnails)
             {
                 thumbnails.GetAsync(_items[i].FileInfo!, Thumbnails.GalleryHeight, _tab.Id,
+                    TestContext.Current.CancellationToken).AsTask().GetAwaiter().GetResult();
+            }
+
+            if (keepTileThumbnailsAt > 0)
+            {
+                // As another tab, or an earlier visit to the folder, left them in the app-wide tier
+                thumbnails.GetTileAsync(_items[i].FileInfo!, keepTileThumbnailsAt,
                     TestContext.Current.CancellationToken).AsTask().GetAwaiter().GetResult();
             }
         }
@@ -437,7 +707,59 @@ public sealed class GalleryTileSharpeningTests : IDisposable
 
         Assert.NotEmpty(_panel.RealizedItems);
         Assert.Equal(!docked, _panel.IsExpanded);
-        SettleSmallThumbnails();
+        if (waitForSmallThumbnails)
+        {
+            SettleSmallThumbnails();
+        }
+    }
+
+    /// <summary>
+    /// Gives the gallery new view models for the same files, as leaving the folder and coming back does: the tab lets
+    /// go of its small thumbnails, and the app-wide tier keeps its Tile Thumbnails.
+    /// </summary>
+    private void ShowTheFolderAgain()
+    {
+        _tab!.Gallery.GalleryItems.Clear();
+        _thumbnails!.Release(_tab.Id);
+        _items = _items.Select(old =>
+        {
+            var item = new GalleryItemViewModel
+            {
+                FileInfo = old.FileInfo,
+                Coordinator = _tab.GalleryCoordinator,
+                ThumbnailHeight = Thumbnails.GalleryHeight
+            };
+            item.SetDetails(old.Details!);
+            return item;
+        }).ToArray();
+        _tab.Gallery.GalleryItems.AddRange(_items);
+        Dispatcher.UIThread.RunJobs();
+        RenderFrame();
+    }
+
+    /// <summary>
+    /// Whether a small thumbnail of the item's file is kept, which only this test's tab keeps. It asks for a Quick
+    /// Thumbnail, which serves a kept one at once and decodes nothing; the decoder has no ready-made ones.
+    /// </summary>
+    private bool KeepsSmallThumbnailOf(int index)
+    {
+        var request = _thumbnails!.GetQuickAsync(Item(index).FileInfo!, Thumbnails.GalleryHeight,
+            TestContext.Current.CancellationToken);
+        return request.IsCompleted && request.Result is Bitmap bitmap &&
+               bitmap.PixelSize.Height == Thumbnails.GalleryHeight;
+    }
+
+    private int CallsFor(string kind, int index) =>
+        _decoder.Calls.Count(c => string.Equals(c, $"{kind}:{Item(index).FileInfo!.Name}", StringComparison.Ordinal));
+
+    /// <summary>Fires the rest timer as its delay passing does, and runs the jobs, without waiting for anything.</summary>
+    private void FireRest()
+    {
+        _timer.Now += GalleryDefaults.TileSharpenDelayMilliseconds + 1;
+        Assert.True(_timer.IsEnabled && _timer.Due <= _timer.Now);
+        _viewer!.OnTileRestElapsed();
+        Dispatcher.UIThread.RunJobs();
+        RenderFrame();
     }
 
     /// <summary>Advances the test's clock past the sharpen delay, then waits until the decodes it started landed.</summary>
