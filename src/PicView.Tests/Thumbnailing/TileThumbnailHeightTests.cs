@@ -12,6 +12,10 @@ public class TileThumbnailHeightTests
     [InlineData(300, 300, 0, 0, 300u)] // unreadable: a square, no cap
     [InlineData(300.4, 200.2, 6000, 4000, 201u)] // rounded up
     [InlineData(0, 0, 6000, 4000, 1u)] // never zero
+    [InlineData(double.NaN, double.NaN, 6000, 4000, 1u)] // not a size: never uint.MaxValue
+    [InlineData(double.PositiveInfinity, double.PositiveInfinity, 6000, 4000, 1u)]
+    [InlineData(double.PositiveInfinity, double.PositiveInfinity, 0, 0, 1u)] // nor uncapped
+    [InlineData(double.NaN, 200, 6000, 4000, 200u)] // the other side still counts
     public void For_GivesTheSmallestHeightThatCoversTheTile(double tileWidth, double tileHeight,
         uint pixelWidth, uint pixelHeight, uint expected) =>
         Assert.Equal(expected, TileThumbnailHeight.For(tileWidth, tileHeight, pixelWidth, pixelHeight));
