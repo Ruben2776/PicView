@@ -365,6 +365,25 @@ public class NavigateAbleItemsViewer : ItemsControl
         }
 
         var rect = bounds.Value;
+        if (IsInVerticalDisplayMode(gallery))
+        {
+            // The scroll viewer scrolls over the panel's margin too
+            var top = rect.Top + gallery.Margin.Top;
+            var bottom = rect.Bottom + gallery.Margin.Top;
+            var current = _scrollViewer.Offset;
+            var height = _scrollViewer.Viewport.Height;
+            if (top < current.Y)
+            {
+                _scrollViewer.SetCurrentValue(ScrollViewer.OffsetProperty, current.WithY(top));
+            }
+            else if (bottom > current.Y + height)
+            {
+                _scrollViewer.SetCurrentValue(ScrollViewer.OffsetProperty, current.WithY(bottom - height));
+            }
+
+            return;
+        }
+
         var offset = _scrollViewer.Offset;
         var viewport = _scrollViewer.Viewport;
         var newX = offset.X;
@@ -401,11 +420,19 @@ public class NavigateAbleItemsViewer : ItemsControl
     {
         SelectedItemIndex = index;
     }
-    
+
+    // The Expanded Gallery's Masonry and Rows; the side-docked strip also scrolls vertically, but keeps the column rules
+    private static bool IsInVerticalDisplayMode(VirtualizingGallery gallery) =>
+        gallery.IsExpanded && GalleryDisplayModes.ShowsTiles(gallery.DisplayMode);
+
     #endregion
 
     #region Spatial Navigation Logic
 
+    /// <summary>
+    /// Moves the selection by an arrow key, or to the first or last item. In the Expanded Gallery's Masonry and Rows the
+    /// arrows follow <see cref="GalleryNavigator"/>, with no wrap; elsewhere the column rules below apply.
+    /// </summary>
     public void Navigate(NavigationDirection direction)
     {
         if (ItemCount is 0)
@@ -428,6 +455,19 @@ public class NavigateAbleItemsViewer : ItemsControl
         var startIndex = SelectedItemIndex == -1 ? CurrentItemIndex : SelectedItemIndex;
         if (startIndex < 0) startIndex = 0;
         if (startIndex >= ItemCount) startIndex = ItemCount - 1;
+
+        // Before GetItemPositions, which builds a list: this path allocates nothing per key press
+        if (ItemsPanelRoot is VirtualizingGallery gallery && IsInVerticalDisplayMode(gallery))
+        {
+            var target = GalleryNavigator.Neighbor(gallery.ItemBounds, startIndex, direction, gallery.DisplayMode);
+            if (target >= 0 && target < ItemCount)
+            {
+                UpdateSelectionIndex(target);
+                ScrollItemIntoView(target);
+            }
+
+            return;
+        }
 
         var items = GetItemPositions();
         if (items.Count is 0)
