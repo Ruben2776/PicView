@@ -1365,6 +1365,148 @@ public class VirtualizingGalleryTests
 
     private static double Top(Strip strip, int index) => strip.Gallery.GetItemBounds(index)!.Value.Top;
 
+    // Each: a panel 800 wide, item size 150, the display mode and scale given, one item with details 6000 x 4000
+    [AvaloniaTheory]
+    [InlineData(GalleryDisplayMode.Rows, 1.0, 300u)]
+    [InlineData(GalleryDisplayMode.Rows, 1.5, 450u)]
+    public void TileThumbnailHeightFor_Rows_IsTheTargetRowHeightInDevicePixels(GalleryDisplayMode mode, double scale,
+        uint expected)
+    {
+        var panel = PanelWith(mode, scale, Details(6000, 4000), out var window);
+        try
+        {
+            Assert.Equal(expected, panel.TileThumbnailHeightFor(0));
+        }
+        finally
+        {
+            window.Close();
+        }
+    }
+
+    // The Masonry placer rounds the tile's height, and the cover height is rounded up, so they can differ by a pixel
+    [AvaloniaFact]
+    public void TileThumbnailHeightFor_Masonry_CoversTheTilesBounds()
+    {
+        var panel = PanelWith(GalleryDisplayMode.Masonry, 1.5, Details(4000, 6000), out var window);
+        try
+        {
+            var tileHeight = panel.ItemBounds[0].Height * 1.5;
+            var height = panel.TileThumbnailHeightFor(0);
+            Assert.True(height >= tileHeight - 1e-6, $"{height} is under the tile's {tileHeight}");
+            Assert.True(height <= tileHeight + 1, $"{height} is over a pixel above the tile's {tileHeight}");
+        }
+        finally
+        {
+            window.Close();
+        }
+    }
+
+    [AvaloniaFact]
+    public void TileThumbnailHeightFor_SmallImage_IsNoTallerThanTheImage()
+    {
+        var panel = PanelWith(GalleryDisplayMode.Rows, 1.0, Details(150, 100), out var window);
+        try
+        {
+            Assert.Equal(100u, panel.TileThumbnailHeightFor(0));
+        }
+        finally
+        {
+            window.Close();
+        }
+    }
+
+    [AvaloniaFact]
+    public void TileThumbnailHeightFor_UnreadableFile_IsTheSquareTile()
+    {
+        var panel = PanelWith(GalleryDisplayMode.Rows, 1.0, GalleryFileDetails.Unreadable, out var window);
+        try
+        {
+            Assert.Equal(300u, panel.TileThumbnailHeightFor(0));
+        }
+        finally
+        {
+            window.Close();
+        }
+    }
+
+    [AvaloniaFact]
+    public void TileThumbnailHeightFor_DetailsNotRead_IsZero()
+    {
+        var panel = PanelWith(GalleryDisplayMode.Rows, 1.0, null, out var window);
+        try
+        {
+            Assert.Equal(0u, panel.TileThumbnailHeightFor(0));
+        }
+        finally
+        {
+            window.Close();
+        }
+    }
+
+    [AvaloniaFact]
+    public void TileThumbnailHeightFor_ColumnsDockedOrNoSuchIndex_IsZero()
+    {
+        var columns = PanelWith(GalleryDisplayMode.Columns, 1.0, Details(6000, 4000), out var columnsWindow);
+        var docked = PanelWith(GalleryDisplayMode.Rows, 1.0, Details(6000, 4000), out var dockedWindow, expanded: false);
+        var rows = PanelWith(GalleryDisplayMode.Rows, 1.0, Details(6000, 4000), out var rowsWindow);
+        try
+        {
+            Assert.Equal(0u, columns.TileThumbnailHeightFor(0));
+            Assert.Equal(0u, docked.TileThumbnailHeightFor(0));
+            Assert.Equal(0u, rows.TileThumbnailHeightFor(5));
+            Assert.Equal(0u, rows.TileThumbnailHeightFor(-1));
+        }
+        finally
+        {
+            columnsWindow.Close();
+            dockedWindow.Close();
+            rowsWindow.Close();
+        }
+    }
+
+    private static GalleryFileDetails Details(uint width, uint height) => new(width, height, null);
+
+    /// <summary>
+    /// A panel 800 wide with an item size of 150 and one item with the details, shown at the render scaling, the way
+    /// the Expanded Gallery's Masonry and Rows are, or Docked when not <paramref name="expanded"/>.
+    /// </summary>
+    private static VirtualizingGallery PanelWith(GalleryDisplayMode mode, double scale, GalleryFileDetails? details,
+        out Window window, bool expanded = true)
+    {
+        var item = new GalleryItemViewModel();
+        if (details is not null)
+        {
+            item.SetDetails(details);
+        }
+
+        var gallery = new VirtualizingGallery
+        {
+            ItemHeight = 150,
+            Orientation = expanded ? Orientation.Vertical : Orientation.Horizontal,
+            IsExpanded = expanded,
+            DisplayMode = mode,
+            Margin = expanded ? new Thickness(15, 40, 15, 5) : default,
+            VerticalAlignment = VerticalAlignment.Top
+        };
+        var viewer = new NavigateAbleItemsViewer
+        {
+            ItemsPanel = new FuncTemplate<Panel?>(() => gallery),
+            ItemTemplate = new FuncDataTemplate<GalleryItemViewModel>((_, _) => new Border()),
+            ItemsSource = new AvaloniaList<GalleryItemViewModel>([item]),
+            CurrentItemIndex = 0
+        };
+        if (expanded)
+        {
+            viewer.TemplateApplied += (_, _) => viewer.SetVerticalScrolling();
+        }
+
+        window = new Window { Width = 830, Height = 600, Content = viewer };
+        window.SetRenderScaling(scale);
+        window.Show();
+        Dispatcher.UIThread.RunJobs();
+        return gallery;
+    }
+
     /// <summary>The scroll viewer scrolls over the margin above the items too, and never sideways.</summary>
     private static void AssertCenteredOnY(int index, Strip strip)
     {

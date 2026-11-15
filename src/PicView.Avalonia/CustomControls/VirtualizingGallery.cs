@@ -7,6 +7,8 @@ using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.VisualTree;
 using PicView.Core.Gallery;
+using PicView.Core.Thumbnailing;
+using PicView.Core.ViewModels;
 
 namespace PicView.Avalonia.CustomControls;
 
@@ -239,6 +241,42 @@ public class VirtualizingGallery : VirtualizingPanel
             return _layout.Bounds[index];
         }
         return null;
+    }
+
+    /// <summary>
+    ///     The height in device pixels that a thumbnail needs to fill the item's tile sharply in Masonry or Rows, which
+    ///     is no taller than the image. Rows' tile is the target row height, not the height of the row the item sits in.
+    ///     It reads the last measure and does not lay out.
+    /// </summary>
+    /// <returns>
+    ///     0 when there is nothing to sharpen: the panel is not expanded, shows Columns, has no bounds for the index,
+    ///     or the item's details are not read yet.
+    /// </returns>
+    public uint TileThumbnailHeightFor(int index)
+    {
+        if (!IsExpanded || DisplayMode is GalleryDisplayMode.Columns || index < 0 || index >= _layout.Bounds.Count)
+        {
+            return 0;
+        }
+
+        var items = Items;
+        if (items is null || index >= items.Count || items[index] is not GalleryItemViewModel item ||
+            item.Details is not { } details)
+        {
+            return 0;
+        }
+
+        var scale = LayoutHelper.GetLayoutScale(this);
+        if (DisplayMode is GalleryDisplayMode.Masonry)
+        {
+            var bounds = _layout.Bounds[index];
+            return TileThumbnailHeight.For(bounds.Width * scale, bounds.Height * scale, details.PixelWidth,
+                details.PixelHeight);
+        }
+
+        var target = Math.Round(ItemHeight * GalleryDefaults.RowHeightFactor * scale);
+        return TileThumbnailHeight.For(GalleryPlacementOptions.AspectRatioOf(item) * target, target,
+            details.PixelWidth, details.PixelHeight);
     }
 
     public IReadOnlyList<double> GetIrregularSnapPoints(Orientation orientation, SnapPointsAlignment snapPointsAlignment)
