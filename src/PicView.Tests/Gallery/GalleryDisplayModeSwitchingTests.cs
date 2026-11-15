@@ -1,11 +1,14 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Styling;
+using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
+using PicView.Avalonia.Views.Config;
 using PicView.Avalonia.Views.Gallery;
 using PicView.Core.Gallery;
 using PicView.Core.Localization;
 using PicView.Core.Models;
+using PicView.Core.SettingsSearch;
 using PicView.Core.ViewModels;
 using R3;
 
@@ -133,6 +136,126 @@ public class GalleryDisplayModeSwitchingTests
     }
 
     // A context menu takes its DataContext from its control as it opens; the tests give it directly, so no popup opens
+    [AvaloniaTheory]
+    [InlineData("DisplayModeMasonryItem", GalleryDisplayMode.Masonry)]
+    [InlineData("DisplayModeRowsItem", GalleryDisplayMode.Rows)]
+    public void SettingsComboBox_PickingAnItem_SetsThatDisplayMode(string itemName, GalleryDisplayMode expected)
+    {
+        var (core, view) = ShowGallerySettings();
+
+        view.FindControl<ComboBox>("DisplayModeComboBox")!.SelectedItem = view.FindControl<ComboBoxItem>(itemName);
+
+        Assert.Equal(expected, core.GallerySettings.ExpandedGalleryDisplayMode.Value);
+        Assert.Equal(expected, Settings.Gallery.ExpandedGalleryDisplayMode);
+        Assert.Equal(expected is GalleryDisplayMode.Rows, Settings.Gallery.RowsWasLastUsedDisplayMode);
+    }
+
+    [AvaloniaFact]
+    public void SettingsComboBox_PickingColumnsAfterRows_SetsColumnsAndStillRemembersRows()
+    {
+        var (core, view) = ShowGallerySettings();
+        var comboBox = view.FindControl<ComboBox>("DisplayModeComboBox")!;
+        comboBox.SelectedItem = view.FindControl<ComboBoxItem>("DisplayModeRowsItem");
+
+        comboBox.SelectedItem = view.FindControl<ComboBoxItem>("DisplayModeColumnsItem");
+
+        Assert.Equal(GalleryDisplayMode.Columns, core.GallerySettings.ExpandedGalleryDisplayMode.Value);
+        Assert.Equal(GalleryDisplayMode.Columns, Settings.Gallery.ExpandedGalleryDisplayMode);
+        Assert.True(Settings.Gallery.RowsWasLastUsedDisplayMode);
+    }
+
+    [AvaloniaTheory]
+    [InlineData("DisplayModeColumnsItem", GalleryDisplayMode.Columns)]
+    [InlineData("DisplayModeMasonryItem", GalleryDisplayMode.Masonry)]
+    [InlineData("DisplayModeRowsItem", GalleryDisplayMode.Rows)]
+    public void SettingsComboBox_CommandSetsDisplayMode_ShowsIt(string itemName, GalleryDisplayMode mode)
+    {
+        var (core, view) = ShowGallerySettings();
+        var comboBox = view.FindControl<ComboBox>("DisplayModeComboBox")!;
+
+        // Pick something else in the combo box first, so it has to follow the command rather than keep its selection
+        comboBox.SelectedIndex = mode is GalleryDisplayMode.Columns ? 1 : 0;
+        core.GallerySettings.SetExpandedDisplayModeCommand.Execute(mode);
+
+        Assert.Same(view.FindControl<ComboBoxItem>(itemName), comboBox.SelectedItem);
+    }
+
+    [AvaloniaFact]
+    public void SettingsComboBox_ToggleCommandFromColumns_ShowsMasonry()
+    {
+        var (core, view) = ShowGallerySettings();
+
+        core.GallerySettings.ToggleExpandedDisplayModeCommand.Execute(Unit.Default);
+
+        Assert.Same(view.FindControl<ComboBoxItem>("DisplayModeMasonryItem"),
+            view.FindControl<ComboBox>("DisplayModeComboBox")!.SelectedItem);
+    }
+
+    // Review Focus 4. Showing the settings selects the saved mode in the combo box, which raises SelectionChanged and so
+    // runs the command. In every saved state that must write nothing: no new value, no change to which of Masonry and
+    // Rows was used last, no save
+    [AvaloniaTheory]
+    [InlineData(GalleryDisplayMode.Columns, true, "DisplayModeColumnsItem")]
+    [InlineData(GalleryDisplayMode.Columns, false, "DisplayModeColumnsItem")]
+    [InlineData(GalleryDisplayMode.Masonry, false, "DisplayModeMasonryItem")]
+    [InlineData(GalleryDisplayMode.Rows, true, "DisplayModeRowsItem")]
+    // A file edited by hand, where the last used mode disagrees with the saved one, is left as it is too
+    [InlineData(GalleryDisplayMode.Masonry, true, "DisplayModeMasonryItem")]
+    [InlineData(GalleryDisplayMode.Rows, false, "DisplayModeRowsItem")]
+    public void SettingsComboBox_Shown_ShowsTheSavedModeAndWritesNothing(GalleryDisplayMode saved, bool rowsWasLastUsed,
+        string itemName)
+    {
+        Settings.Gallery.ExpandedGalleryDisplayMode = saved;
+        Settings.Gallery.RowsWasLastUsedDisplayMode = rowsWasLastUsed;
+        // As ShowGallerySettings, with the setting watched from before the view exists
+        var core = new CoreViewModel(null, _ => ValueTask.FromResult(new ImageModel()));
+        core.GallerySettings.Initialize();
+        var idle = core.GallerySettings.Saving;
+        var published = 0;
+        using var subscription = core.GallerySettings.ExpandedGalleryDisplayMode.Skip(1).Subscribe(_ => published++);
+        var view = new GallerySettingsView();
+        var window = new Window { DataContext = core, Content = view };
+
+        window.Show();
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Same(view.FindControl<ComboBoxItem>(itemName),
+            view.FindControl<ComboBox>("DisplayModeComboBox")!.SelectedItem);
+        // Only the write-through writes the record and saves, and it runs once for each value the setting publishes
+        Assert.Equal(0, published);
+        // A save that was started would have replaced the idle task
+        Assert.Same(idle, core.GallerySettings.Saving);
+        Assert.Equal(saved, core.GallerySettings.ExpandedGalleryDisplayMode.Value);
+        Assert.Equal(saved, Settings.Gallery.ExpandedGalleryDisplayMode);
+        Assert.Equal(rowsWasLastUsed, Settings.Gallery.RowsWasLastUsedDisplayMode);
+    }
+
+    [Fact]
+    public void SettingsSearch_GalleryDisplayMode_IsSuggestedAndTaggedWithItsModes()
+    {
+        Assert.True(TranslationManager.LoadLanguage("en"));
+        var data = new SettingsSearchData();
+
+        var item = Assert.Single(SettingsSearchIndex.Build(data), x => x.Name == "Gallery display mode");
+
+        // Picking the suggestion searches for its name, so the tags must hold the name too
+        Assert.Equal(data.GalleryDisplayModeSearchTags, item.Tags);
+        Assert.Contains("Gallery display mode", item.Tags);
+        Assert.Contains("Columns", item.Tags);
+        Assert.Contains("Masonry", item.Tags);
+        Assert.Contains("Rows", item.Tags);
+    }
+
+    private static (CoreViewModel Core, GallerySettingsView View) ShowGallerySettings()
+    {
+        var core = new CoreViewModel(null, _ => ValueTask.FromResult(new ImageModel()));
+        core.GallerySettings.Initialize();
+        var view = new GallerySettingsView();
+        var window = new Window { DataContext = core, Content = view };
+        window.Show();
+        return (core, view);
+    }
+
     private static ContextMenu MenuOf(GalleryView view, TabViewModel tab)
     {
         var menu = ((Panel)view.Content!).ContextMenu!;
