@@ -33,10 +33,18 @@ public class CropService(TabViewModel tabViewModel, MainWindow mainWindow) : ICr
             return;
         }
 
+        var displayedBitmap = tabViewModel.DisplayPrimaryImage.CurrentValue as Bitmap;
+        var pixelWidth = displayedBitmap is not null
+            ? (uint)displayedBitmap.PixelSize.Width
+            : tabViewModel.Model.PixelWidth;
+        var pixelHeight = displayedBitmap is not null
+            ? (uint)displayedBitmap.PixelSize.Height
+            : tabViewModel.Model.PixelHeight;
+
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
-            tabViewModel.Crop = new CropViewModel(tabViewModel.Zoom, tabViewModel.Model.PixelWidth,
-                tabViewModel.Model.PixelHeight, tabViewModel.Orientation);
+            tabViewModel.Crop = new CropViewModel(tabViewModel.Zoom, pixelWidth,
+                pixelHeight, tabViewModel.Orientation);
         });
 
         IsCropping = true;
@@ -72,7 +80,7 @@ public class CropService(TabViewModel tabViewModel, MainWindow mainWindow) : ICr
 
     public object? GetCroppedImage()
     {
-        if (tabViewModel.Image.CurrentValue is not Bitmap sourceBitmap || tabViewModel.Crop is null)
+        if (tabViewModel.DisplayPrimaryImage.CurrentValue is not Bitmap sourceBitmap || tabViewModel.Crop is null)
         {
             return null;
         }
@@ -155,18 +163,19 @@ public class CropService(TabViewModel tabViewModel, MainWindow mainWindow) : ICr
 
     private (string fileName, FileInfo? fileInfo, Bitmap? bitmap) PrepareCropData()
     {
-        if (tabViewModel.FileInfo is null || !tabViewModel.FileInfo.CurrentValue.Exists)
+        var file = tabViewModel.DisplayPrimaryFileInfo.CurrentValue;
+        if (file is null || !file.Exists)
         {
             return CreateNewCroppedImage();
         }
 
-        return (tabViewModel.FileInfo.Value.FullName, tabViewModel.FileInfo.Value, null);
+        return (file.FullName, file, null);
     }
 
     private (string fileName, FileInfo fileInfo, Bitmap bitmap) CreateNewCroppedImage()
     {
         var fileName = $"{TranslationManager.Translation.Crop} {new Random().Next(9999)}.png";
-        var bitmap = RenderSelection((Bitmap)tabViewModel.Image.CurrentValue!, tabViewModel.Crop!);
+        var bitmap = RenderSelection((Bitmap)tabViewModel.DisplayPrimaryImage.CurrentValue!, tabViewModel.Crop!);
         return (fileName, new FileInfo(fileName), bitmap);
     }
 

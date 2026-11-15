@@ -85,7 +85,7 @@
                 x:Name="BarPinButton"
                 Classes="compareIconBtn"
                 Click="OnBarPinClick"
-                ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.ComparisonPin.Value}">
+                ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.Pin.Value}">
                 <Path
                     Width="13"
                     Height="13"

@@ -372,6 +372,52 @@ public class CompareModesTests
         }
     });
 
+    [AvaloniaFact]
+    public void Aligning_SuppressesPanningAndClearsMarkersOnStop() => WithWindow((window, vm, tab) =>
+    {
+        tab.Display(BitmapModel("a.jpg"), BitmapModel("b.jpg"));
+        vm.GlobalSettings.IsComparing.Value = true;
+        Settle(window);
+
+        var viewer = Assert.IsType<ImageViewer>(ViewOf(tab));
+        var zoom = Assert.IsType<ZoomPanControl>(viewer.FindControl<ZoomPanControl>("ZoomPanControl"));
+        var markers = Assert.IsType<Canvas>(viewer.FindControl<Canvas>("AlignMarkersCanvas"));
+
+        Assert.False(zoom.SuspendPanning);
+
+        tab.IsAligning.Value = true;
+        tab.AlignmentStep.Value = 1;
+        Settle(window);
+
+        Assert.True(zoom.SuspendPanning);
+        Assert.Empty(markers.Children);
+
+        tab.IsAligning.Value = false;
+        tab.AlignmentStep.Value = 0;
+        Settle(window);
+
+        Assert.False(zoom.SuspendPanning);
+        Assert.Empty(markers.Children);
+    });
+
+    [AvaloniaFact]
+    public void CompareBar_BarPinButton_UsesPinAndUnpinTooltips() => WithWindow((window, vm, tab) =>
+    {
+        tab.Display(BitmapModel("a.jpg"), BitmapModel("b.jpg"));
+        vm.GlobalSettings.IsComparing.Value = true;
+        Settle(window);
+
+        var bar = CompareBarOf(tab);
+        var pinBtn = Assert.IsType<Button>(bar.FindControl<Button>("BarPinButton"));
+
+        Assert.Equal(vm.Translation.Pin.Value, ToolTip.GetTip(pinBtn));
+
+        pinBtn.RaiseEvent(new global::Avalonia.Interactivity.RoutedEventArgs(Button.ClickEvent));
+        Settle(window);
+
+        Assert.Equal(vm.Translation.Unpin.Value, ToolTip.GetTip(pinBtn));
+    });
+
     private static PicBox CompareImageOf(PicView.Core.ViewModels.TabViewModel tab)
     {
         var viewer = Assert.IsType<ImageViewer>(ViewOf(tab));

@@ -42,7 +42,6 @@ public class GlobalSettingsViewModel
     public BindableReactiveProperty<bool> IsComparisonBlinkFast { get; }
     public BindableReactiveProperty<double> ComparisonBlinkInterval { get; }
     public BindableReactiveProperty<bool> IsComparisonStretchFill { get; }
-    public BindableReactiveProperty<bool> IsComparisonSwapped { get; } = new(false);
 
     /// <summary>Whether a tab shows a pair: side-by-side or comparison is on.</summary>
     public ReadOnlyReactiveProperty<bool> IsShowingPair { get; }

@@ -63,6 +63,10 @@
                                                                  Converter={StaticResource DisplayableConverter}}"
                                         Stretch="Fill" />
                                     <uc:MotionPhotoView x:Name="MotionPhotoView" />
+                                    <Canvas
+                                        x:Name="AlignMarkersCanvas"
+                                        IsHitTestVisible="False"
+                                        IsVisible="{CompiledBinding IsAligning.Value}" />
                                 </Grid>
                                 <Grid DockPanel.Dock="Right" IsVisible="{CompiledBinding ParentWindowContext.GlobalSettings.IsSideBySide.Value}">
                                     <customControls:PicBox

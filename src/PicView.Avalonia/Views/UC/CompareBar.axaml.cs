@@ -4,10 +4,13 @@ using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
+using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.FileSystem;
 using PicView.Avalonia.ImageHandling;
+using PicView.Avalonia.UI;
 using PicView.Core.Config;
 using PicView.Core.DebugTools;
+using PicView.Core.Localization;
 using PicView.Core.ViewModels;
 using R3;
 
@@ -89,6 +92,11 @@ public partial class CompareBar : UserControl, IDisposable
     {
         _isBarPinned = !_isBarPinned;
         BarPinButton.Classes.Set("active", _isBarPinned);
+        if (DataContext is TabViewModel tab)
+        {
+            var tr = tab.ParentWindowContext.Translation;
+            ToolTip.SetTip(BarPinButton, _isBarPinned ? tr.Unpin.Value : tr.Pin.Value);
+        }
         if (_isBarPinned)
         {
             StopAutoHideTimer();
@@ -275,7 +283,18 @@ public partial class CompareBar : UserControl, IDisposable
             return;
         }
 
+        using var busy = tab.ClaimBusy();
         var model = await GetImageModel.GetImageModelAsync(new FileInfo(localPath)).ConfigureAwait(true);
+        if (model?.Image is null)
+        {
+            await TooltipHelper.ShowTooltipMessageAsync(
+                TranslationManager.Translation.UnableToRender ?? "Unable to load image",
+                true,
+                topLevel as MainWindow,
+                TimeSpan.FromSeconds(2)).ConfigureAwait(true);
+            return;
+        }
+
         if (isPrimary)
         {
             tab.SetComparisonPrimary(model);

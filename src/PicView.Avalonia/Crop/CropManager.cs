@@ -37,7 +37,7 @@ public static class CropManager
         }
         var tab = vm.WindowTabs.ActiveTab.CurrentValue;
         
-        if (!CanCrop(tab.ImageType.CurrentValue, tab.PairSettings().ShowsPair))
+        if (!CanCrop(tab.DisplayPrimaryImageType.CurrentValue, tab.PairSettings().ShowsPair))
         {
             tab.ShouldCropBeEnabled.Value = false;
             return false;
