@@ -25,4 +25,13 @@ public class GalleryDefaultsTests
             50 + GalleryDefaults.BorderSideThickness + SizeDefaults.VerticalScrollbarSize,
             GalleryDefaults.GetDockedGalleryWidth(50));
     }
+
+    [Fact]
+    public void TileConstants_Values_AreTheMasonryAndRowsFactorsAndTheAspectClamp()
+    {
+        Assert.Equal(4.0 / 3, GalleryDefaults.MasonryColumnWidthFactor);
+        Assert.Equal(2.0, GalleryDefaults.RowHeightFactor);
+        Assert.Equal(1.0 / 3, GalleryDefaults.MinTileAspectRatio);
+        Assert.Equal(4.0, GalleryDefaults.MaxTileAspectRatio);
+    }
 }
