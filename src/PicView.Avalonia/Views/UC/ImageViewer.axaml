@@ -92,12 +92,16 @@
                             <RotateTransform Angle="{Binding Orientation.Degrees.Value}" />
                         </LayoutTransformControl.LayoutTransform>
                         <zoom:ZoomPanControl x:Name="SyncedLeftZoom">
-                            <customControls:PicBox
-                                x:Name="SyncedLeftImage"
-                                CurrentFileInfo="{Binding DisplayPrimaryFileInfo.Value}"
-                                ImageType="{Binding DisplayPrimaryImageType.Value}"
-                                Source="{CompiledBinding DisplayPrimaryImage.Value,
-                                                         Converter={StaticResource DisplayableConverter}}" />
+                            <Grid x:Name="SyncedLeftContainer" Background="Transparent">
+                                <customControls:PicBox
+                                    x:Name="SyncedLeftImage"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    CurrentFileInfo="{Binding DisplayPrimaryFileInfo.Value}"
+                                    ImageType="{Binding DisplayPrimaryImageType.Value}"
+                                    Source="{CompiledBinding DisplayPrimaryImage.Value,
+                                                             Converter={StaticResource DisplayableConverter}}" />
+                            </Grid>
                         </zoom:ZoomPanControl>
                     </LayoutTransformControl>
                     <Border
@@ -136,12 +140,16 @@
                             <RotateTransform Angle="{Binding Orientation.Degrees.Value}" />
                         </LayoutTransformControl.LayoutTransform>
                         <zoom:ZoomPanControl x:Name="SyncedRightZoom">
-                            <customControls:PicBox
-                                x:Name="SyncedRightImage"
-                                CurrentFileInfo="{Binding DisplaySecondaryFileInfo.Value}"
-                                ImageType="{Binding DisplaySecondaryImageType.Value}"
-                                Source="{CompiledBinding DisplaySecondaryImage.Value,
-                                                         Converter={StaticResource DisplayableConverter}}" />
+                            <Grid x:Name="SyncedRightContainer" Background="Transparent">
+                                <customControls:PicBox
+                                    x:Name="SyncedRightImage"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    CurrentFileInfo="{Binding DisplaySecondaryFileInfo.Value}"
+                                    ImageType="{Binding DisplaySecondaryImageType.Value}"
+                                    Source="{CompiledBinding DisplaySecondaryImage.Value,
+                                                             Converter={StaticResource DisplayableConverter}}" />
+                            </Grid>
                         </zoom:ZoomPanControl>
                     </LayoutTransformControl>
                     <Border

@@ -127,11 +127,11 @@ public partial class CompareBar : UserControl, IDisposable
             })
             .AddTo(ref _subscriptions);
 
-        tab.Zoom.Level
-            .Subscribe(level =>
+        tab.Zoom.FactorPercent
+            .Subscribe(percent =>
             {
-                ZoomPercentText.Text = $"{level:0}%";
-                ZoomOutButton.IsEnabled = !(Settings.Zoom.AvoidZoomingOut && level <= 100.5);
+                ZoomPercentText.Text = $"{percent}%";
+                ZoomOutButton.IsEnabled = !(Settings.Zoom.AvoidZoomingOut && tab.Zoom.Factor <= 1.001);
             })
             .AddTo(ref _subscriptions);
 
