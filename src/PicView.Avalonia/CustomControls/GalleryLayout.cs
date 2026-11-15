@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Layout;
 using PicView.Core.ViewModels;
@@ -10,6 +11,7 @@ namespace PicView.Avalonia.CustomControls;
 /// <param name="LayoutScale">
 ///     Device pixels per DIP, as layout rounding uses it: <see cref="LayoutHelper.GetLayoutScale" /> of the panel.
 /// </param>
+[StructLayout(LayoutKind.Auto)]
 public readonly record struct GalleryLayoutOptions(Orientation Orientation, bool IsExpanded, double ItemHeight,
     double ItemWidth, double ItemSpacing, double LineSpacing, double WrapHeightOverride, double LayoutScale = 1);
 
@@ -153,23 +155,25 @@ public sealed class GalleryLayout
             }
         }
 
-        if (options.IsExpanded && currentColumnStartIndex < _bounds.Count)
+        switch (options.IsExpanded)
         {
-            // Apply max width to the very last column
-            for (var j = currentColumnStartIndex; j < _bounds.Count; j++)
+            case true when currentColumnStartIndex < _bounds.Count:
             {
-                var rect = _bounds[j];
-                _bounds[j] = new Rect(rect.X, rect.Y, currentColumnMaxWidth, rect.Height);
-            }
-        }
+                // Apply max width to the very last column
+                for (var j = currentColumnStartIndex; j < _bounds.Count; j++)
+                {
+                    var rect = _bounds[j];
+                    _bounds[j] = new Rect(rect.X, rect.Y, currentColumnMaxWidth, rect.Height);
+                }
 
-        if (!options.IsExpanded)
-        {
-            // Exact extent without deducting spacing
-            Extent = options.Orientation == Orientation.Vertical
-                ? new Size(availableSize.Width, currentY)
-                : new Size(currentX, options.ItemHeight);
-            return;
+                break;
+            }
+            case false:
+                // Exact extent without deducting spacing
+                Extent = options.Orientation == Orientation.Vertical
+                    ? new Size(availableSize.Width, currentY)
+                    : new Size(currentX, options.ItemHeight);
+                return;
         }
 
         var totalWidth = currentX + currentColumnMaxWidth;
