@@ -1,6 +1,7 @@
 using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Layout;
+using PicView.Core.Gallery;
 using PicView.Core.ViewModels;
 
 namespace PicView.Avalonia.CustomControls;
@@ -11,13 +12,22 @@ namespace PicView.Avalonia.CustomControls;
 /// <param name="LayoutScale">
 ///     Device pixels per DIP, as layout rounding uses it: <see cref="LayoutHelper.GetLayoutScale" /> of the panel.
 /// </param>
+/// <param name="DisplayMode">
+///     How the Expanded Gallery lays out its items. The Docked Gallery ignores it.
+/// </param>
+/// <param name="WrapWidthOverride">
+///     The width Masonry and Rows wrap at instead of the available width. NaN, or not above 0, means not set.
+/// </param>
 [StructLayout(LayoutKind.Auto)]
 public readonly record struct GalleryLayoutOptions(Orientation Orientation, bool IsExpanded, double ItemHeight,
-    double ItemWidth, double ItemSpacing, double LineSpacing, double WrapHeightOverride, double LayoutScale = 1);
+    double ItemWidth, double ItemSpacing, double LineSpacing, double WrapHeightOverride, double LayoutScale = 1,
+    GalleryDisplayMode DisplayMode = GalleryDisplayMode.Columns, double WrapWidthOverride = double.NaN);
 
 /// <summary>
 ///     Where each Gallery Item sits, and the offsets along the scroll axis that center or hold one.
-///     The scroll axis is Y in the vertical Docked Gallery and X everywhere else.
+///     The scroll axis is Y in the vertical Docked Gallery and in the Expanded Gallery's Masonry and Rows, and X
+///     everywhere else. In Masonry and Rows every edge is on a whole device pixel, and an item's top never decreases
+///     with its index.
 ///     <para>
 ///         The bounds are in the panel's coordinates. The offsets are the scroll viewer's, which scrolls over the
 ///         panel's margin too, as the Expanded Gallery has one: the items start that margin into what it scrolls.
@@ -49,6 +59,16 @@ public sealed class GalleryLayout
     private double _scale = 1;
 
     /// <summary>
+    ///     The Masonry placer's buffer for its columns' heights, kept so a layout calculated again allocates nothing.
+    /// </summary>
+    private double[] _columnHeights = [];
+
+    /// <summary>
+    ///     Whether the last <see cref="Calculate" /> placed Masonry or Rows, whose items are searched by their top.
+    /// </summary>
+    private bool _searchesByTop;
+
+    /// <summary>
     ///     The bounds of every item, in item order. <see cref="Calculate" /> and <see cref="Clear" /> change the list
     ///     in place, so read it again after either.
     /// </summary>
@@ -60,16 +80,19 @@ public sealed class GalleryLayout
     public Size Extent { get; private set; }
 
     /// <summary>
-    ///     Whether the last <see cref="Calculate" /> stacked the items in a single column, so the scroll axis is Y.
+    ///     Whether the last <see cref="Calculate" /> scrolls along Y: it stacked the items in a single column, or placed
+    ///     the Expanded Gallery's Masonry or Rows.
     /// </summary>
     public bool ScrollsVertically { get; private set; }
 
     /// <summary>
-    ///     Whether a panel with these properties stacks its items in a single column, so its scroll axis is Y. That is
-    ///     the vertical Docked Gallery; the horizontal one and the Expanded Gallery's columns scroll along X.
+    ///     Whether a panel with these properties scrolls along Y. That is the vertical Docked Gallery, which stacks its
+    ///     items in a single column, and the Expanded Gallery's Masonry and Rows, whatever the orientation; the
+    ///     horizontal Docked Gallery and the Expanded Gallery's columns scroll along X.
     /// </summary>
-    public static bool ScrollsVerticallyFor(Orientation orientation, bool isExpanded)
-        => !isExpanded && orientation == Orientation.Vertical;
+    public static bool ScrollsVerticallyFor(Orientation orientation, bool isExpanded,
+        GalleryDisplayMode displayMode = GalleryDisplayMode.Columns)
+        => isExpanded ? GalleryDisplayModes.ShowsTiles(displayMode) : orientation == Orientation.Vertical;
 
     /// <summary>
     ///     Places every item, replacing the earlier bounds and extent.
@@ -77,15 +100,29 @@ public sealed class GalleryLayout
     /// <param name="items">
     ///     The items in order. Each is <see cref="GalleryLayoutOptions.ItemWidth" /> wide when that is set. Otherwise a
     ///     <see cref="GalleryItemViewModel" /> that has its details takes its width from their aspect ratio, and any
-    ///     other item is a square. Each width is rounded to whole device pixels.
+    ///     other item is a square. Each width is rounded to whole device pixels. The Expanded Gallery's Masonry and Rows
+    ///     ignore <see cref="GalleryLayoutOptions.ItemWidth" /> and clamp the aspect ratio from 1/3 to 4.
     /// </param>
     /// <param name="options">The panel's layout properties.</param>
     /// <param name="availableSize">The size the panel was given.</param>
     public void Calculate(IReadOnlyList<object?> items, GalleryLayoutOptions options, Size availableSize)
     {
         _bounds.Clear();
-        ScrollsVertically = ScrollsVerticallyFor(options.Orientation, options.IsExpanded);
+        ScrollsVertically = ScrollsVerticallyFor(options.Orientation, options.IsExpanded, options.DisplayMode);
         _scale = options.LayoutScale > 0 && double.IsFinite(options.LayoutScale) ? options.LayoutScale : 1;
+        _searchesByTop = options.IsExpanded && GalleryDisplayModes.ShowsTiles(options.DisplayMode);
+        if (_searchesByTop)
+        {
+            var wrapWidth = double.IsNaN(options.WrapWidthOverride) || options.WrapWidthOverride <= 0
+                ? availableSize.Width
+                : options.WrapWidthOverride;
+            Extent = MasonryPlacement.Place(items,
+                new GalleryPlacementOptions(wrapWidth, options.ItemHeight, options.ItemSpacing, options.LineSpacing,
+                    _scale),
+                _bounds, ref _columnHeights);
+            return;
+        }
+
         var itemSpacing = Snap(options.ItemSpacing);
         var lineSpacing = Snap(options.LineSpacing);
 
@@ -191,6 +228,7 @@ public sealed class GalleryLayout
         Extent = default;
         ScrollsVertically = false;
         _scale = 1;
+        _searchesByTop = false;
     }
 
     /// <summary>
@@ -252,8 +290,9 @@ public sealed class GalleryLayout
     }
 
     /// <summary>
-    ///     The index of the item whose <see cref="Middle" /> is nearest the position. When two are equally near, or
-    ///     several share a middle as a column of the Expanded Gallery does, the lowest index wins.
+    ///     The index of the item whose <see cref="Middle" /> is nearest the position in the Docked Gallery and the
+    ///     Expanded Gallery's columns, or whose top is nearest in Masonry and Rows. When two are equally near, or
+    ///     several share a middle or a top as a column of the Expanded Gallery or a row does, the lowest index wins.
     /// </summary>
     /// <returns>The index, or -1 when there are no bounds.</returns>
     public int IndexNearest(double position)
@@ -263,7 +302,7 @@ public sealed class GalleryLayout
             return -1;
         }
 
-        // Middle never decreases with the index, so the nearest middle is next to where the position would go
+        // The search position never decreases with the index, so the nearest is next to where the position would go
         var after = FirstIndexAtOrAfter(position);
         if (after == 0)
         {
@@ -272,11 +311,11 @@ public sealed class GalleryLayout
 
         if (after == _bounds.Count)
         {
-            return FirstIndexAtOrAfter(Middle(_bounds.Count - 1));
+            return FirstIndexAtOrAfter(SearchPosition(_bounds.Count - 1));
         }
 
-        var before = Middle(after - 1);
-        return position - before <= Middle(after) - position ? FirstIndexAtOrAfter(before) : after;
+        var before = SearchPosition(after - 1);
+        return position - before <= SearchPosition(after) - position ? FirstIndexAtOrAfter(before) : after;
     }
 
     /// <summary>
@@ -316,8 +355,9 @@ public sealed class GalleryLayout
     }
 
     /// <summary>
-    ///     The first index whose <see cref="Middle" /> is not before the position, or the count when all are. Middle never
-    ///     decreases with the index, so this is a binary search.
+    ///     The first index whose search position, the <see cref="Middle" /> in the Docked Gallery and the Expanded
+    ///     Gallery's columns and the top in Masonry and Rows, is not before the position, or the count when all are.
+    ///     The search position never decreases with the index, so this is a binary search.
     /// </summary>
     private int FirstIndexAtOrAfter(double position)
     {
@@ -326,7 +366,7 @@ public sealed class GalleryLayout
         while (low < high)
         {
             var mid = low + (high - low) / 2;
-            if (Middle(mid) < position)
+            if (SearchPosition(mid) < position)
             {
                 low = mid + 1;
             }
@@ -338,6 +378,12 @@ public sealed class GalleryLayout
 
         return low;
     }
+
+    /// <summary>
+    ///     What <see cref="IndexNearest" /> compares: the item's top in Masonry and Rows, its <see cref="Middle" />
+    ///     everywhere else.
+    /// </summary>
+    private double SearchPosition(int index) => _searchesByTop ? _bounds[index].Y : Middle(index);
 
     /// <summary>
     ///     Where a view at <paramref name="offset" /> moves to on its way to <paramref name="target" />, on whole device

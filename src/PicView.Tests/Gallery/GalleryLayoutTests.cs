@@ -29,6 +29,30 @@ public class GalleryLayoutTests
     private static double[] DevicePixels(IEnumerable<double> dips, double scale) =>
         dips.Select(value => DevicePixels(value, scale)).ToArray();
 
+    // Item size 75: a Masonry column is at least 100 wide (75 × 4/3) and the Rows target height is 150 (75 × 2)
+    private static readonly GalleryLayoutOptions Masonry = new(Orientation.Vertical, IsExpanded: true, ItemHeight: 75,
+        ItemWidth: double.NaN, ItemSpacing: 10, LineSpacing: 10, WrapHeightOverride: double.NaN,
+        DisplayMode: GalleryDisplayMode.Masonry);
+
+    private static object?[] SevenTiles() =>
+    [
+        Item(100, 100), Item(200, 100), Item(100, 200), Item(100, 100), Item(100, 100), new GalleryItemViewModel(),
+        Item(100, 100)
+    ];
+
+    /// <summary>Sizes from 200 to 3990 a side, the same every run, with ratios past both ends of the tile clamp.</summary>
+    private static object?[] Varied(int count) => Enumerable.Range(0, count)
+        .Select(i => (object?)Item((uint)(200 + i * 37 % 380 * 10), (uint)(200 + i * 91 % 380 * 10))).ToArray();
+
+    private static void AssertOnDevicePixels(IReadOnlyList<Rect> bounds, double scale)
+    {
+        foreach (var rect in bounds)
+        {
+            double[] edges = [rect.X, rect.Y, rect.Right, rect.Bottom];
+            Assert.All(edges, edge => Assert.Equal(Math.Round(DevicePixels(edge, scale)), DevicePixels(edge, scale)));
+        }
+    }
+
     [Fact]
     public void Calculate_HorizontalDocked_PlacesItemsSideBySideAtTheirAspectRatio()
     {
@@ -142,6 +166,27 @@ public class GalleryLayoutTests
         var layout = new GalleryLayout();
         layout.Calculate(Squares(2), Docked with { Orientation = orientation, IsExpanded = isExpanded }, new Size(300, 300));
         Assert.Equal(expected, layout.ScrollsVertically);
+    }
+
+    [Theory]
+    [InlineData(Orientation.Horizontal, false, GalleryDisplayMode.Columns, false)]
+    [InlineData(Orientation.Vertical, false, GalleryDisplayMode.Columns, true)]
+    [InlineData(Orientation.Horizontal, true, GalleryDisplayMode.Columns, false)]
+    [InlineData(Orientation.Vertical, true, GalleryDisplayMode.Columns, false)] // Columns wraps, so it scrolls sideways
+    [InlineData(Orientation.Vertical, true, GalleryDisplayMode.Masonry, true)]
+    [InlineData(Orientation.Horizontal, true, GalleryDisplayMode.Masonry, true)]
+    [InlineData(Orientation.Vertical, true, GalleryDisplayMode.Rows, true)]
+    [InlineData(Orientation.Horizontal, false, GalleryDisplayMode.Masonry, false)] // the Docked Gallery has no display mode
+    [InlineData(Orientation.Vertical, false, GalleryDisplayMode.Rows, true)]
+    public void ScrollsVertically_ByOrientationModeAndDisplayMode_IsTrueInTheVerticalDockedGalleryAndInMasonryAndRows(
+        Orientation orientation, bool isExpanded, GalleryDisplayMode displayMode, bool expected)
+    {
+        var layout = new GalleryLayout();
+        layout.Calculate(Squares(2),
+            Docked with { Orientation = orientation, IsExpanded = isExpanded, DisplayMode = displayMode },
+            new Size(300, 300));
+        Assert.Equal(expected, layout.ScrollsVertically);
+        Assert.Equal(expected, GalleryLayout.ScrollsVerticallyFor(orientation, isExpanded, displayMode));
     }
 
     [Theory]
@@ -348,5 +393,218 @@ public class GalleryLayoutTests
         Assert.Equal(new Size(), layout.Extent);
         Assert.False(layout.ScrollsVertically);
         Assert.Equal(-1, layout.IndexNearest(0));
+    }
+
+    [Theory]
+    [InlineData(GalleryDisplayMode.Masonry)]
+    [InlineData(GalleryDisplayMode.Rows)]
+    public void Calculate_DockedWithATileDisplayMode_PlacesTheStripAsBefore(GalleryDisplayMode displayMode)
+    {
+        var layout = new GalleryLayout();
+        layout.Calculate([Item(200, 100), Item(100, 100)], Docked with { DisplayMode = displayMode }, new Size(1000, 100));
+        Assert.Equal([new Rect(0, 0, 200, 100), new Rect(200, 0, 100, 100)], layout.Bounds);
+        Assert.Equal(new Size(300, 100), layout.Extent);
+    }
+
+    [Fact]
+    public void Calculate_Masonry_PlacesEachItemInTheShortestColumnAndTheLeftmostOnATie()
+    {
+        var layout = new GalleryLayout();
+        layout.Calculate(SevenTiles(), Masonry, new Size(320, 500)); // three columns of 100 at 0, 110 and 220
+        Assert.Equal(
+        [
+            new Rect(0, 0, 100, 100),     // every column is empty: the leftmost
+            new Rect(110, 0, 100, 50),    // the second and third are empty: the left one. 2:1 is half as tall
+            new Rect(220, 0, 100, 200),   // 1:2 is twice as tall
+            new Rect(110, 60, 100, 100),  // the columns end at 110, 60 and 210
+            new Rect(0, 110, 100, 100),   // 110, 170, 210
+            new Rect(110, 170, 100, 100), // 220, 170, 210. An item not read yet is a square
+            new Rect(220, 210, 100, 100)  // 220, 280, 210
+        ], layout.Bounds);
+        Assert.Equal(new Size(320, 310), layout.Extent); // the third column ends at 320, less the spacing under it
+        Assert.True(layout.ScrollsVertically);
+    }
+
+    [Theory]
+    [InlineData(99, 1, 99)]     // narrower than one column: still one
+    [InlineData(209, 1, 209)]
+    [InlineData(210, 2, 100)]   // 100 + 10 + 100
+    [InlineData(317, 2, 153)]   // 153.5 each, down to the whole pixel
+    [InlineData(320, 3, 100)]
+    [InlineData(320.9, 3, 100)] // the part of a pixel is left over
+    [InlineData(322, 3, 100)]   // 100.67 each: rounding up would end past the width
+    [InlineData(430, 4, 100)]
+    public void Calculate_MasonryByWidth_FitsColumnsOfAtLeastTheMinimumWidth(double width, int columns, double columnWidth)
+    {
+        var layout = new GalleryLayout();
+        layout.Calculate(Squares(8), Masonry, new Size(width, 500));
+        Assert.Equal(columns, layout.Bounds.Select(bounds => bounds.X).Distinct().Count());
+        Assert.All(layout.Bounds, bounds => Assert.Equal(columnWidth, bounds.Width));
+        Assert.Equal(width, layout.Extent.Width);
+    }
+
+    [Fact]
+    public void Calculate_MasonryExtremeRatiosAndItemsWithoutASize_ClampsToOneThirdAndFourAndPlacesSquares()
+    {
+        var unreadable = new GalleryItemViewModel();
+        unreadable.SetDetails(GalleryFileDetails.Unreadable);
+        var layout = new GalleryLayout();
+        layout.Calculate([Item(100, 2000), Item(4000, 100), new GalleryItemViewModel(), unreadable], Masonry,
+            new Size(100, 500));
+        Assert.Equal([new Rect(0, 0, 100, 300), new Rect(0, 310, 100, 25), new Rect(0, 345, 100, 100),
+            new Rect(0, 455, 100, 100)], layout.Bounds);
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(double.PositiveInfinity)]
+    public void Calculate_MasonryWithoutAUsableWidth_PlacesOneColumnOfTheMinimumWidth(double width)
+    {
+        var layout = new GalleryLayout();
+        layout.Calculate([Item(200, 100), Item(100, 100)], Masonry, new Size(width, 500));
+        Assert.Equal([new Rect(0, 0, 100, 50), new Rect(0, 60, 100, 100)], layout.Bounds);
+        Assert.Equal(new Size(100, 160), layout.Extent);
+    }
+
+    [Theory]
+    [InlineData(320, 3)]        // wraps at the override, not at the 1000 available
+    [InlineData(double.NaN, 9)] // not set: (1000 + 10) / 110 columns
+    [InlineData(0, 9)]
+    public void Calculate_MasonryWrapWidthOverride_WrapsAtItWhenSet(double wrapWidth, int columns)
+    {
+        var layout = new GalleryLayout();
+        layout.Calculate(Squares(12), Masonry with { WrapWidthOverride = wrapWidth }, new Size(1000, 500));
+        Assert.Equal(columns, layout.Bounds.Select(bounds => bounds.X).Distinct().Count());
+        Assert.Equal(wrapWidth > 0 ? wrapWidth : 1000, layout.Extent.Width);
+    }
+
+    // At 125%, 320 is 400 device pixels, a spacing of 10 is 12.5, which rounds to 12, and a column is at least 125:
+    // three columns of (400 − 24) / 3, down to 125
+    [Fact]
+    public void Calculate_MasonryAtAFractionalScale_PutsColumnsGapsAndHeightsOnWholeDevicePixels()
+    {
+        var layout = new GalleryLayout();
+        layout.Calculate([Item(4000, 3000), Item(2000, 3000), Item(100, 100), Item(100, 100)],
+            Masonry with { LayoutScale = 1.25 }, new Size(320, 500));
+        Assert.Equal<double>([0, 137, 274, 0], DevicePixels(layout.Bounds.Select(bounds => bounds.X), 1.25));
+        Assert.Equal<double>([0, 0, 0, 106], DevicePixels(layout.Bounds.Select(bounds => bounds.Y), 1.25)); // 94 + 12
+        Assert.Equal<double>([125, 125, 125, 125], DevicePixels(layout.Bounds.Select(bounds => bounds.Width), 1.25));
+        // 125 / (4/3) = 93.75 and 125 / (2/3) = 187.5
+        Assert.Equal<double>([94, 188, 125, 125], DevicePixels(layout.Bounds.Select(bounds => bounds.Height), 1.25));
+        Assert.Equal(231, DevicePixels(layout.Extent.Height, 1.25)); // 106 + 125
+    }
+
+    [Theory]
+    [InlineData(1)]
+    [InlineData(1.25)]
+    [InlineData(1.5)]
+    [InlineData(2)]
+    [InlineData(2.5)]
+    public void Calculate_MasonryVariedItemsAtAnyScale_KeepsTopsFromDecreasingAndEveryEdgeOnADevicePixel(double scale)
+    {
+        var layout = new GalleryLayout();
+        layout.Calculate(Varied(300), Masonry with { LayoutScale = scale }, new Size(1000, 500));
+        var bounds = layout.Bounds;
+
+        Assert.Equal(9, bounds.Select(rect => rect.X).Distinct().Count());
+        AssertOnDevicePixels(bounds, scale);
+        Assert.All(bounds, rect => Assert.True(DevicePixels(rect.Right, scale) <= DevicePixels(1000, scale)));
+        Assert.Equal(bounds.Max(rect => rect.Bottom), layout.Extent.Height, 6);
+        for (var i = 1; i < bounds.Count; i++)
+        {
+            Assert.True(bounds[i].Y >= bounds[i - 1].Y, $"Item {i} starts above item {i - 1}");
+        }
+
+        for (var i = 0; i < bounds.Count; i++)
+        {
+            var found = layout.IndexNearest(bounds[i].Y); // the first item at that top
+            Assert.True(found <= i && bounds[found].Y.Equals(bounds[i].Y), $"Item {i}'s top finds item {found}");
+        }
+    }
+
+    // At 250% half a DIP is more than a device pixel. "Shorter" is compared in whole device pixels (the design's call,
+    // departing from the fork's 0.5 DIP tolerance), so a column one device pixel shorter takes the next item
+    [Fact]
+    public void Calculate_MasonryColumnOneDevicePixelShorterAt250Percent_IsShorterNotATie()
+    {
+        var layout = new GalleryLayout();
+        // 210 is 525 device pixels: two columns of 250, 25 apart. The first item is 251 high there, the second 250
+        layout.Calculate([Item(250, 251), Item(100, 100), Item(100, 100), Item(100, 100)],
+            Masonry with { LayoutScale = 2.5 }, new Size(210, 500));
+        Assert.Equal<double>([0, 275, 275, 0], DevicePixels(layout.Bounds.Select(bounds => bounds.X), 2.5));
+        // The columns end at 276 and 275. With the fork's tolerance the third item would go left, to 276, and the
+        // fourth right, to 275: a top that decreases
+        Assert.Equal<double>([0, 0, 275, 276], DevicePixels(layout.Bounds.Select(bounds => bounds.Y), 2.5));
+    }
+
+    // The design: LineSpacing is the gap between columns, ItemSpacing the gap between the items of a column
+    [Fact]
+    public void Calculate_MasonryWithDifferentSpacings_PutsLineSpacingBetweenColumnsAndItemSpacingBetweenItems()
+    {
+        var layout = new GalleryLayout();
+        layout.Calculate(Squares(4), Masonry with { ItemSpacing = 6, LineSpacing = 20 }, new Size(220, 500));
+        Assert.Equal([new Rect(0, 0, 100, 100), new Rect(120, 0, 100, 100), new Rect(0, 106, 100, 100),
+            new Rect(120, 106, 100, 100)], layout.Bounds);
+        Assert.Equal(new Size(220, 206), layout.Extent);
+    }
+
+    // The seven's tops are 0, 0, 0, 60, 110, 170, 210. Their middles, 50, 25, 100, 110, 160, 220, 260, are not in order
+    [Theory]
+    [InlineData(-50, 0)]
+    [InlineData(30, 0)]   // as near the tops at 0 as the one at 60: the lowest index
+    [InlineData(31, 3)]
+    [InlineData(100, 4)]
+    [InlineData(140, 4)]  // as near 110 as 170
+    [InlineData(141, 5)]
+    [InlineData(5000, 6)]
+    public void IndexNearest_Masonry_PicksTheItemWhoseTopIsNearest(double position, int expected)
+    {
+        var layout = new GalleryLayout();
+        layout.Calculate(SevenTiles(), Masonry, new Size(320, 500));
+        Assert.Equal(expected, layout.IndexNearest(position));
+    }
+
+    [Fact]
+    public void IndexNearest_DockedAfterMasonry_SearchesByTheMiddleAgain()
+    {
+        var layout = new GalleryLayout();
+        layout.Calculate(SevenTiles(), Masonry, new Size(320, 500));
+        layout.Calculate(Squares(10), Docked, new Size(300, 100));
+        Assert.Equal(5, layout.IndexNearest(550)); // every top in the strip is 0
+    }
+
+    [Theory]
+    [InlineData(105, 50, 2, 4)] // 105 to 155: item 5 starts at 170, past it, and the search stops there
+    [InlineData(165, 30, 2, 5)] // 165 to 195: item 3 ends at 160 and misses it, between items 2 and 4 that reach it
+    public void IndicesIn_Masonry_ReturnsTheFirstAndLastItemsTheAreaReaches(double top, double height, int first, int last)
+    {
+        var layout = new GalleryLayout();
+        layout.Calculate(SevenTiles(), Masonry, new Size(320, 500));
+        Assert.Equal((first, last), layout.IndicesIn(new Rect(0, top, 320, height)));
+    }
+
+    [Theory]
+    [InlineData(2, 50)]  // 200 tall from 0: its middle, 100, less half the view
+    [InlineData(5, 170)] // 100 tall from 170, as tall as the view
+    [InlineData(6, 210)] // clamped at the end: 310 − 100
+    [InlineData(1, 0)]   // clamped at the start
+    public void CenterOffset_MasonryInA100View_CentersOrClampsAlongTheHeight(int index, double expected)
+    {
+        var layout = new GalleryLayout();
+        layout.Calculate(SevenTiles(), Masonry, new Size(320, 500));
+        Assert.Equal(expected, layout.CenterOffset(index, 100));
+    }
+
+    [Fact]
+    public void Calculate_MasonryCalculatedAgain_AllocatesNothing()
+    {
+        var items = Squares(500);
+        var layout = new GalleryLayout();
+        layout.Calculate(items, Masonry, new Size(1000, 500));
+
+        var before = GC.GetAllocatedBytesForCurrentThread();
+        layout.Calculate(items, Masonry, new Size(1000, 500));
+
+        Assert.Equal(0L, GC.GetAllocatedBytesForCurrentThread() - before);
     }
 }
