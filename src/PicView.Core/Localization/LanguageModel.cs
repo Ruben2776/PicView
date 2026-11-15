@@ -81,6 +81,18 @@ public class LanguageModel
     public string? Comment { get; set; }
     public string? Comparison { get; set; }
     public string? ComparisonTooltip { get; set; }
+    public string? ComparisonOverlay { get; set; }
+    public string? ComparisonSplit { get; set; }
+    public string? ComparisonSideBySide { get; set; }
+    public string? ComparisonBlink { get; set; }
+    public string? ComparisonDifference { get; set; }
+    public string? ComparisonCustom { get; set; }
+    public string? ComparisonFit { get; set; }
+    public string? ComparisonSwap { get; set; }
+    public string? ComparisonSideBySideFit { get; set; }
+    public string? ComparisonSideBySideSynced { get; set; }
+    public string? ComparisonPickA { get; set; }
+    public string? ComparisonPickB { get; set; }
     public string? CompressedBitsPixel { get; set; }
     public string? Compression { get; set; }
     public string? ConstrainBackgroundToImage { get; set; }

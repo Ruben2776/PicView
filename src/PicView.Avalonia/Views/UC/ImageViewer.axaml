@@ -21,7 +21,7 @@
             Background="{CompiledBinding ParentWindowContext.GlobalSettings.ImageBackground.Value,
                                          Mode=OneWay}"
             DockPanel.Dock="Left">
-            <LayoutTransformControl x:Name="MainTransform">
+            <LayoutTransformControl x:Name="MainTransform" IsVisible="{CompiledBinding !ParentWindowContext.GlobalSettings.IsSideBySideSyncedActive.Value}">
                 <LayoutTransformControl.LayoutTransform>
                     <RotateTransform Angle="{Binding Orientation.Degrees.Value}" />
                 </LayoutTransformControl.LayoutTransform>
@@ -45,14 +45,14 @@
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
                                 LastChildFill="False">
-                                <Grid DockPanel.Dock="Left">
+                                <Grid x:Name="CompareHostGrid" DockPanel.Dock="Left">
                                     <customControls:PicBox
                                         x:Name="MainImage"
                                         CurrentFileInfo="{Binding FileInfo.Value}"
                                         ImageType="{Binding ImageType.Value}"
                                         Source="{CompiledBinding Image.Value,
                                                                  Converter={StaticResource DisplayableConverter}}" />
-                                    <!--  Comparison: the partner stacked on the main image in Difference. Hidden, so not measured or drawn, while off.
+                                    <!--  Comparison: the partner stacked on the main image. Hidden, so not measured or drawn, while off.
                                           No ImageType: an animation draws its frames without the blend, so only the first frame is compared  -->
                                     <customControls:PicBox
                                         x:Name="CompareImage"
@@ -62,6 +62,44 @@
                                         Source="{CompiledBinding SecondaryImage.Value,
                                                                  Converter={StaticResource DisplayableConverter}}"
                                         Stretch="Fill" />
+                                    <Grid
+                                        x:Name="SplitOverlay"
+                                        Background="Transparent"
+                                        IsVisible="{CompiledBinding ParentWindowContext.GlobalSettings.IsSplitMode.Value}">
+                                        <Border
+                                            x:Name="SplitDividerLine"
+                                            HorizontalAlignment="Left"
+                                            VerticalAlignment="Stretch"
+                                            Width="2"
+                                            Background="#E6FFFFFF"
+                                            BoxShadow="0 0 4 0 #99000000"
+                                            IsHitTestVisible="False" />
+                                        <Border
+                                            x:Name="SplitHandle"
+                                            Width="28"
+                                            Height="28"
+                                            HorizontalAlignment="Left"
+                                            VerticalAlignment="Top"
+                                            Background="#E6222222"
+                                            BorderBrush="#E6FFFFFF"
+                                            BorderThickness="1.5"
+                                            BoxShadow="0 2 8 0 #80000000"
+                                            CornerRadius="14"
+                                            Cursor="SizeWestEast">
+                                            <Path
+                                                x:Name="SplitHandleIcon"
+                                                Width="14"
+                                                Height="14"
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"
+                                                Data="M5,8 L2,11 L5,14 M11,8 L14,11 L11,14 M2,11 L14,11"
+                                                Stretch="Uniform"
+                                                Stroke="#FFFFFFFF"
+                                                StrokeLineCap="Round"
+                                                StrokeJoin="Round"
+                                                StrokeThickness="1.5" />
+                                        </Border>
+                                    </Grid>
                                     <uc:MotionPhotoView x:Name="MotionPhotoView" />
                                 </Grid>
                                 <Grid DockPanel.Dock="Right" IsVisible="{CompiledBinding ParentWindowContext.GlobalSettings.IsSideBySide.Value}">
@@ -78,6 +116,39 @@
                     </customControls:AutoScrollViewer>
                 </zoom:ZoomPanControl>
             </LayoutTransformControl>
+            <Grid
+                x:Name="SyncedSideBySideGrid"
+                Background="Transparent"
+                ColumnDefinitions="*,2,*"
+                IsVisible="{CompiledBinding ParentWindowContext.GlobalSettings.IsSideBySideSyncedActive.Value}">
+                <Grid
+                    Grid.Column="0"
+                    Background="Transparent"
+                    ClipToBounds="True">
+                    <zoom:ZoomPanControl x:Name="SyncedLeftZoom">
+                        <customControls:PicBox
+                            x:Name="SyncedLeftImage"
+                            CurrentFileInfo="{Binding FileInfo.Value}"
+                            ImageType="{Binding ImageType.Value}"
+                            Source="{CompiledBinding Image.Value,
+                                                     Converter={StaticResource DisplayableConverter}}" />
+                    </zoom:ZoomPanControl>
+                </Grid>
+                <Border Grid.Column="1" Background="{DynamicResource HoverBarBorderColor}" />
+                <Grid
+                    Grid.Column="2"
+                    Background="Transparent"
+                    ClipToBounds="True">
+                    <zoom:ZoomPanControl x:Name="SyncedRightZoom">
+                        <customControls:PicBox
+                            x:Name="SyncedRightImage"
+                            CurrentFileInfo="{Binding SecondaryFileInfo.Value}"
+                            ImageType="{Binding SecondaryImageType.Value}"
+                            Source="{CompiledBinding SecondaryImage.Value,
+                                                     Converter={StaticResource DisplayableConverter}}" />
+                    </zoom:ZoomPanControl>
+                </Grid>
+            </Grid>
             <uc:ZoomPreviewer
                 x:Name="ZoomPreview"
                 Margin="0,0,25,25"
@@ -101,6 +172,12 @@
                 x:Name="HoverBar"
                 VerticalAlignment="Bottom"
                 ZIndex="2" />
+            <uc:CompareBar
+                x:Name="CompareBar"
+                Margin="0,0,0,18"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Bottom"
+                ZIndex="3" />
             <!--
                 Floating host for the motion photo badges. Living outside MainTransform,
                 the badges stay upright while the code-behind anchors each one to the

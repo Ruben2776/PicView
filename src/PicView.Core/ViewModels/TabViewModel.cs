@@ -365,6 +365,50 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
         ImageType.Value = primary.ImageType;
     }
 
+    public void SwapComparisonPair()
+    {
+        if (SecondaryImage.Value is null && Image.Value is null)
+        {
+            return;
+        }
+
+        var prevModel = Model;
+        var prevImage = Image.Value;
+        var prevImageType = ImageType.Value;
+        var prevFileInfo = FileInfo.Value;
+
+        Model = SecondaryModel ?? Model;
+        Image.Value = SecondaryImage.Value;
+        ImageType.Value = SecondaryImageType.Value;
+        FileInfo.Value = SecondaryFileInfo.Value;
+
+        SecondaryModel = prevModel;
+        SecondaryImage.Value = prevImage;
+        SecondaryImageType.Value = prevImageType;
+        SecondaryFileInfo.Value = prevFileInfo;
+
+        ParentWindowContext.GlobalSettings.IsComparisonSwapped.Value =
+            !ParentWindowContext.GlobalSettings.IsComparisonSwapped.Value;
+    }
+
+    public void SetComparisonPrimary(ImageModel primary)
+    {
+        Model = primary;
+        FileInfo.Value = primary.FileInfo;
+        Image.Value = primary.Image;
+        ImageType.Value = primary.ImageType;
+        Publish(ShownChange.Image);
+    }
+
+    public void SetComparisonSecondary(ImageModel secondary)
+    {
+        SecondaryModel = secondary;
+        SecondaryFileInfo.Value = secondary.FileInfo;
+        SecondaryImage.Value = secondary.Image;
+        SecondaryImageType.Value = secondary.ImageType;
+        Publish(ShownChange.Image);
+    }
+
     /// <summary>
     /// Records what the tab shows now in its <see cref="ViewHistory"/>, and a file, an archive or a URL in File History
     /// and <see cref="LastFile"/>. Each page of a multi-page TIFF or of an archive is its own entry in the View History.

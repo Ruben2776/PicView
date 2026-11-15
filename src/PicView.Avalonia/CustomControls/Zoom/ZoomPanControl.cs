@@ -1,4 +1,4 @@
-﻿using Avalonia;
+using Avalonia;
 using Avalonia.Animation;
 using Avalonia.Controls;
 using Avalonia.Input;
@@ -621,6 +621,41 @@ public class ZoomPanControl : Decorator
         UpdatePreviewWindow();
 
         ViewChanged?.Invoke();
+    }
+
+    /// <summary>
+    /// Mirrors the scale and translation from <paramref name="source"/> without raising <see cref="ViewChanged"/>.
+    /// </summary>
+    public void SyncTransformFrom(ZoomPanControl source)
+    {
+        if (Child == null)
+        {
+            return;
+        }
+
+        SetTransitions(false);
+        SetScale(source.Scale);
+        TranslateX = source.TranslateX;
+        TranslateY = source.TranslateY;
+
+        if (_transformGroup == null)
+        {
+            _scaleTransform = new ScaleTransform();
+            _translateTransform = new TranslateTransform();
+            _transformGroup = new TransformGroup();
+            _transformGroup.Children.Add(_scaleTransform);
+            _transformGroup.Children.Add(_translateTransform);
+            Child.RenderTransform = _transformGroup;
+            Child.RenderTransformOrigin = new RelativePoint(0, 0, RelativeUnit.Absolute);
+        }
+
+        if (_scaleTransform is not null && _translateTransform is not null)
+        {
+            _scaleTransform.ScaleX = Scale;
+            _scaleTransform.ScaleY = Scale;
+            _translateTransform.X = TranslateX;
+            _translateTransform.Y = TranslateY;
+        }
     }
 
     private void SetTransitions(bool isAnimated)
