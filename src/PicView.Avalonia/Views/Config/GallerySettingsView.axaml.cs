@@ -19,7 +19,7 @@ public partial class GallerySettingsView : UserControl
     protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
     {
         base.OnAttachedToVisualTree(e);
-        FollowStretchModes();
+        FollowGallerySettings();
     }
 
     protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
@@ -28,7 +28,7 @@ public partial class GallerySettingsView : UserControl
         _disposables.Dispose();
     }
 
-    private void FollowStretchModes()
+    private void FollowGallerySettings()
     {
         _disposables.Dispose();
         _disposables = default;
@@ -46,6 +46,11 @@ public partial class GallerySettingsView : UserControl
             .Subscribe(mode => SelectStretchMode(DockedGalleryComboBox, mode),
                 DebugHelper.LogError(nameof(GallerySettingsView), nameof(DockedGalleryComboBox)))
             .AddTo(ref _disposables);
+
+        core.GallerySettings.ExpandedGalleryDisplayMode
+            .Subscribe(SelectDisplayMode,
+                DebugHelper.LogError(nameof(GallerySettingsView), nameof(DisplayModeComboBox)))
+            .AddTo(ref _disposables);
     }
 
     // Each item carries its stretch mode in its Tag, because the numbers of the stretch modes skip removed ones
@@ -59,6 +64,30 @@ public partial class GallerySettingsView : UserControl
                 return;
             }
         }
+    }
+
+    private void SelectDisplayMode(GalleryDisplayMode mode)
+    {
+        foreach (var item in DisplayModeComboBox.Items)
+        {
+            if (item is ComboBoxItem { Tag: GalleryDisplayMode itemMode } && itemMode == mode)
+            {
+                DisplayModeComboBox.SelectedItem = item;
+                return;
+            }
+        }
+    }
+
+    private void DisplayModeComboBox_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
+    {
+        if (DisplayModeComboBox.SelectedItem is not ComboBoxItem { Tag: GalleryDisplayMode mode } ||
+            DataContext is not CoreViewModel core)
+        {
+            return;
+        }
+
+        // The same command as the gallery's own display mode menus
+        core.GallerySettings.SetExpandedDisplayModeCommand.Execute(mode);
     }
 
     private void StretchComboBox_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)

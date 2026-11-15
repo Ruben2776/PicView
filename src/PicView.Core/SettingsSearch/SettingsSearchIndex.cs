@@ -202,6 +202,10 @@ public static class SettingsSearchIndex
         {
             list.Add(new SettingsSearchItem(t.DockedGalleryItemSize, data.GallerySizeSearchTags));
         }
+        if (t.GalleryDisplayMode != null)
+        {
+            list.Add(new SettingsSearchItem(t.GalleryDisplayMode, data.GalleryDisplayModeSearchTags));
+        }
         if (t.GalleryThumbnailStretch != null)
         {
             list.Add(new SettingsSearchItem(t.GalleryThumbnailStretch, data.GalleryStretchSearchTags));
