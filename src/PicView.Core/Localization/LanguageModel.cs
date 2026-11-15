@@ -78,6 +78,7 @@ public class LanguageModel
     public string? ColorPickerToolTooltip { get; set; }
     public string? ColorRepresentation { get; set; }
     public string? ColorTone { get; set; }
+    public string? Columns { get; set; }
     public string? Comment { get; set; }
     public string? CompressedBitsPixel { get; set; }
     public string? Compression { get; set; }
@@ -187,6 +188,7 @@ public class LanguageModel
     public string? Fstop { get; set; }
     public string? FullPath { get; set; }
     public string? Fullscreen { get; set; }
+    public string? GalleryDisplayMode { get; set; }
     public string? GalleryMouseWheel { get; set; }
     public string? GallerySettings { get; set; }
     public string? GalleryThumbnailStretch { get; set; }
@@ -249,6 +251,7 @@ public class LanguageModel
     public string? Low { get; set; }
     public string? Manual { get; set; }
     public string? Margins { get; set; }
+    public string? Masonry { get; set; }
     public string? MaxAperture { get; set; }
     public string? Maximize { get; set; }
     public string? MegaPixels { get; set; }
@@ -366,6 +369,7 @@ public class LanguageModel
     public string? Rotated { get; set; }
     public string? RotateLeft { get; set; }
     public string? RotateRight { get; set; }
+    public string? Rows { get; set; }
     public string? Saturation { get; set; }
     public string? Save { get; set; }
     public string? SaveAs { get; set; }
@@ -460,6 +464,7 @@ public class LanguageModel
     public string? Title { get; set; }
     public string? ToggleBackgroundColor { get; set; }
     public string? ToggleFullscreen { get; set; }
+    public string? ToggleGalleryDisplayMode { get; set; }
     public string? ToggleLooping { get; set; }
     public string? ToggleScroll { get; set; }
     public string? ToggleTaskbarProgress { get; set; }

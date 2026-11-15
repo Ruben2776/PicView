@@ -70,6 +70,7 @@ public class TranslationViewModel
         ColorPickerTool.Value = t.ColorPickerTool;
         ColorPickerToolTooltip.Value = t.ColorPickerToolTooltip;
         ColorRepresentation.Value = t.ColorRepresentation;
+        Columns.Value = t.Columns;
         Comment.Value = t.Comment;
         CompressedBitsPixel.Value = t.CompressedBitsPixel;
         Compression.Value = t.Compression;
@@ -137,6 +138,7 @@ public class TranslationViewModel
         Fstop.Value = t.Fstop;
         Fullscreen.Value = t.Fullscreen;
         FullPath.Value = t.FullPath;
+        GalleryDisplayMode.Value = t.GalleryDisplayMode;
         GalleryMouseWheel.Value = t.GalleryMouseWheel;
         GallerySettings.Value = t.GallerySettings;
         Gamma.Value = t.Gamma;
@@ -184,6 +186,7 @@ public class TranslationViewModel
         Lossless.Value = t.Lossless;
         Lossy.Value = t.Lossy;
         Margins.Value = t.Margins;
+        Masonry.Value = t.Masonry;
         MaxAperture.Value = t.MaxAperture;
         Maximize.Value = t.Maximize;
         MeteringMode.Value = t.MeteringMode;
@@ -282,6 +285,7 @@ public class TranslationViewModel
         Right.Value = t.Right;
         RotateLeft.Value = t.RotateLeft;
         RotateRight.Value = t.RotateRight;
+        Rows.Value = t.Rows;
         Saturation.Value = t.Saturation;
         Save.Value = t.Save;
         SaveAs.Value = t.SaveAs;
@@ -356,6 +360,7 @@ public class TranslationViewModel
         Tint.Value = t.Tint;
         Title.Value = t.Title;
         ToggleFullscreen.Value = t.ToggleFullscreen;
+        ToggleGalleryDisplayMode.Value = t.ToggleGalleryDisplayMode;
         ToggleLooping.Value = t.ToggleLooping;
         ToggleScroll.Value = t.ToggleScroll;
         ToggleTaskbarProgress.Value = t.ToggleTaskbarProgress;
@@ -452,6 +457,7 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> ColorPickerTool { get; } = new();
     public BindableReactiveProperty<string?> ColorPickerToolTooltip { get; } = new();
     public BindableReactiveProperty<string?> ColorRepresentation { get; } = new();
+    public BindableReactiveProperty<string?> Columns { get; } = new();
     public BindableReactiveProperty<string?> Comment { get; } = new();
     public BindableReactiveProperty<string?> CompressedBitsPixel { get; } = new();
     public BindableReactiveProperty<string?> Compression { get; } = new();
@@ -519,6 +525,7 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> Fstop { get; } = new();
     public BindableReactiveProperty<string?> FullPath { get; } = new();
     public BindableReactiveProperty<string?> Fullscreen { get; } = new();
+    public BindableReactiveProperty<string?> GalleryDisplayMode { get; } = new();
     public BindableReactiveProperty<string?> GalleryMouseWheel { get; } = new();
     public BindableReactiveProperty<string?> GallerySettings { get; } = new();
     public BindableReactiveProperty<string?> GalleryThumbnailStretch { get; } = new();
@@ -566,6 +573,7 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> Lossless { get; } = new();
     public BindableReactiveProperty<string?> Lossy { get; } = new();
     public BindableReactiveProperty<string?> Margins { get; } = new();
+    public BindableReactiveProperty<string?> Masonry { get; } = new();
     public BindableReactiveProperty<string?> MaxAperture { get; } = new();
     public BindableReactiveProperty<string?> Maximize { get; } = new();
     public BindableReactiveProperty<string?> MeteringMode { get; } = new();
@@ -664,6 +672,7 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> Right { get; } = new();
     public BindableReactiveProperty<string?> RotateLeft { get; } = new();
     public BindableReactiveProperty<string?> RotateRight { get; } = new();
+    public BindableReactiveProperty<string?> Rows { get; } = new();
     public BindableReactiveProperty<string?> Saturation { get; } = new();
     public BindableReactiveProperty<string?> Save { get; } = new();
     public BindableReactiveProperty<string?> SaveAs { get; } = new();
@@ -738,6 +747,7 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> Tint { get; } = new();
     public BindableReactiveProperty<string?> Title { get; } = new();
     public BindableReactiveProperty<string?> ToggleFullscreen { get; } = new();
+    public BindableReactiveProperty<string?> ToggleGalleryDisplayMode { get; } = new();
     public BindableReactiveProperty<string?> ToggleLooping { get; } = new();
     public BindableReactiveProperty<string?> ToggleScroll { get; } = new();
     public BindableReactiveProperty<string?> ToggleTaskbarProgress { get; } = new();
