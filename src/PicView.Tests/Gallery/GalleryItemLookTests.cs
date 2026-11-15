@@ -74,13 +74,13 @@ public class GalleryItemLookTests
 
     /// <summary>
     /// Times realizing Docked Gallery containers: each round jumps 200 items, so every container is new.
-    /// It asserts no time. Run it in Release and read the line it writes.
+    /// It asserts no time, so it is skipped: remove Skip, run it in Release and read the line it writes.
     /// Results (Release, microseconds per container, median of five runs, then the five):
     /// before the look moved to styles: 1946.1 (1977.1, 1946.1, 1790.6, 2026.4, 1932.8)
     /// after the base style (Task 12): 1984.5 (2025.8, 1984.5, 1842.6, 1925.3, 2032.7)
     /// after the tile look (Task 13): 1884.3 (2146.0, 1854.1, 1884.3, 2033.0, 1825.0)
     /// </summary>
-    [AvaloniaFact]
+    [AvaloniaFact(Skip = "Measurement; remove Skip to run by hand in Release")]
     public void Docked_RealizingContainers_ReportsTimePerContainer()
     {
         const int rounds = 50, warmUpRounds = 10, jump = 200, itemCount = 4000;
@@ -298,7 +298,8 @@ public class GalleryItemLookTests
     {
         Settings.Gallery.DockPosition = GalleryDockPosition.Bottom;
         Settings.Gallery.ExpandedGalleryDisplayMode = displayMode;
-        var core = new CoreViewModel(null, _ => ValueTask.FromResult(new ImageModel()));
+        var core = new CoreViewModel(null, _ => ValueTask.FromResult(new ImageModel()),
+            saveGallerySettings: static () => ValueTask.FromResult(true));
         var window = new TestMainWindow(new NoOpModeAdapter());
         var vm = new MainWindowViewModel(core, core.Translation, core.GlobalSettings!, core.GallerySettings);
         window.DataContext = vm;
