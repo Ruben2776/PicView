@@ -5,15 +5,9 @@
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
     xmlns:gallerySettings="clr-namespace:PicView.Core.Gallery;assembly=PicView.Core"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
-    Width="{CompiledBinding ItemWidth, RelativeSource={RelativeSource FindAncestor, AncestorType=customControls:VirtualizingGallery, Tree=Visual},
-                            Mode=OneWay}"
-    Height="{CompiledBinding ItemHeight, RelativeSource={RelativeSource FindAncestor, AncestorType=customControls:VirtualizingGallery, Tree=Visual},
-                             Mode=OneWay}"
-    Margin="1"
     x:DataType="viewModels:GalleryItemViewModel"
-    Background="{DynamicResource GalleryItemBackgroundColor}"
-    BorderBrush="{DynamicResource GalleryItemBorderColor}"
-    BorderThickness="1">
+    Classes="galleryItem">
+    <!--  Size, margin, padding, border and background come from the styles in GalleryView.axaml  -->
     <customControls:NavigateAbleItem.Resources>
         <ContextMenu x:Key="GalleryContextMenu">
 
@@ -299,7 +293,6 @@
     <Panel
         MinWidth="25"
         MinHeight="25"
-        Margin="1"
         ToolTip.HorizontalOffset="0"
         ToolTip.Placement="TopEdgeAlignedLeft"
         ToolTip.VerticalOffset="0">
