@@ -44,7 +44,42 @@
 
         <Panel.ContextMenu>
             <ContextMenu>
-                <customControls:StyledMenuItem Header="{Binding ParentWindowContext.Translation.Stretch.Value, Mode=OneWay}" IsVisible="{CompiledBinding Gallery.IsGalleryExpanded.Value}">
+                <customControls:StyledMenuItem
+                    Header="{Binding ParentWindowContext.Translation.GalleryDisplayMode.Value, Mode=OneWay}"
+                    IsVisible="{CompiledBinding Gallery.IsGalleryExpanded.Value}"
+                    x:Name="DisplayModeMenuItem">
+                    <MenuItem.Icon>
+                        <Image Height="12" Source="{StaticResource GalleryImage}" Width="12" />
+                    </MenuItem.Icon>
+                    <customControls:StyledMenuItem
+                        Command="{Binding ParentWindowContext.GallerySettings.SetExpandedDisplayModeCommand}"
+                        CommandParameter="{x:Static gallerySettings:GalleryDisplayMode.Columns}"
+                        Header="{Binding ParentWindowContext.Translation.Columns.Value, Mode=OneWay}"
+                        IsChecked="{Binding ParentWindowContext.GallerySettings.IsExpandedDisplayModeColumns.Value, Mode=OneWay}"
+                        ToggleType="Radio"
+                        x:Name="DisplayModeColumnsMenuItem" />
+                    <customControls:StyledMenuItem
+                        Command="{Binding ParentWindowContext.GallerySettings.SetExpandedDisplayModeCommand}"
+                        CommandParameter="{x:Static gallerySettings:GalleryDisplayMode.Masonry}"
+                        Header="{Binding ParentWindowContext.Translation.Masonry.Value, Mode=OneWay}"
+                        IsChecked="{Binding ParentWindowContext.GallerySettings.IsExpandedDisplayModeMasonry.Value, Mode=OneWay}"
+                        ToggleType="Radio"
+                        x:Name="DisplayModeMasonryMenuItem" />
+                    <customControls:StyledMenuItem
+                        Command="{Binding ParentWindowContext.GallerySettings.SetExpandedDisplayModeCommand}"
+                        CommandParameter="{x:Static gallerySettings:GalleryDisplayMode.Rows}"
+                        Header="{Binding ParentWindowContext.Translation.Rows.Value, Mode=OneWay}"
+                        IsChecked="{Binding ParentWindowContext.GallerySettings.IsExpandedDisplayModeRows.Value, Mode=OneWay}"
+                        ToggleType="Radio"
+                        x:Name="DisplayModeRowsMenuItem" />
+                </customControls:StyledMenuItem>
+                <customControls:StyledMenuItem Header="{Binding ParentWindowContext.Translation.Stretch.Value, Mode=OneWay}" x:Name="ExpandedStretchMenuItem">
+                    <MenuItem.IsVisible>
+                        <MultiBinding Converter="{x:Static BoolConverters.And}">
+                            <Binding Path="Gallery.IsGalleryExpanded.Value" />
+                            <Binding Path="ParentWindowContext.GallerySettings.IsExpandedDisplayModeColumns.Value" />
+                        </MultiBinding>
+                    </MenuItem.IsVisible>
                     <MenuItem.Icon>
                         <Image Classes="SquareDimensionsImage" />
                     </MenuItem.Icon>
@@ -73,7 +108,7 @@
                         IsChecked="{Binding ParentWindowContext.GallerySettings.IsExpandedStretchSquareFill.Value}"
                         ToggleType="Radio" />
                 </customControls:StyledMenuItem>
-                <customControls:StyledMenuItem Header="{Binding ParentWindowContext.Translation.Stretch.Value, Mode=OneWay}" IsVisible="{CompiledBinding !Gallery.IsGalleryExpanded.Value}">
+                <customControls:StyledMenuItem Header="{Binding ParentWindowContext.Translation.Stretch.Value, Mode=OneWay}" IsVisible="{CompiledBinding !Gallery.IsGalleryExpanded.Value}" x:Name="DockedStretchMenuItem">
                     <MenuItem.Icon>
                         <Image Classes="SquareDimensionsImage" />
                     </MenuItem.Icon>
@@ -215,6 +250,7 @@
                 IconHeight="18"
                 IconWidth="18"
                 IsVisible="{CompiledBinding ParentWindowContext.GallerySettings.IsExpandedDisplayModeColumns.Value}"
+                ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.ToggleGalleryDisplayMode.Value, Mode=OneWay}"
                 VerticalAlignment="Stretch"
                 x:Name="ToTilesButton">
                 <customControls:IconButton.Template>
@@ -245,6 +281,7 @@
                 IconHeight="18"
                 IconWidth="18"
                 IsVisible="{CompiledBinding ParentWindowContext.GallerySettings.IsExpandedDisplayModeTiles.Value}"
+                ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.ToggleGalleryDisplayMode.Value, Mode=OneWay}"
                 VerticalAlignment="Stretch"
                 x:Name="ToColumnsButton">
                 <customControls:IconButton.Template>
