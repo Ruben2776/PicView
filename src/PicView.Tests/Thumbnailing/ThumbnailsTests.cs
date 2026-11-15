@@ -284,8 +284,13 @@ public class ThumbnailsTests
     private static async Task WaitUntil(Func<bool> condition)
     {
         var deadline = DateTime.UtcNow.AddSeconds(5);
-        while (!condition() && DateTime.UtcNow < deadline)
+        while (!condition())
         {
+            if (DateTime.UtcNow >= deadline)
+            {
+                throw new TimeoutException("The condition did not hold within 5 seconds");
+            }
+
             await Task.Delay(5, TestContext.Current.CancellationToken);
         }
     }
@@ -330,6 +335,7 @@ public class ThumbnailsTests
         var taller = Fake(await _thumbnails.GetTileAsync(file, 600));
 
         Assert.Equal(600u, taller.Height);
+        Assert.Equal(2, _decoder.Calls.Count(c => string.Equals(c, "decode-full:a.jpg", StringComparison.Ordinal)));
         Assert.True(_thumbnails.TryGetKept(file, out var kept, out _));
         Assert.Same(taller, kept);
     }

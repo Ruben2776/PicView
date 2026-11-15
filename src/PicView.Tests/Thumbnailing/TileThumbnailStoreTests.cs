@@ -70,6 +70,55 @@ public class TileThumbnailStoreTests
     }
 
     [Fact]
+    public void Move_OntoAKeptPath_LetsGoOfTheOneKeptThereAndCountsOnlyTheMovedBytes()
+    {
+        _store.Add("old", "A", 100, 100);
+        _store.Add("new", "N", 50, 50);
+
+        _store.Move("old", "new");
+
+        Assert.Equal(1, _store.Count);
+        Assert.Equal(100, _store.Bytes);
+        Assert.True(_store.TryGet("new", out var kept, out var height));
+        Assert.Equal("A", kept);
+        Assert.Equal(100u, height);
+    }
+
+    [Fact]
+    public void Move_KeepsTheEntrysPlaceInTheEvictionOrder()
+    {
+        _store.Add("a", "A", 100, 100);
+        _store.Add("b", "B", 100, 100);
+        _store.Add("c", "C", 100, 100);
+
+        _store.Move("a", "moved");
+        _store.Add("d", "D", 100, 100);
+
+        // still the least recently used, so it is the one let go of
+        Assert.False(_store.TryGet("moved", out _, out _));
+        Assert.True(_store.TryGet("b", out _, out _));
+        Assert.Equal(3, _store.Count);
+    }
+
+    [Theory]
+    [InlineData("a")]
+    [InlineData("A")]
+    public void Move_OntoItself_KeepsTheOneEntry(string newPath)
+    {
+        _store.Add("a", "A", 100, 100);
+
+        _store.Move("a", newPath);
+
+        Assert.Equal(1, _store.Count);
+        Assert.Equal(100, _store.Bytes);
+        Assert.True(_store.TryGet("a", out var kept, out _));
+        Assert.Equal("A", kept);
+        _store.Remove(newPath);
+        Assert.Equal(0, _store.Count);
+        Assert.Equal(0, _store.Bytes);
+    }
+
+    [Fact]
     public void Remove_FreesItsBytes()
     {
         _store.Add("a", "A", 100, 100);
