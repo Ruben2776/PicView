@@ -312,10 +312,23 @@ public class ImageScaling
     public bool ShowImageSideBySide { get; set; } = false;
 
     /// <summary>
-    /// Specifies whether the next image is stacked on the current one and blended in Difference, so the two can be
+    /// Specifies whether the next image is stacked on the current one so the two can be
     /// compared. Never on together with <see cref="ShowImageSideBySide"/>.
     /// </summary>
     public bool ShowComparison { get; set; } = false;
+
+    /// <summary>
+    /// Specifies the active stacked comparison mode when <see cref="ShowComparison"/> is enabled.
+    /// </summary>
+    public ComparisonMode ComparisonMode { get; set; } = ComparisonMode.Difference;
+}
+
+public enum ComparisonMode
+{
+    Overlay = 0,
+    Split = 1,
+    Blink = 2,
+    Difference = 3
 }
 
 public class Zoom
