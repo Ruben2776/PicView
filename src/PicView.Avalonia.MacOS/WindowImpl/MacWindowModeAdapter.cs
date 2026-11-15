@@ -19,6 +19,14 @@ public sealed class MacWindowModeAdapter : IWindowModeAdapter
 
     public void EnterNativeState(MainWindow window, WindowModeState state)
     {
+        if (state.Mode is WindowMode.Fullscreen)
+        {
+            // https://github.com/Ruben2776/PicView/issues/450
+            window.ExtendClientAreaToDecorationsHint = false;
+            WindowModeSwitcher.SetNativeState(window, state.Mode);
+            return;
+        }
+        
         if (state.Mode is not WindowMode.Normal)
         {
             WindowModeSwitcher.SetNativeState(window, state.Mode);
