@@ -221,6 +221,9 @@ public class VirtualizingGallery : VirtualizingPanel
             // A held distance belongs to the other layout, so center the current item in the new one
             _isFollowing = true;
             InvalidateMeasure();
+            // Docked, the items are tiles no more, and sharpening still waiting is cancelled; expanded, they are sharpened
+            // once the view rests
+            _viewer?.RestartTileRest();
         }
     }
 

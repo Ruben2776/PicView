@@ -36,6 +36,7 @@ public sealed class GalleryTileSharpeningTests : IDisposable
     private Window? _window;
     private CoreViewModel? _core;
     private TabViewModel? _tab;
+    private GalleryView? _view;
     private NavigateAbleItemsViewer? _viewer;
     private VirtualizingGallery? _panel;
     private GalleryItemViewModel[] _items = [];
@@ -251,6 +252,9 @@ public sealed class GalleryTileSharpeningTests : IDisposable
         Rest();
 
         Assert.True(_decoder.Calls.Count(c => c.StartsWith("decode-full:", StringComparison.Ordinal)) <= 1); // at most the one already in its slot
+        // and the one made in its slot lands on no Columns item
+        Assert.All(RealizedItems(), item => Assert.Equal(0u, ((GalleryItemViewModel)item.DataContext!).TileHeightShown));
+        Assert.DoesNotContain(_items, x => x.Image.Value is Bitmap bitmap && bitmap.PixelSize.Height > Thumbnails.GalleryHeight);
         ScrollToEnd(); // new Columns containers
         Rest();
         Assert.True(_decoder.Calls.Count(c => c.StartsWith("decode-full:", StringComparison.Ordinal)) <= 1);
@@ -282,6 +286,50 @@ public sealed class GalleryTileSharpeningTests : IDisposable
     }
 
     [AvaloniaFact]
+    public void Tile_ScrolledALittleWhileItsTileThumbnailIsMade_EndsSharp()
+    {
+        // Enough slots that every tile's make is in its slot, held at the gate, so a new rest cannot interrupt it
+        _decoder.DecodeFullGate = new ManualResetEventSlim(false);
+        Show(itemCount: 60, slots: 64);
+        AdvanceBy(GalleryDefaults.TileSharpenDelayMilliseconds + 1);
+        Settle(() => _decoder.Calls.Contains($"decode-full:{Item(0).FileInfo!.Name}", StringComparer.Ordinal));
+
+        // A small scroll keeps item 0 realized, and the make outlasts the next rest
+        ScrollBy(50);
+        Assert.Contains(_panel!.RealizedItems, x => x.Index == 0);
+        AdvanceBy(GalleryDefaults.TileSharpenDelayMilliseconds + 1);
+        OpenGate();
+        SettleSharpening();
+
+        Assert.Equal(Needed(0), Item(0).TileHeightShown);
+        Assert.Equal((int)Needed(0), Shown(0).PixelSize.Height);
+        Assert.Equal(1, _decoder.Calls.Count(c => c == $"decode-full:{Item(0).FileInfo!.Name}"));
+    }
+
+    [AvaloniaFact]
+    public void LeavingExpanded_WhileSharpeningWaits_LandsNoTileThumbnailInTheDockedGallery()
+    {
+        // One slot and the gate closed, so one make is in its slot and the others wait for it
+        _decoder.DecodeFullGate = new ManualResetEventSlim(false);
+        Show(slots: 1, dockedFirst: true);
+        AdvanceBy(GalleryDefaults.TileSharpenDelayMilliseconds + 1);
+        Settle(() => _decoder.Calls.Any(c => c.StartsWith("decode-full:", StringComparison.Ordinal)));
+
+        _tab!.Gallery.Switcher.ToggleExpanded();
+        Settle(() => !_panel!.IsExpanded && !_view!.IsInAnimation);
+        OpenGate();
+        Rest();
+
+        Assert.Equal(1, _decoder.Calls.Count(c => c.StartsWith("decode-full:", StringComparison.Ordinal)));
+        Assert.All(RealizedItems(), item =>
+        {
+            var vm = (GalleryItemViewModel)item.DataContext!;
+            Assert.Equal(0u, vm.TileHeightShown);
+            Assert.True(Assert.IsAssignableFrom<Bitmap>(vm.Image.Value).PixelSize.Height <= Thumbnails.GalleryHeight);
+        });
+    }
+
+    [AvaloniaFact]
     public void DockedGallery_NeverAsksForATileThumbnail()
     {
         // the same items in a docked gallery
@@ -302,7 +350,7 @@ public sealed class GalleryTileSharpeningTests : IDisposable
     /// </summary>
     private void Show(GalleryDisplayMode mode = GalleryDisplayMode.Masonry, int itemCount = 12, double scale = 1,
         double width = 800, double height = 600, bool docked = false, int slots = 0, int[]? withoutDetails = null,
-        bool keepSmallThumbnails = false)
+        bool keepSmallThumbnails = false, bool dockedFirst = false)
     {
         Settings.Gallery.DockPosition = GalleryDockPosition.Bottom;
         Settings.Gallery.ExpandedGalleryDisplayMode = mode;
@@ -323,7 +371,13 @@ public sealed class GalleryTileSharpeningTests : IDisposable
         }
         else
         {
-            // The Expanded Gallery reached without animation: expanded and hidden before the view loads, then shown
+            // The Expanded Gallery reached without animation: expanded and hidden before the view loads, then shown.
+            // Expanded from docked, toggling it again docks it
+            if (dockedFirst)
+            {
+                _tab.Gallery.Switcher.Start(docked: true);
+            }
+
             _tab.Gallery.Switcher.ToggleExpanded();
             _tab.Gallery.Switcher.SetHidden(true);
         }
@@ -334,6 +388,7 @@ public sealed class GalleryTileSharpeningTests : IDisposable
         _dataContextSet = true;
 
         var view = new GalleryView { DataContext = _tab };
+        _view = view;
         view.Initialize(_tab);
         _viewer = view.FindControl<NavigateAbleItemsViewer>("GalleryItemsControl")!;
         _viewer.TileRestTimer = _timer;
