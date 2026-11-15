@@ -136,6 +136,12 @@ public class VirtualizingGallery : VirtualizingPanel
     /// </summary>
     private Vector _lastScrollOffset;
 
+    /// <summary>
+    ///     Whether a measure ran since the last layout pass ended, so the viewer is asked to sharpen the tiles once it
+    ///     does.
+    /// </summary>
+    private bool _measuredSinceLayout;
+
     /// <inheritdoc cref="WrapPanel" />
     public Orientation Orientation
     {
@@ -343,6 +349,12 @@ public class VirtualizingGallery : VirtualizingPanel
     {
         base.OnPropertyChanged(change);
 
+        if (change.Property == ItemHeightProperty || change.Property == DisplayModeProperty)
+        {
+            // The tiles change size, so they are sharpened for the new one once the view rests again
+            _viewer?.RestartTileRest();
+        }
+
         if (change.Property == OrientationProperty)
         {
             // The old viewport belongs to the other scroll axis, wait for a fresh one. A held distance belongs to that
@@ -470,6 +482,7 @@ public class VirtualizingGallery : VirtualizingPanel
         // offset, since layout puts the viewport on device pixels, a fraction of a pixel off it at 125% or 150%
         _isFollowing = false;
         HoldItemNearest(offset - marginBefore + length / 2);
+        _viewer?.RestartTileRest();
         return true;
     }
 
@@ -479,6 +492,13 @@ public class VirtualizingGallery : VirtualizingPanel
     /// </summary>
     private void OnLayoutUpdated(object? sender, EventArgs e)
     {
+        if (_measuredSinceLayout)
+        {
+            // Sizes arriving end in a measure too; this starts the rest period only when none runs
+            _measuredSinceLayout = false;
+            _viewer?.RequestTileSharpen();
+        }
+
         if (_pendingOffset is not { } pendingOffset)
         {
             return;
@@ -523,6 +543,7 @@ public class VirtualizingGallery : VirtualizingPanel
     {
         // Each layout decides afresh whether the view moves
         _pendingOffset = null;
+        _measuredSinceLayout = true;
 
         var items = Items;
         if (items is null || items.Count is 0)

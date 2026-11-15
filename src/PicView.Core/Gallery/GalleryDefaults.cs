@@ -48,6 +48,12 @@ public static class GalleryDefaults
     /// <summary>The highest width over height a tile takes.</summary>
     public const double MaxTileAspectRatio = 4;
 
+    /// <summary>
+    /// How long the Expanded Gallery's view must rest, with no scroll, resize, item size or display mode change, before
+    /// its Masonry and Rows tiles are sharpened.
+    /// </summary>
+    public const int TileSharpenDelayMilliseconds = 300;
+
     /// <summary>Width of a gallery docked left or right: items, a side border and the vertical scrollbar.</summary>
     public static double GetDockedGalleryWidth(double itemSize) => itemSize + BorderSideThickness + SizeDefaults.VerticalScrollbarSize;
     /// <summary>Height of a gallery docked top or bottom: items, the top/bottom border and the horizontal scrollbar.</summary>

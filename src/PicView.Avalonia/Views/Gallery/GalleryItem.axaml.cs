@@ -10,6 +10,8 @@ using Avalonia.Markup.Xaml.MarkupExtensions;
 using Avalonia.Media;
 using Avalonia.Media.Transformation;
 using Avalonia.Styling;
+using Avalonia.Threading;
+using Avalonia.VisualTree;
 using PicView.Avalonia.Clipboard;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.FileSystem;
@@ -35,6 +37,9 @@ public partial class GalleryItem : NavigateAbleItem
     private static readonly TransformOperations ThumbnailEndScale = TransformOperations.Parse("scale(1)");
 
     private CancellationTokenSource? _loadCts;
+    private CancellationTokenSource? _sharpenCts;
+    // What TileHeightAsked was before the request in flight, for when that request is cancelled
+    private uint _tileHeightAskedBefore;
     private ContextMenu? _contextMenu;
     private Border? _ring;
     private string? _ringBrushKey;
@@ -144,11 +149,41 @@ public partial class GalleryItem : NavigateAbleItem
         ContextMenu = _contextMenu;
     }
 
-    public async Task LoadImage(GalleryItemViewModel vm)
+    /// <summary>
+    /// The height of the Tile Thumbnail last asked for since the item was loaded, so a rest does not ask for it again;
+    /// 0 when none was.
+    /// </summary>
+    public uint TileHeightAsked { get; private set; }
+
+    /// <summary>Whether a Tile Thumbnail asked for by <see cref="SharpenAsync"/> has not come back yet.</summary>
+    internal bool IsSharpening => _sharpenCts is not null;
+
+    /// <summary>
+    /// Shows <paramref name="vm"/>'s thumbnail. A Masonry or Rows tile shows a kept one at once, a Tile Thumbnail before
+    /// a small one, and asks for nothing; failing that, and in the Docked Gallery and Columns, it loads the small one.
+    /// </summary>
+    public Task LoadImage(GalleryItemViewModel vm) =>
+        LoadImage(vm, this.FindAncestorOfType<VirtualizingGallery>() is { } panel &&
+                      NavigateAbleItemsViewer.ShowsTiles(panel));
+
+    /// <inheritdoc cref="LoadImage(GalleryItemViewModel)" />
+    /// <param name="vm">The item to show.</param>
+    /// <param name="isTile">
+    /// Whether the item is in an expanded Masonry or Rows panel, which the caller reads from the panel: a recycled item
+    /// is not in it yet.
+    /// </param>
+    internal async Task LoadImage(GalleryItemViewModel vm, bool isTile)
     {
         // Fast-path: If the image is already loaded, skip
         if (vm.Image.Value is IImage)
         {
+            return;
+        }
+
+        if (isTile && vm.TryGetKeptThumbnail(out var kept, out var tileHeight) && kept is not null)
+        {
+            vm.Image.Value = kept;
+            vm.TileHeightShown = tileHeight;
             return;
         }
 
@@ -179,14 +214,99 @@ public partial class GalleryItem : NavigateAbleItem
         }
     }
 
-    public void UnloadImage()
+    /// <summary>
+    /// Shows a Tile Thumbnail of <paramref name="vm"/> made for <paramref name="height"/> in place of what the item
+    /// shows, once it comes, unless <paramref name="ct"/> or unloading the item cancelled it first. A file that gives none
+    /// leaves the shown thumbnail alone. Either way the height counts as asked for until the item is unloaded.
+    /// </summary>
+    public async Task SharpenAsync(GalleryItemViewModel vm, uint height, CancellationToken ct)
     {
-        _loadCts?.Cancel();
-        if (DataContext is not GalleryItemViewModel vm)
+        if (_sharpenCts is null)
+        {
+            _tileHeightAskedBefore = TileHeightAsked;
+        }
+        else
+        {
+            // ReSharper disable once MethodHasAsyncOverload
+#pragma warning disable MA0042
+            _sharpenCts.Cancel();
+#pragma warning restore MA0042
+        }
+
+        TileHeightAsked = height;
+        var cts = CancellationTokenSource.CreateLinkedTokenSource(ct);
+        _sharpenCts = cts;
+        object? thumbnail = null;
+        try
+        {
+            thumbnail = await vm.LoadTileThumbnailAsync(height, cts.Token).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException)
+        {
+            // Scrolled again, or the item was unloaded, while it waited for its turn
+        }
+        catch (Exception ex)
+        {
+            DebugHelper.LogDebug(nameof(GalleryItem), nameof(SharpenAsync), ex);
+        }
+
+        if (Dispatcher.UIThread.CheckAccess())
+        {
+            EndSharpening(vm, height, thumbnail, cts);
+        }
+        else
+        {
+            await Dispatcher.UIThread.InvokeAsync(() => EndSharpening(vm, height, thumbnail, cts));
+        }
+    }
+
+    // On the UI thread. A newer request, or unloading, took the item over when its source is no longer this one's
+    private void EndSharpening(GalleryItemViewModel vm, uint height, object? thumbnail, CancellationTokenSource cts)
+    {
+        var isCurrent = ReferenceEquals(_sharpenCts, cts);
+        var cancelled = cts.IsCancellationRequested;
+        cts.Dispose();
+        if (!isCurrent)
         {
             return;
         }
+
+        _sharpenCts = null;
+        if (cancelled)
+        {
+            // Not shown, so the next rest asks again, from the kept Tile Thumbnail if it was made meanwhile
+            TileHeightAsked = _tileHeightAskedBefore;
+            return;
+        }
+
+        if (thumbnail is null || !ReferenceEquals(DataContext, vm))
+        {
+            return;
+        }
+
+        // A small thumbnail still on its way must not land over the sharp one. The small one is not disposed: the
+        // tab's store still keeps it
+        _loadCts?.Cancel();
+        vm.Image.Value = thumbnail;
+        vm.TileHeightShown = height;
+    }
+
+    public void UnloadImage()
+    {
+        _loadCts?.Cancel();
+        _sharpenCts?.Cancel();
+        _sharpenCts = null;
+        TileHeightAsked = 0;
+        // A small thumbnail stays on its view model, as it did before Tile Thumbnails, when this ran after the viewer
+        // had cleared the data context: the tab's store holds it anyway
+        if (DataContext is not GalleryItemViewModel { TileHeightShown: > 0 } vm)
+        {
+            return;
+        }
+
+        // A Tile Thumbnail off screen is held only by the bounded tier, which may then let go of it
         vm.Image.Value = null;
+        vm.TileHeightShown = 0;
     }
 
     private void GalleryContextMenuOnClosed(object? sender, RoutedEventArgs e)
