@@ -116,10 +116,11 @@ public sealed class GalleryLayout
             var wrapWidth = double.IsNaN(options.WrapWidthOverride) || options.WrapWidthOverride <= 0
                 ? availableSize.Width
                 : options.WrapWidthOverride;
-            Extent = MasonryPlacement.Place(items,
-                new GalleryPlacementOptions(wrapWidth, options.ItemHeight, options.ItemSpacing, options.LineSpacing,
-                    _scale),
-                _bounds, ref _columnHeights);
+            var placement = new GalleryPlacementOptions(wrapWidth, options.ItemHeight, options.ItemSpacing,
+                options.LineSpacing, _scale);
+            Extent = options.DisplayMode is GalleryDisplayMode.Rows
+                ? RowsPlacement.Place(items, placement, _bounds)
+                : MasonryPlacement.Place(items, placement, _bounds, ref _columnHeights);
             return;
         }
 
