@@ -280,4 +280,158 @@ public class ThumbnailsTests
         await _thumbnails.GetAsync(file, 150, Thumbnails.AppOwner);
         Assert.Single(_decoder.Calls, "decode:history.jpg");
     }
+
+    private static async Task WaitUntil(Func<bool> condition)
+    {
+        var deadline = DateTime.UtcNow.AddSeconds(5);
+        while (!condition() && DateTime.UtcNow < deadline)
+        {
+            await Task.Delay(5, TestContext.Current.CancellationToken);
+        }
+    }
+
+    [Fact]
+    public async Task GetTileAsync_NothingKept_DecodesWithoutReadyMadeAndLeavesTheSmallStoreAlone()
+    {
+        var file = File("a.jpg");
+
+        var tile = Fake(await _thumbnails.GetTileAsync(file, 600));
+
+        Assert.Equal("decode-full", tile.Source);
+        Assert.Equal(600u, tile.Height);
+        Assert.Equal(["decode-full:a.jpg"], _decoder.Calls);
+        Assert.True(_thumbnails.TryGetKept(file, out var kept, out var tileHeight));
+        Assert.Same(tile, kept);
+        Assert.Equal(600u, tileHeight);
+        // The small store has nothing: a small request still decodes the ordinary way
+        await _thumbnails.GetAsync(file, 150, Tab);
+        Assert.Contains("decode:a.jpg", _decoder.Calls);
+    }
+
+    [Fact]
+    public async Task GetTileAsync_KeptForAtLeastTheHeight_IsServedWithoutDecoding()
+    {
+        var file = File("a.jpg");
+        var first = await _thumbnails.GetTileAsync(file, 600);
+
+        var request = _thumbnails.GetTileAsync(file, 400);
+
+        Assert.True(request.IsCompleted);
+        Assert.Same(first, request.Result);
+        Assert.Single(_decoder.Calls);
+    }
+
+    [Fact]
+    public async Task GetTileAsync_TallerThanKept_DecodesAndReplaces()
+    {
+        var file = File("a.jpg");
+        await _thumbnails.GetTileAsync(file, 400);
+
+        var taller = Fake(await _thumbnails.GetTileAsync(file, 600));
+
+        Assert.Equal(600u, taller.Height);
+        Assert.True(_thumbnails.TryGetKept(file, out var kept, out _));
+        Assert.Same(taller, kept);
+    }
+
+    [Fact]
+    public async Task GetTileAsync_StillBitmapInImageCache_ScalesItDownInsteadOfDecoding()
+    {
+        var file = File("a.jpg");
+        _images.Put(Tab, file, new ImageModel { FileInfo = file, Image = "full", ImageType = ImageType.Bitmap });
+
+        var tile = Fake(await _thumbnails.GetTileAsync(file, 600));
+
+        Assert.Equal("scale", tile.Source);
+        Assert.DoesNotContain("decode-full:a.jpg", _decoder.Calls);
+    }
+
+    [Fact]
+    public async Task GetTileAsync_FileGivesNone_KeepsNothing()
+    {
+        _decoder.CanDecode = false;
+        var file = File("a.jpg");
+
+        Assert.Null(await _thumbnails.GetTileAsync(file, 600));
+        Assert.False(_thumbnails.TryGetKept(file, out _, out _));
+    }
+
+    [Fact]
+    public async Task GetTileAsync_PastTheBudget_DropsTheOldestButKeepsItsSmallThumbnail()
+    {
+        // FakeThumbnailDecoder.BytesPerHeight is 1000, so a 600-tall fake is 600,000 bytes
+        var thumbnails = new Thumbnails(_decoder, _images, tileBudgetInBytes: 1_000_000);
+        var a = File("a.jpg");
+        var small = await thumbnails.GetAsync(a, 150, Tab);
+        await thumbnails.GetTileAsync(a, 600);
+
+        await thumbnails.GetTileAsync(File("b.jpg"), 600);
+
+        Assert.True(thumbnails.TryGetKept(a, out var kept, out var tileHeight));
+        Assert.Same(small, kept);
+        Assert.Equal(0u, tileHeight);
+    }
+
+    [Fact]
+    public async Task Forget_DropsTheTileThumbnailAndTheSmallOne()
+    {
+        var file = File("a.jpg");
+        await _thumbnails.GetAsync(file, 150, Tab);
+        await _thumbnails.GetTileAsync(file, 600);
+
+        _thumbnails.Forget(file.FullName);
+
+        Assert.False(_thumbnails.TryGetKept(file, out _, out _));
+    }
+
+    [Fact]
+    public async Task GetTileAsync_FileForgottenWhileItWasMade_IsHandedBackButNotKept()
+    {
+        var file = File("a.jpg");
+        using var gate = new ManualResetEventSlim();
+        _decoder.DecodeGate = gate;
+        var request = _thumbnails.GetTileAsync(file, 600).AsTask();
+        await WaitUntil(() => _decoder.Calls.Contains("decode-full:a.jpg"));
+
+        _thumbnails.Forget(file.FullName);
+        gate.Set();
+
+        Assert.NotNull(await request);
+        Assert.False(_thumbnails.TryGetKept(file, out _, out _));
+    }
+
+    [Fact]
+    public async Task Relocate_MovesBothKindsToTheNewPath()
+    {
+        var oldFile = File("a.jpg");
+        var newFile = new FileInfo(Path.Combine(Path.GetTempPath(), "picview-renamed", "a.jpg"));
+        var small = await _thumbnails.GetAsync(oldFile, 150, Tab);
+        var tile = await _thumbnails.GetTileAsync(oldFile, 600);
+
+        _thumbnails.Relocate(Tab, oldFile.FullName, newFile.FullName);
+
+        Assert.True(_thumbnails.TryGetKept(newFile, out var kept, out var tileHeight));
+        Assert.Same(tile, kept);
+        Assert.Equal(600u, tileHeight);
+        Assert.Same(small, await _thumbnails.GetAsync(newFile, 150, Tab));
+        Assert.Equal(1, _decoder.Calls.Count(c => c == "decode:a.jpg"));
+    }
+
+    [Fact]
+    public async Task GetTileAsync_CancelledWhileWaitingForASlot_Throws()
+    {
+        var thumbnails = new Thumbnails(_decoder, _images, slots: 1);
+        using var gate = new ManualResetEventSlim();
+        _decoder.DecodeGate = gate;
+        var first = thumbnails.GetTileAsync(File("a.jpg"), 600).AsTask();
+        using var cts = new CancellationTokenSource();
+        var waiting = thumbnails.GetTileAsync(File("b.jpg"), 600, cts.Token).AsTask();
+
+        await cts.CancelAsync();
+
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() => waiting);
+        gate.Set();
+        await first;
+        Assert.DoesNotContain("decode-full:b.jpg", _decoder.Calls);
+    }
 }
