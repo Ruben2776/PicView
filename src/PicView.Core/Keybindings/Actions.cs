@@ -47,6 +47,13 @@ public static class Actions
     // Image control
     public const string SideBySide = nameof(SideBySide);
     public const string Comparison = nameof(Comparison);
+    public const string ComparisonSwap = nameof(ComparisonSwap);
+    public const string ComparisonPin = nameof(ComparisonPin);
+    public const string ComparisonModeNext = nameof(ComparisonModeNext);
+    public const string ComparisonModeOverlay = nameof(ComparisonModeOverlay);
+    public const string ComparisonModeSplit = nameof(ComparisonModeSplit);
+    public const string ComparisonModeBlink = nameof(ComparisonModeBlink);
+    public const string ComparisonModeDifference = nameof(ComparisonModeDifference);
     public const string Flip = nameof(Flip);
     public const string Crop = nameof(Crop);
     public const string ChangeBackground = nameof(ChangeBackground);

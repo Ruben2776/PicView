@@ -52,6 +52,12 @@
 
             <Color x:Key="HoverBarHoverColor">#4D4D4D</Color>
 
+            <!--  Compare bar  -->
+            <Color x:Key="ComparePillGroupBackground">#14000000</Color>
+            <Color x:Key="ComparePillHoverBackground">#18FFFFFF</Color>
+            <Color x:Key="ComparePillActiveBackground">#24FFFFFF</Color>
+            <Color x:Key="ComparePillActiveBorder">#40FFFFFF</Color>
+
             <!--  MENUS & DROPDOWNS  -->
             <Color x:Key="MenuBackgroundColor">#F3292929</Color>
             <Color x:Key="MenuButtonBackground">#303030</Color>
@@ -219,6 +225,12 @@
             <Color x:Key="HoverBarThumbColor">#EE8D8AAB</Color>
 
             <Color x:Key="HoverBarHoverColor">#C7C3EB</Color>
+
+            <!--  Compare bar  -->
+            <Color x:Key="ComparePillGroupBackground">#10000000</Color>
+            <Color x:Key="ComparePillHoverBackground">#14000000</Color>
+            <Color x:Key="ComparePillActiveBackground">#22000000</Color>
+            <Color x:Key="ComparePillActiveBorder">#38000000</Color>
 
             <!--  MENUS & DROPDOWNS  -->
             <Color x:Key="MenuBackgroundColor">#fff</Color>

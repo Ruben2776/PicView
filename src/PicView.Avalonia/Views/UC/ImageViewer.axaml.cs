@@ -26,12 +26,19 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
     private bool _isLoadedOnce;
     private DisposableBag _disposables;
     private ScaleTransform? _flipTransform;
+    private ScaleTransform? _syncedLeftFlipTransform;
+    private ScaleTransform? _syncedRightFlipTransform;
     private bool _animatesNextFlip;
     private readonly TabViewModel _tab;
     private DispatcherTimer? _blinkTimer;
     private bool _blinkShowCompare = true;
     private bool _isDraggingSplit;
     private bool _isSyncingZoom;
+    private Point _alignA1;
+    private Point _alignB1;
+    private Point _alignA2;
+    private Point _alignB2;
+    private static readonly Cursor CrossCursor = new(StandardCursorType.Cross);
     private static readonly Geometry SplitVerticalIcon =
         Geometry.Parse("M5,8 L2,11 L5,14 M11,8 L14,11 L11,14 M2,11 L14,11");
     private static readonly Geometry SplitHorizontalIcon =
@@ -293,8 +300,11 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
             return;
         }
 
+        var pointerControl = _tab.ParentWindowContext.GlobalSettings.IsSideBySideSyncedActive.Value
+            ? (SyncedRightZoom.IsPointerOver ? SyncedRightZoom : SyncedLeftZoom)
+            : ZoomPanControl;
         e.Handled = await mainWindow.KeybindRouter.WheelAsync(Keybind.FromWheel(e.Delta.Y, e.KeyModifiers),
-            e.Pointer.Type is PointerType.Touch, e.GetPosition(ZoomPanControl), this).ConfigureAwait(true);
+            e.Pointer.Type is PointerType.Touch, e.GetPosition(pointerControl), this).ConfigureAwait(true);
     }
 
     /// <summary>
@@ -326,7 +336,7 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
         if (_tab.ParentWindowContext.GlobalSettings.IsSideBySideSyncedActive.Value)
         {
             var target = SyncedRightZoom.IsPointerOver ? SyncedRightZoom : SyncedLeftZoom;
-            target.ZoomWithPointerWheelCore(zoomIn, new Point(target.Bounds.Width * 0.5, target.Bounds.Height * 0.5));
+            target.ZoomWithPointerWheelCore(zoomIn, pointer);
             return;
         }
 
@@ -469,6 +479,8 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
         if (_tab.ParentWindowContext.GlobalSettings.IsSideBySideSyncedActive.Value)
         {
             SyncedLeftZoom.ResetZoomSlim();
+            SyncedRightZoom.ResetZoomSlim();
+            _tab.Zoom.SetFactor(1.0);
             return;
         }
 
@@ -505,23 +517,31 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
         // Read when it runs, not when it was posted: a flip on the UI thread and a reset on the loading thread may
         // land in either order, and the one written last is the one to show
         var scaleX = _tab.Orientation.Current.CurrentValue.IsFlipped ? -1d : 1d;
+        var animate = _animatesNextFlip;
+        _animatesNextFlip = false;
 
-        if (_flipTransform is null)
+        ApplyFlipTransform(MainTransform, ref _flipTransform, scaleX, animate);
+        ApplyFlipTransform(SyncedLeftTransform, ref _syncedLeftFlipTransform, scaleX, animate);
+        ApplyFlipTransform(SyncedRightTransform, ref _syncedRightFlipTransform, scaleX, animate);
+    }
+
+    private static void ApplyFlipTransform(LayoutTransformControl target, ref ScaleTransform? transform, double scaleX, bool animate)
+    {
+        if (transform is null)
         {
             if (scaleX is 1)
             {
                 return;
             }
 
-            _flipTransform = new ScaleTransform();
-            MainTransform.RenderTransform = _flipTransform;
+            transform = new ScaleTransform();
+            target.RenderTransform = transform;
         }
 
-        _flipTransform.Transitions = _animatesNextFlip
+        transform.Transitions = animate
             ? [new DoubleTransition { Property = ScaleTransform.ScaleXProperty, Duration = TimeSpan.FromSeconds(.2) }]
             : null;
-        _animatesNextFlip = false;
-        _flipTransform.ScaleX = scaleX;
+        transform.ScaleX = scaleX;
     }
         
     #endregion
@@ -539,6 +559,20 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
         gs.IsComparisonSplitHorizontal.Subscribe(_ => UpdateSplitClipAndOverlay()).AddTo(ref _disposables);
         gs.IsComparisonBlinkFast.Subscribe(_ => UpdateBlinkTimer()).AddTo(ref _disposables);
         gs.ComparisonBlinkInterval.Subscribe(_ => UpdateBlinkTimer()).AddTo(ref _disposables);
+        gs.IsComparisonStretchFill.Subscribe(_ => ApplyComparisonVisuals()).AddTo(ref _disposables);
+        gs.ShowHoverBar.Subscribe(_ => UpdateCompareBarMargin()).AddTo(ref _disposables);
+        _tab.IsComparisonSwapped.Subscribe(_ => UpdateComparisonBadges()).AddTo(ref _disposables);
+        _tab.DisplayPrimaryFileInfo.Subscribe(_ => UpdateComparisonBadges()).AddTo(ref _disposables);
+        _tab.DisplaySecondaryFileInfo.Subscribe(_ => UpdateComparisonBadges()).AddTo(ref _disposables);
+        _tab.HasAlignment.Subscribe(has =>
+        {
+            if (!has)
+            {
+                CompareImage.RenderTransform = null;
+            }
+        }).AddTo(ref _disposables);
+        _tab.IsAligning.Subscribe(aligning => CompareHostGrid.Cursor = aligning ? CrossCursor : null)
+            .AddTo(ref _disposables);
         gs.IsSideBySideSyncedActive.AsObservable().Subscribe(active =>
         {
             if (active)
@@ -547,27 +581,44 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
                 SyncedRightZoom.ResetZoom(false);
                 _tab.Zoom.SetFactor(1.0);
             }
+            else
+            {
+                HideSyncedCrosshairs();
+            }
         }).AddTo(ref _disposables);
 
         SyncedLeftZoom.ViewChanged += OnSyncedLeftViewChanged;
         SyncedRightZoom.ViewChanged += OnSyncedRightViewChanged;
         SyncedLeftZoom.ScaleChanged += OnSyncedScaleChanged;
+        SyncedLeftZoom.PointerMoved += OnSyncedLeftPointerMoved;
+        SyncedLeftZoom.PointerExited += OnSyncedPointerExited;
+        SyncedRightZoom.PointerMoved += OnSyncedRightPointerMoved;
+        SyncedRightZoom.PointerExited += OnSyncedPointerExited;
 
         CompareHostGrid.SizeChanged += OnCompareHostSizeChanged;
+        CompareHostGrid.PointerPressed += OnCompareHostPointerPressed;
+        ZoomPanControl.ViewChanged += OnMainZoomViewChanged;
         SplitOverlay.PointerPressed += OnSplitPointerPressed;
         SplitOverlay.PointerMoved += OnSplitPointerMoved;
         SplitOverlay.PointerReleased += OnSplitPointerReleased;
         SplitOverlay.PointerCaptureLost += OnSplitPointerCaptureLost;
+        SplitHandle.KeyDown += OnSplitHandleKeyDown;
 
+        UpdateCompareBarMargin();
+        UpdateComparisonBadges();
         ApplyComparisonVisuals();
     }
 
     private void OnCompareHostSizeChanged(object? sender, SizeChangedEventArgs e) =>
         UpdateSplitClipAndOverlay();
 
+    private void OnMainZoomViewChanged() =>
+        UpdateSplitClipAndOverlay();
+
     private void ApplyComparisonVisuals()
     {
         var gs = _tab.ParentWindowContext.GlobalSettings;
+        CompareImage.Stretch = gs.IsComparisonStretchFill.CurrentValue ? Stretch.Fill : Stretch.Uniform;
         if (!gs.IsComparing.CurrentValue)
         {
             StopBlinkTimer();
@@ -634,15 +685,31 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
             var splitY = h * ratio;
             CompareImage.Clip = new RectangleGeometry(new Rect(0, 0, w, splitY));
 
+            var screenPos = CompareHostGrid.TranslatePoint(new Point(w * 0.5, splitY), MainPanel);
+            var lineY = screenPos?.Y ?? splitY;
+            var handleX = screenPos?.X ?? w * 0.5;
+            var mainH = MainPanel.Bounds.Height > 0 ? MainPanel.Bounds.Height : h;
+            var mainW = MainPanel.Bounds.Width > 0 ? MainPanel.Bounds.Width : w;
+
             SplitDividerLine.HorizontalAlignment = global::Avalonia.Layout.HorizontalAlignment.Stretch;
             SplitDividerLine.VerticalAlignment = global::Avalonia.Layout.VerticalAlignment.Top;
             SplitDividerLine.Width = double.NaN;
             SplitDividerLine.Height = 2;
-            SplitDividerLine.Margin = new Thickness(0, Math.Max(0, splitY - 1), 0, 0);
+            SplitDividerLine.Margin = new Thickness(0, Math.Clamp(lineY - 1, 0, Math.Max(0, mainH - 2)), 0, 0);
+
+            SplitDividerHitStrip.HorizontalAlignment = global::Avalonia.Layout.HorizontalAlignment.Stretch;
+            SplitDividerHitStrip.VerticalAlignment = global::Avalonia.Layout.VerticalAlignment.Top;
+            SplitDividerHitStrip.Width = double.NaN;
+            SplitDividerHitStrip.Height = 16;
+            SplitDividerHitStrip.Margin = new Thickness(0, Math.Clamp(lineY - 8, 0, Math.Max(0, mainH - 16)), 0, 0);
+            SplitDividerHitStrip.Cursor = new Cursor(StandardCursorType.SizeNorthSouth);
 
             SplitHandle.HorizontalAlignment = global::Avalonia.Layout.HorizontalAlignment.Left;
             SplitHandle.VerticalAlignment = global::Avalonia.Layout.VerticalAlignment.Top;
-            SplitHandle.Margin = new Thickness(Math.Max(0, w * 0.5 - 14), Math.Clamp(splitY - 14, 0, Math.Max(0, h - 28)), 0, 0);
+            SplitHandle.Margin = new Thickness(
+                Math.Clamp(handleX - 14, 0, Math.Max(0, mainW - 28)),
+                Math.Clamp(lineY - 14, 0, Math.Max(0, mainH - 28)),
+                0, 0);
             SplitHandle.Cursor = new Cursor(StandardCursorType.SizeNorthSouth);
             SplitHandleIcon.Data = SplitHorizontalIcon;
         }
@@ -651,15 +718,31 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
             var splitX = w * ratio;
             CompareImage.Clip = new RectangleGeometry(new Rect(0, 0, splitX, h));
 
+            var screenPos = CompareHostGrid.TranslatePoint(new Point(splitX, h * 0.5), MainPanel);
+            var lineX = screenPos?.X ?? splitX;
+            var handleY = screenPos?.Y ?? h * 0.5;
+            var mainH = MainPanel.Bounds.Height > 0 ? MainPanel.Bounds.Height : h;
+            var mainW = MainPanel.Bounds.Width > 0 ? MainPanel.Bounds.Width : w;
+
             SplitDividerLine.HorizontalAlignment = global::Avalonia.Layout.HorizontalAlignment.Left;
             SplitDividerLine.VerticalAlignment = global::Avalonia.Layout.VerticalAlignment.Stretch;
             SplitDividerLine.Width = 2;
             SplitDividerLine.Height = double.NaN;
-            SplitDividerLine.Margin = new Thickness(Math.Max(0, splitX - 1), 0, 0, 0);
+            SplitDividerLine.Margin = new Thickness(Math.Clamp(lineX - 1, 0, Math.Max(0, mainW - 2)), 0, 0, 0);
+
+            SplitDividerHitStrip.HorizontalAlignment = global::Avalonia.Layout.HorizontalAlignment.Left;
+            SplitDividerHitStrip.VerticalAlignment = global::Avalonia.Layout.VerticalAlignment.Stretch;
+            SplitDividerHitStrip.Width = 16;
+            SplitDividerHitStrip.Height = double.NaN;
+            SplitDividerHitStrip.Margin = new Thickness(Math.Clamp(lineX - 8, 0, Math.Max(0, mainW - 16)), 0, 0, 0);
+            SplitDividerHitStrip.Cursor = new Cursor(StandardCursorType.SizeWestEast);
 
             SplitHandle.HorizontalAlignment = global::Avalonia.Layout.HorizontalAlignment.Left;
             SplitHandle.VerticalAlignment = global::Avalonia.Layout.VerticalAlignment.Top;
-            SplitHandle.Margin = new Thickness(Math.Clamp(splitX - 14, 0, Math.Max(0, w - 28)), Math.Max(0, h * 0.5 - 14), 0, 0);
+            SplitHandle.Margin = new Thickness(
+                Math.Clamp(lineX - 14, 0, Math.Max(0, mainW - 28)),
+                Math.Clamp(handleY - 14, 0, Math.Max(0, mainH - 28)),
+                0, 0);
             SplitHandle.Cursor = new Cursor(StandardCursorType.SizeWestEast);
             SplitHandleIcon.Data = SplitVerticalIcon;
         }
@@ -673,29 +756,16 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
             return;
         }
 
-        var bounds = SplitOverlay.Bounds;
-        if (bounds.Width <= 0 || bounds.Height <= 0)
+        if (e.ClickCount == 2 && SplitHandle.Bounds.Inflate(6).Contains(e.GetPosition(SplitOverlay)))
         {
-            return;
-        }
-
-        var pos = e.GetPosition(SplitOverlay);
-        var ratio = Math.Clamp(gs.ComparisonSplitRatio.CurrentValue, 0.0, 1.0);
-        var isHorizontal = gs.IsComparisonSplitHorizontal.CurrentValue;
-
-        var dist = isHorizontal
-            ? Math.Abs(pos.Y - bounds.Height * ratio)
-            : Math.Abs(pos.X - bounds.Width * ratio);
-
-        var onHandle = SplitHandle.Bounds.Inflate(8).Contains(pos);
-        if (dist > 14 && !onHandle)
-        {
+            gs.ComparisonSplitRatio.Value = 0.5;
+            e.Handled = true;
             return;
         }
 
         _isDraggingSplit = true;
         e.Pointer.Capture(SplitOverlay);
-        UpdateSplitFromPointer(pos, bounds);
+        UpdateSplitFromPointer(e.GetPosition(MainPanel));
         e.Handled = true;
     }
 
@@ -706,7 +776,7 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
             return;
         }
 
-        UpdateSplitFromPointer(e.GetPosition(SplitOverlay), SplitOverlay.Bounds);
+        UpdateSplitFromPointer(e.GetPosition(MainPanel));
         e.Handled = true;
     }
 
@@ -725,17 +795,19 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
     private void OnSplitPointerCaptureLost(object? sender, PointerCaptureLostEventArgs e) =>
         _isDraggingSplit = false;
 
-    private void UpdateSplitFromPointer(Point pos, Rect bounds)
+    private void UpdateSplitFromPointer(Point mainPanelPos)
     {
-        if (bounds.Width <= 0 || bounds.Height <= 0)
+        var hostBounds = CompareHostGrid.Bounds;
+        if (hostBounds.Width <= 0 || hostBounds.Height <= 0)
         {
             return;
         }
 
+        var mapped = MainPanel.TranslatePoint(mainPanelPos, CompareHostGrid) ?? mainPanelPos;
         var gs = _tab.ParentWindowContext.GlobalSettings;
         var ratio = gs.IsComparisonSplitHorizontal.CurrentValue
-            ? pos.Y / bounds.Height
-            : pos.X / bounds.Width;
+            ? mapped.Y / hostBounds.Height
+            : mapped.X / hostBounds.Width;
         gs.ComparisonSplitRatio.Value = Math.Clamp(ratio, 0.0, 1.0);
     }
 
@@ -769,6 +841,11 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
 
     private void OnBlinkTick(object? sender, EventArgs e)
     {
+        if (!_tab.IsSelected)
+        {
+            return;
+        }
+
         _blinkShowCompare = !_blinkShowCompare;
         CompareImage.Opacity = _blinkShowCompare ? 1.0 : 0.0;
     }
@@ -782,7 +859,19 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
         _blinkShowCompare = true;
     }
 
-    private void OnSyncedLeftViewChanged()
+    private void OnSyncedLeftViewChanged() =>
+        SyncSyncedZoom(SyncedLeftZoom, SyncedLeftImage, SyncedRightZoom, SyncedRightImage);
+
+    private void OnSyncedRightViewChanged()
+    {
+        SyncSyncedZoom(SyncedRightZoom, SyncedRightImage, SyncedLeftZoom, SyncedLeftImage);
+        if (!_isSyncingZoom)
+        {
+            _tab.Zoom.SetFactor(SyncedRightZoom.Scale);
+        }
+    }
+
+    private void SyncSyncedZoom(ZoomPanControl sourceZoom, PicBox sourceImage, ZoomPanControl targetZoom, PicBox targetImage)
     {
         if (_isSyncingZoom)
         {
@@ -792,7 +881,20 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
         _isSyncingZoom = true;
         try
         {
-            SyncedRightZoom.SyncTransformFrom(SyncedLeftZoom);
+            var srcRect = GetUniformImageRect(sourceImage);
+            var dstRect = GetUniformImageRect(targetImage);
+            if (srcRect.Width > 0 && srcRect.Height > 0 && dstRect.Width > 0 && dstRect.Height > 0)
+            {
+                var viewCenter = sourceZoom.ViewCenter;
+                var u = (viewCenter.X - srcRect.X) / srcRect.Width;
+                var v = (viewCenter.Y - srcRect.Y) / srcRect.Height;
+                var targetCenter = new Point(dstRect.X + u * dstRect.Width, dstRect.Y + v * dstRect.Height);
+                targetZoom.ShowChildAt(sourceZoom.Scale, targetCenter);
+            }
+            else
+            {
+                targetZoom.SyncTransformFrom(sourceZoom);
+            }
         }
         finally
         {
@@ -800,26 +902,179 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
         }
     }
 
-    private void OnSyncedRightViewChanged()
+    private static Rect GetUniformImageRect(PicBox picBox)
     {
-        if (_isSyncingZoom)
+        var bounds = picBox.Bounds;
+        if (bounds.Width <= 0 || bounds.Height <= 0)
         {
-            return;
+            return default;
         }
 
-        _isSyncingZoom = true;
-        try
+        var sourceSize = picBox.Source is IImage img ? img.Size : default;
+        if (sourceSize.Width <= 0 || sourceSize.Height <= 0)
         {
-            SyncedLeftZoom.SyncTransformFrom(SyncedRightZoom);
+            return new Rect(0, 0, bounds.Width, bounds.Height);
         }
-        finally
-        {
-            _isSyncingZoom = false;
-        }
+
+        var ratio = Math.Min(bounds.Width / sourceSize.Width, bounds.Height / sourceSize.Height);
+        var w = sourceSize.Width * ratio;
+        var h = sourceSize.Height * ratio;
+        return new Rect((bounds.Width - w) * 0.5, (bounds.Height - h) * 0.5, w, h);
     }
 
     private void OnSyncedScaleChanged(double scale) =>
         _tab.Zoom.SetFactor(scale);
+
+    private void UpdateComparisonBadges()
+    {
+        var swapped = _tab.IsComparisonSwapped.CurrentValue;
+        var leftLabel = swapped ? "B" : "A";
+        var rightLabel = swapped ? "A" : "B";
+        var leftName = _tab.DisplayPrimaryFileInfo.CurrentValue?.Name;
+        var rightName = _tab.DisplaySecondaryFileInfo.CurrentValue?.Name;
+        SyncedLeftBadgeText.Text = string.IsNullOrEmpty(leftName) ? leftLabel : $"{leftLabel} · {leftName}";
+        SyncedRightBadgeText.Text = string.IsNullOrEmpty(rightName) ? rightLabel : $"{rightLabel} · {rightName}";
+    }
+
+    private void UpdateCompareBarMargin()
+    {
+        var gs = _tab.ParentWindowContext.GlobalSettings;
+        var bottom = gs.ShowHoverBar.CurrentValue ? 74d : 18d;
+        CompareBar.Margin = new Thickness(0, 0, 0, bottom);
+    }
+
+    private void OnCompareHostPointerPressed(object? sender, PointerPressedEventArgs e)
+    {
+        if (!_tab.IsAligning.Value || !e.GetCurrentPoint(CompareHostGrid).Properties.IsLeftButtonPressed)
+        {
+            return;
+        }
+
+        var pt = e.GetPosition(CompareHostGrid);
+        switch (_tab.AlignmentStep.Value)
+        {
+            case 1:
+                _alignA1 = pt;
+                _tab.AlignmentStep.Value = 2;
+                break;
+            case 2:
+                _alignB1 = pt;
+                _tab.AlignmentStep.Value = 3;
+                break;
+            case 3:
+                _alignA2 = pt;
+                _tab.AlignmentStep.Value = 4;
+                break;
+            case 4:
+                _alignB2 = pt;
+                if (PicView.Core.Comparison.SimilarityTransform.TryCompute(
+                        (_alignA1.X, _alignA1.Y),
+                        (_alignA2.X, _alignA2.Y),
+                        (_alignB1.X, _alignB1.Y),
+                        (_alignB2.X, _alignB2.Y),
+                        out var m))
+                {
+                    CompareImage.RenderTransformOrigin = new RelativePoint(0, 0, RelativeUnit.Absolute);
+                    CompareImage.RenderTransform = new MatrixTransform(
+                        new Matrix(m.M11, m.M12, m.M21, m.M22, m.OffsetX, m.OffsetY));
+                    _tab.HasAlignment.Value = true;
+                }
+
+                _tab.IsAligning.Value = false;
+                _tab.AlignmentStep.Value = 0;
+                break;
+        }
+
+        e.Handled = true;
+    }
+
+    private void OnSplitHandleKeyDown(object? sender, KeyEventArgs e)
+    {
+        var gs = _tab.ParentWindowContext.GlobalSettings;
+        if (!gs.IsSplitMode.Value)
+        {
+            return;
+        }
+
+        switch (e.Key)
+        {
+            case Key.Left:
+            case Key.Up:
+                gs.ComparisonSplitRatio.Value = Math.Clamp(gs.ComparisonSplitRatio.CurrentValue - 0.01, 0.0, 1.0);
+                e.Handled = true;
+                break;
+            case Key.Right:
+            case Key.Down:
+                gs.ComparisonSplitRatio.Value = Math.Clamp(gs.ComparisonSplitRatio.CurrentValue + 0.01, 0.0, 1.0);
+                e.Handled = true;
+                break;
+            case Key.Home:
+                gs.ComparisonSplitRatio.Value = 0.5;
+                e.Handled = true;
+                break;
+        }
+    }
+
+    private void OnSyncedLeftPointerMoved(object? sender, PointerEventArgs e) =>
+        UpdateSyncedCrosshair(e, SyncedLeftZoom, SyncedLeftImage, SyncedRightZoom, SyncedRightImage, SyncedRightCrosshair, SyncedLeftCrosshair);
+
+    private void OnSyncedRightPointerMoved(object? sender, PointerEventArgs e) =>
+        UpdateSyncedCrosshair(e, SyncedRightZoom, SyncedRightImage, SyncedLeftZoom, SyncedLeftImage, SyncedLeftCrosshair, SyncedRightCrosshair);
+
+    private void OnSyncedPointerExited(object? sender, PointerEventArgs e) =>
+        HideSyncedCrosshairs();
+
+    private void HideSyncedCrosshairs()
+    {
+        SyncedLeftCrosshair.IsVisible = false;
+        SyncedRightCrosshair.IsVisible = false;
+    }
+
+    private void UpdateSyncedCrosshair(
+        PointerEventArgs e,
+        ZoomPanControl sourceZoom,
+        PicBox sourceImage,
+        ZoomPanControl targetZoom,
+        PicBox targetImage,
+        global::Avalonia.Controls.Shapes.Path targetCrosshair,
+        global::Avalonia.Controls.Shapes.Path sourceCrosshair)
+    {
+        if (!_tab.ParentWindowContext.GlobalSettings.IsSideBySideSyncedActive.Value)
+        {
+            HideSyncedCrosshairs();
+            return;
+        }
+
+        sourceCrosshair.IsVisible = false;
+        var srcPt = e.GetPosition(sourceImage);
+        var srcRect = GetUniformImageRect(sourceImage);
+        var dstRect = GetUniformImageRect(targetImage);
+        if (srcRect.Width <= 0 || srcRect.Height <= 0 || dstRect.Width <= 0 || dstRect.Height <= 0)
+        {
+            targetCrosshair.IsVisible = false;
+            return;
+        }
+
+        var u = (srcPt.X - srcRect.X) / srcRect.Width;
+        var v = (srcPt.Y - srcRect.Y) / srcRect.Height;
+        if (u is < 0 or > 1 || v is < 0 or > 1)
+        {
+            targetCrosshair.IsVisible = false;
+            return;
+        }
+
+        var dstImagePt = new Point(dstRect.X + u * dstRect.Width, dstRect.Y + v * dstRect.Height);
+        if (targetCrosshair.Parent is Visual canvas && targetImage.TranslatePoint(dstImagePt, canvas) is { } canvasPt)
+        {
+            Canvas.SetLeft(targetCrosshair, canvasPt.X - 8);
+            Canvas.SetTop(targetCrosshair, canvasPt.Y - 8);
+            targetCrosshair.IsVisible = true;
+        }
+        else
+        {
+            targetCrosshair.IsVisible = false;
+        }
+    }
 
     #endregion
 
@@ -828,6 +1083,10 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
         SyncedLeftZoom.ViewChanged -= OnSyncedLeftViewChanged;
         SyncedRightZoom.ViewChanged -= OnSyncedRightViewChanged;
         SyncedLeftZoom.ScaleChanged -= OnSyncedScaleChanged;
+        SyncedLeftZoom.PointerMoved -= OnSyncedLeftPointerMoved;
+        SyncedLeftZoom.PointerExited -= OnSyncedPointerExited;
+        SyncedRightZoom.PointerMoved -= OnSyncedRightPointerMoved;
+        SyncedRightZoom.PointerExited -= OnSyncedPointerExited;
         StopBlinkTimer();
         if (_blinkTimer is not null)
         {
@@ -835,10 +1094,14 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
             _blinkTimer = null;
         }
         CompareHostGrid.SizeChanged -= OnCompareHostSizeChanged;
+        CompareHostGrid.PointerPressed -= OnCompareHostPointerPressed;
+        ZoomPanControl.ViewChanged -= OnMainZoomViewChanged;
         SplitOverlay.PointerPressed -= OnSplitPointerPressed;
         SplitOverlay.PointerMoved -= OnSplitPointerMoved;
         SplitOverlay.PointerReleased -= OnSplitPointerReleased;
         SplitOverlay.PointerCaptureLost -= OnSplitPointerCaptureLost;
+        SplitHandle.KeyDown -= OnSplitHandleKeyDown;
+        CompareBar.Dispose();
         ZoomPanControl.ScaleChanged -= OnScaleChanged;
         RemoveHandler(PointerWheelChangedEvent, PreviewOnPointerWheelChanged);
         RemoveHandler(PointerTouchPadGestureMagnifyEvent, TouchMagnifyEvent);

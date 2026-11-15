@@ -93,6 +93,14 @@ public class LanguageModel
     public string? ComparisonSideBySideSynced { get; set; }
     public string? ComparisonPickA { get; set; }
     public string? ComparisonPickB { get; set; }
+    public string? ComparisonPin { get; set; }
+    public string? ComparisonStretch { get; set; }
+    public string? ComparisonAlign { get; set; }
+    public string? ComparisonAlignReset { get; set; }
+    public string? ComparisonAlignStepA1 { get; set; }
+    public string? ComparisonAlignStepB1 { get; set; }
+    public string? ComparisonAlignStepA2 { get; set; }
+    public string? ComparisonAlignStepB2 { get; set; }
     public string? CompressedBitsPixel { get; set; }
     public string? Compression { get; set; }
     public string? ConstrainBackgroundToImage { get; set; }

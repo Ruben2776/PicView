@@ -2,25 +2,34 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
 using Avalonia.VisualTree;
+using PicView.Avalonia.FileSystem;
 using PicView.Avalonia.ImageHandling;
 using PicView.Core.Config;
+using PicView.Core.DebugTools;
 using PicView.Core.ViewModels;
 using R3;
 
 namespace PicView.Avalonia.Views.UC;
 
-public partial class CompareBar : UserControl
+public partial class CompareBar : UserControl, IDisposable
 {
     private DisposableBag _subscriptions;
 
     public CompareBar()
     {
         InitializeComponent();
-        DataContextChanged += OnDataContextChanged;
-        DetachedFromVisualTree += (_, _) => _subscriptions.Dispose();
+        DataContextChanged += (_, _) => SubscribeToTab();
+        AttachedToVisualTree += (_, _) => SubscribeToTab();
+        DetachedFromVisualTree += (_, _) => Dispose();
     }
 
-    private void OnDataContextChanged(object? sender, EventArgs e)
+    public void Dispose()
+    {
+        _subscriptions.Dispose();
+        _subscriptions = default;
+    }
+
+    private void SubscribeToTab()
     {
         _subscriptions.Dispose();
         _subscriptions = default;
@@ -36,7 +45,26 @@ public partial class CompareBar : UserControl
             .AddTo(ref _subscriptions);
 
         tab.Zoom.Level
-            .Subscribe(level => ZoomPercentText.Text = $"{level:0}%")
+            .Subscribe(level =>
+            {
+                ZoomPercentText.Text = $"{level:0}%";
+                ZoomOutButton.IsEnabled = !(Settings.Zoom.AvoidZoomingOut && level <= 100.5);
+            })
+            .AddTo(ref _subscriptions);
+
+        tab.AlignmentStep
+            .Subscribe(step =>
+            {
+                var tr = tab.ParentWindowContext.Translation;
+                AlignHintText.Text = step switch
+                {
+                    1 => tr.ComparisonAlignStepA1.Value,
+                    2 => tr.ComparisonAlignStepB1.Value,
+                    3 => tr.ComparisonAlignStepA2.Value,
+                    4 => tr.ComparisonAlignStepB2.Value,
+                    _ => string.Empty
+                };
+            })
             .AddTo(ref _subscriptions);
     }
 
@@ -122,11 +150,23 @@ public partial class CompareBar : UserControl
         }
     }
 
-    private async void OnPickAClick(object? sender, RoutedEventArgs e) =>
-        await PickImageForSlotAsync(isPrimary: true);
+    private void OnPickAClick(object? sender, RoutedEventArgs e) =>
+        _ = PickImageForSlotSafeAsync(isPrimary: true);
 
-    private async void OnPickBClick(object? sender, RoutedEventArgs e) =>
-        await PickImageForSlotAsync(isPrimary: false);
+    private void OnPickBClick(object? sender, RoutedEventArgs e) =>
+        _ = PickImageForSlotSafeAsync(isPrimary: false);
+
+    private async Task PickImageForSlotSafeAsync(bool isPrimary)
+    {
+        try
+        {
+            await PickImageForSlotAsync(isPrimary).ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            DebugHelper.LogDebug(nameof(CompareBar), nameof(PickImageForSlotSafeAsync), ex);
+        }
+    }
 
     private async Task PickImageForSlotAsync(bool isPrimary)
     {
@@ -144,15 +184,15 @@ public partial class CompareBar : UserControl
         var files = await storage.OpenFilePickerAsync(new FilePickerOpenOptions
         {
             AllowMultiple = false,
-            FileTypeFilter = [FilePickerFileTypes.ImageAll]
-        });
+            FileTypeFilter = [GetFilePickerFileTypes.AllFileType]
+        }).ConfigureAwait(true);
 
         if (files.Count == 0 || files[0].TryGetLocalPath() is not { } localPath)
         {
             return;
         }
 
-        var model = await GetImageModel.GetImageModelAsync(new FileInfo(localPath));
+        var model = await GetImageModel.GetImageModelAsync(new FileInfo(localPath)).ConfigureAwait(true);
         if (isPrimary)
         {
             tab.SetComparisonPrimary(model);
@@ -160,6 +200,49 @@ public partial class CompareBar : UserControl
         else
         {
             tab.SetComparisonSecondary(model);
+        }
+    }
+
+    private void OnPinClick(object? sender, RoutedEventArgs e)
+    {
+        if (DataContext is TabViewModel tab)
+        {
+            tab.ToggleComparisonPin();
+        }
+    }
+
+    private void OnStretchToggleClick(object? sender, RoutedEventArgs e)
+    {
+        if (SettingsVm is { } gs)
+        {
+            gs.IsComparisonStretchFill.Value = !gs.IsComparisonStretchFill.Value;
+        }
+    }
+
+    private void OnAlignClick(object? sender, RoutedEventArgs e)
+    {
+        if (DataContext is not TabViewModel tab)
+        {
+            return;
+        }
+
+        if (tab.IsAligning.Value)
+        {
+            tab.IsAligning.Value = false;
+            tab.AlignmentStep.Value = 0;
+        }
+        else
+        {
+            tab.IsAligning.Value = true;
+            tab.AlignmentStep.Value = 1;
+        }
+    }
+
+    private void OnResetAlignClick(object? sender, RoutedEventArgs e)
+    {
+        if (DataContext is TabViewModel tab)
+        {
+            tab.ResetComparisonAlignment();
         }
     }
 
@@ -181,6 +264,10 @@ public partial class CompareBar : UserControl
 
     private void OnCloseClick(object? sender, RoutedEventArgs e)
     {
+        if (DataContext is TabViewModel tab)
+        {
+            tab.ClearComparisonOverrides();
+        }
         if (SettingsVm is { } gs)
         {
             gs.IsComparing.Value = false;

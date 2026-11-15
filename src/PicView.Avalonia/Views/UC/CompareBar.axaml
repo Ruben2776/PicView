@@ -22,12 +22,12 @@
         </Style>
         <Style Selector="Button.comparePill:pointerover">
             <Setter Property="Foreground" Value="{DynamicResource MainTextColor}" />
-            <Setter Property="Background" Value="#14FFFFFF" />
+            <Setter Property="Background" Value="{DynamicResource ComparePillHoverBackground}" />
         </Style>
         <Style Selector="Button.comparePill.active">
             <Setter Property="Foreground" Value="{DynamicResource MainTextColor}" />
-            <Setter Property="Background" Value="#24FFFFFF" />
-            <Setter Property="BorderBrush" Value="#40FFFFFF" />
+            <Setter Property="Background" Value="{DynamicResource ComparePillActiveBackground}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ComparePillActiveBorder}" />
         </Style>
         <Style Selector="Button.compareIconBtn">
             <Setter Property="Background" Value="Transparent" />
@@ -44,16 +44,32 @@
         </Style>
         <Style Selector="Button.compareIconBtn:pointerover">
             <Setter Property="Foreground" Value="{DynamicResource MainTextColor}" />
-            <Setter Property="Background" Value="#18FFFFFF" />
+            <Setter Property="Background" Value="{DynamicResource ComparePillHoverBackground}" />
         </Style>
         <Style Selector="Button.compareIconBtn.active">
             <Setter Property="Foreground" Value="{DynamicResource MainTextColor}" />
-            <Setter Property="Background" Value="#24FFFFFF" />
-            <Setter Property="BorderBrush" Value="#40FFFFFF" />
+            <Setter Property="Background" Value="{DynamicResource ComparePillActiveBackground}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ComparePillActiveBorder}" />
+        </Style>
+        <Style Selector="Button.compareIconBtn:disabled">
+            <Setter Property="Opacity" Value="0.35" />
+        </Style>
+        <Style Selector="Button.compareIconBtn Path, Button.comparePill Path">
+            <Setter Property="Stroke" Value="{DynamicResource MainTextColorFaded}" />
+        </Style>
+        <Style Selector="Button.compareIconBtn:pointerover Path, Button.compareIconBtn.active Path, Button.comparePill:pointerover Path, Button.comparePill.active Path">
+            <Setter Property="Stroke" Value="{DynamicResource MainTextColor}" />
+        </Style>
+        <Style Selector="Button.compareIconBtn Border.zoomMinus">
+            <Setter Property="Background" Value="{DynamicResource MainTextColorFaded}" />
+        </Style>
+        <Style Selector="Button.compareIconBtn:pointerover Border.zoomMinus">
+            <Setter Property="Background" Value="{DynamicResource MainTextColor}" />
         </Style>
     </UserControl.Styles>
 
     <Border
+        Margin="12,0"
         Padding="6,4"
         HorizontalAlignment="Center"
         VerticalAlignment="Bottom"
@@ -62,11 +78,12 @@
         BorderThickness="1"
         BoxShadow="0 4 16 0 #55000000"
         CornerRadius="22">
+        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
         <StackPanel Orientation="Horizontal" Spacing="6">
             <!--  Mode Segmented Pill  -->
             <Border
                 Padding="2"
-                Background="#14000000"
+                Background="{DynamicResource ComparePillGroupBackground}"
                 CornerRadius="18">
                 <StackPanel Orientation="Horizontal" Spacing="2">
                     <Button
@@ -131,7 +148,7 @@
             <!--  Contextual Controls: Split Orientation  -->
             <Border
                 Padding="2"
-                Background="#14000000"
+                Background="{DynamicResource ComparePillGroupBackground}"
                 CornerRadius="16"
                 IsVisible="{CompiledBinding ParentWindowContext.GlobalSettings.IsSplitMode.Value}">
                 <StackPanel Orientation="Horizontal" Spacing="2">
@@ -144,7 +161,6 @@
                             Height="14"
                             Data="M3,4 C3,3.45 3.45,3 4,3 L14,3 C14.55,3 15,3.45 15,4 L15,14 C15,14.55 14.55,15 14,15 L4,15 C3.45,15 3,14.55 3,14 Z M9,3 L9,15"
                             Stretch="Uniform"
-                            Stroke="{Binding $parent[Button].Foreground}"
                             StrokeThickness="1.5" />
                     </Button>
                     <Button
@@ -156,7 +172,6 @@
                             Height="14"
                             Data="M3,4 C3,3.45 3.45,3 4,3 L14,3 C14.55,3 15,3.45 15,4 L15,14 C15,14.55 14.55,15 14,15 L4,15 C3.45,15 3,14.55 3,14 Z M3,9 L15,9"
                             Stretch="Uniform"
-                            Stroke="{Binding $parent[Button].Foreground}"
                             StrokeThickness="1.5" />
                     </Button>
                 </StackPanel>
@@ -165,7 +180,7 @@
             <!--  Contextual Controls: Side-by-Side Sub-mode  -->
             <Border
                 Padding="2"
-                Background="#14000000"
+                Background="{DynamicResource ComparePillGroupBackground}"
                 CornerRadius="16"
                 IsVisible="{CompiledBinding ParentWindowContext.GlobalSettings.IsSideBySide.Value}">
                 <StackPanel Orientation="Horizontal" Spacing="2">
@@ -185,7 +200,7 @@
             <!--  Contextual Controls: Blink Timing  -->
             <Border
                 Padding="2"
-                Background="#14000000"
+                Background="{DynamicResource ComparePillGroupBackground}"
                 CornerRadius="16"
                 IsVisible="{CompiledBinding ParentWindowContext.GlobalSettings.IsBlinkMode.Value}">
                 <StackPanel Orientation="Horizontal" Spacing="4">
@@ -225,7 +240,7 @@
             <!--  Pick A / Pick B  -->
             <Border
                 Padding="2"
-                Background="#14000000"
+                Background="{DynamicResource ComparePillGroupBackground}"
                 CornerRadius="16">
                 <StackPanel Orientation="Horizontal" Spacing="2">
                     <Button
@@ -246,6 +261,7 @@
             <!--  Zoom Controls  -->
             <StackPanel Orientation="Horizontal" Spacing="2">
                 <Button
+                    x:Name="ZoomOutButton"
                     Classes="compareIconBtn"
                     Command="{CompiledBinding ParentWindowContext.RunActionCommand}"
                     CommandParameter="{x:Static keybindings:Actions.ZoomOut}"
@@ -255,7 +271,7 @@
                         Height="1.6"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
-                        Background="{Binding $parent[Button].Foreground}"
+                        Classes="zoomMinus"
                         CornerRadius="1" />
                 </Button>
                 <TextBlock
@@ -276,7 +292,6 @@
                         Height="12"
                         Data="M7,2 L7,12 M2,7 L12,7"
                         Stretch="Uniform"
-                        Stroke="{Binding $parent[Button].Foreground}"
                         StrokeLineCap="Round"
                         StrokeThickness="1.6" />
                 </Button>
@@ -285,7 +300,7 @@
             <!--  Swap A / B  -->
             <Button
                 Classes="compareIconBtn"
-                Classes.active="{CompiledBinding ParentWindowContext.GlobalSettings.IsComparisonSwapped.Value}"
+                Classes.active="{CompiledBinding IsComparisonSwapped.Value}"
                 Click="OnSwapClick"
                 ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.ComparisonSwap.Value}">
                 <Path
@@ -293,11 +308,86 @@
                     Height="14"
                     Data="M3,6 L13,6 M10,3 L13,6 L10,9 M13,12 L3,12 M6,9 L3,12 L6,15"
                     Stretch="Uniform"
-                    Stroke="{Binding $parent[Button].Foreground}"
                     StrokeLineCap="Round"
                     StrokeJoin="Round"
                     StrokeThickness="1.5" />
             </Button>
+
+            <!--  Pin Pair  -->
+            <Button
+                x:Name="PinButton"
+                Classes="compareIconBtn"
+                Classes.active="{CompiledBinding IsComparisonPinned.Value}"
+                Click="OnPinClick"
+                ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.ComparisonPin.Value}">
+                <Path
+                    Width="13"
+                    Height="13"
+                    Data="M9,2 L14,7 L12,9 L10.5,8.5 L8,11 L8,14 L6.5,12.5 L3,15 L5.5,11.5 L4,10 L7,10 L9.5,7.5 L9,6 Z"
+                    Stretch="Uniform"
+                    StrokeLineCap="Round"
+                    StrokeJoin="Round"
+                    StrokeThickness="1.4" />
+            </Button>
+
+            <!--  Stretch Fill Toggle (Stacked Compare)  -->
+            <Button
+                x:Name="StretchButton"
+                Classes="compareIconBtn"
+                Classes.active="{CompiledBinding ParentWindowContext.GlobalSettings.IsComparisonStretchFill.Value}"
+                Click="OnStretchToggleClick"
+                IsVisible="{CompiledBinding ParentWindowContext.GlobalSettings.IsComparing.Value}"
+                ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.ComparisonStretch.Value}">
+                <Path
+                    Width="13"
+                    Height="13"
+                    Data="M3,6 L3,3 L6,3 M10,3 L13,3 L13,6 M13,10 L13,13 L10,13 M6,13 L3,13 L3,10 M6,6 L10,6 L10,10 L6,10 Z"
+                    Stretch="Uniform"
+                    StrokeLineCap="Round"
+                    StrokeJoin="Round"
+                    StrokeThickness="1.4" />
+            </Button>
+
+            <!--  2-Point Anchor Alignment  -->
+            <Button
+                x:Name="AlignButton"
+                Classes="compareIconBtn"
+                Classes.active="{CompiledBinding IsAligning.Value}"
+                Click="OnAlignClick"
+                IsVisible="{CompiledBinding ParentWindowContext.GlobalSettings.IsComparing.Value}"
+                ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.ComparisonAlign.Value}">
+                <Path
+                    Width="13"
+                    Height="13"
+                    Data="M4,4 m-2,0 a2,2 0 1,0 4,0 a2,2 0 1,0 -4,0 M12,12 m-2,0 a2,2 0 1,0 4,0 a2,2 0 1,0 -4,0 M5.5,5.5 L10.5,10.5"
+                    Stretch="Uniform"
+                    StrokeLineCap="Round"
+                    StrokeThickness="1.4" />
+            </Button>
+
+            <Button
+                x:Name="ResetAlignButton"
+                Classes="compareIconBtn"
+                Click="OnResetAlignClick"
+                IsVisible="{CompiledBinding HasAlignment.Value}"
+                ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.ComparisonAlignReset.Value}">
+                <Path
+                    Width="12"
+                    Height="12"
+                    Data="M3,8 A5,5 0 1,1 8,13 M3,4 L3,8 L7,8"
+                    Stretch="Uniform"
+                    StrokeLineCap="Round"
+                    StrokeJoin="Round"
+                    StrokeThickness="1.4" />
+            </Button>
+
+            <TextBlock
+                x:Name="AlignHintText"
+                Margin="4,0"
+                VerticalAlignment="Center"
+                FontSize="11"
+                Foreground="{DynamicResource MainTextColor}"
+                IsVisible="{CompiledBinding IsAligning.Value}" />
 
             <!--  Fit / Reset Zoom  -->
             <Button
@@ -310,7 +400,6 @@
                         VerticalAlignment="Center"
                         Data="M3,7 L3,3 L7,3 M11,3 L15,3 L15,7 M15,11 L15,15 L11,15 M7,15 L3,15 L3,11"
                         Stretch="Uniform"
-                        Stroke="{Binding $parent[Button].Foreground}"
                         StrokeLineCap="Round"
                         StrokeJoin="Round"
                         StrokeThickness="1.5" />
@@ -331,10 +420,10 @@
                     Height="10"
                     Data="M2,2 L10,10 M10,2 L2,10"
                     Stretch="Uniform"
-                    Stroke="{Binding $parent[Button].Foreground}"
                     StrokeLineCap="Round"
                     StrokeThickness="1.6" />
             </Button>
         </StackPanel>
+        </ScrollViewer>
     </Border>
 </UserControl>

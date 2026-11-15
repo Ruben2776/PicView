@@ -214,6 +214,21 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
     public BindableReactiveProperty<ImageType?> SecondaryImageType { get; } = new(null);
     public BindableReactiveProperty<FileInfo?> SecondaryFileInfo { get; } = new(null);
 
+    public BindableReactiveProperty<bool> IsComparisonSwapped { get; } = new(false);
+    public BindableReactiveProperty<bool> IsComparisonPinned { get; } = new(false);
+    public BindableReactiveProperty<bool> IsAligning { get; } = new(false);
+    public BindableReactiveProperty<int> AlignmentStep { get; } = new(0);
+    public BindableReactiveProperty<bool> HasAlignment { get; } = new(false);
+    public BindableReactiveProperty<ImageModel?> ComparisonOverrideA { get; } = new(null);
+    public BindableReactiveProperty<ImageModel?> ComparisonOverrideB { get; } = new(null);
+
+    public BindableReactiveProperty<object?> DisplayPrimaryImage { get; } = new(null);
+    public BindableReactiveProperty<ImageType?> DisplayPrimaryImageType { get; } = new(null);
+    public BindableReactiveProperty<FileInfo?> DisplayPrimaryFileInfo { get; } = new(null);
+    public BindableReactiveProperty<object?> DisplaySecondaryImage { get; } = new(null);
+    public BindableReactiveProperty<ImageType?> DisplaySecondaryImageType { get; } = new(null);
+    public BindableReactiveProperty<FileInfo?> DisplaySecondaryFileInfo { get; } = new(null);
+
     /// <summary>
     /// What changed in what the tab shows: once per <see cref="Display"/>, <see cref="DisplaySingleImage"/> and
     /// <see cref="ShowPage"/>, after the models, their bindables and the View History hold the new values, and once per
@@ -363,50 +378,91 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
         FileInfo.Value = primary.FileInfo;
         Image.Value = primary.Image;
         ImageType.Value = primary.ImageType;
+
+        IsComparisonSwapped.Value = false;
+        ResetComparisonAlignment();
+        if (!IsComparisonPinned.Value)
+        {
+            ComparisonOverrideA.Value = null;
+            ComparisonOverrideB.Value = null;
+        }
+        UpdateComparisonDisplayProperties();
     }
 
     public void SwapComparisonPair()
     {
-        if (SecondaryImage.Value is null && Image.Value is null)
+        if (DisplaySecondaryImage.Value is null && DisplayPrimaryImage.Value is null)
         {
             return;
         }
 
-        var prevModel = Model;
-        var prevImage = Image.Value;
-        var prevImageType = ImageType.Value;
-        var prevFileInfo = FileInfo.Value;
-
-        Model = SecondaryModel ?? Model;
-        Image.Value = SecondaryImage.Value;
-        ImageType.Value = SecondaryImageType.Value;
-        FileInfo.Value = SecondaryFileInfo.Value;
-
-        SecondaryModel = prevModel;
-        SecondaryImage.Value = prevImage;
-        SecondaryImageType.Value = prevImageType;
-        SecondaryFileInfo.Value = prevFileInfo;
-
-        ParentWindowContext.GlobalSettings.IsComparisonSwapped.Value =
-            !ParentWindowContext.GlobalSettings.IsComparisonSwapped.Value;
+        IsComparisonSwapped.Value = !IsComparisonSwapped.Value;
+        UpdateComparisonDisplayProperties();
     }
 
     public void SetComparisonPrimary(ImageModel primary)
     {
-        Model = primary;
-        FileInfo.Value = primary.FileInfo;
-        Image.Value = primary.Image;
-        ImageType.Value = primary.ImageType;
-        Publish(ShownChange.Image);
+        ComparisonOverrideA.Value = primary;
+        UpdateComparisonDisplayProperties();
     }
 
     public void SetComparisonSecondary(ImageModel secondary)
     {
-        SecondaryModel = secondary;
-        SecondaryFileInfo.Value = secondary.FileInfo;
-        SecondaryImage.Value = secondary.Image;
-        SecondaryImageType.Value = secondary.ImageType;
-        Publish(ShownChange.Image);
+        ComparisonOverrideB.Value = secondary;
+        UpdateComparisonDisplayProperties();
+    }
+
+    public void ClearComparisonOverrides()
+    {
+        ComparisonOverrideA.Value = null;
+        ComparisonOverrideB.Value = null;
+        IsComparisonSwapped.Value = false;
+        IsComparisonPinned.Value = false;
+        ResetComparisonAlignment();
+        UpdateComparisonDisplayProperties();
+    }
+
+    public void ResetComparisonAlignment()
+    {
+        IsAligning.Value = false;
+        AlignmentStep.Value = 0;
+        HasAlignment.Value = false;
+    }
+
+    public void ToggleComparisonPin()
+    {
+        var pin = !IsComparisonPinned.Value;
+        IsComparisonPinned.Value = pin;
+        if (pin && ComparisonOverrideA.Value is null && Model.Image is not null)
+        {
+            ComparisonOverrideA.Value = Model;
+        }
+        else if (!pin)
+        {
+            ComparisonOverrideA.Value = null;
+            ComparisonOverrideB.Value = null;
+        }
+        UpdateComparisonDisplayProperties();
+    }
+
+    public void UpdateComparisonDisplayProperties()
+    {
+        var aImg = ComparisonOverrideA.Value?.Image ?? Image.Value;
+        var aType = ComparisonOverrideA.Value?.ImageType ?? ImageType.Value;
+        var aFile = ComparisonOverrideA.Value?.FileInfo ?? FileInfo.Value;
+
+        var bImg = ComparisonOverrideB.Value?.Image ?? SecondaryImage.Value;
+        var bType = ComparisonOverrideB.Value?.ImageType ?? SecondaryImageType.Value;
+        var bFile = ComparisonOverrideB.Value?.FileInfo ?? SecondaryFileInfo.Value;
+
+        var swapped = IsComparisonSwapped.Value;
+        DisplayPrimaryImage.Value = swapped ? bImg : aImg;
+        DisplayPrimaryImageType.Value = swapped ? bType : aType;
+        DisplayPrimaryFileInfo.Value = swapped ? bFile : aFile;
+
+        DisplaySecondaryImage.Value = swapped ? aImg : bImg;
+        DisplaySecondaryImageType.Value = swapped ? aType : bType;
+        DisplaySecondaryFileInfo.Value = swapped ? aFile : bFile;
     }
 
     /// <summary>
