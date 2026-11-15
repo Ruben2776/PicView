@@ -281,4 +281,182 @@ public class GetImageTests : IDisposable
 
         return pixels;
     }
+
+    private static (byte R, byte G, byte B) Red => (255, 0, 0);
+    private static (byte R, byte G, byte B) Blue => (0, 0, 255);
+    private static (byte R, byte G, byte B) Green => (0, 255, 0);
+    private static (byte R, byte G, byte B) White => (255, 255, 255);
+
+    /// <summary>
+    /// A picture whose left half is one color and whose right half is another, so where the colors end up shows how
+    /// it was turned.
+    /// </summary>
+    private static MagickImage CreateSplitImage(int width, int height, (byte R, byte G, byte B) left,
+        (byte R, byte G, byte B) right)
+    {
+        var pixels = new byte[width * height * 4];
+        for (var y = 0; y < height; y++)
+        {
+            for (var x = 0; x < width; x++)
+            {
+                var (r, g, b) = x < width / 2 ? left : right;
+                var i = (y * width + x) * 4;
+                pixels[i] = r;
+                pixels[i + 1] = g;
+                pixels[i + 2] = b;
+                pixels[i + 3] = byte.MaxValue;
+            }
+        }
+
+        var image = new MagickImage();
+        image.ReadPixels(pixels, new PixelReadSettings((uint)width, (uint)height, StorageType.Char, PixelMapping.RGBA));
+        return image;
+    }
+
+    /// <summary>
+    /// Writes a JPEG stored 800 wide and 600 tall, red on the left and blue on the right, that says how to turn it.
+    /// </summary>
+    private string WriteSplitJpeg(string name, Orientation orientation, ExifProfile exif)
+    {
+        using var image = CreateSplitImage(800, 600, Red, Blue);
+        // Magick writes the orientation tag only with both an EXIF profile and the property set
+        image.SetProfile(exif);
+        image.Orientation = orientation;
+        var path = Path.Combine(_directory, name);
+        image.Write(path, MagickFormat.Jpeg);
+        return path;
+    }
+
+    private static ExifProfile OrientationProfile(int exifOrientation)
+    {
+        var exif = new ExifProfile();
+        exif.SetValue(ExifTag.Orientation, (ushort)exifOrientation);
+        return exif;
+    }
+
+    /// <summary>
+    /// The split JPEG, turned a quarter clockwise to show, with an embedded EXIF thumbnail stored 200 wide and 150 tall,
+    /// green on the left and white on the right. Magick.NET cannot write an embedded thumbnail, so the EXIF block is
+    /// written by hand: IFD0 holds the orientation, IFD1 says where the thumbnail's JPEG bytes are.
+    /// </summary>
+    private string WriteTurnedJpegWithExifThumbnail()
+    {
+        using var embedded = CreateSplitImage(200, 150, Green, White);
+        var thumbnail = embedded.ToByteArray(MagickFormat.Jpeg);
+
+        using var stream = new MemoryStream();
+        using var writer = new BinaryWriter(stream);
+        writer.Write("Exif\0\0"u8);
+        writer.Write("II"u8); // Little-endian TIFF header; the offsets below count from here
+        writer.Write((ushort)42);
+        writer.Write(8u); // IFD0 starts at 8
+        writer.Write((ushort)1); // One entry
+        writer.Write((ushort)0x0112); // Orientation
+        writer.Write((ushort)3); // SHORT
+        writer.Write(1u);
+        writer.Write(6u); // Rotate 90 CW
+        writer.Write(26u); // IFD1 starts at 26
+        writer.Write((ushort)2); // Two entries
+        writer.Write((ushort)0x0201); // JPEGInterchangeFormat: where the thumbnail starts
+        writer.Write((ushort)4); // LONG
+        writer.Write(1u);
+        writer.Write(56u);
+        writer.Write((ushort)0x0202); // JPEGInterchangeFormatLength
+        writer.Write((ushort)4);
+        writer.Write(1u);
+        writer.Write((uint)thumbnail.Length);
+        writer.Write(0u); // No further IFD
+        writer.Write(thumbnail);
+        writer.Flush();
+
+        return WriteSplitJpeg("with-thumbnail.jpg", Orientation.RightTop, new ExifProfile(stream.ToArray()));
+    }
+
+    /// <summary>
+    /// Checks the pixel at the given fractions of the bitmap's width and height, loosely, as JPEG shifts colors a little.
+    /// </summary>
+    private static void AssertColor(Bitmap bitmap, double x, double y, (byte R, byte G, byte B) expected)
+    {
+        var pixels = ReadPremulBgra(bitmap);
+        var size = bitmap.PixelSize;
+        var i = ((int)(y * size.Height) * size.Width + (int)(x * size.Width)) * 4;
+        var (b, g, r) = (pixels[i], pixels[i + 1], pixels[i + 2]);
+        Assert.True(Math.Abs(r - expected.R) < 60 && Math.Abs(g - expected.G) < 60 && Math.Abs(b - expected.B) < 60,
+            $"Expected {expected} at ({x}, {y}) but found R{r} G{g} B{b}");
+    }
+
+    [AvaloniaTheory]
+    // Turned a quarter clockwise to show: the stored left side is the top
+    [InlineData(6, Orientation.RightTop, 75, 100, 0.5, 0.25, 0.5, 0.75)]
+    // Turned a quarter counterclockwise: the stored left side is the bottom
+    [InlineData(8, Orientation.LeftBottom, 75, 100, 0.5, 0.75, 0.5, 0.25)]
+    // Turned upside down: the stored left side is the right
+    [InlineData(3, Orientation.BottomRight, 133, 100, 0.75, 0.5, 0.25, 0.5)]
+    public void Decode_JpegWithExifOrientation_GivesItUpright(int exifOrientation, Orientation orientation,
+        int width, int height, double redX, double redY, double blueX, double blueY)
+    {
+        var path = WriteSplitJpeg($"turned{exifOrientation}.jpg", orientation, OrientationProfile(exifOrientation));
+
+        using var actual = GetThumbnails.Decode(new FileInfo(path), 100);
+
+        Assert.NotNull(actual);
+        Assert.Equal(new PixelSize(width, height), actual.PixelSize);
+        AssertColor(actual, redX, redY, Red);
+        AssertColor(actual, blueX, blueY, Blue);
+    }
+
+    [AvaloniaFact]
+    public void Decode_JpegThatSaysItIsUpright_MatchesDecodeToHeight()
+    {
+        // Most camera files carry orientation 1. They must stay on the Skia decode, pinned here byte for byte
+        var path = WriteSplitJpeg("upright.jpg", Orientation.TopLeft, OrientationProfile(1));
+
+        using var stream = File.OpenRead(path);
+        using var expected = Bitmap.DecodeToHeight(stream, 100);
+        using var actual = GetThumbnails.Decode(new FileInfo(path), 100);
+
+        Assert.NotNull(actual);
+        Assert.Equal(expected.PixelSize, actual.PixelSize);
+        Assert.Equal(ReadPremulBgra(expected), ReadPremulBgra(actual));
+    }
+
+    [AvaloniaFact]
+    public void Decode_TurnedJpegWhoseExifThumbnailIsTallEnoughUpright_GivesThatThumbnailUpright()
+    {
+        // Upright the embedded thumbnail is 200 tall: enough for 180, which its stored height of 150 is not
+        var path = WriteTurnedJpegWithExifThumbnail();
+
+        using var actual = GetThumbnails.Decode(new FileInfo(path), 180);
+
+        Assert.NotNull(actual);
+        Assert.Equal(new PixelSize(150, 200), actual.PixelSize);
+        AssertColor(actual, 0.5, 0.25, Green);
+        AssertColor(actual, 0.5, 0.75, White);
+    }
+
+    [AvaloniaFact]
+    public void Decode_TurnedJpegWhoseExifThumbnailIsTooShortUpright_DecodesTheFileUpright()
+    {
+        var path = WriteTurnedJpegWithExifThumbnail();
+
+        using var actual = GetThumbnails.Decode(new FileInfo(path), 220);
+
+        Assert.NotNull(actual);
+        Assert.Equal(new PixelSize(165, 220), actual.PixelSize);
+        AssertColor(actual, 0.5, 0.25, Red);
+        AssertColor(actual, 0.5, 0.75, Blue);
+    }
+
+    [AvaloniaFact]
+    public void GetReadyMade_TurnedJpegWithExifThumbnail_GivesTheThumbnailUpright()
+    {
+        var path = WriteTurnedJpegWithExifThumbnail();
+
+        using var actual = GetThumbnails.GetReadyMade(new FileInfo(path), 100);
+
+        Assert.NotNull(actual);
+        Assert.Equal(new PixelSize(150, 200), actual.PixelSize);
+        AssertColor(actual, 0.5, 0.25, Green);
+        AssertColor(actual, 0.5, 0.75, White);
+    }
 }
