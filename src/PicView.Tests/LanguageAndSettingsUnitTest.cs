@@ -136,6 +136,50 @@ public class LanguageAndSettingsUnitTest
     }
 
     [Fact]
+    public void GetLanguageModel_English_HasTheGalleryDisplayModeTexts()
+    {
+        var en = TranslationManager.GetLanguageModel(new CultureInfo("en-US"));
+
+        Assert.Equal("Gallery display mode", en.GalleryDisplayMode);
+        Assert.Equal("Columns", en.Columns);
+        Assert.Equal("Masonry", en.Masonry);
+        Assert.Equal("Rows", en.Rows);
+        Assert.Equal("Switch gallery display mode", en.ToggleGalleryDisplayMode);
+    }
+
+    [Fact]
+    public void UpdateLanguage_English_PublishesTheGalleryDisplayModeTexts()
+    {
+        TranslationManager.GetLanguageModel(new CultureInfo("en-US"));
+        var vm = new TranslationViewModel();
+
+        vm.UpdateLanguage();
+
+        Assert.Equal("Gallery display mode", vm.GalleryDisplayMode.Value);
+        Assert.Equal("Columns", vm.Columns.Value);
+        Assert.Equal("Masonry", vm.Masonry.Value);
+        Assert.Equal("Rows", vm.Rows.Value);
+        Assert.Equal("Switch gallery display mode", vm.ToggleGalleryDisplayMode.Value);
+    }
+
+    [Fact]
+    public void LanguageFiles_GalleryDisplayModeKeys_HaveText()
+    {
+        string[] keys = ["GalleryDisplayMode", "Columns", "Masonry", "Rows", "ToggleGalleryDisplayMode"];
+
+        foreach (var language in TranslationManager.GetLanguages())
+        {
+            using var document = JsonDocument.Parse(File.ReadAllText(language.FullName));
+            foreach (var key in keys)
+            {
+                Assert.True(document.RootElement.TryGetProperty(key, out var value) &&
+                            !string.IsNullOrWhiteSpace(value.GetString()),
+                    $"{key} has no text in {language.Name}");
+            }
+        }
+    }
+
+    [Fact]
     public void GetLanguageModel_LoadsExpectedTranslations()
     {
         var enModel = TranslationManager.GetLanguageModel(new CultureInfo("en-US"));
