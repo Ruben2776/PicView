@@ -409,6 +409,11 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
     /// </summary>
     private void OnScaleChanged(double scale)
     {
+        if (_tab.ParentWindowContext.GlobalSettings.IsSideBySideSyncedActive.Value)
+        {
+            return;
+        }
+
         _tab.Zoom.SetFactor(scale);
         if (Settings.Zoom.IsShowingZoomPercentagePopup)
         {
@@ -584,6 +589,7 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
             else
             {
                 HideSyncedCrosshairs();
+                _tab.Zoom.SetFactor(ZoomPanControl.Scale);
             }
         }).AddTo(ref _disposables);
 
@@ -883,8 +889,8 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
         _isSyncingZoom = true;
         try
         {
-            var srcRect = GetUniformImageRect(sourceImage);
-            var dstRect = GetUniformImageRect(targetImage);
+            var srcRect = GetUniformImageRect(sourceImage, sourceZoom);
+            var dstRect = GetUniformImageRect(targetImage, targetZoom);
             if (srcRect.Width > 0 && srcRect.Height > 0 && dstRect.Width > 0 && dstRect.Height > 0)
             {
                 var viewCenter = sourceZoom.ViewCenter;
@@ -904,10 +910,15 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
         }
     }
 
-    private static Rect GetUniformImageRect(PicBox picBox)
+    private static Rect GetUniformImageRect(PicBox picBox, ZoomPanControl zoom)
     {
-        var bounds = picBox.Bounds;
-        if (bounds.Width <= 0 || bounds.Height <= 0)
+        if (picBox.Bounds.Width > 0 && picBox.Bounds.Height > 0)
+        {
+            return picBox.Bounds;
+        }
+
+        var containerBounds = (zoom.Child as Control)?.Bounds ?? zoom.Bounds;
+        if (containerBounds.Width <= 0 || containerBounds.Height <= 0)
         {
             return default;
         }
@@ -915,13 +926,13 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
         var sourceSize = picBox.Source is IImage img ? img.Size : default;
         if (sourceSize.Width <= 0 || sourceSize.Height <= 0)
         {
-            return new Rect(0, 0, bounds.Width, bounds.Height);
+            return new Rect(0, 0, containerBounds.Width, containerBounds.Height);
         }
 
-        var ratio = Math.Min(bounds.Width / sourceSize.Width, bounds.Height / sourceSize.Height);
+        var ratio = Math.Min(containerBounds.Width / sourceSize.Width, containerBounds.Height / sourceSize.Height);
         var w = sourceSize.Width * ratio;
         var h = sourceSize.Height * ratio;
-        return new Rect((bounds.Width - w) * 0.5, (bounds.Height - h) * 0.5, w, h);
+        return new Rect((containerBounds.Width - w) * 0.5, (containerBounds.Height - h) * 0.5, w, h);
     }
 
     private void OnSyncedScaleChanged(double scale)
@@ -1061,9 +1072,11 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
         }
 
         sourceCrosshair.IsVisible = false;
-        var srcPt = e.GetPosition(sourceImage);
-        var srcRect = GetUniformImageRect(sourceImage);
-        var dstRect = GetUniformImageRect(targetImage);
+        var srcVisual = (sourceZoom.Child as Visual) ?? sourceImage;
+        var targetVisual = (targetZoom.Child as Visual) ?? targetImage;
+        var srcPt = e.GetPosition(srcVisual);
+        var srcRect = GetUniformImageRect(sourceImage, sourceZoom);
+        var dstRect = GetUniformImageRect(targetImage, targetZoom);
         if (srcRect.Width <= 0 || srcRect.Height <= 0 || dstRect.Width <= 0 || dstRect.Height <= 0)
         {
             targetCrosshair.IsVisible = false;
@@ -1079,7 +1092,7 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
         }
 
         var dstImagePt = new Point(dstRect.X + u * dstRect.Width, dstRect.Y + v * dstRect.Height);
-        if (targetCrosshair.Parent is Visual canvas && targetImage.TranslatePoint(dstImagePt, canvas) is { } canvasPt)
+        if (targetCrosshair.Parent is Visual canvas && targetVisual.TranslatePoint(dstImagePt, canvas) is { } canvasPt)
         {
             Canvas.SetLeft(targetCrosshair, canvasPt.X - 8);
             Canvas.SetTop(targetCrosshair, canvasPt.Y - 8);

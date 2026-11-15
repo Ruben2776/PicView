@@ -247,6 +247,131 @@ public class CompareModesTests
         Assert.Same(modelB.Image, tab.DisplaySecondaryImage.Value);
     });
 
+    [AvaloniaFact]
+    public void SyncedSideBySide_WideImage_IsCenteredAtScale1_AndPansVerticallyWhenZoomed() => WithWindow((window, vm, tab) =>
+    {
+        var wideA = new PicView.Core.Models.ImageModel
+        {
+            FileInfo = new FileInfo("wide.gif"),
+            Image = new WriteableBitmap(new PixelSize(400, 100), new Vector(96, 96)),
+            PixelWidth = 400,
+            PixelHeight = 100,
+        };
+        var tallB = new PicView.Core.Models.ImageModel
+        {
+            FileInfo = new FileInfo("tall.jpg"),
+            Image = new WriteableBitmap(new PixelSize(200, 400), new Vector(96, 96)),
+            PixelWidth = 200,
+            PixelHeight = 400,
+        };
+
+        tab.Display(wideA, tallB);
+        vm.GlobalSettings.IsSideBySide.Value = true;
+        vm.GlobalSettings.IsSideBySideSynced.Value = true;
+
+        var hostWindow = new Window { Width = 800, Height = 600, Content = ViewOf(tab) };
+        hostWindow.Show();
+        try
+        {
+            Dispatcher.UIThread.RunJobs();
+            hostWindow.UpdateLayout();
+            Dispatcher.UIThread.RunJobs();
+
+            var viewer = Assert.IsType<ImageViewer>(ViewOf(tab));
+            var leftZoom = Assert.IsType<ZoomPanControl>(viewer.FindControl<ZoomPanControl>("SyncedLeftZoom"));
+            var rightZoom = Assert.IsType<ZoomPanControl>(viewer.FindControl<ZoomPanControl>("SyncedRightZoom"));
+            var leftContainer = Assert.IsType<Grid>(viewer.FindControl<Grid>("SyncedLeftContainer"));
+            var leftImage = Assert.IsType<PicBox>(viewer.FindControl<PicBox>("SyncedLeftImage"));
+
+            // Viewport wrapper fills the zoom slot and centers the wide image rather than pushing it downward
+            Assert.Equal(leftZoom.Bounds.Height, leftContainer.Bounds.Height, 1);
+            Assert.InRange(leftImage.Bounds.Y, (leftContainer.Bounds.Height - leftImage.Bounds.Height) * 0.5 - 1, (leftContainer.Bounds.Height - leftImage.Bounds.Height) * 0.5 + 1);
+            Assert.Equal(0, leftZoom.TranslateX, 1);
+            Assert.Equal(0, leftZoom.TranslateY, 1);
+            Assert.Equal(0, rightZoom.TranslateX, 1);
+            Assert.Equal(0, rightZoom.TranslateY, 1);
+
+            // Slight zoom (1.2x) must allow panning in both axes on both panes
+            leftZoom.ShowChildAt(1.2, new Point(120, 350));
+            Dispatcher.UIThread.RunJobs();
+
+            Assert.Equal(1.2, leftZoom.Scale, 3);
+            Assert.Equal(1.2, rightZoom.Scale, 3);
+            Assert.NotEqual(0, leftZoom.TranslateY, 1);
+
+            leftZoom.SetConstrainedTranslation(-20, -60);
+            Dispatcher.UIThread.RunJobs();
+            Assert.Equal(-20, leftZoom.TranslateX, 1);
+            Assert.Equal(-60, leftZoom.TranslateY, 1);
+            Assert.NotEqual(0, rightZoom.TranslateY, 1);
+
+            viewer.ResetZoom(false);
+            Dispatcher.UIThread.RunJobs();
+
+            Assert.Equal(1.0, leftZoom.Scale, 3);
+            Assert.Equal(1.0, rightZoom.Scale, 3);
+            Assert.Equal(0, leftZoom.TranslateX, 1);
+            Assert.Equal(0, leftZoom.TranslateY, 1);
+            Assert.Equal(0, rightZoom.TranslateX, 1);
+            Assert.Equal(0, rightZoom.TranslateY, 1);
+        }
+        finally
+        {
+            hostWindow.Content = null;
+            hostWindow.Close();
+        }
+    });
+
+    [AvaloniaFact]
+    public void CompareBar_ZoomPercent_ShowsFactorPercentEvenWithFitScale() => WithWindow((window, vm, tab) =>
+    {
+        var previousAvoidZoomingOut = Settings.Zoom.AvoidZoomingOut;
+        var previousIsZoomAnimated = Settings.Zoom.IsZoomAnimated;
+        Settings.Zoom.AvoidZoomingOut = true;
+        Settings.Zoom.IsZoomAnimated = false;
+
+        tab.Display(BitmapModel("a.jpg"), BitmapModel("b.jpg"));
+        tab.Zoom.SetFitScale(0.52);
+        vm.GlobalSettings.IsSideBySide.Value = true;
+        vm.GlobalSettings.IsSideBySideSynced.Value = true;
+
+        var hostWindow = new Window { Width = 800, Height = 600, Content = ViewOf(tab) };
+        hostWindow.Show();
+        try
+        {
+            Dispatcher.UIThread.RunJobs();
+            hostWindow.UpdateLayout();
+            Dispatcher.UIThread.RunJobs();
+
+            var viewer = Assert.IsType<ImageViewer>(ViewOf(tab));
+            var bar = CompareBarOf(tab);
+            var percentText = Assert.IsType<TextBlock>(bar.FindControl<TextBlock>("ZoomPercentText"));
+            var zoomOutBtn = Assert.IsType<Button>(bar.FindControl<Button>("ZoomOutButton"));
+
+            Assert.Equal("100%", percentText.Text);
+            Assert.False(zoomOutBtn.IsEnabled);
+
+            viewer.ZoomIn();
+            Dispatcher.UIThread.RunJobs();
+
+            Assert.Equal("120%", percentText.Text);
+            Assert.True(zoomOutBtn.IsEnabled);
+
+            viewer.ZoomOut();
+            Dispatcher.UIThread.RunJobs();
+
+            Assert.Equal("100%", percentText.Text);
+            Assert.False(zoomOutBtn.IsEnabled);
+        }
+        finally
+        {
+            Settings.Zoom.AvoidZoomingOut = previousAvoidZoomingOut;
+            Settings.Zoom.IsZoomAnimated = previousIsZoomAnimated;
+            hostWindow.Content = null;
+            hostWindow.Close();
+        }
+    });
+
     private static PicBox CompareImageOf(PicView.Core.ViewModels.TabViewModel tab)
     {
         var viewer = Assert.IsType<ImageViewer>(ViewOf(tab));
