@@ -73,6 +73,7 @@ public class GalleryItemLookTests
     /// It asserts no time. Run it in Release and read the line it writes.
     /// Results (Release, microseconds per container, median of five runs, then the five):
     /// before the look moved to styles: 1946.1 (1977.1, 1946.1, 1790.6, 2026.4, 1932.8)
+    /// after the base style (Task 12): 1984.5 (2025.8, 1984.5, 1842.6, 1925.3, 2032.7)
     /// </summary>
     [AvaloniaFact]
     public void Docked_RealizingContainers_ReportsTimePerContainer()
@@ -106,6 +107,26 @@ public class GalleryItemLookTests
             perContainer.Sort();
             _output.WriteLine($"Docked realization: {perContainer[perContainer.Count / 2]:F1} us per container");
         }, itemCount: itemCount);
+    }
+
+    [AvaloniaFact]
+    public void ViewStyle_SelectingGalleryItemsByClass_OverridesTheItemsLook()
+    {
+        WithShownGallery(expanded: false, (_, _, _, panel) =>
+        {
+            var item = ItemAt(panel, 0);
+
+            Assert.Contains("galleryItem", item.Classes);
+            Assert.Equal(new Thickness(7), item.Margin);
+            Assert.True(double.IsNaN(item.Height));
+        }, beforeShow: view => view.Styles.Add(new Style(x => x.OfType<NavigateAbleItem>().Class("galleryItem"))
+        {
+            Setters =
+            {
+                new Setter(Layoutable.MarginProperty, new Thickness(7)),
+                new Setter(Layoutable.HeightProperty, double.NaN)
+            }
+        }));
     }
 
     // Shown in a window, with items that have no thumbnails. Docked at the bottom, or the Expanded Gallery reached

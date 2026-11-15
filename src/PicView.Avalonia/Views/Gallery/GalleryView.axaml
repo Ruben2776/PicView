@@ -10,6 +10,16 @@
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <customControls:GalleryAnimationControl.Styles>
+        <!--  The look of every Gallery Item. NavigateAbleItem overrides its style key, so the item is selected by class  -->
+        <Style Selector="customControls|NavigateAbleItem.galleryItem">
+            <Setter Property="Width" Value="{CompiledBinding ItemWidth, RelativeSource={RelativeSource FindAncestor, AncestorType=customControls:VirtualizingGallery, Tree=Visual}, Mode=OneWay}" />
+            <Setter Property="Height" Value="{CompiledBinding ItemHeight, RelativeSource={RelativeSource FindAncestor, AncestorType=customControls:VirtualizingGallery, Tree=Visual}, Mode=OneWay}" />
+            <Setter Property="Margin" Value="1" />
+            <Setter Property="Padding" Value="1" />
+            <Setter Property="Background" Value="{DynamicResource GalleryItemBackgroundColor}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource GalleryItemBorderColor}" />
+            <Setter Property="BorderThickness" Value="1" />
+        </Style>
         <!--  Masonry and Rows: the vertical scroll bar starts below the 85x60 button cluster at the top right  -->
         <Style Selector=":is(customControls|GalleryAnimationControl).tiles customControls|NavigateAbleItemsViewer /template/ customControls|AutoScrollViewer#PART_ScrollViewer /template/ ScrollBar#PART_VerticalScrollBar">
             <Setter Property="Margin" Value="0,60,0,0" />
