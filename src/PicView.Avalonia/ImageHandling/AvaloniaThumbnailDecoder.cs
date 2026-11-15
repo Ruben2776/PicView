@@ -18,6 +18,14 @@ public sealed class AvaloniaThumbnailDecoder(IPlatformSpecificService? platform)
 
     public object? Decode(FileInfo file, uint height) => GetThumbnails.Decode(file, height, platform);
 
+    public object? DecodeWithoutReadyMade(FileInfo file, uint height) => GetThumbnails.DecodeWithoutReadyMade(file, height);
+
+    /// <remarks>
+    /// Every bitmap this decoder makes is 32 bits a pixel, and so is each one Avalonia keeps in a cache.
+    /// </remarks>
+    public long SizeInBytes(object thumbnail) =>
+        thumbnail is Bitmap bitmap ? (long)bitmap.PixelSize.Width * bitmap.PixelSize.Height * 4 : 0;
+
     /// <remarks>
     /// Scales with Skia rather than <see cref="Bitmap.CreateScaledBitmap"/>, which takes only immutable bitmaps and
     /// throws for the <see cref="WriteableBitmap"/>s PicView decodes into.
