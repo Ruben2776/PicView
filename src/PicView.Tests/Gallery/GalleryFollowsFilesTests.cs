@@ -318,7 +318,8 @@ public class GalleryFollowsFilesTests : IDisposable
     [Fact]
     public async Task RenamedFolder_ItemShowingATileThumbnail_KeepsNoTileSizedBitmapInTheTabsStore()
     {
-        var thumbnails = new Thumbnails(new FakeThumbnailDecoder(), _cache);
+        // A budget of one Tile Thumbnail at 600, so the next one pushes the moved one out
+        var thumbnails = new Thumbnails(new FakeThumbnailDecoder(), _cache, tileBudgetInBytes: 600 * 1000);
         Directory.CreateDirectory(Path.Combine(_directory, "sub"));
         var tab = await LoadedTabAsync(thumbnails, "a.jpg", Path.Combine("sub", "b.jpg"));
         var item = tab.Gallery.GalleryItems[1];
@@ -343,6 +344,12 @@ public class GalleryFollowsFilesTests : IDisposable
         Assert.True(moved.TryGetKeptThumbnail(out var kept, out var tileHeight));
         Assert.Same(tile, kept);
         Assert.Equal(600u, tileHeight);
+
+        // Once the tier lets go of the moved Tile Thumbnail, what is kept for the item is the small one
+        await tab.Gallery.GalleryItems[0].LoadTileThumbnailAsync(600, TestContext.Current.CancellationToken);
+        Assert.True(moved.TryGetKeptThumbnail(out var afterEviction, out var heightAfterEviction));
+        Assert.Same(small, afterEviction);
+        Assert.Equal(0u, heightAfterEviction);
     }
 
     [Fact]
