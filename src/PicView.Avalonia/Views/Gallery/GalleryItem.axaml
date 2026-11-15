@@ -181,7 +181,39 @@
             <Separator />
 
             <!--  Expanded menu items  -->
-            <customControls:StyledMenuItem Header="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.Stretch.Value, Mode=OneWay}" IsVisible="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).WindowTabs.ActiveTab.Value.Gallery.IsGalleryExpanded.Value}">
+            <customControls:StyledMenuItem
+                Header="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.GalleryDisplayMode.Value, Mode=OneWay}"
+                IsVisible="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).WindowTabs.ActiveTab.Value.Gallery.IsGalleryExpanded.Value}"
+                x:Name="ItemDisplayModeMenuItem">
+                <MenuItem.Icon>
+                    <Image Height="12" Source="{StaticResource GalleryImage}" Width="12" />
+                </MenuItem.Icon>
+                <customControls:StyledMenuItem
+                    Command="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.SetExpandedDisplayModeCommand}"
+                    CommandParameter="{x:Static gallerySettings:GalleryDisplayMode.Columns}"
+                    Header="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.Columns.Value, Mode=OneWay}"
+                    IsChecked="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.IsExpandedDisplayModeColumns.Value, Mode=OneWay}"
+                    ToggleType="Radio" />
+                <customControls:StyledMenuItem
+                    Command="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.SetExpandedDisplayModeCommand}"
+                    CommandParameter="{x:Static gallerySettings:GalleryDisplayMode.Masonry}"
+                    Header="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.Masonry.Value, Mode=OneWay}"
+                    IsChecked="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.IsExpandedDisplayModeMasonry.Value, Mode=OneWay}"
+                    ToggleType="Radio" />
+                <customControls:StyledMenuItem
+                    Command="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.SetExpandedDisplayModeCommand}"
+                    CommandParameter="{x:Static gallerySettings:GalleryDisplayMode.Rows}"
+                    Header="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.Rows.Value, Mode=OneWay}"
+                    IsChecked="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.IsExpandedDisplayModeRows.Value, Mode=OneWay}"
+                    ToggleType="Radio" />
+            </customControls:StyledMenuItem>
+            <customControls:StyledMenuItem Header="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.Stretch.Value, Mode=OneWay}" x:Name="ItemExpandedStretchMenuItem">
+                <MenuItem.IsVisible>
+                    <MultiBinding Converter="{x:Static BoolConverters.And}">
+                        <Binding Path="$parent[Window].((viewModels:MainWindowViewModel)DataContext).WindowTabs.ActiveTab.Value.Gallery.IsGalleryExpanded.Value" />
+                        <Binding Path="$parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.IsExpandedDisplayModeColumns.Value" />
+                    </MultiBinding>
+                </MenuItem.IsVisible>
                 <MenuItem.Icon>
                     <Image Classes="SquareDimensionsImage" />
                 </MenuItem.Icon>
