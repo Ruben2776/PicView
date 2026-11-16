@@ -441,6 +441,20 @@ public class ComparisonViewerTests
     });
 
     [AvaloniaFact]
+    public void TakesPress_WhileAligningInSynced_IsFalse() => WithWindow((window, vm, tab) =>
+    {
+        // The stacked pair the points are picked on is hidden, so a press is the window's
+        vm.ImageWidth.Value = 400;
+        vm.ImageHeight.Value = 300;
+        var viewer = Host(window, tab, configure: static comparison => comparison.SetMode(ComparisonMode.Synced));
+        viewer.Comparison.ToggleAligning();
+        Settle(window);
+        Assert.True(viewer.Comparison.IsAligning.Value);
+
+        Assert.False(TakesPressAt(window, viewer, CenterOf(Part<Grid>(viewer, "SyncedGrid"), window)));
+    });
+
+    [AvaloniaFact]
     public void TakesPress_OverTheImage_IsFalse() => WithWindow((window, vm, tab) =>
     {
         vm.ImageWidth.Value = 400;
