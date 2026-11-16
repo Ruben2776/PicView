@@ -4,6 +4,7 @@
     x:DataType="vm:TabViewModel"
     xmlns="https://github.com/avaloniaui"
     xmlns:keybindings="using:PicView.Core.Keybindings"
+    xmlns:uc="using:PicView.Avalonia.Views.UC"
     xmlns:vm="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <UserControl.Styles>
@@ -65,6 +66,37 @@
         <Style Selector="Button.compareIconBtn:pointerover Border.zoomMinus">
             <Setter Property="Background" Value="{DynamicResource MainTextColor}" />
         </Style>
+        <!--  Horizontal at the top and bottom; the vertical class at the left and right stacks the groups  -->
+        <Style Selector="StackPanel.barGroup">
+            <Setter Property="Orientation" Value="Horizontal" />
+        </Style>
+        <Style Selector="Slider">
+            <Setter Property="Width" Value="92" />
+        </Style>
+        <Style Selector="Border.barDivider">
+            <Setter Property="Width" Value="1" />
+            <Setter Property="Height" Value="18" />
+        </Style>
+        <Style Selector="ScrollViewer.barScroll">
+            <Setter Property="HorizontalScrollBarVisibility" Value="Auto" />
+            <Setter Property="VerticalScrollBarVisibility" Value="Disabled" />
+        </Style>
+        <Style Selector="uc|CompareBar.vertical StackPanel.barGroup">
+            <Setter Property="Orientation" Value="Vertical" />
+        </Style>
+        <Style Selector="uc|CompareBar.vertical Slider">
+            <Setter Property="Orientation" Value="Vertical" />
+            <Setter Property="Width" Value="NaN" />
+            <Setter Property="Height" Value="92" />
+        </Style>
+        <Style Selector="uc|CompareBar.vertical Border.barDivider">
+            <Setter Property="Width" Value="18" />
+            <Setter Property="Height" Value="1" />
+        </Style>
+        <Style Selector="uc|CompareBar.vertical ScrollViewer.barScroll">
+            <Setter Property="HorizontalScrollBarVisibility" Value="Disabled" />
+            <Setter Property="VerticalScrollBarVisibility" Value="Auto" />
+        </Style>
     </UserControl.Styles>
 
     <Border
@@ -74,15 +106,15 @@
         HorizontalAlignment="Center"
         Padding="6,4"
         VerticalAlignment="Center">
-        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
-            <StackPanel Orientation="Horizontal" Spacing="6">
+        <ScrollViewer Classes="barScroll">
+            <StackPanel Classes="barGroup" Spacing="6">
 
                 <!--  Mode Segmented Pill  -->
                 <Border
                     Background="{DynamicResource ComparePillGroupBackground}"
                     CornerRadius="18"
                     Padding="2">
-                    <StackPanel Orientation="Horizontal" Spacing="2">
+                    <StackPanel Classes="barGroup" Spacing="2">
                         <Button
                             Classes="comparePill"
                             Classes.active="{CompiledBinding Comparison.IsOverlay.Value}"
@@ -123,9 +155,9 @@
 
                 <!--  Contextual Controls: Overlay Opacity  -->
                 <StackPanel
+                    Classes="barGroup"
                     IsVisible="{CompiledBinding Comparison.IsOverlay.Value}"
                     Margin="4,0"
-                    Orientation="Horizontal"
                     Spacing="6"
                     VerticalAlignment="Center">
                     <TextBlock
@@ -138,8 +170,7 @@
                         Minimum="0"
                         Value="{CompiledBinding Comparison.OverlayOpacity.Value,
                                                 Mode=TwoWay}"
-                        VerticalAlignment="Center"
-                        Width="92" />
+                        VerticalAlignment="Center" />
                     <TextBlock
                         FontSize="11"
                         Foreground="{DynamicResource MainTextColorFaded}"
@@ -153,7 +184,7 @@
                     CornerRadius="16"
                     IsVisible="{CompiledBinding Comparison.IsSplit.Value}"
                     Padding="2">
-                    <StackPanel Orientation="Horizontal" Spacing="2">
+                    <StackPanel Classes="barGroup" Spacing="2">
                         <Button
                             Classes="compareIconBtn"
                             Classes.active="{CompiledBinding !Comparison.IsSplitHorizontal.Value}"
@@ -185,7 +216,7 @@
                     CornerRadius="16"
                     IsVisible="{CompiledBinding Comparison.IsBlink.Value}"
                     Padding="2">
-                    <StackPanel Orientation="Horizontal" Spacing="4">
+                    <StackPanel Classes="barGroup" Spacing="4">
                         <Button
                             Classes="comparePill"
                             Classes.active="{CompiledBinding Comparison.IsBlinkFast.Value}"
@@ -214,17 +245,16 @@
                 <!--  Divider  -->
                 <Border
                     Background="{DynamicResource HoverBarBorderColor}"
-                    Height="18"
+                    Classes="barDivider"
                     Margin="2,0"
-                    VerticalAlignment="Center"
-                    Width="1" />
+                    VerticalAlignment="Center" />
 
                 <!--  Pick A / Pick B  -->
                 <Border
                     Background="{DynamicResource ComparePillGroupBackground}"
                     CornerRadius="16"
                     Padding="2">
-                    <StackPanel Orientation="Horizontal" Spacing="2">
+                    <StackPanel Classes="barGroup" Spacing="2">
                         <Button
                             Classes="comparePill"
                             Command="{CompiledBinding ParentWindowContext.RunActionCommand}"
@@ -243,7 +273,7 @@
                 </Border>
 
                 <!--  Zoom Controls  -->
-                <StackPanel Orientation="Horizontal" Spacing="2">
+                <StackPanel Classes="barGroup" Spacing="2">
                     <Button
                         Classes="compareIconBtn"
                         Command="{CompiledBinding ParentWindowContext.RunActionCommand}"
@@ -411,6 +441,30 @@
                         StrokeLineCap="Round"
                         StrokeThickness="1.6"
                         Width="10" />
+                </Button>
+
+                <!--  Bar Position (placeholder look)  -->
+                <Button x:Name="BarPositionButton">
+                    <Button.Flyout>
+                        <MenuFlyout>
+                            <MenuItem
+                                Click="OnBarPositionBottomClick"
+                                Header="{CompiledBinding ParentWindowContext.Translation.Bottom.Value}"
+                                x:Name="BarPositionBottomItem" />
+                            <MenuItem
+                                Click="OnBarPositionTopClick"
+                                Header="{CompiledBinding ParentWindowContext.Translation.Top.Value}"
+                                x:Name="BarPositionTopItem" />
+                            <MenuItem
+                                Click="OnBarPositionLeftClick"
+                                Header="{CompiledBinding ParentWindowContext.Translation.Left.Value}"
+                                x:Name="BarPositionLeftItem" />
+                            <MenuItem
+                                Click="OnBarPositionRightClick"
+                                Header="{CompiledBinding ParentWindowContext.Translation.Right.Value}"
+                                x:Name="BarPositionRightItem" />
+                        </MenuFlyout>
+                    </Button.Flyout>
                 </Button>
             </StackPanel>
         </ScrollViewer>

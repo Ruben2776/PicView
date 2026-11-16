@@ -1,6 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using PicView.Avalonia.UI;
+using PicView.Core.Config;
 using PicView.Core.DebugTools;
 using PicView.Core.Sizing;
 using PicView.Core.ViewModels;
@@ -61,6 +62,23 @@ public partial class CompareBar : UserControl, IDisposable
                     };
                 }, DebugHelper.LogError(nameof(CompareBar), nameof(ComparisonViewModel.AlignmentStep)))
                 .AddTo(ref _subscriptions);
+
+            // Stacks the groups into a column at the sides, and names the current side on the position button
+            comparison.BarPosition
+                .SubscribeOnUIThread(() =>
+                {
+                    var position = comparison.BarPosition.Value;
+                    Classes.Set("vertical", position is ComparisonBarPosition.Left or ComparisonBarPosition.Right);
+                    var tr = tab.ParentWindowContext.Translation;
+                    BarPositionButton.Content = position switch
+                    {
+                        ComparisonBarPosition.Top => tr.Top.Value,
+                        ComparisonBarPosition.Left => tr.Left.Value,
+                        ComparisonBarPosition.Right => tr.Right.Value,
+                        _ => tr.Bottom.Value
+                    };
+                }, DebugHelper.LogError(nameof(CompareBar), nameof(ComparisonViewModel.BarPosition)))
+                .AddTo(ref _subscriptions);
         }
     }
 
@@ -85,4 +103,16 @@ public partial class CompareBar : UserControl, IDisposable
     private void OnAlignClick(object? sender, RoutedEventArgs e) => Comparison?.ToggleAligning();
 
     private void OnResetAlignClick(object? sender, RoutedEventArgs e) => Comparison?.ResetAlignment();
+
+    private void OnBarPositionBottomClick(object? sender, RoutedEventArgs e) =>
+        Comparison?.BarPosition.Value = ComparisonBarPosition.Bottom;
+
+    private void OnBarPositionTopClick(object? sender, RoutedEventArgs e) =>
+        Comparison?.BarPosition.Value = ComparisonBarPosition.Top;
+
+    private void OnBarPositionLeftClick(object? sender, RoutedEventArgs e) =>
+        Comparison?.BarPosition.Value = ComparisonBarPosition.Left;
+
+    private void OnBarPositionRightClick(object? sender, RoutedEventArgs e) =>
+        Comparison?.BarPosition.Value = ComparisonBarPosition.Right;
 }

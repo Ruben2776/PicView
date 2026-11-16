@@ -1,6 +1,8 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Interactivity;
+using Avalonia.Layout;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using PicView.Avalonia.Functions;
@@ -244,6 +246,65 @@ public class CompareBarTests
         Assert.False(tab.IsComparing.Value);
         Assert.False(vm.GlobalSettings.IsSideBySide.Value);
     });
+
+    [AvaloniaTheory]
+    [InlineData(ComparisonBarPosition.Left)]
+    [InlineData(ComparisonBarPosition.Right)]
+    public void CompareBar_AtTheSide_StacksItsGroupsVertically(ComparisonBarPosition position)
+        => WithWindow((window, _, tab) =>
+        {
+            Settings.Comparison!.BarPosition = position;
+            var bar = Compare(window, tab, ComparisonMode.Overlay);
+
+            AssertGroupsAndSlider(bar, Orientation.Vertical);
+            var track = bar.GetVisualDescendants().OfType<Slider>().Single()
+                .GetVisualDescendants().OfType<Track>().Single();
+            Assert.True(track.Bounds.Height > 0);
+            var strip = Assert.IsType<Border>(bar.Content);
+            Assert.True(strip.Bounds.Height > strip.Bounds.Width);
+        });
+
+    [AvaloniaFact]
+    public void CompareBar_AtTheBottom_StacksItsGroupsHorizontally() => WithWindow((window, _, tab) =>
+    {
+        Settings.Comparison!.BarPosition = ComparisonBarPosition.Bottom;
+        var bar = Compare(window, tab, ComparisonMode.Overlay);
+
+        AssertGroupsAndSlider(bar, Orientation.Horizontal);
+        var track = bar.GetVisualDescendants().OfType<Slider>().Single()
+            .GetVisualDescendants().OfType<Track>().Single();
+        Assert.True(track.Bounds.Width > 0);
+        var strip = Assert.IsType<Border>(bar.Content);
+        Assert.True(strip.Bounds.Width > strip.Bounds.Height);
+    });
+
+    [AvaloniaFact]
+    public void CompareBar_PositionItemClicked_SetsTheBarPositionAndSaves() => WithWindow((window, _, tab) =>
+    {
+        Settings.Comparison!.BarPosition = ComparisonBarPosition.Bottom;
+        var bar = Compare(window, tab);
+        var button = Assert.IsType<Button>(bar.FindControl<Button>("BarPositionButton"));
+        var menu = Assert.IsType<MenuFlyout>(button.Flyout);
+
+        menu.Items.OfType<MenuItem>().Single(i => string.Equals(i.Name, "BarPositionLeftItem", StringComparison.Ordinal))
+            .RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+        Settle(window);
+
+        Assert.Equal(ComparisonBarPosition.Left, tab.Comparison!.BarPosition.Value);
+        Assert.Equal(ComparisonBarPosition.Left, Settings.Comparison!.BarPosition);
+        var nav = Assert.IsType<NavigableView>(ViewOf(tab));
+        Assert.Equal(Dock.Left, DockPanel.GetDock(nav.BarHost));
+    });
+
+    // Every group panel and the opacity slider run in the orientation
+    private static void AssertGroupsAndSlider(CompareBar bar, Orientation orientation)
+    {
+        var groups = bar.GetVisualDescendants().OfType<StackPanel>()
+            .Where(p => p.Classes.Contains("barGroup")).ToList();
+        Assert.NotEmpty(groups);
+        Assert.All(groups, p => Assert.Equal(orientation, p.Orientation));
+        Assert.Equal(orientation, bar.GetVisualDescendants().OfType<Slider>().Single().Orientation);
+    }
 
     private sealed class MockFrameProvider : FrameProvider
     {
