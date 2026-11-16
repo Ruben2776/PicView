@@ -15,6 +15,7 @@ namespace PicView.Core.ViewModels;
 public sealed class ComparisonViewModel : IDisposable
 {
     private readonly Action _save;
+    private readonly Func<ImageModel, IDisposable?>? _hold;
 
     private ImageModel _primary;
     private ImageModel? _secondary;
@@ -24,6 +25,9 @@ public sealed class ComparisonViewModel : IDisposable
 
     // Whether this owns the override in each slot: a picked override is owned, a pinned primary is not
     private bool _ownsA, _ownsB;
+
+    // The cache's hold on a pinned primary in A, which the tab no longer keeps once it browses away from it
+    private IDisposable? _heldA;
 
     private (double X, double Y) _alignA1, _alignB1, _alignA2;
 
@@ -77,11 +81,18 @@ public sealed class ComparisonViewModel : IDisposable
 
     public bool IsDisposed => _isDisposed;
 
-    public ComparisonViewModel(ImageModel primary, ImageModel? secondary, Action save)
+    /// <param name="hold">
+    /// Holds a cached image so the cache does not dispose it, until the lease it returns is disposed, or returns null
+    /// when the image is not cached: the tab's <see cref="Navigation.SharedImageCache.Hold"/>. A pinned primary is
+    /// held, since the tab browses away from it.
+    /// </param>
+    public ComparisonViewModel(ImageModel primary, ImageModel? secondary, Action save,
+        Func<ImageModel, IDisposable?>? hold = null)
     {
         _primary = primary;
         _secondary = secondary;
         _save = save;
+        _hold = hold;
 
         var saved = Settings.Comparison!;
         Mode = new BindableReactiveProperty<ComparisonMode>(saved.Mode);
@@ -151,6 +162,7 @@ public sealed class ComparisonViewModel : IDisposable
             {
                 _overrideA = _primary;
                 _ownsA = false;
+                _heldA = _hold?.Invoke(_primary);
             }
         }
         else
@@ -165,7 +177,7 @@ public sealed class ComparisonViewModel : IDisposable
     {
         if (slot is ComparisonSlot.A)
         {
-            Release(ref _overrideA, ref _ownsA, model);
+            ReleaseA(model);
             _overrideA = model;
             _ownsA = true;
         }
@@ -307,8 +319,16 @@ public sealed class ComparisonViewModel : IDisposable
 
     private void ReleaseOverrides()
     {
-        Release(ref _overrideA, ref _ownsA, null);
+        ReleaseA(null);
         Release(ref _overrideB, ref _ownsB, null);
+    }
+
+    // Clears the override for A, and lets the cache dispose a pinned primary again
+    private void ReleaseA(ImageModel? keep)
+    {
+        Release(ref _overrideA, ref _ownsA, keep);
+        _heldA?.Dispose();
+        _heldA = null;
     }
 
     /// <summary>Clears an override, disposing it when owned and it is not <paramref name="keep"/>.</summary>

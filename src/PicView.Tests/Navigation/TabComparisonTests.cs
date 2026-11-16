@@ -118,6 +118,27 @@ public class TabComparisonTests
     }
 
     [Fact]
+    public async Task TogglePin_OnACachedPrimary_TheCacheKeepsItAfterTheTabReleasesIt()
+    {
+        var cache = Cache();
+        var tab = NewTab(TestTabServices.For(cache));
+        var file = Model("a.jpg").FileInfo!;
+        cache.SetFiles(tab.Id, [file]);
+        var a = Assert.IsType<ImageModel>(await cache.GetAsync(tab.Id, file, TestContext.Current.CancellationToken));
+        tab.Display(a, Model("b.jpg"));
+        tab.SetComparing(true);
+
+        tab.Comparison!.TogglePin();
+        // As browsing past it does
+        cache.ReleaseImages(tab.Id);
+        cache.ForceDisposalQueue();
+
+        // A disposed image leaves the cache
+        Assert.True(cache.TryGetReady(file, out var ready));
+        Assert.Same(a, ready);
+    }
+
+    [Fact]
     public async Task CloseImageAsync_WhileComparing_ShowsTheMenuAndKeepsComparingOn()
     {
         _tab.Display(Model("a.jpg"), Model("b.jpg"));
