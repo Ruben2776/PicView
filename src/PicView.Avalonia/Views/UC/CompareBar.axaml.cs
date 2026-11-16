@@ -1,5 +1,6 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using Avalonia.VisualTree;
 using PicView.Avalonia.UI;
 using PicView.Core.Config;
 using PicView.Core.DebugTools;
@@ -79,7 +80,28 @@ public partial class CompareBar : UserControl, IDisposable
                     };
                 }, DebugHelper.LogError(nameof(CompareBar), nameof(ComparisonViewModel.BarPosition)))
                 .AddTo(ref _subscriptions);
+
+            // Reports its thickness across its edge for the window fit to reserve. Layout raises this on the UI
+            // thread; a hidden bar raises nothing, so its reserve is kept while the gallery is expanded
+            Observable.FromEventHandler<SizeChangedEventArgs>(h => SizeChanged += h, h => SizeChanged -= h)
+                .Subscribe(_ => ReportExtent(comparison))
+                .AddTo(ref _subscriptions);
         }
+    }
+
+    private void ReportExtent(ComparisonViewModel comparison)
+    {
+        // Only while docked in a view's bar host: in its viewer's own host the bar takes no room from the image
+        if (Parent is null || this.FindAncestorOfType<ComparisonViewer>() is { } viewer &&
+            ReferenceEquals(Parent, viewer.CompareBarHost))
+        {
+            return;
+        }
+
+        comparison.BarExtent.Value = comparison.BarPosition.Value is ComparisonBarPosition.Left
+            or ComparisonBarPosition.Right
+            ? Bounds.Width
+            : Bounds.Height;
     }
 
     private ComparisonViewModel? Comparison => (DataContext as TabViewModel)?.Comparison;

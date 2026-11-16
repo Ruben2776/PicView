@@ -227,6 +227,13 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
                     .Select(_ => t.Comparison?.IsSynced.AsObservable() ?? Observable.Return(false)).Switch())
                 .Switch().Skip(1)
                 .Subscribe(_ => FitSoon()),
+            // Only the shown tab's docked compare bar: its thickness and its side change the Reserved Space
+            vm.WindowTabs.ActiveTab.Select(static t => t.ViewKind.AsObservable()
+                    .Select(_ => t.Comparison is { } c
+                        ? c.BarExtent.CombineLatest(c.BarPosition, static (_, _) => Unit.Default)
+                        : Observable.Return(Unit.Default)).Switch())
+                .Switch().Skip(1)
+                .Subscribe(_ => FitSoon()),
             vm.GlobalSettings.WindowMargin.Skip(1).Subscribe(_ => FitSoon()),
             // Only the shown tab's gallery, so a gallery docking in a background tab fits nothing. It may change off the
             // UI thread, as FitSoon allows
@@ -703,11 +710,21 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
         };
     }
 
-    private static ReservedSpace GetReservedSpace(MainWindowViewModel vm)
+    internal static ReservedSpace GetReservedSpace(MainWindowViewModel vm)
     {
-        var gallery = vm.WindowTabs.ActiveTab.CurrentValue.Gallery;
+        var tab = vm.WindowTabs.ActiveTab.CurrentValue;
+        var gallery = tab.Gallery;
         var (galleryWidth, galleryHeight) =
             GalleryDocking.ReservedBy(gallery.Appearance.Value, gallery.Switcher.IsDocked.CurrentValue);
+        // A comparison's bar docks inside the gallery, at an edge of the view, so it takes room from the image too
+        if (tab.ViewKind.Value is TabViewKind.Comparison && tab.Comparison is { } comparison)
+        {
+            var (barWidth, barHeight) =
+                ComparisonBarDocking.ReservedBy(comparison.BarPosition.Value, comparison.BarExtent.Value);
+            galleryWidth += barWidth;
+            galleryHeight += barHeight;
+        }
+
         // What the window shows, not the settings: hiding the interface hides the bottom bar but keeps its setting
         return ReservedSpace.For(vm.WindowTabs.Tabs.CurrentValue.Count, vm.Interface.Value, galleryWidth,
             galleryHeight);

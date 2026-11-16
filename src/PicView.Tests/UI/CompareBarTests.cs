@@ -140,13 +140,32 @@ public class CompareBarTests
         var bar = Compare(window, tab);
         var nav = Assert.IsType<NavigableView>(ViewOf(tab));
 
+        var extentBefore = tab.Comparison!.BarExtent.Value;
+        Assert.True(extentBefore > 0);
+
         tab.Gallery.IsGalleryExpanded.Value = true;
         Settle(window);
         Assert.False(nav.BarHost.IsVisible);
+        Assert.Equal(extentBefore, tab.Comparison!.BarExtent.Value);
 
         tab.Gallery.IsGalleryExpanded.Value = false;
         Settle(window);
         Assert.True(bar.IsEffectivelyVisible);
+        Assert.Equal(extentBefore, tab.Comparison!.BarExtent.Value);
+    });
+
+    [AvaloniaTheory]
+    [InlineData(ComparisonBarPosition.Bottom)]
+    [InlineData(ComparisonBarPosition.Left)]
+    public void CompareBar_Docked_ReportsItsThickness(ComparisonBarPosition position) => WithWindow((window, _, tab) =>
+    {
+        Settings.Comparison!.BarPosition = position;
+        Compare(window, tab);
+        var nav = Assert.IsType<NavigableView>(ViewOf(tab));
+
+        var thickness = position is ComparisonBarPosition.Left ? nav.BarHost.Bounds.Width : nav.BarHost.Bounds.Height;
+        Assert.True(thickness > 0);
+        Assert.InRange(tab.Comparison!.BarExtent.Value, thickness - 1, thickness + 1);
     });
 
     [AvaloniaFact]
