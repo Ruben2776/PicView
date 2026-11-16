@@ -121,7 +121,8 @@ public class CompareModesTests
             hostWindow.UpdateLayout();
             Dispatcher.UIThread.RunJobs();
 
-            var viewer = Assert.IsType<ImageViewer>(ViewOf(tab));
+            Assert.IsType<NavigableView>(ViewOf(tab));
+            var viewer = Assert.IsType<ImageViewer>(ViewerOf(tab));
             var zoom = Assert.IsType<ZoomPanControl>(viewer.FindControl<ZoomPanControl>("ZoomPanControl"));
             var handle = Assert.IsType<Border>(viewer.FindControl<Border>("SplitHandle"));
 
@@ -158,7 +159,8 @@ public class CompareModesTests
         vm.GlobalSettings.IsSideBySideSynced.Value = true;
         Settle(window);
 
-        var viewer = Assert.IsType<ImageViewer>(ViewOf(tab));
+        Assert.IsType<NavigableView>(ViewOf(tab));
+        var viewer = Assert.IsType<ImageViewer>(ViewerOf(tab));
         var leftZoom = Assert.IsType<PicView.Avalonia.CustomControls.Zoom.ZoomPanControl>(
             viewer.FindControl<PicView.Avalonia.CustomControls.Zoom.ZoomPanControl>("SyncedLeftZoom"));
         var rightZoom = Assert.IsType<PicView.Avalonia.CustomControls.Zoom.ZoomPanControl>(
@@ -201,7 +203,8 @@ public class CompareModesTests
             hostWindow.UpdateLayout();
             Dispatcher.UIThread.RunJobs();
 
-            var viewer = Assert.IsType<ImageViewer>(ViewOf(tab));
+            Assert.IsType<NavigableView>(ViewOf(tab));
+            var viewer = Assert.IsType<ImageViewer>(ViewerOf(tab));
             var leftZoom = Assert.IsType<ZoomPanControl>(viewer.FindControl<ZoomPanControl>("SyncedLeftZoom"));
             var rightZoom = Assert.IsType<ZoomPanControl>(viewer.FindControl<ZoomPanControl>("SyncedRightZoom"));
 
@@ -277,7 +280,8 @@ public class CompareModesTests
             hostWindow.UpdateLayout();
             Dispatcher.UIThread.RunJobs();
 
-            var viewer = Assert.IsType<ImageViewer>(ViewOf(tab));
+            Assert.IsType<NavigableView>(ViewOf(tab));
+            var viewer = Assert.IsType<ImageViewer>(ViewerOf(tab));
             var leftZoom = Assert.IsType<ZoomPanControl>(viewer.FindControl<ZoomPanControl>("SyncedLeftZoom"));
             var rightZoom = Assert.IsType<ZoomPanControl>(viewer.FindControl<ZoomPanControl>("SyncedRightZoom"));
             var leftContainer = Assert.IsType<Grid>(viewer.FindControl<Grid>("SyncedLeftContainer"));
@@ -343,7 +347,8 @@ public class CompareModesTests
             hostWindow.UpdateLayout();
             Dispatcher.UIThread.RunJobs();
 
-            var viewer = Assert.IsType<ImageViewer>(ViewOf(tab));
+            Assert.IsType<NavigableView>(ViewOf(tab));
+            var viewer = Assert.IsType<ImageViewer>(ViewerOf(tab));
             var bar = CompareBarOf(tab);
             var percentText = Assert.IsType<TextBlock>(bar.FindControl<TextBlock>("ZoomPercentText"));
             var zoomOutBtn = Assert.IsType<Button>(bar.FindControl<Button>("ZoomOutButton"));
@@ -379,7 +384,8 @@ public class CompareModesTests
         vm.GlobalSettings.IsComparing.Value = true;
         Settle(window);
 
-        var viewer = Assert.IsType<ImageViewer>(ViewOf(tab));
+        Assert.IsType<NavigableView>(ViewOf(tab));
+        var viewer = Assert.IsType<ImageViewer>(ViewerOf(tab));
         var zoom = Assert.IsType<ZoomPanControl>(viewer.FindControl<ZoomPanControl>("ZoomPanControl"));
         var markers = Assert.IsType<Canvas>(viewer.FindControl<Canvas>("AlignMarkersCanvas"));
 
@@ -420,19 +426,22 @@ public class CompareModesTests
 
     private static PicBox CompareImageOf(PicView.Core.ViewModels.TabViewModel tab)
     {
-        var viewer = Assert.IsType<ImageViewer>(ViewOf(tab));
+        Assert.IsType<NavigableView>(ViewOf(tab));
+        var viewer = Assert.IsType<ImageViewer>(ViewerOf(tab));
         return Assert.IsType<PicBox>(viewer.FindControl<PicBox>("CompareImage"));
     }
 
     private static Grid CompareHostOf(PicView.Core.ViewModels.TabViewModel tab)
     {
-        var viewer = Assert.IsType<ImageViewer>(ViewOf(tab));
+        Assert.IsType<NavigableView>(ViewOf(tab));
+        var viewer = Assert.IsType<ImageViewer>(ViewerOf(tab));
         return Assert.IsType<Grid>(viewer.FindControl<Grid>("CompareHostGrid"));
     }
 
     private static CompareBar CompareBarOf(PicView.Core.ViewModels.TabViewModel tab)
     {
-        var viewer = Assert.IsType<ImageViewer>(ViewOf(tab));
+        Assert.IsType<NavigableView>(ViewOf(tab));
+        var viewer = Assert.IsType<ImageViewer>(ViewerOf(tab));
         return Assert.IsType<CompareBar>(viewer.FindControl<CompareBar>("CompareBar"));
     }
 }

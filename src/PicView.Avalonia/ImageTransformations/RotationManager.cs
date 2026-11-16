@@ -16,8 +16,8 @@ public static class RotationManager
     {
         switch (vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.Value)
         {
-            case ImageViewer imageViewer:
-                imageViewer.ResetZoomSlim();
+            case NavigableView { Viewer: { } viewer }:
+                viewer.ResetZoomSlim();
                 break;
             case CropControl cropControl:
                 cropControl.ResetZoom();
@@ -31,8 +31,8 @@ public static class RotationManager
     {
         switch (vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.Value)
         {
-            case ImageViewer imageViewer:
-                imageViewer.ResetZoom(Settings.Zoom.IsZoomAnimated);
+            case NavigableView { Viewer: { } viewer }:
+                viewer.ResetZoom(Settings.Zoom.IsZoomAnimated);
                 break;
             // The crop view zooms too (ADR-0027)
             case CropControl cropControl:
@@ -55,14 +55,14 @@ public static class RotationManager
     {
         var tab = vm.WindowTabs.ActiveTab.CurrentValue;
         var view = tab.CurrentView.Value;
-        if (view is not (ImageViewer { HasImage: true } or CropControl))
+        if (view is not (NavigableView { Viewer.HasImage: true } or CropControl))
         {
             return;
         }
 
-        if (view is ImageViewer imageViewer)
+        if (view is NavigableView { Viewer: { } viewer })
         {
-            imageViewer.AnimateNextFlip();
+            viewer.AnimateNextFlip();
         }
 
         tab.Orientation.Flip();
@@ -74,7 +74,7 @@ public static class RotationManager
     private static void Turn(MainWindowViewModel vm, MainWindow mainWindow, Action<TabOrientation> turn)
     {
         var tab = vm.WindowTabs.ActiveTab.CurrentValue;
-        if (tab.CurrentView.Value is not (ImageViewer { HasImage: true } or CropControl))
+        if (tab.CurrentView.Value is not (NavigableView { Viewer.HasImage: true } or CropControl))
         {
             return;
         }

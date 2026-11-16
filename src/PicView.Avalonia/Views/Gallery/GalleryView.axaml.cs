@@ -35,9 +35,9 @@ public partial class GalleryView : GalleryAnimationControl, IDisposable
     }
 
     /// <summary>
-    /// Shows the gallery of <paramref name="tab"/> and follows it from now on. The image viewer that holds this view
-    /// calls it once, as it is created, with the tab the viewer shows. The view is given the tab instead of looking up
-    /// the active one, since a viewer is also created for a tab that is not active, and it doesn't wait for a
+    /// Shows the gallery of <paramref name="tab"/> and follows it from now on. The navigable view that holds this view
+    /// calls it once, as it is created, with the tab it shows. The view is given the tab instead of looking up the
+    /// active one, since a navigable view is also created for a tab that is not active, and it doesn't wait for a
     /// DataContext, which is set once and never handled when it changes.
     /// </summary>
     public void Initialize(TabViewModel tab)
@@ -248,8 +248,8 @@ public partial class GalleryView : GalleryAnimationControl, IDisposable
     }
 
     /// <summary>
-    /// Stops following the tab's gallery, as when another view replaces the image viewer that holds this view. The
-    /// tab outlives its views, so it would keep this view in step with it otherwise.
+    /// Stops following the tab's gallery, as when the tab's navigable view that holds this view is disposed. The tab
+    /// outlives its views, so it would keep this view in step with it otherwise.
     /// </summary>
     public void Dispose() => _disposables.Dispose();
 }

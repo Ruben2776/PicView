@@ -376,7 +376,7 @@ public class NavigationSubscriptionsTests
     private static ImageViewer ViewerOf(TabViewModel tab)
     {
         tab.SetLoading();
-        return (ImageViewer)tab.CurrentView.Value!;
+        return (ImageViewer)((NavigableView)tab.CurrentView.Value!).Viewer!;
     }
 
     private static ImageModel BitmapModel(string name, uint pixelWidth = 2, uint pixelHeight = 2) => new()

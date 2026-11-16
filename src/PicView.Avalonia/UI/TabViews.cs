@@ -11,7 +11,7 @@ namespace PicView.Avalonia.UI;
 
 /// <summary>
 /// One per Main Window: makes and keeps the controls the window shows for its tabs' Tab Views (ADR-0022). Each tab
-/// has a menu and a viewer made once and kept, and a crop control made per crop. Attaching may happen on any thread;
+/// has a menu, and a navigable view holding its viewer, made once and kept, and a crop control made per crop. Attaching may happen on any thread;
 /// the controls are made on the UI thread.
 /// </summary>
 public sealed class TabViews(MainWindow window) : ITabViewFactory
@@ -24,6 +24,7 @@ public sealed class TabViews(MainWindow window) : ITabViewFactory
         private readonly BindableReactiveProperty<object?> _view = new();
         private readonly IDisposable _following;
         private ImageViewer? _viewer;
+        private NavigableView? _navigable;
         private StartUpMenu? _menu;
         private CropControl? _crop;
 
@@ -74,7 +75,9 @@ public sealed class TabViews(MainWindow window) : ITabViewFactory
                     break;
                 case TabViewKind.ImageViewer:
                     _viewer ??= new ImageViewer(_tab);
-                    _view.Value = _viewer;
+                    _navigable ??= new NavigableView(_tab);
+                    _navigable.Show(_viewer);
+                    _view.Value = _navigable;
                     break;
                 case TabViewKind.Crop:
                     if (_crop is null)
@@ -120,6 +123,8 @@ public sealed class TabViews(MainWindow window) : ITabViewFactory
         {
             _disposed = true;
             _following.Dispose();
+            _navigable?.Dispose();
+            _navigable = null;
             _viewer?.Dispose();
             _viewer = null;
             _menu = null;

@@ -76,7 +76,7 @@ public partial class MainView : UserControl
         tab.ShouldCropBeEnabled.Value = CropManager.SetIfCropEnabled(TopLevel.GetTopLevel(this) as MainWindow);
         tab.ShouldOptimizeImageBeEnabled.Value = ConversionHelper.DetermineIfOptimizeImageShouldBeEnabled(tab.FileInfo.CurrentValue);
         tab.ShouldPrintBeEnabled.Value = ConversionHelper.DetermineIfPrintMenuItemShouldBeEnabled(tab);
-        tab.ShouldCloseImageBeVisible.Value = tab.CurrentView.Value is ImageViewer;
+        tab.ShouldCloseImageBeVisible.Value = tab.CurrentView.Value is NavigableView;
     }
 
     private void MainTabControlOnSelectionChanged(object? sender, SelectionChangedEventArgs e)
@@ -128,18 +128,18 @@ public partial class MainView : UserControl
             {
                 case CropControl:
                     return; // Don't show this control's context menu, to not interfere with crop control's context menu
-                case ImageViewer viewer:
+                case NavigableView nav:
                 {
                     // The click arrows and hoverbar have their own right-click interaction
-                    if (viewer.ClickArrowLeft.PolyButton.IsPointerOver || viewer.ClickArrowRight.PolyButton.IsPointerOver)
+                    if (nav.ClickArrowLeft.PolyButton.IsPointerOver || nav.ClickArrowRight.PolyButton.IsPointerOver)
                     {
                         return;
                     }
-                    if (viewer.HoverBar.BottomBorder.IsPointerOver)
+                    if (nav.HoverBar.BottomBorder.IsPointerOver)
                     {
                         return;
                     }
-                    if (viewer.GalleryView.IsPointerOver)
+                    if (nav.GalleryView.IsPointerOver)
                     {
                         return;
                     }

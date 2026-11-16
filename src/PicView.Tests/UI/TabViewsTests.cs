@@ -47,7 +47,9 @@ public class TabViewsTests
         => WithWindow((_, _, tab) =>
         {
             tab.SetLoading();
-            var viewer = Assert.IsType<ImageViewer>(ViewOf(tab));
+            var nav = Assert.IsType<NavigableView>(ViewOf(tab));
+            var viewer = Assert.IsType<ImageViewer>(ViewerOf(tab));
+            Assert.Same(tab, nav.DataContext);
             Assert.Same(tab, viewer.DataContext);
         });
 
@@ -68,7 +70,8 @@ public class TabViewsTests
         => WithWindow((_, _, tab) =>
         {
             tab.Display(BitmapModel("a.jpg"));
-            var viewer = Assert.IsType<ImageViewer>(ViewOf(tab));
+            Assert.IsType<NavigableView>(ViewOf(tab));
+            var viewer = Assert.IsType<ImageViewer>(ViewerOf(tab));
             viewer.ZoomPanControl.SetScaleImmediate(2);
 
             tab.Crop = new CropViewModel(tab.Zoom, 2, 2);
@@ -84,7 +87,8 @@ public class TabViewsTests
             // The crop's zoom is its own: the viewer comes back as it was left, with no zoom preview
             tab.Display(BitmapModel("a.jpg"));
             Settle(window);
-            var viewer = Assert.IsType<ImageViewer>(ViewOf(tab));
+            Assert.IsType<NavigableView>(ViewOf(tab));
+            var viewer = Assert.IsType<ImageViewer>(ViewerOf(tab));
             tab.Crop = new CropViewModel(tab.Zoom, 2, 2);
             Settle(window);
             Assert.IsType<CropControl>(ViewOf(tab)).ZoomPanControl.SetScaleImmediate(3);
@@ -105,7 +109,8 @@ public class TabViewsTests
             Settings.Zoom.ResetZoomOnChange = true;
             tab.Display(BitmapModel("a.jpg"));
             Settle(window);
-            var viewer = Assert.IsType<ImageViewer>(ViewOf(tab));
+            Assert.IsType<NavigableView>(ViewOf(tab));
+            var viewer = Assert.IsType<ImageViewer>(ViewerOf(tab));
             viewer.ZoomPanControl.SetScaleImmediate(2);
             tab.Crop = new CropViewModel(tab.Zoom, 2, 2);
             Settle(window);
@@ -124,7 +129,8 @@ public class TabViewsTests
             Settings.Zoom.ResetZoomOnChange = false;
             tab.Display(BitmapModel("a.jpg"));
             Settle(window);
-            var viewer = Assert.IsType<ImageViewer>(ViewOf(tab));
+            Assert.IsType<NavigableView>(ViewOf(tab));
+            var viewer = Assert.IsType<ImageViewer>(ViewerOf(tab));
             viewer.ZoomPanControl.SetScaleImmediate(2);
             tab.Crop = new CropViewModel(tab.Zoom, 2, 2);
             Settle(window);
@@ -145,7 +151,8 @@ public class TabViewsTests
             // image change off, nothing else brings the tab's Zoom Factor back to the viewer's scale
             Settings.Zoom.ResetZoomOnChange = false;
             tab.Display(BitmapModel("a.jpg"));
-            var viewer = Assert.IsType<ImageViewer>(ViewOf(tab));
+            Assert.IsType<NavigableView>(ViewOf(tab));
+            var viewer = Assert.IsType<ImageViewer>(ViewerOf(tab));
             tab.Crop = new CropViewModel(tab.Zoom, 2, 2);
             var crop = Assert.IsType<CropControl>(ViewOf(tab));
             crop.SetZoomView(new ZoomView(3, 0.5, 0.5));
@@ -165,7 +172,8 @@ public class TabViewsTests
             // The viewer was zoomed when the crop opened and is not shown while the new image is displayed, so
             // nothing else resets its zoom for the new image
             tab.Display(BitmapModel("a.jpg"));
-            var viewer = Assert.IsType<ImageViewer>(ViewOf(tab));
+            Assert.IsType<NavigableView>(ViewOf(tab));
+            var viewer = Assert.IsType<ImageViewer>(ViewerOf(tab));
             viewer.ZoomPanControl.SetScaleImmediate(2);
             tab.Crop = new CropViewModel(tab.Zoom, 2, 2);
 
@@ -220,7 +228,7 @@ public class TabViewsTests
             var tab = vm.WindowTabs.CreateTab();
             tab.SetLoading();
             var views = tab.Views!;
-            var viewer = (ImageViewer)views.View.Value!;
+            var nav = (NavigableView)views.View.Value!;
             var a = new GalleryItemViewModel { FileInfo = new FileInfo("a.jpg") };
             tab.Gallery.GalleryItems.Add(a);
             Dispatcher.UIThread.RunJobs();
@@ -230,7 +238,7 @@ public class TabViewsTests
             Assert.Null(views.View.Value);
             Assert.Null(tab.Views);
             Assert.Equal([a],
-                viewer.GalleryView.FindControl<NavigateAbleItemsViewer>("GalleryItemsControl")!.Items
+                nav.GalleryView.FindControl<NavigateAbleItemsViewer>("GalleryItemsControl")!.Items
                     .Cast<GalleryItemViewModel>());
         });
 
@@ -266,7 +274,8 @@ public class TabViewsTests
 
             // The viewer replaces the menu, which detaches it; ending the load on a fresh tab shows the same menu again
             var ticket = tab.SetLoading();
-            Assert.IsType<ImageViewer>(ViewOf(tab));
+            Assert.IsType<NavigableView>(ViewOf(tab));
+            Assert.IsType<ImageViewer>(ViewerOf(tab));
             // The viewer's own Loaded needs the full window, so the host is left empty while it shows
             host.Content = null;
             Settle(window);
@@ -308,7 +317,8 @@ public class TabViewsTests
             // The kept viewer is loaded again each time it is shown after a crop or the menu. Handlers added on
             // every load made one wheel step zoom twice after one crop, and three times after two
             tab.SetLoading();
-            var viewer = Assert.IsType<ImageViewer>(ViewOf(tab));
+            Assert.IsType<NavigableView>(ViewOf(tab));
+            var viewer = Assert.IsType<ImageViewer>(ViewerOf(tab));
 
             viewer.RaiseEvent(new RoutedEventArgs(Control.LoadedEvent));
             viewer.RaiseEvent(new RoutedEventArgs(Control.LoadedEvent));
@@ -323,6 +333,7 @@ public class TabViewsTests
         {
             await Task.Run(tab.SetLoading, TestContext.Current.CancellationToken);
             Dispatcher.UIThread.RunJobs();
-            Assert.IsType<ImageViewer>(ViewOf(tab));
+            Assert.IsType<NavigableView>(ViewOf(tab));
+            Assert.IsType<ImageViewer>(ViewerOf(tab));
         });
 }

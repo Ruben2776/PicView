@@ -189,9 +189,9 @@ public sealed class WindowModeSwitcher(
             adapter.EnterNativeState(window, next);
 
             if (next.Mode is not WindowMode.Maximized &&
-                vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.Value is ImageViewer imageViewer)
+                vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.Value is NavigableView { Viewer: { } viewer })
             {
-                imageViewer.ResetZoomSlim();
+                viewer.ResetZoomSlim();
             }
         }
 
