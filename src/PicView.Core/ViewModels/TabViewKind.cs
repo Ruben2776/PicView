@@ -1,8 +1,8 @@
 namespace PicView.Core.ViewModels;
 
 /// <summary>
-/// Which view a tab shows: the Tab View (ADR-0022). The tab derives it from its Crop, its Title Phase and whether it
-/// shows anything, so nothing assigns a view into the tab.
+/// Which view a tab shows: the Tab View (ADR-0022). The tab derives it from its Crop, its Comparison, its Title Phase
+/// and whether it shows anything, so nothing assigns a view into the tab.
 /// </summary>
 public enum TabViewKind
 {
@@ -13,5 +13,10 @@ public enum TabViewKind
     ImageViewer,
 
     /// <summary>The crop control: the tab is in a crop.</summary>
-    Crop
+    Crop,
+
+    /// <summary>
+    /// The comparison viewer, in the navigable view: the tab compares and shows something, and is not in a crop.
+    /// </summary>
+    Comparison
 }

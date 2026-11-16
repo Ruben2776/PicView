@@ -53,4 +53,10 @@ public interface INavigableContent : IZoomScrollTarget
     /// allocates nothing.
     /// </summary>
     bool TakesPress(PointerPressedEventArgs e);
+
+    /// <summary>
+    /// Shows the image at <paramref name="factor"/>, the tab's Zoom Factor, without animation, as when the viewer
+    /// comes into the slot in place of the other one (ADR-0032).
+    /// </summary>
+    void ShowFactor(double factor);
 }

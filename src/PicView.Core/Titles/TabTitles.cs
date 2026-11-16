@@ -52,7 +52,7 @@ public sealed class TabTitles : INotifyPropertyChanged, IDisposable
             tab.Zoom.Level.Subscribe(_ => Mark()),
             tab.NavigationIndex.Subscribe(_ => Mark()),
             tab.MaxIndex.Subscribe(_ => Mark()),
-            tab.Services?.GlobalSettings.IsShowingPair.Skip(1).Subscribe(_ => Mark()) ?? Disposable.Empty,
+            tab.IsShowingPair.Skip(1).Subscribe(_ => Mark()),
             tab.Services?.GlobalSettings.IsShowingFullPathInTitleBar.Skip(1).Subscribe(_ => Mark()) ?? Disposable.Empty);
         SaysLoading = Observable.Create<bool, TabTitles>(this, static (observer, titles) =>
         {

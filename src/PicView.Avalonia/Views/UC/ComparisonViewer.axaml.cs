@@ -261,12 +261,24 @@ public partial class ComparisonViewer : UserControl, INavigableContent, IDisposa
     {
         if (Comparison.IsSynced.Value)
         {
-            SyncedLeftZoom.SetScaleImmediate(factor);
-            SyncedRightZoom.SetScaleImmediate(factor);
+            ShowScale(SyncedLeftZoom, factor);
+            ShowScale(SyncedRightZoom, factor);
             return;
         }
 
-        ZoomPanControl.SetScaleImmediate(factor);
+        ShowScale(ZoomPanControl, factor);
+    }
+
+    // A control already at the factor is left alone: setting the scale again re-centres the zoom control's child,
+    // which offsets a child smaller than the control
+    private static void ShowScale(ZoomPanControl zoom, double factor)
+    {
+        if (zoom.Scale.Equals(factor))
+        {
+            return;
+        }
+
+        zoom.SetScaleImmediate(factor);
     }
 
     #endregion

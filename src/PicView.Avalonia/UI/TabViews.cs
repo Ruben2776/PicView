@@ -11,8 +11,9 @@ namespace PicView.Avalonia.UI;
 
 /// <summary>
 /// One per Main Window: makes and keeps the controls the window shows for its tabs' Tab Views (ADR-0022). Each tab
-/// has a menu, and a navigable view holding its viewer, made once and kept, and a crop control made per crop. Attaching may happen on any thread;
-/// the controls are made on the UI thread.
+/// has a menu, and a navigable view holding its image viewer, made once and kept, a comparison viewer made per
+/// comparison and shown in the same navigable view, and a crop control made per crop. Attaching may happen on any
+/// thread; the controls are made on the UI thread.
 /// </summary>
 public sealed class TabViews(MainWindow window) : ITabViewFactory
 {
@@ -24,6 +25,7 @@ public sealed class TabViews(MainWindow window) : ITabViewFactory
         private readonly BindableReactiveProperty<object?> _view = new();
         private readonly IDisposable _following;
         private ImageViewer? _viewer;
+        private ComparisonViewer? _comparisonViewer;
         private NavigableView? _navigable;
         private StartUpMenu? _menu;
         private CropControl? _crop;
@@ -76,7 +78,33 @@ public sealed class TabViews(MainWindow window) : ITabViewFactory
                 case TabViewKind.ImageViewer:
                     _viewer ??= new ImageViewer(_tab);
                     _navigable ??= new NavigableView(_tab);
-                    _navigable.Show(_viewer);
+                    ShowInSlot(_viewer);
+                    // After the image viewer took the slot, so the comparison viewer's zoom preview left with it
+                    DropComparisonViewer();
+                    _view.Value = _navigable;
+                    break;
+                case TabViewKind.Comparison:
+                    // The comparison may already be gone again, which a later change of the kind shows
+                    if (_tab.Comparison is not { } comparison)
+                    {
+                        break;
+                    }
+
+                    // Reached from the image viewer, and straight from the start-up menu or a crop
+                    _navigable ??= new NavigableView(_tab);
+                    if (_comparisonViewer is null || !ReferenceEquals(_comparisonViewer.Comparison, comparison))
+                    {
+                        // A viewer of an older comparison leaves the slot before it is disposed
+                        var old = _comparisonViewer;
+                        _comparisonViewer = new ComparisonViewer(_tab, comparison);
+                        ShowInSlot(_comparisonViewer);
+                        old?.Dispose();
+                    }
+                    else
+                    {
+                        ShowInSlot(_comparisonViewer);
+                    }
+
                     _view.Value = _navigable;
                     break;
                 case TabViewKind.Crop:
@@ -90,6 +118,32 @@ public sealed class TabViews(MainWindow window) : ITabViewFactory
                     _view.Value = _crop;
                     break;
             }
+        }
+
+        /// <summary>
+        /// Puts <paramref name="viewer"/> in the navigable view's slot. A viewer that takes the slot from the other one
+        /// starts at the tab's Zoom Factor, so toggling comparison keeps the zoom (ADR-0032), and an incoming image
+        /// viewer follows the motion photo of what the tab shows now.
+        /// </summary>
+        private void ShowInSlot(INavigableContent viewer)
+        {
+            var navigable = _navigable!;
+            if (navigable.Viewer is { } shown && !ReferenceEquals(shown, viewer))
+            {
+                viewer.ShowFactor(_tab.Zoom.Factor);
+                if (viewer is ImageViewer imageViewer)
+                {
+                    imageViewer.UpdateMotionPhoto(_tab);
+                }
+            }
+
+            navigable.Show(viewer);
+        }
+
+        private void DropComparisonViewer()
+        {
+            _comparisonViewer?.Dispose();
+            _comparisonViewer = null;
         }
 
         /// <summary>
@@ -127,6 +181,7 @@ public sealed class TabViews(MainWindow window) : ITabViewFactory
             _navigable = null;
             _viewer?.Dispose();
             _viewer = null;
+            DropComparisonViewer();
             _menu = null;
             _crop = null;
             _croppedModel = null;

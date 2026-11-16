@@ -283,10 +283,23 @@ public class TabTitlesTests
         _ = _tab.Titles.Title;
         Assert.Equal(1, _tab.Titles.BuildCount);
 
-        _tab.Services!.GlobalSettings.IsComparing.Value = true;
+        _tab.SetComparing(true);
         _ = _tab.Titles.Title;
 
         Assert.Equal(2, _tab.Titles.BuildCount);
+    }
+
+    [Fact]
+    public void Comparing_InOneTab_DoesNotMarkAnotherTabsTitles()
+    {
+        var other = new TabViewModel(null!, _tab.Services);
+        _ = other.Titles.Title;
+        Assert.Equal(1, other.Titles.BuildCount);
+
+        _tab.SetComparing(true);
+        _ = other.Titles.Title;
+
+        Assert.Equal(1, other.Titles.BuildCount);
     }
 
     [Fact]
@@ -318,7 +331,7 @@ public class TabTitlesTests
             Directory.CreateDirectory(file.DirectoryName!);
             File.WriteAllBytes(file.FullName, [0]);
         }
-        _tab.Services!.GlobalSettings.IsComparing.Value = true;
+        _tab.SetComparing(true);
 
         _tab.Display(Model("a.jpg"), Model("b.jpg"));
 
