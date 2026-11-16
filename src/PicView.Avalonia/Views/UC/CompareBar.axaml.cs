@@ -18,24 +18,12 @@ public partial class CompareBar : UserControl, IDisposable
         DataContextChanged += (_, _) => SubscribeToTab();
         AttachedToVisualTree += (_, _) => SubscribeToTab();
         DetachedFromVisualTree += (_, _) => Dispose();
-        PointerMoved += (_, _) => NotifyUserActivity();
     }
 
     public void Dispose()
     {
         _subscriptions.Dispose();
         _subscriptions = default;
-    }
-
-    public void NotifyUserActivity()
-    {
-        if (!IsVisible)
-        {
-            return;
-        }
-
-        Opacity = 1;
-        IsHitTestVisible = true;
     }
 
     private void SubscribeToTab()
@@ -74,8 +62,6 @@ public partial class CompareBar : UserControl, IDisposable
                 }, DebugHelper.LogError(nameof(CompareBar), nameof(ComparisonViewModel.AlignmentStep)))
                 .AddTo(ref _subscriptions);
         }
-
-        NotifyUserActivity();
     }
 
     private ComparisonViewModel? Comparison => (DataContext as TabViewModel)?.Comparison;

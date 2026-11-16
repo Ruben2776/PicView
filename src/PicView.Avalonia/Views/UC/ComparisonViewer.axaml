@@ -228,7 +228,6 @@
             x:Name="ZoomPreview" />
         <Panel
             HorizontalAlignment="Center"
-            Margin="0,0,0,18"
             VerticalAlignment="Bottom"
             ZIndex="3"
             x:Name="CompareBarHost">
