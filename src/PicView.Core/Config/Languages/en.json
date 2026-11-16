@@ -80,6 +80,8 @@
   "ComparisonSideBySideSynced": "Synced",
   "ComparisonPickA": "Pick A",
   "ComparisonPickB": "Pick B",
+  "ComparisonSplitVertical": "Vertical split",
+  "ComparisonSplitHorizontal": "Horizontal split",
   "CompressedBitsPixel": "Compressed bits per pixel",
   "Compression": "Compression",
   "ConstrainBackgroundToImage": "Constrain background color to image",

@@ -80,6 +80,8 @@
   "ComparisonSideBySideSynced": "Синхронно",
   "ComparisonPickA": "Выбрать A",
   "ComparisonPickB": "Выбрать B",
+  "ComparisonSplitVertical": "Vertical split",
+  "ComparisonSplitHorizontal": "Horizontal split",
   "CompressedBitsPixel": "Сжатые биты на пиксель",
   "Compression": "Сжатие",
   "ConstrainBackgroundToImage": "Ограничить цвет фона изображением",

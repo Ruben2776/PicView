@@ -1,5 +1,4 @@
 using System.Globalization;
-using PicView.Core.Config;
 using PicView.Core.Localization;
 using R3;
 
@@ -79,11 +78,12 @@ public class TranslationViewModel
         ComparisonBlink.Value = t.ComparisonBlink ?? "Blink";
         ComparisonDifference.Value = t.ComparisonDifference ?? "Difference";
         ComparisonCustom.Value = t.ComparisonCustom ?? "Custom";
-        ComparisonFit.Value = t.ComparisonFit ?? "Fit";
         ComparisonSwap.Value = t.ComparisonSwap ?? "Swap A/B";
         ComparisonSideBySideSynced.Value = t.ComparisonSideBySideSynced ?? "Synced";
         ComparisonPickA.Value = t.ComparisonPickA ?? "Pick A";
         ComparisonPickB.Value = t.ComparisonPickB ?? "Pick B";
+        ComparisonSplitVertical.Value = t.ComparisonSplitVertical ?? "Vertical split";
+        ComparisonSplitHorizontal.Value = t.ComparisonSplitHorizontal ?? "Horizontal split";
         ComparisonPin.Value = t.ComparisonPin ?? "Pin A";
         ComparisonStretch.Value = t.ComparisonStretch ?? "Stretch to match";
         ComparisonAlign.Value = t.ComparisonAlign ?? "2-Point Align";
@@ -486,11 +486,12 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> ComparisonBlink { get; } = new("Blink");
     public BindableReactiveProperty<string?> ComparisonDifference { get; } = new("Difference");
     public BindableReactiveProperty<string?> ComparisonCustom { get; } = new("Custom");
-    public BindableReactiveProperty<string?> ComparisonFit { get; } = new("Fit");
     public BindableReactiveProperty<string?> ComparisonSwap { get; } = new("Swap A/B");
     public BindableReactiveProperty<string?> ComparisonSideBySideSynced { get; } = new("Synced");
     public BindableReactiveProperty<string?> ComparisonPickA { get; } = new("Pick A");
     public BindableReactiveProperty<string?> ComparisonPickB { get; } = new("Pick B");
+    public BindableReactiveProperty<string?> ComparisonSplitVertical { get; } = new("Vertical split");
+    public BindableReactiveProperty<string?> ComparisonSplitHorizontal { get; } = new("Horizontal split");
     public BindableReactiveProperty<string?> ComparisonPin { get; } = new("Pin A");
     public BindableReactiveProperty<string?> ComparisonStretch { get; } = new("Stretch to match");
     public BindableReactiveProperty<string?> ComparisonAlign { get; } = new("2-Point Align");
