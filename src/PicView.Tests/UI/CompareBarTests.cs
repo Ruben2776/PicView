@@ -340,6 +340,61 @@ public class CompareBarTests
             }
         });
 
+    [AvaloniaFact]
+    public void CompareBar_AtTheSideAligning_KeepsItsThickness() => WithWindow((window, _, tab) =>
+    {
+        Settings.Comparison!.BarPosition = ComparisonBarPosition.Left;
+        var bar = Compare(window, tab, ComparisonMode.Overlay);
+        TallEnoughNotToScroll(window);
+        var comparison = tab.Comparison!;
+        var before = comparison.BarExtent.Value;
+        Assert.True(before > 0);
+
+        comparison.ToggleAligning();
+        Settle(window);
+        AssertDoesNotScroll(bar);
+        Assert.InRange(comparison.BarExtent.Value, before - 0.5, before + 0.5);
+
+        comparison.AddAlignmentPoint(10, 10);
+        Settle(window);
+        Assert.Equal(2, comparison.AlignmentStep.Value);
+        AssertDoesNotScroll(bar);
+        Assert.InRange(comparison.BarExtent.Value, before - 0.5, before + 0.5);
+    });
+
+    [AvaloniaFact]
+    public void CompareBar_AtTheSideCustomBlink_KeepsItsThickness() => WithWindow((window, _, tab) =>
+    {
+        Settings.Comparison!.BarPosition = ComparisonBarPosition.Left;
+        var bar = Compare(window, tab, ComparisonMode.Blink);
+        TallEnoughNotToScroll(window);
+        var comparison = tab.Comparison!;
+        comparison.IsBlinkFast.Value = true;
+        Settle(window);
+        var before = comparison.BarExtent.Value;
+        Assert.True(before > 0);
+
+        comparison.IsBlinkFast.Value = false;
+        Settle(window);
+
+        AssertDoesNotScroll(bar);
+        Assert.InRange(comparison.BarExtent.Value, before - 0.5, before + 0.5);
+    });
+
+    [AvaloniaFact]
+    public void CompareBar_AtTheBottomAligning_ShowsTheHintOnOneLine() => WithWindow((window, _, tab) =>
+    {
+        Settings.Comparison!.BarPosition = ComparisonBarPosition.Bottom;
+        var bar = Compare(window, tab, ComparisonMode.Overlay);
+        var hint = Assert.IsType<TextBlock>(bar.FindControl<TextBlock>("AlignHintText"));
+
+        tab.Comparison!.ToggleAligning();
+        Settle(window);
+
+        Assert.False(string.IsNullOrEmpty(hint.Text));
+        Assert.Single(hint.TextLayout.TextLines);
+    });
+
     // Every group panel and the opacity slider run in the orientation
     private static void AssertGroupsAndSlider(CompareBar bar, Orientation orientation)
     {
@@ -348,6 +403,20 @@ public class CompareBarTests
         Assert.NotEmpty(groups);
         Assert.All(groups, p => Assert.Equal(orientation, p.Orientation));
         Assert.Equal(orientation, bar.GetVisualDescendants().OfType<Slider>().Single().Orientation);
+    }
+
+    // A column taller than the window scrolls, and its scroll bar adds to the side bar's thickness; these tests
+    // look only at what the rows themselves do
+    private static void TallEnoughNotToScroll(TestMainWindow window)
+    {
+        window.Height = 1200;
+        Settle(window);
+    }
+
+    private static void AssertDoesNotScroll(CompareBar bar)
+    {
+        var scroll = bar.GetVisualDescendants().OfType<ScrollViewer>().First();
+        Assert.True(scroll.Extent.Height <= scroll.Viewport.Height + 0.5);
     }
 
     private sealed class MockFrameProvider : FrameProvider

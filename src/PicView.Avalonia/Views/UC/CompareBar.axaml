@@ -3,6 +3,7 @@
     x:Class="PicView.Avalonia.Views.UC.CompareBar"
     x:DataType="vm:TabViewModel"
     xmlns="https://github.com/avaloniaui"
+    xmlns:cc="using:PicView.Avalonia.CustomControls"
     xmlns:keybindings="using:PicView.Core.Keybindings"
     xmlns:uc="using:PicView.Avalonia.Views.UC"
     xmlns:vm="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
@@ -91,6 +92,13 @@
             <Setter Property="Width" Value="NaN" />
             <Setter Property="Height" Value="92" />
         </Style>
+        <!--  At the sides the contextual rows fit the width the permanent rows give  -->
+        <Style Selector="uc|CompareBar.vertical TextBlock#AlignHintText">
+            <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
+        <Style Selector="uc|CompareBar.vertical NumericUpDown">
+            <Setter Property="Width" Value="NaN" />
+        </Style>
         <Style Selector="uc|CompareBar.vertical Border.barDivider">
             <Setter Property="Width" Value="18" />
             <Setter Property="Height" Value="1" />
@@ -109,7 +117,8 @@
         Padding="6,4"
         VerticalAlignment="Center">
         <ScrollViewer Classes="barScroll">
-            <StackPanel Classes="barGroup" Spacing="6">
+            <!--  Contextual rows are left out of its thickness at the sides, so they never resize it  -->
+            <cc:ContextualStackPanel Classes="barGroup" Spacing="6">
 
                 <!--  Mode Segmented Pill  -->
                 <Border
@@ -159,6 +168,7 @@
                 <StackPanel
                     Classes="barGroup"
                     IsVisible="{CompiledBinding Comparison.IsOverlay.Value}"
+                    cc:ContextualStackPanel.IsContextual="True"
                     Margin="4,0"
                     Spacing="6"
                     VerticalAlignment="Center">
@@ -185,6 +195,7 @@
                     Background="{DynamicResource ComparePillGroupBackground}"
                     CornerRadius="16"
                     IsVisible="{CompiledBinding Comparison.IsSplit.Value}"
+                    cc:ContextualStackPanel.IsContextual="True"
                     Padding="2">
                     <StackPanel Classes="barGroup" Spacing="2">
                         <Button
@@ -217,6 +228,7 @@
                     Background="{DynamicResource ComparePillGroupBackground}"
                     CornerRadius="16"
                     IsVisible="{CompiledBinding Comparison.IsBlink.Value}"
+                    cc:ContextualStackPanel.IsContextual="True"
                     Padding="2">
                     <StackPanel Classes="barGroup" Spacing="4">
                         <Button
@@ -387,6 +399,7 @@
                     Classes="compareIconBtn"
                     Click="OnResetAlignClick"
                     IsVisible="{CompiledBinding Comparison.HasAlignment.Value}"
+                    cc:ContextualStackPanel.IsContextual="True"
                     ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.ComparisonAlignReset.Value}"
                     x:Name="ResetAlignButton">
                     <Path
@@ -404,6 +417,7 @@
                     Foreground="{DynamicResource MainTextColor}"
                     IsVisible="{CompiledBinding Comparison.IsAligning.Value}"
                     Margin="4,0"
+                    cc:ContextualStackPanel.IsContextual="True"
                     VerticalAlignment="Center"
                     x:Name="AlignHintText" />
 
@@ -468,7 +482,7 @@
                         </MenuFlyout>
                     </Button.Flyout>
                 </Button>
-            </StackPanel>
+            </cc:ContextualStackPanel>
         </ScrollViewer>
     </Border>
 </UserControl>
