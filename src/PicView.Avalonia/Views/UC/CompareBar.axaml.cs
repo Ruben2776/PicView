@@ -47,49 +47,51 @@ public partial class CompareBar : UserControl, IDisposable
             }, DebugHelper.LogError(nameof(CompareBar), nameof(TabZoom.FactorPercent)))
             .AddTo(ref _subscriptions);
 
-        if (tab.Comparison is { } comparison)
+        if (tab.Comparison is not { } comparison)
         {
-            comparison.AlignmentStep.AsObservable()
-                .SubscribeOnUIThread(() =>
-                {
-                    var tr = tab.ParentWindowContext.Translation;
-                    AlignHintText.Text = comparison.AlignmentStep.Value switch
-                    {
-                        1 => tr.ComparisonAlignStepA1.Value,
-                        2 => tr.ComparisonAlignStepB1.Value,
-                        3 => tr.ComparisonAlignStepA2.Value,
-                        4 => tr.ComparisonAlignStepB2.Value,
-                        _ => string.Empty
-                    };
-                }, DebugHelper.LogError(nameof(CompareBar), nameof(ComparisonViewModel.AlignmentStep)))
-                .AddTo(ref _subscriptions);
-
-            // Stacks the groups into a column at the sides, and names the current side on the position button
-            comparison.BarPosition
-                .SubscribeOnUIThread(() =>
-                {
-                    var position = comparison.BarPosition.Value;
-                    Classes.Set("vertical", position is ComparisonBarPosition.Left or ComparisonBarPosition.Right);
-                    Classes.Set("dockTop", position is ComparisonBarPosition.Top);
-                    Classes.Set("dockLeft", position is ComparisonBarPosition.Left);
-                    Classes.Set("dockRight", position is ComparisonBarPosition.Right);
-                    var tr = tab.ParentWindowContext.Translation;
-                    BarPositionText.Text = position switch
-                    {
-                        ComparisonBarPosition.Top => tr.Top.Value,
-                        ComparisonBarPosition.Left => tr.Left.Value,
-                        ComparisonBarPosition.Right => tr.Right.Value,
-                        _ => tr.Bottom.Value
-                    };
-                }, DebugHelper.LogError(nameof(CompareBar), nameof(ComparisonViewModel.BarPosition)))
-                .AddTo(ref _subscriptions);
-
-            // Reports its thickness across its edge for the window fit to reserve. Layout raises this on the UI
-            // thread; a hidden bar raises nothing, so its reserve is kept while the gallery is expanded
-            Observable.FromEventHandler<SizeChangedEventArgs>(h => SizeChanged += h, h => SizeChanged -= h)
-                .Subscribe(_ => ReportExtent(comparison))
-                .AddTo(ref _subscriptions);
+            return;
         }
+
+        comparison.AlignmentStep.AsObservable()
+            .SubscribeOnUIThread(() =>
+            {
+                var tr = tab.ParentWindowContext.Translation;
+                AlignHintText.Text = comparison.AlignmentStep.Value switch
+                {
+                    1 => tr.ComparisonAlignStepA1.Value,
+                    2 => tr.ComparisonAlignStepB1.Value,
+                    3 => tr.ComparisonAlignStepA2.Value,
+                    4 => tr.ComparisonAlignStepB2.Value,
+                    _ => string.Empty
+                };
+            }, DebugHelper.LogError(nameof(CompareBar), nameof(ComparisonViewModel.AlignmentStep)))
+            .AddTo(ref _subscriptions);
+
+        // Stacks the groups into a column at the sides, and names the current side on the position button
+        comparison.BarPosition
+            .SubscribeOnUIThread(() =>
+            {
+                var position = comparison.BarPosition.Value;
+                Classes.Set("vertical", position is ComparisonBarPosition.Left or ComparisonBarPosition.Right);
+                Classes.Set("dockTop", position is ComparisonBarPosition.Top);
+                Classes.Set("dockLeft", position is ComparisonBarPosition.Left);
+                Classes.Set("dockRight", position is ComparisonBarPosition.Right);
+                var tr = tab.ParentWindowContext.Translation;
+                BarPositionButton.Text = position switch
+                {
+                    ComparisonBarPosition.Top => tr.Top.Value,
+                    ComparisonBarPosition.Left => tr.Left.Value,
+                    ComparisonBarPosition.Right => tr.Right.Value,
+                    _ => tr.Bottom.Value
+                };
+            }, DebugHelper.LogError(nameof(CompareBar), nameof(ComparisonViewModel.BarPosition)))
+            .AddTo(ref _subscriptions);
+
+        // Reports its thickness across its edge for the window fit to reserve. Layout raises this on the UI
+        // thread; a hidden bar raises nothing, so its reserve is kept while the gallery is expanded
+        Observable.FromEventHandler<SizeChangedEventArgs>(h => SizeChanged += h, h => SizeChanged -= h)
+            .Subscribe(_ => ReportExtent(comparison))
+            .AddTo(ref _subscriptions);
     }
 
     private void ReportExtent(ComparisonViewModel comparison)
