@@ -22,34 +22,40 @@
                 <ScaleTransform ScaleX="{CompiledBinding Orientation.ScaleX.Value}" />
             </LayoutTransformControl.RenderTransform>
             <zoom:ZoomPanControl x:Name="ZoomPanControl" Host="Comparison">
-                <Border
-                    Width="{CompiledBinding ParentWindowContext.ImageWidth.Value}"
-                    Height="{CompiledBinding ParentWindowContext.ImageHeight.Value}"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Background="{CompiledBinding ParentWindowContext.GlobalSettings.ConstrainedImageBackground.Value,
-                                                 Mode=OneWay}">
-                    <Grid x:Name="StackHost">
-                        <customControls:PicBox
-                            x:Name="ImageA"
-                            CurrentFileInfo="{CompiledBinding $parent[uc:ComparisonViewer].Comparison.FileInfoA.Value}"
-                            ImageType="{CompiledBinding $parent[uc:ComparisonViewer].Comparison.ImageTypeA.Value}"
-                            Source="{CompiledBinding $parent[uc:ComparisonViewer].Comparison.ImageA.Value,
-                                                     Converter={StaticResource DisplayableConverter}}" />
-                        <!--  No ImageType: an animation draws its frames without the blend, so only the first frame is compared  -->
-                        <customControls:PicBox
-                            x:Name="ImageB"
-                            BlendMode="Difference"
-                            CurrentFileInfo="{CompiledBinding $parent[uc:ComparisonViewer].Comparison.FileInfoB.Value}"
-                            Source="{CompiledBinding $parent[uc:ComparisonViewer].Comparison.ImageB.Value,
-                                                     Converter={StaticResource DisplayableConverter}}"
-                            Stretch="Fill" />
-                        <Canvas
-                            x:Name="AlignMarkersCanvas"
-                            IsHitTestVisible="False"
-                            IsVisible="{CompiledBinding $parent[uc:ComparisonViewer].Comparison.IsAligning.Value}" />
-                    </Grid>
-                </Border>
+                <!--  As large as the view, as the image viewer's scroll viewer is, so the zoom control centres and pans the
+                      fitted pair exactly as it does the image  -->
+                <Panel
+                    Width="{CompiledBinding ParentWindowContext.ScrollViewerWidth.Value}"
+                    Height="{CompiledBinding ParentWindowContext.ScrollViewerHeight.Value}">
+                    <Border
+                        Width="{CompiledBinding ParentWindowContext.ImageWidth.Value}"
+                        Height="{CompiledBinding ParentWindowContext.ImageHeight.Value}"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Background="{CompiledBinding ParentWindowContext.GlobalSettings.ConstrainedImageBackground.Value,
+                                                     Mode=OneWay}">
+                        <Grid x:Name="StackHost">
+                            <customControls:PicBox
+                                x:Name="ImageA"
+                                CurrentFileInfo="{CompiledBinding $parent[uc:ComparisonViewer].Comparison.FileInfoA.Value}"
+                                ImageType="{CompiledBinding $parent[uc:ComparisonViewer].Comparison.ImageTypeA.Value}"
+                                Source="{CompiledBinding $parent[uc:ComparisonViewer].Comparison.ImageA.Value,
+                                                         Converter={StaticResource DisplayableConverter}}" />
+                            <!--  No ImageType: an animation draws its frames without the blend, so only the first frame is compared  -->
+                            <customControls:PicBox
+                                x:Name="ImageB"
+                                BlendMode="Difference"
+                                CurrentFileInfo="{CompiledBinding $parent[uc:ComparisonViewer].Comparison.FileInfoB.Value}"
+                                Source="{CompiledBinding $parent[uc:ComparisonViewer].Comparison.ImageB.Value,
+                                                         Converter={StaticResource DisplayableConverter}}"
+                                Stretch="Fill" />
+                            <Canvas
+                                x:Name="AlignMarkersCanvas"
+                                IsHitTestVisible="False"
+                                IsVisible="{CompiledBinding $parent[uc:ComparisonViewer].Comparison.IsAligning.Value}" />
+                        </Grid>
+                    </Border>
+                </Panel>
             </zoom:ZoomPanControl>
         </LayoutTransformControl>
         <!--  Synced: A and B side by side, zoomed and panned together  -->

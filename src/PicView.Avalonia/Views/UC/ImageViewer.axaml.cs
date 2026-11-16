@@ -293,7 +293,7 @@ public partial class ImageViewer : UserControl, IDisposable, INavigableContent
     /// <inheritdoc/>
     public void ShowFactor(double factor)
     {
-        // Already there: setting the scale again would re-centre the image
+        // Already there: setting the scale again would re-centre a panned view
         if (ZoomPanControl.Scale.Equals(factor))
         {
             return;
