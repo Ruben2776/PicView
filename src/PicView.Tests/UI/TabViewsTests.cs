@@ -387,6 +387,24 @@ public class TabViewsTests
         });
 
     [AvaloniaFact]
+    public void Comparing_SingleImageShown_ComparesItAgainstNothing()
+        => WithWindow((window, _, tab) =>
+        {
+            tab.Display(BitmapModel("a.jpg"), BitmapModel("b.jpg"));
+            tab.SetComparing(true);
+
+            // A pasted SVG (or any clipboard image) shows as a Single Image, with no partner to compare against
+            var pasted = BitmapModel("clipboard.svg");
+            tab.DisplaySingleImage(pasted, SingleImageType.Clipboard, "SVG");
+            Settle(window);
+
+            Assert.Equal(TabViewKind.Comparison, tab.ViewKind.Value);
+            var comparison = Assert.IsType<ComparisonViewer>(ViewerOf(tab)).Comparison;
+            Assert.Same(pasted.Image, comparison.ImageA.Value);
+            Assert.Null(comparison.ImageB.Value);
+        });
+
+    [AvaloniaFact]
     public void Comparing_Off_ShowsTheKeptImageViewerAgain()
         => WithWindow((_, _, tab) =>
         {
