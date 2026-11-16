@@ -527,6 +527,72 @@ public class ComparisonViewerTests
         Assert.Equal(0.5, viewer.Comparison.SplitRatio.Value, 3);
     });
 
+    [AvaloniaFact]
+    public async Task Display_OnAnotherThreadAfterAligning_ShowsTheNewPairUnaligned() => await WithWindowAsync(
+        async (window, vm, tab) =>
+        {
+            // A tab shows its next pair on a loading thread, which the comparison's changes then come from
+            var viewer = ShowComparing(window, vm, tab);
+            var stack = Part<Grid>(viewer, "StackHost");
+            var b = Part<PicBox>(viewer, "ImageB");
+            viewer.Comparison.ToggleAligning();
+            Settle(window);
+            Press(window, stack, new Point(100, 100));
+            Press(window, stack, new Point(120, 100));
+            Press(window, stack, new Point(300, 200));
+            Press(window, stack, new Point(320, 200));
+            Assert.IsType<MatrixTransform>(b.RenderTransform);
+            var (c, d) = (BitmapModel("c.jpg"), BitmapModel("d.jpg"));
+
+            await Task.Run(() => tab.Display(c, d)).ConfigureAwait(true);
+            Settle(window);
+
+            Assert.Null(b.RenderTransform);
+            Assert.Same(c.Image, Part<PicBox>(viewer, "ImageA").Source);
+            Assert.Same(d.Image, b.Source);
+            Assert.Equal("A · c.jpg", Part<TextBlock>(viewer, "SyncedLeftBadgeText").Text);
+            Assert.Equal("B · d.jpg", Part<TextBlock>(viewer, "SyncedRightBadgeText").Text);
+        });
+
+    [AvaloniaFact]
+    public async Task Display_OnAnotherThreadWhileAligning_StopsAligningInTheView() => await WithWindowAsync(
+        async (window, vm, tab) =>
+        {
+            var viewer = ShowComparing(window, vm, tab);
+            var stack = Part<Grid>(viewer, "StackHost");
+            var markers = Part<Canvas>(viewer, "AlignMarkersCanvas");
+            var hint = Assert.IsType<TextBlock>(Part<CompareBar>(viewer, "CompareBar").FindControl<TextBlock>("AlignHintText"));
+            viewer.Comparison.ToggleAligning();
+            Settle(window);
+            Press(window, stack, new Point(100, 100));
+            Assert.Single(markers.Children);
+            Assert.NotNull(stack.Cursor);
+            Assert.False(string.IsNullOrEmpty(hint.Text));
+            var (c, d) = (BitmapModel("c.jpg"), BitmapModel("d.jpg"));
+
+            await Task.Run(() => tab.Display(c, d)).ConfigureAwait(true);
+            Settle(window);
+
+            Assert.Empty(markers.Children);
+            Assert.Null(stack.Cursor);
+            Assert.False(Part<ZoomPanControl>(viewer, "ZoomPanControl").IsAligning);
+            Assert.True(string.IsNullOrEmpty(hint.Text));
+        });
+
+    // Turns the tab's comparing on over a pair, so the tab passes its next pair to the comparison, and shows its view
+    private static ComparisonViewer ShowComparing(TestMainWindow window, MainWindowViewModel vm, TabViewModel tab)
+    {
+        window.Width = 800;
+        window.Height = 600;
+        vm.ImageWidth.Value = 400;
+        vm.ImageHeight.Value = 300;
+        tab.Display(BitmapModel("a.jpg"), BitmapModel("b.jpg"));
+        tab.SetComparing(true);
+        window.Content = Assert.IsType<NavigableView>(ViewOf(tab));
+        Settle(window);
+        return Assert.IsType<ComparisonViewer>(ViewerOf(tab));
+    }
+
     // Shows the viewer in the tab's navigable view, in place of the image viewer, with the window's click handling
     // and its Actions recorded
     private static (ComparisonViewer Viewer, RecordingActionRunner Actions) HostInNavigableView(

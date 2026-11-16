@@ -90,62 +90,42 @@ public partial class ComparisonViewer : UserControl, INavigableContent, IDisposa
 
     private void InitializeComparison()
     {
+        // The comparison changes on the thread that shows the tab's next pair, so each of these runs on the UI thread
         var c = Comparison;
-        c.Mode.Subscribe(_ => ApplyComparisonVisuals(), LogError(nameof(ApplyComparisonVisuals)))
+        c.Mode.SubscribeOnUIThread(ApplyComparisonVisuals, LogError(nameof(ApplyComparisonVisuals)))
             .AddTo(ref _disposables);
-        c.OverlayOpacity.Subscribe(_ => ApplyComparisonVisuals(), LogError(nameof(ApplyComparisonVisuals)))
+        c.OverlayOpacity.SubscribeOnUIThread(ApplyComparisonVisuals, LogError(nameof(ApplyComparisonVisuals)))
             .AddTo(ref _disposables);
-        c.IsStretchFill.Subscribe(_ => ApplyComparisonVisuals(), LogError(nameof(ApplyComparisonVisuals)))
+        c.IsStretchFill.SubscribeOnUIThread(ApplyComparisonVisuals, LogError(nameof(ApplyComparisonVisuals)))
             .AddTo(ref _disposables);
-        c.SplitRatio.Subscribe(_ => UpdateSplitClipAndOverlay(), LogError(nameof(UpdateSplitClipAndOverlay)))
+        c.SplitRatio.SubscribeOnUIThread(UpdateSplitClipAndOverlay, LogError(nameof(UpdateSplitClipAndOverlay)))
             .AddTo(ref _disposables);
-        c.IsSplitHorizontal.Subscribe(_ => UpdateSplitClipAndOverlay(), LogError(nameof(UpdateSplitClipAndOverlay)))
+        c.IsSplitHorizontal.SubscribeOnUIThread(UpdateSplitClipAndOverlay, LogError(nameof(UpdateSplitClipAndOverlay)))
             .AddTo(ref _disposables);
-        c.IsBlinkFast.Subscribe(_ => UpdateBlinkTimer(), LogError(nameof(UpdateBlinkTimer)))
+        c.IsBlinkFast.SubscribeOnUIThread(UpdateBlinkTimer, LogError(nameof(UpdateBlinkTimer)))
             .AddTo(ref _disposables);
-        c.BlinkInterval.Subscribe(_ => UpdateBlinkTimer(), LogError(nameof(UpdateBlinkTimer)))
+        c.BlinkInterval.SubscribeOnUIThread(UpdateBlinkTimer, LogError(nameof(UpdateBlinkTimer)))
             .AddTo(ref _disposables);
-        c.IsSwapped.AsObservable().Subscribe(_ => UpdateComparisonBadges(), LogError(nameof(UpdateComparisonBadges)))
+        c.IsSwapped.AsObservable().SubscribeOnUIThread(UpdateComparisonBadges, LogError(nameof(UpdateComparisonBadges)))
             .AddTo(ref _disposables);
-        c.FileInfoA.AsObservable().Subscribe(_ => UpdateComparisonBadges(), LogError(nameof(UpdateComparisonBadges)))
+        c.FileInfoA.AsObservable().SubscribeOnUIThread(UpdateComparisonBadges, LogError(nameof(UpdateComparisonBadges)))
             .AddTo(ref _disposables);
-        c.FileInfoB.AsObservable().Subscribe(_ => UpdateComparisonBadges(), LogError(nameof(UpdateComparisonBadges)))
+        c.FileInfoB.AsObservable().SubscribeOnUIThread(UpdateComparisonBadges, LogError(nameof(UpdateComparisonBadges)))
             .AddTo(ref _disposables);
 
         // The scroll bar follows the setting, as the image viewer's does
-        _tab.ParentWindowContext?.GlobalSettings.IsScrollingEnabled.Subscribe(ShowScrolling,
+        _tab.ParentWindowContext?.GlobalSettings.IsScrollingEnabled.SubscribeOnUIThread(ShowScrolling,
             LogError(nameof(ShowScrolling))).AddTo(ref _disposables);
 
-        c.Alignment.AsObservable().Subscribe(ShowAlignment, LogError(nameof(ShowAlignment))).AddTo(ref _disposables);
-        c.HasAlignment.AsObservable().Subscribe(has =>
-        {
-            if (!has)
-            {
-                ImageB.RenderTransform = null;
-            }
-        }, LogError(nameof(ComparisonViewModel.HasAlignment))).AddTo(ref _disposables);
-        c.IsAligning.AsObservable().Subscribe(aligning =>
-        {
-            ZoomPanControl.IsAligning = aligning;
-            StackHost.Cursor = aligning ? CrossCursor : null;
-            AlignMarkersCanvas.Children.Clear();
-        }, LogError(nameof(ComparisonViewModel.IsAligning))).AddTo(ref _disposables);
+        // Set with the alignment, and cleared with it
+        c.Alignment.AsObservable().SubscribeOnUIThread(ShowAlignment, LogError(nameof(ShowAlignment)))
+            .AddTo(ref _disposables);
+        c.IsAligning.AsObservable().SubscribeOnUIThread(ShowAligning, LogError(nameof(ShowAligning)))
+            .AddTo(ref _disposables);
 
         // Entering or leaving the synced layout in a shown viewer: the factor follows the layout now shown
-        c.IsSynced.AsObservable().Skip(1).Subscribe(synced =>
-        {
-            if (synced)
-            {
-                SyncedLeftZoom.ResetZoom(false);
-                SyncedRightZoom.ResetZoom(false);
-                _tab.Zoom.SetFactor(1.0);
-            }
-            else
-            {
-                HideSyncedCrosshairs();
-                _tab.Zoom.SetFactor(ZoomPanControl.Scale);
-            }
-        }, LogError(nameof(ComparisonViewModel.IsSynced))).AddTo(ref _disposables);
+        c.IsSynced.AsObservable().Skip(1).SubscribeOnUIThread(ShowSyncedFactor, LogError(nameof(ShowSyncedFactor)))
+            .AddTo(ref _disposables);
 
         ZoomPanControl.ScaleChanged += OnScaleChanged;
         ZoomPanControl.ViewChanged += OnMainZoomViewChanged;
@@ -344,13 +324,29 @@ public partial class ComparisonViewer : UserControl, INavigableContent, IDisposa
             ? SyncedRightZoom.IsPointerOver ? SyncedRightZoom : SyncedLeftZoom
             : ZoomPanControl;
 
-    private void ShowScrolling(bool isScrolling) =>
-        StackScrollViewer.VerticalScrollBarVisibility =
-            isScrolling ? ScrollBarVisibility.Visible : ScrollBarVisibility.Disabled;
+    private void ShowScrolling() =>
+        StackScrollViewer.VerticalScrollBarVisibility = _tab.ParentWindowContext.GlobalSettings.IsScrollingEnabled.Value
+            ? ScrollBarVisibility.Visible
+            : ScrollBarVisibility.Disabled;
 
     #endregion
 
     #region Zoom
+
+    private void ShowSyncedFactor()
+    {
+        if (Comparison.IsSynced.Value)
+        {
+            SyncedLeftZoom.ResetZoom(false);
+            SyncedRightZoom.ResetZoom(false);
+            _tab.Zoom.SetFactor(1.0);
+        }
+        else
+        {
+            HideSyncedCrosshairs();
+            _tab.Zoom.SetFactor(ZoomPanControl.Scale);
+        }
+    }
 
     /// <summary>
     /// Reports the main control's scale to the tab as the Zoom Factor (ADR-0016), shows the zoom percentage popup
@@ -711,14 +707,18 @@ public partial class ComparisonViewer : UserControl, INavigableContent, IDisposa
 
     #region Alignment
 
-    private void ShowAlignment(SimilarityMatrix? alignment)
-    {
-        if (alignment is not { } m)
-        {
-            return;
-        }
+    private void ShowAlignment() =>
+        ImageB.RenderTransform = Comparison.Alignment.Value is { } m
+            ? new MatrixTransform(new Matrix(m.M11, m.M12, m.M21, m.M22, m.OffsetX, m.OffsetY))
+            : null;
 
-        ImageB.RenderTransform = new MatrixTransform(new Matrix(m.M11, m.M12, m.M21, m.M22, m.OffsetX, m.OffsetY));
+    // Picking points shows a cross over the pair and the points picked so far; stopping clears them
+    private void ShowAligning()
+    {
+        var aligning = Comparison.IsAligning.Value;
+        ZoomPanControl.IsAligning = aligning;
+        StackHost.Cursor = aligning ? CrossCursor : null;
+        AlignMarkersCanvas.Children.Clear();
     }
 
     private void OnStackHostPointerPressed(object? sender, PointerPressedEventArgs e)
