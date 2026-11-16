@@ -71,7 +71,7 @@ public partial class CompareBar : UserControl, IDisposable
                     var position = comparison.BarPosition.Value;
                     Classes.Set("vertical", position is ComparisonBarPosition.Left or ComparisonBarPosition.Right);
                     var tr = tab.ParentWindowContext.Translation;
-                    BarPositionButton.Content = position switch
+                    BarPositionText.Text = position switch
                     {
                         ComparisonBarPosition.Top => tr.Top.Value,
                         ComparisonBarPosition.Left => tr.Left.Value,
