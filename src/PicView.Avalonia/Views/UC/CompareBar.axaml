@@ -5,8 +5,7 @@
     xmlns:keybindings="using:PicView.Core.Keybindings"
     xmlns:vm="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
     x:DataType="vm:TabViewModel"
-    Background="Transparent"
-    IsVisible="False">
+    Background="Transparent">
     <UserControl.Styles>
         <Style Selector="Button.comparePill">
             <Setter Property="Background" Value="Transparent" />
@@ -105,32 +104,37 @@
                     <Button
                         x:Name="OverlayModeButton"
                         Classes="comparePill"
-                        Classes.active="{CompiledBinding ParentWindowContext.GlobalSettings.IsOverlayMode.Value}"
-                        Click="OnOverlayModeClick"
+                        Classes.active="{CompiledBinding Comparison.IsOverlay.Value}"
+                        Command="{CompiledBinding ParentWindowContext.RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.ComparisonModeOverlay}"
                         Content="{CompiledBinding ParentWindowContext.Translation.ComparisonOverlay.Value}" />
                     <Button
                         x:Name="SplitModeButton"
                         Classes="comparePill"
-                        Classes.active="{CompiledBinding ParentWindowContext.GlobalSettings.IsSplitMode.Value}"
-                        Click="OnSplitModeClick"
+                        Classes.active="{CompiledBinding Comparison.IsSplit.Value}"
+                        Command="{CompiledBinding ParentWindowContext.RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.ComparisonModeSplit}"
                         Content="{CompiledBinding ParentWindowContext.Translation.ComparisonSplit.Value}" />
                     <Button
-                        x:Name="SideBySideModeButton"
+                        x:Name="SyncedModeButton"
                         Classes="comparePill"
-                        Classes.active="{CompiledBinding ParentWindowContext.GlobalSettings.IsSideBySide.Value}"
-                        Click="OnSideBySideModeClick"
-                        Content="{CompiledBinding ParentWindowContext.Translation.ComparisonSideBySide.Value}" />
+                        Classes.active="{CompiledBinding Comparison.IsSynced.Value}"
+                        Command="{CompiledBinding ParentWindowContext.RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.ComparisonModeSynced}"
+                        Content="{CompiledBinding ParentWindowContext.Translation.ComparisonSideBySideSynced.Value}" />
                     <Button
                         x:Name="BlinkModeButton"
                         Classes="comparePill"
-                        Classes.active="{CompiledBinding ParentWindowContext.GlobalSettings.IsBlinkMode.Value}"
-                        Click="OnBlinkModeClick"
+                        Classes.active="{CompiledBinding Comparison.IsBlink.Value}"
+                        Command="{CompiledBinding ParentWindowContext.RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.ComparisonModeBlink}"
                         Content="{CompiledBinding ParentWindowContext.Translation.ComparisonBlink.Value}" />
                     <Button
                         x:Name="DifferenceModeButton"
                         Classes="comparePill"
-                        Classes.active="{CompiledBinding ParentWindowContext.GlobalSettings.IsDifferenceMode.Value}"
-                        Click="OnDifferenceModeClick"
+                        Classes.active="{CompiledBinding Comparison.IsDifference.Value}"
+                        Command="{CompiledBinding ParentWindowContext.RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.ComparisonModeDifference}"
                         Content="{CompiledBinding ParentWindowContext.Translation.ComparisonDifference.Value}" />
                 </StackPanel>
             </Border>
@@ -139,7 +143,7 @@
             <StackPanel
                 Margin="4,0"
                 VerticalAlignment="Center"
-                IsVisible="{CompiledBinding ParentWindowContext.GlobalSettings.IsOverlayMode.Value}"
+                IsVisible="{CompiledBinding Comparison.IsOverlay.Value}"
                 Orientation="Horizontal"
                 Spacing="6">
                 <TextBlock
@@ -152,7 +156,7 @@
                     VerticalAlignment="Center"
                     Maximum="1"
                     Minimum="0"
-                    Value="{CompiledBinding ParentWindowContext.GlobalSettings.ComparisonOverlayOpacity.Value,
+                    Value="{CompiledBinding Comparison.OverlayOpacity.Value,
                                             Mode=TwoWay}" />
                 <TextBlock
                     VerticalAlignment="Center"
@@ -166,11 +170,11 @@
                 Padding="2"
                 Background="{DynamicResource ComparePillGroupBackground}"
                 CornerRadius="16"
-                IsVisible="{CompiledBinding ParentWindowContext.GlobalSettings.IsSplitMode.Value}">
+                IsVisible="{CompiledBinding Comparison.IsSplit.Value}">
                 <StackPanel Orientation="Horizontal" Spacing="2">
                     <Button
                         Classes="compareIconBtn"
-                        Classes.active="{CompiledBinding !ParentWindowContext.GlobalSettings.IsComparisonSplitHorizontal.Value}"
+                        Classes.active="{CompiledBinding !Comparison.IsSplitHorizontal.Value}"
                         Click="OnSplitVerticalClick">
                         <Path
                             Width="14"
@@ -181,7 +185,7 @@
                     </Button>
                     <Button
                         Classes="compareIconBtn"
-                        Classes.active="{CompiledBinding ParentWindowContext.GlobalSettings.IsComparisonSplitHorizontal.Value}"
+                        Classes.active="{CompiledBinding Comparison.IsSplitHorizontal.Value}"
                         Click="OnSplitHorizontalClick">
                         <Path
                             Width="14"
@@ -193,41 +197,21 @@
                 </StackPanel>
             </Border>
 
-            <!--  Contextual Controls: Side-by-Side Sub-mode  -->
-            <Border
-                Padding="2"
-                Background="{DynamicResource ComparePillGroupBackground}"
-                CornerRadius="16"
-                IsVisible="{CompiledBinding ParentWindowContext.GlobalSettings.IsSideBySide.Value}">
-                <StackPanel Orientation="Horizontal" Spacing="2">
-                    <Button
-                        Classes="comparePill"
-                        Classes.active="{CompiledBinding ParentWindowContext.GlobalSettings.IsSideBySideStandardActive.Value}"
-                        Click="OnSideBySideStandardClick"
-                        Content="{CompiledBinding ParentWindowContext.Translation.ComparisonSideBySideFit.Value}" />
-                    <Button
-                        Classes="comparePill"
-                        Classes.active="{CompiledBinding ParentWindowContext.GlobalSettings.IsSideBySideSyncedActive.Value}"
-                        Click="OnSideBySideSyncedClick"
-                        Content="{CompiledBinding ParentWindowContext.Translation.ComparisonSideBySideSynced.Value}" />
-                </StackPanel>
-            </Border>
-
             <!--  Contextual Controls: Blink Timing  -->
             <Border
                 Padding="2"
                 Background="{DynamicResource ComparePillGroupBackground}"
                 CornerRadius="16"
-                IsVisible="{CompiledBinding ParentWindowContext.GlobalSettings.IsBlinkMode.Value}">
+                IsVisible="{CompiledBinding Comparison.IsBlink.Value}">
                 <StackPanel Orientation="Horizontal" Spacing="4">
                     <Button
                         Classes="comparePill"
-                        Classes.active="{CompiledBinding ParentWindowContext.GlobalSettings.IsComparisonBlinkFast.Value}"
+                        Classes.active="{CompiledBinding Comparison.IsBlinkFast.Value}"
                         Click="OnBlinkFastClick"
                         Content="0.3s" />
                     <Button
                         Classes="comparePill"
-                        Classes.active="{CompiledBinding !ParentWindowContext.GlobalSettings.IsComparisonBlinkFast.Value}"
+                        Classes.active="{CompiledBinding !Comparison.IsBlinkFast.Value}"
                         Click="OnBlinkCustomClick"
                         Content="{CompiledBinding ParentWindowContext.Translation.ComparisonCustom.Value}" />
                     <NumericUpDown
@@ -237,10 +221,10 @@
                         VerticalAlignment="Center"
                         FormatString="0.0"
                         Increment="0.1"
-                        IsVisible="{CompiledBinding !ParentWindowContext.GlobalSettings.IsComparisonBlinkFast.Value}"
+                        IsVisible="{CompiledBinding !Comparison.IsBlinkFast.Value}"
                         Maximum="5.0"
                         Minimum="0.1"
-                        Value="{CompiledBinding ParentWindowContext.GlobalSettings.ComparisonBlinkInterval.Value,
+                        Value="{CompiledBinding Comparison.BlinkInterval.Value,
                                                 Mode=TwoWay}" />
                 </StackPanel>
             </Border>
@@ -261,13 +245,15 @@
                 <StackPanel Orientation="Horizontal" Spacing="2">
                     <Button
                         Classes="comparePill"
-                        Click="OnPickAClick"
+                        Command="{CompiledBinding ParentWindowContext.RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.ComparisonPickA}"
                         Content="A"
                         Padding="9,4"
                         ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.ComparisonPickA.Value}" />
                     <Button
                         Classes="comparePill"
-                        Click="OnPickBClick"
+                        Command="{CompiledBinding ParentWindowContext.RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.ComparisonPickB}"
                         Content="B"
                         Padding="9,4"
                         ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.ComparisonPickB.Value}" />
@@ -316,8 +302,9 @@
             <!--  Swap A / B  -->
             <Button
                 Classes="compareIconBtn"
-                Classes.active="{CompiledBinding IsComparisonSwapped.Value}"
-                Click="OnSwapClick"
+                Classes.active="{CompiledBinding Comparison.IsSwapped.Value}"
+                Command="{CompiledBinding ParentWindowContext.RunActionCommand}"
+                CommandParameter="{x:Static keybindings:Actions.ComparisonSwap}"
                 ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.ComparisonSwap.Value}">
                 <Path
                     Width="14"
@@ -333,8 +320,9 @@
             <Button
                 x:Name="PinButton"
                 Classes="compareIconBtn"
-                Classes.active="{CompiledBinding IsComparisonPinned.Value}"
-                Click="OnPinClick"
+                Classes.active="{CompiledBinding Comparison.IsPinned.Value}"
+                Command="{CompiledBinding ParentWindowContext.RunActionCommand}"
+                CommandParameter="{x:Static keybindings:Actions.ComparisonPin}"
                 ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.ComparisonPin.Value}">
                 <Path
                     Width="13"
@@ -350,9 +338,9 @@
             <Button
                 x:Name="StretchButton"
                 Classes="compareIconBtn"
-                Classes.active="{CompiledBinding ParentWindowContext.GlobalSettings.IsComparisonStretchFill.Value}"
+                Classes.active="{CompiledBinding Comparison.IsStretchFill.Value}"
                 Click="OnStretchToggleClick"
-                IsVisible="{CompiledBinding ParentWindowContext.GlobalSettings.IsComparing.Value}"
+                IsVisible="{CompiledBinding !Comparison.IsSynced.Value}"
                 ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.ComparisonStretch.Value}">
                 <Path
                     Width="13"
@@ -368,9 +356,9 @@
             <Button
                 x:Name="AlignButton"
                 Classes="compareIconBtn"
-                Classes.active="{CompiledBinding IsAligning.Value}"
+                Classes.active="{CompiledBinding Comparison.IsAligning.Value}"
                 Click="OnAlignClick"
-                IsVisible="{CompiledBinding ParentWindowContext.GlobalSettings.IsComparing.Value}"
+                IsVisible="{CompiledBinding !Comparison.IsSynced.Value}"
                 ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.ComparisonAlign.Value}">
                 <Path
                     Width="13"
@@ -385,7 +373,7 @@
                 x:Name="ResetAlignButton"
                 Classes="compareIconBtn"
                 Click="OnResetAlignClick"
-                IsVisible="{CompiledBinding HasAlignment.Value}"
+                IsVisible="{CompiledBinding Comparison.HasAlignment.Value}"
                 ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.ComparisonAlignReset.Value}">
                 <Path
                     Width="12"
@@ -403,12 +391,13 @@
                 VerticalAlignment="Center"
                 FontSize="11"
                 Foreground="{DynamicResource MainTextColor}"
-                IsVisible="{CompiledBinding IsAligning.Value}" />
+                IsVisible="{CompiledBinding Comparison.IsAligning.Value}" />
 
             <!--  Fit / Reset Zoom  -->
             <Button
                 Classes="comparePill"
-                Click="OnFitClick">
+                Command="{CompiledBinding ParentWindowContext.RunActionCommand}"
+                CommandParameter="{x:Static keybindings:Actions.ResetZoom}">
                 <StackPanel Orientation="Horizontal" Spacing="5">
                     <Path
                         Width="12"
@@ -428,8 +417,10 @@
 
             <!--  Close Comparison  -->
             <Button
+                x:Name="CloseButton"
                 Classes="compareIconBtn"
-                Click="OnCloseClick"
+                Command="{CompiledBinding ParentWindowContext.RunActionCommand}"
+                CommandParameter="{x:Static keybindings:Actions.Comparison}"
                 ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.Close.Value}">
                 <Path
                     Width="10"

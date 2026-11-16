@@ -75,13 +75,11 @@ public class TranslationViewModel
         ComparisonTooltip.Value = t.ComparisonTooltip;
         ComparisonOverlay.Value = t.ComparisonOverlay ?? "Overlay";
         ComparisonSplit.Value = t.ComparisonSplit ?? "Split";
-        ComparisonSideBySide.Value = t.ComparisonSideBySide ?? "Side by side";
         ComparisonBlink.Value = t.ComparisonBlink ?? "Blink";
         ComparisonDifference.Value = t.ComparisonDifference ?? "Difference";
         ComparisonCustom.Value = t.ComparisonCustom ?? "Custom";
         ComparisonFit.Value = t.ComparisonFit ?? "Fit";
         ComparisonSwap.Value = t.ComparisonSwap ?? "Swap A/B";
-        ComparisonSideBySideFit.Value = t.ComparisonSideBySideFit ?? "Standard";
         ComparisonSideBySideSynced.Value = t.ComparisonSideBySideSynced ?? "Synced";
         ComparisonPickA.Value = t.ComparisonPickA ?? "Pick A";
         ComparisonPickB.Value = t.ComparisonPickB ?? "Pick B";
@@ -479,13 +477,11 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> ComparisonTooltip { get; } = new();
     public BindableReactiveProperty<string?> ComparisonOverlay { get; } = new("Overlay");
     public BindableReactiveProperty<string?> ComparisonSplit { get; } = new("Split");
-    public BindableReactiveProperty<string?> ComparisonSideBySide { get; } = new("Side by side");
     public BindableReactiveProperty<string?> ComparisonBlink { get; } = new("Blink");
     public BindableReactiveProperty<string?> ComparisonDifference { get; } = new("Difference");
     public BindableReactiveProperty<string?> ComparisonCustom { get; } = new("Custom");
     public BindableReactiveProperty<string?> ComparisonFit { get; } = new("Fit");
     public BindableReactiveProperty<string?> ComparisonSwap { get; } = new("Swap A/B");
-    public BindableReactiveProperty<string?> ComparisonSideBySideFit { get; } = new("Standard");
     public BindableReactiveProperty<string?> ComparisonSideBySideSynced { get; } = new("Synced");
     public BindableReactiveProperty<string?> ComparisonPickA { get; } = new("Pick A");
     public BindableReactiveProperty<string?> ComparisonPickB { get; } = new("Pick B");

@@ -75,7 +75,7 @@ public sealed class ComparisonViewModel : IDisposable
     public IReadOnlyBindableReactiveProperty<FileInfo?> FileInfoA => _fileInfoA;
     public IReadOnlyBindableReactiveProperty<FileInfo?> FileInfoB => _fileInfoB;
 
-    internal bool IsDisposed => _isDisposed;
+    public bool IsDisposed => _isDisposed;
 
     public ComparisonViewModel(ImageModel primary, ImageModel? secondary, Action save)
     {

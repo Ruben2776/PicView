@@ -2,6 +2,7 @@ using System.Collections.Frozen;
 using Avalonia.Threading;
 using PicView.Avalonia.Clipboard;
 using PicView.Avalonia.ColorManagement;
+using PicView.Avalonia.Comparison;
 using PicView.Avalonia.Crop;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.FileSystem;
@@ -240,6 +241,9 @@ public class FunctionsMapper : IActionRunner
             Actions.ComparisonModeSplit => ComparisonModeSplit,
             Actions.ComparisonModeBlink => ComparisonModeBlink,
             Actions.ComparisonModeDifference => ComparisonModeDifference,
+            Actions.ComparisonModeSynced => ComparisonModeSynced,
+            Actions.ComparisonPickA => ComparisonPickA,
+            Actions.ComparisonPickB => ComparisonPickB,
             Actions.Slideshow => Slideshow,
             Actions.ColorPicker => ColorPicker,
             Actions.Restart => Restart,
@@ -751,6 +755,10 @@ public class FunctionsMapper : IActionRunner
     private ValueTask ComparisonModeSplit() => SetComparisonMode(ComparisonMode.Split);
     private ValueTask ComparisonModeBlink() => SetComparisonMode(ComparisonMode.Blink);
     private ValueTask ComparisonModeDifference() => SetComparisonMode(ComparisonMode.Difference);
+    private ValueTask ComparisonModeSynced() => SetComparisonMode(ComparisonMode.Synced);
+
+    private ValueTask ComparisonPickA() => ComparisonPicker.PickAsync(_vm, _mainWindow, ComparisonSlot.A);
+    private ValueTask ComparisonPickB() => ComparisonPicker.PickAsync(_vm, _mainWindow, ComparisonSlot.B);
 
     // The mode is remembered for the next comparison too, and turns comparing on in the active tab
     private ValueTask SetComparisonMode(ComparisonMode mode)

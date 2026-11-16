@@ -27,6 +27,16 @@ public class ActionListContractTests
         Assert.Empty(unresolved);
     }
 
+    [Theory]
+    [InlineData("ComparisonModeSynced")]
+    [InlineData("ComparisonPickA")]
+    [InlineData("ComparisonPickB")]
+    public void ComparisonActions_AreActionNamesThatResolve(string action)
+    {
+        Assert.Contains(action, (IReadOnlySet<string>)KeybindCategoryDefinition.ActionNames);
+        Assert.NotNull(_mapper.GetFunctionByName(action));
+    }
+
     [Fact]
     public void ActionNames_AllResolveThroughFunctionsMapper()
     {
