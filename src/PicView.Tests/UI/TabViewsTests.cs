@@ -468,8 +468,8 @@ public class TabViewsTests
             tab.Display(BitmapModel("a.jpg"), BitmapModel("b.jpg"));
             tab.SetComparing(true);
 
-            Assert.True(CropManager.CanCrop(tab.DisplayPrimaryImageType.Value, isShowingPair: false));
-            Assert.False(CropManager.CanCrop(tab.DisplayPrimaryImageType.Value, tab.PairSettings().ShowsPair));
+            Assert.True(CropManager.CanCrop(tab.ImageType.Value, isShowingPair: false));
+            Assert.False(CropManager.CanCrop(tab.ImageType.Value, tab.PairSettings().ShowsPair));
         });
 
     [AvaloniaFact]

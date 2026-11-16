@@ -311,25 +311,6 @@ public class ImageScaling
     /// When enabled, the application shows two images next to each other for comparison purposes.
     /// </summary>
     public bool ShowImageSideBySide { get; set; } = false;
-
-    /// <summary>
-    /// Specifies whether the next image is stacked on the current one so the two can be
-    /// compared. Never on together with <see cref="ShowImageSideBySide"/>.
-    /// </summary>
-    public bool ShowComparison { get; set; } = false;
-
-    /// <summary>
-    /// Specifies the active stacked comparison mode when <see cref="ShowComparison"/> is enabled.
-    /// </summary>
-    public ComparisonMode ComparisonMode { get; set; } = ComparisonMode.Difference;
-
-    public double ComparisonOverlayOpacity { get; set; } = 0.5;
-    public double ComparisonSplitRatio { get; set; } = 0.5;
-    public bool IsComparisonSplitHorizontal { get; set; } = false;
-    public bool IsComparisonBlinkFast { get; set; } = true;
-    public double ComparisonBlinkInterval { get; set; } = 1.0;
-    public bool IsSideBySideSynced { get; set; } = false;
-    public bool IsComparisonStretchFill { get; set; } = true;
 }
 
 public enum ComparisonMode
