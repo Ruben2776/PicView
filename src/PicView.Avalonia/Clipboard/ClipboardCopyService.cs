@@ -162,9 +162,16 @@ public class ClipboardCopyService(
         return false;
     }
 
+    /// <summary>
+    /// The SVG file behind what <paramref name="tab"/> shows: its file, or for a Single Image drawn from SVG code,
+    /// such as a pasted one, the temp file that holds the code. Null when there is neither.
+    /// </summary>
+    internal static string? SvgPathOf(TabViewModel? tab) =>
+        tab?.FileInfo.CurrentValue?.FullName ?? tab?.Model.SvgSourcePath;
+
     public async Task<bool> CopyAxamlAsync(string? path)
     {
-        if (string.IsNullOrWhiteSpace(path) || clipboard is null || !IsSvgFile(path) || !File.Exists(path))
+        if (string.IsNullOrWhiteSpace(path) || clipboard is null || !SvgFileReader.HasSvgExtension(path) || !File.Exists(path))
         {
             return false;
         }
@@ -184,10 +191,24 @@ public class ClipboardCopyService(
         }
     }
 
-    private static bool IsSvgFile(string path)
+    public async Task<bool> CopySvgAsync(string? path)
     {
-        var extension = Path.GetExtension(path);
-        return extension.Equals(".svg", StringComparison.OrdinalIgnoreCase) ||
-               extension.Equals(".svgz", StringComparison.OrdinalIgnoreCase);
+        if (string.IsNullOrWhiteSpace(path) || clipboard is null || !SvgFileReader.HasSvgExtension(path) || !File.Exists(path))
+        {
+            return false;
+        }
+
+        try
+        {
+            // The file's own text, unparsed: an .svgz is decompressed, nothing else changes. The read may have
+            // finished on a thread pool thread; CopyTextAsync moves to the UI thread.
+            var svgText = await SvgFileReader.ReadAsync(path).ConfigureAwait(false);
+            return await CopyTextAsync(svgText).ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            DebugHelper.LogDebug(nameof(ClipboardCopyService), nameof(CopySvgAsync), ex);
+            return false;
+        }
     }
 }

@@ -34,6 +34,7 @@ public class SettingsSearchData
     public string GalleryDockSearchTags { get; }
     public string GallerySizeSearchTags { get; }
     public string GalleryStretchSearchTags { get; }
+    public string GalleryDisplayModeSearchTags { get; }
     public string GalleryMouseWheelSearchTags { get; }
     public string SlideshowSearchTags { get; }
     public string WindowScalingSearchTags { get; }
@@ -337,6 +338,21 @@ public class SettingsSearchData
         sb.Append("Stretch Fill Uniform");
         GalleryStretchSearchTags = sb.ToString();
         
+        sb.Clear();
+
+        sb.Append(TranslationManager.Translation.GallerySettings);
+        sb.Append(space);
+        sb.Append(TranslationManager.Translation.GalleryDisplayMode);
+        sb.Append(space);
+        sb.Append(TranslationManager.Translation.Columns);
+        sb.Append(space);
+        sb.Append(TranslationManager.Translation.Masonry);
+        sb.Append(space);
+        sb.Append(TranslationManager.Translation.Rows);
+        sb.Append(space);
+        sb.Append("Display Mode Columns Masonry Rows Justified Waterfall Mosaic Tiles Layout");
+        GalleryDisplayModeSearchTags = sb.ToString();
+
         sb.Clear();
         
         sb.Append(TranslationManager.Translation.GallerySettings);

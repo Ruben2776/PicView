@@ -7,6 +7,8 @@ using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.VisualTree;
 using PicView.Core.Gallery;
+using PicView.Core.Thumbnailing;
+using PicView.Core.ViewModels;
 
 namespace PicView.Avalonia.CustomControls;
 
@@ -45,6 +47,19 @@ public class VirtualizingGallery : VirtualizingPanel
         AvaloniaProperty.Register<VirtualizingGallery, double>(nameof(WrapHeightOverride), double.NaN);
 
     /// <summary>
+    ///     How the Expanded Gallery arranges its items. It is ignored while the gallery is not expanded.
+    /// </summary>
+    public static readonly StyledProperty<GalleryDisplayMode> DisplayModeProperty =
+        AvaloniaProperty.Register<VirtualizingGallery, GalleryDisplayMode>(nameof(DisplayMode),
+            GalleryDisplayMode.Columns);
+
+    /// <summary>
+    ///     The width Masonry and Rows wrap in while the gallery's width animates. NaN to wrap in the available width.
+    /// </summary>
+    public static readonly StyledProperty<double> WrapWidthOverrideProperty =
+        AvaloniaProperty.Register<VirtualizingGallery, double>(nameof(WrapWidthOverride), double.NaN);
+
+    /// <summary>
     ///     How the thumbnails in this panel fill their items. It doesn't affect measure.
     /// </summary>
     public static readonly StyledProperty<Stretch> ThumbnailStretchProperty =
@@ -64,7 +79,9 @@ public class VirtualizingGallery : VirtualizingPanel
             ItemWidthProperty,
             ItemSpacingProperty,
             LineSpacingProperty,
-            WrapHeightOverrideProperty);
+            WrapHeightOverrideProperty,
+            DisplayModeProperty,
+            WrapWidthOverrideProperty);
     }
     
     public readonly record struct RealizedGalleryItem(int Index, Control Element);
@@ -119,6 +136,12 @@ public class VirtualizingGallery : VirtualizingPanel
     /// </summary>
     private Vector _lastScrollOffset;
 
+    /// <summary>
+    ///     Whether a measure ran since the last layout pass ended, so the viewer is asked to sharpen the tiles once it
+    ///     does.
+    /// </summary>
+    private bool _measuredSinceLayout;
+
     /// <inheritdoc cref="WrapPanel" />
     public Orientation Orientation
     {
@@ -165,6 +188,25 @@ public class VirtualizingGallery : VirtualizingPanel
         set => SetValue(WrapHeightOverrideProperty, value);
     }
 
+    /// <inheritdoc cref="DisplayModeProperty" />
+    public GalleryDisplayMode DisplayMode
+    {
+        get => GetValue(DisplayModeProperty);
+        set => SetValue(DisplayModeProperty, value);
+    }
+
+    /// <inheritdoc cref="WrapWidthOverrideProperty" />
+    public double WrapWidthOverride
+    {
+        get => GetValue(WrapWidthOverrideProperty);
+        set => SetValue(WrapWidthOverrideProperty, value);
+    }
+
+    /// <summary>
+    ///     The bounds of every item, by index, from the last measure. Each measure changes the list in place.
+    /// </summary>
+    public IReadOnlyList<Rect> ItemBounds => _layout.Bounds;
+
     public bool IsExpanded
     {
         get;
@@ -179,6 +221,9 @@ public class VirtualizingGallery : VirtualizingPanel
             // A held distance belongs to the other layout, so center the current item in the new one
             _isFollowing = true;
             InvalidateMeasure();
+            // Docked, the items are tiles no more, and sharpening still waiting is cancelled; expanded, they are sharpened
+            // once the view rests
+            _viewer?.RestartTileRest();
         }
     }
 
@@ -186,7 +231,7 @@ public class VirtualizingGallery : VirtualizingPanel
     ///     Whether the panel scrolls along Y rather than X. It reads the panel's own properties, so it is right between
     ///     a change to them and the next measure, when the layout's axis is stale or cleared.
     /// </summary>
-    private bool ScrollsVertically => GalleryLayout.ScrollsVerticallyFor(Orientation, IsExpanded);
+    private bool ScrollsVertically => GalleryLayout.ScrollsVerticallyFor(Orientation, IsExpanded, DisplayMode);
 
     /// <summary>
     ///     A center request: from the next layout on, every layout centers the current item again, until someone else
@@ -205,6 +250,42 @@ public class VirtualizingGallery : VirtualizingPanel
             return _layout.Bounds[index];
         }
         return null;
+    }
+
+    /// <summary>
+    ///     The height in device pixels that a thumbnail needs to fill the item's tile sharply in Masonry or Rows, which
+    ///     is no taller than the image. Rows' tile is the target row height, not the height of the row the item sits in.
+    ///     It reads the last measure and does not lay out.
+    /// </summary>
+    /// <returns>
+    ///     0 when there is nothing to sharpen: the panel is not expanded, shows Columns, has no bounds for the index,
+    ///     or the item's details are not read yet.
+    /// </returns>
+    public uint TileThumbnailHeightFor(int index)
+    {
+        if (!IsExpanded || DisplayMode is GalleryDisplayMode.Columns || index < 0 || index >= _layout.Bounds.Count)
+        {
+            return 0;
+        }
+
+        var items = Items;
+        if (items is null || index >= items.Count || items[index] is not GalleryItemViewModel item ||
+            item.Details is not { } details)
+        {
+            return 0;
+        }
+
+        var scale = LayoutHelper.GetLayoutScale(this);
+        if (DisplayMode is GalleryDisplayMode.Masonry)
+        {
+            var bounds = _layout.Bounds[index];
+            return TileThumbnailHeight.For(bounds.Width * scale, bounds.Height * scale, details.PixelWidth,
+                details.PixelHeight);
+        }
+
+        var target = Math.Round(ItemHeight * GalleryDefaults.RowHeightFactor * scale);
+        return TileThumbnailHeight.For(GalleryPlacementOptions.AspectRatioOf(item) * target, target,
+            details.PixelWidth, details.PixelHeight);
     }
 
     public IReadOnlyList<double> GetIrregularSnapPoints(Orientation orientation, SnapPointsAlignment snapPointsAlignment)
@@ -271,6 +352,12 @@ public class VirtualizingGallery : VirtualizingPanel
     {
         base.OnPropertyChanged(change);
 
+        if (change.Property == ItemHeightProperty || change.Property == DisplayModeProperty)
+        {
+            // The tiles change size, so they are sharpened for the new one once the view rests again
+            _viewer?.RestartTileRest();
+        }
+
         if (change.Property == OrientationProperty)
         {
             // The old viewport belongs to the other scroll axis, wait for a fresh one. A held distance belongs to that
@@ -278,6 +365,13 @@ public class VirtualizingGallery : VirtualizingPanel
             _viewport = default;
             _isFollowing = true;
             RecycleAllItems();
+        }
+        else if (change.Property == DisplayModeProperty)
+        {
+            // A held distance belongs to the other layout, so center the current item in the new one. Keep the
+            // viewport and the containers: between Masonry and Rows the effective viewport can stay identical, so a
+            // panel that waited for a new one would wait forever, and items shown in both keep their containers
+            _isFollowing = true;
         }
     }
 
@@ -391,6 +485,7 @@ public class VirtualizingGallery : VirtualizingPanel
         // offset, since layout puts the viewport on device pixels, a fraction of a pixel off it at 125% or 150%
         _isFollowing = false;
         HoldItemNearest(offset - marginBefore + length / 2);
+        _viewer?.RestartTileRest();
         return true;
     }
 
@@ -400,6 +495,13 @@ public class VirtualizingGallery : VirtualizingPanel
     /// </summary>
     private void OnLayoutUpdated(object? sender, EventArgs e)
     {
+        if (_measuredSinceLayout)
+        {
+            // Sizes arriving end in a measure too; this starts the rest period only when none runs
+            _measuredSinceLayout = false;
+            _viewer?.RequestTileSharpen();
+        }
+
         if (_pendingOffset is not { } pendingOffset)
         {
             return;
@@ -444,6 +546,7 @@ public class VirtualizingGallery : VirtualizingPanel
     {
         // Each layout decides afresh whether the view moves
         _pendingOffset = null;
+        _measuredSinceLayout = true;
 
         var items = Items;
         if (items is null || items.Count is 0)
@@ -455,7 +558,7 @@ public class VirtualizingGallery : VirtualizingPanel
         // 1. Calculate all layout boundaries instantly in memory, on the device pixels layout rounding puts them on
         _layout.Calculate(items,
             new GalleryLayoutOptions(Orientation, IsExpanded, ItemHeight, ItemWidth, ItemSpacing, LineSpacing,
-                WrapHeightOverride, LayoutHelper.GetLayoutScale(this)),
+                WrapHeightOverride, LayoutHelper.GetLayoutScale(this), DisplayMode, WrapWidthOverride),
             availableSize);
 
         _viewer ??= this.FindAncestorOfType<NavigateAbleItemsViewer>();

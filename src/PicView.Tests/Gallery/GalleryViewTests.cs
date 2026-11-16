@@ -1,9 +1,11 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Presenters;
+using Avalonia.Controls.Primitives;
 using Avalonia.Headless;
 using Avalonia.Layout;
 using Avalonia.Threading;
+using Avalonia.VisualTree;
 using ImageMagick;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Gallery;
@@ -250,13 +252,337 @@ public class GalleryViewTests
         }, startHidden: true, duringLoad: tab => tab.Gallery.Switcher.SetHidden(false));
     }
 
+    [AvaloniaFact]
+    public void DisplayModeButtons_Toggled_SwapWhichOneShows()
+    {
+        WithShownDockedGallery((core, _, view, _) =>
+        {
+            var toggle = core.GallerySettings.ToggleExpandedDisplayModeCommand;
+            var toTiles = view.FindControl<IconButton>("ToTilesButton")!;
+            var toColumns = view.FindControl<IconButton>("ToColumnsButton")!;
+            Assert.Same(toggle, toTiles.Command);
+            Assert.Same(toggle, toColumns.Command);
+            Assert.True(toTiles.IsVisible);
+            Assert.False(toColumns.IsVisible);
+
+            toggle.Execute(Unit.Default);
+            Dispatcher.UIThread.RunJobs();
+
+            Assert.Equal(GalleryDisplayMode.Masonry, core.GallerySettings.ExpandedGalleryDisplayMode.Value);
+            Assert.False(toTiles.IsVisible);
+            Assert.True(toColumns.IsVisible);
+
+            toggle.Execute(Unit.Default);
+            Dispatcher.UIThread.RunJobs();
+
+            Assert.True(toTiles.IsVisible);
+            Assert.False(toColumns.IsVisible);
+        });
+    }
+
+    // The toggle hides the button it was run from, and nothing stops a hidden button's repeat timer, so a repeating
+    // button would switch back and forth for as long as it is held. The timer is a DispatcherTimer, which the headless
+    // dispatcher does not run from RunJobs, so the held press itself is not driven here
+    [AvaloniaFact]
+    public void DisplayModeButtons_DoNotRepeatWhileHeld()
+    {
+        WithShownDockedGallery((_, _, view, _) =>
+        {
+            Assert.False(view.FindControl<IconButton>("ToTilesButton")!.IsRepeatEnabled);
+            Assert.False(view.FindControl<IconButton>("ToColumnsButton")!.IsRepeatEnabled);
+        });
+    }
+
+    [AvaloniaFact]
+    public void ExpandedBeforeTheViewLoads_FillsItsParent()
+    {
+        WithShownExpandedGallery(GalleryDisplayMode.Columns, (_, _, view, _) =>
+        {
+            Assert.True(view.IsVisible);
+            Assert.Equal(((Control)view.Parent!).Bounds.Size, view.Bounds.Size);
+        });
+    }
+
+    [AvaloniaFact]
+    public void Expanded_Masonry_HasTheTilesClassAndScrollsVertically()
+    {
+        WithShownExpandedGallery(GalleryDisplayMode.Masonry, (_, _, view, panel) =>
+        {
+            var scrollViewer = panel.FindAncestorOfType<ScrollViewer>()!;
+            Assert.Contains("tiles", view.Classes);
+            Assert.Equal(GalleryDisplayMode.Masonry, panel.DisplayMode);
+            Assert.Equal(VerticalAlignment.Top, panel.VerticalAlignment);
+            Assert.Equal(ScrollBarVisibility.Visible, scrollViewer.VerticalScrollBarVisibility);
+            Assert.Equal(ScrollBarVisibility.Disabled, scrollViewer.HorizontalScrollBarVisibility);
+            // Below the 85x60 button cluster
+            Assert.Equal(60, VerticalScrollBar(panel).Bounds.Top);
+        });
+    }
+
+    [AvaloniaFact]
+    public void Expanded_Columns_HasNoTilesClassAndScrollsHorizontally()
+    {
+        WithShownExpandedGallery(GalleryDisplayMode.Columns, (_, _, view, panel) =>
+        {
+            var scrollViewer = panel.FindAncestorOfType<ScrollViewer>()!;
+            Assert.DoesNotContain("tiles", view.Classes);
+            Assert.Equal(VerticalAlignment.Center, panel.VerticalAlignment);
+            Assert.Equal(ScrollBarVisibility.Visible, scrollViewer.HorizontalScrollBarVisibility);
+            Assert.Equal(ScrollBarVisibility.Disabled, scrollViewer.VerticalScrollBarVisibility);
+            Assert.Equal(0, VerticalScrollBar(panel).Margin.Top);
+        });
+    }
+
+    [AvaloniaFact]
+    public void Docked_WhateverTheDisplayMode_NeverHasTheTilesClass()
+    {
+        Settings.Gallery.ExpandedGalleryDisplayMode = GalleryDisplayMode.Masonry;
+        WithShownDockedGallery((core, window, view, panel) =>
+        {
+            Assert.DoesNotContain("tiles", view.Classes);
+            core.GallerySettings.ExpandedGalleryDisplayMode.Value = GalleryDisplayMode.Rows;
+            RenderFrame(window);
+            Assert.DoesNotContain("tiles", view.Classes);
+            Assert.Equal(GalleryDisplayMode.Columns, panel.DisplayMode);
+        });
+    }
+
+    [AvaloniaTheory]
+    [InlineData(1.0)]
+    [InlineData(1.25)]
+    [InlineData(1.5)]
+    public void GetExpandedWrapWidth_OnceExpanded_EqualsThePanelsWidth(double renderScaling)
+    {
+        WithShownExpandedGallery(GalleryDisplayMode.Masonry, (_, _, view, panel) =>
+        {
+            var appearance = ((TabViewModel)view.DataContext!).Gallery.Appearance.Value;
+            Assert.True(panel.Bounds.Width > 0);
+            Assert.Equal(panel.Bounds.Width, view.GetExpandedWrapWidth(appearance), 1e-6);
+        }, renderScaling);
+    }
+
+    [AvaloniaFact]
+    public void DisplayModeChanged_WhileExpanded_ReappliesWithoutAnAnimation()
+    {
+        WithShownExpandedGallery(GalleryDisplayMode.Columns, (core, window, view, panel) =>
+        {
+            var tab = (TabViewModel)view.DataContext!;
+            core.GallerySettings.ExpandedGalleryDisplayMode.Value = GalleryDisplayMode.Masonry;
+            RenderFrame(window);
+
+            Assert.False(view.IsInAnimation);
+            Assert.Contains("tiles", view.Classes);
+            Assert.Equal(GalleryDisplayMode.Masonry, panel.DisplayMode);
+            Assert.True(double.IsNaN(panel.WrapWidthOverride));
+            Assert.Equal(view.GetExpandedWrapWidth(tab.Gallery.Appearance.Value), panel.Bounds.Width, 1e-6);
+
+            core.GallerySettings.ExpandedGalleryDisplayMode.Value = GalleryDisplayMode.Columns;
+            RenderFrame(window);
+
+            Assert.False(view.IsInAnimation);
+            Assert.DoesNotContain("tiles", view.Classes);
+            Assert.Equal(0, VerticalScrollBar(panel).Margin.Top);
+        });
+    }
+
+    [AvaloniaTheory]
+    [InlineData(1.0)]
+    [InlineData(1.25)]
+    [InlineData(1.5)]
+    public void ExpandedFromClosed_Masonry_LocksTheWrapSoNoItemMovesWhenTheAnimationEnds(double renderScaling)
+    {
+        WithShownExpandedGallery(GalleryDisplayMode.Masonry, (_, window, view, panel) =>
+        {
+            var tab = (TabViewModel)view.DataContext!;
+            tab.Gallery.Switcher.ToggleExpanded();
+            Dispatcher.UIThread.RunJobs();
+
+            // Growing from nothing, the panel already wraps in the width it ends with: the second item is beside the first
+            Assert.True(view.IsInAnimation);
+            var locked = view.GetExpandedWrapWidth(tab.Gallery.Appearance.Value);
+            Assert.Equal(locked, panel.WrapWidthOverride, 1e-6);
+            var during = panel.ItemBounds.ToArray();
+            Assert.Equal(0, during[1].Top);
+
+            WaitForAnimation(window, view);
+
+            Assert.True(double.IsNaN(panel.WrapWidthOverride));
+            Assert.Equal(locked, panel.Bounds.Width, 1e-6);
+            Assert.Equal(during, panel.ItemBounds.ToArray());
+        }, renderScaling, startClosed: true);
+    }
+
+    // Review Focus 2. From a side dock only the width tweens, starting at the docked width, where Masonry has room for
+    // one column and Rows for one item a row. The frames in between are read too
+    [AvaloniaTheory]
+    [InlineData(GalleryDockPosition.Left, GalleryDisplayMode.Masonry, 1.0)]
+    [InlineData(GalleryDockPosition.Right, GalleryDisplayMode.Masonry, 1.25)]
+    [InlineData(GalleryDockPosition.Left, GalleryDisplayMode.Masonry, 1.5)]
+    [InlineData(GalleryDockPosition.Right, GalleryDisplayMode.Rows, 1.0)]
+    [InlineData(GalleryDockPosition.Left, GalleryDisplayMode.Rows, 1.25)]
+    public void ExpandedFromASideDock_Tiles_KeepTheFinalWrapThroughTheWidthTweenAndMoveNothingWhenItEnds(
+        GalleryDockPosition dock, GalleryDisplayMode displayMode, double renderScaling)
+    {
+        Settings.Gallery.ExpandedGalleryDisplayMode = displayMode;
+        WithShownDockedGallery((_, window, view, panel) =>
+        {
+            var tab = (TabViewModel)view.DataContext!;
+            var dockedWidth = view.Width;
+            Assert.Equal(dock, tab.Gallery.Appearance.Value.Dock);
+            Assert.Equal(GalleryDefaults.GetDockedGalleryWidth(Settings.Gallery.DockedGalleryItemSize), dockedWidth);
+            Assert.Equal(GalleryDisplayMode.Columns, panel.DisplayMode);
+
+            tab.Gallery.Switcher.ToggleExpanded();
+            Dispatcher.UIThread.RunJobs();
+
+            // Still as narrow as the strip, and already wrapped in the width it ends with: the second item is beside the
+            // first, past the strip's edge
+            Assert.True(view.IsInAnimation);
+            var locked = view.GetExpandedWrapWidth(tab.Gallery.Appearance.Value);
+            Assert.Equal(locked, panel.WrapWidthOverride, 1e-6);
+            var during = panel.ItemBounds.ToArray();
+            Assert.Equal(0, during[1].Top);
+            Assert.True(during[1].Left > dockedWidth);
+
+            // Every frame until the control is done: no item is placed anew. The tween runs on the render timer's real time
+            var endWidth = ((Control)view.Parent!).Bounds.Width;
+            var framesMidTween = 0;
+            var deadline = DateTime.UtcNow.AddSeconds(10);
+            while (view.IsInAnimation && DateTime.UtcNow < deadline)
+            {
+                RenderFrame(window);
+                if (view.IsInAnimation)
+                {
+                    Assert.Equal(during, panel.ItemBounds.ToArray());
+                    if (view.Bounds.Width > dockedWidth + 1 && view.Bounds.Width < endWidth - 1)
+                    {
+                        framesMidTween++;
+                    }
+                }
+
+                Thread.Sleep(10);
+            }
+
+            RenderFrame(window);
+            Assert.False(view.IsInAnimation);
+
+            Assert.True(double.IsNaN(panel.WrapWidthOverride));
+            Assert.Equal(locked, panel.Bounds.Width, 1e-6);
+            Assert.Equal(during, panel.ItemBounds.ToArray());
+
+            // The tween runs on real time, so a stalled machine can jump from the docked width straight to the full
+            // width. Then the frames in between were not checked, which is no failure of the gallery
+            if (framesMidTween is 0)
+            {
+                Assert.Skip("No frame was read between the docked width and the full width, so the tween was not checked");
+            }
+        }, beforeLoad: (tab, window) =>
+        {
+            window.Width = 1000;
+            window.Height = 600;
+            window.SetRenderScaling(renderScaling);
+            // The helper docks at the bottom. The appearance reads the dock position when the shown mode changes, so the
+            // tab starts again, docked at the side
+            Settings.Gallery.DockPosition = dock;
+            tab.Gallery.Switcher.Start(docked: false);
+            tab.Gallery.Switcher.Start(docked: true);
+        });
+    }
+
+    // Review Focus 5, at the view: nothing is applied while crop or a Single Image hides the gallery
+    [AvaloniaFact]
+    public void DisplayModeChanged_WhileTheExpandedGalleryIsHidden_IsAppliedWhenItShowsAgain()
+    {
+        WithShownExpandedGallery(GalleryDisplayMode.Columns, (core, window, view, panel) =>
+        {
+            var tab = (TabViewModel)view.DataContext!;
+            tab.Gallery.Switcher.SetHidden(true);
+            RenderFrame(window);
+            Assert.False(view.IsVisible);
+
+            core.GallerySettings.ExpandedGalleryDisplayMode.Value = GalleryDisplayMode.Masonry;
+            RenderFrame(window);
+
+            Assert.False(view.IsVisible);
+            Assert.DoesNotContain("tiles", view.Classes);
+            Assert.Equal(GalleryDisplayMode.Columns, panel.DisplayMode);
+
+            tab.Gallery.Switcher.SetHidden(false);
+            RenderFrame(window);
+
+            Assert.True(view.IsVisible);
+            Assert.False(view.IsInAnimation);
+            Assert.Contains("tiles", view.Classes);
+            Assert.Equal(GalleryDisplayMode.Masonry, panel.DisplayMode);
+            Assert.Equal(ScrollBarVisibility.Visible, panel.FindAncestorOfType<ScrollViewer>()!.VerticalScrollBarVisibility);
+        });
+    }
+
+    [AvaloniaFact]
+    public void ExpandedFromClosed_Columns_LocksOnlyTheWrapHeight()
+    {
+        WithShownExpandedGallery(GalleryDisplayMode.Columns, (_, window, view, panel) =>
+        {
+            ((TabViewModel)view.DataContext!).Gallery.Switcher.ToggleExpanded();
+            Dispatcher.UIThread.RunJobs();
+
+            Assert.True(view.IsInAnimation);
+            Assert.True(double.IsNaN(panel.WrapWidthOverride));
+            Assert.False(double.IsNaN(panel.WrapHeightOverride));
+            WaitForAnimation(window, view);
+        }, startClosed: true);
+    }
+
+    // The same window, 1000 by 600, with the tab expanded before its view loads, so the view shows it without an
+    // animation. With startClosed the tab is closed instead, for a test that expands it itself
+    private static void WithShownExpandedGallery(GalleryDisplayMode displayMode,
+        Action<CoreViewModel, Window, GalleryView, VirtualizingGallery> test, double renderScaling = 1,
+        bool startClosed = false)
+    {
+        Settings.Gallery.ExpandedGalleryDisplayMode = displayMode;
+        WithShownDockedGallery(test, beforeLoad: (tab, window) =>
+        {
+            window.Width = 1000;
+            window.Height = 600;
+            window.SetRenderScaling(renderScaling);
+            if (startClosed)
+            {
+                tab.Gallery.Switcher.Start(docked: false);
+            }
+            else
+            {
+                tab.Gallery.Switcher.ToggleExpanded();
+            }
+        });
+    }
+
+    private static ScrollBar VerticalScrollBar(VirtualizingGallery panel) =>
+        panel.FindAncestorOfType<ScrollViewer>()!.GetVisualDescendants().OfType<ScrollBar>()
+            .Single(bar => bar.Orientation == Orientation.Vertical);
+
+    // The tween runs on the render timer's real time, so tick it until the control is done
+    private static void WaitForAnimation(Window window, GalleryView view)
+    {
+        var deadline = DateTime.UtcNow.AddSeconds(10);
+        while (view.IsInAnimation && DateTime.UtcNow < deadline)
+        {
+            RenderFrame(window);
+            Thread.Sleep(10);
+        }
+        RenderFrame(window);
+        Assert.False(view.IsInAnimation);
+    }
+
     // Shown in a window, so the view loads, with a tab started docked at the bottom and a few items. duringLoad runs
     // as the view loads, when it sizes itself to nothing before it follows the switcher
     private static void WithShownDockedGallery(Action<CoreViewModel, Window, GalleryView, VirtualizingGallery> test,
-        bool initializeFirst = true, bool startHidden = false, Action<TabViewModel>? duringLoad = null)
+        bool initializeFirst = true, bool startHidden = false, Action<TabViewModel>? duringLoad = null,
+        Action<TabViewModel, Window>? beforeLoad = null)
     {
         Settings.Gallery.DockPosition = GalleryDockPosition.Bottom;
-        var core = new CoreViewModel(null, _ => ValueTask.FromResult(new ImageModel()));
+        // The display mode saves through the delegate, so the tests that switch it write no settings file
+        var core = new CoreViewModel(null, _ => ValueTask.FromResult(new ImageModel()),
+            saveGallerySettings: static () => ValueTask.FromResult(true));
         var window = new TestMainWindow(new NoOpModeAdapter());
         var vm = new MainWindowViewModel(core, core.Translation, core.GlobalSettings!, core.GallerySettings);
         window.DataContext = vm;
@@ -270,6 +596,8 @@ public class GalleryViewTests
         {
             tab.Gallery.Switcher.SetHidden(true);
         }
+
+        beforeLoad?.Invoke(tab, window);
 
         var application = Application.Current!;
         var previous = application.DataContext;

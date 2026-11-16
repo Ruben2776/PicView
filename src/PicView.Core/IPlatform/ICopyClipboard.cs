@@ -22,4 +22,10 @@ public interface ICopyClipboard
     /// leaves the clipboard untouched when the file is missing, cannot be read, or is not a supported SVG.
     /// </summary>
     Task<bool> CopyAxamlAsync(string? path);
+
+    /// <summary>
+    /// Copies the source text of the SVG file at <paramref name="path"/> as it is on disk (an .svgz is decompressed).
+    /// Returns false and leaves the clipboard untouched when the file is missing, cannot be read, or is not an SVG.
+    /// </summary>
+    Task<bool> CopySvgAsync(string? path);
 }

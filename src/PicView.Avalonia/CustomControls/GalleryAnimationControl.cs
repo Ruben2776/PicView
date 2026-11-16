@@ -56,6 +56,27 @@ public class GalleryAnimationControl : UserControl
         return Math.Max(0, availableHeight);
     }
 
+    /// <summary>
+    /// The width the panel gets once the Expanded Gallery fills the parent, for locking the wrap of Masonry and Rows
+    /// while the gallery grows or shrinks. Layout rounds the scroll bar up, and each margin on its own, to whole device
+    /// pixels, so each part is rounded the same way here: rounding their sum is a device pixel off at 125% and 150%,
+    /// and one pixel of width reshuffles a masonry.
+    /// </summary>
+    internal double GetExpandedWrapWidth(GalleryAppearance expanded)
+    {
+        if (_parentControl is null)
+        {
+            return double.NaN;
+        }
+
+        var scale = LayoutHelper.GetLayoutScale(this);
+        var margin = LayoutHelper.RoundLayoutThickness(ToThickness(expanded.Margin), scale);
+        var border = LayoutHelper.RoundLayoutThickness(ToThickness(expanded.Border), scale);
+        var scrollBar = LayoutHelper.RoundLayoutSizeUp(new Size(SizeDefaults.VerticalScrollbarSize, 0), scale).Width;
+        return Math.Max(0,
+            _parentControl.Bounds.Width - border.Left - border.Right - scrollBar - margin.Left - margin.Right);
+    }
+
     #endregion
 
     #region Constructors, Subscriptions & Setup
@@ -80,10 +101,12 @@ public class GalleryAnimationControl : UserControl
 
         IsVisible = false; // Don't take up space initially
         Width = Height = 0; // Make sure it has no size before animation
-        SetupSubscriptions();
 
+        // Before the subscriptions, so a tab already expanded when its view loads fills the parent
         _parentControl = Parent as Control;
         _parentControl.SizeChanged += ParentSizeChanged;
+
+        SetupSubscriptions();
     }
 
     private void SetupSubscriptions()
@@ -152,6 +175,7 @@ public class GalleryAnimationControl : UserControl
             {
                 // Fallback
                 _itemsPanel?.WrapHeightOverride = double.NaN;
+                _itemsPanel?.WrapWidthOverride = double.NaN;
                 Apply(to);
                 SetExtent(to);
                 DebugHelper.LogDebug(nameof(GalleryAnimationControl), nameof(OnGalleryModeChanged), ex);
@@ -222,6 +246,7 @@ public class GalleryAnimationControl : UserControl
 
         var dockChanged = _applied.Mode is GalleryMode.Docked && appearance.Mode is GalleryMode.Docked &&
                           _applied.Dock != appearance.Dock;
+        var showsTiles = GalleryDisplayModes.ShowsTiles(appearance.DisplayMode);
 
         if (_itemsPanel is { } panel)
         {
@@ -234,8 +259,11 @@ public class GalleryAnimationControl : UserControl
             panel.IsExpanded = appearance.Wraps;
             panel.Margin = ToThickness(appearance.Margin);
             panel.ThumbnailStretch = GalleryThumbnailStretch.ToStretch(appearance.Stretch);
+            panel.DisplayMode = appearance.DisplayMode;
+            panel.VerticalAlignment = showsTiles ? VerticalAlignment.Top : VerticalAlignment.Center;
         }
 
+        Classes.Set("tiles", showsTiles);
         BorderThickness = ToThickness(appearance.Border);
         DockPanel.SetDock(this, appearance.Dock switch
         {
@@ -332,7 +360,11 @@ public class GalleryAnimationControl : UserControl
         // 2. Wrap as the Expanded Gallery does once it fills the parent, so it doesn't rewrap while it grows or shrinks
         if (transition.LocksWrap && _itemsPanel is not null)
         {
-            _itemsPanel.WrapHeightOverride = GetExpandedWrapHeight(to.Mode is GalleryMode.Expanded ? to : from);
+            var expanded = to.Mode is GalleryMode.Expanded ? to : from;
+            _itemsPanel.WrapHeightOverride = GetExpandedWrapHeight(expanded);
+            _itemsPanel.WrapWidthOverride = GalleryDisplayModes.ShowsTiles(expanded.DisplayMode)
+                ? GetExpandedWrapWidth(expanded)
+                : double.NaN;
         }
 
         // The current item, in the new look
@@ -402,6 +434,7 @@ public class GalleryAnimationControl : UserControl
         if (transition.LocksWrap && _itemsPanel is not null)
         {
             _itemsPanel.WrapHeightOverride = double.NaN;
+            _itemsPanel.WrapWidthOverride = double.NaN;
             _itemsPanel.InvalidateMeasure();
         }
 

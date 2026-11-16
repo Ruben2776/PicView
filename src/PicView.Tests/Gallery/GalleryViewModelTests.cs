@@ -178,6 +178,172 @@ public class GalleryViewModelTests
         Assert.Equal(GalleryStretchMode.Uniform, gallery.Appearance.Value.Stretch);
     }
 
+    [Fact]
+    public void Appearance_DisplayModeChanged_WhileExpanded_FollowsIt()
+    {
+        var shared = new GallerySharedSettingsViewModel(NoSave);
+        using var gallery = new GalleryViewModel(NoSave);
+        gallery.Initialize(shared);
+        gallery.Switcher.ToggleExpanded();
+        Assert.Equal(GalleryDisplayMode.Columns, gallery.Appearance.Value.DisplayMode);
+
+        shared.SetExpandedDisplayModeCommand.Execute(GalleryDisplayMode.Masonry);
+        Assert.Equal(GalleryDisplayMode.Masonry, gallery.Appearance.Value.DisplayMode);
+        Assert.False(gallery.Appearance.Value.ScrollsHorizontally);
+
+        shared.SetExpandedDisplayModeCommand.Execute(GalleryDisplayMode.Rows);
+        Assert.Equal(GalleryDisplayMode.Rows, gallery.Appearance.Value.DisplayMode);
+
+        shared.ToggleExpandedDisplayModeCommand.Execute(Unit.Default);
+        Assert.Equal(GalleryDisplayMode.Columns, gallery.Appearance.Value.DisplayMode);
+        Assert.True(gallery.Appearance.Value.ScrollsHorizontally);
+    }
+
+    [Fact]
+    public void Appearance_DisplayModeChanged_WhileDocked_PublishesNothingUntilExpanded()
+    {
+        var shared = new GallerySharedSettingsViewModel(NoSave);
+        using var gallery = new GalleryViewModel(NoSave);
+        gallery.Initialize(shared);
+        gallery.Switcher.Start(true);
+        var docked = gallery.Appearance.Value;
+        var published = 0;
+        using var subscription = gallery.Appearance.AsObservable().Skip(1).Subscribe(_ => published++);
+
+        shared.SetExpandedDisplayModeCommand.Execute(GalleryDisplayMode.Masonry);
+
+        Assert.Equal(0, published);
+        Assert.Equal(docked, gallery.Appearance.Value);
+
+        gallery.Switcher.ToggleExpanded();
+        Assert.Equal(GalleryDisplayMode.Masonry, gallery.Appearance.Value.DisplayMode);
+
+        gallery.Switcher.ToggleExpanded();
+        Assert.Equal(docked, gallery.Appearance.Value);
+    }
+
+    [Fact]
+    public void Appearance_DisplayModeChanged_ReachesEveryExpandedTab()
+    {
+        // One shared view model serves every tab and every Main Window (Review Focus 1)
+        var shared = new GallerySharedSettingsViewModel(NoSave);
+        using var first = new GalleryViewModel(NoSave);
+        using var second = new GalleryViewModel(NoSave);
+        first.Initialize(shared);
+        second.Initialize(shared);
+        first.Switcher.ToggleExpanded();
+        second.Switcher.ToggleExpanded();
+
+        shared.SetExpandedDisplayModeCommand.Execute(GalleryDisplayMode.Rows);
+
+        Assert.Equal(GalleryDisplayMode.Rows, first.Appearance.Value.DisplayMode);
+        Assert.Equal(GalleryDisplayMode.Rows, second.Appearance.Value.DisplayMode);
+        Assert.True(shared.IsExpandedDisplayModeRows.Value);
+    }
+
+    [Fact]
+    public void Appearance_DisplayModeChanged_WhileHidden_PublishesNothingAndComesBackInTheNewMode()
+    {
+        var shared = new GallerySharedSettingsViewModel(NoSave);
+        using var gallery = new GalleryViewModel(NoSave);
+        gallery.Initialize(shared);
+        gallery.Switcher.ToggleExpanded();
+        // As crop, a Single Image or the Gallery File Limit hides it (Review Focus 5)
+        gallery.Switcher.SetHidden(true);
+        var hidden = gallery.Appearance.Value;
+        var published = 0;
+        using var subscription = gallery.Appearance.AsObservable().Skip(1).Subscribe(_ => published++);
+
+        shared.SetExpandedDisplayModeCommand.Execute(GalleryDisplayMode.Rows);
+
+        Assert.Equal(0, published);
+        Assert.Equal(hidden, gallery.Appearance.Value);
+
+        gallery.Switcher.SetHidden(false);
+        Assert.Equal(GalleryDisplayMode.Rows, gallery.Appearance.Value.DisplayMode);
+        Assert.False(gallery.Appearance.Value.ScrollsHorizontally);
+    }
+
+    // Review Focus 1. Two tabs, or two Main Windows: each has its own GalleryViewModel, and all share the one settings
+    // view model
+    [Fact]
+    public void Appearance_DisplayModeChanged_TwoExpandedTabsSharingTheSettings_BothFollowIt()
+    {
+        var shared = new GallerySharedSettingsViewModel(NoSave);
+        using var first = new GalleryViewModel(NoSave);
+        using var second = new GalleryViewModel(NoSave);
+        first.Initialize(shared);
+        second.Initialize(shared);
+        first.Switcher.ToggleExpanded();
+        second.Switcher.ToggleExpanded();
+
+        shared.SetExpandedDisplayModeCommand.Execute(GalleryDisplayMode.Masonry);
+
+        Assert.Equal(GalleryDisplayMode.Masonry, first.Appearance.Value.DisplayMode);
+        Assert.False(first.Appearance.Value.ScrollsHorizontally);
+        Assert.Equal(first.Appearance.Value, second.Appearance.Value);
+        // What both tabs' switch buttons and checked menu items read
+        Assert.True(shared.IsExpandedDisplayModeMasonry.Value);
+        Assert.False(shared.IsExpandedDisplayModeColumns.Value);
+
+        shared.ToggleExpandedDisplayModeCommand.Execute(Unit.Default);
+
+        Assert.Equal(GalleryDisplayMode.Columns, first.Appearance.Value.DisplayMode);
+        Assert.True(first.Appearance.Value.ScrollsHorizontally);
+        Assert.Equal(first.Appearance.Value, second.Appearance.Value);
+        Assert.True(shared.IsExpandedDisplayModeColumns.Value);
+    }
+
+    // Review Focus 5. Crop and a Single Image hide the gallery with SetHidden, the Gallery File Limit with SetOverLimit.
+    // The mode stays Expanded and the shown mode is Closed
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void Appearance_DisplayModeChanged_WhileAnExpandedGalleryIsHidden_PublishesNothingUntilItIsShownAgain(
+        bool byFileLimit)
+    {
+        var shared = new GallerySharedSettingsViewModel(NoSave);
+        using var gallery = new GalleryViewModel(NoSave);
+        gallery.Initialize(shared);
+        gallery.Switcher.ToggleExpanded();
+        Action<bool> hide = byFileLimit ? gallery.Switcher.SetOverLimit : gallery.Switcher.SetHidden;
+        hide(true);
+        Assert.Equal(GalleryMode.Expanded, gallery.Mode.Value);
+        Assert.Equal(GalleryMode.Closed, gallery.ShownMode.Value);
+        var whileHidden = gallery.Appearance.Value;
+        Assert.Equal(GalleryMode.Closed, whileHidden.Mode);
+        Assert.Equal(GalleryDisplayMode.Columns, whileHidden.DisplayMode);
+        var published = 0;
+        using var subscription = gallery.Appearance.AsObservable().Skip(1).Subscribe(_ => published++);
+
+        shared.SetExpandedDisplayModeCommand.Execute(GalleryDisplayMode.Masonry);
+        shared.SetExpandedDisplayModeCommand.Execute(GalleryDisplayMode.Rows);
+
+        Assert.Equal(0, published);
+        Assert.Equal(whileHidden, gallery.Appearance.Value);
+
+        hide(false);
+
+        // Shown again: one new appearance, Expanded, in the display mode picked last while it was hidden
+        Assert.Equal(1, published);
+        Assert.Equal(GalleryMode.Expanded, gallery.Appearance.Value.Mode);
+        Assert.Equal(GalleryDisplayMode.Rows, gallery.Appearance.Value.DisplayMode);
+        Assert.False(gallery.Appearance.Value.ScrollsHorizontally);
+    }
+
+    [Fact]
+    public void Appearance_StoredDisplayMode_AppliesBeforeAndAfterInitialize()
+    {
+        Settings.Gallery.ExpandedGalleryDisplayMode = GalleryDisplayMode.Rows;
+        using var gallery = new GalleryViewModel(NoSave);
+
+        gallery.Switcher.ToggleExpanded();
+        Assert.Equal(GalleryDisplayMode.Rows, gallery.Appearance.Value.DisplayMode);
+
+        gallery.Initialize(new GallerySharedSettingsViewModel(NoSave));
+        Assert.Equal(GalleryDisplayMode.Rows, gallery.Appearance.Value.DisplayMode);
+    }
+
     private class ManualFrameProvider : FrameProvider
     {
         private readonly List<IFrameRunnerWorkItem> _items = new();

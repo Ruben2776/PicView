@@ -451,6 +451,9 @@ public static class SettingsManager
         {
             existingSettings.Gallery.DockedGalleryItemSize = GalleryDefaults.DefaultDockedGalleryHeight;
         }
+
+        existingSettings.Gallery.ItemSpacing = GalleryDefaults.AcceptedItemSpacing(existingSettings.Gallery.ItemSpacing);
+        existingSettings.Gallery.LineSpacing = GalleryDefaults.AcceptedLineSpacing(existingSettings.Gallery.LineSpacing);
         
         if (existingSettings.Version < 3.0)
         {
@@ -471,6 +474,10 @@ public static class SettingsManager
         {
             existingSettings.Gallery.DockPosition = GalleryDockPosition.Bottom;
         }
+
+        // A stored number that is not a display mode loads as Columns
+        existingSettings.Gallery.ExpandedGalleryDisplayMode =
+            GalleryDisplayModes.Validate(existingSettings.Gallery.ExpandedGalleryDisplayMode);
 
         existingSettings.Theme ??= new Theme();
         existingSettings.Sorting ??= new Sorting();

@@ -1,19 +1,85 @@
 <customControls:GalleryAnimationControl
+    Background="{DynamicResource GalleryBackgroundColor}"
+    BorderBrush="{DynamicResource GalleryBorderColor}"
     x:Class="PicView.Avalonia.Views.Gallery.GalleryView"
+    x:DataType="viewModels:TabViewModel"
     xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
     xmlns:gallery="clr-namespace:PicView.Avalonia.Views.Gallery"
     xmlns:gallerySettings="clr-namespace:PicView.Core.Gallery;assembly=PicView.Core"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
-    x:DataType="viewModels:TabViewModel"
-    Background="{DynamicResource GalleryBackgroundColor}"
-    BorderBrush="{DynamicResource GalleryBorderColor}">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <customControls:GalleryAnimationControl.Styles>
+        <!--  The look of every Gallery Item. NavigateAbleItem overrides its style key, so the item is selected by class  -->
+        <Style Selector="customControls|NavigateAbleItem.galleryItem">
+            <Setter Property="Width" Value="{CompiledBinding ItemWidth, RelativeSource={RelativeSource FindAncestor, AncestorType=customControls:VirtualizingGallery, Tree=Visual}, Mode=OneWay}" />
+            <Setter Property="Height" Value="{CompiledBinding ItemHeight, RelativeSource={RelativeSource FindAncestor, AncestorType=customControls:VirtualizingGallery, Tree=Visual}, Mode=OneWay}" />
+            <Setter Property="Margin" Value="1" />
+            <Setter Property="Padding" Value="1" />
+            <Setter Property="Background" Value="{DynamicResource GalleryItemBackgroundColor}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource GalleryItemBorderColor}" />
+            <Setter Property="BorderThickness" Value="1" />
+        </Style>
+        <!--  Masonry and Rows: the panel sizes each item, which is a rounded, borderless tile  -->
+        <Style Selector=":is(gallery|GalleryView).tiles customControls|NavigateAbleItem.galleryItem">
+            <Setter Property="Width" Value="NaN" />
+            <Setter Property="Height" Value="NaN" />
+            <Setter Property="Margin" Value="0" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="gallery:GalleryItem.IsTile" Value="True" />
+        </Style>
+        <!--  Clips the thumbnail to the corners, and keeps the theme's 2 px context-menu border from pushing it inwards  -->
+        <Style Selector=":is(gallery|GalleryView).tiles customControls|NavigateAbleItem.galleryItem /template/ Border#border">
+            <Setter Property="ClipToBounds" Value="True" />
+            <Setter Property="BorderThickness" Value="0" />
+        </Style>
+        <!--  Masonry and Rows: the vertical scroll bar starts below the 85x60 button cluster at the top right  -->
+        <Style Selector=":is(customControls|GalleryAnimationControl).tiles customControls|NavigateAbleItemsViewer /template/ customControls|AutoScrollViewer#PART_ScrollViewer /template/ ScrollBar#PART_VerticalScrollBar">
+            <Setter Property="Margin" Value="0,60,0,0" />
+        </Style>
+    </customControls:GalleryAnimationControl.Styles>
     <Panel>
 
         <Panel.ContextMenu>
             <ContextMenu>
-                <customControls:StyledMenuItem Header="{Binding ParentWindowContext.Translation.Stretch.Value, Mode=OneWay}" IsVisible="{CompiledBinding Gallery.IsGalleryExpanded.Value}">
+                <customControls:StyledMenuItem
+                    Header="{Binding ParentWindowContext.Translation.GalleryDisplayMode.Value, Mode=OneWay}"
+                    IsVisible="{CompiledBinding Gallery.IsGalleryExpanded.Value}"
+                    x:Name="DisplayModeMenuItem">
+                    <MenuItem.Icon>
+                        <Image Height="12" Source="{StaticResource GalleryImage}" Width="12" />
+                    </MenuItem.Icon>
+                    <customControls:StyledMenuItem
+                        Command="{Binding ParentWindowContext.GallerySettings.SetExpandedDisplayModeCommand}"
+                        CommandParameter="{x:Static gallerySettings:GalleryDisplayMode.Columns}"
+                        Header="{Binding ParentWindowContext.Translation.Columns.Value, Mode=OneWay}"
+                        IsChecked="{Binding ParentWindowContext.GallerySettings.IsExpandedDisplayModeColumns.Value, Mode=OneWay}"
+                        ToggleType="Radio"
+                        x:Name="DisplayModeColumnsMenuItem" />
+                    <customControls:StyledMenuItem
+                        Command="{Binding ParentWindowContext.GallerySettings.SetExpandedDisplayModeCommand}"
+                        CommandParameter="{x:Static gallerySettings:GalleryDisplayMode.Masonry}"
+                        Header="{Binding ParentWindowContext.Translation.Masonry.Value, Mode=OneWay}"
+                        IsChecked="{Binding ParentWindowContext.GallerySettings.IsExpandedDisplayModeMasonry.Value, Mode=OneWay}"
+                        ToggleType="Radio"
+                        x:Name="DisplayModeMasonryMenuItem" />
+                    <customControls:StyledMenuItem
+                        Command="{Binding ParentWindowContext.GallerySettings.SetExpandedDisplayModeCommand}"
+                        CommandParameter="{x:Static gallerySettings:GalleryDisplayMode.Rows}"
+                        Header="{Binding ParentWindowContext.Translation.Rows.Value, Mode=OneWay}"
+                        IsChecked="{Binding ParentWindowContext.GallerySettings.IsExpandedDisplayModeRows.Value, Mode=OneWay}"
+                        ToggleType="Radio"
+                        x:Name="DisplayModeRowsMenuItem" />
+                </customControls:StyledMenuItem>
+                <customControls:StyledMenuItem Header="{Binding ParentWindowContext.Translation.Stretch.Value, Mode=OneWay}" x:Name="ExpandedStretchMenuItem">
+                    <MenuItem.IsVisible>
+                        <MultiBinding Converter="{x:Static BoolConverters.And}">
+                            <Binding Path="Gallery.IsGalleryExpanded.Value" />
+                            <Binding Path="ParentWindowContext.GallerySettings.IsExpandedDisplayModeColumns.Value" />
+                        </MultiBinding>
+                    </MenuItem.IsVisible>
                     <MenuItem.Icon>
                         <Image Classes="SquareDimensionsImage" />
                     </MenuItem.Icon>
@@ -42,7 +108,7 @@
                         IsChecked="{Binding ParentWindowContext.GallerySettings.IsExpandedStretchSquareFill.Value}"
                         ToggleType="Radio" />
                 </customControls:StyledMenuItem>
-                <customControls:StyledMenuItem Header="{Binding ParentWindowContext.Translation.Stretch.Value, Mode=OneWay}" IsVisible="{CompiledBinding !Gallery.IsGalleryExpanded.Value}">
+                <customControls:StyledMenuItem Header="{Binding ParentWindowContext.Translation.Stretch.Value, Mode=OneWay}" IsVisible="{CompiledBinding !Gallery.IsGalleryExpanded.Value}" x:Name="DockedStretchMenuItem">
                     <MenuItem.Icon>
                         <Image Classes="SquareDimensionsImage" />
                     </MenuItem.Icon>
@@ -80,11 +146,11 @@
                 <customControls:StyledMenuItem Command="{Binding Gallery.ToggleExpandedCommand}" Header="{CompiledBinding ParentWindowContext.Translation.ShowImageGallery.Value, Mode=OneWay}">
                     <MenuItem.Icon>
                         <Path
-                            Width="12"
-                            Height="12"
                             Data="{StaticResource GalleryGeometry}"
                             Fill="{DynamicResource MainTextColor}"
-                            Stretch="Fill" />
+                            Height="12"
+                            Stretch="Fill"
+                            Width="12" />
                     </MenuItem.Icon>
                 </customControls:StyledMenuItem>
                 <customControls:StyledMenuItem
@@ -94,11 +160,11 @@
                     IsVisible="{CompiledBinding !Gallery.IsGalleryExpanded.Value}">
                     <MenuItem.Icon>
                         <Path
-                            Width="12"
-                            Height="12"
                             Data="{StaticResource CloseGeometry}"
                             Fill="{DynamicResource MainTextColor}"
-                            Stretch="Fill" />
+                            Height="12"
+                            Stretch="Fill"
+                            Width="12" />
                     </MenuItem.Icon>
                 </customControls:StyledMenuItem>
                 <customControls:StyledMenuItem
@@ -108,47 +174,167 @@
                     IsVisible="{CompiledBinding Gallery.IsGalleryExpanded.Value}">
                     <MenuItem.Icon>
                         <Path
-                            Width="12"
-                            Height="12"
                             Data="{StaticResource CloseGeometry}"
                             Fill="{DynamicResource MainTextColor}"
-                            Stretch="Fill" />
+                            Height="12"
+                            Stretch="Fill"
+                            Width="12" />
                     </MenuItem.Icon>
                 </customControls:StyledMenuItem>
             </ContextMenu>
         </Panel.ContextMenu>
 
-        <Button
-            Width="50"
+
+        <!--
+            Orientation + close buttons drawn as one shape, 85x60, top right.
+            Orientation: the 35x35 square at x 0-35; its right edge follows the close curve from y 15 to 35.
+            Close: the 50x60 rectangle at x 35-85 with a 45px bottom-left sweep (circle center 80,15).
+            The shapes share the curve, so they never overlap. The buttons have no background, so only their
+            shape Path is hit-tested: hover and clicks follow the shape without a (non-anti-aliased) Clip.
+        -->
+        <Panel
             Height="60"
             HorizontalAlignment="Right"
-            VerticalAlignment="Top"
-            Background="{DynamicResource PopUpBackgroundColor}"
-            BorderBrush="{DynamicResource MenuBorderColor}"
-            BorderThickness="1,0,0,0"
-            Classes="hover"
-            Command="{CompiledBinding Gallery.ToggleExpandedCommand}"
-            CornerRadius="0,0,0,45"
-            DockPanel.Dock="Right"
             IsVisible="{CompiledBinding Gallery.IsGalleryExpanded.Value}"
+            VerticalAlignment="Top"
+            Width="85"
             ZIndex="99">
+            <Panel.Styles>
+                <!--  IconButton's style key is RepeatButton, so type selectors must say RepeatButton  -->
+                <Style Selector="RepeatButton.galleryShape">
+                    <Setter Property="Background" Value="{DynamicResource PopUpBackgroundColor}" />
+                    <Setter Property="Transitions">
+                        <Transitions>
+                            <BrushTransition Duration="{StaticResource ButtonHoverAnimationDuration}" Property="Background" />
+                        </Transitions>
+                    </Setter>
+                </Style>
+                <Style Selector="RepeatButton.galleryShape:pointerover">
+                    <Setter Property="Background" Value="{DynamicResource AccentColor}" />
+                </Style>
+                <Style Selector="Button.galleryShape">
+                    <Setter Property="Background" Value="{x:Null}" />
+                    <Setter Property="BorderThickness" Value="0" />
+                    <Setter Property="Padding" Value="0" />
+                    <Setter Property="HorizontalAlignment" Value="Stretch" />
+                    <Setter Property="VerticalAlignment" Value="Stretch" />
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    <Setter Property="VerticalContentAlignment" Value="Stretch" />
+                </Style>
+                <Style Selector="Button.galleryShape Path.shape">
+                    <Setter Property="Fill" Value="{DynamicResource PopUpBackgroundColor}" />
+                    <Setter Property="Transitions">
+                        <Transitions>
+                            <BrushTransition Duration="{StaticResource ButtonHoverAnimationDuration}" Property="Fill" />
+                        </Transitions>
+                    </Setter>
+                </Style>
+                <Style Selector="Button.galleryShape:pointerover Path.shape">
+                    <Setter Property="Fill" Value="{DynamicResource AccentColor}" />
+                </Style>
+                <Style Selector="Button.galleryShape Path.icon">
+                    <Setter Property="Fill" Value="{DynamicResource MainTextColor}" />
+                </Style>
+                <Style Selector="Button.galleryShape:pointerover Path.icon">
+                    <Setter Property="Fill" Value="{StaticResource SecondaryTextColor}" />
+                </Style>
+            </Panel.Styles>
+
+            <!--  To masonry button  -->
+            <customControls:IconButton
+                Classes="galleryShape"
+                Command="{CompiledBinding ParentWindowContext.GallerySettings.ToggleExpandedDisplayModeCommand}"
+                Foreground="{StaticResource MainTextColor}"
+                HorizontalAlignment="Stretch"
+                Icon="{StaticResource GalleryToVerticalImage}"
+                IconHeight="18"
+                IconWidth="18"
+                IsRepeatEnabled="False"
+                IsVisible="{CompiledBinding ParentWindowContext.GallerySettings.IsExpandedDisplayModeColumns.Value}"
+                ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.ToggleGalleryDisplayMode.Value, Mode=OneWay}"
+                VerticalAlignment="Stretch"
+                x:Name="ToTilesButton">
+                <customControls:IconButton.Template>
+                    <ControlTemplate TargetType="customControls:IconButton">
+                        <Panel>
+                            <Path Data="M0,0 H35 V15 A45,45 0 0 0 39.6887,35 H0 Z" Fill="{TemplateBinding Background}" />
+                            <ContentPresenter
+                                Content="{TemplateBinding Content}"
+                                Height="35"
+                                HorizontalAlignment="Left"
+                                HorizontalContentAlignment="Center"
+                                Name="PART_ContentPresenter"
+                                VerticalAlignment="Top"
+                                VerticalContentAlignment="Center"
+                                Width="35" />
+                        </Panel>
+                    </ControlTemplate>
+                </customControls:IconButton.Template>
+            </customControls:IconButton>
+
+            <!--  To columns button  -->
+            <customControls:IconButton
+                Classes="galleryShape"
+                Command="{CompiledBinding ParentWindowContext.GallerySettings.ToggleExpandedDisplayModeCommand}"
+                Foreground="{StaticResource MainTextColor}"
+                HorizontalAlignment="Stretch"
+                Icon="{StaticResource ToGalleryHorizontalImage}"
+                IconHeight="18"
+                IconWidth="18"
+                IsRepeatEnabled="False"
+                IsVisible="{CompiledBinding ParentWindowContext.GallerySettings.IsExpandedDisplayModeTiles.Value}"
+                ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.ToggleGalleryDisplayMode.Value, Mode=OneWay}"
+                VerticalAlignment="Stretch"
+                x:Name="ToColumnsButton">
+                <customControls:IconButton.Template>
+                    <ControlTemplate TargetType="customControls:IconButton">
+                        <Panel>
+                            <Path Data="M0,0 H35 V15 A45,45 0 0 0 39.6887,35 H0 Z" Fill="{TemplateBinding Background}" />
+                            <ContentPresenter
+                                Content="{TemplateBinding Content}"
+                                Height="35"
+                                HorizontalAlignment="Left"
+                                HorizontalContentAlignment="Center"
+                                Name="PART_ContentPresenter"
+                                VerticalAlignment="Top"
+                                VerticalContentAlignment="Center"
+                                Width="35" />
+                        </Panel>
+                    </ControlTemplate>
+                </customControls:IconButton.Template>
+            </customControls:IconButton>
+
+            <Button Classes="galleryShape" Command="{CompiledBinding Gallery.ToggleExpandedCommand}">
+                <Panel>
+                    <Path Classes="shape" Data="M35,0 H85 V60 H80 A45,45 0 0 1 35,15 Z" />
+                    <Path
+                        Classes="icon"
+                        Data="{StaticResource CloseGeometry}"
+                        Height="23"
+                        HorizontalAlignment="Left"
+                        Margin="52,13,0,0"
+                        Stretch="Fill"
+                        VerticalAlignment="Top"
+                        Width="23" />
+                </Panel>
+            </Button>
+
+            <!--  Borders, drawn once: the orientation button's left and bottom edges, then the curve (which is also the seam between the two)  -->
             <Path
-                Width="23"
-                Height="23"
-                Margin="7,0,0,11"
-                Data="{StaticResource CloseGeometry}"
-                Fill="{DynamicResource MainTextColor}"
-                Stretch="Fill" />
-        </Button>
+                Data="M0.5,0 V34.5 H40 M35.5,0 V15 A44.5,44.5 0 0 0 80,59.5"
+                IsHitTestVisible="False"
+                Stroke="{DynamicResource PopUpMainBorderColor}"
+                StrokeThickness="1" />
+        </Panel>
 
         <customControls:NavigateAbleItemsViewer
-            x:Name="GalleryItemsControl"
             CurrentItemIndex="{CompiledBinding NavigationIndex.Value,
                                                Mode=OneWay}"
             PartnerItemIndex="{CompiledBinding PartnerIndex.Value,
                                                Mode=OneWay}"
             SelectedItemIndex="{CompiledBinding Gallery.SelectedGalleryItemIndex.Value,
-                                                Mode=TwoWay}">
+                                                Mode=TwoWay}"
+            x:Name="GalleryItemsControl">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <gallery:GalleryItem />
@@ -157,9 +343,9 @@
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <customControls:VirtualizingGallery
-                        x:Name="GalleryItemsPanel"
+                        LineSpacing="{CompiledBinding Gallery.LineSpacing.Value}"
                         VerticalAlignment="Center"
-                        LineSpacing="{CompiledBinding Gallery.LineSpacing.Value}" />
+                        x:Name="GalleryItemsPanel" />
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
         </customControls:NavigateAbleItemsViewer>

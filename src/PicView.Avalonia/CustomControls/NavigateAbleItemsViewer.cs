@@ -6,6 +6,7 @@ using Avalonia.Controls.Presenters;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using PicView.Avalonia.Views.Gallery;
 using PicView.Core.DebugTools;
@@ -28,6 +29,9 @@ public class NavigateAbleItemsViewer : ItemsControl
     private AutoScrollViewer? _scrollViewer;
 
     private IDisposable? _viewportSubscription;
+
+    // Whether the viewer is on the visual tree, where a rest can sharpen its tiles
+    private bool _isAttached;
 
     protected override Type StyleKeyOverride => typeof(NavigateAbleItemsViewer);
 
@@ -72,6 +76,7 @@ public class NavigateAbleItemsViewer : ItemsControl
     public NavigateAbleItemsViewer()
     {
         AddHandler(PointerWheelChangedEvent, OnPointerWheelChanged, RoutingStrategies.Direct | RoutingStrategies.Tunnel);
+        TileRestTimer = new DispatcherTileRestTimer(OnTileRestElapsed);
     }
 
     protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
@@ -80,11 +85,27 @@ public class NavigateAbleItemsViewer : ItemsControl
         _scrollViewer = e.NameScope.Find<AutoScrollViewer>("PART_ScrollViewer");
     }
 
+    protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        base.OnAttachedToVisualTree(e);
+        _isAttached = true;
+    }
+
     protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
     {
+        // First, so the sharpening cancelled below, and the items unloaded after, start no rest
+        _isAttached = false;
         base.OnDetachedFromVisualTree(e);
         _viewportSubscription?.Dispose();
         _viewportSubscription = null;
+        TileRestTimer.Stop();
+        CancelTileSharpening();
+    }
+
+    protected override void OnSizeChanged(SizeChangedEventArgs e)
+    {
+        base.OnSizeChanged(e);
+        RestartTileRest();
     }
 
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
@@ -145,11 +166,24 @@ public class NavigateAbleItemsViewer : ItemsControl
         {
             return;
         }
-        _ = galleryItem.LoadImage(vm).ConfigureAwait(false);
+
+        // Read from the panel: a recycled item is not in it yet, and the tile style may not be applied yet
+        var isTile = ItemsPanelRoot is VirtualizingGallery gallery && ShowsTiles(gallery);
+        _ = galleryItem.LoadImage(vm, isTile).ConfigureAwait(false);
+        if (isTile)
+        {
+            RequestTileSharpen();
+        }
     }
 
     protected override void ClearContainerForItemOverride(Control container)
     {
+        // Before the base clears the container, which takes the item's data context, the view model it unloads
+        if (container is ContentPresenter { Child: GalleryItem galleryItem })
+        {
+            galleryItem.UnloadImage();
+        }
+
         base.ClearContainerForItemOverride(container);
         if (container is not ContentPresenter { Child: NavigateAbleItem navItem })
         {
@@ -157,10 +191,6 @@ public class NavigateAbleItemsViewer : ItemsControl
         }
         navItem.SetCurrent(false);
         navItem.SetSelected(false);
-        if (navItem is GalleryItem galleryItem)
-        {
-            galleryItem.UnloadImage();
-        }
     }
     #endregion
 
@@ -365,6 +395,25 @@ public class NavigateAbleItemsViewer : ItemsControl
         }
 
         var rect = bounds.Value;
+        if (IsInVerticalDisplayMode(gallery))
+        {
+            // The scroll viewer scrolls over the panel's margin too
+            var top = rect.Top + gallery.Margin.Top;
+            var bottom = rect.Bottom + gallery.Margin.Top;
+            var current = _scrollViewer.Offset;
+            var height = _scrollViewer.Viewport.Height;
+            if (top < current.Y)
+            {
+                _scrollViewer.SetCurrentValue(ScrollViewer.OffsetProperty, current.WithY(top));
+            }
+            else if (bottom > current.Y + height)
+            {
+                _scrollViewer.SetCurrentValue(ScrollViewer.OffsetProperty, current.WithY(bottom - height));
+            }
+
+            return;
+        }
+
         var offset = _scrollViewer.Offset;
         var viewport = _scrollViewer.Viewport;
         var newX = offset.X;
@@ -401,11 +450,152 @@ public class NavigateAbleItemsViewer : ItemsControl
     {
         SelectedItemIndex = index;
     }
-    
+
+    // The Expanded Gallery's Masonry and Rows; the side-docked strip also scrolls vertically, but keeps the column rules
+    private static bool IsInVerticalDisplayMode(VirtualizingGallery gallery) => ShowsTiles(gallery);
+
+    /// <summary>Whether the panel shows tiles: it is expanded, in Masonry or Rows.</summary>
+    internal static bool ShowsTiles(VirtualizingGallery gallery) =>
+        gallery.IsExpanded && GalleryDisplayModes.ShowsTiles(gallery.DisplayMode);
+
+    #endregion
+
+    #region Tile Sharpening
+
+    /// <summary>
+    /// Starts the rest period again, as when the user scrolled or resized the view, or changed the item size or the
+    /// display mode. Sharpening requests still waiting for their turn are cancelled, so only what is on screen once the
+    /// view rests is decoded.
+    /// </summary>
+    public void RestartTileRest()
+    {
+        CancelTileSharpening();
+        TileRestTimer.Stop();
+        if (ItemsPanelRoot is VirtualizingGallery gallery && ShowsTiles(gallery))
+        {
+            TileRestTimer.Start();
+        }
+    }
+
+    /// <summary>
+    /// Starts the rest period unless it runs, as when a tile was loaded or the panel laid out again: neither is the
+    /// user moving the view, so neither postpones sharpening. A viewer off the visual tree starts nothing.
+    /// </summary>
+    public void RequestTileSharpen()
+    {
+        if (!TileRestTimer.IsEnabled && _isAttached && ItemsPanelRoot is VirtualizingGallery gallery &&
+            ShowsTiles(gallery))
+        {
+            TileRestTimer.Start();
+        }
+    }
+
+    /// <summary>
+    /// The view rested: every realized tile that shows something shorter than it needs, and was not asked for that
+    /// height already, asks for its Tile Thumbnail, nearest the middle of the view first.
+    /// </summary>
+    internal void OnTileRestElapsed()
+    {
+        TileRestTimer.Stop();
+        if (ItemsPanelRoot is not VirtualizingGallery gallery || !ShowsTiles(gallery))
+        {
+            return;
+        }
+
+        var viewMiddle = ViewMiddleIn(gallery);
+        var realizedItems = gallery.RealizedItems;
+        for (var i = 0; i < realizedItems.Count; i++)
+        {
+            var realized = realizedItems[i];
+            if (GetNavigateAbleItem(realized.Element) is not GalleryItem { DataContext: GalleryItemViewModel vm } item)
+            {
+                continue;
+            }
+
+            var needed = gallery.TileThumbnailHeightFor(realized.Index);
+            if (needed is 0 || needed <= vm.TileHeightShown || needed <= item.TileHeightAsked ||
+                SmallThumbnailIsTallEnough(vm, needed) || gallery.GetItemBounds(realized.Index) is not { } bounds)
+            {
+                continue;
+            }
+
+            var distance = Point.Distance(bounds.Center, viewMiddle);
+            _tilesToSharpen.Add(new TileToSharpen(distance, item, vm, needed));
+        }
+
+        if (_tilesToSharpen.Count is 0)
+        {
+            return;
+        }
+
+        _tilesToSharpen.Sort(TileToSharpen.NearestFirst);
+        _tileSharpenCts ??= new CancellationTokenSource();
+        var token = _tileSharpenCts.Token;
+        foreach (var tile in _tilesToSharpen)
+        {
+            _ = tile.Item.SharpenAsync(tile.Vm, tile.Height, token);
+        }
+
+        _tilesToSharpen.Clear();
+    }
+
+    /// <summary>
+    /// Whether the item shows a small thumbnail with at least <paramref name="needed"/> pixels in height, as when the tile
+    /// is shorter than the gallery height or the image is small. A Tile Thumbnail is compared by the height it was made
+    /// for instead, which <see cref="GalleryItemViewModel.TileHeightShown"/> holds.
+    /// </summary>
+    private static bool SmallThumbnailIsTallEnough(GalleryItemViewModel vm, uint needed) =>
+        vm is { TileHeightShown: 0, Image.Value: Bitmap bitmap } && bitmap.PixelSize.Height >= needed;
+
+    /// <summary>The rest timer. A test replaces it with one on its own clock.</summary>
+    internal ITileRestTimer TileRestTimer { get; set; }
+
+    private readonly List<TileToSharpen> _tilesToSharpen = [];
+
+    /// <summary>Cancels the sharpening requests of the rest period; null until the view first rests.</summary>
+    private CancellationTokenSource? _tileSharpenCts;
+
+    private void CancelTileSharpening()
+    {
+        if (_tileSharpenCts is null)
+        {
+            return;
+        }
+
+        _tileSharpenCts.Cancel();
+        _tileSharpenCts.Dispose();
+        _tileSharpenCts = null;
+    }
+
+    // The middle of the view in the panel's coordinates. The scroll viewer scrolls over the panel's margin too
+    private Point ViewMiddleIn(VirtualizingGallery gallery)
+    {
+        if (_scrollViewer is null)
+        {
+            return default;
+        }
+
+        var offset = _scrollViewer.Offset;
+        var viewport = _scrollViewer.Viewport;
+        var margin = gallery.Margin;
+        return new Point(offset.X - margin.Left + viewport.Width / 2, offset.Y - margin.Top + viewport.Height / 2);
+    }
+
+    private readonly record struct TileToSharpen(double Distance, GalleryItem Item, GalleryItemViewModel Vm,
+        uint Height)
+    {
+        public static readonly Comparison<TileToSharpen> NearestFirst =
+            static (a, b) => a.Distance.CompareTo(b.Distance);
+    }
+
     #endregion
 
     #region Spatial Navigation Logic
 
+    /// <summary>
+    /// Moves the selection by an arrow key, or to the first or last item. In the Expanded Gallery's Masonry and Rows the
+    /// arrows follow <see cref="GalleryNavigator"/>, with no wrap; elsewhere the column rules below apply.
+    /// </summary>
     public void Navigate(NavigationDirection direction)
     {
         if (ItemCount is 0)
@@ -428,6 +618,19 @@ public class NavigateAbleItemsViewer : ItemsControl
         var startIndex = SelectedItemIndex == -1 ? CurrentItemIndex : SelectedItemIndex;
         if (startIndex < 0) startIndex = 0;
         if (startIndex >= ItemCount) startIndex = ItemCount - 1;
+
+        // Before GetItemPositions, which builds a list: this path allocates nothing per key press
+        if (ItemsPanelRoot is VirtualizingGallery gallery && IsInVerticalDisplayMode(gallery))
+        {
+            var target = GalleryNavigator.Neighbor(gallery.ItemBounds, startIndex, direction, gallery.DisplayMode);
+            if (target >= 0 && target < ItemCount)
+            {
+                UpdateSelectionIndex(target);
+                ScrollItemIntoView(target);
+            }
+
+            return;
+        }
 
         var items = GetItemPositions();
         if (items.Count is 0)

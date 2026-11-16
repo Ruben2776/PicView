@@ -316,6 +316,53 @@ public class GalleryFollowsFilesTests : IDisposable
     }
 
     [Fact]
+    public async Task RenamedFolder_ItemShowingATileThumbnail_KeepsNoTileSizedBitmapInTheTabsStore()
+    {
+        // A budget of one Tile Thumbnail at 600, so the next one pushes the moved one out
+        var thumbnails = new Thumbnails(new FakeThumbnailDecoder(), _cache, tileBudgetInBytes: 600 * 1000);
+        Directory.CreateDirectory(Path.Combine(_directory, "sub"));
+        var tab = await LoadedTabAsync(thumbnails, "a.jpg", Path.Combine("sub", "b.jpg"));
+        var item = tab.Gallery.GalleryItems[1];
+        var small = await thumbnails.GetAsync(item.FileInfo!, Thumbnails.GalleryHeight, tab.Id,
+            TestContext.Current.CancellationToken);
+        var tile = await item.LoadTileThumbnailAsync(600, TestContext.Current.CancellationToken);
+        item.Image.Value = tile;
+        item.TileHeightShown = 600;
+        var renamed = Path.Combine(_directory, "renamed");
+        Directory.Move(Path.Combine(_directory, "sub"), renamed);
+
+        tab.ImageIterator.RenameFolder(Path.Combine(_directory, "sub"), renamed);
+        await IdleAsync(tab);
+
+        var moved = tab.Gallery.GalleryItems[1];
+        Assert.NotSame(item, moved);
+        Assert.Same(tile, moved.Image.Value);
+        Assert.Equal(600u, moved.TileHeightShown);
+        // The tab's store holds the small one under the new path, not the tile
+        Assert.Same(small, await thumbnails.GetAsync(moved.FileInfo!, Thumbnails.GalleryHeight, tab.Id,
+            TestContext.Current.CancellationToken));
+        Assert.True(moved.TryGetKeptThumbnail(out var kept, out var tileHeight));
+        Assert.Same(tile, kept);
+        Assert.Equal(600u, tileHeight);
+
+        // Once the tier lets go of the moved Tile Thumbnail, what is kept for the item is the small one
+        await tab.Gallery.GalleryItems[0].LoadTileThumbnailAsync(600, TestContext.Current.CancellationToken);
+        Assert.True(moved.TryGetKeptThumbnail(out var afterEviction, out var heightAfterEviction));
+        Assert.Same(small, afterEviction);
+        Assert.Equal(0u, heightAfterEviction);
+    }
+
+    [Fact]
+    public void ItemOutsideAGallery_HasNothingKeptAndLoadsNoTileThumbnail()
+    {
+        var item = new GalleryItemViewModel { FileInfo = new FileInfo("a.jpg") };
+
+        Assert.False(item.TryGetKeptThumbnail(out _, out _));
+        Assert.True(item.LoadTileThumbnailAsync(600, CancellationToken.None).IsCompleted);
+        Assert.Equal(0u, item.TileHeightShown);
+    }
+
+    [Fact]
     public async Task SingleImageShown_ThenTheSameFiles_KeepsTheItems()
     {
         var tab = await LoadedTabAsync("a.jpg", "b.jpg");
@@ -689,9 +736,9 @@ public class GalleryFollowsFilesTests : IDisposable
 
     #endregion
 
-    private TabViewModel CreateTab()
+    private TabViewModel CreateTab(Thumbnails? thumbnails = null)
     {
-        var tab = new TabViewModel(null!, TestTabServices.For(_cache, _thumbnails))
+        var tab = new TabViewModel(null!, TestTabServices.For(_cache, thumbnails ?? _thumbnails))
         {
             Model = new ImageModel { FileInfo = new FileInfo(Path.Combine(_directory, "shown.jpg")) }
         };
@@ -699,9 +746,11 @@ public class GalleryFollowsFilesTests : IDisposable
         return tab;
     }
 
-    private async Task<TabViewModel> LoadedTabAsync(params string[] names)
+    private Task<TabViewModel> LoadedTabAsync(params string[] names) => LoadedTabAsync(null, names);
+
+    private async Task<TabViewModel> LoadedTabAsync(Thumbnails? thumbnails, params string[] names)
     {
-        var tab = CreateTab();
+        var tab = CreateTab(thumbnails);
         Show(tab);
         tab.ImageIterator.Initialize(await FilesAsync(names));
         await WaitUntilLoadedAsync(tab, names.Select(Path.GetFileName).ToArray()!);
@@ -817,6 +866,10 @@ public class GalleryFollowsFilesTests : IDisposable
             RanOnCallersThread = IsCallersThread;
             return new object();
         }
+
+        public object? DecodeWithoutReadyMade(FileInfo file, uint height) => null;
+
+        public long SizeInBytes(object thumbnail) => 0;
 
         public object? ScaleDown(object image, uint height) => null;
     }

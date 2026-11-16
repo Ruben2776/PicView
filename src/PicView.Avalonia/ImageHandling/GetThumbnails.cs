@@ -21,6 +21,7 @@ public static class GetThumbnails
     /// <summary>
     /// Makes a thumbnail of <paramref name="fileInfo"/> no taller than <paramref name="height"/>: the shell's when
     /// <paramref name="platform"/> has one, else the EXIF thumbnail when it is tall enough, else a decode of the file.
+    /// The thumbnail is upright: a file stored turned, as its EXIF orientation says, is turned to show.
     /// Blocks while it reads the file.
     /// </summary>
     public static Bitmap? Decode(FileInfo fileInfo, uint height, IPlatformSpecificService? platform = null)
@@ -54,12 +55,18 @@ public static class GetThumbnails
             }
 
             using var thumbnail = profile.CreateThumbnail();
-            if (thumbnail is null || thumbnail.Height < height)
+            if (thumbnail is null)
             {
                 return CreateThumb(magick, fileInfo, height);
             }
 
-            thumbnail.AutoOrient();
+            // Upright first: a turned file's thumbnail is tall enough by its upright height
+            OrientLikeFile(thumbnail, magick);
+            if (thumbnail.Height < height)
+            {
+                return CreateThumb(magick, fileInfo, height);
+            }
+
             return MagickBitmapConverter.ToBgraWriteableBitmap(thumbnail);
         }
         catch (Exception e)
@@ -76,6 +83,48 @@ public static class GetThumbnails
             catch (Exception exception)
             {
                 DebugHelper.LogDebug(nameof(GetThumbnails), nameof(Decode), exception);
+                return null;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Reads <paramref name="fileInfo"/> and makes a thumbnail <paramref name="height"/> tall, never from the OS shell
+    /// or the file's EXIF thumbnail, which are made at sizes of their own. A RAW file's embedded preview is still used
+    /// when it is at least <paramref name="height"/> tall. The thumbnail is upright. Blocks while it reads the file.
+    /// </summary>
+    public static Bitmap? DecodeWithoutReadyMade(FileInfo fileInfo, uint height)
+    {
+        try
+        {
+            if (fileInfo is null)
+            {
+                return null;
+            }
+
+            using var magick = new MagickImage();
+#pragma warning disable MA0042
+            // ReSharper disable once MethodHasAsyncOverload
+            magick.Ping(fileInfo, CreatePingSettings());
+#pragma warning restore MA0042
+
+            return CreateThumb(magick, fileInfo, height);
+        }
+        catch (Exception e)
+        {
+            DebugHelper.LogDebug(nameof(GetThumbnails), nameof(DecodeWithoutReadyMade), e);
+            if (!fileInfo.IsCommon())
+            {
+                return null;
+            }
+
+            try
+            {
+                return GetSkBitmapThumb(fileInfo, height);
+            }
+            catch (Exception exception)
+            {
+                DebugHelper.LogDebug(nameof(GetThumbnails), nameof(DecodeWithoutReadyMade), exception);
                 return null;
             }
         }
@@ -118,8 +167,29 @@ public static class GetThumbnails
         {
             return null;
         }
-        thumbnail.AutoOrient();
+        OrientLikeFile(thumbnail, magick);
         return MagickBitmapConverter.ToBgraWriteableBitmap(thumbnail);
+    }
+
+    /// <summary>
+    /// Whether the file is stored turned. Reads the ping the caller already made, so it costs no file read, and is
+    /// the property <see cref="MagickImage.AutoOrient"/> acts on, so the decision and the turn cannot disagree.
+    /// </summary>
+    private static bool IsTurned(MagickImage pinged) =>
+        pinged.Orientation is not (Orientation.Undefined or Orientation.TopLeft);
+
+    /// <summary>
+    /// Turns an embedded thumbnail or preview upright. It is stored like its file's pixels and carries no
+    /// orientation of its own, so it takes the file's.
+    /// </summary>
+    private static void OrientLikeFile(IMagickImage<byte> embedded, MagickImage file)
+    {
+        if (file.Orientation is not Orientation.Undefined)
+        {
+            embedded.Orientation = file.Orientation;
+        }
+
+        embedded.AutoOrient();
     }
 
     /// <summary>
@@ -181,7 +251,8 @@ public static class GetThumbnails
             case MagickFormat.Icon:
             case MagickFormat.Wbmp:
             {
-                return GetSkBitmapThumb(fileInfo, height);
+                // Skia does not turn a picture, ImageMagick does
+                return IsTurned(magick) ? GetTurnedThumb(magick, fileInfo, height) : GetSkBitmapThumb(fileInfo, height);
             }
         
             case MagickFormat.Svg:
@@ -248,11 +319,7 @@ public static class GetThumbnails
             using var preview = new MagickImage(data, settings);
 
             // The preview is stored in sensor orientation, the RAW file knows how the camera was held
-            if (magick.Orientation is not Orientation.Undefined)
-            {
-                preview.Orientation = magick.Orientation;
-            }
-            preview.AutoOrient();
+            OrientLikeFile(preview, magick);
             if (preview.Height < height)
             {
                 return null;
@@ -269,7 +336,27 @@ public static class GetThumbnails
     }
 
     /// <summary>
+    /// Reads a common-format file stored turned with ImageMagick at a reduced size, turns it upright and makes the
+    /// thumbnail, as Skia cannot turn a picture.
+    /// </summary>
+    private static Bitmap GetTurnedThumb(MagickImage magick, FileInfo fileInfo, uint height)
+    {
+        var settings = new MagickReadSettings { Format = magick.Format };
+        // Both sides at least height, so a JPEG is still tall enough after a quarter turn; other formats ignore it
+        settings.SetDefines(new JpegReadDefines { Size = new MagickGeometry(height, height) });
+#pragma warning disable MA0042
+        // ReSharper disable once MethodHasAsyncOverload
+        magick.Read(fileInfo, settings);
+#pragma warning restore MA0042
+
+        magick.AutoOrient();
+        magick.Thumbnail(new MagickGeometry(0, height));
+        return MagickBitmapConverter.ToBgraWriteableBitmap(magick);
+    }
+
+    /// <summary>
     /// Decodes a common format to <paramref name="height"/> with Skia, reading the file natively.
+    /// It does not turn the picture: <see cref="CreateThumb"/> sends a turned file to ImageMagick instead.
     /// The codec decodes at a reduced size where the format supports it (JPEG DCT scaling, WebP),
     /// and the result lands straight in the <see cref="WriteableBitmap"/> framebuffer without managed buffers.
     /// </summary>

@@ -14,10 +14,29 @@ namespace PicView.Avalonia.Navigation;
 /// </summary>
 public static class UpdateImage
 {
+    /// <summary>
+    /// Shows how far <paramref name="tab"/> is through its files on the taskbar. A Single Image is one of no
+    /// files, so showing one in the active tab takes the progress of the files before it away.
+    /// </summary>
     internal static void SetTaskbarProgress(MainWindowViewModel vm, TabViewModel tab)
     {
-        if (Settings.UIProperties.IsTaskbarProgressEnabled && vm.Core.PlatformService is { } platform &&
-            tab.ImageIterator is { CurrentIndex: > -1 } iterator && iterator.Files.Count > 0)
+        if (!Settings.UIProperties.IsTaskbarProgressEnabled || vm.Core.PlatformService is not { } platform)
+        {
+            return;
+        }
+
+        // By the Single Image and not by a missing iterator: the tab drops its iterator only after it shows the image
+        if (tab.SingleImageType is not SingleImageType.None)
+        {
+            if (ReferenceEquals(tab, vm.WindowTabs.ActiveTab.CurrentValue))
+            {
+                platform.StopTaskbarProgress();
+            }
+
+            return;
+        }
+
+        if (tab.ImageIterator is { CurrentIndex: > -1 } iterator && iterator.Files.Count > 0)
         {
             platform.SetTaskbarProgress((ulong)iterator.CurrentIndex, (ulong)iterator.Files.Count);
         }
@@ -39,9 +58,14 @@ public static class UpdateImage
     /// Shows <paramref name="model"/> as the active tab's Single Image. Showing a kept Single Image again passes back the
     /// model it kept, never a copy, since View History finds the entry by that instance.
     /// </summary>
-    public static void SetSingleImage(MainWindowViewModel vm, ImageModel model, SingleImageType type, string title)
+    /// <param name="tab">
+    /// The tab to show it in when that is not simply the active one: a load that takes a while passes the tab it
+    /// started in, so switching tabs meanwhile does not send the image to another tab.
+    /// </param>
+    public static void SetSingleImage(MainWindowViewModel vm, ImageModel model, SingleImageType type, string title,
+        TabViewModel? tab = null)
     {
-        var tabViewModel = vm.WindowTabs.ActiveTab.CurrentValue;
+        var tabViewModel = tab ?? vm.WindowTabs.ActiveTab.CurrentValue;
 
         // The window's fitter follows the new image, and its viewer follows that Fit (ADR-0026)
         tabViewModel.DisplaySingleImage(model, type, title);

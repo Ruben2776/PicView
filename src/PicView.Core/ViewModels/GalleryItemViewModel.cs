@@ -65,6 +65,39 @@ public class GalleryItemViewModel : IDisposable
             : Coordinator.LoadThumbnailAsync(this, cancellationToken);
 
     /// <summary>
+    /// The height the Tile Thumbnail in <see cref="Image"/> was made for; 0 while <see cref="Image"/> holds a small
+    /// thumbnail or nothing. Written only on the UI thread, by the gallery item that sets <see cref="Image"/>.
+    /// </summary>
+    public uint TileHeightShown { get; set; }
+
+    /// <summary>
+    /// Looks up the thumbnail kept for the item's file: its Tile Thumbnail with the height it was made for, else its
+    /// small thumbnail with <paramref name="tileHeight"/> 0. Never decodes.
+    /// </summary>
+    /// <returns>Whether any thumbnail is kept; false for an item outside a gallery.</returns>
+    public bool TryGetKeptThumbnail(out object? thumbnail, out uint tileHeight)
+    {
+        if (Coordinator is null)
+        {
+            thumbnail = null;
+            tileHeight = 0;
+            return false;
+        }
+
+        return Coordinator.TryGetKeptThumbnail(this, out thumbnail, out tileHeight);
+    }
+
+    /// <summary>
+    /// Loads a Tile Thumbnail of the item's file made at <paramref name="height"/>, or the kept one made for at least
+    /// that height.
+    /// </summary>
+    /// <returns>The thumbnail, or null for an item outside a gallery or a file that gives none.</returns>
+    public ValueTask<object?> LoadTileThumbnailAsync(uint height, CancellationToken cancellationToken) =>
+        Coordinator is null
+            ? ValueTask.FromResult<object?>(null)
+            : Coordinator.LoadTileThumbnailAsync(this, height, cancellationToken);
+
+    /// <summary>
     /// Replaces the item's <see cref="Details"/> and the size text that shows them.
     /// </summary>
     internal void SetDetails(GalleryFileDetails details)

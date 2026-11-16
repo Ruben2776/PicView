@@ -263,7 +263,10 @@ public class GalleryCoordinator : IDisposable
         var item = CreateItem(file, old.Details);
         item.Image.Value = old.Image.Value;
         item.IsMotionPhoto.Value = old.IsMotionPhoto.Value;
-        if (old.Image.Value is { } thumbnail)
+        item.TileHeightShown = old.TileHeightShown;
+        _thumbnails.Relocate(_tab.Id, old.FileInfo!.FullName, file.FullName);
+        // A tile-sized bitmap must never be kept in the tab's store as a small thumbnail
+        if (old.TileHeightShown is 0 && old.Image.Value is { } thumbnail)
         {
             _thumbnails.Keep(_tab.Id, file.FullName, thumbnail, old.ThumbnailHeight);
         }
@@ -615,6 +618,20 @@ public class GalleryCoordinator : IDisposable
 
         return thumbnail;
     }
+
+    /// <summary>
+    /// The thumbnail kept for <paramref name="item"/>'s file, a Tile Thumbnail before a small one.
+    /// </summary>
+    internal bool TryGetKeptThumbnail(GalleryItemViewModel item, out object? thumbnail, out uint tileHeight) =>
+        _thumbnails.TryGetKept(item.FileInfo!, out thumbnail, out tileHeight);
+
+    /// <summary>
+    /// Loads <paramref name="item"/>'s Tile Thumbnail made at <paramref name="height"/>.
+    /// </summary>
+    /// <returns>The thumbnail, or null when the file gives none.</returns>
+    internal ValueTask<object?> LoadTileThumbnailAsync(GalleryItemViewModel item, uint height,
+        CancellationToken cancellationToken) =>
+        _thumbnails.GetTileAsync(item.FileInfo!, height, cancellationToken);
 
     private static double ThumbnailHeight() => Thumbnails.GalleryHeight;
 

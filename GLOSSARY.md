@@ -140,12 +140,16 @@ Two images a tab shows beside each other when Side-by-Side is on: the shown imag
 _Avoid_: Dual view, two-up, double view
 
 **Thumbnail**:
-A bitmap of a file no taller than a height asked for, never the full image: a Gallery Item's, a File History entry's, or a drag preview's. A tab keeps the ones it asks for until it closes, File History keeps its own for the whole run, and a drag preview keeps none. Only the tallest one asked for is kept for each file, and it serves every request up to its height. When the file's image is already in memory as a still image, it is scaled down instead of read again.
+A bitmap of a file no taller than a height asked for, never the full image: a Gallery Item's, a File History entry's, or a drag preview's. A tab keeps the ones it asks for until it closes, File History keeps its own for the whole run, and a drag preview keeps none. Only the tallest one asked for is kept for each file, and it serves every request up to its height. When the file's image is already in memory as a still image, it is scaled down instead of read again. A Tile Thumbnail is kept apart from these, by the app and not for long.
 _Avoid_: Thumb, preview (for the bitmap)
 
 **Quick Thumbnail**:
 A Thumbnail that is there at once or not at all: one kept already, or else one the OS shell or the file's EXIF data has ready. It never decodes the image and is never kept, so it may be absent. A Stand-in shows one.
 _Avoid_: Fast thumbnail, quick preview
+
+**Tile Thumbnail**:
+A Thumbnail made for the size a Masonry or Rows tile shows it at, in device pixels, so the tile is sharp. The app keeps the most recently used ones up to a memory budget and drops the oldest first, whichever tab asked. A tile whose Tile Thumbnail was dropped shows its ordinary Thumbnail until a new one is made.
+_Avoid_: Sharp thumbnail, full-size thumbnail, HQ thumbnail
 
 ## Archives
 
@@ -182,6 +186,10 @@ _Avoid_: Thumbnails list, gallery list
 **Thumbnail Stretch**:
 How a gallery's thumbnails are shaped and filled. Uniform shows each whole image in its own proportions, Uniform to Fill fills the thumbnail and crops what spills over, Square shows the whole image inside a square, and Fill Square fills a square and crops what spills over. The Docked Gallery and the Expanded Gallery each have their own, and every Main Window uses the same two.
 _Avoid_: Gallery stretch, stretch mode
+
+**Gallery Display Mode**:
+How the Expanded Gallery arranges its Gallery Items: Columns, Masonry or Rows. Columns fills columns of equal-height thumbnails and scrolls sideways. Masonry fills equal-width columns, each thumbnail in its own proportions, and scrolls down. Rows fills rows of equal height across the width and scrolls down. Every Main Window uses the same one, and the Docked Gallery has none. Masonry and Rows always fill and crop, so Thumbnail Stretch applies only to Columns. The settings also remember which of Masonry and Rows was used last, which is what the Expanded Gallery's switch button goes to from Columns.
+_Avoid_: Gallery layout, view mode, Gallery Mode (that is Closed, Docked or Expanded)
 
 ## Saving
 

@@ -3,11 +3,14 @@ using System.Diagnostics;
 using System.Reflection;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input.Platform;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Avalonia.Threading;
 using ImageMagick;
+using PicView.Avalonia.Clipboard;
+using PicView.Core.Svg;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Interfaces;
 using PicView.Avalonia.Printing;
@@ -921,6 +924,293 @@ public class AppLifecycleTests : IAsyncDisposable
     }
 
     [AvaloniaFact]
+    public async Task PasteText_SvgMarkup_ShowsItAsATempFileSingleImageTitledSvgImage()
+    {
+        TranslationManager.LoadLanguage("en");
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var window = app.MainWindows.Open[0];
+        var vm = ViewModelOf(window);
+        var tab = vm.WindowTabs.ActiveTab.CurrentValue;
+        var service = new ClipboardPasteService(clipboard: null, window, _core);
+        const string svg = "<svg xmlns='http://www.w3.org/2000/svg' width='40' height='20'>" +
+                           "<rect x='5' y='5' width='10' height='10' fill='red'/></svg>";
+        Application.Current!.DataContext = _core;
+        try
+        {
+            var pasted = await service.PasteTextAsync(svg, vm);
+
+            Assert.True(pasted);
+            Assert.Equal(SingleImageType.TempFile, tab.SingleImageType);
+            Assert.IsType<SvgDrawing>(tab.Model.Image);
+            Assert.Equal(40u, tab.Model.PixelWidth);
+            Assert.Null(tab.Model.FileInfo);
+            Assert.Equal("SVG image", TranslationManager.Translation.SvgImage);
+            Assert.Equal("SVG image", tab.Titles.TabTitle);
+            Assert.Contains("SVG image", tab.Titles.WindowTitle);
+            Assert.Null(tab.ImageIterator);
+        }
+        finally
+        {
+            Application.Current.DataContext = null;
+        }
+    }
+
+    [AvaloniaFact]
+    public async Task PasteText_SvgMarkupWithXmlDeclarationAndWhitespace_ShowsIt()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var window = app.MainWindows.Open[0];
+        var vm = ViewModelOf(window);
+        var tab = vm.WindowTabs.ActiveTab.CurrentValue;
+        var service = new ClipboardPasteService(clipboard: null, window, _core);
+        const string svg = """
+
+                             <?xml version='1.0' encoding='UTF-8'?>
+                           <!-- copied -->
+                           <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><circle cx='12' cy='12' r='6'/></svg>
+
+                           """;
+        Application.Current!.DataContext = _core;
+        try
+        {
+            Assert.True(await service.PasteTextAsync(svg, vm));
+            Assert.Equal(SingleImageType.TempFile, tab.SingleImageType);
+            Assert.IsType<SvgDrawing>(tab.Model.Image);
+        }
+        finally
+        {
+            Application.Current.DataContext = null;
+        }
+    }
+
+    [AvaloniaFact]
+    public async Task PasteText_SvgMarkupAfterAFile_StopsTheTaskbarProgress()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var window = app.MainWindows.Open[0];
+        var vm = ViewModelOf(window);
+        var tab = vm.WindowTabs.ActiveTab.CurrentValue;
+        var file = Path.Combine(_folder, "viewed.png");
+        using (var image = new MagickImage(MagickColors.Red, 4, 3))
+        {
+            await image.WriteAsync(file, MagickFormat.Png, TestContext.Current.CancellationToken);
+        }
+
+        var service = new ClipboardPasteService(clipboard: null, window, _core);
+        var wasEnabled = Settings.UIProperties.IsTaskbarProgressEnabled;
+        Settings.UIProperties.IsTaskbarProgressEnabled = true;
+        Application.Current!.DataContext = _core;
+        try
+        {
+            await SourceOpener.OpenAsync(window, _core, file);
+            UpdateImage.SetTaskbarProgress(vm, tab);
+            var shownForTheFile = _platform.IsTaskbarProgressShown;
+
+            await service.PasteTextAsync(
+                "<svg xmlns='http://www.w3.org/2000/svg' width='40' height='20'><rect width='10' height='10'/></svg>",
+                vm);
+            Dispatcher.UIThread.RunJobs();
+
+            Assert.True(shownForTheFile);
+            Assert.Equal(SingleImageType.TempFile, tab.SingleImageType);
+            Assert.False(_platform.IsTaskbarProgressShown);
+        }
+        finally
+        {
+            Application.Current.DataContext = null;
+            Settings.UIProperties.IsTaskbarProgressEnabled = wasEnabled;
+        }
+    }
+
+    [AvaloniaFact]
+    public async Task SetTaskbarProgress_SingleImageInABackgroundTab_LeavesTheProgressAlone()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var vm = ViewModelOf(app.MainWindows.Open[0]);
+        var background = vm.WindowTabs.ActiveTab.CurrentValue;
+        vm.WindowTabs.SelectTab(vm.WindowTabs.CreateTab());
+        background.DisplaySingleImage(new ImageModel { Image = new object() }, SingleImageType.Clipboard, "Pasted");
+        var wasEnabled = Settings.UIProperties.IsTaskbarProgressEnabled;
+        Settings.UIProperties.IsTaskbarProgressEnabled = true;
+        try
+        {
+            Dispatcher.UIThread.RunJobs();
+            var before = _platform.IsTaskbarProgressShown;
+
+            UpdateImage.SetTaskbarProgress(vm, background);
+
+            Assert.Equal(before, _platform.IsTaskbarProgressShown);
+        }
+        finally
+        {
+            Settings.UIProperties.IsTaskbarProgressEnabled = wasEnabled;
+        }
+    }
+
+    [AvaloniaFact]
+    public async Task PasteText_SvgMarkup_CanBeCopiedAsAxaml()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var window = app.MainWindows.Open[0];
+        var vm = ViewModelOf(window);
+        var tab = vm.WindowTabs.ActiveTab.CurrentValue;
+        var service = new ClipboardPasteService(clipboard: null, window, _core);
+        var copy = new ClipboardCopyService(window.Clipboard);
+        Application.Current!.DataContext = _core;
+        try
+        {
+            await service.PasteTextAsync(
+                "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><rect width='10' height='10' fill='red'/></svg>",
+                vm);
+
+            var path = ClipboardCopyService.SvgPathOf(tab);
+            var copied = await copy.CopyAxamlAsync(path);
+
+            Assert.NotNull(path);
+            Assert.Null(tab.Model.FileInfo);
+            Assert.True(copied);
+            Assert.StartsWith("<DrawingImage Viewbox=\"0 0 24 24\">", await window.Clipboard!.TryGetTextAsync());
+        }
+        finally
+        {
+            Application.Current.DataContext = null;
+        }
+    }
+
+    [AvaloniaFact]
+    public async Task SvgPathOf_FileAndNoImage_ReturnsTheFileAndNull()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var tab = ViewModelOf(app.MainWindows.Open[0]).WindowTabs.ActiveTab.CurrentValue;
+        var file = new FileInfo(Path.Combine(_folder, "icon.svg"));
+
+        var withoutImage = ClipboardCopyService.SvgPathOf(tab);
+        tab.Display(new ImageModel { FileInfo = file, SvgSourcePath = "ignored.svg" });
+
+        Assert.Null(withoutImage);
+        Assert.Null(ClipboardCopyService.SvgPathOf(null));
+        Assert.Equal(file.FullName, ClipboardCopyService.SvgPathOf(tab));
+    }
+
+    [AvaloniaTheory]
+    [InlineData(Actions.CopySvg, "<svg xmlns=")]
+    [InlineData(Actions.CopyAxaml, "<DrawingImage ")]
+    public async Task PasteText_SvgMarkup_TheCopyActionCopiesItsSource(string action, string expectedStart)
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var window = app.MainWindows.Open[0];
+        var vm = ViewModelOf(window);
+        var tab = vm.WindowTabs.ActiveTab.CurrentValue;
+        var service = new ClipboardPasteService(clipboard: null, window, _core);
+        window.SetClipboardCopyService(_platform);
+        Application.Current!.DataContext = _core;
+        try
+        {
+            await service.PasteTextAsync(
+                "  <?xml version='1.0'?><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><rect width='10' height='10' fill='red'/></svg>",
+                vm);
+            await window.Clipboard!.SetTextAsync("before");
+
+            await vm.ActionRunner!.Run(action);
+
+            Assert.Equal(ImageType.Svg, tab.ImageType.Value);
+            Assert.StartsWith(expectedStart, await window.Clipboard.TryGetTextAsync());
+        }
+        finally
+        {
+            Application.Current.DataContext = null;
+        }
+    }
+
+    [AvaloniaFact]
+    public async Task PasteText_SvgMarkupDeclaringUtf16_ShowsIt()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var window = app.MainWindows.Open[0];
+        var vm = ViewModelOf(window);
+        var tab = vm.WindowTabs.ActiveTab.CurrentValue;
+        var service = new ClipboardPasteService(clipboard: null, window, _core);
+        // The text of an SVG file saved as UTF-16: the clipboard holds the decoded text, declaration included
+        const string svg = "<?xml version='1.0' encoding='UTF-16' standalone='no'?>" +
+                           "<svg xmlns='http://www.w3.org/2000/svg' width='40' height='20'>" +
+                           "<rect x='5' y='5' width='10' height='10' fill='red'/></svg>";
+        Application.Current!.DataContext = _core;
+        try
+        {
+            Assert.True(await service.PasteTextAsync(svg, vm));
+            Assert.IsType<SvgDrawing>(tab.Model.Image);
+        }
+        finally
+        {
+            Application.Current.DataContext = null;
+        }
+    }
+
+    [AvaloniaFact]
+    public async Task TempFileSingleImage_ShowAsyncWithATab_ShowsInThatTabEvenWhenAnotherIsActive()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var vm = ViewModelOf(app.MainWindows.Open[0]);
+        var started = vm.WindowTabs.ActiveTab.CurrentValue;
+        var other = vm.WindowTabs.CreateTab();
+        vm.WindowTabs.SelectTab(other);
+        var path = TempFileManager.GetNewTempFilePath("tab.svg");
+        await File.WriteAllTextAsync(path,
+            "<svg xmlns='http://www.w3.org/2000/svg' width='40' height='20'><rect width='10' height='10'/></svg>",
+            TestContext.Current.CancellationToken);
+        Application.Current!.DataContext = _core;
+        try
+        {
+            Assert.NotSame(started, vm.WindowTabs.ActiveTab.CurrentValue);
+
+            Assert.True(await TempFileSingleImage.ShowAsync(vm, new FileInfo(path), "Pasted", started));
+
+            Assert.Equal(SingleImageType.TempFile, started.SingleImageType);
+            Assert.IsType<SvgDrawing>(started.Model.Image);
+            Assert.Equal(SingleImageType.None, other.SingleImageType);
+        }
+        finally
+        {
+            Application.Current.DataContext = null;
+        }
+    }
+
+    [AvaloniaTheory]
+    [InlineData("<div><svg")]
+    [InlineData("<div><svg width='10' height='10'></div>")]
+    [InlineData("<svg></svg>")]
+    public async Task PasteText_MarkupThatCannotBeDrawn_DoesNotShowASingleImage(string text)
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var window = app.MainWindows.Open[0];
+        var vm = ViewModelOf(window);
+        var tab = vm.WindowTabs.ActiveTab.CurrentValue;
+        var service = new ClipboardPasteService(clipboard: null, window, _core);
+        Application.Current!.DataContext = _core;
+        try
+        {
+            var pasted = await service.PasteTextAsync(text, vm);
+
+            Assert.False(pasted);
+            Assert.Equal(SingleImageType.None, tab.SingleImageType);
+        }
+        finally
+        {
+            Application.Current.DataContext = null;
+        }
+    }
+
+    [AvaloniaFact]
     public async Task FileHistoryPrevAndNext_AtTheEndsOfTheViewHistory_DoNotOpenTheLastFile()
     {
         var app = CreateApp();
@@ -1654,8 +1944,11 @@ public class AppLifecycleTests : IAsyncDisposable
     /// </summary>
     private sealed class NoPlatform : IPlatformSpecificService
     {
-        public void SetTaskbarProgress(ulong progress, ulong maximum) { }
-        public void StopTaskbarProgress() { }
+        /// <summary>Whether the last taskbar call left a progress showing; null before any call.</summary>
+        public bool? IsTaskbarProgressShown { get; private set; }
+
+        public void SetTaskbarProgress(ulong progress, ulong maximum) => IsTaskbarProgressShown = true;
+        public void StopTaskbarProgress() => IsTaskbarProgressShown = false;
         public void SetCursorPos(int x, int y) { }
         public void DisableScreensaver() { }
         public void EnableScreensaver() { }
