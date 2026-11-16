@@ -83,17 +83,22 @@ public class CompareBarTests
     });
 
     [AvaloniaFact]
-    public void CompareBar_BarPinButton_UsesPinAndUnpinTooltips() => WithWindow((window, vm, tab) =>
+    public void CompareBar_Comparing_HasNoBarPinButton() => WithWindow((window, _, tab) =>
     {
         var bar = Compare(window, tab);
-        var pinButton = Assert.IsType<Button>(bar.FindControl<Button>("BarPinButton"));
+        Assert.Null(bar.FindControl<Button>("BarPinButton"));
+        Assert.NotNull(bar.FindControl<Button>("PinButton")); // pins the pair; it stays
+    });
 
-        Assert.Equal(vm.Translation.Pin.Value, ToolTip.GetTip(pinButton));
-
-        pinButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+    [AvaloniaFact]
+    public void CompareBar_AfterInactivity_StaysShown() => WithWindow((window, _, tab) =>
+    {
+        var bar = Compare(window, tab);
+        Thread.Sleep(3500); // longer than the old 3 s auto-hide
         Settle(window);
-
-        Assert.Equal(vm.Translation.Unpin.Value, ToolTip.GetTip(pinButton));
+        Assert.Equal(1, bar.Opacity);
+        Assert.True(bar.IsHitTestVisible);
+        Assert.True(bar.IsEffectivelyVisible);
     });
 
     [AvaloniaFact]

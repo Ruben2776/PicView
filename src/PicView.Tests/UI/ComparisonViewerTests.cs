@@ -451,8 +451,8 @@ public class ComparisonViewerTests
         var viewer = Host(window, tab, configure: static comparison => comparison.SetMode(ComparisonMode.Split));
         var strip = Part<Border>(viewer, "SplitDividerHitStrip");
 
-        // Below the handle, on the strip
-        var point = strip.TranslatePoint(new Point(strip.Bounds.Width / 2, strip.Bounds.Height - 10), window);
+        // Near the top of the strip, away from the handle and the compare bar
+        var point = strip.TranslatePoint(new Point(strip.Bounds.Width / 2, 10), window);
 
         Assert.True(TakesPressAt(window, viewer, point!.Value));
     });
