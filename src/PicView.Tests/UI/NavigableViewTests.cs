@@ -51,6 +51,20 @@ public class NavigableViewTests
         });
 
     [AvaloniaFact]
+    public void ImageViewer_HasNoComparisonControls()
+        => WithWindow((window, _, tab) =>
+        {
+            tab.Display(BitmapModel("a.jpg"));
+            Settle(window);
+
+            var viewer = Assert.IsType<ImageViewer>(ViewerOf(tab));
+            foreach (var name in new[] { "CompareImage", "CompareBar", "SplitOverlay", "SyncedSideBySideGrid", "AlignMarkersCanvas" })
+            {
+                Assert.Null(viewer.FindControl<Control>(name));
+            }
+        });
+
+    [AvaloniaFact]
     public void Crop_SetAndCleared_ReplacesThenShowsTheSameNavigableView()
         => WithWindow((_, _, tab) =>
         {

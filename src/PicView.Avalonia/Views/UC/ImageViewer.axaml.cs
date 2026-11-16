@@ -5,7 +5,6 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
-using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using PicView.Avalonia.CustomControls;
@@ -13,7 +12,6 @@ using PicView.Avalonia.CustomControls.Zoom;
 using PicView.Avalonia.ImageTransformations;
 using PicView.Avalonia.Input;
 using PicView.Avalonia.UI;
-using PicView.Core.Config;
 using PicView.Core.DebugTools;
 using PicView.Core.Extensions;
 using PicView.Core.ViewModels;
@@ -27,25 +25,8 @@ public partial class ImageViewer : UserControl, IDisposable, INavigableContent
     private bool _isLoadedOnce;
     private DisposableBag _disposables;
     private ScaleTransform? _flipTransform;
-    private ScaleTransform? _syncedLeftFlipTransform;
-    private ScaleTransform? _syncedRightFlipTransform;
     private bool _animatesNextFlip;
     private readonly TabViewModel _tab;
-    private DispatcherTimer? _blinkTimer;
-    private bool _blinkShowCompare = true;
-    private bool _isDraggingSplit;
-    private bool _isSyncingZoom;
-    private Point _alignA1;
-    private Point _alignB1;
-    private Point _alignA2;
-    private Point _alignB2;
-    // The hover bar of the NavigableView this viewer is shown in, followed while attached
-    private HoverBar? _hoverBar;
-    private static readonly Cursor CrossCursor = new(StandardCursorType.Cross);
-    private static readonly Geometry SplitVerticalIcon =
-        Geometry.Parse("M5,8 L2,11 L5,14 M11,8 L14,11 L11,14 M2,11 L14,11");
-    private static readonly Geometry SplitHorizontalIcon =
-        Geometry.Parse("M8,5 L11,2 L14,5 M8,11 L11,14 L14,11 M11,2 L11,14");
 
     /// <param name="tab">The tab this viewer shows, which is not always the active one: a viewer is also created for a
     /// tab that opens in the background.</param>
@@ -54,7 +35,6 @@ public partial class ImageViewer : UserControl, IDisposable, INavigableContent
         _tab = tab;
         DataContext = tab;
         InitializeComponent();
-        InitializeComparison();
         ZoomPanControl.ScaleChanged += OnScaleChanged;
         ImageControlHelper.TriggerScalingModeUpdate(MainImage, true);
         Loaded += OnLoaded;
@@ -280,11 +260,7 @@ public partial class ImageViewer : UserControl, IDisposable, INavigableContent
     void INavigableContent.Magnify(PointerDeltaEventArgs e) =>
         ZoomPanControl.ZoomWithPointerWheelCore(e.Delta.Y > 0, e.GetPosition(this));
 
-    // Measured on the zoom control the wheel zooms: the one under the pointer while side by side is synced
-    Point INavigableContent.ZoomPointer(PointerEventArgs e) =>
-        e.GetPosition(_tab.ParentWindowContext.GlobalSettings.IsSideBySideSyncedActive.Value
-            ? (SyncedRightZoom.IsPointerOver ? SyncedRightZoom : SyncedLeftZoom)
-            : ZoomPanControl);
+    Point INavigableContent.ZoomPointer(PointerEventArgs e) => e.GetPosition(ZoomPanControl);
 
     ZoomPreviewer? INavigableContent.ZoomPreview => ZoomPreview;
 
@@ -326,17 +302,8 @@ public partial class ImageViewer : UserControl, IDisposable, INavigableContent
 
     void IZoomScrollTarget.ScrollToEnd() => ImageScrollViewer.ScrollToEnd();
 
-    void IZoomScrollTarget.ZoomAt(bool zoomIn, Point pointer)
-    {
-        if (_tab.ParentWindowContext.GlobalSettings.IsSideBySideSyncedActive.Value)
-        {
-            var target = SyncedRightZoom.IsPointerOver ? SyncedRightZoom : SyncedLeftZoom;
-            target.ZoomWithPointerWheelCore(zoomIn, pointer);
-            return;
-        }
-
+    void IZoomScrollTarget.ZoomAt(bool zoomIn, Point pointer) =>
         ZoomPanControl.ZoomWithPointerWheelCore(zoomIn, pointer);
-    }
 
     private void InitializeImageTransformer()
     {
@@ -347,8 +314,6 @@ public partial class ImageViewer : UserControl, IDisposable, INavigableContent
 
         _isInitialized = true;
         ZoomPanControl.Initialize(ZoomPreview);
-        SyncedLeftZoom.Initialize();
-        SyncedRightZoom.Initialize();
         
         if (DataContext is not TabViewModel tab)
         {
@@ -380,11 +345,6 @@ public partial class ImageViewer : UserControl, IDisposable, INavigableContent
     /// </summary>
     private void OnScaleChanged(double scale)
     {
-        if (_tab.ParentWindowContext.GlobalSettings.IsSideBySideSyncedActive.Value)
-        {
-            return;
-        }
-
         _tab.Zoom.SetFactor(scale);
         if (Settings.Zoom.IsShowingZoomPercentagePopup)
         {
@@ -416,57 +376,20 @@ public partial class ImageViewer : UserControl, IDisposable, INavigableContent
             : default;
 
     /// <inheritdoc cref="CustomControls.Zoom.ZoomPanControl.ZoomIn"/>
-    public void ZoomIn()
-    {
-        if (_tab.ParentWindowContext.GlobalSettings.IsSideBySideSyncedActive.Value)
-        {
-            SyncedLeftZoom.ZoomIn();
-            return;
-        }
-
+    public void ZoomIn() =>
         ZoomPanControl.ZoomIn();
-    }
 
     /// <inheritdoc cref="ZoomPanControl.ZoomOut"/>
-    public void ZoomOut()
-    {
-        if (_tab.ParentWindowContext.GlobalSettings.IsSideBySideSyncedActive.Value)
-        {
-            SyncedLeftZoom.ZoomOut();
-            return;
-        }
-
+    public void ZoomOut() =>
         ZoomPanControl.ZoomOut();
-    }
 
     /// <inheritdoc cref="ZoomPanControl.ResetZoom(bool)"/>
-    public void ResetZoom(bool enableAnimations = true)
-    {
-        if (_tab.ParentWindowContext.GlobalSettings.IsSideBySideSyncedActive.Value)
-        {
-            SyncedLeftZoom.ResetZoom(enableAnimations);
-            SyncedRightZoom.ResetZoom(enableAnimations);
-            _tab.Zoom.SetFactor(1.0);
-            return;
-        }
-
+    public void ResetZoom(bool enableAnimations = true) =>
         ZoomPanControl.ResetZoom(enableAnimations);
-        _tab.Zoom.SetFactor(1.0);
-    }
-
+    
     /// <inheritdoc cref="ZoomPanControl.ResetZoomSlim"/>
-    public void ResetZoomSlim()
-    {
-        if (_tab.ParentWindowContext.GlobalSettings.IsSideBySideSyncedActive.Value)
-        {
-            SyncedLeftZoom.ResetZoomSlim();
-            SyncedRightZoom.ResetZoomSlim();
-            _tab.Zoom.SetFactor(1.0);
-            return;
-        }
-
+    public void ResetZoomSlim() =>
         ZoomPanControl.ResetZoomSlim();
-    }
     
     #endregion
 
@@ -501,693 +424,29 @@ public partial class ImageViewer : UserControl, IDisposable, INavigableContent
         // Read when it runs, not when it was posted: a flip on the UI thread and a reset on the loading thread may
         // land in either order, and the one written last is the one to show
         var scaleX = _tab.Orientation.Current.CurrentValue.IsFlipped ? -1d : 1d;
-        var animate = _animatesNextFlip;
-        _animatesNextFlip = false;
 
-        ApplyFlipTransform(MainTransform, ref _flipTransform, scaleX, animate);
-        ApplyFlipTransform(SyncedLeftTransform, ref _syncedLeftFlipTransform, scaleX, animate);
-        ApplyFlipTransform(SyncedRightTransform, ref _syncedRightFlipTransform, scaleX, animate);
-    }
-
-    private static void ApplyFlipTransform(LayoutTransformControl target, ref ScaleTransform? transform, double scaleX, bool animate)
-    {
-        if (transform is null)
+        if (_flipTransform is null)
         {
             if (scaleX is 1)
             {
                 return;
             }
 
-            transform = new ScaleTransform();
-            target.RenderTransform = transform;
+            _flipTransform = new ScaleTransform();
+            MainTransform.RenderTransform = _flipTransform;
         }
 
-        transform.Transitions = animate
+        _flipTransform.Transitions = _animatesNextFlip
             ? [new DoubleTransition { Property = ScaleTransform.ScaleXProperty, Duration = TimeSpan.FromSeconds(.2) }]
             : null;
-        transform.ScaleX = scaleX;
+        _animatesNextFlip = false;
+        _flipTransform.ScaleX = scaleX;
     }
         
     #endregion
 
-    #region Comparison Modes
-
-    private void InitializeComparison()
-    {
-        var gs = _tab.ParentWindowContext.GlobalSettings;
-
-        gs.IsComparing.Subscribe(_ => ApplyComparisonVisuals()).AddTo(ref _disposables);
-        gs.ComparisonMode.Subscribe(_ => ApplyComparisonVisuals()).AddTo(ref _disposables);
-        gs.ComparisonOverlayOpacity.Subscribe(_ => ApplyComparisonVisuals()).AddTo(ref _disposables);
-        gs.ComparisonSplitRatio.Subscribe(_ => UpdateSplitClipAndOverlay()).AddTo(ref _disposables);
-        gs.IsComparisonSplitHorizontal.Subscribe(_ => UpdateSplitClipAndOverlay()).AddTo(ref _disposables);
-        gs.IsComparisonBlinkFast.Subscribe(_ => UpdateBlinkTimer()).AddTo(ref _disposables);
-        gs.ComparisonBlinkInterval.Subscribe(_ => UpdateBlinkTimer()).AddTo(ref _disposables);
-        _tab.ParentWindowContext.WindowTabs.ActiveTab.Subscribe(_ => UpdateBlinkTimer()).AddTo(ref _disposables);
-        gs.IsComparisonStretchFill.Subscribe(_ => ApplyComparisonVisuals()).AddTo(ref _disposables);
-        gs.ShowHoverBar.Subscribe(_ => UpdateCompareBarMargin()).AddTo(ref _disposables);
-        _tab.IsComparisonSwapped.Subscribe(_ => UpdateComparisonBadges()).AddTo(ref _disposables);
-        _tab.DisplayPrimaryFileInfo.Subscribe(_ => UpdateComparisonBadges()).AddTo(ref _disposables);
-        _tab.DisplaySecondaryFileInfo.Subscribe(_ => UpdateComparisonBadges()).AddTo(ref _disposables);
-        _tab.HasAlignment.Subscribe(has =>
-        {
-            if (!has)
-            {
-                CompareImage.RenderTransform = null;
-            }
-        }).AddTo(ref _disposables);
-        _tab.IsAligning.Subscribe(aligning =>
-        {
-            CompareHostGrid.Cursor = aligning ? CrossCursor : null;
-            ZoomPanControl.SuspendPanning = aligning;
-            AlignMarkersCanvas.Children.Clear();
-            if (aligning && _tab.HasAlignment.Value)
-            {
-                CompareImage.RenderTransform = null;
-                _tab.HasAlignment.Value = false;
-            }
-        }).AddTo(ref _disposables);
-        gs.IsSideBySideSyncedActive.AsObservable().Subscribe(active =>
-        {
-            if (active)
-            {
-                SyncedLeftZoom.ResetZoom(false);
-                SyncedRightZoom.ResetZoom(false);
-                _tab.Zoom.SetFactor(1.0);
-            }
-            else
-            {
-                HideSyncedCrosshairs();
-                _tab.Zoom.SetFactor(ZoomPanControl.Scale);
-            }
-        }).AddTo(ref _disposables);
-
-        SyncedLeftZoom.ViewChanged += OnSyncedLeftViewChanged;
-        SyncedRightZoom.ViewChanged += OnSyncedRightViewChanged;
-        SyncedLeftZoom.ScaleChanged += OnSyncedScaleChanged;
-        SyncedLeftZoom.PointerMoved += OnSyncedLeftPointerMoved;
-        SyncedLeftZoom.PointerExited += OnSyncedPointerExited;
-        SyncedRightZoom.PointerMoved += OnSyncedRightPointerMoved;
-        SyncedRightZoom.PointerExited += OnSyncedPointerExited;
-
-        CompareHostGrid.SizeChanged += OnCompareHostSizeChanged;
-        CompareHostGrid.PointerPressed += OnCompareHostPointerPressed;
-        ZoomPanControl.ViewChanged += OnMainZoomViewChanged;
-        SplitOverlay.PointerPressed += OnSplitPointerPressed;
-        SplitOverlay.PointerMoved += OnSplitPointerMoved;
-        SplitOverlay.PointerReleased += OnSplitPointerReleased;
-        SplitOverlay.PointerCaptureLost += OnSplitPointerCaptureLost;
-        SplitHandle.KeyDown += OnSplitHandleKeyDown;
-        MainPanel.PointerMoved += OnMainPanelPointerMoved;
-
-        UpdateCompareBarMargin();
-        UpdateComparisonBadges();
-        ApplyComparisonVisuals();
-    }
-
-    private void OnCompareHostSizeChanged(object? sender, SizeChangedEventArgs e) =>
-        UpdateSplitClipAndOverlay();
-
-    private void OnMainZoomViewChanged() =>
-        UpdateSplitClipAndOverlay();
-
-    private void ApplyComparisonVisuals()
-    {
-        var gs = _tab.ParentWindowContext.GlobalSettings;
-        CompareImage.Stretch = gs.IsComparisonStretchFill.CurrentValue ? Stretch.Fill : Stretch.Uniform;
-        if (!gs.IsComparing.CurrentValue)
-        {
-            StopBlinkTimer();
-            CompareImage.BlendMode = BitmapBlendingMode.Difference;
-            CompareImage.Opacity = 1.0;
-            CompareImage.Clip = null;
-            return;
-        }
-
-        switch (gs.ComparisonMode.CurrentValue)
-        {
-            case ComparisonMode.Overlay:
-                StopBlinkTimer();
-                CompareImage.BlendMode = BitmapBlendingMode.Unspecified;
-                CompareImage.Opacity = Math.Clamp(gs.ComparisonOverlayOpacity.CurrentValue, 0.0, 1.0);
-                CompareImage.Clip = null;
-                break;
-
-            case ComparisonMode.Split:
-                StopBlinkTimer();
-                CompareImage.BlendMode = BitmapBlendingMode.Unspecified;
-                CompareImage.Opacity = 1.0;
-                UpdateSplitClipAndOverlay();
-                break;
-
-            case ComparisonMode.Blink:
-                CompareImage.BlendMode = BitmapBlendingMode.Unspecified;
-                CompareImage.Clip = null;
-                UpdateBlinkTimer();
-                break;
-
-            case ComparisonMode.Difference:
-            default:
-                StopBlinkTimer();
-                CompareImage.BlendMode = BitmapBlendingMode.Difference;
-                CompareImage.Opacity = 1.0;
-                CompareImage.Clip = null;
-                break;
-        }
-    }
-
-    private void UpdateSplitClipAndOverlay()
-    {
-        var gs = _tab.ParentWindowContext.GlobalSettings;
-        if (!gs.IsComparing.CurrentValue || gs.ComparisonMode.CurrentValue != ComparisonMode.Split)
-        {
-            CompareImage.Clip = null;
-            return;
-        }
-
-        var bounds = CompareHostGrid.Bounds;
-        var w = bounds.Width;
-        var h = bounds.Height;
-        if (w <= 0 || h <= 0)
-        {
-            return;
-        }
-
-        var ratio = Math.Clamp(gs.ComparisonSplitRatio.CurrentValue, 0.0, 1.0);
-        var isHorizontal = gs.IsComparisonSplitHorizontal.CurrentValue;
-
-        if (isHorizontal)
-        {
-            var splitY = h * ratio;
-            CompareImage.Clip = new RectangleGeometry(new Rect(0, 0, w, splitY));
-
-            var screenPos = CompareHostGrid.TranslatePoint(new Point(w * 0.5, splitY), MainPanel);
-            var lineY = screenPos?.Y ?? splitY;
-            var handleX = screenPos?.X ?? w * 0.5;
-            var mainH = MainPanel.Bounds.Height > 0 ? MainPanel.Bounds.Height : h;
-            var mainW = MainPanel.Bounds.Width > 0 ? MainPanel.Bounds.Width : w;
-
-            SplitDividerLine.HorizontalAlignment = global::Avalonia.Layout.HorizontalAlignment.Stretch;
-            SplitDividerLine.VerticalAlignment = global::Avalonia.Layout.VerticalAlignment.Top;
-            SplitDividerLine.Width = double.NaN;
-            SplitDividerLine.Height = 2;
-            SplitDividerLine.Margin = new Thickness(0, Math.Clamp(lineY - 1, 0, Math.Max(0, mainH - 2)), 0, 0);
-
-            SplitDividerHitStrip.HorizontalAlignment = global::Avalonia.Layout.HorizontalAlignment.Stretch;
-            SplitDividerHitStrip.VerticalAlignment = global::Avalonia.Layout.VerticalAlignment.Top;
-            SplitDividerHitStrip.Width = double.NaN;
-            SplitDividerHitStrip.Height = 16;
-            SplitDividerHitStrip.Margin = new Thickness(0, Math.Clamp(lineY - 8, 0, Math.Max(0, mainH - 16)), 0, 0);
-            SplitDividerHitStrip.Cursor = new Cursor(StandardCursorType.SizeNorthSouth);
-
-            SplitHandle.HorizontalAlignment = global::Avalonia.Layout.HorizontalAlignment.Left;
-            SplitHandle.VerticalAlignment = global::Avalonia.Layout.VerticalAlignment.Top;
-            SplitHandle.Margin = new Thickness(
-                Math.Clamp(handleX - 14, 0, Math.Max(0, mainW - 28)),
-                Math.Clamp(lineY - 14, 0, Math.Max(0, mainH - 28)),
-                0, 0);
-            SplitHandle.Cursor = new Cursor(StandardCursorType.SizeNorthSouth);
-            SplitHandleIcon.Data = SplitHorizontalIcon;
-        }
-        else
-        {
-            var splitX = w * ratio;
-            CompareImage.Clip = new RectangleGeometry(new Rect(0, 0, splitX, h));
-
-            var screenPos = CompareHostGrid.TranslatePoint(new Point(splitX, h * 0.5), MainPanel);
-            var lineX = screenPos?.X ?? splitX;
-            var handleY = screenPos?.Y ?? h * 0.5;
-            var mainH = MainPanel.Bounds.Height > 0 ? MainPanel.Bounds.Height : h;
-            var mainW = MainPanel.Bounds.Width > 0 ? MainPanel.Bounds.Width : w;
-
-            SplitDividerLine.HorizontalAlignment = global::Avalonia.Layout.HorizontalAlignment.Left;
-            SplitDividerLine.VerticalAlignment = global::Avalonia.Layout.VerticalAlignment.Stretch;
-            SplitDividerLine.Width = 2;
-            SplitDividerLine.Height = double.NaN;
-            SplitDividerLine.Margin = new Thickness(Math.Clamp(lineX - 1, 0, Math.Max(0, mainW - 2)), 0, 0, 0);
-
-            SplitDividerHitStrip.HorizontalAlignment = global::Avalonia.Layout.HorizontalAlignment.Left;
-            SplitDividerHitStrip.VerticalAlignment = global::Avalonia.Layout.VerticalAlignment.Stretch;
-            SplitDividerHitStrip.Width = 16;
-            SplitDividerHitStrip.Height = double.NaN;
-            SplitDividerHitStrip.Margin = new Thickness(Math.Clamp(lineX - 8, 0, Math.Max(0, mainW - 16)), 0, 0, 0);
-            SplitDividerHitStrip.Cursor = new Cursor(StandardCursorType.SizeWestEast);
-
-            SplitHandle.HorizontalAlignment = global::Avalonia.Layout.HorizontalAlignment.Left;
-            SplitHandle.VerticalAlignment = global::Avalonia.Layout.VerticalAlignment.Top;
-            SplitHandle.Margin = new Thickness(
-                Math.Clamp(lineX - 14, 0, Math.Max(0, mainW - 28)),
-                Math.Clamp(handleY - 14, 0, Math.Max(0, mainH - 28)),
-                0, 0);
-            SplitHandle.Cursor = new Cursor(StandardCursorType.SizeWestEast);
-            SplitHandleIcon.Data = SplitVerticalIcon;
-        }
-    }
-
-    private void OnSplitPointerPressed(object? sender, PointerPressedEventArgs e)
-    {
-        var gs = _tab.ParentWindowContext.GlobalSettings;
-        if (!gs.IsSplitMode.Value || !e.GetCurrentPoint(SplitOverlay).Properties.IsLeftButtonPressed)
-        {
-            return;
-        }
-
-        if (e.ClickCount == 2 && SplitHandle.Bounds.Inflate(6).Contains(e.GetPosition(SplitOverlay)))
-        {
-            gs.ComparisonSplitRatio.Value = 0.5;
-            e.Handled = true;
-            return;
-        }
-
-        _isDraggingSplit = true;
-        e.Pointer.Capture(SplitOverlay);
-        UpdateSplitFromPointer(e.GetPosition(MainPanel));
-        e.Handled = true;
-    }
-
-    private void OnSplitPointerMoved(object? sender, PointerEventArgs e)
-    {
-        if (!_isDraggingSplit)
-        {
-            return;
-        }
-
-        UpdateSplitFromPointer(e.GetPosition(MainPanel));
-        e.Handled = true;
-    }
-
-    private void OnSplitPointerReleased(object? sender, PointerReleasedEventArgs e)
-    {
-        if (!_isDraggingSplit)
-        {
-            return;
-        }
-
-        _isDraggingSplit = false;
-        e.Pointer.Capture(null);
-        e.Handled = true;
-    }
-
-    private void OnSplitPointerCaptureLost(object? sender, PointerCaptureLostEventArgs e) =>
-        _isDraggingSplit = false;
-
-    private void UpdateSplitFromPointer(Point mainPanelPos)
-    {
-        var hostBounds = CompareHostGrid.Bounds;
-        if (hostBounds.Width <= 0 || hostBounds.Height <= 0)
-        {
-            return;
-        }
-
-        var mapped = MainPanel.TranslatePoint(mainPanelPos, CompareHostGrid) ?? mainPanelPos;
-        var gs = _tab.ParentWindowContext.GlobalSettings;
-        var ratio = gs.IsComparisonSplitHorizontal.CurrentValue
-            ? mapped.Y / hostBounds.Height
-            : mapped.X / hostBounds.Width;
-        gs.ComparisonSplitRatio.Value = Math.Clamp(ratio, 0.0, 1.0);
-    }
-
-    private void UpdateBlinkTimer()
-    {
-        var gs = _tab.ParentWindowContext.GlobalSettings;
-        var isTabActive = _tab.IsSelected || ReferenceEquals(_tab.ParentWindowContext.WindowTabs.ActiveTab.CurrentValue, _tab);
-        if (!isTabActive || !gs.IsComparing.CurrentValue || gs.ComparisonMode.CurrentValue != ComparisonMode.Blink)
-        {
-            StopBlinkTimer();
-            return;
-        }
-
-        var seconds = gs.IsComparisonBlinkFast.CurrentValue
-            ? 0.3
-            : Math.Clamp(gs.ComparisonBlinkInterval.CurrentValue, 0.1, 5.0);
-
-        if (_blinkTimer is null)
-        {
-            _blinkTimer = new DispatcherTimer();
-            _blinkTimer.Tick += OnBlinkTick;
-        }
-
-        _blinkTimer.Interval = TimeSpan.FromSeconds(seconds);
-        if (!_blinkTimer.IsEnabled)
-        {
-            _blinkShowCompare = true;
-            CompareImage.Opacity = 1.0;
-            _blinkTimer.Start();
-        }
-    }
-
-    private void OnBlinkTick(object? sender, EventArgs e)
-    {
-        if (!_tab.IsSelected)
-        {
-            return;
-        }
-
-        _blinkShowCompare = !_blinkShowCompare;
-        CompareImage.Opacity = _blinkShowCompare ? 1.0 : 0.0;
-    }
-
-    private void StopBlinkTimer()
-    {
-        if (_blinkTimer is { IsEnabled: true })
-        {
-            _blinkTimer.Stop();
-        }
-        _blinkShowCompare = true;
-    }
-
-    private void OnSyncedLeftViewChanged() =>
-        SyncSyncedZoom(SyncedLeftZoom, SyncedLeftImage, SyncedRightZoom, SyncedRightImage);
-
-    private void OnSyncedRightViewChanged()
-    {
-        SyncSyncedZoom(SyncedRightZoom, SyncedRightImage, SyncedLeftZoom, SyncedLeftImage);
-        if (!_isSyncingZoom)
-        {
-            _tab.Zoom.SetFactor(SyncedRightZoom.Scale);
-        }
-    }
-
-    private void SyncSyncedZoom(ZoomPanControl sourceZoom, PicBox sourceImage, ZoomPanControl targetZoom, PicBox targetImage)
-    {
-        if (_isSyncingZoom)
-        {
-            return;
-        }
-
-        _isSyncingZoom = true;
-        try
-        {
-            var srcRect = GetUniformImageRect(sourceImage, sourceZoom);
-            var dstRect = GetUniformImageRect(targetImage, targetZoom);
-            if (srcRect.Width > 0 && srcRect.Height > 0 && dstRect.Width > 0 && dstRect.Height > 0)
-            {
-                var viewCenter = sourceZoom.ViewCenter;
-                var u = (viewCenter.X - srcRect.X) / srcRect.Width;
-                var v = (viewCenter.Y - srcRect.Y) / srcRect.Height;
-                var targetCenter = new Point(dstRect.X + u * dstRect.Width, dstRect.Y + v * dstRect.Height);
-                targetZoom.ShowChildAt(sourceZoom.Scale, targetCenter);
-            }
-            else
-            {
-                targetZoom.SyncTransformFrom(sourceZoom);
-            }
-        }
-        finally
-        {
-            _isSyncingZoom = false;
-        }
-    }
-
-    private static Rect GetUniformImageRect(PicBox picBox, ZoomPanControl zoom)
-    {
-        if (picBox.Bounds.Width > 0 && picBox.Bounds.Height > 0)
-        {
-            return picBox.Bounds;
-        }
-
-        var containerBounds = (zoom.Child as Control)?.Bounds ?? zoom.Bounds;
-        if (containerBounds.Width <= 0 || containerBounds.Height <= 0)
-        {
-            return default;
-        }
-
-        var sourceSize = picBox.Source is IImage img ? img.Size : default;
-        if (sourceSize.Width <= 0 || sourceSize.Height <= 0)
-        {
-            return new Rect(0, 0, containerBounds.Width, containerBounds.Height);
-        }
-
-        var ratio = Math.Min(containerBounds.Width / sourceSize.Width, containerBounds.Height / sourceSize.Height);
-        var w = sourceSize.Width * ratio;
-        var h = sourceSize.Height * ratio;
-        return new Rect((containerBounds.Width - w) * 0.5, (containerBounds.Height - h) * 0.5, w, h);
-    }
-
-    private void OnSyncedScaleChanged(double scale)
-    {
-        if (_tab.ParentWindowContext.GlobalSettings.IsSideBySideSyncedActive.Value)
-        {
-            _tab.Zoom.SetFactor(scale);
-        }
-    }
-
-    private void UpdateComparisonBadges()
-    {
-        var swapped = _tab.IsComparisonSwapped.CurrentValue;
-        var leftLabel = swapped ? "B" : "A";
-        var rightLabel = swapped ? "A" : "B";
-        var leftName = _tab.DisplayPrimaryFileInfo.CurrentValue?.Name;
-        var rightName = _tab.DisplaySecondaryFileInfo.CurrentValue?.Name;
-        SyncedLeftBadgeText.Text = string.IsNullOrEmpty(leftName) ? leftLabel : $"{leftLabel} · {leftName}";
-        SyncedRightBadgeText.Text = string.IsNullOrEmpty(rightName) ? rightLabel : $"{rightLabel} · {rightName}";
-    }
-
-    private void OnMainPanelPointerMoved(object? sender, PointerEventArgs e) =>
-        CompareBar.NotifyUserActivity();
-
-    private void OnHoverBarSizeChanged(object? sender, SizeChangedEventArgs e) =>
-        UpdateCompareBarMargin();
-
-    // The hover bar is the NavigableView's, which this viewer finds once it is shown in one
-    protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
-    {
-        base.OnAttachedToVisualTree(e);
-        UnfollowHoverBar();
-        _hoverBar = this.FindAncestorOfType<NavigableView>()?.HoverBar;
-        if (_hoverBar is null)
-        {
-            return;
-        }
-
-        _hoverBar.SizeChanged += OnHoverBarSizeChanged;
-        UpdateCompareBarMargin();
-    }
-
-    protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
-    {
-        base.OnDetachedFromVisualTree(e);
-        UnfollowHoverBar();
-    }
-
-    private void UnfollowHoverBar()
-    {
-        if (_hoverBar is null)
-        {
-            return;
-        }
-
-        _hoverBar.SizeChanged -= OnHoverBarSizeChanged;
-        _hoverBar = null;
-    }
-
-    private void UpdateCompareBarMargin()
-    {
-        if (this.FindAncestorOfType<NavigableView>()?.HoverBar is not { } hoverBar)
-        {
-            return;
-        }
-
-        var hoverVisible = hoverBar.IsVisible && hoverBar.Bounds.Height > 0;
-        var bottom = hoverVisible
-            ? hoverBar.Bounds.Height + hoverBar.Margin.Bottom + 12d
-            : 18d;
-        CompareBar.Margin = new Thickness(0, 0, 0, bottom);
-    }
-
-    private void OnCompareHostPointerPressed(object? sender, PointerPressedEventArgs e)
-    {
-        if (!_tab.IsAligning.Value || !e.GetCurrentPoint(CompareHostGrid).Properties.IsLeftButtonPressed)
-        {
-            return;
-        }
-
-        var pt = e.GetPosition(CompareHostGrid);
-        switch (_tab.AlignmentStep.Value)
-        {
-            case 1:
-                _alignA1 = pt;
-                AddAlignMarker(pt, "A1", isSecondary: false);
-                _tab.AlignmentStep.Value = 2;
-                break;
-            case 2:
-                _alignB1 = pt;
-                AddAlignMarker(pt, "B1", isSecondary: true);
-                _tab.AlignmentStep.Value = 3;
-                break;
-            case 3:
-                _alignA2 = pt;
-                AddAlignMarker(pt, "A2", isSecondary: false);
-                _tab.AlignmentStep.Value = 4;
-                break;
-            case 4:
-                _alignB2 = pt;
-                if (PicView.Core.Comparison.SimilarityTransform.TryCompute(
-                        (_alignA1.X, _alignA1.Y),
-                        (_alignA2.X, _alignA2.Y),
-                        (_alignB1.X, _alignB1.Y),
-                        (_alignB2.X, _alignB2.Y),
-                        out var m))
-                {
-                    CompareImage.RenderTransformOrigin = new RelativePoint(0, 0, RelativeUnit.Absolute);
-                    CompareImage.RenderTransform = new MatrixTransform(
-                        new Matrix(m.M11, m.M12, m.M21, m.M22, m.OffsetX, m.OffsetY));
-                    _tab.HasAlignment.Value = true;
-                }
-
-                AlignMarkersCanvas.Children.Clear();
-                _tab.IsAligning.Value = false;
-                _tab.AlignmentStep.Value = 0;
-                break;
-        }
-
-        e.Handled = true;
-    }
-
-    private void AddAlignMarker(Point pt, string label, bool isSecondary)
-    {
-        var fill = isSecondary ? Color.Parse("#FFEC4899") : Color.Parse("#FF38BDF8");
-        var marker = new Border
-        {
-            Width = 20,
-            Height = 20,
-            CornerRadius = new CornerRadius(10),
-            Background = new SolidColorBrush(fill, 0.88),
-            BorderBrush = Brushes.White,
-            BorderThickness = new Thickness(1.5),
-            Child = new TextBlock
-            {
-                Text = label,
-                FontSize = 9,
-                FontWeight = FontWeight.Bold,
-                Foreground = Brushes.White,
-                HorizontalAlignment = global::Avalonia.Layout.HorizontalAlignment.Center,
-                VerticalAlignment = global::Avalonia.Layout.VerticalAlignment.Center
-            }
-        };
-        Canvas.SetLeft(marker, pt.X - 10);
-        Canvas.SetTop(marker, pt.Y - 10);
-        AlignMarkersCanvas.Children.Add(marker);
-    }
-
-    private void OnSplitHandleKeyDown(object? sender, KeyEventArgs e)
-    {
-        var gs = _tab.ParentWindowContext.GlobalSettings;
-        if (!gs.IsSplitMode.Value)
-        {
-            return;
-        }
-
-        switch (e.Key)
-        {
-            case Key.Left:
-            case Key.Up:
-                gs.ComparisonSplitRatio.Value = Math.Clamp(gs.ComparisonSplitRatio.CurrentValue - 0.01, 0.0, 1.0);
-                e.Handled = true;
-                break;
-            case Key.Right:
-            case Key.Down:
-                gs.ComparisonSplitRatio.Value = Math.Clamp(gs.ComparisonSplitRatio.CurrentValue + 0.01, 0.0, 1.0);
-                e.Handled = true;
-                break;
-            case Key.Home:
-                gs.ComparisonSplitRatio.Value = 0.5;
-                e.Handled = true;
-                break;
-        }
-    }
-
-    private void OnSyncedLeftPointerMoved(object? sender, PointerEventArgs e) =>
-        UpdateSyncedCrosshair(e, SyncedLeftZoom, SyncedLeftImage, SyncedRightZoom, SyncedRightImage, SyncedRightCrosshair, SyncedLeftCrosshair);
-
-    private void OnSyncedRightPointerMoved(object? sender, PointerEventArgs e) =>
-        UpdateSyncedCrosshair(e, SyncedRightZoom, SyncedRightImage, SyncedLeftZoom, SyncedLeftImage, SyncedLeftCrosshair, SyncedRightCrosshair);
-
-    private void OnSyncedPointerExited(object? sender, PointerEventArgs e) =>
-        HideSyncedCrosshairs();
-
-    private void HideSyncedCrosshairs()
-    {
-        SyncedLeftCrosshair.IsVisible = false;
-        SyncedRightCrosshair.IsVisible = false;
-    }
-
-    private void UpdateSyncedCrosshair(
-        PointerEventArgs e,
-        ZoomPanControl sourceZoom,
-        PicBox sourceImage,
-        ZoomPanControl targetZoom,
-        PicBox targetImage,
-        global::Avalonia.Controls.Shapes.Path targetCrosshair,
-        global::Avalonia.Controls.Shapes.Path sourceCrosshair)
-    {
-        if (!_tab.ParentWindowContext.GlobalSettings.IsSideBySideSyncedActive.Value)
-        {
-            HideSyncedCrosshairs();
-            return;
-        }
-
-        sourceCrosshair.IsVisible = false;
-        var srcVisual = (sourceZoom.Child as Visual) ?? sourceImage;
-        var targetVisual = (targetZoom.Child as Visual) ?? targetImage;
-        var srcPt = e.GetPosition(srcVisual);
-        var srcRect = GetUniformImageRect(sourceImage, sourceZoom);
-        var dstRect = GetUniformImageRect(targetImage, targetZoom);
-        if (srcRect.Width <= 0 || srcRect.Height <= 0 || dstRect.Width <= 0 || dstRect.Height <= 0)
-        {
-            targetCrosshair.IsVisible = false;
-            return;
-        }
-
-        var u = (srcPt.X - srcRect.X) / srcRect.Width;
-        var v = (srcPt.Y - srcRect.Y) / srcRect.Height;
-        if (u is < 0 or > 1 || v is < 0 or > 1)
-        {
-            targetCrosshair.IsVisible = false;
-            return;
-        }
-
-        var dstImagePt = new Point(dstRect.X + u * dstRect.Width, dstRect.Y + v * dstRect.Height);
-        if (targetCrosshair.Parent is Visual canvas && targetVisual.TranslatePoint(dstImagePt, canvas) is { } canvasPt)
-        {
-            Canvas.SetLeft(targetCrosshair, canvasPt.X - 8);
-            Canvas.SetTop(targetCrosshair, canvasPt.Y - 8);
-            targetCrosshair.IsVisible = true;
-        }
-        else
-        {
-            targetCrosshair.IsVisible = false;
-        }
-    }
-
-    #endregion
-
     public void Dispose()
     {
-        SyncedLeftZoom.ViewChanged -= OnSyncedLeftViewChanged;
-        SyncedRightZoom.ViewChanged -= OnSyncedRightViewChanged;
-        SyncedLeftZoom.ScaleChanged -= OnSyncedScaleChanged;
-        SyncedLeftZoom.PointerMoved -= OnSyncedLeftPointerMoved;
-        SyncedLeftZoom.PointerExited -= OnSyncedPointerExited;
-        SyncedRightZoom.PointerMoved -= OnSyncedRightPointerMoved;
-        SyncedRightZoom.PointerExited -= OnSyncedPointerExited;
-        StopBlinkTimer();
-        if (_blinkTimer is not null)
-        {
-            _blinkTimer.Tick -= OnBlinkTick;
-            _blinkTimer = null;
-        }
-        CompareHostGrid.SizeChanged -= OnCompareHostSizeChanged;
-        CompareHostGrid.PointerPressed -= OnCompareHostPointerPressed;
-        ZoomPanControl.ViewChanged -= OnMainZoomViewChanged;
-        SplitOverlay.PointerPressed -= OnSplitPointerPressed;
-        SplitOverlay.PointerMoved -= OnSplitPointerMoved;
-        SplitOverlay.PointerReleased -= OnSplitPointerReleased;
-        SplitOverlay.PointerCaptureLost -= OnSplitPointerCaptureLost;
-        SplitHandle.KeyDown -= OnSplitHandleKeyDown;
-        UnfollowHoverBar();
-        MainPanel.PointerMoved -= OnMainPanelPointerMoved;
-        CompareBar.Dispose();
         ZoomPanControl.ScaleChanged -= OnScaleChanged;
         MainPanel.LayoutUpdated -= OnMotionPhotoBadgeAnchorChanged;
         MotionPhotoView.LayoutUpdated -= OnMotionPhotoBadgeAnchorChanged;
@@ -1202,7 +461,7 @@ public partial class ImageViewer : UserControl, IDisposable, INavigableContent
         SecondaryMotionPhotoView.FirstFrameShown -= OnMotionPhotoFirstFrameShown;
         SecondaryMotionPhotoView.Dispose();
         _disposables.Dispose();
-
+        
         GC.SuppressFinalize(this);
     }
 }
