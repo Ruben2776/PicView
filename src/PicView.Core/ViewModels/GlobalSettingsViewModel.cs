@@ -276,7 +276,7 @@ public class GlobalSettingsViewModel
         }, DebugHelper.LogError(nameof(GlobalSettingsViewModel), nameof(Follow)));
     }
 
-    private void SaveSoon()
+    internal void SaveSoon()
     {
         while (true)
         {
