@@ -264,6 +264,8 @@ public partial class ImageViewer : UserControl, IDisposable, INavigableContent
 
     ZoomPreviewer? INavigableContent.ZoomPreview => ZoomPreview;
 
+    Control? INavigableContent.DockedBar => null;
+
     bool INavigableContent.TakesPress(PointerPressedEventArgs e) => false;
 
     /// <inheritdoc/>

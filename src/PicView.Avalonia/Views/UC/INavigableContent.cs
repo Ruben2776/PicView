@@ -1,4 +1,5 @@
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Input;
 using PicView.Avalonia.Input;
 
@@ -46,6 +47,12 @@ public interface INavigableContent : IZoomScrollTarget
     /// nothing when it has none.
     /// </summary>
     ZoomPreviewer? ZoomPreview { get; }
+
+    /// <summary>
+    /// The control the navigable view docks to an edge of the view while this viewer is shown, so it takes its own
+    /// space, or nothing when it has none.
+    /// </summary>
+    Control? DockedBar { get; }
 
     /// <summary>
     /// Whether the viewer takes the press of <paramref name="e"/> for itself, as a drag of a control or a point it

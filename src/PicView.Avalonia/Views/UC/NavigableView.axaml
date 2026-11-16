@@ -11,6 +11,9 @@
     <DockPanel LastChildFill="True">
         <gallery:GalleryView x:Name="GalleryView" ZIndex="1" />
 
+        <!--  The shown viewer's docked bar, moved here so it takes its own space at an edge, inside the gallery's  -->
+        <Panel x:Name="BarHost" IsVisible="{CompiledBinding !Gallery.IsGalleryExpanded.Value}" />
+
         <Panel
             x:Name="ContentPanel"
             Background="{CompiledBinding ParentWindowContext.GlobalSettings.ImageBackground.Value,

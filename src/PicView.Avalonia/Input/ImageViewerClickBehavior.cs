@@ -40,7 +40,7 @@ public static class ImageViewerClickBehavior
                 var view = vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.Value;
                 switch (view)
                 {
-                    case NavigableView nav when nav.GalleryView.IsPointerOver:
+                    case NavigableView nav when nav.GalleryView.IsPointerOver || nav.BarHost.IsPointerOver:
                         return;
                     case NavigableView nav when nav.ClickArrowLeft.IsPointerOver || nav.ClickArrowRight.IsPointerOver:
                     case StartUpMenu startUpMenu when startUpMenu.Buttons.IsPointerOver:
