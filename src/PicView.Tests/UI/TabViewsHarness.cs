@@ -5,6 +5,7 @@ using ImageMagick;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Interfaces;
 using PicView.Avalonia.UI;
+using PicView.Avalonia.Views.UC;
 using PicView.Core.ImageDecoding;
 using PicView.Core.Models;
 using PicView.Core.Navigation;
@@ -24,6 +25,8 @@ namespace PicView.Tests.UI;
 internal static class TabViewsHarness
 {
     public static object? ViewOf(TabViewModel tab) => tab.Views!.View.Value;
+
+    public static INavigableContent? ViewerOf(TabViewModel tab) => (ViewOf(tab) as NavigableView)?.Viewer;
 
     // Loaded is raised by a layout pass, which the headless window runs when asked
     public static void Settle(TestMainWindow window)

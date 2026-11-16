@@ -61,10 +61,12 @@ public sealed class ContextualActionHandler(MainWindow window, MainWindowViewMod
                 await activeTab.CropService.CopyCroppedImageAsync().ConfigureAwait(false);
                 return true;
 
-            case (InputMode.MotionPhoto, PlayPause) when activeTab.CurrentView.Value is ImageViewer imageViewer:
+            case (InputMode.MotionPhoto, PlayPause)
+                when activeTab.CurrentView.Value is NavigableView { Viewer: ImageViewer imageViewer }:
                 imageViewer.ToggleMotionPhotoPlayPause();
                 return true;
-            case (InputMode.MotionPhoto, Cancel) when activeTab.CurrentView.Value is ImageViewer imageViewer:
+            case (InputMode.MotionPhoto, Cancel)
+                when activeTab.CurrentView.Value is NavigableView { Viewer: ImageViewer imageViewer }:
                 // A stopped motion photo leaves Cancel to the next mode
                 return imageViewer.StopMotionPhotoIfPlaying();
 

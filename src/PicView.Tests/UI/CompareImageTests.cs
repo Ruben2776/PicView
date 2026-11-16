@@ -61,7 +61,8 @@ public class CompareImageTests
 
     private static PicBox CompareImageOf(PicView.Core.ViewModels.TabViewModel tab)
     {
-        var viewer = Assert.IsType<ImageViewer>(ViewOf(tab));
+        Assert.IsType<NavigableView>(ViewOf(tab));
+        var viewer = Assert.IsType<ImageViewer>(ViewerOf(tab));
         return Assert.IsType<PicBox>(viewer.FindControl<PicBox>("CompareImage"));
     }
 }

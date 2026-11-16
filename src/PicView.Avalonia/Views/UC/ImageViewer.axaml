@@ -2,10 +2,8 @@
     x:Class="PicView.Avalonia.Views.UC.ImageViewer"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:buttons="clr-namespace:PicView.Avalonia.Views.UC.Buttons"
     xmlns:converters="clr-namespace:PicView.Avalonia.Converters"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
-    xmlns:gallery="clr-namespace:PicView.Avalonia.Views.Gallery"
     xmlns:uc="clr-namespace:PicView.Avalonia.Views.UC"
     xmlns:vm="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
     xmlns:zoom="clr-namespace:PicView.Avalonia.CustomControls.Zoom"
@@ -13,265 +11,235 @@
     <UserControl.Resources>
         <converters:DisplayableConverter x:Key="DisplayableConverter" />
     </UserControl.Resources>
-    <DockPanel LastChildFill="True">
-        <gallery:GalleryView x:Name="GalleryView" ZIndex="1" />
-
-        <Panel
-            x:Name="MainPanel"
-            Background="{CompiledBinding ParentWindowContext.GlobalSettings.ImageBackground.Value,
-                                         Mode=OneWay}"
-            DockPanel.Dock="Left">
-            <LayoutTransformControl x:Name="MainTransform" IsVisible="{CompiledBinding !ParentWindowContext.GlobalSettings.IsSideBySideSyncedActive.Value}">
-                <LayoutTransformControl.LayoutTransform>
-                    <RotateTransform Angle="{Binding Orientation.Degrees.Value}" />
-                </LayoutTransformControl.LayoutTransform>
-                <zoom:ZoomPanControl x:Name="ZoomPanControl">
-                    <customControls:AutoScrollViewer
-                        x:Name="ImageScrollViewer"
-                        Width="{Binding ParentWindowContext.ScrollViewerWidth.Value}"
-                        Height="{Binding ParentWindowContext.ScrollViewerHeight.Value}"
-                        Focusable="False"
-                        HorizontalScrollBarVisibility="Disabled"
-                        VerticalScrollBarVisibility="Disabled">
-                        <Border
-                            x:Name="MainBorder"
-                            Width="{Binding ParentWindowContext.ImageWidth.Value}"
-                            Height="{Binding ParentWindowContext.ImageHeight.Value}"
+    <!--  The gallery, click arrows, hover bar and gallery shortcut, and the image background, are the NavigableView's  -->
+    <Panel x:Name="MainPanel">
+        <LayoutTransformControl x:Name="MainTransform" IsVisible="{CompiledBinding !ParentWindowContext.GlobalSettings.IsSideBySideSyncedActive.Value}">
+            <LayoutTransformControl.LayoutTransform>
+                <RotateTransform Angle="{Binding Orientation.Degrees.Value}" />
+            </LayoutTransformControl.LayoutTransform>
+            <zoom:ZoomPanControl x:Name="ZoomPanControl">
+                <customControls:AutoScrollViewer
+                    x:Name="ImageScrollViewer"
+                    Width="{Binding ParentWindowContext.ScrollViewerWidth.Value}"
+                    Height="{Binding ParentWindowContext.ScrollViewerHeight.Value}"
+                    Focusable="False"
+                    HorizontalScrollBarVisibility="Disabled"
+                    VerticalScrollBarVisibility="Disabled">
+                    <Border
+                        x:Name="MainBorder"
+                        Width="{Binding ParentWindowContext.ImageWidth.Value}"
+                        Height="{Binding ParentWindowContext.ImageHeight.Value}"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Background="{CompiledBinding ParentWindowContext.GlobalSettings.ConstrainedImageBackground.Value,
+                                                     Mode=OneWay}">
+                        <DockPanel
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            Background="{CompiledBinding ParentWindowContext.GlobalSettings.ConstrainedImageBackground.Value,
-                                                         Mode=OneWay}">
-                            <DockPanel
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                LastChildFill="False">
-                                <Grid x:Name="CompareHostGrid" DockPanel.Dock="Left">
-                                    <customControls:PicBox
-                                        x:Name="MainImage"
-                                        CurrentFileInfo="{Binding DisplayPrimaryFileInfo.Value}"
-                                        ImageType="{Binding DisplayPrimaryImageType.Value}"
-                                        Source="{CompiledBinding DisplayPrimaryImage.Value,
-                                                                 Converter={StaticResource DisplayableConverter}}" />
-                                    <!--  Comparison: the partner stacked on the main image. Hidden, so not measured or drawn, while off.
-                                          No ImageType: an animation draws its frames without the blend, so only the first frame is compared  -->
-                                    <customControls:PicBox
-                                        x:Name="CompareImage"
-                                        BlendMode="Difference"
-                                        CurrentFileInfo="{Binding DisplaySecondaryFileInfo.Value}"
-                                        IsVisible="{CompiledBinding ParentWindowContext.GlobalSettings.IsComparing.Value}"
-                                        Source="{CompiledBinding DisplaySecondaryImage.Value,
-                                                                 Converter={StaticResource DisplayableConverter}}"
-                                        Stretch="Fill" />
-                                    <uc:MotionPhotoView x:Name="MotionPhotoView" />
-                                    <Canvas
-                                        x:Name="AlignMarkersCanvas"
-                                        IsHitTestVisible="False"
-                                        IsVisible="{CompiledBinding IsAligning.Value}" />
-                                </Grid>
-                                <Grid DockPanel.Dock="Right" IsVisible="{CompiledBinding ParentWindowContext.GlobalSettings.IsSideBySide.Value}">
-                                    <customControls:PicBox
-                                        x:Name="SecondaryImage"
-                                        CurrentFileInfo="{Binding DisplaySecondaryFileInfo.Value}"
-                                        ImageType="{Binding DisplaySecondaryImageType.Value}"
-                                        Source="{CompiledBinding DisplaySecondaryImage.Value,
-                                                                 Converter={StaticResource DisplayableConverter}}" />
-                                    <uc:MotionPhotoView x:Name="SecondaryMotionPhotoView" AllowAutoPlay="False" />
-                                </Grid>
-                            </DockPanel>
-                        </Border>
-                    </customControls:AutoScrollViewer>
-                </zoom:ZoomPanControl>
-            </LayoutTransformControl>
-            <Grid
-                x:Name="SyncedSideBySideGrid"
-                Background="Transparent"
-                ColumnDefinitions="*,2,*"
-                IsVisible="{CompiledBinding ParentWindowContext.GlobalSettings.IsSideBySideSyncedActive.Value}">
-                <Grid
-                    Grid.Column="0"
-                    Background="Transparent"
-                    ClipToBounds="True">
-                    <LayoutTransformControl x:Name="SyncedLeftTransform">
-                        <LayoutTransformControl.LayoutTransform>
-                            <RotateTransform Angle="{Binding Orientation.Degrees.Value}" />
-                        </LayoutTransformControl.LayoutTransform>
-                        <zoom:ZoomPanControl x:Name="SyncedLeftZoom">
-                            <Grid x:Name="SyncedLeftContainer" Background="Transparent">
+                            LastChildFill="False">
+                            <Grid x:Name="CompareHostGrid" DockPanel.Dock="Left">
                                 <customControls:PicBox
-                                    x:Name="SyncedLeftImage"
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"
+                                    x:Name="MainImage"
                                     CurrentFileInfo="{Binding DisplayPrimaryFileInfo.Value}"
                                     ImageType="{Binding DisplayPrimaryImageType.Value}"
                                     Source="{CompiledBinding DisplayPrimaryImage.Value,
                                                              Converter={StaticResource DisplayableConverter}}" />
-                            </Grid>
-                        </zoom:ZoomPanControl>
-                    </LayoutTransformControl>
-                    <Border
-                        Margin="10"
-                        Padding="7,3"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Top"
-                        Background="#99181818"
-                        CornerRadius="10"
-                        IsHitTestVisible="False">
-                        <TextBlock
-                            x:Name="SyncedLeftBadgeText"
-                            FontSize="11"
-                            FontWeight="SemiBold"
-                            Foreground="#FFEAEAEA"
-                            Text="A" />
-                    </Border>
-                    <Canvas IsHitTestVisible="False">
-                        <Path
-                            x:Name="SyncedLeftCrosshair"
-                            Width="16"
-                            Height="16"
-                            Data="M8,0 L8,16 M0,8 L16,8"
-                            IsVisible="False"
-                            Stroke="#CCFFFFFF"
-                            StrokeThickness="1.2" />
-                    </Canvas>
-                </Grid>
-                <Border Grid.Column="1" Background="{DynamicResource HoverBarBorderColor}" />
-                <Grid
-                    Grid.Column="2"
-                    Background="Transparent"
-                    ClipToBounds="True">
-                    <LayoutTransformControl x:Name="SyncedRightTransform">
-                        <LayoutTransformControl.LayoutTransform>
-                            <RotateTransform Angle="{Binding Orientation.Degrees.Value}" />
-                        </LayoutTransformControl.LayoutTransform>
-                        <zoom:ZoomPanControl x:Name="SyncedRightZoom">
-                            <Grid x:Name="SyncedRightContainer" Background="Transparent">
+                                <!--  Comparison: the partner stacked on the main image. Hidden, so not measured or drawn, while off.
+                                      No ImageType: an animation draws its frames without the blend, so only the first frame is compared  -->
                                 <customControls:PicBox
-                                    x:Name="SyncedRightImage"
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"
+                                    x:Name="CompareImage"
+                                    BlendMode="Difference"
+                                    CurrentFileInfo="{Binding DisplaySecondaryFileInfo.Value}"
+                                    IsVisible="{CompiledBinding ParentWindowContext.GlobalSettings.IsComparing.Value}"
+                                    Source="{CompiledBinding DisplaySecondaryImage.Value,
+                                                             Converter={StaticResource DisplayableConverter}}"
+                                    Stretch="Fill" />
+                                <uc:MotionPhotoView x:Name="MotionPhotoView" />
+                                <Canvas
+                                    x:Name="AlignMarkersCanvas"
+                                    IsHitTestVisible="False"
+                                    IsVisible="{CompiledBinding IsAligning.Value}" />
+                            </Grid>
+                            <Grid DockPanel.Dock="Right" IsVisible="{CompiledBinding ParentWindowContext.GlobalSettings.IsSideBySide.Value}">
+                                <customControls:PicBox
+                                    x:Name="SecondaryImage"
                                     CurrentFileInfo="{Binding DisplaySecondaryFileInfo.Value}"
                                     ImageType="{Binding DisplaySecondaryImageType.Value}"
                                     Source="{CompiledBinding DisplaySecondaryImage.Value,
                                                              Converter={StaticResource DisplayableConverter}}" />
+                                <uc:MotionPhotoView x:Name="SecondaryMotionPhotoView" AllowAutoPlay="False" />
                             </Grid>
-                        </zoom:ZoomPanControl>
-                    </LayoutTransformControl>
-                    <Border
-                        Margin="10"
-                        Padding="7,3"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Top"
-                        Background="#99181818"
-                        CornerRadius="10"
-                        IsHitTestVisible="False">
-                        <TextBlock
-                            x:Name="SyncedRightBadgeText"
-                            FontSize="11"
-                            FontWeight="SemiBold"
-                            Foreground="#FFEAEAEA"
-                            Text="B" />
+                        </DockPanel>
                     </Border>
-                    <Canvas IsHitTestVisible="False">
-                        <Path
-                            x:Name="SyncedRightCrosshair"
-                            Width="16"
-                            Height="16"
-                            Data="M8,0 L8,16 M0,8 L16,8"
-                            IsVisible="False"
-                            Stroke="#CCFFFFFF"
-                            StrokeThickness="1.2" />
-                    </Canvas>
-                </Grid>
-            </Grid>
-            <uc:ZoomPreviewer
-                x:Name="ZoomPreview"
-                Margin="0,0,25,25"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Bottom"
-                IsVisible="False"
-                ZIndex="90" />
-            <buttons:ClickArrowRight
-                x:Name="ClickArrowRight"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Center"
-                Opacity="0"
-                ZIndex="2" />
-            <buttons:ClickArrowLeft
-                x:Name="ClickArrowLeft"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Center"
-                Opacity="0"
-                ZIndex="2" />
-            <uc:HoverBar
-                x:Name="HoverBar"
-                VerticalAlignment="Bottom"
-                ZIndex="2" />
-            <Panel
-                x:Name="SplitOverlay"
-                IsVisible="{CompiledBinding ParentWindowContext.GlobalSettings.IsSplitMode.Value}"
-                ZIndex="2">
+                </customControls:AutoScrollViewer>
+            </zoom:ZoomPanControl>
+        </LayoutTransformControl>
+        <Grid
+            x:Name="SyncedSideBySideGrid"
+            Background="Transparent"
+            ColumnDefinitions="*,2,*"
+            IsVisible="{CompiledBinding ParentWindowContext.GlobalSettings.IsSideBySideSyncedActive.Value}">
+            <Grid
+                Grid.Column="0"
+                Background="Transparent"
+                ClipToBounds="True">
+                <LayoutTransformControl x:Name="SyncedLeftTransform">
+                    <LayoutTransformControl.LayoutTransform>
+                        <RotateTransform Angle="{Binding Orientation.Degrees.Value}" />
+                    </LayoutTransformControl.LayoutTransform>
+                    <zoom:ZoomPanControl x:Name="SyncedLeftZoom">
+                        <Grid x:Name="SyncedLeftContainer" Background="Transparent">
+                            <customControls:PicBox
+                                x:Name="SyncedLeftImage"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                CurrentFileInfo="{Binding DisplayPrimaryFileInfo.Value}"
+                                ImageType="{Binding DisplayPrimaryImageType.Value}"
+                                Source="{CompiledBinding DisplayPrimaryImage.Value,
+                                                         Converter={StaticResource DisplayableConverter}}" />
+                        </Grid>
+                    </zoom:ZoomPanControl>
+                </LayoutTransformControl>
                 <Border
-                    x:Name="SplitDividerHitStrip"
-                    Width="16"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Stretch"
-                    Background="Transparent"
-                    Cursor="SizeWestEast" />
-                <Border
-                    x:Name="SplitDividerLine"
-                    Width="2"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Stretch"
-                    Background="#E6FFFFFF"
-                    BoxShadow="0 0 4 0 #99000000"
-                    IsHitTestVisible="False" />
-                <Border
-                    x:Name="SplitHandle"
-                    Width="28"
-                    Height="28"
+                    Margin="10"
+                    Padding="7,3"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top"
-                    Background="#E6222222"
-                    BorderBrush="#E6FFFFFF"
-                    BorderThickness="1.5"
-                    BoxShadow="0 2 8 0 #80000000"
-                    CornerRadius="14"
-                    Cursor="SizeWestEast"
-                    Focusable="True">
-                    <Path
-                        x:Name="SplitHandleIcon"
-                        Width="14"
-                        Height="14"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        Data="M5,8 L2,11 L5,14 M11,8 L14,11 L11,14 M2,11 L14,11"
-                        Stretch="Uniform"
-                        Stroke="#FFFFFFFF"
-                        StrokeLineCap="Round"
-                        StrokeJoin="Round"
-                        StrokeThickness="1.5" />
+                    Background="#99181818"
+                    CornerRadius="10"
+                    IsHitTestVisible="False">
+                    <TextBlock
+                        x:Name="SyncedLeftBadgeText"
+                        FontSize="11"
+                        FontWeight="SemiBold"
+                        Foreground="#FFEAEAEA"
+                        Text="A" />
                 </Border>
-            </Panel>
-            <uc:CompareBar
-                x:Name="CompareBar"
-                Margin="0,0,0,18"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Bottom"
-                ZIndex="3" />
-            <!--
-                Floating host for the motion photo badges. Living outside MainTransform,
-                the badges stay upright while the code-behind anchors each one to the
-                on-screen top-right corner of its image, regardless of rotation,
-                flipping or zooming.
-            -->
-            <Panel x:Name="MotionPhotoBadgeHost" ZIndex="2" />
-            <buttons:GalleryShortcut
-                x:Name="GalleryShortcut"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Bottom"
-                IsVisible="{CompiledBinding !ParentWindowContext.IsBottomToolbarShown.Value}"
-                Opacity="0"
-                ZIndex="2" />
+                <Canvas IsHitTestVisible="False">
+                    <Path
+                        x:Name="SyncedLeftCrosshair"
+                        Width="16"
+                        Height="16"
+                        Data="M8,0 L8,16 M0,8 L16,8"
+                        IsVisible="False"
+                        Stroke="#CCFFFFFF"
+                        StrokeThickness="1.2" />
+                </Canvas>
+            </Grid>
+            <Border Grid.Column="1" Background="{DynamicResource HoverBarBorderColor}" />
+            <Grid
+                Grid.Column="2"
+                Background="Transparent"
+                ClipToBounds="True">
+                <LayoutTransformControl x:Name="SyncedRightTransform">
+                    <LayoutTransformControl.LayoutTransform>
+                        <RotateTransform Angle="{Binding Orientation.Degrees.Value}" />
+                    </LayoutTransformControl.LayoutTransform>
+                    <zoom:ZoomPanControl x:Name="SyncedRightZoom">
+                        <Grid x:Name="SyncedRightContainer" Background="Transparent">
+                            <customControls:PicBox
+                                x:Name="SyncedRightImage"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                CurrentFileInfo="{Binding DisplaySecondaryFileInfo.Value}"
+                                ImageType="{Binding DisplaySecondaryImageType.Value}"
+                                Source="{CompiledBinding DisplaySecondaryImage.Value,
+                                                         Converter={StaticResource DisplayableConverter}}" />
+                        </Grid>
+                    </zoom:ZoomPanControl>
+                </LayoutTransformControl>
+                <Border
+                    Margin="10"
+                    Padding="7,3"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Background="#99181818"
+                    CornerRadius="10"
+                    IsHitTestVisible="False">
+                    <TextBlock
+                        x:Name="SyncedRightBadgeText"
+                        FontSize="11"
+                        FontWeight="SemiBold"
+                        Foreground="#FFEAEAEA"
+                        Text="B" />
+                </Border>
+                <Canvas IsHitTestVisible="False">
+                    <Path
+                        x:Name="SyncedRightCrosshair"
+                        Width="16"
+                        Height="16"
+                        Data="M8,0 L8,16 M0,8 L16,8"
+                        IsVisible="False"
+                        Stroke="#CCFFFFFF"
+                        StrokeThickness="1.2" />
+                </Canvas>
+            </Grid>
+        </Grid>
+        <uc:ZoomPreviewer
+            x:Name="ZoomPreview"
+            Margin="0,0,25,25"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Bottom"
+            IsVisible="False"
+            ZIndex="90" />
+        <Panel
+            x:Name="SplitOverlay"
+            IsVisible="{CompiledBinding ParentWindowContext.GlobalSettings.IsSplitMode.Value}"
+            ZIndex="2">
+            <Border
+                x:Name="SplitDividerHitStrip"
+                Width="16"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Stretch"
+                Background="Transparent"
+                Cursor="SizeWestEast" />
+            <Border
+                x:Name="SplitDividerLine"
+                Width="2"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Stretch"
+                Background="#E6FFFFFF"
+                BoxShadow="0 0 4 0 #99000000"
+                IsHitTestVisible="False" />
+            <Border
+                x:Name="SplitHandle"
+                Width="28"
+                Height="28"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Background="#E6222222"
+                BorderBrush="#E6FFFFFF"
+                BorderThickness="1.5"
+                BoxShadow="0 2 8 0 #80000000"
+                CornerRadius="14"
+                Cursor="SizeWestEast"
+                Focusable="True">
+                <Path
+                    x:Name="SplitHandleIcon"
+                    Width="14"
+                    Height="14"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Data="M5,8 L2,11 L5,14 M11,8 L14,11 L11,14 M2,11 L14,11"
+                    Stretch="Uniform"
+                    Stroke="#FFFFFFFF"
+                    StrokeLineCap="Round"
+                    StrokeJoin="Round"
+                    StrokeThickness="1.5" />
+            </Border>
         </Panel>
-    </DockPanel>
+        <uc:CompareBar
+            x:Name="CompareBar"
+            Margin="0,0,0,18"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Bottom"
+            ZIndex="3" />
+        <!--
+            Floating host for the motion photo badges. Living outside MainTransform,
+            the badges stay upright while the code-behind anchors each one to the
+            on-screen top-right corner of its image, regardless of rotation,
+            flipping or zooming.
+        -->
+        <Panel x:Name="MotionPhotoBadgeHost" ZIndex="2" />
+    </Panel>
 </UserControl>

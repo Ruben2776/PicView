@@ -155,7 +155,7 @@ public class AppLifecycleTests : IAsyncDisposable
         window.SharedTitleBar = new CustomTitleBar();
         window.SharedBottomBar = new BottomBar();
 
-        Assert.IsType<ImageViewer>(ViewOf(window));
+        Assert.IsType<ImageViewer>(Assert.IsType<NavigableView>(ViewOf(window)).Viewer);
         await setUp;
     }
 
@@ -1302,7 +1302,7 @@ public class AppLifecycleTests : IAsyncDisposable
 
         Assert.True(result.IsLoaded);
         Assert.Equal(b, second.Model.FileInfo?.FullName);
-        Assert.IsType<ImageViewer>(second.CurrentView.Value);
+        Assert.IsType<ImageViewer>(Assert.IsType<NavigableView>(second.CurrentView.Value).Viewer);
         Assert.True(second.IsInitialized);
         Assert.NotNull(second.Hookups);
         Assert.Same(first, tabs.ActiveTab.CurrentValue);
@@ -1333,7 +1333,7 @@ public class AppLifecycleTests : IAsyncDisposable
 
         Assert.Equal(LoadOutcome.Superseded, resultA.Outcome);
         Assert.True(resultB.IsLoaded);
-        Assert.IsType<ImageViewer>(tab.CurrentView.Value);
+        Assert.IsType<ImageViewer>(Assert.IsType<NavigableView>(tab.CurrentView.Value).Viewer);
         Assert.Equal(b, tab.Model.FileInfo?.FullName);
     }
 

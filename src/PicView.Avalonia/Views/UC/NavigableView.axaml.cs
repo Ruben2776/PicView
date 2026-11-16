@@ -1,0 +1,120 @@
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Interactivity;
+using PicView.Avalonia.Input;
+using PicView.Avalonia.UI;
+using PicView.Core.DebugTools;
+using PicView.Core.ViewModels;
+using R3;
+
+namespace PicView.Avalonia.Views.UC;
+
+/// <summary>
+/// What a tab shows while it navigates its images: the gallery, the click arrows, the hover bar and the gallery
+/// shortcut around a slot that holds the viewer (ADR-0022). The tab keeps one, made once, and shows it again after a
+/// crop or the menu, so the gallery is never rebuilt.
+/// </summary>
+public partial class NavigableView : UserControl, IZoomScrollTarget, IDisposable
+{
+    private readonly TabViewModel _tab;
+    private bool _isLoadedOnce;
+    private DisposableBag _disposables;
+
+    /// <param name="tab">The tab this view shows, which is not always the active one: a view is also created for a
+    /// tab that opens in the background.</param>
+    public NavigableView(TabViewModel tab)
+    {
+        _tab = tab;
+        DataContext = tab;
+        InitializeComponent();
+        GalleryView.Initialize(tab);
+        Loaded += OnLoaded;
+    }
+
+    /// <summary>
+    /// The viewer in the slot, or nothing before one is shown.
+    /// </summary>
+    public INavigableContent? Viewer { get; private set; }
+
+    /// <summary>
+    /// Puts <paramref name="viewer"/> in the slot, in place of the one there.
+    /// </summary>
+    public void Show(INavigableContent viewer)
+    {
+        if (ReferenceEquals(Viewer, viewer))
+        {
+            return;
+        }
+
+        Viewer = viewer;
+        Slot.Content = viewer;
+    }
+
+    private void OnLoaded(object? sender, RoutedEventArgs e)
+    {
+        // The view is kept and loaded again each time it is shown after a crop or the menu, and its subscriptions
+        // last until it is disposed, so they are made on the first load only
+        if (_isLoadedOnce)
+        {
+            return;
+        }
+
+        _isLoadedOnce = true;
+
+        // Correspond to change when index clicked on track
+        Observable.FromEvent<EventHandler<int>, int>(
+                handler => (_, index) => handler(index),
+                handler => HoverBar.ProgressBar.ClickedOnTrack += handler,
+                handler => HoverBar.ProgressBar.ClickedOnTrack -= handler)
+            .SubscribeAwait(async (x, _) =>
+            {
+                await _tab.ImageIterator.SkipToIndexAsync(x, _tab.GetTabCancellation()).ConfigureAwait(false);
+            }, DebugHelper.LogError(nameof(NavigableView), nameof(OnLoaded)), AwaitOperation.Drop)
+            .AddTo(ref _disposables);
+        // Correspond to change when index dragged on track
+        // wait for a 25ms pause in changes (debounce), and then emit the last value.
+        Observable.FromEvent<EventHandler<int>, int>(
+                handler => (_, index) => handler(index),
+                handler => HoverBar.ProgressBar.DraggedOnTrack += handler,
+                handler => HoverBar.ProgressBar.DraggedOnTrack -= handler)
+            .Debounce(TimeSpan.FromMilliseconds(25)) // Debounce handles rapid events during drag
+            .SubscribeAwait(async (x, _) =>
+            {
+                await _tab.ImageIterator.SkipToIndexAsync(x, _tab.GetTabCancellation()).ConfigureAwait(false);
+            }, DebugHelper.LogError(nameof(NavigableView), nameof(OnLoaded)), AwaitOperation.Drop)
+            .AddTo(ref _disposables);
+
+        _disposables.Add(new HoverFadeButtonHandler(GalleryShortcut, GalleryShortcut.InnerButton));
+    }
+
+    #region IZoomScrollTarget
+
+    bool IZoomScrollTarget.CanScrollVertically => Viewer?.CanScrollVertically ?? false;
+
+    bool IZoomScrollTarget.IsImageTallerThanViewer => Viewer?.IsImageTallerThanViewer ?? false;
+
+    void IZoomScrollTarget.ScrollLine(bool down) => Viewer?.ScrollLine(down);
+
+    void IZoomScrollTarget.ScrollToHome() => Viewer?.ScrollToHome();
+
+    void IZoomScrollTarget.ScrollToEnd() => Viewer?.ScrollToEnd();
+
+    void IZoomScrollTarget.ZoomIn() => Viewer?.ZoomIn();
+
+    void IZoomScrollTarget.ZoomOut() => Viewer?.ZoomOut();
+
+    void IZoomScrollTarget.ZoomAt(bool zoomIn, Point pointer) => Viewer?.ZoomAt(zoomIn, pointer);
+
+    #endregion
+
+    /// <summary>
+    /// Stops following the tab's gallery and hover bar. The viewer in the slot is its owner's to dispose.
+    /// </summary>
+    public void Dispose()
+    {
+        GalleryView.Dispose();
+        _disposables.Dispose();
+        HoverBar.Dispose();
+        GC.SuppressFinalize(this);
+    }
+}

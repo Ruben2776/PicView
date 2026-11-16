@@ -26,27 +26,27 @@ public static class UIHelper
     
     public static ClickArrowRight? GetClickArrowRight(MainWindowViewModel vm)
     {
-        if (vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.Value is ImageViewer imageViewer)
+        if (vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.Value is NavigableView nav)
         {
-            return imageViewer.ClickArrowRight;
+            return nav.ClickArrowRight;
         }
         return null;
     }
     
     public static ClickArrowLeft? GetClickArrowLeft(MainWindowViewModel vm)
     {
-        if (vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.Value is ImageViewer imageViewer)
+        if (vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.Value is NavigableView nav)
         {
-            return imageViewer.ClickArrowLeft;
+            return nav.ClickArrowLeft;
         }
         return null;
     }
     
     public static HoverBar? GetHoverBar(MainWindowViewModel vm)
     {
-        if (vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.Value is ImageViewer imageViewer)
+        if (vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.Value is NavigableView nav)
         {
-            return imageViewer.HoverBar;
+            return nav.HoverBar;
         }
 
         return null;

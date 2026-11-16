@@ -40,9 +40,9 @@ public static class ImageViewerClickBehavior
                 var view = vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.Value;
                 switch (view)
                 {
-                    case ImageViewer imageViewer when imageViewer.GalleryView.IsPointerOver:
+                    case NavigableView nav when nav.GalleryView.IsPointerOver:
                         return;
-                    case ImageViewer imageViewer when imageViewer.ClickArrowLeft.IsPointerOver || imageViewer.ClickArrowRight.IsPointerOver:
+                    case NavigableView nav when nav.ClickArrowLeft.IsPointerOver || nav.ClickArrowRight.IsPointerOver:
                     case StartUpMenu startUpMenu when startUpMenu.Buttons.IsPointerOver:
                         return;
                 }
@@ -52,7 +52,7 @@ public static class ImageViewerClickBehavior
                     return;
                 }
 
-                switch (DoubleClickActionFor(Settings.UIProperties.DoubleClickBehavior, canResetZoom: view is ImageViewer))
+                switch (DoubleClickActionFor(Settings.UIProperties.DoubleClickBehavior, canResetZoom: view is NavigableView))
                 {
                     case DoubleClickAction.ResetZoom:
                         await vm.ActionRunner.Run(Actions.ResetZoom).ConfigureAwait(false);
@@ -64,27 +64,25 @@ public static class ImageViewerClickBehavior
             }
             else if (Settings.Navigation.IsNavigatingByClicking)
             {
-                if (vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.Value is ImageViewer imageViewer && imageViewer.MainPanel.IsPointerOver)
+                // Any viewer in the slot navigates by clicking, unless it is zoomed, where a press pans. A press a
+                // control already handled, such as on a split handle or an alignment point, does not navigate
+                if (!e.Handled &&
+                    vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.Value is NavigableView { Viewer.IsZoomed: false } nav &&
+                    nav.ContentPanel.IsPointerOver)
                 {
-                    if (imageViewer.GalleryView.IsPointerOver)
+                    if (nav.GalleryView.IsPointerOver)
                     {
                         return;
                     }
 
-                    if (imageViewer.ClickArrowLeft.IsPointerOver || imageViewer.ClickArrowRight.IsPointerOver)
+                    if (nav.ClickArrowLeft.IsPointerOver || nav.ClickArrowRight.IsPointerOver)
                     {
                         return;
                     }
 
-                    if (imageViewer.ZoomPanControl.Scale is not 1.0)
-                    {
-                        // Don't conflict with panning when zoomed
-                        return;
-                    }
-                    
-                    var point = e.GetPosition(imageViewer);
-                    var isLeftSide = point.X < imageViewer.Bounds.Width / 2;
-                    var isRightSide = point.X >= imageViewer.Bounds.Width / 2;
+                    var point = e.GetPosition(nav);
+                    var isLeftSide = point.X < nav.Bounds.Width / 2;
+                    var isRightSide = point.X >= nav.Bounds.Width / 2;
                     if (isLeftSide)
                     {
                         await vm.ActionRunner.Run(Actions.Prev).ConfigureAwait(false);

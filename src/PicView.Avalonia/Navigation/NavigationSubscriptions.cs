@@ -42,7 +42,7 @@ public sealed class NavigationSubscriptions : ITabHookups
     private void FollowFit(Fitted fitted)
     {
         var tab = _mainWindowViewModel.WindowTabs.ActiveTab.CurrentValue;
-        if (fitted.Cause is not FitCause.NewImage || tab.CurrentView.Value is not ImageViewer viewer)
+        if (fitted.Cause is not FitCause.NewImage || tab.CurrentView.Value is not NavigableView { Viewer: { } viewer })
         {
             return;
         }
@@ -52,6 +52,9 @@ public sealed class NavigationSubscriptions : ITabHookups
             viewer.ResetZoomSlim();
         }
 
-        viewer.UpdateMotionPhoto(tab);
+        if (viewer is ImageViewer imageViewer)
+        {
+            imageViewer.UpdateMotionPhoto(tab);
+        }
     }
 }

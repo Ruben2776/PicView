@@ -7,6 +7,7 @@ using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
+using Avalonia.VisualTree;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.CustomControls.Zoom;
 using PicView.Avalonia.ImageTransformations;
@@ -20,7 +21,7 @@ using R3;
 
 namespace PicView.Avalonia.Views.UC;
 
-public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
+public partial class ImageViewer : UserControl, IDisposable, INavigableContent
 {
     private bool _isInitialized;
     private bool _isLoadedOnce;
@@ -38,6 +39,8 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
     private Point _alignB1;
     private Point _alignA2;
     private Point _alignB2;
+    // The hover bar of the NavigableView this viewer is shown in, followed while attached
+    private HoverBar? _hoverBar;
     private static readonly Cursor CrossCursor = new(StandardCursorType.Cross);
     private static readonly Geometry SplitVerticalIcon =
         Geometry.Parse("M5,8 L2,11 L5,14 M11,8 L14,11 L11,14 M2,11 L14,11");
@@ -53,7 +56,6 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
         InitializeComponent();
         InitializeComparison();
         ZoomPanControl.ScaleChanged += OnScaleChanged;
-        GalleryView.Initialize(tab);
         ImageControlHelper.TriggerScalingModeUpdate(MainImage, true);
         Loaded += OnLoaded;
     }
@@ -286,16 +288,12 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
 
     private async ValueTask PreviewOnPointerWheelChangedAsync(PointerWheelEventArgs e)
     {
-        if (GalleryView.IsPointerOver)
-        {
-            return;
-        }
-
-        // The wheel only works on the image viewer the active tab shows
+        // The wheel only works on the image viewer the active tab shows. The gallery is not inside this viewer, so
+        // its wheel never routes here
         if (TopLevel.GetTopLevel(this) is not MainWindow
             {
-                DataContext: MainWindowViewModel { WindowTabs.ActiveTab.CurrentValue.CurrentView.Value: ImageViewer }
-            } mainWindow)
+                DataContext: MainWindowViewModel { WindowTabs.ActiveTab.CurrentValue.CurrentView.Value: NavigableView nav }
+            } mainWindow || !ReferenceEquals(nav.Viewer, this))
         {
             return;
         }
@@ -369,36 +367,12 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
             }, DebugHelper.LogError(nameof(ImageViewer), nameof(InitializeImageTransformer))).AddTo(ref _disposables);
         }
         
-        // Correspond to change when index clicked on track
-        Observable.FromEvent<EventHandler<int>, int>(
-                handler => (sender, index) => handler(index),
-                handler => HoverBar.ProgressBar.ClickedOnTrack += handler,
-                handler => HoverBar.ProgressBar.ClickedOnTrack -= handler)
-            .SubscribeAwait(async (x, _) =>
-            {
-                await tab.ImageIterator.SkipToIndexAsync(x, tab.GetTabCancellation()).ConfigureAwait(false);
-            }, DebugHelper.LogError(nameof(ImageViewer), nameof(InitializeImageTransformer)), AwaitOperation.Drop)
-            .AddTo(ref _disposables);
-        // Correspond to change when index dragged on track
-        // wait for a 25ms pause in changes (debounce), and then emit the last value.
-        Observable.FromEvent<EventHandler<int>, int>(
-                handler => (sender, index) => handler(index),
-                handler => HoverBar.ProgressBar.DraggedOnTrack += handler,
-                handler => HoverBar.ProgressBar.DraggedOnTrack -= handler)
-            .Debounce(TimeSpan.FromMilliseconds(25)) // Debounce handles rapid events during drag
-            .SubscribeAwait(async (x, _) =>
-            {
-                await tab.ImageIterator.SkipToIndexAsync(x, tab.GetTabCancellation()).ConfigureAwait(false);
-            },DebugHelper.LogError(nameof(ImageViewer), nameof(InitializeImageTransformer)), AwaitOperation.Drop)
-            .AddTo(ref _disposables);
-        
         tab.Orientation.Current
             .Select(static orientation => orientation.IsFlipped)
             .DistinctUntilChanged()
             .Subscribe(_ => ShowFlip(),
             DebugHelper.LogError(nameof(ImageViewer), nameof(ShowFlip)))
             .AddTo(ref _disposables);
-        _disposables.Add(new HoverFadeButtonHandler(GalleryShortcut, GalleryShortcut.InnerButton));
     }
 
     #region Zoom
@@ -422,8 +396,13 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
                 TopLevel.GetTopLevel(this) as MainWindow, TimeSpan.FromSeconds(1));
         }
 
-        ZoomPreview.Margin = HoverBar.Opacity > 0
-            ? new Thickness(0, 0, 25, HoverBar.Bounds.Height / 2 + 25)
+        if (this.FindAncestorOfType<NavigableView>()?.HoverBar is not { } hoverBar)
+        {
+            return;
+        }
+
+        ZoomPreview.Margin = hoverBar.Opacity > 0
+            ? new Thickness(0, 0, 25, hoverBar.Bounds.Height / 2 + 25)
             : new Thickness(0, 0, 25, 25);
     }
 
@@ -500,6 +479,9 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
     /// Whether an image is shown, so that turning or flipping it means something.
     /// </summary>
     public bool HasImage => MainImage.Source is not null;
+
+    /// <inheritdoc/>
+    public bool IsZoomed => ZoomPanControl.Scale is not 1.0;
 
     /// <summary>
     /// Animates the next change of the tab's flip, as the Flip Action does; resetting it on a new image does not.
@@ -619,7 +601,6 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
         SplitOverlay.PointerReleased += OnSplitPointerReleased;
         SplitOverlay.PointerCaptureLost += OnSplitPointerCaptureLost;
         SplitHandle.KeyDown += OnSplitHandleKeyDown;
-        HoverBar.SizeChanged += OnHoverBarSizeChanged;
         MainPanel.PointerMoved += OnMainPanelPointerMoved;
 
         UpdateCompareBarMargin();
@@ -971,11 +952,48 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
     private void OnHoverBarSizeChanged(object? sender, SizeChangedEventArgs e) =>
         UpdateCompareBarMargin();
 
+    // The hover bar is the NavigableView's, which this viewer finds once it is shown in one
+    protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        base.OnAttachedToVisualTree(e);
+        UnfollowHoverBar();
+        _hoverBar = this.FindAncestorOfType<NavigableView>()?.HoverBar;
+        if (_hoverBar is null)
+        {
+            return;
+        }
+
+        _hoverBar.SizeChanged += OnHoverBarSizeChanged;
+        UpdateCompareBarMargin();
+    }
+
+    protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        base.OnDetachedFromVisualTree(e);
+        UnfollowHoverBar();
+    }
+
+    private void UnfollowHoverBar()
+    {
+        if (_hoverBar is null)
+        {
+            return;
+        }
+
+        _hoverBar.SizeChanged -= OnHoverBarSizeChanged;
+        _hoverBar = null;
+    }
+
     private void UpdateCompareBarMargin()
     {
-        var hoverVisible = HoverBar.IsVisible && HoverBar.Bounds.Height > 0;
+        if (this.FindAncestorOfType<NavigableView>()?.HoverBar is not { } hoverBar)
+        {
+            return;
+        }
+
+        var hoverVisible = hoverBar.IsVisible && hoverBar.Bounds.Height > 0;
         var bottom = hoverVisible
-            ? HoverBar.Bounds.Height + HoverBar.Margin.Bottom + 12d
+            ? hoverBar.Bounds.Height + hoverBar.Margin.Bottom + 12d
             : 18d;
         CompareBar.Margin = new Thickness(0, 0, 0, bottom);
     }
@@ -1170,7 +1188,7 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
         SplitOverlay.PointerReleased -= OnSplitPointerReleased;
         SplitOverlay.PointerCaptureLost -= OnSplitPointerCaptureLost;
         SplitHandle.KeyDown -= OnSplitHandleKeyDown;
-        HoverBar.SizeChanged -= OnHoverBarSizeChanged;
+        UnfollowHoverBar();
         MainPanel.PointerMoved -= OnMainPanelPointerMoved;
         CompareBar.Dispose();
         ZoomPanControl.ScaleChanged -= OnScaleChanged;
@@ -1189,10 +1207,8 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
         SecondaryMotionPhotoView.PlaybackStopped -= OnMotionPhotoPlaybackStopped;
         SecondaryMotionPhotoView.FirstFrameShown -= OnMotionPhotoFirstFrameShown;
         SecondaryMotionPhotoView.Dispose();
-        GalleryView.Dispose();
         _disposables.Dispose();
-        HoverBar.Dispose();
-        
+
         GC.SuppressFinalize(this);
     }
 }

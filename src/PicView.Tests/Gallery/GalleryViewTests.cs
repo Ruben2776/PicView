@@ -121,9 +121,9 @@ public class GalleryViewTests
     }
 
     [AvaloniaFact]
-    public void Released_ImageViewer_StopsFollowingItsTabsGallery()
+    public void Released_NavigableView_StopsFollowingItsTabsGallery()
     {
-        WithImageViewer((tab, imageViewer, viewer) =>
+        WithNavigableView((tab, _, viewer) =>
         {
             var a = new GalleryItemViewModel { FileInfo = new FileInfo("a.jpg") };
             var b = new GalleryItemViewModel { FileInfo = new FileInfo("b.jpg") };
@@ -142,9 +142,9 @@ public class GalleryViewTests
     }
 
     [AvaloniaFact]
-    public void CroppedAndBack_ImageViewer_StillFollowsItsTabsGallery()
+    public void CroppedAndBack_NavigableView_StillFollowsItsTabsGallery()
     {
-        WithImageViewer((tab, imageViewer, viewer) =>
+        WithNavigableView((tab, _, viewer) =>
         {
             var a = new GalleryItemViewModel { FileInfo = new FileInfo("a.jpg") };
             tab.Gallery.GalleryItems.Add(a);
@@ -355,12 +355,12 @@ public class GalleryViewTests
             test(tab, vm, view.FindControl<NavigateAbleItemsViewer>("GalleryItemsControl")!);
         });
 
-    private static void WithImageViewer(Action<TabViewModel, ImageViewer, NavigateAbleItemsViewer> test) =>
+    private static void WithNavigableView(Action<TabViewModel, NavigableView, NavigateAbleItemsViewer> test) =>
         WithTab(static vm => vm.WindowTabs.ActiveTab.CurrentValue, (tab, _) =>
         {
             tab.SetLoading();
-            var imageViewer = (ImageViewer)tab.CurrentView.Value!;
-            test(tab, imageViewer, imageViewer.GalleryView.FindControl<NavigateAbleItemsViewer>("GalleryItemsControl")!);
+            var nav = (NavigableView)tab.CurrentView.Value!;
+            test(tab, nav, nav.GalleryView.FindControl<NavigateAbleItemsViewer>("GalleryItemsControl")!);
         });
 
     // The gallery view loads its XAML only when the application's DataContext is a CoreViewModel
