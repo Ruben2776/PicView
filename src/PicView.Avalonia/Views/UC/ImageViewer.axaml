@@ -175,6 +175,7 @@
                 </Canvas>
             </Grid>
         </Grid>
+        <!--  Moved into the NavigableView's overlay host while this viewer is shown, above its chrome  -->
         <uc:ZoomPreviewer
             x:Name="ZoomPreview"
             Margin="0,0,25,25"

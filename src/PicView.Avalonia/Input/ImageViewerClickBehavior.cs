@@ -64,10 +64,10 @@ public static class ImageViewerClickBehavior
             }
             else if (Settings.Navigation.IsNavigatingByClicking)
             {
-                // Any viewer in the slot navigates by clicking, unless it is zoomed, where a press pans. A press a
-                // control already handled, such as on a split handle or an alignment point, does not navigate
-                if (!e.Handled &&
-                    vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.Value is NavigableView { Viewer.IsZoomed: false } nav &&
+                // Any viewer in the slot navigates by clicking, unless it is zoomed, where a press pans. This runs
+                // from the window's tunnel, before the viewer's own controls see the press, so a press on a split
+                // handle or an alignment point still navigates, as before
+                if (vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.Value is NavigableView { Viewer.IsZoomed: false } nav &&
                     nav.ContentPanel.IsPointerOver)
                 {
                     if (nav.GalleryView.IsPointerOver)

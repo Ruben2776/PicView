@@ -311,20 +311,23 @@ public class TabViewsTests
     }
 
     [AvaloniaFact]
-    public void Loaded_RaisedAgain_AddsTheViewersWheelAndPinchHandlersOnce()
+    public void Loaded_RaisedAgain_AddsTheWheelAndPinchHandlersOnce()
         => WithWindow((_, _, tab) =>
         {
-            // The kept viewer is loaded again each time it is shown after a crop or the menu. Handlers added on
-            // every load made one wheel step zoom twice after one crop, and three times after two
+            // The kept view is loaded again each time it is shown after a crop or the menu. Handlers added on
+            // every load made one wheel step zoom twice after one crop, and three times after two. The navigable
+            // view routes them, so a wheel over its chrome reaches the viewer
             tab.SetLoading();
-            Assert.IsType<NavigableView>(ViewOf(tab));
+            var nav = Assert.IsType<NavigableView>(ViewOf(tab));
             var viewer = Assert.IsType<ImageViewer>(ViewerOf(tab));
 
-            viewer.RaiseEvent(new RoutedEventArgs(Control.LoadedEvent));
+            nav.RaiseEvent(new RoutedEventArgs(Control.LoadedEvent));
+            nav.RaiseEvent(new RoutedEventArgs(Control.LoadedEvent));
             viewer.RaiseEvent(new RoutedEventArgs(Control.LoadedEvent));
 
-            Assert.Equal(1, HandlerCount(viewer, InputElement.PointerWheelChangedEvent));
-            Assert.Equal(1, HandlerCount(viewer, InputElement.PinchEvent));
+            Assert.Equal(1, HandlerCount(nav.ContentPanel, InputElement.PointerWheelChangedEvent));
+            Assert.Equal(1, HandlerCount(nav.ContentPanel, InputElement.PinchEvent));
+            Assert.Equal(0, HandlerCount(viewer, InputElement.PointerWheelChangedEvent));
         });
 
     [AvaloniaFact]

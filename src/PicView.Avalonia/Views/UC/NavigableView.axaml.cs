@@ -1,6 +1,8 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Interactivity;
+using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Input;
 using PicView.Avalonia.UI;
 using PicView.Core.DebugTools;
@@ -46,8 +48,20 @@ public partial class NavigableView : UserControl, IZoomScrollTarget, IDisposable
             return;
         }
 
+        if (Viewer?.ZoomPreview is { } previous)
+        {
+            OverlayHost.Children.Remove(previous);
+        }
+
         Viewer = viewer;
         Slot.Content = viewer;
+
+        // Moved, not copied: the chrome sits above the whole slot, so the preview is lifted above it
+        if (viewer.ZoomPreview is { } preview)
+        {
+            (preview.Parent as Panel)?.Children.Remove(preview);
+            OverlayHost.Children.Add(preview);
+        }
     }
 
     private void OnLoaded(object? sender, RoutedEventArgs e)
@@ -60,6 +74,12 @@ public partial class NavigableView : UserControl, IZoomScrollTarget, IDisposable
         }
 
         _isLoadedOnce = true;
+
+        // Routed here, not in the viewer, so the wheel, a touchpad magnify and a pinch over the arrows, the hover bar
+        // and the gallery shortcut reach the viewer too. The gallery is outside the content panel and keeps its wheel
+        ContentPanel.AddHandler(PointerWheelChangedEvent, OnContentWheelChanged, RoutingStrategies.Tunnel);
+        ContentPanel.AddHandler(PointerTouchPadGestureMagnifyEvent, OnContentMagnify, RoutingStrategies.Bubble);
+        ContentPanel.AddHandler(PinchEvent, OnContentMagnify, RoutingStrategies.Bubble);
 
         // Correspond to change when index clicked on track
         Observable.FromEvent<EventHandler<int>, int>(
@@ -87,6 +107,25 @@ public partial class NavigableView : UserControl, IZoomScrollTarget, IDisposable
         _disposables.Add(new HoverFadeButtonHandler(GalleryShortcut, GalleryShortcut.InnerButton));
     }
 
+    private async ValueTask OnContentWheelChanged(object? sender, PointerWheelEventArgs e)
+    {
+        // The wheel only works on the view the active tab shows
+        if (Viewer is not { } viewer ||
+            TopLevel.GetTopLevel(this) is not MainWindow
+            {
+                DataContext: MainWindowViewModel { WindowTabs.ActiveTab.CurrentValue.CurrentView.Value: var view }
+            } mainWindow ||
+            !ReferenceEquals(view, this))
+        {
+            return;
+        }
+
+        e.Handled = await mainWindow.KeybindRouter.WheelAsync(Keybind.FromWheel(e.Delta.Y, e.KeyModifiers),
+            e.Pointer.Type is PointerType.Touch, viewer.ZoomPointer(e), viewer).ConfigureAwait(true);
+    }
+
+    private void OnContentMagnify(object? sender, PointerDeltaEventArgs e) => Viewer?.Magnify(e);
+
     #region IZoomScrollTarget
 
     bool IZoomScrollTarget.CanScrollVertically => Viewer?.CanScrollVertically ?? false;
@@ -112,6 +151,9 @@ public partial class NavigableView : UserControl, IZoomScrollTarget, IDisposable
     /// </summary>
     public void Dispose()
     {
+        ContentPanel.RemoveHandler(PointerWheelChangedEvent, OnContentWheelChanged);
+        ContentPanel.RemoveHandler(PointerTouchPadGestureMagnifyEvent, OnContentMagnify);
+        ContentPanel.RemoveHandler(PinchEvent, OnContentMagnify);
         GalleryView.Dispose();
         _disposables.Dispose();
         HoverBar.Dispose();

@@ -62,18 +62,15 @@ public partial class ImageViewer : UserControl, IDisposable, INavigableContent
 
     private void OnLoaded(object? sender, RoutedEventArgs e)
     {
-        // The viewer is kept and loaded again each time it is shown after a crop or the menu, and its handlers
-        // and subscriptions last until it is disposed, so they are made on the first load only. Made on every
-        // load, one wheel step zoomed once more for each time the viewer had been shown again
+        // The viewer is kept and loaded again each time it is shown after a crop or the menu, and its subscriptions
+        // last until it is disposed, so they are made on the first load only. The wheel, magnify and pinch are
+        // routed by the NavigableView, which calls ZoomPointer and Magnify
         if (_isLoadedOnce)
         {
             return;
         }
 
         _isLoadedOnce = true;
-        AddHandler(PointerWheelChangedEvent, PreviewOnPointerWheelChanged, RoutingStrategies.Tunnel);
-        AddHandler(PointerTouchPadGestureMagnifyEvent, TouchMagnifyEvent, RoutingStrategies.Bubble);
-        AddHandler(PinchEvent, TouchMagnifyEvent, RoutingStrategies.Bubble);
 
         Dispatcher.UIThread.Post(InitializeImageTransformer, DispatcherPriority.Background);
 
@@ -280,30 +277,16 @@ public partial class ImageViewer : UserControl, IDisposable, INavigableContent
     public void TriggerScalingModeUpdate(bool invalidate) =>
         ImageControlHelper.TriggerScalingModeUpdate(MainImage, invalidate);
 
-    private void TouchMagnifyEvent(object? sender, PointerDeltaEventArgs e) =>
+    void INavigableContent.Magnify(PointerDeltaEventArgs e) =>
         ZoomPanControl.ZoomWithPointerWheelCore(e.Delta.Y > 0, e.GetPosition(this));
 
-    private async ValueTask PreviewOnPointerWheelChanged(object? sender, PointerWheelEventArgs e) =>
-        await PreviewOnPointerWheelChangedAsync(e).ConfigureAwait(false);
-
-    private async ValueTask PreviewOnPointerWheelChangedAsync(PointerWheelEventArgs e)
-    {
-        // The wheel only works on the image viewer the active tab shows. The gallery is not inside this viewer, so
-        // its wheel never routes here
-        if (TopLevel.GetTopLevel(this) is not MainWindow
-            {
-                DataContext: MainWindowViewModel { WindowTabs.ActiveTab.CurrentValue.CurrentView.Value: NavigableView nav }
-            } mainWindow || !ReferenceEquals(nav.Viewer, this))
-        {
-            return;
-        }
-
-        var pointerControl = _tab.ParentWindowContext.GlobalSettings.IsSideBySideSyncedActive.Value
+    // Measured on the zoom control the wheel zooms: the one under the pointer while side by side is synced
+    Point INavigableContent.ZoomPointer(PointerEventArgs e) =>
+        e.GetPosition(_tab.ParentWindowContext.GlobalSettings.IsSideBySideSyncedActive.Value
             ? (SyncedRightZoom.IsPointerOver ? SyncedRightZoom : SyncedLeftZoom)
-            : ZoomPanControl;
-        e.Handled = await mainWindow.KeybindRouter.WheelAsync(Keybind.FromWheel(e.Delta.Y, e.KeyModifiers),
-            e.Pointer.Type is PointerType.Touch, e.GetPosition(pointerControl), this).ConfigureAwait(true);
-    }
+            : ZoomPanControl);
+
+    ZoomPreviewer? INavigableContent.ZoomPreview => ZoomPreview;
 
     /// <summary>
     /// Whether the shown image is taller than the scroll viewer, so there is something to scroll.
@@ -1192,9 +1175,6 @@ public partial class ImageViewer : UserControl, IDisposable, INavigableContent
         MainPanel.PointerMoved -= OnMainPanelPointerMoved;
         CompareBar.Dispose();
         ZoomPanControl.ScaleChanged -= OnScaleChanged;
-        RemoveHandler(PointerWheelChangedEvent, PreviewOnPointerWheelChanged);
-        RemoveHandler(PointerTouchPadGestureMagnifyEvent, TouchMagnifyEvent);
-        RemoveHandler(PinchEvent, TouchMagnifyEvent);
         MainPanel.LayoutUpdated -= OnMotionPhotoBadgeAnchorChanged;
         MotionPhotoView.LayoutUpdated -= OnMotionPhotoBadgeAnchorChanged;
         SecondaryMotionPhotoView.LayoutUpdated -= OnMotionPhotoBadgeAnchorChanged;

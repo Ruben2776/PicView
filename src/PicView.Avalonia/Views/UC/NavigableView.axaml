@@ -40,6 +40,8 @@
                 IsVisible="{CompiledBinding !ParentWindowContext.IsBottomToolbarShown.Value}"
                 Opacity="0"
                 ZIndex="2" />
+            <!--  The shown viewer's zoom preview, moved here so it is above the chrome and takes the pointer there  -->
+            <Panel x:Name="OverlayHost" ZIndex="90" />
         </Panel>
     </DockPanel>
 </UserControl>
