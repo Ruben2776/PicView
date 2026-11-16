@@ -9,11 +9,14 @@ using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.CustomControls.Zoom;
 using PicView.Avalonia.Input;
+using PicView.Avalonia.Views.Menu;
 using PicView.Avalonia.Views.UC;
 using PicView.Core.Config;
 using PicView.Core.ImageDecoding;
+using PicView.Core.Keybindings;
 using PicView.Core.Models;
 using PicView.Core.ViewModels;
+using PicView.Tests.Input;
 using PicView.Tests.WindowBehavior;
 using static PicView.Tests.UI.TabViewsHarness;
 using MouseButton = Avalonia.Input.MouseButton;
@@ -390,6 +393,107 @@ public class ComparisonViewerTests
 
         Assert.False(TakesPressAt(window, viewer, CenterOf(Part<Grid>(viewer, "StackHost"), window)));
     });
+
+    [AvaloniaFact]
+    public void DoubleClick_OnTheImage_RunsTheDoubleClickAction() => WithWindow((window, vm, tab) =>
+    {
+        // The window's click handling runs as in the app, so the tests below that expect nothing can fail
+        Settings.UIProperties.DoubleClickBehavior = 2;
+        var (viewer, actions) = HostInNavigableView(window, vm, tab);
+
+        DoubleClickAt(window, CenterOf(Part<Grid>(viewer, "StackHost"), window), new Vector(2, 0));
+
+        Assert.Contains(Actions.ToggleFullscreen, actions.Calls);
+    });
+
+    [AvaloniaFact]
+    public void DoubleClick_WhileAligning_DoesNotToggleFullscreen() => WithWindow((window, vm, tab) =>
+    {
+        Settings.UIProperties.DoubleClickBehavior = 2;
+        var (viewer, actions) = HostInNavigableView(window, vm, tab);
+        viewer.Comparison.ToggleAligning();
+        Settle(window);
+
+        // A1 and B1 a few pixels apart, quickly: a double-click to the window
+        DoubleClickAt(window, CenterOf(Part<Grid>(viewer, "StackHost"), window), new Vector(2, 0));
+
+        Assert.Empty(actions.Calls);
+        Assert.Equal(3, viewer.Comparison.AlignmentStep.Value);
+    });
+
+    [AvaloniaFact]
+    public void DoubleClick_WhileAligningZoomedIn_KeepsTheZoom() => WithWindow((window, vm, tab) =>
+    {
+        Settings.UIProperties.DoubleClickBehavior = 1;
+        var (viewer, actions) = HostInNavigableView(window, vm, tab);
+        var zoom = Part<ZoomPanControl>(viewer, "ZoomPanControl");
+        zoom.SetScaleImmediate(2.0);
+        // The zoom preview sizes itself from the main view, which this host lacks, so unsized it would cover all
+        Part<ZoomPreviewer>(viewer, "ZoomPreview").IsVisible = false;
+        viewer.Comparison.ToggleAligning();
+        Settle(window);
+
+        DoubleClickAt(window, CenterOf(Part<Grid>(viewer, "StackHost"), window), new Vector(2, 0));
+
+        // Neither the window's Reset Zoom nor the zoom control's own double-click reset
+        Assert.Empty(actions.Calls);
+        Assert.Equal(2.0, zoom.Scale, 3);
+        Assert.Equal(3, viewer.Comparison.AlignmentStep.Value);
+    });
+
+    [AvaloniaFact]
+    public void DoubleClick_OnTheSplitHandle_OnlyResetsTheRatio() => WithWindow((window, vm, tab) =>
+    {
+        Settings.UIProperties.DoubleClickBehavior = 2;
+        var (viewer, actions) = HostInNavigableView(window, vm, tab, static comparison =>
+        {
+            comparison.SetMode(ComparisonMode.Split);
+            comparison.SplitRatio.Value = 0.3;
+        });
+
+        DoubleClickAt(window, CenterOf(Part<Border>(viewer, "SplitHandle"), window), default);
+
+        Assert.Empty(actions.Calls);
+        Assert.Equal(0.5, viewer.Comparison.SplitRatio.Value, 3);
+    });
+
+    // Shows the viewer in the tab's navigable view, in place of the image viewer, with the window's click handling
+    // and its Actions recorded
+    private static (ComparisonViewer Viewer, RecordingActionRunner Actions) HostInNavigableView(
+        TestMainWindow window, MainWindowViewModel vm, TabViewModel tab,
+        Action<ComparisonViewModel>? configure = null)
+    {
+        window.Width = 800;
+        window.Height = 600;
+        vm.ImageWidth.Value = 400;
+        vm.ImageHeight.Value = 300;
+        tab.Display(BitmapModel("a.jpg"), BitmapModel("b.jpg"));
+        var comparison = new ComparisonViewModel(tab.Model, tab.SecondaryModel, static () => { });
+        configure?.Invoke(comparison);
+        var viewer = new ComparisonViewer(tab, comparison);
+        var nav = Assert.IsType<NavigableView>(ViewOf(tab));
+        nav.Show(viewer);
+        window.Content = nav;
+        // The bars the click handling asks about, which the app sets up
+        window.SharedTitleBar = new CustomTitleBar();
+        window.SharedBottomBar = new BottomBar();
+        var actions = new RecordingActionRunner();
+        vm.ActionRunner = actions;
+        window.AddHandler(InputElement.PointerPressedEvent,
+            (_, e) => _ = ImageViewerClickBehavior.PointerPressedAsync(e, window), RoutingStrategies.Tunnel);
+        Settle(window);
+        return (viewer, actions);
+    }
+
+    private static void DoubleClickAt(TestMainWindow window, Point first, Vector offset)
+    {
+        window.MouseDown(first, MouseButton.Left);
+        window.MouseUp(first, MouseButton.Left);
+        var second = first + offset;
+        window.MouseDown(second, MouseButton.Left);
+        window.MouseUp(second, MouseButton.Left);
+        Settle(window);
+    }
 
     // Hosts the viewer in the window after the tab shows the pair, A and B unless given
     private static ComparisonViewer Host(TestMainWindow window, TabViewModel tab, ImageModel? a = null,

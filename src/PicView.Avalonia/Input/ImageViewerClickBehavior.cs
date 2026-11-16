@@ -45,6 +45,9 @@ public static class ImageViewerClickBehavior
                     case NavigableView nav when nav.ClickArrowLeft.IsPointerOver || nav.ClickArrowRight.IsPointerOver:
                     case StartUpMenu startUpMenu when startUpMenu.Buttons.IsPointerOver:
                         return;
+                    // A quick second alignment point, or a double-click on a split handle, is the viewer's
+                    case NavigableView { Viewer: { } viewer } when viewer.TakesPress(e):
+                        return;
                 }
 
                 if (window.SharedBottomBar.IsPointerOver || window.SharedTitleBar.IsPointerOver)
