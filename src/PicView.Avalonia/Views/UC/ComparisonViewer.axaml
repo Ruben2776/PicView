@@ -22,11 +22,15 @@
                 <ScaleTransform ScaleX="{CompiledBinding Orientation.ScaleX.Value}" />
             </LayoutTransformControl.RenderTransform>
             <zoom:ZoomPanControl x:Name="ZoomPanControl" Host="Comparison">
-                <!--  As large as the view, as the image viewer's scroll viewer is, so the zoom control centres and pans the
-                      fitted pair exactly as it does the image  -->
-                <Panel
+                <!--  The image viewer's scroll viewer, as large as the view, so the zoom control centres and pans the fitted
+                      pair exactly as it does the image, and a tall pair scrolls together while scrolling is on  -->
+                <customControls:AutoScrollViewer
+                    x:Name="StackScrollViewer"
                     Width="{CompiledBinding ParentWindowContext.ScrollViewerWidth.Value}"
-                    Height="{CompiledBinding ParentWindowContext.ScrollViewerHeight.Value}">
+                    Height="{CompiledBinding ParentWindowContext.ScrollViewerHeight.Value}"
+                    Focusable="False"
+                    HorizontalScrollBarVisibility="Disabled"
+                    VerticalScrollBarVisibility="Disabled">
                     <Border
                         Width="{CompiledBinding ParentWindowContext.ImageWidth.Value}"
                         Height="{CompiledBinding ParentWindowContext.ImageHeight.Value}"
@@ -55,7 +59,7 @@
                                 IsVisible="{CompiledBinding $parent[uc:ComparisonViewer].Comparison.IsAligning.Value}" />
                         </Grid>
                     </Border>
-                </Panel>
+                </customControls:AutoScrollViewer>
             </zoom:ZoomPanControl>
         </LayoutTransformControl>
         <!--  Synced: A and B side by side, zoomed and panned together  -->

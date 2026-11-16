@@ -349,6 +349,62 @@ public class ComparisonViewerTests
     });
 
     [AvaloniaFact]
+    public void ScrollEnabled_TallPair_ScrollsThePairTogether() => WithWindow((window, vm, tab) =>
+    {
+        // Fitted with scrolling on: the pair is as wide as the view and taller than it
+        ShowTallPairFit(vm);
+        var viewer = Host(window, tab);
+        var target = (IZoomScrollTarget)viewer;
+
+        Assert.True(target.CanScrollVertically);
+        Assert.True(target.IsImageTallerThanViewer);
+
+        var scroll = Part<AutoScrollViewer>(viewer, "StackScrollViewer");
+        target.ScrollLine(true);
+        Settle(window);
+        Assert.True(scroll.Offset.Y > 0, $"Expected the offset below 0, got {scroll.Offset.Y}");
+
+        target.ScrollToEnd();
+        Settle(window);
+        Assert.Equal(scroll.Extent.Height - scroll.Viewport.Height, scroll.Offset.Y, 1);
+
+        target.ScrollToHome();
+        Settle(window);
+        Assert.Equal(0, scroll.Offset.Y, 1);
+    });
+
+    [AvaloniaFact]
+    public void ScrollEnabled_Synced_DoesNotScroll() => WithWindow((window, vm, tab) =>
+    {
+        ShowTallPairFit(vm);
+        var viewer = Host(window, tab, configure: static comparison => comparison.SetMode(ComparisonMode.Synced));
+        var target = (IZoomScrollTarget)viewer;
+
+        Assert.False(target.CanScrollVertically);
+        Assert.False(target.IsImageTallerThanViewer);
+    });
+
+    [AvaloniaFact]
+    public void ScrollDisabled_TallPair_DoesNotScroll() => WithWindow((window, vm, tab) =>
+    {
+        ShowTallPairFit(vm);
+        vm.GlobalSettings.IsScrollingEnabled.Value = false;
+        var viewer = Host(window, tab);
+
+        Assert.False(((IZoomScrollTarget)viewer).CanScrollVertically);
+    });
+
+    // The fit the window gives a tall image with scrolling on: the view's size, and the image taller than it
+    private static void ShowTallPairFit(MainWindowViewModel vm)
+    {
+        vm.GlobalSettings.IsScrollingEnabled.Value = true;
+        vm.ScrollViewerWidth.Value = 400;
+        vm.ScrollViewerHeight.Value = 300;
+        vm.ImageWidth.Value = 400;
+        vm.ImageHeight.Value = 1200;
+    }
+
+    [AvaloniaFact]
     public void TakesPress_OverTheSplitHandle_IsTrue() => WithWindow((window, vm, tab) =>
     {
         vm.ImageWidth.Value = 400;
