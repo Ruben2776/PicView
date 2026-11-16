@@ -87,11 +87,12 @@ public class LanguageModel
     public string? ComparisonBlink { get; set; }
     public string? ComparisonDifference { get; set; }
     public string? ComparisonCustom { get; set; }
-    public string? ComparisonFit { get; set; }
     public string? ComparisonSwap { get; set; }
     public string? ComparisonSideBySideSynced { get; set; }
     public string? ComparisonPickA { get; set; }
     public string? ComparisonPickB { get; set; }
+    public string? ComparisonSplitVertical { get; set; }
+    public string? ComparisonSplitHorizontal { get; set; }
     public string? ComparisonPin { get; set; }
     public string? ComparisonStretch { get; set; }
     public string? ComparisonAlign { get; set; }

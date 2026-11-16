@@ -512,6 +512,8 @@
   "ComparisonSideBySideSynced": "Synced",
   "ComparisonPickA": "Pick A",
   "ComparisonPickB": "Pick B",
+  "ComparisonSplitVertical": "Vertical split",
+  "ComparisonSplitHorizontal": "Horizontal split",
   "ComparisonPin": "Pin A",
   "ComparisonStretch": "Stretch to match",
   "ComparisonAlign": "2-Point Align",

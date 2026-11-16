@@ -39,6 +39,54 @@ public class CompareBarTests
         Assert.True(bar.IsEffectivelyVisible);
     });
 
+    [AvaloniaTheory]
+    [InlineData(ComparisonBarPosition.Bottom, 0, 1, 0, 0)]
+    [InlineData(ComparisonBarPosition.Top, 0, 0, 0, 1)]
+    [InlineData(ComparisonBarPosition.Left, 0, 0, 1, 0)]
+    [InlineData(ComparisonBarPosition.Right, 1, 0, 0, 0)]
+    public void CompareBar_Border_IsOnTheEdgeFacingTheImage(ComparisonBarPosition position, double left, double top,
+        double right, double bottom) => WithWindow((window, _, tab) =>
+    {
+        Settings.Comparison!.BarPosition = position;
+        var bar = Compare(window, tab);
+
+        Assert.Equal(new Thickness(left, top, right, bottom), Assert.IsType<Border>(bar.Content).BorderThickness);
+    });
+
+    [AvaloniaFact]
+    public void CompareBar_ActiveModeButton_HasNoHoverClass() => WithWindow((window, _, tab) =>
+    {
+        var bar = Compare(window, tab, ComparisonMode.Overlay);
+        var overlay = Assert.IsAssignableFrom<Button>(bar.FindControl<Button>("OverlayModeButton"));
+        var split = Assert.IsAssignableFrom<Button>(bar.FindControl<Button>("SplitModeButton"));
+
+        Assert.DoesNotContain("MenuItemHover", overlay.Classes, StringComparer.Ordinal);
+        Assert.Contains("MenuItemHover", split.Classes, StringComparer.Ordinal);
+    });
+
+    [AvaloniaTheory]
+    [InlineData(ComparisonBarPosition.Bottom, Dock.Right)]
+    [InlineData(ComparisonBarPosition.Left, Dock.Bottom)]
+    public void CompareBar_CloseButton_SitsAtTheEndOfTheBar(ComparisonBarPosition position, Dock dock)
+        => WithWindow((window, _, tab) =>
+        {
+            Settings.Comparison!.BarPosition = position;
+            var bar = Compare(window, tab);
+            var close = bar.GetVisualDescendants().OfType<Control>()
+                .Single(c => string.Equals(c.Name, "CloseButton", StringComparison.Ordinal));
+            var panel = Assert.IsType<DockPanel>(close.Parent);
+
+            Assert.Equal(dock, DockPanel.GetDock(close));
+            if (dock == Dock.Right)
+            {
+                Assert.Equal(panel.Bounds.Width, close.Bounds.Right, precision: 1);
+            }
+            else
+            {
+                Assert.Equal(panel.Bounds.Height, close.Bounds.Bottom, precision: 1);
+            }
+        });
+
     [AvaloniaFact]
     public void CompareBar_SideBySideOnly_IsNotShown() => WithWindow((window, vm, tab) =>
     {
@@ -193,7 +241,7 @@ public class CompareBarTests
             var bar = Compare(window, tab, ComparisonMode.Synced);
             var viewer = Assert.IsType<ComparisonViewer>(ViewerOf(tab));
             var percentText = Assert.IsType<TextBlock>(bar.FindControl<TextBlock>("ZoomPercentText"));
-            var zoomOutButton = Assert.IsType<Button>(bar.FindControl<Button>("ZoomOutButton"));
+            var zoomOutButton = Assert.IsAssignableFrom<Button>(bar.FindControl<Button>("ZoomOutButton"));
 
             Assert.Equal("100%", percentText.Text);
             Assert.False(zoomOutButton.IsEnabled);
@@ -258,7 +306,7 @@ public class CompareBarTests
         // The harness leaves the Action runner null, so the window's Actions would do nothing
         vm.ActionRunner = new FunctionsMapper(vm, window);
         var bar = Compare(window, tab);
-        var close = Assert.IsType<Button>(bar.FindControl<Button>("CloseButton"));
+        var close = Assert.IsAssignableFrom<Button>(bar.FindControl<Button>("CloseButton"));
 
         close.Command!.Execute(close.CommandParameter);
         Dispatcher.UIThread.RunJobs();

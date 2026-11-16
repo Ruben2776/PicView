@@ -208,6 +208,7 @@
                     Data="M5,8 L2,11 L5,14 M11,8 L14,11 L11,14 M2,11 L14,11"
                     Height="14"
                     HorizontalAlignment="Center"
+                    Margin="0,5,0,0"
                     Stretch="Uniform"
                     Stroke="#FFFFFFFF"
                     StrokeJoin="Round"
