@@ -215,8 +215,6 @@ public class SettingsSearchData
         
         sb.Clear();
         
-        sb.Clear();
-        
         sb.Append(TranslationManager.Translation.ImageAliasing);
         sb.Append(space);
         sb.Append(TranslationManager.Translation.HighQuality);

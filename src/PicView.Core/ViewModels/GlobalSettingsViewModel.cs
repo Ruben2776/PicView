@@ -1,4 +1,4 @@
-using PicView.Core.Config;
+﻿using PicView.Core.Config;
 using PicView.Core.DebugTools;
 using PicView.Core.Gallery;
 using PicView.Core.Localization;
@@ -7,7 +7,7 @@ using R3;
 namespace PicView.Core.ViewModels;
 
 /// <summary>
-/// The fifteen toggled settings publish their changes (ADR-0020): each is a bindable over its stored value, and the
+/// The fourteen toggled settings publish their changes (ADR-0020): each is a bindable over its stored value, and the
 /// write-through here is the one writer of that stored value, followed by one coalesced save.
 /// </summary>
 public class GlobalSettingsViewModel
@@ -20,31 +20,6 @@ public class GlobalSettingsViewModel
     public BindableReactiveProperty<bool> IsLooping { get; }
 
     public BindableReactiveProperty<bool> IsSideBySide { get; }
-
-    /// <summary>Comparison mode: the next image stacked on the current one. Never on with side-by-side.</summary>
-    public BindableReactiveProperty<bool> IsComparing { get; }
-
-    /// <summary>Active stacked comparison mode (Overlay, Split, Blink, or Difference).</summary>
-    public BindableReactiveProperty<ComparisonMode> ComparisonMode { get; }
-
-    public IReadOnlyBindableReactiveProperty<bool> IsOverlayMode { get; }
-    public IReadOnlyBindableReactiveProperty<bool> IsSplitMode { get; }
-    public IReadOnlyBindableReactiveProperty<bool> IsBlinkMode { get; }
-    public IReadOnlyBindableReactiveProperty<bool> IsDifferenceMode { get; }
-
-    public BindableReactiveProperty<bool> IsSideBySideSynced { get; }
-    public IReadOnlyBindableReactiveProperty<bool> IsSideBySideSyncedActive { get; }
-    public IReadOnlyBindableReactiveProperty<bool> IsSideBySideStandardActive { get; }
-
-    public BindableReactiveProperty<double> ComparisonOverlayOpacity { get; }
-    public BindableReactiveProperty<double> ComparisonSplitRatio { get; }
-    public BindableReactiveProperty<bool> IsComparisonSplitHorizontal { get; }
-    public BindableReactiveProperty<bool> IsComparisonBlinkFast { get; }
-    public BindableReactiveProperty<double> ComparisonBlinkInterval { get; }
-    public BindableReactiveProperty<bool> IsComparisonStretchFill { get; }
-
-    /// <summary>Whether a tab shows a pair: side-by-side or comparison is on.</summary>
-    public ReadOnlyReactiveProperty<bool> IsShowingPair { get; }
 
     public BindableReactiveProperty<bool> IsScrollingEnabled { get; }
 
@@ -147,42 +122,7 @@ public class GlobalSettingsViewModel
         _save = save ?? SaveSettingsAsync;
 
         IsLooping = new BindableReactiveProperty<bool>(Settings.UIProperties.Looping);
-        // A settings file with both on (hand-edited, or from an older build): comparison wins
-        if (Settings.ImageScaling.ShowComparison)
-        {
-            Settings.ImageScaling.ShowImageSideBySide = false;
-        }
         IsSideBySide = new BindableReactiveProperty<bool>(Settings.ImageScaling.ShowImageSideBySide);
-        IsComparing = new BindableReactiveProperty<bool>(Settings.ImageScaling.ShowComparison);
-        ComparisonMode = new BindableReactiveProperty<ComparisonMode>(Settings.ImageScaling.ComparisonMode);
-        IsSideBySideSynced = new BindableReactiveProperty<bool>(Settings.ImageScaling.IsSideBySideSynced);
-        ComparisonOverlayOpacity = new BindableReactiveProperty<double>(Settings.ImageScaling.ComparisonOverlayOpacity);
-        ComparisonSplitRatio = new BindableReactiveProperty<double>(Settings.ImageScaling.ComparisonSplitRatio);
-        IsComparisonSplitHorizontal = new BindableReactiveProperty<bool>(Settings.ImageScaling.IsComparisonSplitHorizontal);
-        IsComparisonBlinkFast = new BindableReactiveProperty<bool>(Settings.ImageScaling.IsComparisonBlinkFast);
-        ComparisonBlinkInterval = new BindableReactiveProperty<double>(Settings.ImageScaling.ComparisonBlinkInterval);
-        IsComparisonStretchFill = new BindableReactiveProperty<bool>(Settings.ImageScaling.IsComparisonStretchFill);
-        IsOverlayMode = IsComparing.CombineLatest(ComparisonMode, static (comparing, mode) => comparing && mode == Config.ComparisonMode.Overlay)
-            .DistinctUntilChanged()
-            .ToReadOnlyBindableReactiveProperty();
-        IsSplitMode = IsComparing.CombineLatest(ComparisonMode, static (comparing, mode) => comparing && mode == Config.ComparisonMode.Split)
-            .DistinctUntilChanged()
-            .ToReadOnlyBindableReactiveProperty();
-        IsBlinkMode = IsComparing.CombineLatest(ComparisonMode, static (comparing, mode) => comparing && mode == Config.ComparisonMode.Blink)
-            .DistinctUntilChanged()
-            .ToReadOnlyBindableReactiveProperty();
-        IsDifferenceMode = IsComparing.CombineLatest(ComparisonMode, static (comparing, mode) => comparing && mode == Config.ComparisonMode.Difference)
-            .DistinctUntilChanged()
-            .ToReadOnlyBindableReactiveProperty();
-        IsSideBySideSyncedActive = IsSideBySide.CombineLatest(IsSideBySideSynced, static (sbs, synced) => sbs && synced)
-            .DistinctUntilChanged()
-            .ToReadOnlyBindableReactiveProperty();
-        IsSideBySideStandardActive = IsSideBySide.CombineLatest(IsSideBySideSynced, static (sbs, synced) => sbs && !synced)
-            .DistinctUntilChanged()
-            .ToReadOnlyBindableReactiveProperty();
-        IsShowingPair = IsSideBySide.CombineLatest(IsComparing, static (sideBySide, comparing) => sideBySide || comparing)
-            .DistinctUntilChanged()
-            .ToReadOnlyReactiveProperty();
         IsScrollingEnabled = new BindableReactiveProperty<bool>(Settings.Zoom.ScrollEnabled);
         IsZoomedToFit = new BindableReactiveProperty<bool>(Settings.ImageScaling.ZoomToFit);
         IsIncludingSubdirectories = new BindableReactiveProperty<bool>(Settings.Sorting.IncludeSubDirectories);
@@ -217,19 +157,6 @@ public class GlobalSettingsViewModel
         Follow(ShowHoverBar, value => Settings.UIProperties.ShowHoverNavigationBar = value, rephrases: true);
         Follow(ShowFadeButtons, value => Settings.UIProperties.ShowAltInterfaceButtons = value);
         Follow(WindowMargin, value => Settings.WindowProperties.Margin = value);
-        Follow(IsComparing, value => Settings.ImageScaling.ShowComparison = value);
-        Follow(ComparisonMode, value => Settings.ImageScaling.ComparisonMode = value);
-        Follow(IsSideBySideSynced, value => Settings.ImageScaling.IsSideBySideSynced = value);
-        Follow(ComparisonOverlayOpacity, value => Settings.ImageScaling.ComparisonOverlayOpacity = value);
-        Follow(ComparisonSplitRatio, value => Settings.ImageScaling.ComparisonSplitRatio = value);
-        Follow(IsComparisonSplitHorizontal, value => Settings.ImageScaling.IsComparisonSplitHorizontal = value);
-        Follow(IsComparisonBlinkFast, value => Settings.ImageScaling.IsComparisonBlinkFast = value);
-        Follow(ComparisonBlinkInterval, value => Settings.ImageScaling.ComparisonBlinkInterval = value);
-        Follow(IsComparisonStretchFill, value => Settings.ImageScaling.IsComparisonStretchFill = value);
-
-        // Side-by-side and comparison are never on together: turning one on turns the other off
-        IsComparing.Where(static on => on).Subscribe(_ => IsSideBySide.Value = false);
-        IsSideBySide.Where(static on => on).Subscribe(_ => IsComparing.Value = false);
     }
 
     /// <summary>

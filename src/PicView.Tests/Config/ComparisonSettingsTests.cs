@@ -36,4 +36,14 @@ public class ComparisonSettingsTests
 
         Assert.NotNull(ensured.Comparison);
     }
+
+    [Fact]
+    public void Settings_HaveNoComparisonInImageScaling()
+    {
+        var json = JsonSerializer.Serialize(SettingsManager.GetDefaults(), SettingsGenerationContext.Default.AppSettings);
+
+        Assert.DoesNotContain("\"Show" + "Comparison\"", json);
+        Assert.DoesNotContain("\"IsSideBySide" + "Synced\"", json);
+        Assert.Contains("\"Comparison\"", json);
+    }
 }
