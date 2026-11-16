@@ -68,6 +68,58 @@
                 </ControlTemplate>
             </Setter>
         </Style>
+        <!--  Structure only: the horizontal parts turned upright  -->
+        <Style Selector="^:vertical">
+            <Setter Property="MinWidth" Value="20" />
+            <Setter Property="MinHeight" Value="40" />
+            <Setter Property="Template">
+                <ControlTemplate>
+                    <Grid Name="grid">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" MinWidth="20" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Track
+                            Name="PART_Track"
+                            Grid.Column="1"
+                            IsDirectionReversed="{TemplateBinding IsDirectionReversed}"
+                            Orientation="Vertical">
+                            <Track.DecreaseButton>
+                                <RepeatButton
+                                    Name="PART_DecreaseButton"
+                                    Width="12"
+                                    Height="NaN"
+                                    Theme="{StaticResource SliderDecreaseTheme}" />
+                            </Track.DecreaseButton>
+                            <Track.IncreaseButton>
+                                <RepeatButton
+                                    Name="PART_IncreaseButton"
+                                    Width="12"
+                                    Height="NaN"
+                                    Theme="{StaticResource SliderIncreaseTheme}" />
+                            </Track.IncreaseButton>
+                            <Thumb Width="22" Height="22">
+                                <Thumb.Template>
+                                    <ControlTemplate>
+                                        <Rectangle
+                                            Name="thumb"
+                                            Fill="{DynamicResource ScrollbarThumbColor}"
+                                            Stroke="{DynamicResource ScrollbarThumbBorderColor}"
+                                            StrokeThickness="1.5" />
+                                    </ControlTemplate>
+                                </Thumb.Template>
+                                <Thumb.Styles>
+                                    <Style Selector="Rectangle:pointerover">
+                                        <Setter Property="Fill" Value="{DynamicResource AccentColor}" />
+                                    </Style>
+                                </Thumb.Styles>
+                            </Thumb>
+                        </Track>
+                    </Grid>
+                </ControlTemplate>
+            </Setter>
+        </Style>
 
         <Style Selector="^ /template/ Track#PART_Track">
             <Setter Property="Minimum" Value="{TemplateBinding Minimum}" />
