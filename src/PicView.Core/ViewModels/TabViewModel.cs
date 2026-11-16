@@ -246,7 +246,8 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
             if (wanted && _comparison is null)
             {
                 _comparison = new ComparisonViewModel(Model, SecondaryModel,
-                    Services?.GlobalSettings is { } gs ? gs.SaveSoon : static () => { });
+                    Services?.GlobalSettings is { } gs ? gs.SaveSoon : static () => { },
+                    Services?.Cache is { } cache ? cache.Hold : null);
                 DeriveViewKind();
             }
             else if (!wanted && _comparison is { } old)

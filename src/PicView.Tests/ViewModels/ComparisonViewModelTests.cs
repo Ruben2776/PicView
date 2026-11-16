@@ -1,5 +1,7 @@
 using PicView.Core.Config;
 using PicView.Core.Models;
+using PicView.Core.Navigation;
+using PicView.Core.Preloading;
 using PicView.Core.ViewModels;
 
 namespace PicView.Tests.ViewModels;
@@ -178,6 +180,114 @@ public class ComparisonViewModelTests
         Assert.False(IsDisposed(a));
         Assert.False(IsDisposed(b));
         Assert.True(vm.IsDisposed);
+    }
+
+    [Fact]
+    public async Task BrowsingPastThePrimary_NotPinned_TheCacheDisposesIt()
+    {
+        // What the pin guards against: the cache disposes the primary once the tab has browsed past it
+        var (cache, primary, files) = await CachedPrimary();
+        using var vm = New(primary, null, cache);
+
+        await BrowsePastThePreloadWindow(cache, files);
+
+        Assert.True(IsDisposed(primary));
+    }
+
+    [Fact]
+    public async Task TogglePin_OnACachedPrimary_KeepsItWhileTheTabBrowsesPastIt()
+    {
+        var (cache, primary, files) = await CachedPrimary();
+        using var vm = New(primary, null, cache);
+        vm.TogglePin();
+
+        await BrowsePastThePreloadWindow(cache, files);
+
+        Assert.False(IsDisposed(primary));
+        Assert.Same(primary.Image, vm.ImageA.Value);
+    }
+
+    [Fact]
+    public async Task TogglePin_Off_ReleasesTheCachedPrimary()
+    {
+        var (cache, primary, files) = await CachedPrimary();
+        using var vm = New(primary, null, cache);
+        vm.TogglePin();
+        await BrowsePastThePreloadWindow(cache, files);
+
+        vm.TogglePin();
+        cache.ForceDisposalQueue();
+
+        Assert.True(IsDisposed(primary));
+    }
+
+    [Fact]
+    public async Task SetOverride_AOverAPinnedPrimary_ReleasesTheCachedPrimary()
+    {
+        var (cache, primary, files) = await CachedPrimary();
+        using var vm = New(primary, null, cache);
+        vm.TogglePin();
+        await BrowsePastThePreloadWindow(cache, files);
+
+        vm.SetOverride(ComparisonSlot.A, Model("c.jpg"));
+        cache.ForceDisposalQueue();
+
+        Assert.True(IsDisposed(primary));
+    }
+
+    [Fact]
+    public async Task ClearOverrides_WithAPinnedPrimary_ReleasesTheCachedPrimary()
+    {
+        var (cache, primary, files) = await CachedPrimary();
+        using var vm = New(primary, null, cache);
+        vm.TogglePin();
+        await BrowsePastThePreloadWindow(cache, files);
+
+        vm.ClearOverrides();
+        cache.ForceDisposalQueue();
+
+        Assert.True(IsDisposed(primary));
+    }
+
+    [Fact]
+    public async Task Dispose_WithAPinnedCachedPrimary_ReleasesIt()
+    {
+        var (cache, primary, files) = await CachedPrimary();
+        var vm = New(primary, null, cache);
+        vm.TogglePin();
+        await BrowsePastThePreloadWindow(cache, files);
+
+        vm.Dispose();
+        cache.ForceDisposalQueue();
+
+        Assert.True(IsDisposed(primary));
+    }
+
+    private const uint TabId = 1;
+
+    private ComparisonViewModel New(ImageModel primary, ImageModel? secondary, SharedImageCache cache) =>
+        new(primary, secondary, () => _saves++, cache.Hold);
+
+    // A cache over a tab's files, with the first one loaded for the tab and shown as its primary
+    private static async Task<(SharedImageCache Cache, ImageModel Primary, FileInfo[] Files)> CachedPrimary()
+    {
+        var files = Enumerable.Range(0, PreLoaderConfig.MaxCount * 3).Select(static i => Model($"{i}.jpg").FileInfo!)
+            .ToArray();
+        var cache = new SharedImageCache(static f => ValueTask.FromResult(Model(f.Name)));
+        cache.SetFiles(TabId, files);
+        var primary = await cache.GetAsync(TabId, files[0], TestContext.Current.CancellationToken);
+        return (cache, Assert.IsType<ImageModel>(primary), files);
+    }
+
+    // Shows each file after the first in turn, as browsing does, so the first leaves the tab's preload window
+    private static async Task BrowsePastThePreloadWindow(SharedImageCache cache, FileInfo[] files)
+    {
+        for (var i = 1; i < files.Length; i++)
+        {
+            await cache.GetAsync(TabId, files[i], TestContext.Current.CancellationToken);
+        }
+
+        cache.ForceDisposalQueue();
     }
 
     [Fact]

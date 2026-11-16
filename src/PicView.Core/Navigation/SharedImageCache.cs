@@ -146,6 +146,35 @@ public sealed class SharedImageCache
     }
 
     /// <summary>
+    /// Holds a reference to <paramref name="model"/> while it is the cached image of its file, so it is not disposed,
+    /// whatever its owners do, until the returned lease is disposed. For a model shown outside its owner's preload
+    /// window, such as a pinned comparison image.
+    /// </summary>
+    /// <returns>The lease, or <see langword="null"/> when <paramref name="model"/> is not a cached, loaded image.</returns>
+    public IDisposable? Hold(ImageModel model)
+    {
+        if (model.FileInfo?.FullName is not { } path)
+        {
+            return null;
+        }
+
+        PreLoadValue? value;
+        // Disposal runs under this lock, so a value that is not disposed here stays undisposed while it is referenced
+        lock (_disposalLock)
+        {
+            if (!_pathLookup.TryGetValue(path, out value) || !ReferenceEquals(value.ImageModel, model) ||
+                value.IsLoading || value.IsDisposed)
+            {
+                return null;
+            }
+
+            value.AddReference();
+        }
+
+        return new Lease(this, value);
+    }
+
+    /// <summary>
     /// Stores an already loaded <paramref name="model"/> for <paramref name="file"/>, replacing any cached image of
     /// the file, and gives <paramref name="ownerId"/> a reference to it.
     /// </summary>
@@ -520,6 +549,20 @@ public sealed class SharedImageCache
     }
 
     #endregion
+
+    // A reference from Hold, released once
+    private sealed class Lease(SharedImageCache cache, PreLoadValue value) : IDisposable
+    {
+        private int _isReleased;
+
+        public void Dispose()
+        {
+            if (Interlocked.Exchange(ref _isReleased, 1) is 0)
+            {
+                cache.Release(value);
+            }
+        }
+    }
 
     private sealed class Owner
     {
