@@ -188,20 +188,14 @@
                         Spacing="6"
                         VerticalAlignment="Center"
                         customControls:ContextualStackPanel.IsContextual="True">
-                        <TextBlock
-                            Classes="txt"
-                            Foreground="{DynamicResource MainTextColorFaded}"
-                            Text="A" />
+                        <TextBlock Classes="txt" Text="A" />
                         <Slider
                             Maximum="1"
                             Minimum="0"
                             Value="{CompiledBinding Comparison.OverlayOpacity.Value,
                                                     Mode=TwoWay}"
                             VerticalAlignment="Center" />
-                        <TextBlock
-                            Classes="txt"
-                            Foreground="{DynamicResource MainTextColorFaded}"
-                            Text="B" />
+                        <TextBlock Classes="txt" Text="B" />
                     </StackPanel>
 
                     <!--  Contextual Controls: Split Orientation  -->
@@ -211,31 +205,25 @@
                         IsVisible="{CompiledBinding Comparison.IsSplit.Value}"
                         Padding="2"
                         customControls:ContextualStackPanel.IsContextual="True">
-                        <StackPanel Classes="barGroup" Spacing="2">
-                            <Button
+                        <StackPanel Classes="barGroup">
+                            <customControls:IconButton
                                 Classes="compareIconBtn"
                                 Classes.active="{CompiledBinding !Comparison.IsSplitHorizontal.Value}"
                                 Click="OnSplitVerticalClick"
-                                ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.ComparisonSplitVertical.Value}">
-                                <Path
-                                    Data="M3,4 C3,3.45 3.45,3 4,3 L14,3 C14.55,3 15,3.45 15,4 L15,14 C15,14.55 14.55,15 14,15 L4,15 C3.45,15 3,14.55 3,14 Z M9,3 L9,15"
-                                    Height="14"
-                                    Stretch="Uniform"
-                                    StrokeThickness="1.5"
-                                    Width="14" />
-                            </Button>
-                            <Button
+                                CornerRadius="16,0,0,16"
+                                Icon="{StaticResource SeparatorVerticalImage}"
+                                IconHeight="12"
+                                IconWidth="12"
+                                ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.ComparisonSplitVertical.Value}" />
+                            <customControls:IconButton
                                 Classes="compareIconBtn"
                                 Classes.active="{CompiledBinding Comparison.IsSplitHorizontal.Value}"
                                 Click="OnSplitHorizontalClick"
-                                ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.ComparisonSplitHorizontal.Value}">
-                                <Path
-                                    Data="M3,4 C3,3.45 3.45,3 4,3 L14,3 C14.55,3 15,3.45 15,4 L15,14 C15,14.55 14.55,15 14,15 L4,15 C3.45,15 3,14.55 3,14 Z M3,9 L15,9"
-                                    Height="14"
-                                    Stretch="Uniform"
-                                    StrokeThickness="1.5"
-                                    Width="14" />
-                            </Button>
+                                CornerRadius="0,16,16,0"
+                                Icon="{StaticResource SeparatorHorizontalImage}"
+                                IconHeight="12"
+                                IconWidth="12"
+                                ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.ComparisonSplitHorizontal.Value}" />
                         </StackPanel>
                     </Border>
 
@@ -282,15 +270,13 @@
                         VerticalAlignment="Center" />
 
                     <!--  Pick A / Pick B  -->
-                    <Border
-                        Background="{DynamicResource ComparePillGroupBackground}"
-                        CornerRadius="16"
-                        Padding="2">
+                    <Border Background="{DynamicResource ComparePillGroupBackground}" CornerRadius="10">
                         <StackPanel Classes="barGroup" Spacing="2">
                             <Button
                                 Classes="compareBtn MenuItemHover"
                                 Command="{CompiledBinding ParentWindowContext.RunActionCommand}"
                                 CommandParameter="{x:Static keybindings:Actions.ComparisonPickA}"
+                                CornerRadius="10,0,0,10"
                                 Padding="9,4"
                                 ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.ComparisonPickA.Value}">
                                 <TextBlock Classes="txt" Text="A" />
@@ -299,6 +285,7 @@
                                 Classes="compareBtn MenuItemHover"
                                 Command="{CompiledBinding ParentWindowContext.RunActionCommand}"
                                 CommandParameter="{x:Static keybindings:Actions.ComparisonPickB}"
+                                CornerRadius="0,10,10,0"
                                 Padding="9,4"
                                 ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.ComparisonPickB.Value}">
                                 <TextBlock Classes="txt" Text="B" />
@@ -377,38 +364,28 @@
                     </Button>
 
                     <!--  2-Point Anchor Alignment  -->
-                    <Button
+                    <customControls:IconButton
                         Classes="compareIconBtn"
                         Classes.active="{CompiledBinding Comparison.IsAligning.Value}"
                         Click="OnAlignClick"
+                        Data="{StaticResource ComparisonAlignGeometry}"
+                        IconHeight="12"
+                        IconWidth="12"
                         IsVisible="{CompiledBinding !Comparison.IsSynced.Value}"
                         ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.ComparisonAlign.Value}"
-                        x:Name="AlignButton">
-                        <Path
-                            Data="M4,4 m-2,0 a2,2 0 1,0 4,0 a2,2 0 1,0 -4,0 M12,12 m-2,0 a2,2 0 1,0 4,0 a2,2 0 1,0 -4,0 M5.5,5.5 L10.5,10.5"
-                            Height="13"
-                            Stretch="Uniform"
-                            StrokeLineCap="Round"
-                            StrokeThickness="1.4"
-                            Width="13" />
-                    </Button>
+                        customControls:ContextualStackPanel.IsContextual="True"
+                        x:Name="AlignButton" />
 
-                    <Button
+                    <customControls:IconButton
                         Classes="compareIconBtn"
                         Click="OnResetAlignClick"
+                        Icon="{StaticResource ResetImage}"
+                        IconHeight="12"
+                        IconWidth="12"
                         IsVisible="{CompiledBinding Comparison.HasAlignment.Value}"
                         ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.ComparisonAlignReset.Value}"
                         customControls:ContextualStackPanel.IsContextual="True"
-                        x:Name="ResetAlignButton">
-                        <Path
-                            Data="M3,8 A5,5 0 1,1 8,13 M3,4 L3,8 L7,8"
-                            Height="12"
-                            Stretch="Uniform"
-                            StrokeJoin="Round"
-                            StrokeLineCap="Round"
-                            StrokeThickness="1.4"
-                            Width="12" />
-                    </Button>
+                        x:Name="ResetAlignButton" />
 
                     <TextBlock
                         Classes="txt"
@@ -428,9 +405,14 @@
                         IconWidth="13"
                         ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.ResetZoom.Value}" />
 
-                    <!--  Bar Position (placeholder look)  -->
-                    <Button x:Name="BarPositionButton">
-                        <TextBlock Classes="txt" x:Name="BarPositionText" />
+                    <!--  Bar Position  -->
+                    <customControls:TextIconButton
+                        Background="Transparent"
+                        Icon="{StaticResource PanelBottomDashedImage}"
+                        IconHeight="14"
+                        IconMargin="0,0,5,0"
+                        IconWidth="14"
+                        x:Name="BarPositionButton">
                         <Button.Flyout>
                             <MenuFlyout>
                                 <MenuItem
@@ -451,7 +433,7 @@
                                     x:Name="BarPositionRightItem" />
                             </MenuFlyout>
                         </Button.Flyout>
-                    </Button>
+                    </customControls:TextIconButton>
 
                 </customControls:ContextualStackPanel>
             </ScrollViewer>
