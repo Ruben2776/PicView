@@ -69,19 +69,23 @@ public class ZoomPanControlTests
     }
 
     [Theory]
-    // host, left pressed, scale, modifiers, Space held => pans
-    [InlineData(ZoomPanHost.ImageViewer, true, 2.0, KeyModifiers.None, false, true)]
-    [InlineData(ZoomPanHost.ImageViewer, true, 2.0, KeyModifiers.Shift, false, false)]
-    [InlineData(ZoomPanHost.ImageViewer, true, 1.0, KeyModifiers.None, false, false)]
-    [InlineData(ZoomPanHost.ImageViewer, false, 2.0, KeyModifiers.None, false, false)]
-    [InlineData(ZoomPanHost.Crop, true, 2.0, KeyModifiers.None, false, false)]
-    [InlineData(ZoomPanHost.Crop, true, 2.0, KeyModifiers.None, true, true)]
-    [InlineData(ZoomPanHost.Crop, true, 2.0, KeyModifiers.Shift, true, true)]
-    [InlineData(ZoomPanHost.Crop, true, 1.0, KeyModifiers.None, true, false)]
-    [InlineData(ZoomPanHost.Crop, true, 0.5, KeyModifiers.None, true, false)]
+    // host, left pressed, scale, modifiers, Space held, aligning => pans
+    [InlineData(ZoomPanHost.ImageViewer, true, 2.0, KeyModifiers.None, false, false, true)]
+    [InlineData(ZoomPanHost.ImageViewer, true, 2.0, KeyModifiers.Shift, false, false, false)]
+    [InlineData(ZoomPanHost.ImageViewer, true, 1.0, KeyModifiers.None, false, false, false)]
+    [InlineData(ZoomPanHost.ImageViewer, false, 2.0, KeyModifiers.None, false, false, false)]
+    [InlineData(ZoomPanHost.Crop, true, 2.0, KeyModifiers.None, false, false, false)]
+    [InlineData(ZoomPanHost.Crop, true, 2.0, KeyModifiers.None, true, false, true)]
+    [InlineData(ZoomPanHost.Crop, true, 2.0, KeyModifiers.Shift, true, false, true)]
+    [InlineData(ZoomPanHost.Crop, true, 1.0, KeyModifiers.None, true, false, false)]
+    [InlineData(ZoomPanHost.Crop, true, 0.5, KeyModifiers.None, true, false, false)]
+    [InlineData(ZoomPanHost.Comparison, true, 2.0, KeyModifiers.None, false, false, true)]
+    [InlineData(ZoomPanHost.Comparison, true, 2.0, KeyModifiers.None, false, true, false)]
+    [InlineData(ZoomPanHost.Comparison, true, 2.0, KeyModifiers.Shift, false, false, false)]
+    [InlineData(ZoomPanHost.Comparison, true, 1.0, KeyModifiers.None, false, false, false)]
     internal void StartsPan_HostAndInput_FollowsTheHost(ZoomPanHost host, bool left, double scale,
-        KeyModifiers modifiers, bool space, bool expected)
-        => Assert.Equal(expected, ZoomPanControl.StartsPan(host, left, scale, modifiers, space));
+        KeyModifiers modifiers, bool space, bool aligning, bool expected)
+        => Assert.Equal(expected, ZoomPanControl.StartsPan(host, left, scale, modifiers, space, aligning));
 
     [AvaloniaFact]
     public void Press_CropHostWithoutSpace_DoesNotPan()
