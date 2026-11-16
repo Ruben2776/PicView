@@ -288,6 +288,8 @@ public partial class ImageViewer : UserControl, IDisposable, INavigableContent
 
     ZoomPreviewer? INavigableContent.ZoomPreview => ZoomPreview;
 
+    bool INavigableContent.TakesPress(PointerPressedEventArgs e) => false;
+
     /// <summary>
     /// Whether the shown image is taller than the scroll viewer, so there is something to scroll.
     /// </summary>

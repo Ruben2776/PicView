@@ -1,4 +1,4 @@
-using Avalonia;
+﻿using Avalonia;
 using Avalonia.Animation;
 using Avalonia.Controls;
 using Avalonia.Input;
@@ -47,6 +47,12 @@ public class ZoomPanControl : Decorator
     /// Temporarily blocks pointer-drag panning (e.g. while picking alignment anchor points).
     /// </summary>
     public bool SuspendPanning { get; set; }
+
+    /// <summary>
+    /// Whether alignment points are being picked, so a press is a point instead of a pan. Only the
+    /// <see cref="ZoomPanHost.Comparison"/> host reads it.
+    /// </summary>
+    public bool IsAligning { get; set; }
 
     /// <summary>Raised when <see cref="IsSpaceHeld"/> changed, with the new value.</summary>
     public event Action<bool>? SpaceHeldChanged;
@@ -412,7 +418,9 @@ public class ZoomPanControl : Decorator
                 return;
             }
 
-            if (e.ClickCount is 2 && Settings.UIProperties.DoubleClickBehavior is 1)
+            // While aligning, a quick second point is not a double-click that resets the zoom
+            if (e.ClickCount is 2 && Settings.UIProperties.DoubleClickBehavior is 1 &&
+                !(Host is ZoomPanHost.Comparison && IsAligning))
             {
                 ResetZoom(Settings.Zoom.IsZoomAnimated);
                 return;
@@ -421,7 +429,7 @@ public class ZoomPanControl : Decorator
 
         var p = e.GetPosition(this);
         if (!StartsPan(Host, e.GetCurrentPoint(this).Properties.IsLeftButtonPressed, Scale, e.KeyModifiers,
-                IsSpaceHeld))
+                IsSpaceHeld, IsAligning))
         {
             return;
         }
@@ -471,10 +479,10 @@ public class ZoomPanControl : Decorator
 
     /// <summary>
     /// Whether a press starts a pan: a left press on an image zoomed in, which in the viewer is not a press with
-    /// Shift alone, and in the crop needs Space held.
+    /// Shift alone, in the crop needs Space held, and in the comparison is not made while aligning.
     /// </summary>
     internal static bool StartsPan(ZoomPanHost host, bool isLeftPressed, double scale, KeyModifiers modifiers,
-        bool isSpaceHeld)
+        bool isSpaceHeld, bool isAligning = false)
     {
         if (!isLeftPressed || !(Math.Abs(scale) > 1.0001))
         {
@@ -484,6 +492,11 @@ public class ZoomPanControl : Decorator
         if (host is ZoomPanHost.Crop)
         {
             return isSpaceHeld;
+        }
+
+        if (host is ZoomPanHost.Comparison && isAligning)
+        {
+            return false;
         }
 
         return modifiers != KeyModifiers.Shift;

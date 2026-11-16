@@ -46,4 +46,11 @@ public interface INavigableContent : IZoomScrollTarget
     /// nothing when it has none.
     /// </summary>
     ZoomPreviewer? ZoomPreview { get; }
+
+    /// <summary>
+    /// Whether the viewer takes the press of <paramref name="e"/> for itself, as a drag of a control or a point it
+    /// picks, so a click does not navigate. Asked from the window's tunnel, before the viewer sees the press, and
+    /// allocates nothing.
+    /// </summary>
+    bool TakesPress(PointerPressedEventArgs e);
 }
