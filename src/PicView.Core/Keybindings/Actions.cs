@@ -54,6 +54,9 @@ public static class Actions
     public const string ComparisonModeSplit = nameof(ComparisonModeSplit);
     public const string ComparisonModeBlink = nameof(ComparisonModeBlink);
     public const string ComparisonModeDifference = nameof(ComparisonModeDifference);
+    public const string ComparisonModeSynced = nameof(ComparisonModeSynced);
+    public const string ComparisonPickA = nameof(ComparisonPickA);
+    public const string ComparisonPickB = nameof(ComparisonPickB);
     public const string Flip = nameof(Flip);
     public const string Crop = nameof(Crop);
     public const string ChangeBackground = nameof(ChangeBackground);

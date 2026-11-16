@@ -226,6 +226,8 @@
             Margin="0,0,0,18"
             HorizontalAlignment="Center"
             VerticalAlignment="Bottom"
-            ZIndex="3" />
+            ZIndex="3">
+            <uc:CompareBar x:Name="CompareBar" />
+        </Panel>
     </Panel>
 </UserControl>

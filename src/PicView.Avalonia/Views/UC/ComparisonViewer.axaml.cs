@@ -160,6 +160,7 @@ public partial class ComparisonViewer : UserControl, INavigableContent, IDisposa
         SplitOverlay.PointerReleased += OnSplitPointerReleased;
         SplitOverlay.PointerCaptureLost += OnSplitPointerCaptureLost;
         SplitHandle.KeyDown += OnSplitHandleKeyDown;
+        MainPanel.PointerMoved += OnMainPanelPointerMoved;
     }
 
     private static Action<Result> LogError(string method) => DebugHelper.LogError(nameof(ComparisonViewer), method);
@@ -831,7 +832,9 @@ public partial class ComparisonViewer : UserControl, INavigableContent, IDisposa
         }
 
         _hoverBar.SizeChanged += OnHoverBarSizeChanged;
+        _hoverBar.PropertyChanged += OnHoverBarPropertyChanged;
         UpdateZoomPreviewMargin();
+        UpdateCompareBarMargin();
     }
 
     protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
@@ -842,8 +845,21 @@ public partial class ComparisonViewer : UserControl, INavigableContent, IDisposa
         UnfollowHoverBar();
     }
 
-    private void OnHoverBarSizeChanged(object? sender, SizeChangedEventArgs e) =>
+    private void OnHoverBarSizeChanged(object? sender, SizeChangedEventArgs e)
+    {
         UpdateZoomPreviewMargin();
+        UpdateCompareBarMargin();
+    }
+
+    private void OnHoverBarPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
+    {
+        if (e.Property == IsVisibleProperty)
+        {
+            UpdateCompareBarMargin();
+        }
+    }
+
+    private void OnMainPanelPointerMoved(object? sender, PointerEventArgs e) => CompareBar.NotifyUserActivity();
 
     private void UnfollowHoverBar()
     {
@@ -853,6 +869,7 @@ public partial class ComparisonViewer : UserControl, INavigableContent, IDisposa
         }
 
         _hoverBar.SizeChanged -= OnHoverBarSizeChanged;
+        _hoverBar.PropertyChanged -= OnHoverBarPropertyChanged;
         _hoverBar = null;
     }
 
@@ -867,6 +884,20 @@ public partial class ComparisonViewer : UserControl, INavigableContent, IDisposa
         ZoomPreview.Margin = hoverBar.Opacity > 0
             ? new Thickness(0, 0, 25, hoverBar.Bounds.Height / 2 + 25)
             : new Thickness(0, 0, 25, 25);
+    }
+
+    // Keeps the compare bar above the hover bar while it shows
+    private void UpdateCompareBarMargin()
+    {
+        if (_hoverBar is not { } hoverBar)
+        {
+            return;
+        }
+
+        var bottom = hoverBar.IsVisible && hoverBar.Bounds.Height > 0
+            ? hoverBar.Bounds.Height + hoverBar.Margin.Bottom + 12d
+            : 18d;
+        CompareBarHost.Margin = new Thickness(0, 0, 0, bottom);
     }
 
     #endregion
@@ -897,6 +928,8 @@ public partial class ComparisonViewer : UserControl, INavigableContent, IDisposa
         SplitOverlay.PointerReleased -= OnSplitPointerReleased;
         SplitOverlay.PointerCaptureLost -= OnSplitPointerCaptureLost;
         SplitHandle.KeyDown -= OnSplitHandleKeyDown;
+        MainPanel.PointerMoved -= OnMainPanelPointerMoved;
+        CompareBar.Dispose();
         StopBlinkTimer();
         if (_blinkTimer is not null)
         {
