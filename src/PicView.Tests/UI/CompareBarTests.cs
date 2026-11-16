@@ -74,21 +74,22 @@ public class CompareBarTests
             Settings.Comparison!.BarPosition = position;
             var bar = Compare(window, tab);
             var nav = Assert.IsType<NavigableView>(ViewOf(tab));
-            var strip = Assert.IsType<Border>(bar.Content);
+            // The bar's background may span the edge (its look is the owner's); its row of controls is only as long as
+            // its content
+            var row = bar.GetVisualDescendants().OfType<StackPanel>().First(p => p.Classes.Contains("barGroup"));
 
             Assert.Equal(dock, DockPanel.GetDock(nav.BarHost));
             if (position is ComparisonBarPosition.Top or ComparisonBarPosition.Bottom)
             {
                 Assert.True(nav.BarHost.Bounds.Height > 0);
                 Assert.Equal(nav.Bounds.Height - nav.BarHost.Bounds.Height, nav.ContentPanel.Bounds.Height, precision: 1);
-                // The bar is only as long as its content; the CompareBar itself stretches across the host
-                Assert.True(strip.Bounds.Width < nav.Bounds.Width);
+                Assert.True(row.DesiredSize.Width < nav.Bounds.Width);
             }
             else
             {
                 Assert.True(nav.BarHost.Bounds.Width > 0);
                 Assert.Equal(nav.Bounds.Width - nav.BarHost.Bounds.Width, nav.ContentPanel.Bounds.Width, precision: 1);
-                Assert.True(strip.Bounds.Height < nav.Bounds.Height);
+                Assert.True(row.DesiredSize.Height < nav.Bounds.Height);
             }
         });
 
