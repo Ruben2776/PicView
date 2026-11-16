@@ -84,8 +84,10 @@
         <Style Selector="uc|CompareBar.vertical StackPanel.barGroup">
             <Setter Property="Orientation" Value="Vertical" />
         </Style>
+        <!--  Reversed so the minimum (A) is at the top, beside the A label above it  -->
         <Style Selector="uc|CompareBar.vertical Slider">
             <Setter Property="Orientation" Value="Vertical" />
+            <Setter Property="IsDirectionReversed" Value="True" />
             <Setter Property="Width" Value="NaN" />
             <Setter Property="Height" Value="92" />
         </Style>

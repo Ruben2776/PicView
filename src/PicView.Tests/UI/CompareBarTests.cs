@@ -315,6 +315,31 @@ public class CompareBarTests
         Assert.Equal(Dock.Left, DockPanel.GetDock(nav.BarHost));
     });
 
+    [AvaloniaTheory]
+    [InlineData(0.0)]
+    [InlineData(1.0)]
+    public void CompareBar_AtTheSide_OpacityRunsFromAAtTheTopToBAtTheBottom(double opacity)
+        => WithWindow((window, _, tab) =>
+        {
+            Settings.Comparison!.BarPosition = ComparisonBarPosition.Left;
+            var bar = Compare(window, tab, ComparisonMode.Overlay);
+            tab.Comparison!.OverlayOpacity.Value = opacity;
+            Settle(window);
+
+            var track = bar.GetVisualDescendants().OfType<Slider>().Single()
+                .GetVisualDescendants().OfType<Track>().Single();
+            var thumb = Assert.IsType<Thumb>(track.Thumb);
+            var top = thumb.TranslatePoint(default, track)!.Value.Y;
+            if (opacity is 0)
+            {
+                Assert.InRange(top, -0.5, 0.5);
+            }
+            else
+            {
+                Assert.InRange(top + thumb.Bounds.Height, track.Bounds.Height - 0.5, track.Bounds.Height + 0.5);
+            }
+        });
+
     // Every group panel and the opacity slider run in the orientation
     private static void AssertGroupsAndSlider(CompareBar bar, Orientation orientation)
     {
