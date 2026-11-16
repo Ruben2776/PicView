@@ -9,11 +9,11 @@
     xmlns:vm="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <UserControl.Styles>
-        <Style Selector="Button.comparePill">
+        <Style Selector="Button.compareBtn">
             <Setter Property="Background" Value="Transparent" />
             <Setter Property="BorderBrush" Value="Transparent" />
             <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="CornerRadius" Value="15" />
+            <Setter Property="CornerRadius" Value="4" />
             <Setter Property="Padding" Value="11,5" />
             <Setter Property="FontSize" Value="12" />
             <Setter Property="Foreground" Value="{DynamicResource MainTextColorFaded}" />
@@ -21,11 +21,11 @@
             <Setter Property="VerticalContentAlignment" Value="Center" />
             <Setter Property="HorizontalContentAlignment" Value="Center" />
         </Style>
-        <Style Selector="Button.comparePill:pointerover">
+        <Style Selector="Button.compareBtn:pointerover">
             <Setter Property="Foreground" Value="{DynamicResource MainTextColor}" />
             <Setter Property="Background" Value="{DynamicResource ComparePillHoverBackground}" />
         </Style>
-        <Style Selector="Button.comparePill.active">
+        <Style Selector="Button.compareBtn.active">
             <Setter Property="Foreground" Value="{DynamicResource MainTextColor}" />
             <Setter Property="Background" Value="{DynamicResource ComparePillActiveBackground}" />
             <Setter Property="BorderBrush" Value="{DynamicResource ComparePillActiveBorder}" />
@@ -34,7 +34,7 @@
             <Setter Property="Background" Value="Transparent" />
             <Setter Property="BorderBrush" Value="Transparent" />
             <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="CornerRadius" Value="14" />
+            <Setter Property="CornerRadius" Value="4" />
             <Setter Property="Width" Value="28" />
             <Setter Property="Height" Value="28" />
             <Setter Property="Padding" Value="0" />
@@ -110,68 +110,60 @@
     </UserControl.Styles>
 
     <Border
-        Background="{DynamicResource HoverBarBackgroundColor}"
-        BorderBrush="{DynamicResource HoverBarBorderColor}"
-        BorderThickness="1"
-        HorizontalAlignment="Center"
-        Padding="6,4"
-        VerticalAlignment="Center">
+        Background="{DynamicResource PopUpBackgroundColor}"
+        BorderBrush="{DynamicResource PopUpMainBorderColor}"
+        BorderThickness="0,1,0,0"
+        Padding="6,4">
         <ScrollViewer Classes="barScroll">
             <!--  Contextual rows are left out of its thickness at the sides, so they never resize it  -->
             <cc:ContextualStackPanel Classes="barGroup" Spacing="6">
 
-                <!--  Mode Segmented Pill  -->
-                <Border
-                    Background="{DynamicResource ComparePillGroupBackground}"
-                    CornerRadius="18"
-                    Padding="2">
-                    <StackPanel Classes="barGroup" Spacing="2">
-                        <Button
-                            Classes="comparePill"
-                            Classes.active="{CompiledBinding Comparison.IsOverlay.Value}"
-                            Command="{CompiledBinding ParentWindowContext.RunActionCommand}"
-                            CommandParameter="{x:Static keybindings:Actions.ComparisonModeOverlay}"
-                            Content="{CompiledBinding ParentWindowContext.Translation.ComparisonOverlay.Value}"
-                            x:Name="OverlayModeButton" />
-                        <Button
-                            Classes="comparePill"
-                            Classes.active="{CompiledBinding Comparison.IsSplit.Value}"
-                            Command="{CompiledBinding ParentWindowContext.RunActionCommand}"
-                            CommandParameter="{x:Static keybindings:Actions.ComparisonModeSplit}"
-                            Content="{CompiledBinding ParentWindowContext.Translation.ComparisonSplit.Value}"
-                            x:Name="SplitModeButton" />
-                        <Button
-                            Classes="comparePill"
-                            Classes.active="{CompiledBinding Comparison.IsSynced.Value}"
-                            Command="{CompiledBinding ParentWindowContext.RunActionCommand}"
-                            CommandParameter="{x:Static keybindings:Actions.ComparisonModeSynced}"
-                            Content="{CompiledBinding ParentWindowContext.Translation.ComparisonSideBySideSynced.Value}"
-                            x:Name="SyncedModeButton" />
-                        <Button
-                            Classes="comparePill"
-                            Classes.active="{CompiledBinding Comparison.IsBlink.Value}"
-                            Command="{CompiledBinding ParentWindowContext.RunActionCommand}"
-                            CommandParameter="{x:Static keybindings:Actions.ComparisonModeBlink}"
-                            Content="{CompiledBinding ParentWindowContext.Translation.ComparisonBlink.Value}"
-                            x:Name="BlinkModeButton" />
-                        <Button
-                            Classes="comparePill"
-                            Classes.active="{CompiledBinding Comparison.IsDifference.Value}"
-                            Command="{CompiledBinding ParentWindowContext.RunActionCommand}"
-                            CommandParameter="{x:Static keybindings:Actions.ComparisonModeDifference}"
-                            Content="{CompiledBinding ParentWindowContext.Translation.ComparisonDifference.Value}"
-                            x:Name="DifferenceModeButton" />
-                    </StackPanel>
-                </Border>
+                <StackPanel Classes="barGroup" Spacing="2">
+                    <Button
+                        Classes="compareBtn"
+                        Classes.active="{CompiledBinding Comparison.IsOverlay.Value}"
+                        Command="{CompiledBinding ParentWindowContext.RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.ComparisonModeOverlay}"
+                        Content="{CompiledBinding ParentWindowContext.Translation.ComparisonOverlay.Value}"
+                        x:Name="OverlayModeButton" />
+                    <Button
+                        Classes="compareBtn"
+                        Classes.active="{CompiledBinding Comparison.IsSplit.Value}"
+                        Command="{CompiledBinding ParentWindowContext.RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.ComparisonModeSplit}"
+                        Content="{CompiledBinding ParentWindowContext.Translation.ComparisonSplit.Value}"
+                        x:Name="SplitModeButton" />
+                    <Button
+                        Classes="compareBtn"
+                        Classes.active="{CompiledBinding Comparison.IsSynced.Value}"
+                        Command="{CompiledBinding ParentWindowContext.RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.ComparisonModeSynced}"
+                        Content="{CompiledBinding ParentWindowContext.Translation.ComparisonSideBySideSynced.Value}"
+                        x:Name="SyncedModeButton" />
+                    <Button
+                        Classes="compareBtn"
+                        Classes.active="{CompiledBinding Comparison.IsBlink.Value}"
+                        Command="{CompiledBinding ParentWindowContext.RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.ComparisonModeBlink}"
+                        Content="{CompiledBinding ParentWindowContext.Translation.ComparisonBlink.Value}"
+                        x:Name="BlinkModeButton" />
+                    <Button
+                        Classes="compareBtn"
+                        Classes.active="{CompiledBinding Comparison.IsDifference.Value}"
+                        Command="{CompiledBinding ParentWindowContext.RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.ComparisonModeDifference}"
+                        Content="{CompiledBinding ParentWindowContext.Translation.ComparisonDifference.Value}"
+                        x:Name="DifferenceModeButton" />
+                </StackPanel>
 
                 <!--  Contextual Controls: Overlay Opacity  -->
                 <StackPanel
                     Classes="barGroup"
                     IsVisible="{CompiledBinding Comparison.IsOverlay.Value}"
-                    cc:ContextualStackPanel.IsContextual="True"
                     Margin="4,0"
                     Spacing="6"
-                    VerticalAlignment="Center">
+                    VerticalAlignment="Center"
+                    cc:ContextualStackPanel.IsContextual="True">
                     <TextBlock
                         FontSize="11"
                         Foreground="{DynamicResource MainTextColorFaded}"
@@ -195,8 +187,8 @@
                     Background="{DynamicResource ComparePillGroupBackground}"
                     CornerRadius="16"
                     IsVisible="{CompiledBinding Comparison.IsSplit.Value}"
-                    cc:ContextualStackPanel.IsContextual="True"
-                    Padding="2">
+                    Padding="2"
+                    cc:ContextualStackPanel.IsContextual="True">
                     <StackPanel Classes="barGroup" Spacing="2">
                         <Button
                             Classes="compareIconBtn"
@@ -228,16 +220,16 @@
                     Background="{DynamicResource ComparePillGroupBackground}"
                     CornerRadius="16"
                     IsVisible="{CompiledBinding Comparison.IsBlink.Value}"
-                    cc:ContextualStackPanel.IsContextual="True"
-                    Padding="2">
+                    Padding="2"
+                    cc:ContextualStackPanel.IsContextual="True">
                     <StackPanel Classes="barGroup" Spacing="4">
                         <Button
-                            Classes="comparePill"
+                            Classes="compareBtn"
                             Classes.active="{CompiledBinding Comparison.IsBlinkFast.Value}"
                             Click="OnBlinkFastClick"
                             Content="0.3s" />
                         <Button
-                            Classes="comparePill"
+                            Classes="compareBtn"
                             Classes.active="{CompiledBinding !Comparison.IsBlinkFast.Value}"
                             Click="OnBlinkCustomClick"
                             Content="{CompiledBinding ParentWindowContext.Translation.ComparisonCustom.Value}" />
@@ -270,14 +262,14 @@
                     Padding="2">
                     <StackPanel Classes="barGroup" Spacing="2">
                         <Button
-                            Classes="comparePill"
+                            Classes="compareBtn"
                             Command="{CompiledBinding ParentWindowContext.RunActionCommand}"
                             CommandParameter="{x:Static keybindings:Actions.ComparisonPickA}"
                             Content="A"
                             Padding="9,4"
                             ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.ComparisonPickA.Value}" />
                         <Button
-                            Classes="comparePill"
+                            Classes="compareBtn"
                             Command="{CompiledBinding ParentWindowContext.RunActionCommand}"
                             CommandParameter="{x:Static keybindings:Actions.ComparisonPickB}"
                             Content="B"
@@ -399,8 +391,8 @@
                     Classes="compareIconBtn"
                     Click="OnResetAlignClick"
                     IsVisible="{CompiledBinding Comparison.HasAlignment.Value}"
-                    cc:ContextualStackPanel.IsContextual="True"
                     ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.ComparisonAlignReset.Value}"
+                    cc:ContextualStackPanel.IsContextual="True"
                     x:Name="ResetAlignButton">
                     <Path
                         Data="M3,8 A5,5 0 1,1 8,13 M3,4 L3,8 L7,8"
@@ -417,13 +409,13 @@
                     Foreground="{DynamicResource MainTextColor}"
                     IsVisible="{CompiledBinding Comparison.IsAligning.Value}"
                     Margin="4,0"
-                    cc:ContextualStackPanel.IsContextual="True"
                     VerticalAlignment="Center"
+                    cc:ContextualStackPanel.IsContextual="True"
                     x:Name="AlignHintText" />
 
                 <!--  Fit / Reset Zoom  -->
                 <Button
-                    Classes="comparePill"
+                    Classes="compareBtn"
                     Command="{CompiledBinding ParentWindowContext.RunActionCommand}"
                     CommandParameter="{x:Static keybindings:Actions.ResetZoom}">
                     <StackPanel Orientation="Horizontal" Spacing="5">
@@ -441,22 +433,6 @@
                             Text="{CompiledBinding ParentWindowContext.Translation.ComparisonFit.Value}"
                             VerticalAlignment="Center" />
                     </StackPanel>
-                </Button>
-
-                <!--  Close Comparison  -->
-                <Button
-                    Classes="compareIconBtn"
-                    Command="{CompiledBinding ParentWindowContext.RunActionCommand}"
-                    CommandParameter="{x:Static keybindings:Actions.Comparison}"
-                    ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.Close.Value}"
-                    x:Name="CloseButton">
-                    <Path
-                        Data="M2,2 L10,10 M10,2 L2,10"
-                        Height="10"
-                        Stretch="Uniform"
-                        StrokeLineCap="Round"
-                        StrokeThickness="1.6"
-                        Width="10" />
                 </Button>
 
                 <!--  Bar Position (placeholder look)  -->
@@ -482,6 +458,23 @@
                         </MenuFlyout>
                     </Button.Flyout>
                 </Button>
+
+                <!--  Close Comparison  -->
+                <Button
+                    Classes="compareIconBtn"
+                    Command="{CompiledBinding ParentWindowContext.RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.Comparison}"
+                    ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.Close.Value}"
+                    x:Name="CloseButton">
+                    <Path
+                        Data="M2,2 L10,10 M10,2 L2,10"
+                        Height="10"
+                        Stretch="Uniform"
+                        StrokeLineCap="Round"
+                        StrokeThickness="1.6"
+                        Width="10" />
+                </Button>
+
             </cc:ContextualStackPanel>
         </ScrollViewer>
     </Border>
