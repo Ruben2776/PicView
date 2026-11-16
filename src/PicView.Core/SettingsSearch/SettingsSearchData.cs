@@ -23,7 +23,6 @@ public class SettingsSearchData
     public string ImageZoomToFitSearchTags { get; }
     public string ImageScrollingSearchTags { get; }
     public string ImageSideBySideSearchTags { get; }
-    public string ImageComparisonSearchTags { get; }
     public string ImageScalingSearchTags { get; }
     public string MotionPhotoSearchTags { get; }
     public string NavigationSubdirectorySearchTags { get; }
@@ -215,13 +214,6 @@ public class SettingsSearchData
         ImageSideBySideSearchTags = sb.ToString();
         
         sb.Clear();
-        
-        sb.Append(TranslationManager.Translation.Image);
-        sb.Append(space);
-        sb.Append(TranslationManager.Translation.Comparison);
-        sb.Append(space);
-        sb.Append("Comparison Compare Difference");
-        ImageComparisonSearchTags = sb.ToString();
         
         sb.Clear();
         

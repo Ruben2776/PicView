@@ -1,92 +1,82 @@
 ﻿<UserControl
     x:Class="PicView.Avalonia.Views.Config.ImageSettingsView"
+    x:DataType="viewModels:CoreViewModel"
     xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:keybindings="using:PicView.Core.Keybindings"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
+    xmlns:keybindings="using:PicView.Core.Keybindings"
     xmlns:ui="clr-namespace:PicView.Avalonia.UI"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
-    x:DataType="viewModels:CoreViewModel">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <StackPanel HorizontalAlignment="Center" Orientation="Vertical">
 
         <StackPanel Classes="searchHeader">
             <Image
-                Width="18"
                 Height="18"
-                Source="{StaticResource ImageSettingImage}" />
+                Source="{StaticResource ImageSettingImage}"
+                Width="18" />
             <TextBlock
-                Margin="0,20,0,20"
                 Classes="txt bold"
+                Margin="0,20,0,20"
                 Text="{CompiledBinding Translation.Image.Value,
                                        Mode=OneWay}" />
         </StackPanel>
 
         <!--  Scroll  -->
-        <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.ImageScrollingSearchTags}" Classes="searchBorder">
+        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.ImageScrollingSearchTags}">
             <customControls:TextToggleButton
-                x:Name="ScrollToggleButton"
                 Classes="MenuItemHover settingsToggleButton"
-                Command="{CompiledBinding MainWindows.ActiveWindow.Value.RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ToggleScroll}"
-                IsChecked="{CompiledBinding GlobalSettings.IsScrollingEnabled.Value, Mode=OneWay}"
+                Command="{CompiledBinding MainWindows.ActiveWindow.Value.RunActionCommand}"
+                CommandParameter="{x:Static keybindings:Actions.ToggleScroll}"
+                IsChecked="{CompiledBinding GlobalSettings.IsScrollingEnabled.Value,
+                                            Mode=OneWay}"
                 Text="{CompiledBinding GlobalSettings.ScrollingText.Value,
-                                       Mode=OneWay}" />
+                                       Mode=OneWay}"
+                x:Name="ScrollToggleButton" />
         </Border>
 
         <!--  Side by side  -->
-        <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.ImageSideBySideSearchTags}" Classes="searchBorder">
+        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.ImageSideBySideSearchTags}">
             <customControls:TextToggleButton
-                x:Name="SideBySideToggleButton"
                 Classes="MenuItemHover settingsToggleButton"
-                Command="{CompiledBinding MainWindows.ActiveWindow.Value.RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.SideBySide}"
+                Command="{CompiledBinding MainWindows.ActiveWindow.Value.RunActionCommand}"
+                CommandParameter="{x:Static keybindings:Actions.SideBySide}"
                 IsChecked="{Binding GlobalSettings.IsSideBySide.Value, Mode=OneWay}"
                 Text="{CompiledBinding Translation.SideBySide.Value,
-                                       Mode=OneWay}" />
-
-        </Border>
-
-        <!--  Comparison  -->
-        <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.ImageComparisonSearchTags}" Classes="searchBorder">
-            <customControls:TextToggleButton
-                x:Name="ComparisonToggleButton"
-                Classes="MenuItemHover settingsToggleButton"
-                Command="{CompiledBinding MainWindows.ActiveWindow.Value.RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.Comparison}"
-                IsChecked="{CompiledBinding GlobalSettings.IsComparing.Value, Mode=OneWay}"
-                Text="{CompiledBinding Translation.Comparison.Value,
                                        Mode=OneWay}"
-                ToolTip.Tip="{CompiledBinding Translation.ComparisonTooltip.Value,
-                                              Mode=OneWay}" />
+                x:Name="SideBySideToggleButton" />
+
         </Border>
 
         <!--  Autoplay motion photos  -->
-        <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.MotionPhotoSearchTags}" Classes="searchBorder">
+        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.MotionPhotoSearchTags}">
             <customControls:TextToggleButton
-                x:Name="AutoPlayMotionPhotosToggleButton"
                 Classes="MenuItemHover settingsToggleButton"
                 IsChecked="{CompiledBinding SettingsViewModel.IsAutoPlayingMotionPhotos.Value,
                                             Mode=TwoWay}"
                 Text="{CompiledBinding Translation.AutoPlayMotionPhotos.Value,
-                                       Mode=OneWay}" />
+                                       Mode=OneWay}"
+                x:Name="AutoPlayMotionPhotosToggleButton" />
         </Border>
 
         <!--  Aliasing  -->
-        <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.ImageScalingSearchTags}" Classes="searchBorder">
+        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.ImageScalingSearchTags}">
             <StackPanel>
                 <TextBlock
-                    Margin="0,20,0,20"
                     Classes="txt bold"
+                    Margin="0,20,0,20"
                     Text="{CompiledBinding Translation.ImageAliasing.Value,
                                            Mode=OneWay}" />
                 <ComboBox
-                    x:Name="ImageAliasingBox"
-                    Width="300"
-                    Margin="0,6,0,10"
-                    Padding="5,7,0,7"
                     BorderThickness="1"
                     FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
                     Foreground="{DynamicResource MainTextColor}"
+                    Margin="0,6,0,10"
+                    Padding="5,7,0,7"
                     SelectedIndex="{CompiledBinding SettingsViewModel.ImageScalingIndex.Value,
-                                                    Mode=TwoWay}">
+                                                    Mode=TwoWay}"
+                    Width="300"
+                    x:Name="ImageAliasingBox">
                     <ComboBoxItem Content="{CompiledBinding Translation.HighQuality.Value, Mode=OneWay}" Foreground="{DynamicResource MainTextColor}" />
                     <ComboBoxItem Content="{CompiledBinding Translation.None.Value, Mode=OneWay}" Foreground="{DynamicResource MainTextColor}" />
                 </ComboBox>
