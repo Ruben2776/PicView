@@ -435,6 +435,7 @@ public class ComparisonViewModelTests
         vm.IsBlinkFast.Value = false;
         vm.BlinkInterval.Value = 2;
         vm.IsStretchFill.Value = false;
+        vm.BarPosition.Value = ComparisonBarPosition.Right;
 
         var saved = Settings.Comparison!;
         Assert.Equal(0.3, saved.OverlayOpacity);
@@ -443,7 +444,17 @@ public class ComparisonViewModelTests
         Assert.False(saved.IsBlinkFast);
         Assert.Equal(2, saved.BlinkInterval);
         Assert.False(saved.IsStretchFill);
-        Assert.Equal(6, _saves);
+        Assert.Equal(ComparisonBarPosition.Right, saved.BarPosition);
+        Assert.Equal(7, _saves);
+    }
+
+    [Fact]
+    public void New_StartsFromTheSavedBarPosition()
+    {
+        Settings.Comparison!.BarPosition = ComparisonBarPosition.Top;
+        using var vm = New(Model("a.jpg"), Model("b.jpg"));
+        Assert.Equal(ComparisonBarPosition.Top, vm.BarPosition.Value);
+        Assert.Equal(0, _saves);
     }
 
     [Fact]
