@@ -246,6 +246,50 @@ public class ComparisonViewModelTests
         => Assert.Equal(to, ComparisonViewModel.Next(from));
 
     [Fact]
+    public void SetMode_SyncedWhileAligning_StopsAligning()
+    {
+        // The synced layout hides the stacked pair the points are picked on, and the button that stops picking them
+        using var vm = New(Model("a.jpg"), Model("b.jpg"));
+        vm.ToggleAligning();
+        vm.AddAlignmentPoint(1, 1);
+
+        vm.SetMode(ComparisonMode.Synced);
+
+        Assert.Equal(0, vm.AlignmentStep.Value);
+        Assert.False(vm.IsAligning.Value);
+    }
+
+    [Fact]
+    public void NextMode_IntoSyncedWhileAligning_StopsAligning()
+    {
+        using var vm = New(Model("a.jpg"), Model("b.jpg"));
+        vm.SetMode(ComparisonMode.Difference);
+        vm.ToggleAligning();
+
+        vm.NextMode();
+
+        Assert.True(vm.IsSynced.Value);
+        Assert.False(vm.IsAligning.Value);
+    }
+
+    [Fact]
+    public void SetMode_SyncedAfterAligning_KeepsTheAlignment()
+    {
+        using var vm = New(Model("a.jpg"), Model("b.jpg"));
+        vm.ToggleAligning();
+        vm.AddAlignmentPoint(0, 0);
+        vm.AddAlignmentPoint(1, 1);
+        vm.AddAlignmentPoint(10, 0);
+        vm.AddAlignmentPoint(11, 1);
+        var alignment = vm.Alignment.Value;
+
+        vm.SetMode(ComparisonMode.Synced);
+
+        Assert.True(vm.HasAlignment.Value);
+        Assert.Equal(alignment, vm.Alignment.Value);
+    }
+
+    [Fact]
     public void SetMode_Synced_OnlyIsSyncedIsTrue()
     {
         using var vm = New(Model("a.jpg"), Model("b.jpg"));

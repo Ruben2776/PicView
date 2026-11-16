@@ -110,6 +110,11 @@ public sealed class ComparisonViewModel : IDisposable
             .DistinctUntilChanged()
             .ToReadOnlyBindableReactiveProperty();
 
+        // The synced layout hides the stacked pair the points are picked on and the button that stops picking them,
+        // so entering it stops picking; an alignment already made is kept
+        IsSynced.AsObservable().Where(static synced => synced).Subscribe(_ => _alignmentStep.Value = 0,
+            DebugHelper.LogError(nameof(ComparisonViewModel), nameof(IsSynced)));
+
         UpdateShown();
     }
 
