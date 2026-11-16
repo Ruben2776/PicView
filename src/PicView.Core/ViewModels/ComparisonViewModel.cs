@@ -56,6 +56,9 @@ public sealed class ComparisonViewModel : IDisposable
     public BindableReactiveProperty<bool> IsStretchFill { get; }
     public BindableReactiveProperty<ComparisonBarPosition> BarPosition { get; }
 
+    /// <summary>The docked bar's measured thickness across its edge, which the window fit reserves. Not saved.</summary>
+    public ReactiveProperty<double> BarExtent { get; } = new(0);
+
     public IReadOnlyBindableReactiveProperty<bool> IsOverlay { get; }
     public IReadOnlyBindableReactiveProperty<bool> IsSplit { get; }
     public IReadOnlyBindableReactiveProperty<bool> IsBlink { get; }
@@ -288,6 +291,7 @@ public sealed class ComparisonViewModel : IDisposable
         IsBlinkFast.Dispose();
         IsStretchFill.Dispose();
         BarPosition.Dispose();
+        BarExtent.Dispose();
         IsOverlay.Dispose();
         IsSplit.Dispose();
         IsBlink.Dispose();
