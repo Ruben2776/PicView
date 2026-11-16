@@ -54,6 +54,7 @@ public sealed class ComparisonViewModel : IDisposable
     public BindableReactiveProperty<bool> IsSplitHorizontal { get; }
     public BindableReactiveProperty<bool> IsBlinkFast { get; }
     public BindableReactiveProperty<bool> IsStretchFill { get; }
+    public BindableReactiveProperty<ComparisonBarPosition> BarPosition { get; }
 
     public IReadOnlyBindableReactiveProperty<bool> IsOverlay { get; }
     public IReadOnlyBindableReactiveProperty<bool> IsSplit { get; }
@@ -102,6 +103,7 @@ public sealed class ComparisonViewModel : IDisposable
         IsSplitHorizontal = new BindableReactiveProperty<bool>(saved.IsSplitHorizontal);
         IsBlinkFast = new BindableReactiveProperty<bool>(saved.IsBlinkFast);
         IsStretchFill = new BindableReactiveProperty<bool>(saved.IsStretchFill);
+        BarPosition = new BindableReactiveProperty<ComparisonBarPosition>(saved.BarPosition);
 
         Follow(Mode, static value => Settings.Comparison!.Mode = value);
         Follow(OverlayOpacity, static value => Settings.Comparison!.OverlayOpacity = value);
@@ -110,6 +112,7 @@ public sealed class ComparisonViewModel : IDisposable
         Follow(IsSplitHorizontal, static value => Settings.Comparison!.IsSplitHorizontal = value);
         Follow(IsBlinkFast, static value => Settings.Comparison!.IsBlinkFast = value);
         Follow(IsStretchFill, static value => Settings.Comparison!.IsStretchFill = value);
+        Follow(BarPosition, static value => Settings.Comparison!.BarPosition = value);
 
         IsOverlay = Is(ComparisonMode.Overlay);
         IsSplit = Is(ComparisonMode.Split);
@@ -284,6 +287,7 @@ public sealed class ComparisonViewModel : IDisposable
         IsSplitHorizontal.Dispose();
         IsBlinkFast.Dispose();
         IsStretchFill.Dispose();
+        BarPosition.Dispose();
         IsOverlay.Dispose();
         IsSplit.Dispose();
         IsBlink.Dispose();

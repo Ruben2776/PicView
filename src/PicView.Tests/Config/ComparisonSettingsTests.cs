@@ -21,6 +21,24 @@ public class ComparisonSettingsTests
         Assert.True(c.IsBlinkFast);
         Assert.Equal(1.0, c.BlinkInterval);
         Assert.True(c.IsStretchFill);
+        Assert.Equal(ComparisonBarPosition.Bottom, c.BarPosition);
+    }
+
+    [Fact]
+    public void BarPosition_RoundTripsThroughJson()
+    {
+        Settings.Comparison!.BarPosition = ComparisonBarPosition.Left;
+        var json = JsonSerializer.Serialize(Settings, SettingsGenerationContext.Default.AppSettings);
+        var loaded = JsonSerializer.Deserialize(json, SettingsGenerationContext.Default.AppSettings)!;
+        Assert.Equal(ComparisonBarPosition.Left, SettingsManager.EnsureSettings(loaded).Comparison!.BarPosition);
+    }
+
+    [Fact]
+    public void EnsureSettings_UnknownBarPosition_ResetsToBottom()
+    {
+        var loaded = JsonSerializer.Deserialize("{\"Version\":1,\"Comparison\":{\"BarPosition\":42}}",
+            SettingsGenerationContext.Default.AppSettings)!;
+        Assert.Equal(ComparisonBarPosition.Bottom, SettingsManager.EnsureSettings(loaded).Comparison!.BarPosition);
     }
 
     [Fact]

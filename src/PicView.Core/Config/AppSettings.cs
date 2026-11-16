@@ -322,6 +322,14 @@ public enum ComparisonMode
     Synced = 4
 }
 
+public enum ComparisonBarPosition
+{
+    Bottom = 0,
+    Top = 1,
+    Left = 2,
+    Right = 3
+}
+
 public class ComparisonSettings
 {
     public ComparisonMode Mode { get; set; } = ComparisonMode.Difference;
@@ -331,6 +339,7 @@ public class ComparisonSettings
     public bool IsBlinkFast { get; set; } = true;
     public double BlinkInterval { get; set; } = 1.0;
     public bool IsStretchFill { get; set; } = true;
+    public ComparisonBarPosition BarPosition { get; set; } = ComparisonBarPosition.Bottom;
 }
 
 public class Zoom
