@@ -1,3 +1,5 @@
+using Avalonia;
+using Avalonia.Input;
 using PicView.Avalonia.Input;
 
 namespace PicView.Avalonia.Views.UC;
@@ -27,4 +29,21 @@ public interface INavigableContent : IZoomScrollTarget
     void ResetZoomSlim();
 
     void TriggerScalingModeUpdate(bool invalidate);
+
+    /// <summary>
+    /// Where the pointer of <paramref name="e"/> is, in the coordinates <see cref="IZoomScrollTarget.ZoomAt"/> takes.
+    /// The navigable view routes the wheel, so a wheel over its chrome zooms the viewer too.
+    /// </summary>
+    Point ZoomPointer(PointerEventArgs e);
+
+    /// <summary>
+    /// Zooms for a touchpad magnify or a pinch, which the navigable view routes here from anywhere over its content.
+    /// </summary>
+    void Magnify(PointerDeltaEventArgs e);
+
+    /// <summary>
+    /// The viewer's zoom preview, which the navigable view shows above its chrome while the viewer is shown, or
+    /// nothing when it has none.
+    /// </summary>
+    ZoomPreviewer? ZoomPreview { get; }
 }
