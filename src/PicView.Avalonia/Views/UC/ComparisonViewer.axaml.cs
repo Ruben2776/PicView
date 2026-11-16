@@ -210,6 +210,8 @@ public partial class ComparisonViewer : UserControl, INavigableContent, IDisposa
 
     ZoomPreviewer? INavigableContent.ZoomPreview => ZoomPreview;
 
+    Control? INavigableContent.DockedBar => CompareBar;
+
     /// <summary>
     /// A press on the split handle or its strip drags the split, and a press while aligning is a point, so neither
     /// navigates. The synced layout hides the stacked pair, so a press there is never a point.

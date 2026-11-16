@@ -406,6 +406,22 @@ public class TabViewsTests
         });
 
     [AvaloniaFact]
+    public void Comparing_Off_TakesTheBarOutOfTheHost()
+        => WithWindow((_, _, tab) =>
+        {
+            tab.Display(BitmapModel("a.jpg"), BitmapModel("b.jpg"));
+            var viewer = Assert.IsType<ImageViewer>(ViewerOf(tab));
+            tab.SetComparing(true);
+            Assert.IsType<ComparisonViewer>(ViewerOf(tab));
+
+            tab.SetComparing(false);
+
+            Assert.Same(viewer, ViewerOf(tab));
+            var nav = Assert.IsType<NavigableView>(ViewOf(tab));
+            Assert.Empty(nav.BarHost.Children);
+        });
+
+    [AvaloniaFact]
     public void Comparing_OnAfterZooming_StartsTheComparisonAtTheTabsFactor()
         => WithWindow((window, vm, tab) =>
         {
@@ -449,15 +465,18 @@ public class TabViewsTests
             viewer.ZoomIn();
             viewer.ZoomIn();
             Settle(window);
-            var expected = (viewer.ZoomPanControl.TranslateX, viewer.ZoomPanControl.TranslateY);
+            // The docked compare bar takes its own space, so the comparison's view is smaller: the pan is compared as
+            // a share of each view, which is where in the view the zoom is centred
+            var expected = (viewer.ZoomPanControl.TranslateX / viewer.ZoomPanControl.Bounds.Width,
+                viewer.ZoomPanControl.TranslateY / viewer.ZoomPanControl.Bounds.Height);
 
             tab.SetComparing(true);
             Settle(window);
 
             var zoom = ZoomOf(Assert.IsType<ComparisonViewer>(ViewerOf(tab)));
             Assert.Equal(viewer.ZoomPanControl.Scale, zoom.Scale, 6);
-            Assert.Equal(expected.TranslateX, zoom.TranslateX, 6);
-            Assert.Equal(expected.TranslateY, zoom.TranslateY, 6);
+            Assert.Equal(expected.Item1, zoom.TranslateX / zoom.Bounds.Width, 6);
+            Assert.Equal(expected.Item2, zoom.TranslateY / zoom.Bounds.Height, 6);
         });
 
     [AvaloniaFact]

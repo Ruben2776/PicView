@@ -65,6 +65,16 @@ public class NavigableViewTests
         });
 
     [AvaloniaFact]
+    public void ImageViewer_HasNoDockedBar()
+        => WithWindow((window, _, tab) =>
+        {
+            var (nav, viewer) = ShowIn(window, tab);
+
+            Assert.Empty(nav.BarHost.Children);
+            Assert.Null(((INavigableContent)viewer).DockedBar);
+        });
+
+    [AvaloniaFact]
     public void Crop_SetAndCleared_ReplacesThenShowsTheSameNavigableView()
         => WithWindow((_, _, tab) =>
         {

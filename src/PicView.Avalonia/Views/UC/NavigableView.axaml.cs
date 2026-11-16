@@ -5,6 +5,7 @@ using Avalonia.Interactivity;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Input;
 using PicView.Avalonia.UI;
+using PicView.Core.Config;
 using PicView.Core.DebugTools;
 using PicView.Core.ViewModels;
 using R3;
@@ -20,6 +21,7 @@ public partial class NavigableView : UserControl, IZoomScrollTarget, IDisposable
 {
     private readonly TabViewModel _tab;
     private bool _isLoadedOnce;
+    private IDisposable? _barPosition;
     private DisposableBag _disposables;
 
     /// <param name="tab">The tab this view shows, which is not always the active one: a view is also created for a
@@ -53,6 +55,14 @@ public partial class NavigableView : UserControl, IZoomScrollTarget, IDisposable
             OverlayHost.Children.Remove(previous);
         }
 
+        if (Viewer?.DockedBar is { } previousBar)
+        {
+            BarHost.Children.Remove(previousBar);
+        }
+
+        _barPosition?.Dispose();
+        _barPosition = null;
+
         Viewer = viewer;
         Slot.Content = viewer;
 
@@ -62,7 +72,34 @@ public partial class NavigableView : UserControl, IZoomScrollTarget, IDisposable
             (preview.Parent as Panel)?.Children.Remove(preview);
             OverlayHost.Children.Add(preview);
         }
+
+        // Moved too: docked beside the content panel, the bar takes its own space instead of covering the image
+        if (viewer.DockedBar is { } bar)
+        {
+            (bar.Parent as Panel)?.Children.Remove(bar);
+            BarHost.Children.Add(bar);
+
+            // Follows the comparison the bar belongs to, which changes on the thread that shows the tab's next pair
+            if (viewer is ComparisonViewer { Comparison: var comparison })
+            {
+                var position = comparison.BarPosition;
+                _barPosition = position.SubscribeOnUIThread(
+                    () => DockPanel.SetDock(BarHost, DockFor(position.Value)),
+                    DebugHelper.LogError(nameof(NavigableView), nameof(Show)));
+            }
+        }
     }
+
+    /// <summary>
+    /// The edge of the view the docked bar takes at <paramref name="position"/>.
+    /// </summary>
+    internal static Dock DockFor(ComparisonBarPosition position) => position switch
+    {
+        ComparisonBarPosition.Top => Dock.Top,
+        ComparisonBarPosition.Left => Dock.Left,
+        ComparisonBarPosition.Right => Dock.Right,
+        _ => Dock.Bottom
+    };
 
     private void OnLoaded(object? sender, RoutedEventArgs e)
     {
@@ -156,6 +193,8 @@ public partial class NavigableView : UserControl, IZoomScrollTarget, IDisposable
         ContentPanel.RemoveHandler(PinchEvent, OnContentMagnify);
         GalleryView.Dispose();
         _disposables.Dispose();
+        _barPosition?.Dispose();
+        _barPosition = null;
         HoverBar.Dispose();
         GC.SuppressFinalize(this);
     }

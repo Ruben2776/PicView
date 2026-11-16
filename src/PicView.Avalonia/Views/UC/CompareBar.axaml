@@ -71,12 +71,9 @@
         Background="{DynamicResource HoverBarBackgroundColor}"
         BorderBrush="{DynamicResource HoverBarBorderColor}"
         BorderThickness="1"
-        BoxShadow="0 4 16 0 #55000000"
-        CornerRadius="22"
         HorizontalAlignment="Center"
-        Margin="12,0"
         Padding="6,4"
-        VerticalAlignment="Bottom">
+        VerticalAlignment="Center">
         <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
             <StackPanel Orientation="Horizontal" Spacing="6">
 

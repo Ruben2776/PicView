@@ -139,7 +139,7 @@ public partial class MainView : UserControl
                     {
                         return;
                     }
-                    if (nav.GalleryView.IsPointerOver)
+                    if (nav.GalleryView.IsPointerOver || nav.BarHost.IsPointerOver)
                     {
                         return;
                     }
