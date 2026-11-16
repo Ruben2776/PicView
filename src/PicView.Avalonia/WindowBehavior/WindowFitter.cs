@@ -218,9 +218,15 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
                 pair.Current)),
             vm.GlobalSettings.IsZoomedToFit.Skip(1).Subscribe(_ => FitSoon()),
             vm.GlobalSettings.IsScrollingEnabled.Skip(1).Subscribe(_ => FitSoon()),
-            vm.GlobalSettings.IsShowingPair.Skip(1).Subscribe(_ => FitSoon()),
-            // Comparing fits one image even when the pair stays the same, as when side-by-side turns into it
-            vm.GlobalSettings.IsComparing.Skip(1).Subscribe(_ => FitSoon()),
+            // Only the shown tab's pair
+            vm.WindowTabs.ActiveTab.Select(static t => t.IsShowingPair.Skip(1)).Switch()
+                .Subscribe(_ => FitSoon()),
+            // Whether the shown tab's comparison lays its pair out beside each other: a comparison made or dropped
+            // changes the kind, and the synced mode puts the pair side by side
+            vm.WindowTabs.ActiveTab.Select(static t => t.ViewKind.AsObservable()
+                    .Select(_ => t.Comparison?.IsSynced.AsObservable() ?? Observable.Return(false)).Switch())
+                .Switch().Skip(1)
+                .Subscribe(_ => FitSoon()),
             vm.GlobalSettings.WindowMargin.Skip(1).Subscribe(_ => FitSoon()),
             // Only the shown tab's gallery, so a gallery docking in a background tab fits nothing. It may change off the
             // UI thread, as FitSoon allows
@@ -465,16 +471,22 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
         }
 
         _tabsOwingNewImageFit.Add(tab);
-        // Only side-by-side passes the second size: comparing stacks the pair, so the window fits one image
         if (!ReferenceEquals(tab, vm.WindowTabs.ActiveTab.CurrentValue) ||
             vm.WindowModeState.CurrentValue.Mode is WindowMode.Minimized ||
-            PixelSizes.Of(tab, vm.WindowTabs.SharedCache, Settings.ImageScaling.ShowImageSideBySide) is not { } sizes)
+            PixelSizes.Of(tab, vm.WindowTabs.SharedCache, ShowsPairBeside(tab)) is not { } sizes)
         {
             return;
         }
 
         Fit(vm, sizes);
     }
+
+    /// <summary>
+    /// Whether the window fits <paramref name="tab"/>'s pair beside each other, passing the second size: side-by-side
+    /// does, and a comparison only in its synced mode, as the others stack the pair, so the window fits one image.
+    /// </summary>
+    internal static bool ShowsPairBeside(TabViewModel tab) =>
+        tab.Comparison is { } c ? c.IsSynced.Value : Settings.ImageScaling.ShowImageSideBySide;
 
     private void FitSoon()
     {
@@ -511,8 +523,7 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
             return;
         }
 
-        // Only side-by-side passes the second size: comparing stacks the pair, so the window fits one image
-        if (PixelSizes.Of(tab, vm.WindowTabs.SharedCache, Settings.ImageScaling.ShowImageSideBySide) is { } sizes)
+        if (PixelSizes.Of(tab, vm.WindowTabs.SharedCache, ShowsPairBeside(tab)) is { } sizes)
         {
             Fit(vm, sizes);
         }

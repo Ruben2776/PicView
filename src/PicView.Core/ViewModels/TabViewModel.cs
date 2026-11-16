@@ -168,11 +168,101 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
             return;
         }
 
+        if (_comparison is not null)
+        {
+            _viewKind.Value = TabViewKind.Comparison;
+            return;
+        }
+
         var phase = _titles?.Phase ?? TitlePhase.None;
         _viewKind.Value = Shows || phase is TitlePhase.Loading or TitlePhase.Downloading
             ? TabViewKind.ImageViewer
             : TabViewKind.StartUpMenu;
     }
+
+    #region Comparison
+
+    /// <summary>
+    /// Whether this tab compares its pair. It stays on while the tab shows nothing, so the next image it shows
+    /// compares. Only <see cref="SetComparing"/> writes it.
+    /// </summary>
+    public IReadOnlyBindableReactiveProperty<bool> IsComparing => _pair.Comparing;
+
+    /// <summary>
+    /// Whether this tab shows a pair: side-by-side, which is global, or its own comparing.
+    /// </summary>
+    public ReadOnlyReactiveProperty<bool> IsShowingPair => _pair.Pair;
+
+    /// <summary>
+    /// The tab's comparison, which it has exactly while it compares and shows something, or null.
+    /// </summary>
+    public ComparisonViewModel? Comparison => _comparison;
+
+    private readonly (BindableReactiveProperty<bool> Comparing, ReadOnlyReactiveProperty<bool> Pair) _pair =
+        MakePairState(services);
+
+    private ComparisonViewModel? _comparison;
+    private readonly Lock _comparisonGate = new();
+
+    // Built together, as an initializer cannot read another instance member. Without services side-by-side is the
+    // stored setting
+    private static (BindableReactiveProperty<bool> Comparing, ReadOnlyReactiveProperty<bool> Pair) MakePairState(
+        TabServices? services)
+    {
+        var comparing = new BindableReactiveProperty<bool>(false);
+        var pair = services?.GlobalSettings.IsSideBySide is { } sideBySide
+            ? sideBySide.CombineLatest(comparing, static (beside, compares) => beside || compares)
+            : comparing.Select(static compares => Settings.ImageScaling.ShowImageSideBySide || compares);
+        return (comparing, pair.DistinctUntilChanged().ToReadOnlyReactiveProperty());
+    }
+
+    /// <summary>
+    /// Turns comparing on or off for this tab only. On while it shows something makes its <see cref="Comparison"/>;
+    /// off disposes it.
+    /// </summary>
+    public void SetComparing(bool on)
+    {
+        if (IsDisposed)
+        {
+            return;
+        }
+
+        _pair.Comparing.Value = on;
+        UpdateComparison(pairChanged: false);
+    }
+
+    // The tab has a comparison exactly while it compares and shows something. The kind is derived before an old
+    // comparison is disposed, so its view leaves the window first
+    private void UpdateComparison(bool pairChanged)
+    {
+        lock (_comparisonGate)
+        {
+            if (IsDisposed)
+            {
+                return;
+            }
+
+            var wanted = _pair.Comparing.Value && Shows;
+            if (wanted && _comparison is null)
+            {
+                _comparison = new ComparisonViewModel(Model, SecondaryModel,
+                    Services?.GlobalSettings is { } gs ? gs.SaveSoon : static () => { });
+                DeriveViewKind();
+            }
+            else if (!wanted && _comparison is { } old)
+            {
+                _comparison = null;
+                DeriveViewKind();
+                old.Dispose();
+            }
+            else if (pairChanged && _comparison is { } comparison)
+            {
+                comparison.OnPairChanged(Model, SecondaryModel);
+            }
+        }
+    }
+
+    #endregion
 
     public GalleryViewModel Gallery { get; } = new();
     
@@ -387,6 +477,7 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
             ComparisonOverrideB.Value = null;
         }
         UpdateComparisonDisplayProperties();
+        UpdateComparison(pairChanged: true);
     }
 
     public void SwapComparisonPair()
@@ -707,18 +798,17 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
     private IDisposable? _settingsSubscription;
 
     /// <summary>
-    /// Whether a pair is shown (side-by-side or comparison) and looping, as the tab's settings publish them, or the
-    /// stored settings for a tab without them.
+    /// Whether a pair is shown (side-by-side or this tab's comparing) and looping, as the tab's settings publish them,
+    /// or the stored settings for a tab without them.
     /// </summary>
     public (bool ShowsPair, bool Looping) PairSettings() => Services?.GlobalSettings is { } settings
-        ? (settings.IsShowingPair.CurrentValue, settings.IsLooping.CurrentValue)
-        : (Settings.ImageScaling.ShowImageSideBySide || Settings.ImageScaling.ShowComparison,
-            Settings.UIProperties.Looping);
+        ? (IsShowingPair.CurrentValue, settings.IsLooping.CurrentValue)
+        : (Settings.ImageScaling.ShowImageSideBySide || IsComparing.Value, Settings.UIProperties.Looping);
 
     /// <summary>
-    /// Follows the global settings the tab reads, once: Looping derives Next and Prev again, showing a pair (side-by-side
-    /// or comparison) derives them and has the shown file iterated to again, and including subdirectories lists the
-    /// folder again.
+    /// Follows the settings the tab reads, once: Looping derives Next and Prev again, showing a pair (side-by-side or
+    /// this tab's comparing) derives them and has the shown file iterated to again, and including subdirectories lists
+    /// the folder again.
     /// </summary>
     private void FollowSettings()
     {
@@ -730,7 +820,7 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
         _settingsSubscription = Disposable.Combine(
             settings.IsLooping.Skip(1).Subscribe(_ => DeriveCanNavigate()),
             // The pair is derived from the files, so the shown file is iterated to again, as a pair or alone
-            settings.IsShowingPair.Skip(1).SubscribeAwait(async (_, _) =>
+            IsShowingPair.Skip(1).SubscribeAwait(async (_, _) =>
             {
                 DeriveCanNavigate();
                 if (ImageIterator is { Files.Count: > 0 } iterator)
@@ -1037,12 +1127,13 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
 
     /// <summary>
     /// Closes the image the tab shows and shows the start-up menu, as the Close image action: the tab becomes fresh, as
-    /// when it lost its files, and leaves the archives it opened. Does nothing unless the tab shows the image viewer, so
-    /// a crop and the start-up menu stay as they are.
+    /// when it lost its files, and leaves the archives it opened. Does nothing unless the tab shows the image viewer or
+    /// its comparison, so a crop and the start-up menu stay as they are. Comparing stays on, so the next image the tab
+    /// shows compares.
     /// </summary>
     public async ValueTask CloseImageAsync()
     {
-        if (_viewKind.Value is not TabViewKind.ImageViewer)
+        if (_viewKind.Value is not (TabViewKind.ImageViewer or TabViewKind.Comparison))
         {
             return;
         }
@@ -1112,6 +1203,13 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
         _viewsSubscription?.Dispose();
         _currentView.Dispose();
         _titles?.Dispose();
+        lock (_comparisonGate)
+        {
+            _comparison?.Dispose();
+            _comparison = null;
+        }
+        _pair.Pair.Dispose();
+        _pair.Comparing.Dispose();
         _viewKind.Dispose();
         _shown.Dispose();
         lock (_busyGate)

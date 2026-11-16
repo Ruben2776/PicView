@@ -205,7 +205,7 @@ public partial class ImageViewer : UserControl, IDisposable, INavigableContent
         // is always null and the overlays hide themselves. Images downloaded from a URL live
         // in a real temp file and intentionally behave like any local file.
         // While comparing, no motion photo plays: a clip would cover the blended pair
-        var comparing = Settings.ImageScaling.ShowComparison;
+        var comparing = tabViewModel.IsComparing.Value;
         MotionPhotoView.OnImageChanged(comparing ? null : tabViewModel.Model);
         SecondaryMotionPhotoView.OnImageChanged(comparing ? null : tabViewModel.SecondaryModel);
         UpdateMotionPhotoBadgePositions();
@@ -289,6 +289,18 @@ public partial class ImageViewer : UserControl, IDisposable, INavigableContent
     ZoomPreviewer? INavigableContent.ZoomPreview => ZoomPreview;
 
     bool INavigableContent.TakesPress(PointerPressedEventArgs e) => false;
+
+    /// <inheritdoc/>
+    public void ShowFactor(double factor)
+    {
+        // Already there: setting the scale again would re-centre the image
+        if (ZoomPanControl.Scale.Equals(factor))
+        {
+            return;
+        }
+
+        ZoomPanControl.SetScaleImmediate(factor);
+    }
 
     /// <summary>
     /// Whether the shown image is taller than the scroll viewer, so there is something to scroll.

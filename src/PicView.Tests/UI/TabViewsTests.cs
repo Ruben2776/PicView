@@ -12,6 +12,15 @@ using PicView.Avalonia.CustomControls.Zoom;
 using PicView.Avalonia.Interfaces;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.Views.UC;
+using PicView.Avalonia.Views.Menu;
+using PicView.Avalonia.ImageTransformations;
+using PicView.Avalonia.Input;
+using PicView.Avalonia.WindowBehavior;
+using PicView.Core.Config;
+using PicView.Core.Keybindings;
+using PicView.Tests.Input;
+using Avalonia.Headless;
+using MouseButton = Avalonia.Input.MouseButton;
 using PicView.Core.ImageDecoding;
 using PicView.Core.Models;
 using PicView.Core.Navigation;
@@ -339,4 +348,285 @@ public class TabViewsTests
             Assert.IsType<NavigableView>(ViewOf(tab));
             Assert.IsType<ImageViewer>(ViewerOf(tab));
         });
+
+    [AvaloniaFact]
+    public void Comparing_On_ShowsTheSameNavigableViewWithAComparisonViewer()
+        => WithWindow((_, _, tab) =>
+        {
+            tab.Display(BitmapModel("a.jpg"), BitmapModel("b.jpg"));
+            var nav = Assert.IsType<NavigableView>(ViewOf(tab));
+
+            tab.SetComparing(true);
+
+            Assert.Same(nav, ViewOf(tab));
+            var viewer = Assert.IsType<ComparisonViewer>(ViewerOf(tab));
+            Assert.Same(tab.Comparison, viewer.Comparison);
+        });
+
+    [AvaloniaFact]
+    public void Comparing_OnAndOff_KeepsTheSameGallery()
+        => WithWindow((_, _, tab) =>
+        {
+            tab.Display(BitmapModel("a.jpg"), BitmapModel("b.jpg"));
+            var nav = Assert.IsType<NavigableView>(ViewOf(tab));
+            var a = new GalleryItemViewModel { FileInfo = new FileInfo("a.jpg") };
+            tab.Gallery.GalleryItems.Add(a);
+            Dispatcher.UIThread.RunJobs();
+            var galleryBefore = nav.GalleryView;
+
+            tab.SetComparing(true);
+            tab.SetComparing(false);
+            Dispatcher.UIThread.RunJobs();
+
+            Assert.Same(nav, ViewOf(tab));
+            Assert.Same(galleryBefore, nav.GalleryView);
+            Assert.Equal([a],
+                nav.GalleryView.FindControl<NavigateAbleItemsViewer>("GalleryItemsControl")!.Items
+                    .Cast<GalleryItemViewModel>());
+        });
+
+    [AvaloniaFact]
+    public void Comparing_Off_ShowsTheKeptImageViewerAgain()
+        => WithWindow((_, _, tab) =>
+        {
+            tab.Display(BitmapModel("a.jpg"), BitmapModel("b.jpg"));
+            var viewer = Assert.IsType<ImageViewer>(ViewerOf(tab));
+            tab.SetComparing(true);
+            var comparisonViewer = Assert.IsType<ComparisonViewer>(ViewerOf(tab));
+            var preview = ((INavigableContent)comparisonViewer).ZoomPreview!;
+
+            tab.SetComparing(false);
+
+            Assert.Same(viewer, ViewerOf(tab));
+            // The comparison viewer left the slot, and its zoom preview left the view's overlay with it
+            var nav = Assert.IsType<NavigableView>(ViewOf(tab));
+            Assert.DoesNotContain(preview, nav.OverlayHost.Children);
+            Assert.True(IsDisposed(comparisonViewer));
+        });
+
+    [AvaloniaFact]
+    public void Comparing_OnAfterZooming_StartsTheComparisonAtTheTabsFactor()
+        => WithWindow((window, vm, tab) =>
+        {
+            Settings.Zoom.IsZoomAnimated = false;
+            var viewer = ShowPair(window, vm, tab);
+            viewer.ZoomIn();
+            viewer.ZoomIn();
+            Settle(window);
+            Assert.NotEqual(1, tab.Zoom.Factor);
+
+            tab.SetComparing(true);
+            Settle(window);
+
+            var comparison = Assert.IsType<ComparisonViewer>(ViewerOf(tab));
+            Assert.Equal(tab.Zoom.Factor, ZoomOf(comparison).Scale, 6);
+        });
+
+    [AvaloniaFact]
+    public void Comparing_OnUnzoomed_LeavesTheComparisonUnpanned()
+        => WithWindow((window, vm, tab) =>
+        {
+            // Setting the scale it already has would re-centre its content, which offsets the comparison
+            ShowPair(window, vm, tab);
+
+            tab.SetComparing(true);
+            Settle(window);
+
+            var zoom = ZoomOf(Assert.IsType<ComparisonViewer>(ViewerOf(tab)));
+            Assert.Equal(1, zoom.Scale);
+            Assert.Equal(0, zoom.TranslateX);
+            Assert.Equal(0, zoom.TranslateY);
+        });
+
+    [AvaloniaFact]
+    public void Comparing_OffAfterZooming_StartsTheViewerAtTheTabsFactor()
+        => WithWindow((window, vm, tab) =>
+        {
+            Settings.Zoom.IsZoomAnimated = false;
+            var viewer = ShowPair(window, vm, tab);
+            tab.SetComparing(true);
+            Settle(window);
+            var comparison = Assert.IsType<ComparisonViewer>(ViewerOf(tab));
+            ((IZoomScrollTarget)comparison).ZoomIn();
+            ((IZoomScrollTarget)comparison).ZoomIn();
+            Settle(window);
+            Assert.NotEqual(1, tab.Zoom.Factor);
+
+            tab.SetComparing(false);
+            Settle(window);
+
+            Assert.Same(viewer, ViewerOf(tab));
+            Assert.Equal(tab.Zoom.Factor, viewer.ZoomPanControl.Scale, 6);
+        });
+
+    [AvaloniaFact]
+    public void CloseTab_WhileComparing_DisposesTheComparisonViewer()
+        => WithWindow((_, vm, _) =>
+        {
+            var tab = vm.WindowTabs.CreateTab();
+            tab.Display(BitmapModel("a.jpg"), BitmapModel("b.jpg"));
+            tab.SetComparing(true);
+            var comparison = tab.Comparison!;
+            var viewer = Assert.IsType<ComparisonViewer>(ViewerOf(tab));
+
+            vm.WindowTabs.CloseTab(tab);
+            Dispatcher.UIThread.RunJobs();
+
+            Assert.True(comparison.IsDisposed);
+            Assert.True(IsDisposed(viewer));
+        });
+
+    [AvaloniaFact]
+    public void Comparing_FromTheStartUpMenu_ShowsANavigableViewWithAComparisonViewer()
+        => WithWindow((_, _, tab) =>
+        {
+            Assert.IsType<StartUpMenu>(ViewOf(tab));
+            tab.SetComparing(true);
+
+            tab.Display(BitmapModel("a.jpg"), BitmapModel("b.jpg"));
+
+            Assert.IsType<NavigableView>(ViewOf(tab));
+            Assert.IsType<ComparisonViewer>(ViewerOf(tab));
+        });
+
+    [AvaloniaFact]
+    public async Task Comparing_AfterClosingTheImage_ShowsANewComparisonViewer()
+        => await WithWindowAsync(async (_, _, tab) =>
+        {
+            tab.Display(BitmapModel("a.jpg"), BitmapModel("b.jpg"));
+            tab.SetComparing(true);
+            var old = Assert.IsType<ComparisonViewer>(ViewerOf(tab));
+            await tab.CloseImageAsync().ConfigureAwait(true);
+            Dispatcher.UIThread.RunJobs();
+
+            tab.Display(BitmapModel("c.jpg"), BitmapModel("d.jpg"));
+
+            var viewer = Assert.IsType<ComparisonViewer>(ViewerOf(tab));
+            Assert.NotSame(old, viewer);
+            Assert.Same(tab.Comparison, viewer.Comparison);
+            Assert.True(IsDisposed(old));
+            var nav = Assert.IsType<NavigableView>(ViewOf(tab));
+            Assert.DoesNotContain(((INavigableContent)old).ZoomPreview!, nav.OverlayHost.Children);
+        });
+
+    [AvaloniaFact]
+    public void Comparing_ResetZoom_ResetsTheComparisonScale()
+        => WithWindow((window, vm, tab) =>
+        {
+            Settings.Zoom.IsZoomAnimated = false;
+            ShowPair(window, vm, tab);
+            tab.SetComparing(true);
+            Settle(window);
+            var comparison = Assert.IsType<ComparisonViewer>(ViewerOf(tab));
+            ((IZoomScrollTarget)comparison).ZoomIn();
+            ((IZoomScrollTarget)comparison).ZoomIn();
+            Settle(window);
+            Assert.NotEqual(1, ZoomOf(comparison).Scale);
+
+            RotationManager.ResetZoom(vm);
+            Settle(window);
+
+            Assert.Equal(1, ZoomOf(comparison).Scale);
+            Assert.Equal(1, tab.Zoom.Factor);
+        });
+
+    [AvaloniaFact]
+    public async Task Comparing_WindowModeChanged_ResetsTheComparisonZoomSlim()
+        => await WithWindowAsync(async (window, vm, tab) =>
+        {
+            Settings.Zoom.IsZoomAnimated = false;
+            ShowPair(window, vm, tab);
+            tab.SetComparing(true);
+            Settle(window);
+            var comparison = Assert.IsType<ComparisonViewer>(ViewerOf(tab));
+            ((IZoomScrollTarget)comparison).ZoomIn();
+            Settle(window);
+            Assert.NotEqual(1, ZoomOf(comparison).Scale);
+            var switcher = new WindowModeSwitcher(window, new NoNativeState(), static () => ValueTask.FromResult(true));
+
+            await switcher.ToggleFullscreen().ConfigureAwait(true);
+            Settle(window);
+
+            Assert.Equal(1, ZoomOf(comparison).Scale);
+        });
+
+    [AvaloniaFact]
+    public void Comparing_ShouldCloseImageBeVisible_IsTrue()
+        => WithWindow((_, _, tab) =>
+        {
+            tab.Display(BitmapModel("a.jpg"), BitmapModel("b.jpg"));
+            tab.SetComparing(true);
+
+            // The main view's context menu shows Close image while the tab's view is a navigable view
+            Assert.IsType<NavigableView>(tab.CurrentView.Value);
+        });
+
+    [AvaloniaFact]
+    public void Comparing_ClickedOnTheRightHalf_NavigatesNext()
+        => WithWindow((window, vm, tab) =>
+        {
+            Settings.Navigation.IsNavigatingByClicking = true;
+            ShowPair(window, vm, tab);
+            tab.SetComparing(true);
+            tab.Comparison!.SetMode(ComparisonMode.Split);
+            window.SharedTitleBar = new CustomTitleBar();
+            window.SharedBottomBar = new BottomBar();
+            var actions = new RecordingActionRunner();
+            vm.ActionRunner = actions;
+            window.AddHandler(InputElement.PointerPressedEvent,
+                (_, e) => _ = ImageViewerClickBehavior.PointerPressedAsync(e, window), RoutingStrategies.Tunnel);
+            Settle(window);
+            var nav = Assert.IsType<NavigableView>(ViewOf(tab));
+            var comparison = Assert.IsType<ComparisonViewer>(ViewerOf(tab));
+
+            // A press on the split handle drags the split, so it does not navigate
+            Click(window, CenterOf(comparison.FindControl<Border>("SplitHandle")!, window));
+            Assert.Empty(actions.Calls);
+
+            // On the image, right of the split handle in the middle
+            var panel = nav.ContentPanel;
+            Click(window,
+                panel.TranslatePoint(new Point(panel.Bounds.Width * 0.6, panel.Bounds.Height / 2), window)!.Value);
+
+            Assert.Equal([Actions.Next], actions.Calls);
+        });
+
+    // Shows a pair in the tab's navigable view, hosted in the window so its viewer loads, and returns its image viewer
+    private static ImageViewer ShowPair(TestMainWindow window, MainWindowViewModel vm, TabViewModel tab)
+    {
+        window.Width = 800;
+        window.Height = 600;
+        vm.ImageWidth.Value = 400;
+        vm.ImageHeight.Value = 300;
+        tab.Display(BitmapModel("a.jpg"), BitmapModel("b.jpg"));
+        window.Content = Assert.IsType<NavigableView>(ViewOf(tab));
+        Settle(window);
+        return Assert.IsType<ImageViewer>(ViewerOf(tab));
+    }
+
+    private static ZoomPanControl ZoomOf(ComparisonViewer viewer) =>
+        viewer.FindControl<ZoomPanControl>("ZoomPanControl")!;
+
+    private static bool IsDisposed(ComparisonViewer viewer) =>
+        (bool)typeof(ComparisonViewer).GetField("_isDisposed", BindingFlags.Instance | BindingFlags.NonPublic)!
+            .GetValue(viewer)!;
+
+    private static Point CenterOf(Control control, Window window) =>
+        control.TranslatePoint(new Point(control.Bounds.Width / 2, control.Bounds.Height / 2), window)!.Value;
+
+    private static void Click(TestMainWindow window, Point at)
+    {
+        window.MouseDown(at, MouseButton.Left);
+        window.MouseUp(at, MouseButton.Left);
+        Settle(window);
+    }
+
+    private sealed class NoNativeState : IWindowModeAdapter
+    {
+        public bool SkipsInitialNativeState => false;
+
+        public void EnterNativeState(MainWindow window, WindowModeState state)
+        {
+        }
+    }
 }

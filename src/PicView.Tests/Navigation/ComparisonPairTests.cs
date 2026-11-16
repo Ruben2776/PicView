@@ -25,7 +25,7 @@ public class ComparisonPairTests
         _tab = new TabViewModel(null!, TestTabServices.For(cache, null));
         _tab.Initialize();
         _iterator = (ImageIterator)_tab.ImageIterator!;
-        _tab.Services!.GlobalSettings.IsComparing.Value = true;
+        _tab.SetComparing(true);
     }
 
     [Fact]
@@ -61,14 +61,13 @@ public class ComparisonPairTests
     [Fact]
     public async Task TurningComparisonOn_ShowsThePair()
     {
-        var settings = _tab.Services!.GlobalSettings;
-        settings.IsComparing.Value = false;
+        _tab.SetComparing(false);
         _iterator.Initialize(Files("a.jpg", "b.jpg", "c.jpg"), 0);
         await _iterator.IterateToIndexAsync(0, new CancellationTokenSource());
         Assert.Equal(("a.jpg", null), Shown());
 
         // The tab reloads what it shows once the setting publishes, which may wait for the cache
-        settings.IsComparing.Value = true;
+        _tab.SetComparing(true);
         await WaitUntil(() => Shown() == ("a.jpg", "b.jpg"));
 
         Assert.Equal(("a.jpg", "b.jpg"), Shown());
@@ -77,12 +76,12 @@ public class ComparisonPairTests
     [Fact]
     public async Task SwitchingSideBySideToComparison_KeepsThePair()
     {
-        var settings = _tab.Services!.GlobalSettings;
-        settings.IsSideBySide.Value = true;
+        _tab.SetComparing(false);
+        _tab.Services!.GlobalSettings.IsSideBySide.Value = true;
         _iterator.Initialize(Files("a.jpg", "b.jpg", "c.jpg"), 0);
         await _iterator.IterateToIndexAsync(0, new CancellationTokenSource());
 
-        settings.IsComparing.Value = true;
+        _tab.SetComparing(true);
 
         Assert.Equal(("a.jpg", "b.jpg"), Shown());
         Assert.Equal(0, _iterator.CurrentIndex);
