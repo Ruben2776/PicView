@@ -1,5 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Layout;
@@ -110,6 +111,10 @@ public partial class ComparisonViewer : UserControl, INavigableContent, IDisposa
             .AddTo(ref _disposables);
         c.FileInfoB.AsObservable().Subscribe(_ => UpdateComparisonBadges(), LogError(nameof(UpdateComparisonBadges)))
             .AddTo(ref _disposables);
+
+        // The scroll bar follows the setting, as the image viewer's does
+        _tab.ParentWindowContext?.GlobalSettings.IsScrollingEnabled.Subscribe(ShowScrolling,
+            LogError(nameof(ShowScrolling))).AddTo(ref _disposables);
 
         c.Alignment.AsObservable().Subscribe(ShowAlignment, LogError(nameof(ShowAlignment))).AddTo(ref _disposables);
         c.HasAlignment.AsObservable().Subscribe(has =>
@@ -285,21 +290,45 @@ public partial class ComparisonViewer : UserControl, INavigableContent, IDisposa
 
     #region IZoomScrollTarget
 
-    // Nothing scrolls: the comparison is zoomed and panned only
-    bool IZoomScrollTarget.CanScrollVertically => false;
+    // The stacked pair scrolls as the image viewer's image does; the synced layout is zoomed and panned only
+    bool IZoomScrollTarget.CanScrollVertically =>
+        !Comparison.IsSynced.Value &&
+        StackScrollViewer.VerticalScrollBarVisibility is ScrollBarVisibility.Visible or ScrollBarVisibility.Auto;
 
-    bool IZoomScrollTarget.IsImageTallerThanViewer => false;
+    bool IZoomScrollTarget.IsImageTallerThanViewer =>
+        !Comparison.IsSynced.Value && StackScrollViewer.Extent.Height > StackScrollViewer.Viewport.Height;
 
     void IZoomScrollTarget.ScrollLine(bool down)
     {
+        if (Comparison.IsSynced.Value)
+        {
+            return;
+        }
+
+        if (down)
+        {
+            StackScrollViewer.LineDown();
+        }
+        else
+        {
+            StackScrollViewer.LineUp();
+        }
     }
 
     void IZoomScrollTarget.ScrollToHome()
     {
+        if (!Comparison.IsSynced.Value)
+        {
+            StackScrollViewer.ScrollToHome();
+        }
     }
 
     void IZoomScrollTarget.ScrollToEnd()
     {
+        if (!Comparison.IsSynced.Value)
+        {
+            StackScrollViewer.ScrollToEnd();
+        }
     }
 
     void IZoomScrollTarget.ZoomIn() => (Comparison.IsSynced.Value ? SyncedLeftZoom : ZoomPanControl).ZoomIn();
@@ -314,6 +343,10 @@ public partial class ComparisonViewer : UserControl, INavigableContent, IDisposa
         Comparison.IsSynced.Value
             ? SyncedRightZoom.IsPointerOver ? SyncedRightZoom : SyncedLeftZoom
             : ZoomPanControl;
+
+    private void ShowScrolling(bool isScrolling) =>
+        StackScrollViewer.VerticalScrollBarVisibility =
+            isScrolling ? ScrollBarVisibility.Visible : ScrollBarVisibility.Disabled;
 
     #endregion
 
