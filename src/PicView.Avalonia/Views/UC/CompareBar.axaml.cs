@@ -1,7 +1,10 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
+using PicView.Avalonia.UI;
 using PicView.Core.Config;
+using PicView.Core.DebugTools;
+using PicView.Core.Sizing;
 using PicView.Core.ViewModels;
 using R3;
 
@@ -110,21 +113,22 @@ public partial class CompareBar : UserControl, IDisposable
             return;
         }
 
+        // The tab's zoom and comparison may change on the thread that shows the tab's next image
         tab.Zoom.FactorPercent
-            .Subscribe(percent =>
+            .SubscribeOnUIThread(() =>
             {
-                ZoomPercentText.Text = $"{percent}%";
+                ZoomPercentText.Text = $"{tab.Zoom.FactorPercent.CurrentValue}%";
                 ZoomOutButton.IsEnabled = !(Settings.Zoom.AvoidZoomingOut && tab.Zoom.Factor <= 1.001);
-            })
+            }, DebugHelper.LogError(nameof(CompareBar), nameof(TabZoom.FactorPercent)))
             .AddTo(ref _subscriptions);
 
         if (tab.Comparison is { } comparison)
         {
             comparison.AlignmentStep.AsObservable()
-                .Subscribe(step =>
+                .SubscribeOnUIThread(() =>
                 {
                     var tr = tab.ParentWindowContext.Translation;
-                    AlignHintText.Text = step switch
+                    AlignHintText.Text = comparison.AlignmentStep.Value switch
                     {
                         1 => tr.ComparisonAlignStepA1.Value,
                         2 => tr.ComparisonAlignStepB1.Value,
@@ -132,7 +136,7 @@ public partial class CompareBar : UserControl, IDisposable
                         4 => tr.ComparisonAlignStepB2.Value,
                         _ => string.Empty
                     };
-                })
+                }, DebugHelper.LogError(nameof(CompareBar), nameof(ComparisonViewModel.AlignmentStep)))
                 .AddTo(ref _subscriptions);
         }
 
