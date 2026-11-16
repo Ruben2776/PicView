@@ -269,8 +269,7 @@ public partial class ComparisonViewer : UserControl, INavigableContent, IDisposa
         ShowScale(ZoomPanControl, factor);
     }
 
-    // A control already at the factor is left alone: setting the scale again re-centres the zoom control's child,
-    // which offsets a child smaller than the control
+    // A control already at the factor is left alone, as setting the scale again would re-centre a panned view
     private static void ShowScale(ZoomPanControl zoom, double factor)
     {
         if (zoom.Scale.Equals(factor))

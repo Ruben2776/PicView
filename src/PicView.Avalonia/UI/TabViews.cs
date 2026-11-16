@@ -68,6 +68,11 @@ public sealed class TabViews(MainWindow window) : ITabViewFactory
                 EndCrop();
             }
 
+            if (kind is TabViewKind.StartUpMenu or TabViewKind.Crop)
+            {
+                ReleaseDroppedComparisonViewer();
+            }
+
             switch (kind)
             {
                 case TabViewKind.StartUpMenu:
@@ -138,6 +143,23 @@ public sealed class TabViews(MainWindow window) : ITabViewFactory
             }
 
             navigable.Show(viewer);
+        }
+
+        /// <summary>
+        /// Disposes a comparison viewer whose comparison the tab dropped while showing another kind, as when it closes
+        /// its image while comparing, so nothing stays bound to the disposed comparison. The kept image viewer takes
+        /// its place in the hidden slot first, so its zoom preview leaves the navigable view's overlay.
+        /// </summary>
+        private void ReleaseDroppedComparisonViewer()
+        {
+            if (_comparisonViewer is not { } viewer || ReferenceEquals(viewer.Comparison, _tab.Comparison))
+            {
+                return;
+            }
+
+            _viewer ??= new ImageViewer(_tab);
+            ShowInSlot(_viewer);
+            DropComparisonViewer();
         }
 
         private void DropComparisonViewer()

@@ -13,6 +13,7 @@ using PicView.Avalonia.Interfaces;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.Views.UC;
 using PicView.Avalonia.Views.Menu;
+using PicView.Avalonia.Crop;
 using PicView.Avalonia.ImageTransformations;
 using PicView.Avalonia.Input;
 using PicView.Avalonia.WindowBehavior;
@@ -439,6 +440,39 @@ public class TabViewsTests
         });
 
     [AvaloniaFact]
+    public void Comparing_ZoomedOnAnImageSmallerThanTheView_PansAsTheImageViewer()
+        => WithWindow((window, vm, tab) =>
+        {
+            // The fitted pair, 400 by 300, is smaller than the 800 by 600 view
+            Settings.Zoom.IsZoomAnimated = false;
+            var viewer = ShowPair(window, vm, tab);
+            viewer.ZoomIn();
+            viewer.ZoomIn();
+            Settle(window);
+            var expected = (viewer.ZoomPanControl.TranslateX, viewer.ZoomPanControl.TranslateY);
+
+            tab.SetComparing(true);
+            Settle(window);
+
+            var zoom = ZoomOf(Assert.IsType<ComparisonViewer>(ViewerOf(tab)));
+            Assert.Equal(viewer.ZoomPanControl.Scale, zoom.Scale, 6);
+            Assert.Equal(expected.TranslateX, zoom.TranslateX, 6);
+            Assert.Equal(expected.TranslateY, zoom.TranslateY, 6);
+        });
+
+    [AvaloniaFact]
+    public void Comparing_CropIsRefused()
+        => WithWindow((_, _, tab) =>
+        {
+            // A crop never opens over a comparison: comparing shows a pair, and a pair cannot be cropped
+            tab.Display(BitmapModel("a.jpg"), BitmapModel("b.jpg"));
+            tab.SetComparing(true);
+
+            Assert.True(CropManager.CanCrop(tab.DisplayPrimaryImageType.Value, isShowingPair: false));
+            Assert.False(CropManager.CanCrop(tab.DisplayPrimaryImageType.Value, tab.PairSettings().ShowsPair));
+        });
+
+    [AvaloniaFact]
     public void Comparing_OffAfterZooming_StartsTheViewerAtTheTabsFactor()
         => WithWindow((window, vm, tab) =>
         {
@@ -495,18 +529,23 @@ public class TabViewsTests
         {
             tab.Display(BitmapModel("a.jpg"), BitmapModel("b.jpg"));
             tab.SetComparing(true);
+            var nav = Assert.IsType<NavigableView>(ViewOf(tab));
             var old = Assert.IsType<ComparisonViewer>(ViewerOf(tab));
             await tab.CloseImageAsync().ConfigureAwait(true);
             Dispatcher.UIThread.RunJobs();
+
+            // Released with its comparison, even though the hidden navigable view is kept
+            Assert.IsType<StartUpMenu>(ViewOf(tab));
+            Assert.True(IsDisposed(old));
+            Assert.IsType<ImageViewer>(nav.Viewer);
+            Assert.DoesNotContain(((INavigableContent)old).ZoomPreview!, nav.OverlayHost.Children);
 
             tab.Display(BitmapModel("c.jpg"), BitmapModel("d.jpg"));
 
             var viewer = Assert.IsType<ComparisonViewer>(ViewerOf(tab));
             Assert.NotSame(old, viewer);
             Assert.Same(tab.Comparison, viewer.Comparison);
-            Assert.True(IsDisposed(old));
-            var nav = Assert.IsType<NavigableView>(ViewOf(tab));
-            Assert.DoesNotContain(((INavigableContent)old).ZoomPreview!, nav.OverlayHost.Children);
+            Assert.Same(nav, ViewOf(tab));
         });
 
     [AvaloniaFact]
