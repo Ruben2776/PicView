@@ -1,8 +1,6 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using Avalonia.Threading;
 using PicView.Avalonia.UI;
-using PicView.Core.Config;
 using PicView.Core.DebugTools;
 using PicView.Core.Sizing;
 using PicView.Core.ViewModels;
@@ -13,8 +11,6 @@ namespace PicView.Avalonia.Views.UC;
 public partial class CompareBar : UserControl, IDisposable
 {
     private DisposableBag _subscriptions;
-    private DispatcherTimer? _autoHideTimer;
-    private bool _isBarPinned;
 
     public CompareBar()
     {
@@ -27,7 +23,6 @@ public partial class CompareBar : UserControl, IDisposable
 
     public void Dispose()
     {
-        StopAutoHideTimer();
         _subscriptions.Dispose();
         _subscriptions = default;
     }
@@ -41,66 +36,6 @@ public partial class CompareBar : UserControl, IDisposable
 
         Opacity = 1;
         IsHitTestVisible = true;
-        if (_isBarPinned)
-        {
-            StopAutoHideTimer();
-            return;
-        }
-
-        RestartAutoHideTimer();
-    }
-
-    private void RestartAutoHideTimer()
-    {
-        if (_autoHideTimer is null)
-        {
-            _autoHideTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(3) };
-            _autoHideTimer.Tick += OnAutoHideTick;
-        }
-
-        _autoHideTimer.Stop();
-        _autoHideTimer.Start();
-    }
-
-    private void StopAutoHideTimer()
-    {
-        if (_autoHideTimer is not null)
-        {
-            _autoHideTimer.Stop();
-            _autoHideTimer.Tick -= OnAutoHideTick;
-            _autoHideTimer = null;
-        }
-    }
-
-    private void OnAutoHideTick(object? sender, EventArgs e)
-    {
-        _autoHideTimer?.Stop();
-        if (!_isBarPinned && IsVisible && !IsPointerOver)
-        {
-            Opacity = 0;
-            IsHitTestVisible = false;
-        }
-    }
-
-    private void OnBarPinClick(object? sender, RoutedEventArgs e)
-    {
-        _isBarPinned = !_isBarPinned;
-        BarPinButton.Classes.Set("active", _isBarPinned);
-        if (DataContext is TabViewModel tab)
-        {
-            var tr = tab.ParentWindowContext.Translation;
-            ToolTip.SetTip(BarPinButton, _isBarPinned ? tr.Unpin.Value : tr.Pin.Value);
-        }
-        if (_isBarPinned)
-        {
-            StopAutoHideTimer();
-            Opacity = 1;
-            IsHitTestVisible = true;
-        }
-        else
-        {
-            RestartAutoHideTimer();
-        }
     }
 
     private void SubscribeToTab()
