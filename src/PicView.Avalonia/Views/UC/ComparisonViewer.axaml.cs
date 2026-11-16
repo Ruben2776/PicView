@@ -139,6 +139,7 @@ public partial class ComparisonViewer : UserControl, INavigableContent, IDisposa
 
         StackHost.SizeChanged += OnStackHostSizeChanged;
         MainPanel.SizeChanged += OnStackHostSizeChanged;
+        StackScrollViewer.ScrollChanged += OnStackScrollChanged;
         StackHost.PointerPressed += OnStackHostPointerPressed;
         SplitOverlay.PointerPressed += OnSplitPointerPressed;
         SplitOverlay.PointerMoved += OnSplitPointerMoved;
@@ -486,6 +487,10 @@ public partial class ComparisonViewer : UserControl, INavigableContent, IDisposa
 
     // Also on the main panel's: it is arranged after the stack host, so only then does the stack host map to it
     private void OnStackHostSizeChanged(object? sender, SizeChangedEventArgs e) =>
+        UpdateSplitClipAndOverlay();
+
+    // Scrolling moves the stack host, so the divider has to follow it
+    private void OnStackScrollChanged(object? sender, ScrollChangedEventArgs e) =>
         UpdateSplitClipAndOverlay();
 
     private void OnMainZoomViewChanged() =>
@@ -955,6 +960,7 @@ public partial class ComparisonViewer : UserControl, INavigableContent, IDisposa
         SyncedRightZoom.PointerExited -= OnSyncedPointerExited;
         StackHost.SizeChanged -= OnStackHostSizeChanged;
         MainPanel.SizeChanged -= OnStackHostSizeChanged;
+        StackScrollViewer.ScrollChanged -= OnStackScrollChanged;
         StackHost.PointerPressed -= OnStackHostPointerPressed;
         SplitOverlay.PointerPressed -= OnSplitPointerPressed;
         SplitOverlay.PointerMoved -= OnSplitPointerMoved;
