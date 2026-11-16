@@ -374,7 +374,36 @@ public class ComparisonViewerTests
     });
 
     [AvaloniaFact]
-    public void ScrollEnabled_Synced_DoesNotScroll() => WithWindow((window, vm, tab) =>
+    public void SplitMode_Scrolled_KeepsTheDividerOnTheSplit() => WithWindow((window, vm, tab) =>
+    {
+        ShowTallPairFit(vm);
+        var viewer = Host(window, tab, configure: static comparison =>
+        {
+            comparison.SetMode(ComparisonMode.Split);
+            comparison.IsSplitHorizontal.Value = true;
+            comparison.SplitRatio.Value = 0.5;
+        });
+        var scroll = Part<AutoScrollViewer>(viewer, "StackScrollViewer");
+        var host = Part<Grid>(viewer, "StackHost");
+        var main = Part<Panel>(viewer, "MainPanel");
+        var line = Part<Border>(viewer, "SplitDividerLine");
+        var strip = Part<Border>(viewer, "SplitDividerHitStrip");
+        var handle = Part<Border>(viewer, "SplitHandle");
+
+        scroll.Offset = new Vector(0, 400);
+        Settle(window);
+        Assert.True(scroll.Offset.Y > 0, $"Expected the offset below 0, got {scroll.Offset.Y}");
+
+        var splitY = host.Bounds.Height * 0.5;
+        var expectedY = host.TranslatePoint(new Point(host.Bounds.Width * 0.5, splitY), main)!.Value.Y;
+        Assert.InRange(expectedY, 15, main.Bounds.Height - 15);
+        Assert.Equal(expectedY - 1, line.Margin.Top, 1);
+        Assert.Equal(expectedY - 8, strip.Margin.Top, 1);
+        Assert.Equal(expectedY - 14, handle.Margin.Top, 1);
+    });
+
+    [AvaloniaFact]
+    public void ScrollEnabled_Synced_DoesNotScroll()=> WithWindow((window, vm, tab) =>
     {
         ShowTallPairFit(vm);
         var viewer = Host(window, tab, configure: static comparison => comparison.SetMode(ComparisonMode.Synced));
