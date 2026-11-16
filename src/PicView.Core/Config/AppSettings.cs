@@ -19,6 +19,7 @@ public class AppSettings
     public Zoom? Zoom { get; set; }
     public StartUp? StartUp { get; set; }
     public Navigation? Navigation { get; set; }
+    public ComparisonSettings? Comparison { get; set; }
 }
 
 public class WindowProperties
@@ -336,7 +337,19 @@ public enum ComparisonMode
     Overlay = 0,
     Split = 1,
     Blink = 2,
-    Difference = 3
+    Difference = 3,
+    Synced = 4
+}
+
+public class ComparisonSettings
+{
+    public ComparisonMode Mode { get; set; } = ComparisonMode.Difference;
+    public double OverlayOpacity { get; set; } = 0.5;
+    public double SplitRatio { get; set; } = 0.5;
+    public bool IsSplitHorizontal { get; set; }
+    public bool IsBlinkFast { get; set; } = true;
+    public double BlinkInterval { get; set; } = 1.0;
+    public bool IsStretchFill { get; set; } = true;
 }
 
 public class Zoom

@@ -319,6 +319,7 @@ public static class SettingsManager
             UIProperties = GetDefaultUIProperties(),
             Gallery = new Gallery(),
             ImageScaling = new ImageScaling(),
+            Comparison = new ComparisonSettings(),
             Sorting = new Sorting(),
             Theme = new Theme(),
             WindowProperties = new WindowProperties(),
@@ -474,6 +475,7 @@ public static class SettingsManager
         existingSettings.Theme ??= new Theme();
         existingSettings.Sorting ??= new Sorting();
         existingSettings.ImageScaling ??= new ImageScaling();
+        existingSettings.Comparison ??= new ComparisonSettings();
         existingSettings.WindowProperties ??= new WindowProperties();
         existingSettings.Zoom ??= GetDefaultZoom();
         existingSettings.StartUp ??= new StartUp();
