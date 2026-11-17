@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.VisualTree;
 using PicView.Avalonia.UI;
@@ -19,6 +20,8 @@ public partial class CompareBar : UserControl, IDisposable
     public CompareBar()
     {
         InitializeComponent();
+        // Bubbled, so a slider or number box under the pointer takes the wheel first
+        BarScroll.AddHandler(PointerWheelChangedEvent, OnBarScrollWheelChanged);
         DataContextChanged += (_, _) => SubscribeToTab();
         AttachedToVisualTree += (_, _) => SubscribeToTab();
         DetachedFromVisualTree += (_, _) => Dispose();
@@ -127,6 +130,31 @@ public partial class CompareBar : UserControl, IDisposable
             ? Bounds.Width
             : Bounds.Height;
     }
+
+    // A scroll viewer moves sideways only for a sideways wheel, so a plain wheel would leave the row at the top or
+    // bottom where it is. At the sides the column scrolls with the plain wheel on its own
+    private void OnBarScrollWheelChanged(object? sender, PointerWheelEventArgs e)
+    {
+        if (e.Handled || BarScroll.HorizontalScrollBarVisibility is ScrollBarVisibility.Disabled ||
+            Math.Abs(e.Delta.X) >= Math.Abs(e.Delta.Y))
+        {
+            return;
+        }
+
+        var maxX = BarScroll.Extent.Width - BarScroll.Viewport.Width;
+        if (maxX <= 0)
+        {
+            return;
+        }
+
+        e.Handled = true;
+        var offset = BarScroll.Offset;
+        BarScroll.SetCurrentValue(ScrollViewer.OffsetProperty,
+            offset.WithX(Math.Clamp(offset.X - e.Delta.Y * WheelStep, 0, maxX)));
+    }
+
+    // The same distance a scroll viewer moves for one wheel step
+    private const double WheelStep = 50;
 
     private ComparisonViewModel? Comparison => (DataContext as TabViewModel)?.Comparison;
 

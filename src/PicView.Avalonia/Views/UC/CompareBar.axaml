@@ -63,7 +63,7 @@
             <Setter Property="Width" Value="1" />
             <Setter Property="Height" Value="18" />
         </Style>
-        <Style Selector="ScrollViewer.barScroll">
+        <Style Selector="customControls|AutoScrollViewer.barScroll">
             <Setter Property="HorizontalScrollBarVisibility" Value="Auto" />
             <Setter Property="VerticalScrollBarVisibility" Value="Disabled" />
         </Style>
@@ -88,7 +88,7 @@
             <Setter Property="Width" Value="18" />
             <Setter Property="Height" Value="1" />
         </Style>
-        <Style Selector="uc|CompareBar.vertical ScrollViewer.barScroll">
+        <Style Selector="uc|CompareBar.vertical customControls|AutoScrollViewer.barScroll">
             <Setter Property="HorizontalScrollBarVisibility" Value="Disabled" />
             <Setter Property="VerticalScrollBarVisibility" Value="Auto" />
         </Style>
@@ -129,7 +129,10 @@
                 IconWidth="11"
                 ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.Close.Value}"
                 x:Name="CloseButton" />
-            <ScrollViewer Classes="barScroll">
+            <customControls:AutoScrollViewer
+                Classes="barScroll"
+                Theme="{StaticResource ClickableMenuScrollButtons}"
+                x:Name="BarScroll">
                 <!--  Contextual rows are left out of its thickness at the sides, so they never resize it  -->
                 <customControls:ContextualStackPanel Classes="barGroup" Spacing="6">
 
@@ -436,7 +439,7 @@
                     </customControls:TextIconButton>
 
                 </customControls:ContextualStackPanel>
-            </ScrollViewer>
+            </customControls:AutoScrollViewer>
         </DockPanel>
     </Border>
 </UserControl>

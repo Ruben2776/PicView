@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
+using Avalonia.Headless;
 using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.Threading;
@@ -460,6 +461,32 @@ public class CompareBarTests
         Assert.False(string.IsNullOrEmpty(hint.Text));
         Assert.Single(hint.TextLayout.TextLines);
     });
+
+    [AvaloniaTheory]
+    [InlineData(ComparisonBarPosition.Bottom)]
+    [InlineData(ComparisonBarPosition.Top)]
+    [InlineData(ComparisonBarPosition.Left)]
+    public void CompareBar_WheelOverAnOverflowingBar_ScrollsAlongIt(ComparisonBarPosition position) =>
+        WithWindow((window, _, tab) =>
+        {
+            Settings.Comparison!.BarPosition = position;
+            var bar = Compare(window, tab);
+            var vertical = position is ComparisonBarPosition.Left;
+            // Too small for the bar's row, so it scrolls along it
+            window.Width = vertical ? 800 : 300;
+            window.Height = vertical ? 250 : 600;
+            Settle(window);
+            var scroll = bar.GetVisualDescendants().OfType<AutoScrollViewer>().First();
+            Assert.True(vertical
+                ? scroll.Extent.Height > scroll.Viewport.Height
+                : scroll.Extent.Width > scroll.Viewport.Width);
+
+            var over = Assert.IsAssignableFrom<Button>(bar.FindControl<Button>("OverlayModeButton"));
+            window.MouseWheel(BoundsIn(window, over).Center, new Vector(0, -1));
+            Settle(window);
+
+            Assert.True((vertical ? scroll.Offset.Y : scroll.Offset.X) > 0);
+        });
 
     // Every group panel and the opacity slider run in the orientation
     private static void AssertGroupsAndSlider(CompareBar bar, Orientation orientation)
