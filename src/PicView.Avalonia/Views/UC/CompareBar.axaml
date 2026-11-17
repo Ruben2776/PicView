@@ -51,15 +51,24 @@
         <Style Selector="Button.compareIconBtn:disabled, RepeatButton.compareIconBtn:disabled">
             <Setter Property="Opacity" Value="{StaticResource ThemeDisabledOpacity}" />
         </Style>
-        <Style Selector="Button.compareIconBtn:not(.active):pointerover Path, Button.comparePill:not(.active):pointerover Path">
-            <Setter Property="Stroke" Value="{DynamicResource MainTextColor}" />
-        </Style>
-        <Style Selector="Button.compareIconBtn.active Path, Button.comparePill.active Path">
-            <Setter Property="Stroke" Value="White" />
-        </Style>
         <!--  The txt class sets its own foreground, so an active button's text is set white here  -->
         <Style Selector="Button.compareBtn.active TextBlock.txt, RepeatButton.compareBtn.active TextBlock.txt">
             <Setter Property="Foreground" Value="White" />
+        </Style>
+        <!--  A hovered text button's text is white in both themes  -->
+        <Style Selector="Button.compareBtn:pointerover TextBlock.txt">
+            <Setter Property="Foreground" Value="White" />
+        </Style>
+        <!--  The stretch icon is a path: the main text color, and white while hovered  -->
+        <Style Selector="Button.compareIconBtn Path">
+            <Setter Property="Stroke" Value="{DynamicResource MainTextColor}" />
+        </Style>
+        <Style Selector="Button.compareIconBtn:pointerover Path, Button.compareIconBtn.active Path">
+            <Setter Property="Stroke" Value="White" />
+        </Style>
+        <!--  The blink interval's selected text is white on the highlight  -->
+        <Style Selector="NumericUpDown#BlinkIntervalBox /template/ TextBox#PART_TextBox">
+            <Setter Property="SelectionForegroundBrush" Value="White" />
         </Style>
         <!--  Horizontal at the top and bottom; the vertical class at the left and right stacks the groups  -->
         <Style Selector="StackPanel.barGroup">
@@ -241,6 +250,7 @@
                                 Classes="compareIconBtn"
                                 Classes.active="{CompiledBinding !Comparison.IsSplitHorizontal.Value}"
                                 Click="OnSplitVerticalClick"
+                                x:Name="SplitVerticalButton"
                                 CornerRadius="16,0,0,16"
                                 Icon="{StaticResource SeparatorVerticalImage}"
                                 IconHeight="14"
@@ -250,6 +260,7 @@
                                 Classes="compareIconBtn"
                                 Classes.active="{CompiledBinding Comparison.IsSplitHorizontal.Value}"
                                 Click="OnSplitHorizontalClick"
+                                x:Name="SplitHorizontalButton"
                                 CornerRadius="0,16,16,0"
                                 Icon="{StaticResource SeparatorHorizontalImage}"
                                 IconHeight="14"
@@ -269,16 +280,20 @@
                             <Button
                                 Classes="compareBtn"
                                 Classes.active="{CompiledBinding Comparison.IsBlinkFast.Value}"
-                                Click="OnBlinkFastClick">
+                                Click="OnBlinkFastClick"
+                                x:Name="BlinkFastButton">
                                 <TextBlock Classes="txt" Text="0.3s" />
                             </Button>
                             <Button
                                 Classes="compareBtn"
                                 Classes.active="{CompiledBinding !Comparison.IsBlinkFast.Value}"
-                                Click="OnBlinkCustomClick">
+                                Click="OnBlinkCustomClick"
+                                x:Name="BlinkCustomButton">
                                 <TextBlock Classes="txt" Text="{CompiledBinding ParentWindowContext.Translation.ComparisonCustom.Value}" />
                             </Button>
                             <NumericUpDown
+                                x:Name="BlinkIntervalBox"
+                                Foreground="{DynamicResource MainTextColor}"
                                 FormatString="0.0"
                                 Height="26"
                                 Increment="0.1"
@@ -286,6 +301,7 @@
                                 Maximum="5.0"
                                 MinHeight="26"
                                 Minimum="0.1"
+                                Padding="0"
                                 Value="{CompiledBinding Comparison.BlinkInterval.Value,
                                                         Mode=TwoWay}"
                                 VerticalAlignment="Center"
@@ -349,6 +365,7 @@
                             Classes="compareIconBtn"
                             Command="{CompiledBinding ParentWindowContext.RunActionCommand}"
                             CommandParameter="{x:Static keybindings:Actions.ZoomIn}"
+                            x:Name="ZoomInButton"
                             Foreground="{DynamicResource MainTextColor}"
                             Icon="{StaticResource ZoomInImage}"
                             IconHeight="14"
@@ -362,6 +379,7 @@
                         Classes.active="{CompiledBinding Comparison.IsSwapped.Value}"
                         Command="{CompiledBinding ParentWindowContext.RunActionCommand}"
                         CommandParameter="{x:Static keybindings:Actions.ComparisonSwap}"
+                        x:Name="SwapButton"
                         Icon="{StaticResource LeftRightArrowsImage}"
                         IconHeight="14"
                         IconWidth="14"
@@ -445,8 +463,8 @@
 
                     <!--  Bar Position  -->
                     <customControls:TextIconButton
-                        Classes="textIconBtn"
                         Background="Transparent"
+                        Classes="textIconBtn"
                         Icon="{StaticResource PanelBottomDashedImage}"
                         IconHeight="16"
                         IconMargin="0,0,5,0"
