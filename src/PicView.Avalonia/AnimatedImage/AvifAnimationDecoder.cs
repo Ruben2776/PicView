@@ -47,6 +47,11 @@ internal sealed class AvifAnimationDecoder : IAnimationDecoder
 
     public unsafe void RenderFrame(int index, WriteableBitmap target)
     {
+        if (index < 0 || index >= FrameDurations.Count)
+        {
+            throw new ArgumentOutOfRangeException(nameof(index), index, "The frame does not exist.");
+        }
+
         var frame = _collection[index];
 
         if (!frame.HasAlpha)

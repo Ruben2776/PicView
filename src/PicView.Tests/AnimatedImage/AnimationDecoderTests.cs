@@ -85,6 +85,58 @@ public class AnimationDecoderTests
         }
     }
 
+    [AvaloniaTheory]
+    [InlineData(ImageType.AnimatedGif, "gif")]
+    [InlineData(ImageType.AnimatedWebp, "webp")]
+    [InlineData(ImageType.AnimatedAvif, "avif")]
+    public void RenderFrame_SameIndexIntoFreshTarget_DrawsTheFrameThere(ImageType type, string extension)
+    {
+        var path = CreateAnimatedFile(extension, 10);
+
+        try
+        {
+            using var stream = File.OpenRead(path);
+            using var decoder = AnimationDecoders.Create(type, stream);
+            using var first = new WriteableBitmap(decoder.Size, new Vector(96, 96), PixelFormat.Bgra8888,
+                decoder.AlphaFormat);
+            using var second = new WriteableBitmap(decoder.Size, new Vector(96, 96), PixelFormat.Bgra8888,
+                decoder.AlphaFormat);
+
+            decoder.RenderFrame(1, first);
+            decoder.RenderFrame(1, second);
+
+            Assert.Equal("green", DominantChannelAtCenter(second));
+        }
+        finally
+        {
+            File.Delete(path);
+        }
+    }
+
+    [AvaloniaTheory]
+    [InlineData(ImageType.AnimatedGif, "gif")]
+    [InlineData(ImageType.AnimatedWebp, "webp")]
+    [InlineData(ImageType.AnimatedAvif, "avif")]
+    public void RenderFrame_IndexOutOfRange_Throws(ImageType type, string extension)
+    {
+        var path = CreateAnimatedFile(extension, 10);
+
+        try
+        {
+            using var stream = File.OpenRead(path);
+            using var decoder = AnimationDecoders.Create(type, stream);
+            using var target = new WriteableBitmap(decoder.Size, new Vector(96, 96), PixelFormat.Bgra8888,
+                decoder.AlphaFormat);
+
+            Assert.ThrowsAny<ArgumentOutOfRangeException>(() => decoder.RenderFrame(3, target));
+            Assert.ThrowsAny<ArgumentOutOfRangeException>(() => decoder.RenderFrame(-1, target));
+        }
+        finally
+        {
+            File.Delete(path);
+        }
+    }
+
     [AvaloniaFact]
     public void Create_StillImageType_Throws()
     {

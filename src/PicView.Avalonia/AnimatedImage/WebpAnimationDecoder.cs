@@ -40,6 +40,11 @@ internal sealed class WebpAnimationDecoder : IAnimationDecoder
 
     public void RenderFrame(int index, WriteableBitmap target)
     {
+        if (index < 0 || index >= FrameDurations.Count)
+        {
+            throw new ArgumentOutOfRangeException(nameof(index), index, "The frame does not exist.");
+        }
+
         _codec.GetFrameInfo(index, out var frameInfo);
 
         var info = new SKImageInfo(_codec.Info.Width, _codec.Info.Height).WithAlphaType(frameInfo.AlphaType);

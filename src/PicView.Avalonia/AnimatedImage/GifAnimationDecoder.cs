@@ -9,6 +9,8 @@ internal sealed class GifAnimationDecoder : IAnimationDecoder
 {
     private readonly CancellationTokenSource _cts = new();
     private readonly GifDecoder _decoder;
+    private int _lastIndex = -1;
+    private WriteableBitmap? _lastTarget;
 
     public GifAnimationDecoder(Stream stream)
     {
@@ -37,8 +39,21 @@ internal sealed class GifAnimationDecoder : IAnimationDecoder
 
     public void RenderFrame(int index, WriteableBitmap target)
     {
-        // GifDecoder replays from the first frame when an earlier index is asked for
+        if (index < 0 || index >= FrameDurations.Count)
+        {
+            throw new ArgumentOutOfRangeException(nameof(index), index, "The frame does not exist.");
+        }
+
+        // GifDecoder replays from the first frame when an earlier index is asked for, but it draws nothing when the
+        // index is the one it drew last. For a different target, step away from that index first so it is drawn again.
+        if (index == _lastIndex && !ReferenceEquals(_lastTarget, target) && FrameDurations.Count > 1)
+        {
+            _decoder.RenderFrame(index == 0 ? 1 : 0, target);
+        }
+
         _decoder.RenderFrame(index, target);
+        _lastIndex = index;
+        _lastTarget = target;
     }
 
     public void Dispose()
