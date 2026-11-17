@@ -15,6 +15,7 @@ using PicView.Core.Config;
 using PicView.Core.ImageDecoding;
 using PicView.Core.Keybindings;
 using PicView.Core.Models;
+using PicView.Core.Localization;
 using PicView.Core.ViewModels;
 using PicView.Tests.Input;
 using PicView.Tests.WindowBehavior;
@@ -587,6 +588,9 @@ public class ComparisonViewerTests
     public async Task Display_OnAnotherThreadWhileAligning_StopsAligningInTheView() => await WithWindowAsync(
         async (window, vm, tab) =>
         {
+            // The hint shows only once there is a translation for it
+            Assert.True(TranslationManager.LoadLanguage("en"));
+            vm.Translation.UpdateLanguage();
             var viewer = ShowComparing(window, vm, tab);
             var stack = Part<Grid>(viewer, "StackHost");
             var markers = Part<Canvas>(viewer, "AlignMarkersCanvas");

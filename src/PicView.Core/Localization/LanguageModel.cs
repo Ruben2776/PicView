@@ -24,6 +24,10 @@ public class LanguageModel
     public string? AdjustZoomLevel { get; set; }
     public string? AdvanceBy100Images { get; set; }
     public string? AdvanceBy10Images { get; set; }
+    public string? AlignStepA1 { get; set; }
+    public string? AlignStepA2 { get; set; }
+    public string? AlignStepB1 { get; set; }
+    public string? AlignStepB2 { get; set; }
     public string? AllowZoomOut { get; set; }
     public string? Alt { get; set; }
     public string? Altitude { get; set; }
@@ -46,6 +50,7 @@ public class LanguageModel
     public string? BitDepth { get; set; }
     public string? BlackAndWhite { get; set; }
     public string? Blacks { get; set; }
+    public string? Blink { get; set; }
     public string? Blue { get; set; }
     public string? Blur { get; set; }
     public string? Bottom { get; set; }
@@ -82,25 +87,6 @@ public class LanguageModel
     public string? Comment { get; set; }
     public string? Comparison { get; set; }
     public string? ComparisonTooltip { get; set; }
-    public string? ComparisonOverlay { get; set; }
-    public string? ComparisonSplit { get; set; }
-    public string? ComparisonBlink { get; set; }
-    public string? ComparisonDifference { get; set; }
-    public string? ComparisonCustom { get; set; }
-    public string? ComparisonSwap { get; set; }
-    public string? ComparisonSideBySideSynced { get; set; }
-    public string? ComparisonPickA { get; set; }
-    public string? ComparisonPickB { get; set; }
-    public string? ComparisonSplitVertical { get; set; }
-    public string? ComparisonSplitHorizontal { get; set; }
-    public string? ComparisonPin { get; set; }
-    public string? ComparisonStretch { get; set; }
-    public string? ComparisonAlign { get; set; }
-    public string? ComparisonAlignReset { get; set; }
-    public string? ComparisonAlignStepA1 { get; set; }
-    public string? ComparisonAlignStepB1 { get; set; }
-    public string? ComparisonAlignStepA2 { get; set; }
-    public string? ComparisonAlignStepB2 { get; set; }
     public string? CompressedBitsPixel { get; set; }
     public string? Compression { get; set; }
     public string? ConstrainBackgroundToImage { get; set; }
@@ -126,6 +112,7 @@ public class LanguageModel
     public string? CropPicture { get; set; }
     public string? Ctrl { get; set; }
     public string? CtrlToZoom { get; set; }
+    public string? Custom { get; set; }
     public string? Cut { get; set; }
     public string? DarkTheme { get; set; }
     public string? Date { get; set; }
@@ -140,6 +127,7 @@ public class LanguageModel
     public string? DeleteFile { get; set; }
     public string? DeleteFilePermanently { get; set; }
     public string? Descending { get; set; }
+    public string? Difference { get; set; }
     public string? DigitalZoom { get; set; }
     public string? DisableFadeInButtonsOnHover { get; set; }
     public string? DiskSize { get; set; }
@@ -234,6 +222,7 @@ public class LanguageModel
     public string? HighlightColor { get; set; }
     public string? Highlights { get; set; }
     public string? HighQuality { get; set; }
+    public string? HorizontalSplit { get; set; }
     public string? Hotkey { get; set; }
     public string? Hue { get; set; }
     public string? Image { get; set; }
@@ -330,6 +319,7 @@ public class LanguageModel
     public string? OriginalSize { get; set; }
     public string? OutputFolder { get; set; }
     public string? OutputSize { get; set; }
+    public string? Overlay { get; set; }
     public string? Pan { get; set; }
     public string? PaperSize { get; set; }
     public string? PasswordArchive { get; set; }
@@ -339,7 +329,10 @@ public class LanguageModel
     public string? PercentComplete { get; set; }
     public string? PermanentlyDelete { get; set; }
     public string? PhotometricInterpretation { get; set; }
+    public string? PickA { get; set; }
+    public string? PickB { get; set; }
     public string? Pin { get; set; }
+    public string? PinA { get; set; }
     public string? Pinned { get; set; }
     public string? Pixels { get; set; }
     public string? PlayPause { get; set; }
@@ -347,6 +340,7 @@ public class LanguageModel
     public string? PortraitSoft { get; set; }
     public string? Portable { get; set; }
     public string? PortableNotWritable { get; set; }
+    public string? ResetAlignment { get; set; }
     public string? Roaming { get; set; }
     public string? Posterize { get; set; }
     public string? PresetDescription { get; set; }
@@ -466,16 +460,20 @@ public class LanguageModel
     public string? Solarize { get; set; }
     public string? SortFilesBy { get; set; }
     public string? Space { get; set; }
+    public string? Split { get; set; }
     public string? Square { get; set; }
     public string? Start { get; set; }
     public string? StartSlideshow { get; set; }
     public string? StayCentered { get; set; }
     public string? StayTopMost { get; set; }
     public string? Stretch { get; set; }
+    public string? StretchToMatch { get; set; }
     public string? StrobeReturnLightDetected { get; set; }
     public string? StrobeReturnLightNotDetected { get; set; }
     public string? Subject { get; set; }
     public string? SvgImage { get; set; }
+    public string? SwapAB { get; set; }
+    public string? Synced { get; set; }
     public string? Temperature { get; set; }
     public string? TabManagement { get; set; }
     public string? Theme { get; set; }
@@ -492,6 +490,7 @@ public class LanguageModel
     public string? Tonal { get; set; }
     public string? ToolWindows { get; set; }
     public string? Top { get; set; }
+    public string? TwoPointAlign { get; set; }
     public string? UnableToRender { get; set; }
     public string? Unassociate { get; set; }
     public string? Uncalibrated { get; set; }
@@ -509,6 +508,7 @@ public class LanguageModel
     public string? UsingMouse { get; set; }
     public string? UsingTouchpad { get; set; }
     public string? Version { get; set; }
+    public string? VerticalSplit { get; set; }
     public string? Vibrance { get; set; }
     public string? View { get; set; }
     public string? ViewLicenseFile { get; set; }

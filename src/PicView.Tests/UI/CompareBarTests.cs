@@ -13,6 +13,7 @@ using PicView.Avalonia.Input;
 using PicView.Avalonia.Views.UC;
 using PicView.Core.Config;
 using PicView.Core.Gallery;
+using PicView.Core.Localization;
 using PicView.Core.ViewModels;
 using PicView.Tests.WindowBehavior;
 using R3;
@@ -622,6 +623,9 @@ public class CompareBarTests
     [AvaloniaFact]
     public void CompareBar_AtTheBottomAligning_ShowsTheHintOnOneLine() => WithWindow((window, _, tab) =>
     {
+        // The hint shows only once there is a translation for it, here the English one
+        Assert.True(TranslationManager.LoadLanguage("en"));
+        tab.ParentWindowContext.Translation.UpdateLanguage();
         Settings.Comparison!.BarPosition = ComparisonBarPosition.Bottom;
         var bar = Compare(window, tab, ComparisonMode.Overlay);
         var hint = Assert.IsType<TextBlock>(bar.FindControl<TextBlock>("AlignHintText"));

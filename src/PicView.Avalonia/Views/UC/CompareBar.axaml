@@ -179,7 +179,7 @@
                             IconHeight="12"
                             IconMargin="0,0,5,0"
                             IconWidth="12"
-                            Text="{CompiledBinding ParentWindowContext.Translation.ComparisonOverlay.Value}"
+                            Text="{CompiledBinding ParentWindowContext.Translation.Overlay.Value}"
                             x:Name="OverlayModeButton" />
                         <customControls:TextIconButton
                             Classes="compareBtn textIconBtn"
@@ -190,7 +190,7 @@
                             IconHeight="12"
                             IconMargin="0,0,5,0"
                             IconWidth="12"
-                            Text="{CompiledBinding ParentWindowContext.Translation.ComparisonSplit.Value}"
+                            Text="{CompiledBinding ParentWindowContext.Translation.Split.Value}"
                             x:Name="SplitModeButton" />
                         <customControls:TextIconButton
                             Classes="compareBtn textIconBtn"
@@ -201,7 +201,7 @@
                             IconHeight="12"
                             IconMargin="0,0,5,0"
                             IconWidth="12"
-                            Text="{CompiledBinding ParentWindowContext.Translation.ComparisonSideBySideSynced.Value}"
+                            Text="{CompiledBinding ParentWindowContext.Translation.Synced.Value}"
                             x:Name="SyncedModeButton" />
                         <customControls:TextIconButton
                             Classes="compareBtn textIconBtn"
@@ -212,7 +212,7 @@
                             IconHeight="12"
                             IconMargin="0,0,5,0"
                             IconWidth="12"
-                            Text="{CompiledBinding ParentWindowContext.Translation.ComparisonBlink.Value}"
+                            Text="{CompiledBinding ParentWindowContext.Translation.Blink.Value}"
                             x:Name="BlinkModeButton" />
                         <customControls:TextIconButton
                             Classes="compareBtn textIconBtn"
@@ -223,7 +223,7 @@
                             IconHeight="12"
                             IconMargin="0,0,5,0"
                             IconWidth="12"
-                            Text="{CompiledBinding ParentWindowContext.Translation.ComparisonDifference.Value}"
+                            Text="{CompiledBinding ParentWindowContext.Translation.Difference.Value}"
                             x:Name="DifferenceModeButton" />
                     </StackPanel>
 
@@ -262,7 +262,7 @@
                                 Icon="{StaticResource SeparatorVerticalImage}"
                                 IconHeight="14"
                                 IconWidth="14"
-                                ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.ComparisonSplitVertical.Value}"
+                                ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.VerticalSplit.Value}"
                                 x:Name="SplitVerticalButton" />
                             <customControls:IconButton
                                 Classes="compareIconBtn"
@@ -272,7 +272,7 @@
                                 Icon="{StaticResource SeparatorHorizontalImage}"
                                 IconHeight="14"
                                 IconWidth="14"
-                                ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.ComparisonSplitHorizontal.Value}"
+                                ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.HorizontalSplit.Value}"
                                 x:Name="SplitHorizontalButton" />
                         </StackPanel>
                     </Border>
@@ -298,7 +298,7 @@
                                 Classes.active="{CompiledBinding !Comparison.IsBlinkFast.Value}"
                                 Click="OnBlinkCustomClick"
                                 x:Name="BlinkCustomButton">
-                                <TextBlock Classes="txt" Text="{CompiledBinding ParentWindowContext.Translation.ComparisonCustom.Value}" />
+                                <TextBlock Classes="txt" Text="{CompiledBinding ParentWindowContext.Translation.Custom.Value}" />
                             </Button>
                             <NumericUpDown
                                 Foreground="{DynamicResource MainTextColor}"
@@ -334,7 +334,7 @@
                                 CommandParameter="{x:Static keybindings:Actions.ComparisonPickA}"
                                 CornerRadius="10,0,0,10"
                                 Padding="9,4"
-                                ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.ComparisonPickA.Value}"
+                                ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.PickA.Value}"
                                 x:Name="PickAButton">
                                 <TextBlock Classes="txt" Text="A" />
                             </Button>
@@ -344,7 +344,7 @@
                                 CommandParameter="{x:Static keybindings:Actions.ComparisonPickB}"
                                 CornerRadius="0,10,10,0"
                                 Padding="9,4"
-                                ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.ComparisonPickB.Value}"
+                                ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.PickB.Value}"
                                 x:Name="PickBButton">
                                 <TextBlock Classes="txt" Text="B" />
                             </Button>
@@ -391,7 +391,7 @@
                         Icon="{StaticResource LeftRightArrowsImage}"
                         IconHeight="14"
                         IconWidth="14"
-                        ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.ComparisonSwap.Value}"
+                        ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.SwapAB.Value}"
                         x:Name="SwapButton" />
 
                     <!--  Pin Pair  -->
@@ -403,7 +403,7 @@
                         Icon="{StaticResource PinImage}"
                         IconHeight="14"
                         IconWidth="14"
-                        ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.ComparisonPin.Value}"
+                        ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.PinA.Value}"
                         x:Name="PinButton" />
 
                     <!--  Stretch Fill Toggle (Stacked Compare)  -->
@@ -412,7 +412,7 @@
                         Classes.active="{CompiledBinding Comparison.IsStretchFill.Value}"
                         Click="OnStretchToggleClick"
                         IsVisible="{CompiledBinding !Comparison.IsSynced.Value}"
-                        ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.ComparisonStretch.Value}"
+                        ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.StretchToMatch.Value}"
                         x:Name="StretchButton">
                         <Path
                             Data="M3,6 L3,3 L6,3 M10,3 L13,3 L13,6 M13,10 L13,13 L10,13 M6,13 L3,13 L3,10 M6,6 L10,6 L10,10 L6,10 Z"
@@ -433,7 +433,7 @@
                         IconHeight="12"
                         IconWidth="12"
                         IsVisible="{CompiledBinding !Comparison.IsSynced.Value}"
-                        ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.ComparisonAlign.Value}"
+                        ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.TwoPointAlign.Value}"
                         customControls:ContextualStackPanel.IsContextual="True"
                         x:Name="AlignButton" />
 
@@ -445,7 +445,7 @@
                         IconHeight="12"
                         IconWidth="12"
                         IsVisible="{CompiledBinding Comparison.HasAlignment.Value}"
-                        ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.ComparisonAlignReset.Value}"
+                        ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.ResetAlignment.Value}"
                         customControls:ContextualStackPanel.IsContextual="True"
                         x:Name="ResetAlignButton" />
 
