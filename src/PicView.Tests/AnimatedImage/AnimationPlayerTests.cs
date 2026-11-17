@@ -1,4 +1,5 @@
 using Avalonia;
+using ImageMagick;
 using PicView.Avalonia.AnimatedImage;
 using PicView.Core.Animation;
 using PicView.Core.ImageDecoding;
@@ -103,7 +104,19 @@ public class AnimationPlayerTests
     }
 
     [AvaloniaFact]
-    public void Frame_DecoderThrows_ReturnsLastBitmapAndDoesNotThrow()
+    public void Constructor_FirstFrameThrows_ThrowsAndDisposesWhatItOwns()
+    {
+        var decoder = new FakeAnimationDecoder(100, 100, 100) { ThrowOnRender = true };
+        var stream = new MemoryStream();
+
+        Assert.Throws<InvalidOperationException>(() => new AnimationPlayer(NewPlayback(), decoder, stream));
+
+        Assert.True(decoder.IsDisposed);
+        Assert.False(stream.CanRead);
+    }
+
+    [AvaloniaFact]
+    public void Frame_DecoderThrows_KeepsLastDrawnFrameUntilANewOneDraws()
     {
         var decoder = new FakeAnimationDecoder(100, 100, 100);
         using var player = new AnimationPlayer(NewPlayback(), decoder);
@@ -114,6 +127,63 @@ public class AnimationPlayerTests
 
         Assert.NotNull(after);
         Assert.Same(before, after);
+        Assert.Equal([0], decoder.Rendered);
+
+        decoder.ThrowOnRender = false;
+        player.Frame(TimeSpan.FromMilliseconds(100));
+
+        Assert.Equal([0, 2], decoder.Rendered);
+    }
+
+    [AvaloniaFact]
+    public void Frame_FailedFrame_IsAskedForOnce()
+    {
+        var decoder = new FakeAnimationDecoder(100, 100, 100);
+        using var player = new AnimationPlayer(NewPlayback(), decoder);
+
+        decoder.ThrowOnRender = true;
+        player.Frame(TimeSpan.FromMilliseconds(150));
+        for (var i = 0; i < 10; i++)
+        {
+            player.Frame(TimeSpan.Zero);
+        }
+
+        Assert.Equal([0, 1], decoder.Asked);
+    }
+
+    [AvaloniaFact]
+    public void Frame_FailedFrameComesBack_IsAskedForAgain()
+    {
+        var playback = NewPlayback();
+        var decoder = new FakeAnimationDecoder(100, 100, 100);
+        using var player = new AnimationPlayer(playback, decoder);
+
+        decoder.ThrowOnRender = true;
+        player.Frame(TimeSpan.FromMilliseconds(150));
+        player.Frame(TimeSpan.FromMilliseconds(100));
+        playback.Step(-1);
+        player.Frame(TimeSpan.Zero);
+
+        Assert.Equal([0, 1, 2, 1], decoder.Asked);
+    }
+
+    [AvaloniaFact]
+    public void Frame_AllocatesNothing_WhenFrameHasFailed()
+    {
+        var decoder = new FakeAnimationDecoder(100, 100, 100);
+        using var player = new AnimationPlayer(NewPlayback(), decoder);
+        decoder.ThrowOnRender = true;
+        player.Frame(TimeSpan.FromMilliseconds(150));
+
+        var before = GC.GetAllocatedBytesForCurrentThread();
+        for (var i = 0; i < 1000; i++)
+        {
+            player.Frame(TimeSpan.Zero);
+        }
+
+        var allocated = GC.GetAllocatedBytesForCurrentThread() - before;
+
+        Assert.Equal(0, allocated);
     }
 
     [AvaloniaFact]
@@ -167,5 +237,65 @@ public class AnimationPlayerTests
         var playback = new AnimationPlayback(new FileInfo(path), ImageType.AnimatedGif);
 
         Assert.Throws<FileNotFoundException>(() => AnimationPlayer.Open(playback));
+    }
+
+    [AvaloniaFact]
+    public void Open_FileMovedAndDeletedWhileOpen_BothSucceed()
+    {
+        var path = CreateAnimatedGif();
+        var moved = path + ".moved.gif";
+        try
+        {
+            using var player = AnimationPlayer.Open(new AnimationPlayback(new FileInfo(path), ImageType.AnimatedGif));
+
+            File.Move(path, moved);
+            File.Delete(moved);
+
+            Assert.False(File.Exists(path));
+            Assert.False(File.Exists(moved));
+        }
+        finally
+        {
+            File.Delete(path);
+            File.Delete(moved);
+        }
+    }
+
+    [AvaloniaFact]
+    public void Open_NotAnImage_ThrowsAndReleasesTheFile()
+    {
+        var path = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + ".gif");
+        File.WriteAllText(path, "This is not a GIF.");
+        try
+        {
+            var playback = new AnimationPlayback(new FileInfo(path), ImageType.AnimatedGif);
+
+            Assert.ThrowsAny<Exception>(() => AnimationPlayer.Open(playback));
+
+            // Opening without sharing fails while any other handle to the file is still open
+            using (new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None))
+            {
+            }
+
+            File.Delete(path);
+            Assert.False(File.Exists(path));
+        }
+        finally
+        {
+            File.Delete(path);
+        }
+    }
+
+    private static string CreateAnimatedGif()
+    {
+        var path = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}.gif");
+        using var collection = new MagickImageCollection();
+        foreach (var color in new[] { MagickColors.Red, MagickColors.Green, MagickColors.Blue })
+        {
+            collection.Add(new MagickImage(color, 16, 16) { AnimationDelay = 10, Format = MagickFormat.Gif });
+        }
+
+        collection.Write(path, MagickFormat.Gif);
+        return path;
     }
 }

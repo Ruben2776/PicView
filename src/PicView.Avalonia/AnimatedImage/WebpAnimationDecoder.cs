@@ -50,7 +50,8 @@ internal sealed class WebpAnimationDecoder : IAnimationDecoder
         var info = new SKImageInfo(_codec.Info.Width, _codec.Info.Height).WithAlphaType(frameInfo.AlphaType);
 
         // The next frame in sequence builds on the one the target already holds; any other frame is decoded alone
-        var options = index > 0 && _lastIndex == index - 1 && ReferenceEquals(_lastTarget, target)
+        var buildsOnPrior = index > 0 && _lastIndex == index - 1 && ReferenceEquals(_lastTarget, target);
+        var options = buildsOnPrior
             ? new SKCodecOptions(index, _lastIndex)
             : new SKCodecOptions(index);
 
@@ -58,6 +59,12 @@ internal sealed class WebpAnimationDecoder : IAnimationDecoder
         using (var frameBuffer = target.Lock())
         {
             var result = _codec.GetPixels(info, frameBuffer.Address, options);
+            // When building on the prior frame fails, the frame is decoded once more on its own
+            if (result != SKCodecResult.Success && buildsOnPrior)
+            {
+                result = _codec.GetPixels(info, frameBuffer.Address, new SKCodecOptions(index));
+            }
+
             if (result != SKCodecResult.Success)
             {
                 throw new InvalidDataException($"Could not decode frame {index} of {_codec.FrameCount}.");

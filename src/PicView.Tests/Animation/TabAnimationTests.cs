@@ -1,6 +1,7 @@
 using PicView.Core.Animation;
 using PicView.Core.ImageDecoding;
 using PicView.Core.Models;
+using PicView.Core.Navigation.Tiff;
 using PicView.Core.ViewModels;
 using R3;
 
@@ -152,14 +153,21 @@ public class TabAnimationTests
     }
 
     [Fact]
-    public void ShowPage_LeavesPlaybacksAlone()
+    public void ShowPage_OnTiffBesideAnAnimation_LeavesTheSecondaryPlaybackAlone()
     {
-        _tab.Display(Model("a.gif", ImageType.AnimatedGif));
-        var playback = _tab.Animation.Primary.Value;
+        var pages = new[] { new object(), new object() };
+        var tiff = Model("a.tif", ImageType.Bitmap);
+        tiff.Image = pages[0];
+        tiff.TiffNavigation = new TiffNavigationInfo { PageCount = 2, CurrentPage = 0, Pages = pages };
+        DisplaySideBySide(tiff, Model("b.gif", ImageType.AnimatedGif));
+        var playback = _tab.Animation.Secondary.Value;
 
         _tab.ShowPage(1);
 
-        Assert.Same(playback, _tab.Animation.Primary.Value);
+        Assert.Same(pages[1], _tab.Image.Value);
+        Assert.NotNull(playback);
+        Assert.Same(playback, _tab.Animation.Secondary.Value);
+        Assert.Null(_tab.Animation.Primary.Value);
     }
 
     [Fact]

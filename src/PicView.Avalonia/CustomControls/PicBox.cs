@@ -254,6 +254,8 @@ public class PicBox : Control
         }
         catch (Exception e)
         {
+            // A half-built visual would take the player and never draw it, so there is no visual and the still stays
+            _customVisual = null;
             DebugHelper.LogDebug(nameof(PicBox), nameof(CreateVisual), e);
         }
 

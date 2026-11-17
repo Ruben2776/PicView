@@ -9,6 +9,9 @@ internal sealed class FakeAnimationDecoder(params int[] durationsMs) : IAnimatio
 {
     public List<int> Rendered { get; } = [];
 
+    /// <summary>Every index asked for, including the ones that threw.</summary>
+    public List<int> Asked { get; } = [];
+
     public bool IsDisposed { get; private set; }
 
     public bool ThrowOnRender { get; set; }
@@ -22,6 +25,7 @@ internal sealed class FakeAnimationDecoder(params int[] durationsMs) : IAnimatio
 
     public void RenderFrame(int index, WriteableBitmap target)
     {
+        Asked.Add(index);
         if (ThrowOnRender)
         {
             throw new InvalidOperationException("Render failed.");

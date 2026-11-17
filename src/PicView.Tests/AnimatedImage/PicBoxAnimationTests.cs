@@ -242,7 +242,7 @@ public class PicBoxAnimationTests
     }
 
     [AvaloniaFact]
-    public void ImageViewerAndPreviewer_AnimatedImageShown_OnlyTheViewerHasAPlayback()
+    public void ImageViewerAndZoomPreviewer_AnimatedImageShown_OnlyTheViewerHasAPlayback()
         => WithWindow((window, _, tab) =>
         {
             tab.Display(new ImageModel
@@ -261,8 +261,7 @@ public class PicBoxAnimationTests
             // The harness window does not host the tab's view, so the boxes are looked for under the viewer
             var stillBoxes = viewer.GetLogicalDescendants()
                 .OfType<PicBox>()
-                .Where(box => box.FindLogicalAncestorOfType<ZoomPreviewer>() is not null
-                              || box.FindLogicalAncestorOfType<CropControl>() is not null)
+                .Where(box => box.FindLogicalAncestorOfType<ZoomPreviewer>() is not null)
                 .ToList();
             Assert.Equal(2, stillBoxes.Count);
             Assert.All(stillBoxes, box => Assert.Null(box.Playback));

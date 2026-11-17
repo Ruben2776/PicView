@@ -17,7 +17,8 @@ internal interface IAnimationDecoder : IDisposable
     AlphaFormat AlphaFormat { get; }
 
     /// <summary>
-    ///     The frame durations as the file gives them. A duration of zero or less is reported as-is.
+    ///     The frame durations. WebP and AVIF give them as the file does, and a duration of zero or less is reported
+    ///     as-is. GIF reports a duration of 10 ms or less as 100 ms.
     /// </summary>
     IReadOnlyList<TimeSpan> FrameDurations { get; }
 

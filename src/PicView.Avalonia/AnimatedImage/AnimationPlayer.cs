@@ -16,24 +16,35 @@ internal sealed class AnimationPlayer : IDisposable
     private readonly Stream? _stream;
     private WriteableBitmap? _bitmap;
     private int _lastDrawn = -1;
+    private int _lastFailed = -1;
 
     /// <summary>
     ///     Attaches a timeline built from the decoder's durations to the playback, makes the target bitmap and draws the
-    ///     playback's current frame (frame 0 for a new playback).
+    ///     playback's current frame (frame 0 for a new playback). Takes ownership of the decoder and stream: when
+    ///     anything here throws, including drawing that first frame, it disposes them and rethrows.
     /// </summary>
     public AnimationPlayer(AnimationPlayback playback, IAnimationDecoder decoder, Stream? stream = null)
     {
         Playback = playback;
         _decoder = decoder;
         _stream = stream;
-        Size = decoder.Size;
-
-        playback.Attach(new FrameTimeline(decoder.FrameDurations));
-        _bitmap = new WriteableBitmap(Size, new Vector(96, 96), PixelFormat.Bgra8888, decoder.AlphaFormat);
-
-        if (playback.Timeline is { Count: > 0 })
+        try
         {
-            Draw(playback.CurrentFrame);
+            Size = decoder.Size;
+            playback.Attach(new FrameTimeline(decoder.FrameDurations));
+            _bitmap = new WriteableBitmap(Size, new Vector(96, 96), PixelFormat.Bgra8888, decoder.AlphaFormat);
+
+            if (playback.Timeline is { Count: > 0 })
+            {
+                var index = playback.CurrentFrame;
+                _decoder.RenderFrame(index, _bitmap);
+                _lastDrawn = index;
+            }
+        }
+        catch
+        {
+            Dispose();
+            throw;
         }
     }
 
@@ -50,18 +61,19 @@ internal sealed class AnimationPlayer : IDisposable
     {
         var stream = new FileStream(playback.File.FullName, FileMode.Open, FileAccess.Read,
             FileShare.ReadWrite | FileShare.Delete);
-        IAnimationDecoder? decoder = null;
+        IAnimationDecoder decoder;
         try
         {
             decoder = AnimationDecoders.Create(playback.ImageType, stream);
-            return new AnimationPlayer(playback, decoder, stream);
         }
         catch
         {
-            decoder?.Dispose();
             stream.Dispose();
             throw;
         }
+
+        // The constructor disposes the decoder and stream itself when it throws
+        return new AnimationPlayer(playback, decoder, stream);
     }
 
     /// <summary>
@@ -76,7 +88,13 @@ internal sealed class AnimationPlayer : IDisposable
         }
 
         var index = Playback.Advance(elapsed);
-        if (index != _lastDrawn && Playback.Timeline is { Count: > 0 })
+        // A frame that failed is not asked for again until the playback has moved off it
+        if (index != _lastFailed)
+        {
+            _lastFailed = -1;
+        }
+
+        if (index != _lastDrawn && index != _lastFailed && Playback.Timeline is { Count: > 0 })
         {
             Draw(index);
         }
@@ -107,6 +125,7 @@ internal sealed class AnimationPlayer : IDisposable
         }
         catch (Exception e)
         {
+            _lastFailed = index;
             DebugHelper.LogDebug(nameof(AnimationPlayer), nameof(Draw), e);
         }
     }
