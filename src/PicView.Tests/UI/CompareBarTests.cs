@@ -5,6 +5,7 @@ using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
+using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Functions;
 using PicView.Avalonia.Input;
 using PicView.Avalonia.Views.UC;
@@ -51,6 +52,22 @@ public class CompareBarTests
         var bar = Compare(window, tab);
 
         Assert.Equal(new Thickness(left, top, right, bottom), Assert.IsType<Border>(bar.Content).BorderThickness);
+    });
+
+    [AvaloniaTheory]
+    [InlineData(ComparisonBarPosition.Bottom, PlacementMode.Top, 0, 5)]
+    [InlineData(ComparisonBarPosition.Top, PlacementMode.Bottom, 0, 5)]
+    [InlineData(ComparisonBarPosition.Left, PlacementMode.Right, 5, 5)]
+    [InlineData(ComparisonBarPosition.Right, PlacementMode.Left, 5, 5)]
+    public void CompareBar_PositionMenu_OpensAwayFromTheDockedEdge(ComparisonBarPosition position,
+        PlacementMode placement, double iconLeft, double iconRight) => WithWindow((window, _, tab) =>
+    {
+        Settings.Comparison!.BarPosition = position;
+        var bar = Compare(window, tab);
+        var button = Assert.IsType<TextIconButton>(bar.FindControl<TextIconButton>("BarPositionButton"));
+
+        Assert.Equal(placement, Assert.IsAssignableFrom<PopupFlyoutBase>(button.Flyout).Placement);
+        Assert.Equal(new Thickness(iconLeft, 0, iconRight, 0), button.IconMargin);
     });
 
     [AvaloniaFact]
@@ -288,8 +305,8 @@ public class CompareBarTests
     public void CompareBar_SyncedMode_HidesStretchAndAlign() => WithWindow((window, _, tab) =>
     {
         var bar = Compare(window, tab, ComparisonMode.Overlay);
-        var stretch = Assert.IsType<Button>(bar.FindControl<Button>("StretchButton"));
-        var align = Assert.IsType<Button>(bar.FindControl<Button>("AlignButton"));
+        var stretch = Assert.IsAssignableFrom<Button>(bar.FindControl<Button>("StretchButton"));
+        var align = Assert.IsAssignableFrom<Button>(bar.FindControl<Button>("AlignButton"));
         Assert.True(stretch.IsVisible);
         Assert.True(align.IsVisible);
 
@@ -351,7 +368,7 @@ public class CompareBarTests
     {
         Settings.Comparison!.BarPosition = ComparisonBarPosition.Bottom;
         var bar = Compare(window, tab);
-        var button = Assert.IsType<Button>(bar.FindControl<Button>("BarPositionButton"));
+        var button = Assert.IsAssignableFrom<Button>(bar.FindControl<Button>("BarPositionButton"));
         var menu = Assert.IsType<MenuFlyout>(button.Flyout);
 
         menu.Items.OfType<MenuItem>().Single(i => string.Equals(i.Name, "BarPositionLeftItem", StringComparison.Ordinal))
