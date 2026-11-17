@@ -26,6 +26,10 @@ public partial class CompareBar : UserControl, IDisposable
         PickBButton.Classes.Add(HoverClass);
         ResetZoomButton.Classes.Add(HoverClass);
         BarPositionButton.Classes.Add(HoverClass);
+        ZoomOutButton.Classes.Add(HoverClass);
+        ZoomInButton.Classes.Add(HoverClass);
+        ResetAlignButton.Classes.Add(HoverClass);
+        CloseButton.Classes.Add(HoverClass);
         DataContextChanged += (_, _) => SubscribeToTab();
         AttachedToVisualTree += (_, _) => SubscribeToTab();
         DetachedFromVisualTree += (_, _) => Dispose();
@@ -66,6 +70,14 @@ public partial class CompareBar : UserControl, IDisposable
         HoverUnlessActive(SyncedModeButton, comparison.IsSynced);
         HoverUnlessActive(BlinkModeButton, comparison.IsBlink);
         HoverUnlessActive(DifferenceModeButton, comparison.IsDifference);
+        HoverUnlessActive(SplitVerticalButton, comparison.IsSplitHorizontal, activeWhen: false);
+        HoverUnlessActive(SplitHorizontalButton, comparison.IsSplitHorizontal);
+        HoverUnlessActive(BlinkFastButton, comparison.IsBlinkFast);
+        HoverUnlessActive(BlinkCustomButton, comparison.IsBlinkFast, activeWhen: false);
+        HoverUnlessActive(SwapButton, comparison.IsSwapped);
+        HoverUnlessActive(PinButton, comparison.IsPinned);
+        HoverUnlessActive(StretchButton, comparison.IsStretchFill);
+        HoverUnlessActive(AlignButton, comparison.IsAligning);
 
         comparison.AlignmentStep.AsObservable()
             .SubscribeOnUIThread(() =>
@@ -129,10 +141,11 @@ public partial class CompareBar : UserControl, IDisposable
     // The light theme's hover is the hover class; the dark theme's is the menu item hover
     internal static string HoverClass => Settings.Theme?.Dark is false ? "hover" : "MenuItemHover";
 
-    // A mode button takes the hover style only while it is not the active mode
-    private void HoverUnlessActive(Button button, IReadOnlyBindableReactiveProperty<bool> isActive) =>
-        isActive.AsObservable()
-            .SubscribeOnUIThread(() => button.Classes.Set(HoverClass, !isActive.Value),
+    // A button that can be active takes the hover style only while it is not: while the state is not activeWhen
+    private void HoverUnlessActive(Button button, IReadOnlyBindableReactiveProperty<bool> state,
+        bool activeWhen = true) =>
+        state.AsObservable()
+            .SubscribeOnUIThread(() => button.Classes.Set(HoverClass, state.Value != activeWhen),
                 DebugHelper.LogError(nameof(CompareBar), nameof(HoverUnlessActive)))
             .AddTo(ref _subscriptions);
 

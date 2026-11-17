@@ -120,6 +120,65 @@ public class CompareBarTests
             }
         });
 
+    [AvaloniaTheory]
+    [InlineData(true, "MenuItemHover")]
+    [InlineData(false, "hover")]
+    public void CompareBar_IconAndBlinkButtons_TakeTheThemesHoverUnlessActive(bool dark, string hover) =>
+        WithWindow((window, _, tab) =>
+        {
+            var wasDark = Settings.Theme.Dark;
+            Settings.Theme.Dark = dark;
+            try
+            {
+                var bar = Compare(window, tab, ComparisonMode.Blink);
+                tab.Comparison!.IsBlinkFast.Value = false;
+                tab.Comparison.IsStretchFill.Value = true;
+                Settle(window);
+
+                foreach (var name in new[] { "ZoomOutButton", "ZoomInButton", "SwapButton", "PinButton", "CloseButton", "BlinkFastButton" })
+                {
+                    Assert.Contains(hover, Assert.IsAssignableFrom<Button>(bar.FindControl<Button>(name)).Classes,
+                        StringComparer.Ordinal);
+                }
+
+                // The active ones take none
+                foreach (var name in new[] { "StretchButton", "BlinkCustomButton" })
+                {
+                    Assert.DoesNotContain(hover, Assert.IsAssignableFrom<Button>(bar.FindControl<Button>(name)).Classes,
+                        StringComparer.Ordinal);
+                }
+            }
+            finally
+            {
+                Settings.Theme.Dark = wasDark;
+            }
+        });
+
+    [AvaloniaFact]
+    public void CompareBar_HoveredPickButton_HasWhiteText() => WithWindow((window, _, tab) =>
+    {
+        var bar = Compare(window, tab);
+        var pickA = Assert.IsAssignableFrom<Button>(bar.FindControl<Button>("PickAButton"));
+
+        window.MouseMove(BoundsIn(window, pickA).Center);
+        Settle(window);
+
+        var text = Assert.IsType<TextBlock>(pickA.Content);
+        Assert.Equal(Colors.White, Assert.IsAssignableFrom<ISolidColorBrush>(text.Foreground).Color);
+    });
+
+    [AvaloniaFact]
+    public void CompareBar_BlinkInterval_HasWhiteSelectedText() => WithWindow((window, _, tab) =>
+    {
+        var bar = Compare(window, tab, ComparisonMode.Blink);
+        tab.Comparison!.IsBlinkFast.Value = false;
+        Settle(window);
+        var box = Assert.IsType<NumericUpDown>(bar.FindControl<NumericUpDown>("BlinkIntervalBox"));
+        var text = box.GetVisualDescendants().OfType<TextBox>().First();
+
+        Assert.Equal(Colors.White, Assert.IsAssignableFrom<ISolidColorBrush>(text.SelectionForegroundBrush).Color);
+    });
+
     private static IEnumerable<Pen> IconPens(TextIconButton button) =>
         Assert.IsType<DrawingGroup>(button.LocalIconCopy?.Drawing).Children.OfType<GeometryDrawing>()
             .Select(d => d.Pen).OfType<Pen>();
