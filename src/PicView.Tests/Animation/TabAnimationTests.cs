@@ -98,6 +98,55 @@ public class TabAnimationTests
         Assert.Same(_tab.Animation.Primary.Value, seen);
     }
 
+    // A control that loses its player draws its image again, so the image must already be the new one: the old
+    // bitmap may be disposed by then, as when the next file is in another directory
+    [Fact]
+    public void Display_StillAfterAnimated_SetsImageBeforeEndingThePlayback()
+    {
+        _tab.Display(Model("a.gif", ImageType.AnimatedGif));
+        var next = Model("b.jpg", ImageType.Bitmap);
+        object? imageWhenPlaybackEnded = null;
+        using var subscription = _tab.Animation.Primary.AsObservable().Skip(1)
+            .Subscribe(_ => imageWhenPlaybackEnded = _tab.Image.Value);
+
+        _tab.Display(next);
+
+        Assert.Same(next.Image, imageWhenPlaybackEnded);
+    }
+
+    [Fact]
+    public void Display_SideBySide_SetsBothImagesBeforeChangingThePlaybacks()
+    {
+        _tab.Display(Model("a.gif", ImageType.AnimatedGif), Model("b.webp", ImageType.AnimatedWebp));
+        var primary = Model("c.gif", ImageType.AnimatedGif);
+        var secondary = Model("d.jpg", ImageType.Bitmap);
+        object? primaryImageWhenChanged = null;
+        object? secondaryImageWhenChanged = null;
+        using var first = _tab.Animation.Primary.AsObservable().Skip(1)
+            .Subscribe(_ => primaryImageWhenChanged = _tab.Image.Value);
+        using var second = _tab.Animation.Secondary.AsObservable().Skip(1)
+            .Subscribe(_ => secondaryImageWhenChanged = _tab.SecondaryImage.Value);
+
+        _tab.Display(primary, secondary);
+
+        Assert.Same(primary.Image, primaryImageWhenChanged);
+        Assert.Same(secondary.Image, secondaryImageWhenChanged);
+    }
+
+    [Fact]
+    public void ShowStandIn_SetsImageBeforeEndingThePlayback()
+    {
+        _tab.Display(Model("a.gif", ImageType.AnimatedGif));
+        var standIn = new object();
+        object? imageWhenPlaybackEnded = null;
+        using var subscription = _tab.Animation.Primary.AsObservable().Skip(1)
+            .Subscribe(_ => imageWhenPlaybackEnded = _tab.Image.Value);
+
+        _tab.ShowStandIn(standIn);
+
+        Assert.Same(standIn, imageWhenPlaybackEnded);
+    }
+
     [Fact]
     public void UpdateShownFile_AnimatedPrimary_ReplacesItsPlayback()
     {

@@ -355,17 +355,19 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
 
     private void ShowModels(ImageModel primary, ImageModel? secondary)
     {
-        // Before the image type changes, so what reacts to it finds the playback already there
-        Animation.Show(primary, secondary);
-
         SecondaryModel = secondary;
         SecondaryImage.Value = secondary?.Image;
-        SecondaryImageType.Value = secondary?.ImageType;
         SecondaryFileInfo.Value = secondary?.FileInfo;
 
         Model = primary;
         FileInfo.Value = primary.FileInfo;
         Image.Value = primary.Image;
+
+        // After both images: a control that loses its player draws its image again, and the old one may be disposed by
+        // now, as when the next file is in another directory. Before the image types, so what reacts to a type finds
+        // the playback already there
+        Animation.Show(primary, secondary);
+        SecondaryImageType.Value = secondary?.ImageType;
         ImageType.Value = primary.ImageType;
     }
 
@@ -825,8 +827,9 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
     /// </summary>
     public void ShowStandIn(object? image)
     {
-        Animation.End();
+        // The image first: a control that loses its player draws its image again, and the old one may be disposed
         Image.Value = image;
+        Animation.End();
     }
 
     /// <summary>
