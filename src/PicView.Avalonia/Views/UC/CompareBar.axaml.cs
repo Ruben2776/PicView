@@ -1,4 +1,6 @@
+using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Interactivity;
 using Avalonia.VisualTree;
 using PicView.Avalonia.UI;
@@ -76,6 +78,23 @@ public partial class CompareBar : UserControl, IDisposable
                 Classes.Set("dockTop", position is ComparisonBarPosition.Top);
                 Classes.Set("dockLeft", position is ComparisonBarPosition.Left);
                 Classes.Set("dockRight", position is ComparisonBarPosition.Right);
+
+                // The position menu opens toward the image, away from the edge the bar is docked to
+                if (BarPositionButton.Flyout is PopupFlyoutBase flyout)
+                {
+                    flyout.Placement = position switch
+                    {
+                        ComparisonBarPosition.Top => PlacementMode.Bottom,
+                        ComparisonBarPosition.Left => PlacementMode.Right,
+                        ComparisonBarPosition.Right => PlacementMode.Left,
+                        _ => PlacementMode.Top
+                    };
+                }
+
+                BarPositionButton.IconMargin = position is ComparisonBarPosition.Left or ComparisonBarPosition.Right
+                    ? new Thickness(5, 0, 5, 0)
+                    : new Thickness(0, 0, 5, 0);
+
                 var tr = tab.ParentWindowContext.Translation;
                 BarPositionButton.Text = position switch
                 {

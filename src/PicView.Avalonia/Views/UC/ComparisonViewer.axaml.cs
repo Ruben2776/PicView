@@ -13,7 +13,6 @@ using PicView.Avalonia.CustomControls.Zoom;
 using PicView.Avalonia.ImageTransformations;
 using PicView.Avalonia.Input;
 using PicView.Avalonia.UI;
-using PicView.Core.Comparison;
 using PicView.Core.Config;
 using PicView.Core.DebugTools;
 using PicView.Core.Extensions;
@@ -165,7 +164,7 @@ public partial class ComparisonViewer : UserControl, INavigableContent, IDisposa
     {
     }
 
-    /// <inheritdoc cref="ZoomPanControl.ResetZoom(bool)"/>
+    /// <inheritdoc cref="CustomControls.Zoom.ZoomPanControl.ResetZoom(bool)"/>
     public void ResetZoom(bool enableAnimations = true)
     {
         if (Comparison.IsSynced.Value)
@@ -545,6 +544,8 @@ public partial class ComparisonViewer : UserControl, INavigableContent, IDisposa
                 0, 0);
             SplitHandle.Cursor = SizeNorthSouthCursor;
             SplitHandleIcon.Data = SplitHorizontalIcon;
+            // The up-down arrows sit off center to the left without this, as the left-right ones do vertically
+            SplitHandleIcon.Margin = new Thickness(5, 0, 0, 0);
         }
         else
         {
@@ -574,6 +575,7 @@ public partial class ComparisonViewer : UserControl, INavigableContent, IDisposa
                 0, 0);
             SplitHandle.Cursor = SizeWestEastCursor;
             SplitHandleIcon.Data = SplitVerticalIcon;
+            SplitHandleIcon.Margin = new Thickness(0, 5, 0, 0);
         }
     }
 
