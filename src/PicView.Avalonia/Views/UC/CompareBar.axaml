@@ -25,6 +25,13 @@
             <Setter Property="Background" Value="{DynamicResource ComparePillActiveBackground}" />
             <Setter Property="BorderBrush" Value="{DynamicResource ComparePillActiveBorder}" />
         </Style>
+        <!--  The text and icon buttons are the main text color, and white while hovered or active in both themes  -->
+        <Style Selector="Button.textIconBtn">
+            <Setter Property="Foreground" Value="{DynamicResource MainTextColor}" />
+        </Style>
+        <Style Selector="Button.textIconBtn:pointerover, Button.textIconBtn.active">
+            <Setter Property="Foreground" Value="White" />
+        </Style>
         <Style Selector="Button.compareIconBtn, RepeatButton.compareIconBtn">
             <Setter Property="Background" Value="Transparent" />
             <Setter Property="BorderBrush" Value="Transparent" />
@@ -35,10 +42,6 @@
             <Setter Property="VerticalContentAlignment" Value="Center" />
             <Setter Property="HorizontalContentAlignment" Value="Center" />
             <Setter Property="Foreground" Value="{DynamicResource MainTextColor}" />
-        </Style>
-        <Style Selector="Button.compareIconBtn:not(.active):pointerover, RepeatButton.compareIconBtn:not(.active):pointerover">
-            <Setter Property="Foreground" Value="{DynamicResource MainTextColor}" />
-            <Setter Property="Background" Value="{DynamicResource ComparePillHoverBackground}" />
         </Style>
         <Style Selector="Button.compareIconBtn.active, RepeatButton.compareIconBtn.active">
             <Setter Property="Foreground" Value="White" />
@@ -152,11 +155,10 @@
 
                     <StackPanel Classes="barGroup" Spacing="2">
                         <customControls:TextIconButton
-                            Classes="compareBtn"
+                            Classes="compareBtn textIconBtn"
                             Classes.active="{CompiledBinding Comparison.IsOverlay.Value}"
                             Command="{CompiledBinding ParentWindowContext.RunActionCommand}"
                             CommandParameter="{x:Static keybindings:Actions.ComparisonModeOverlay}"
-                            Foreground="{DynamicResource MainTextColor}"
                             Icon="{StaticResource BlendImage}"
                             IconHeight="12"
                             IconMargin="0,0,5,0"
@@ -164,11 +166,10 @@
                             Text="{CompiledBinding ParentWindowContext.Translation.ComparisonOverlay.Value}"
                             x:Name="OverlayModeButton" />
                         <customControls:TextIconButton
-                            Classes="compareBtn"
+                            Classes="compareBtn textIconBtn"
                             Classes.active="{CompiledBinding Comparison.IsSplit.Value}"
                             Command="{CompiledBinding ParentWindowContext.RunActionCommand}"
                             CommandParameter="{x:Static keybindings:Actions.ComparisonModeSplit}"
-                            Foreground="{DynamicResource MainTextColor}"
                             Icon="{StaticResource SplitImage}"
                             IconHeight="12"
                             IconMargin="0,0,5,0"
@@ -176,11 +177,10 @@
                             Text="{CompiledBinding ParentWindowContext.Translation.ComparisonSplit.Value}"
                             x:Name="SplitModeButton" />
                         <customControls:TextIconButton
-                            Classes="compareBtn"
+                            Classes="compareBtn textIconBtn"
                             Classes.active="{CompiledBinding Comparison.IsSynced.Value}"
                             Command="{CompiledBinding ParentWindowContext.RunActionCommand}"
                             CommandParameter="{x:Static keybindings:Actions.ComparisonModeSynced}"
-                            Foreground="{DynamicResource MainTextColor}"
                             Icon="{StaticResource Columns2Image}"
                             IconHeight="12"
                             IconMargin="0,0,5,0"
@@ -188,11 +188,10 @@
                             Text="{CompiledBinding ParentWindowContext.Translation.ComparisonSideBySideSynced.Value}"
                             x:Name="SyncedModeButton" />
                         <customControls:TextIconButton
-                            Classes="compareBtn"
+                            Classes="compareBtn textIconBtn"
                             Classes.active="{CompiledBinding Comparison.IsBlink.Value}"
                             Command="{CompiledBinding ParentWindowContext.RunActionCommand}"
                             CommandParameter="{x:Static keybindings:Actions.ComparisonModeBlink}"
-                            Foreground="{DynamicResource MainTextColor}"
                             Icon="{StaticResource TimerImage}"
                             IconHeight="12"
                             IconMargin="0,0,5,0"
@@ -200,11 +199,10 @@
                             Text="{CompiledBinding ParentWindowContext.Translation.ComparisonBlink.Value}"
                             x:Name="BlinkModeButton" />
                         <customControls:TextIconButton
-                            Classes="compareBtn"
+                            Classes="compareBtn textIconBtn"
                             Classes.active="{CompiledBinding Comparison.IsDifference.Value}"
                             Command="{CompiledBinding ParentWindowContext.RunActionCommand}"
                             CommandParameter="{x:Static keybindings:Actions.ComparisonModeDifference}"
-                            Foreground="{DynamicResource MainTextColor}"
                             Icon="{StaticResource DiffImage}"
                             IconHeight="12"
                             IconMargin="0,0,5,0"
@@ -447,8 +445,8 @@
 
                     <!--  Bar Position  -->
                     <customControls:TextIconButton
+                        Classes="textIconBtn"
                         Background="Transparent"
-                        Foreground="{DynamicResource MainTextColor}"
                         Icon="{StaticResource PanelBottomDashedImage}"
                         IconHeight="16"
                         IconMargin="0,0,5,0"

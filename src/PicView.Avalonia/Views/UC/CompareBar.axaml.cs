@@ -25,6 +25,7 @@ public partial class CompareBar : UserControl, IDisposable
         PickAButton.Classes.Add(HoverClass);
         PickBButton.Classes.Add(HoverClass);
         ResetZoomButton.Classes.Add(HoverClass);
+        BarPositionButton.Classes.Add(HoverClass);
         DataContextChanged += (_, _) => SubscribeToTab();
         AttachedToVisualTree += (_, _) => SubscribeToTab();
         DetachedFromVisualTree += (_, _) => Dispose();
