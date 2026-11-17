@@ -9,12 +9,12 @@
     x:DataType="viewModels:MainWindowViewModel"
     xmlns="https://github.com/avaloniaui"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls;assembly=PicView.Avalonia"
+    xmlns:keybindings="using:PicView.Core.Keybindings"
     xmlns:main="clr-namespace:PicView.Avalonia.Views.Main;assembly=PicView.Avalonia"
     xmlns:uc="clr-namespace:PicView.Avalonia.Views.UC;assembly=PicView.Avalonia"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
     xmlns:views="clr-namespace:PicView.Avalonia.MacOS.Views"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:keybindings="using:PicView.Core.Keybindings">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <NativeMenu.Menu>
         <NativeMenu>
             <!--  File  -->
@@ -22,17 +22,22 @@
                 <NativeMenu>
 
                     <!--  Open  -->
-                    <NativeMenuItem Command="{Binding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.Open}" Header="{Binding Translation.Open.Value}" />
+                    <NativeMenuItem
+                        Command="{Binding RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.Open}"
+                        Header="{Binding Translation.Open.Value}" />
 
                     <!--  Open with  -->
                     <NativeMenuItem
-                        Command="{Binding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.OpenWith}"
+                        Command="{Binding RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.OpenWith}"
                         Header="{Binding Translation.OpenWith.Value, Mode=OneWay}"
                         IsEnabled="{Binding WindowTabs.ActiveTab.Value.FileInfo.Value, Converter={x:Static ObjectConverters.IsNotNull}, FallbackValue=False, Mode=OneWay}" />
 
                     <!--  Save  -->
                     <NativeMenuItem
-                        Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.Save}"
+                        Command="{CompiledBinding RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.Save}"
                         Header="{CompiledBinding Translation.Save.Value,
                                                  Mode=OneWay}"
                         IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.Image.Value,
@@ -42,7 +47,8 @@
 
                     <!--  Save as  -->
                     <NativeMenuItem
-                        Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.SaveAs}"
+                        Command="{CompiledBinding RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.SaveAs}"
                         Header="{CompiledBinding Translation.SaveAs.Value,
                                                  Mode=OneWay}"
                         IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.Image.Value,
@@ -52,7 +58,8 @@
 
                     <!--  Print  -->
                     <NativeMenuItem
-                        Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.Print}"
+                        Command="{CompiledBinding RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.Print}"
                         Header="{CompiledBinding Translation.Print.Value,
                                                  Mode=OneWay}"
                         IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.Image.Value,
@@ -62,7 +69,8 @@
 
                     <!--  Save as PDF  -->
                     <NativeMenuItem
-                        Command="{Binding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.SaveAsPDF}"
+                        Command="{Binding RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.SaveAsPDF}"
                         Header="{Binding Translation.SaveAsPdf.Value}"
                         IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.Image.Value,
                                                     Converter={x:Static ObjectConverters.IsNotNull},
@@ -71,7 +79,8 @@
 
                     <!--  Locate on disk  -->
                     <NativeMenuItem
-                        Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.OpenInExplorer}"
+                        Command="{CompiledBinding RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.OpenInExplorer}"
                         Header="{CompiledBinding Translation.ShowInFolder.Value,
                                                  Mode=OneWay}"
                         IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value,
@@ -83,7 +92,8 @@
 
                     <!--  Delete file  -->
                     <NativeMenuItem
-                        Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.DeleteFile}"
+                        Command="{CompiledBinding RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.DeleteFile}"
                         Header="{CompiledBinding Translation.DeleteFile.Value,
                                                  Mode=OneWay}"
                         IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value,
@@ -95,7 +105,8 @@
 
                     <!--  Reload  -->
                     <NativeMenuItem
-                        Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.Reload}"
+                        Command="{CompiledBinding RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.Reload}"
                         Header="{CompiledBinding Translation.Reload.Value,
                                                  Mode=OneWay}"
                         IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value,
@@ -105,11 +116,18 @@
 
                     <NativeMenuItemSeparator />
                     <!--  New window  -->
-                    <NativeMenuItem Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.NewWindow}" Header="{CompiledBinding Translation.NewWindow.Value, Mode=OneWay}" />
+                    <NativeMenuItem
+                        Command="{CompiledBinding RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.NewWindow}"
+                        Header="{CompiledBinding Translation.NewWindow.Value,
+                                                 Mode=OneWay}" />
 
 
                     <!--  New Tab  -->
-                    <NativeMenuItem Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.NewTab}" Header="{Binding Translation.NewTab.Value}" />
+                    <NativeMenuItem
+                        Command="{CompiledBinding RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.NewTab}"
+                        Header="{Binding Translation.NewTab.Value}" />
 
                     <!--  Close other tabs  -->
                     <!-- <NativeMenuItem Header="Close other tabs (missing translation)" /> -->
@@ -118,7 +136,8 @@
 
                     <!--  Rename  -->
                     <NativeMenuItem
-                        Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.Rename}"
+                        Command="{CompiledBinding RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.Rename}"
                         Header="{CompiledBinding Translation.RenameFile.Value,
                                                  Mode=OneWay}"
                         IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value,
@@ -130,7 +149,8 @@
 
                     <!--  File properties  -->
                     <NativeMenuItem
-                        Command="{Binding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ShowFileProperties}"
+                        Command="{Binding RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.ShowFileProperties}"
                         Header="{Binding Translation.FileProperties.Value}"
                         IsEnabled="{Binding WindowTabs.ActiveTab.Value.FileInfo.Value, Converter={x:Static ObjectConverters.IsNotNull}, FallbackValue=False, Mode=OneWay}" />
 
@@ -142,23 +162,32 @@
             <NativeMenuItem Header="{Binding Translation.Edit.Value}">
                 <NativeMenu>
                     <NativeMenuItem
-                        Command="{Binding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.CopyImage}"
+                        Command="{Binding RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.CopyImage}"
                         Header="{Binding Translation.CopyImage.Value}"
                         IsEnabled="{Binding WindowTabs.ActiveTab.Value.FileInfo.Value, Converter={x:Static ObjectConverters.IsNotNull}, FallbackValue=False, Mode=OneWay}" />
                     <NativeMenuItem
-                        Command="{Binding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.CopyFile}"
+                        Command="{Binding RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.CopyFile}"
                         Header="{Binding Translation.CopyFile.Value}"
                         IsEnabled="{Binding WindowTabs.ActiveTab.Value.FileInfo.Value, Converter={x:Static ObjectConverters.IsNotNull}, FallbackValue=False, Mode=OneWay}" />
                     <NativeMenuItem
-                        Command="{Binding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.CopyBase64}"
+                        Command="{Binding RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.CopyBase64}"
                         Header="{Binding Translation.CopyImage.Value}"
                         IsEnabled="{Binding WindowTabs.ActiveTab.Value.FileInfo.Value, Converter={x:Static ObjectConverters.IsNotNull}, FallbackValue=False, Mode=OneWay}" />
-                    <NativeMenuItem Command="{Binding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.Paste}" Header="{Binding Translation.Paste.Value}" />
+                    <NativeMenuItem
+                        Command="{Binding RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.Paste}"
+                        Header="{Binding Translation.Paste.Value}" />
 
                     <NativeMenuItemSeparator />
 
                     <!--  Crop image  -->
-                    <NativeMenuItem Command="{Binding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.Crop}" Header="{Binding Translation.Crop.Value}" />
+                    <NativeMenuItem
+                        Command="{Binding RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.Crop}"
+                        Header="{Binding Translation.Crop.Value}" />
 
                 </NativeMenu>
             </NativeMenuItem>
@@ -167,24 +196,46 @@
             <NativeMenuItem Header="{Binding Translation.View.Value}">
                 <NativeMenu>
                     <!--  Fullscreen  -->
-                    <NativeMenuItem Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ToggleFullscreen}" Header="{CompiledBinding Translation.Fullscreen.Value, Mode=OneWay}" />
+                    <NativeMenuItem
+                        Command="{CompiledBinding RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.ToggleFullscreen}"
+                        Header="{CompiledBinding Translation.Fullscreen.Value,
+                                                 Mode=OneWay}" />
 
                     <!--  Maximize  -->
-                    <NativeMenuItem Command="{Binding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.Maximize}" Header="{Binding Translation.Maximize.Value}" />
+                    <NativeMenuItem
+                        Command="{Binding RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.Maximize}"
+                        Header="{Binding Translation.Maximize.Value}" />
 
                     <!--  Restore  -->
-                    <NativeMenuItem Command="{Binding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.Restore}" Header="{Binding Translation.RestoreDown.Value}" />
+                    <NativeMenuItem
+                        Command="{Binding RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.Restore}"
+                        Header="{Binding Translation.RestoreDown.Value}" />
 
                     <NativeMenuItemSeparator />
 
                     <!--  Change background  -->
-                    <NativeMenuItem Command="{Binding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ChangeBackground}" Header="{Binding Translation.ChangeBackground.Value}" />
+                    <NativeMenuItem
+                        Command="{Binding RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.ChangeBackground}"
+                        Header="{Binding Translation.ChangeBackground.Value}" />
+
+                    <NativeMenuItemSeparator />
+
+                    <NativeMenuItem
+                        Command="{Binding RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.Comparison}"
+                        Header="{Binding Translation.Comparison.Value}"
+                        ToggleType="CheckBox" />
 
                     <NativeMenuItemSeparator />
 
                     <!--  Toggle side-by-side  -->
                     <NativeMenuItem
-                        Command="{Binding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.SideBySide}"
+                        Command="{Binding RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.SideBySide}"
                         Header="{Binding Translation.SideBySide.Value}"
                         ToggleType="CheckBox" />
 
@@ -192,16 +243,25 @@
 
                     <!--  Toggle UI  -->
                     <NativeMenuItem
-                        Command="{Binding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ToggleInterface}"
+                        Command="{Binding RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.ToggleInterface}"
                         Header="{CompiledBinding GlobalSettings.InterfaceText.Value,
                                                  Mode=OneWay}"
                         ToggleType="CheckBox" />
 
                     <!--  Toggle bottom bar  -->
-                    <NativeMenuItem Command="{Binding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ToggleBottomToolbar}" Header="{CompiledBinding GlobalSettings.BottomBarText.Value, Mode=OneWay}" />
+                    <NativeMenuItem
+                        Command="{Binding RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.ToggleBottomToolbar}"
+                        Header="{CompiledBinding GlobalSettings.BottomBarText.Value,
+                                                 Mode=OneWay}" />
 
                     <!--  Toggle gallery  -->
-                    <NativeMenuItem Command="{Binding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ToggleGallery}" Header="{CompiledBinding Translation.ShowImageGallery.Value, Mode=OneWay}" />
+                    <NativeMenuItem
+                        Command="{Binding RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.ToggleGallery}"
+                        Header="{CompiledBinding Translation.ShowImageGallery.Value,
+                                                 Mode=OneWay}" />
 
                 </NativeMenu>
             </NativeMenuItem>
@@ -211,13 +271,22 @@
                 <NativeMenu>
 
                     <!--  Flip image  -->
-                    <NativeMenuItem Command="{Binding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.Flip}" Header="{Binding WindowTabs.ActiveTab.Value.Orientation.FlipLabel.Value}" />
+                    <NativeMenuItem
+                        Command="{Binding RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.Flip}"
+                        Header="{Binding WindowTabs.ActiveTab.Value.Orientation.FlipLabel.Value}" />
 
                     <!--  Rotate left  -->
-                    <NativeMenuItem Command="{Binding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.RotateLeft}" Header="{Binding Translation.RotateLeft.Value}" />
+                    <NativeMenuItem
+                        Command="{Binding RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.RotateLeft}"
+                        Header="{Binding Translation.RotateLeft.Value}" />
 
                     <!--  Rotate right  -->
-                    <NativeMenuItem Command="{Binding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.RotateRight}" Header="{Binding Translation.RotateRight.Value}" />
+                    <NativeMenuItem
+                        Command="{Binding RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.RotateRight}"
+                        Header="{Binding Translation.RotateRight.Value}" />
 
                     <!--  Rotate 0  -->
                     <NativeMenuItem
@@ -254,39 +323,66 @@
                     <NativeMenuItemSeparator />
 
                     <!--  Zoom in  -->
-                    <NativeMenuItem Command="{Binding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ZoomIn}" Header="{Binding Translation.ZoomIn.Value}" />
+                    <NativeMenuItem
+                        Command="{Binding RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.ZoomIn}"
+                        Header="{Binding Translation.ZoomIn.Value}" />
 
                     <!--  Zoom out  -->
-                    <NativeMenuItem Command="{Binding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ZoomOut}" Header="{Binding Translation.ZoomOut.Value}" />
+                    <NativeMenuItem
+                        Command="{Binding RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.ZoomOut}"
+                        Header="{Binding Translation.ZoomOut.Value}" />
 
                     <!--  Reset Zoom  -->
-                    <NativeMenuItem Command="{Binding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ResetZoom}" Header="{Binding Translation.ResetZoom.Value}" />
+                    <NativeMenuItem
+                        Command="{Binding RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.ResetZoom}"
+                        Header="{Binding Translation.ResetZoom.Value}" />
 
                     <NativeMenuItemSeparator />
 
                     <!--  Crop image  -->
-                    <NativeMenuItem Command="{Binding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.Crop}" Header="{Binding Translation.Crop.Value}" />
+                    <NativeMenuItem
+                        Command="{Binding RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.Crop}"
+                        Header="{Binding Translation.Crop.Value}" />
 
                     <NativeMenuItemSeparator />
 
                     <!--  Set as wallpaper  -->
-                    <NativeMenuItem Command="{Binding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.SetAsWallpaper}" Header="{Binding Translation.SetAsWallpaper.Value}" />
+                    <NativeMenuItem
+                        Command="{Binding RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.SetAsWallpaper}"
+                        Header="{Binding Translation.SetAsWallpaper.Value}" />
 
                     <NativeMenuItemSeparator />
 
                     <!--  Optimize image  -->
-                    <NativeMenuItem Command="{Binding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.OptimizeImage}" Header="{Binding Translation.OptimizeImage.Value}" />
+                    <NativeMenuItem
+                        Command="{Binding RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.OptimizeImage}"
+                        Header="{Binding Translation.OptimizeImage.Value}" />
 
                     <NativeMenuItemSeparator />
 
                     <!--  Show Effects window  -->
-                    <NativeMenuItem Command="{Binding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.EffectsWindow}" Header="{Binding Translation.Effects.Value}" />
+                    <NativeMenuItem
+                        Command="{Binding RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.EffectsWindow}"
+                        Header="{Binding Translation.Effects.Value}" />
 
                     <!--  Show Resize window  -->
-                    <NativeMenuItem Command="{Binding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.BatchResizeWindow}" Header="{Binding Translation.Resize.Value}" />
+                    <NativeMenuItem
+                        Command="{Binding RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.BatchResizeWindow}"
+                        Header="{Binding Translation.Resize.Value}" />
 
                     <!--  Show Image info  -->
-                    <NativeMenuItem Command="{Binding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ImageInfoWindow}" Header="{Binding Translation.ImageInfo.Value}" />
+                    <NativeMenuItem
+                        Command="{Binding RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.ImageInfoWindow}"
+                        Header="{Binding Translation.ImageInfo.Value}" />
 
                 </NativeMenu>
             </NativeMenuItem>
@@ -296,16 +392,28 @@
                 <NativeMenu>
 
                     <!--  Show Image info  -->
-                    <NativeMenuItem Command="{Binding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ImageInfoWindow}" Header="{Binding Translation.ImageInfo.Value}" />
+                    <NativeMenuItem
+                        Command="{Binding RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.ImageInfoWindow}"
+                        Header="{Binding Translation.ImageInfo.Value}" />
 
                     <!--  Show Effects window  -->
-                    <NativeMenuItem Command="{Binding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.EffectsWindow}" Header="{Binding Translation.Effects.Value}" />
+                    <NativeMenuItem
+                        Command="{Binding RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.EffectsWindow}"
+                        Header="{Binding Translation.Effects.Value}" />
 
                     <!--  Show Batch Resize window  -->
-                    <NativeMenuItem Command="{Binding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.BatchResizeWindow}" Header="{Binding Translation.BatchResize.Value}" />
+                    <NativeMenuItem
+                        Command="{Binding RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.BatchResizeWindow}"
+                        Header="{Binding Translation.BatchResize.Value}" />
 
                     <!--  Show Single Resize window  -->
-                    <NativeMenuItem Command="{Binding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ResizeWindow}" Header="{Binding Translation.ResizeImage.Value}" />
+                    <NativeMenuItem
+                        Command="{Binding RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.ResizeWindow}"
+                        Header="{Binding Translation.ResizeImage.Value}" />
 
                 </NativeMenu>
             </NativeMenuItem>
@@ -320,7 +428,8 @@
 
                             <!--  Sort files by name  -->
                             <NativeMenuItem
-                                Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.SortFilesByName}"
+                                Command="{CompiledBinding RunActionCommand}"
+                                CommandParameter="{x:Static keybindings:Actions.SortFilesByName}"
                                 Header="{CompiledBinding Translation.FileName.Value,
                                                          Mode=OneWay}"
                                 IsChecked="{Binding WindowTabs.IsSortedByName.Value}"
@@ -328,7 +437,8 @@
 
                             <!--  Sort files by size  -->
                             <NativeMenuItem
-                                Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.SortFilesBySize}"
+                                Command="{CompiledBinding RunActionCommand}"
+                                CommandParameter="{x:Static keybindings:Actions.SortFilesBySize}"
                                 Header="{CompiledBinding Translation.FileSize.Value,
                                                          Mode=OneWay}"
                                 IsChecked="{Binding WindowTabs.IsSortedByFileSize.Value}"
@@ -336,7 +446,8 @@
 
                             <!--  Sort files by extension  -->
                             <NativeMenuItem
-                                Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.SortFilesByExtension}"
+                                Command="{CompiledBinding RunActionCommand}"
+                                CommandParameter="{x:Static keybindings:Actions.SortFilesByExtension}"
                                 Header="{CompiledBinding Translation.FileExtension.Value,
                                                          Mode=OneWay}"
                                 IsChecked="{Binding WindowTabs.IsSortedByExtension.Value}"
@@ -344,7 +455,8 @@
 
                             <!--  Sort files by creation time  -->
                             <NativeMenuItem
-                                Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.SortFilesByCreationTime}"
+                                Command="{CompiledBinding RunActionCommand}"
+                                CommandParameter="{x:Static keybindings:Actions.SortFilesByCreationTime}"
                                 Header="{CompiledBinding Translation.Created.Value,
                                                          Mode=OneWay}"
                                 IsChecked="{Binding WindowTabs.IsSortedByCreationTime.Value}"
@@ -352,7 +464,8 @@
 
                             <!--  Sort files by last access time  -->
                             <NativeMenuItem
-                                Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.SortFilesByLastAccessTime}"
+                                Command="{CompiledBinding RunActionCommand}"
+                                CommandParameter="{x:Static keybindings:Actions.SortFilesByLastAccessTime}"
                                 Header="{CompiledBinding Translation.LastAccessTime.Value,
                                                          Mode=OneWay}"
                                 IsChecked="{Binding WindowTabs.IsSortedByLastAccessTime.Value}"
@@ -360,7 +473,8 @@
 
                             <!--  Sort files by last write time  -->
                             <NativeMenuItem
-                                Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.SortFilesByLastAccessTime}"
+                                Command="{CompiledBinding RunActionCommand}"
+                                CommandParameter="{x:Static keybindings:Actions.SortFilesByLastAccessTime}"
                                 Header="{CompiledBinding Translation.Modified.Value,
                                                          Mode=OneWay}"
                                 IsChecked="{Binding WindowTabs.IsSortedByLastWriteTime.Value}"
@@ -368,7 +482,8 @@
 
                             <!--  Sort files randomly  -->
                             <NativeMenuItem
-                                Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.SortFilesRandomly}"
+                                Command="{CompiledBinding RunActionCommand}"
+                                CommandParameter="{x:Static keybindings:Actions.SortFilesRandomly}"
                                 Header="{CompiledBinding Translation.Random.Value,
                                                          Mode=OneWay}"
                                 IsChecked="{Binding WindowTabs.IsSortedByRandomization.Value}"
@@ -378,7 +493,8 @@
 
                             <!--  Sort files ascending  -->
                             <NativeMenuItem
-                                Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.SortFilesAscending}"
+                                Command="{CompiledBinding RunActionCommand}"
+                                CommandParameter="{x:Static keybindings:Actions.SortFilesAscending}"
                                 Header="{CompiledBinding Translation.Ascending.Value,
                                                          Mode=OneWay}"
                                 IsChecked="{CompiledBinding WindowTabs.IsAscending.Value}"
@@ -386,7 +502,8 @@
 
                             <!--  Sort files descending  -->
                             <NativeMenuItem
-                                Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.SortFilesDescending}"
+                                Command="{CompiledBinding RunActionCommand}"
+                                CommandParameter="{x:Static keybindings:Actions.SortFilesDescending}"
                                 Header="{CompiledBinding Translation.Descending.Value,
                                                          Mode=OneWay}"
                                 IsChecked="{CompiledBinding !WindowTabs.IsAscending.Value}"
@@ -397,20 +514,26 @@
                     <NativeMenuItemSeparator />
 
                     <!--  Slideshow  -->
-                    <NativeMenuItem Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.Slideshow}" Header="{CompiledBinding Translation.Slideshow.Value, Mode=OneWay}" />
+                    <NativeMenuItem
+                        Command="{CompiledBinding RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.Slideshow}"
+                        Header="{CompiledBinding Translation.Slideshow.Value,
+                                                 Mode=OneWay}" />
 
                     <NativeMenuItemSeparator />
 
                     <!--  First image  -->
                     <NativeMenuItem
-                        Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.First}"
+                        Command="{CompiledBinding RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.First}"
                         Header="{CompiledBinding Translation.FirstImage.Value,
                                                  Mode=OneWay}"
                         IsEnabled="{Binding WindowTabs.ActiveTab.Value.CanNavigateBackwards.Value, Converter={x:Static ObjectConverters.IsNotNull}, FallbackValue=False, Mode=OneWay}" />
 
                     <!--  Last image  -->
                     <NativeMenuItem
-                        Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.Last}"
+                        Command="{CompiledBinding RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.Last}"
                         Header="{CompiledBinding Translation.LastImage.Value,
                                                  Mode=OneWay}"
                         IsEnabled="{Binding WindowTabs.ActiveTab.Value.CanNavigateForwards, Converter={x:Static ObjectConverters.IsNotNull}, FallbackValue=False, Mode=OneWay}" />
@@ -449,14 +572,16 @@
 
                     <!--  Next folder  -->
                     <NativeMenuItem
-                        Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.NextFolder}"
+                        Command="{CompiledBinding RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.NextFolder}"
                         Header="{CompiledBinding Translation.NextFolder.Value,
                                                  Mode=OneWay}"
                         IsEnabled="{Binding WindowTabs.ActiveTab.Value.FileInfo.Value, Converter={x:Static ObjectConverters.IsNotNull}, FallbackValue=False, Mode=OneWay}" />
 
                     <!--  Previous folder  -->
                     <NativeMenuItem
-                        Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.PrevFolder}"
+                        Command="{CompiledBinding RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.PrevFolder}"
                         Header="{CompiledBinding Translation.PrevFolder.Value,
                                                  Mode=OneWay}"
                         IsEnabled="{Binding WindowTabs.ActiveTab.Value.FileInfo.Value, Converter={x:Static ObjectConverters.IsNotNull}, FallbackValue=False, Mode=OneWay}" />
@@ -465,14 +590,16 @@
 
                     <!--  Next archive  -->
                     <NativeMenuItem
-                        Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.NextArchive}"
+                        Command="{CompiledBinding RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.NextArchive}"
                         Header="{CompiledBinding Translation.NextArchive.Value,
                                                  Mode=OneWay}"
                         IsEnabled="{Binding WindowTabs.ActiveTab.Value.FileInfo.Value, Converter={x:Static ObjectConverters.IsNotNull}, FallbackValue=False, Mode=OneWay}" />
 
                     <!--  Previous archive  -->
                     <NativeMenuItem
-                        Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.PrevArchive}"
+                        Command="{CompiledBinding RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.PrevArchive}"
                         Header="{CompiledBinding Translation.PrevArchive.Value,
                                                  Mode=OneWay}"
                         IsEnabled="{Binding WindowTabs.ActiveTab.Value.FileInfo.Value, Converter={x:Static ObjectConverters.IsNotNull}, FallbackValue=False, Mode=OneWay}" />
@@ -485,16 +612,22 @@
                 <NativeMenu>
 
                     <!--  Change background  -->
-                    <NativeMenuItem Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ChangeBackground}" Header="{CompiledBinding Translation.ChangeBackground.Value, Mode=OneWay}" />
+                    <NativeMenuItem
+                        Command="{CompiledBinding RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.ChangeBackground}"
+                        Header="{CompiledBinding Translation.ChangeBackground.Value,
+                                                 Mode=OneWay}" />
 
                     <NativeMenuItemSeparator />
 
                     <!--  Toggle looping  -->
                     <NativeMenuItem
-                        Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ToggleLooping}"
+                        Command="{CompiledBinding RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.ToggleLooping}"
                         Header="{CompiledBinding GlobalSettings.LoopingText.Value,
                                                  Mode=OneWay}"
-                        IsChecked="{CompiledBinding GlobalSettings.IsLooping.Value, Mode=OneWay}"
+                        IsChecked="{CompiledBinding GlobalSettings.IsLooping.Value,
+                                                    Mode=OneWay}"
                         ToggleType="CheckBox" />
 
                     <!--  Toggle stretch  -->
@@ -527,21 +660,31 @@
 
                     <!--  Toggle subdirectories  -->
                     <NativeMenuItem
-                        Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ToggleSubdirectories}"
+                        Command="{CompiledBinding RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.ToggleSubdirectories}"
                         Header="{CompiledBinding Translation.SearchSubdirectory.Value,
                                                  Mode=OneWay}"
-                        IsChecked="{CompiledBinding GlobalSettings.IsIncludingSubdirectories.Value, Mode=OneWay}"
+                        IsChecked="{CompiledBinding GlobalSettings.IsIncludingSubdirectories.Value,
+                                                    Mode=OneWay}"
                         ToggleType="CheckBox" />
 
                     <NativeMenuItemSeparator />
 
                     <!--  Show keybindings  -->
-                    <NativeMenuItem Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.KeybindingsWindow}" Header="{CompiledBinding Translation.ApplicationShortcuts.Value, Mode=OneWay}" />
+                    <NativeMenuItem
+                        Command="{CompiledBinding RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.KeybindingsWindow}"
+                        Header="{CompiledBinding Translation.ApplicationShortcuts.Value,
+                                                 Mode=OneWay}" />
 
                     <NativeMenuItemSeparator />
 
                     <!--  Show settings window  -->
-                    <NativeMenuItem Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.SettingsWindow}" Header="{CompiledBinding Translation.ShowAllSettingsWindow.Value, Mode=OneWay}" />
+                    <NativeMenuItem
+                        Command="{CompiledBinding RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.SettingsWindow}"
+                        Header="{CompiledBinding Translation.ShowAllSettingsWindow.Value,
+                                                 Mode=OneWay}" />
                 </NativeMenu>
             </NativeMenuItem>
 
@@ -550,10 +693,18 @@
                 <NativeMenu>
 
                     <!--  Show about window  -->
-                    <NativeMenuItem Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.AboutWindow}" Header="{CompiledBinding Translation.About.Value, Mode=OneWay}" />
+                    <NativeMenuItem
+                        Command="{CompiledBinding RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.AboutWindow}"
+                        Header="{CompiledBinding Translation.About.Value,
+                                                 Mode=OneWay}" />
 
                     <!--  Check for updates  -->
-                    <NativeMenuItem Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.CheckForUpdates}" Header="{CompiledBinding Translation.CheckForUpdates.Value, Mode=OneWay}" />
+                    <NativeMenuItem
+                        Command="{CompiledBinding RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.CheckForUpdates}"
+                        Header="{CompiledBinding Translation.CheckForUpdates.Value,
+                                                 Mode=OneWay}" />
                 </NativeMenu>
             </NativeMenuItem>
 
