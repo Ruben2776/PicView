@@ -128,4 +128,22 @@ public class AnimationPlaybackTests
         Assert.Equal(1, playback.CurrentFrame);
         Assert.Equal(1, playback.Advance(T(10)));
     }
+
+    [Fact]
+    public void Attach_Again_KeepsPosition()
+    {
+        var playback = Create();
+        playback.Advance(T(150));
+        playback.Attach(Timeline());
+        Assert.Equal(1, playback.CurrentFrame);
+    }
+
+    [Fact]
+    public void Attach_ShorterTimeline_WrapsPositionIntoIt()
+    {
+        var playback = Create();
+        playback.Advance(T(550));
+        playback.Attach(new FrameTimeline([T(100), T(100)]));
+        Assert.Equal(1, playback.CurrentFrame);
+    }
 }

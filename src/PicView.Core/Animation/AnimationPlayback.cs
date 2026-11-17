@@ -70,7 +70,7 @@ public sealed class AnimationPlayback(FileInfo file, ImageType imageType)
         lock (_lock)
         {
             _timeline = timeline;
-            _positionTicks = 0;
+            _positionTicks = timeline.Count == 0 ? 0 : _positionTicks % timeline.Total.Ticks;
         }
     }
 
