@@ -1,47 +1,47 @@
 <customControls:MainTitleBar
+    Height="{Binding TitlebarHeight.Value, Mode=OneWay}"
+    IsVisible="{Binding IsTopToolbarShown.Value, Mode=OneWay}"
     x:Class="PicView.Avalonia.Views.Menu.CustomTitleBar"
+    x:DataType="vm:MainWindowViewModel"
     xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
     xmlns:keybindings="using:PicView.Core.Keybindings"
     xmlns:uc="clr-namespace:PicView.Avalonia.Views.UC"
     xmlns:vm="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
-    Height="{Binding TitlebarHeight.Value, Mode=OneWay}"
-    x:DataType="vm:MainWindowViewModel"
-    IsVisible="{Binding IsTopToolbarShown.Value, Mode=OneWay}">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <Border
-        x:Name="TopWindowBorder"
         Background="{DynamicResource TitleBarBackgroundColor}"
         BorderBrush="{DynamicResource TitleBarBorderColor}"
-        BorderThickness="0,0,0,1">
+        BorderThickness="0,0,0,1"
+        x:Name="TopWindowBorder">
         <DockPanel LastChildFill="True">
 
             <Border
-                x:Name="LogoBorder"
                 Background="{DynamicResource WindowLogoColor}"
                 BorderBrush="{DynamicResource WindowBorderColor}"
-                BorderThickness="0,0,1,0">
+                BorderThickness="0,0,1,0"
+                x:Name="LogoBorder">
                 <Image
-                    Width="20"
                     Height="25"
                     Margin="7,1,7,1"
-                    Source="{StaticResource LogoImage}" />
+                    Source="{StaticResource LogoImage}"
+                    Width="20" />
             </Border>
 
             <customControls:StyledMenu
-                x:Name="MainMenu"
+                Foreground="{DynamicResource MainTextColor}"
                 Height="{Binding TitlebarHeight.Value, Mode=OneWay}"
                 HorizontalAlignment="Left"
-                Foreground="{DynamicResource MainTextColor}"
                 IsVisible="{Binding TopTitlebarViewModel.IsMainMenuVisible.Value}"
-                ZIndex="9">
+                ZIndex="9"
+                x:Name="MainMenu">
 
                 <!--  File  -->
                 <customControls:StyledMenuItem
-                    x:Name="FileMenuItem"
                     Height="{Binding TitlebarHeight.Value, Mode=OneWay}"
-                    MaxWidth="{Binding TopTitlebarViewModel.MaxItemWidth.Value}">
+                    MaxWidth="{Binding TopTitlebarViewModel.MaxItemWidth.Value}"
+                    x:Name="FileMenuItem">
                     <MenuItem.Header>
                         <TextBlock Classes="txt" Text="{Binding Translation.File.Value, Mode=OneWay}" />
                     </MenuItem.Header>
@@ -85,12 +85,12 @@
 
                     <!--  Export to PDF  -->
                     <customControls:StyledMenuItem
-                        x:Name="PDFMenuItem"
                         Command="{Binding RunActionCommand}"
                         CommandParameter="{x:Static keybindings:Actions.SaveAsPDF}"
                         Header="{Binding Translation.SaveAsPdf.Value}"
                         IsEnabled="{Binding WindowTabs.ActiveTab.Value.Image.Value, Converter={x:Static ObjectConverters.IsNotNull}, FallbackValue=False}"
-                        Theme="{StaticResource MainBg}">
+                        Theme="{StaticResource MainBg}"
+                        x:Name="PDFMenuItem">
                         <MenuItem.Icon>
                             <Path Classes="SavePath" />
                         </MenuItem.Icon>
@@ -98,12 +98,12 @@
 
                     <!--  Print  -->
                     <customControls:StyledMenuItem
-                        x:Name="PrintMenuItem"
                         Command="{Binding RunActionCommand}"
                         CommandParameter="{x:Static keybindings:Actions.Print}"
                         Header="{Binding Translation.Print.Value, Mode=OneWay}"
                         IsEnabled="{Binding WindowTabs.ActiveTab.Value.ShouldPrintBeEnabled.Value}"
-                        Theme="{StaticResource MainBg}">
+                        Theme="{StaticResource MainBg}"
+                        x:Name="PrintMenuItem">
                         <MenuItem.Icon>
                             <Path Classes="PrintPath" />
                         </MenuItem.Icon>
@@ -111,17 +111,17 @@
 
                     <!--  Open with  -->
                     <customControls:StyledMenuItem
-                        x:Name="OpenWithMenuItem"
                         Command="{Binding RunActionCommand}"
                         CommandParameter="{x:Static keybindings:Actions.OpenWith}"
                         Header="{Binding Translation.OpenWith.Value, Mode=OneWay}"
                         IsEnabled="{Binding WindowTabs.ActiveTab.Value.FileInfo.Value, Converter={x:Static ObjectConverters.IsNotNull}, FallbackValue=False}"
-                        Theme="{StaticResource MainBg}">
+                        Theme="{StaticResource MainBg}"
+                        x:Name="OpenWithMenuItem">
                         <MenuItem.Icon>
                             <Image
-                                Width="12"
                                 Height="12"
-                                Source="{StaticResource OpenExternalImage}" />
+                                Source="{StaticResource OpenExternalImage}"
+                                Width="12" />
                         </MenuItem.Icon>
                     </customControls:StyledMenuItem>
 
@@ -152,7 +152,7 @@
                 </customControls:StyledMenuItem>
 
                 <!--  Edit  -->
-                <customControls:StyledMenuItem x:Name="EditMenuItem" MaxWidth="{Binding TopTitlebarViewModel.MaxItemWidth.Value}">
+                <customControls:StyledMenuItem MaxWidth="{Binding TopTitlebarViewModel.MaxItemWidth.Value}" x:Name="EditMenuItem">
                     <MenuItem.Header>
                         <TextBlock Classes="txt" Text="{Binding Translation.Edit.Value, Mode=OneWay}" />
                     </MenuItem.Header>
@@ -248,10 +248,25 @@
                 </customControls:StyledMenuItem>
 
                 <!--  View  -->
-                <customControls:StyledMenuItem x:Name="ViewMenuItem" MaxWidth="{Binding TopTitlebarViewModel.MaxItemWidth.Value}">
+                <customControls:StyledMenuItem MaxWidth="{Binding TopTitlebarViewModel.MaxItemWidth.Value}" x:Name="ViewMenuItem">
                     <MenuItem.Header>
                         <TextBlock Classes="txt" Text="{Binding Translation.View.Value, Mode=OneWay}" />
                     </MenuItem.Header>
+
+                    <!--  Comparison  -->
+                    <customControls:StyledMenuItem
+                        Command="{CompiledBinding RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.Comparison}"
+                        Header="{CompiledBinding Translation.Comparison.Value,
+                                                 Mode=OneWay}"
+                        Theme="{StaticResource MainBg}">
+                        <MenuItem.Icon>
+                            <Image
+                                Height="12"
+                                Source="{StaticResource PaletteImage}"
+                                Width="12" />
+                        </MenuItem.Icon>
+                    </customControls:StyledMenuItem>
 
                     <!--  Change background  -->
                     <customControls:StyledMenuItem
@@ -263,9 +278,9 @@
                         Theme="{StaticResource MainBg}">
                         <MenuItem.Icon>
                             <Image
-                                Width="12"
                                 Height="12"
-                                Source="{StaticResource PaletteImage}" />
+                                Source="{StaticResource PaletteImage}"
+                                Width="12" />
                         </MenuItem.Icon>
                     </customControls:StyledMenuItem>
 
@@ -278,9 +293,9 @@
                         Theme="{StaticResource MainBg}">
                         <MenuItem.Icon>
                             <Image
-                                Width="12"
                                 Height="12"
-                                Source="{StaticResource EyeOffImage}" />
+                                Source="{StaticResource EyeOffImage}"
+                                Width="12" />
                         </MenuItem.Icon>
                     </customControls:StyledMenuItem>
 
@@ -293,9 +308,9 @@
                         Theme="{StaticResource MainBg}">
                         <MenuItem.Icon>
                             <Image
-                                Width="12"
                                 Height="12"
-                                Source="{StaticResource Panel-Bottom}" />
+                                Source="{StaticResource Panel-Bottom}"
+                                Width="12" />
                         </MenuItem.Icon>
                     </customControls:StyledMenuItem>
 
@@ -316,9 +331,9 @@
                         Theme="{StaticResource MainBg}">
                         <MenuItem.Icon>
                             <Image
-                                Width="12"
                                 Height="12"
-                                Source="{StaticResource GalleryImage}" />
+                                Source="{StaticResource GalleryImage}"
+                                Width="12" />
                         </MenuItem.Icon>
                     </customControls:StyledMenuItem>
 
@@ -335,12 +350,12 @@
 
                     <!--  Maximize  -->
                     <customControls:StyledMenuItem
-                        x:Name="MaximizeMenuItem"
                         Command="{Binding RunActionCommand}"
                         CommandParameter="{x:Static keybindings:Actions.Maximize}"
                         Header="{Binding Translation.Maximize.Value, Mode=OneWay}"
                         IsVisible="{Binding ShouldMaximizeBeShown.Value, Mode=OneWay}"
-                        Theme="{StaticResource MainBg}">
+                        Theme="{StaticResource MainBg}"
+                        x:Name="MaximizeMenuItem">
                         <MenuItem.Icon>
                             <Image Classes="MaximizeImage" />
                         </MenuItem.Icon>
@@ -361,7 +376,7 @@
                 </customControls:StyledMenuItem>
 
                 <!--  Image  -->
-                <customControls:StyledMenuItem x:Name="ImageMenuItem" MaxWidth="{Binding TopTitlebarViewModel.MaxItemWidth.Value}">
+                <customControls:StyledMenuItem MaxWidth="{Binding TopTitlebarViewModel.MaxItemWidth.Value}" x:Name="ImageMenuItem">
                     <MenuItem.Header>
                         <TextBlock Classes="txt" Text="{Binding Translation.Image.Value, Mode=OneWay}" />
                     </MenuItem.Header>
@@ -375,9 +390,9 @@
                         Theme="{StaticResource MainBg}">
                         <MenuItem.Icon>
                             <Image
-                                Width="12"
                                 Height="12"
-                                Source="{StaticResource CameraImage}" />
+                                Source="{StaticResource CameraImage}"
+                                Width="12" />
                         </MenuItem.Icon>
                     </customControls:StyledMenuItem>
 
@@ -390,9 +405,9 @@
                         Theme="{StaticResource MainBg}">
                         <MenuItem.Icon>
                             <Image
-                                Width="12"
                                 Height="12"
-                                Source="{StaticResource FileUserImage}" />
+                                Source="{StaticResource FileUserImage}"
+                                Width="12" />
                         </MenuItem.Icon>
                     </customControls:StyledMenuItem>
 
@@ -405,9 +420,9 @@
                         ToolTip.Tip="{Binding Translation.EffectsTooltip.Value, Mode=OneWay}">
                         <MenuItem.Icon>
                             <Image
-                                Width="12"
                                 Height="12"
-                                Source="{StaticResource SparklesImage}" />
+                                Source="{StaticResource SparklesImage}"
+                                Width="12" />
                         </MenuItem.Icon>
                     </customControls:StyledMenuItem>
 
@@ -419,9 +434,9 @@
                         Theme="{StaticResource MainBg}">
                         <MenuItem.Icon>
                             <Image
-                                Width="12"
                                 Height="12"
-                                Source="{StaticResource UpscaleImage}" />
+                                Source="{StaticResource UpscaleImage}"
+                                Width="12" />
                         </MenuItem.Icon>
                     </customControls:StyledMenuItem>
 
@@ -433,9 +448,9 @@
                         Theme="{StaticResource MainBg}">
                         <MenuItem.Icon>
                             <Image
-                                Width="12"
                                 Height="12"
-                                Source="{StaticResource UpscaleImage}" />
+                                Source="{StaticResource UpscaleImage}"
+                                Width="12" />
                         </MenuItem.Icon>
                     </customControls:StyledMenuItem>
 
@@ -447,20 +462,20 @@
                         Theme="{StaticResource MainBg}">
                         <MenuItem.Icon>
                             <Image
-                                Width="12"
                                 Height="12"
-                                Source="{StaticResource PortalImage}" />
+                                Source="{StaticResource PortalImage}"
+                                Width="12" />
                         </MenuItem.Icon>
                     </customControls:StyledMenuItem>
 
                     <!--  Crop  -->
                     <customControls:StyledMenuItem
-                        x:Name="CropMenuItem"
                         Command="{Binding RunActionCommand}"
                         CommandParameter="{x:Static keybindings:Actions.Crop}"
                         Header="{Binding Translation.Crop.Value, Mode=OneWay}"
                         IsEnabled="{Binding WindowTabs.ActiveTab.Value.ShouldCropBeEnabled.Value}"
-                        Theme="{StaticResource MainBg}">
+                        Theme="{StaticResource MainBg}"
+                        x:Name="CropMenuItem">
                         <MenuItem.Icon>
                             <Image Classes="CropImage" />
                         </MenuItem.Icon>
@@ -511,7 +526,7 @@
                 </customControls:StyledMenuItem>
 
                 <!--  Navigate  -->
-                <customControls:StyledMenuItem x:Name="NavigateMenuItem" MaxWidth="{Binding TopTitlebarViewModel.MaxItemWidth.Value}">
+                <customControls:StyledMenuItem MaxWidth="{Binding TopTitlebarViewModel.MaxItemWidth.Value}" x:Name="NavigateMenuItem">
                     <MenuItem.Header>
                         <TextBlock Classes="txt" Text="{Binding Translation.Navigate.Value, Mode=OneWay}" />
                     </MenuItem.Header>
@@ -526,9 +541,9 @@
                         Theme="{StaticResource MainBg}">
                         <MenuItem.Icon>
                             <Image
-                                Width="12"
                                 Height="12"
-                                Source="{StaticResource NextImage}" />
+                                Source="{StaticResource NextImage}"
+                                Width="12" />
                         </MenuItem.Icon>
                     </customControls:StyledMenuItem>
 
@@ -542,9 +557,9 @@
                         Theme="{StaticResource MainBg}">
                         <MenuItem.Icon>
                             <Image
-                                Width="12"
                                 Height="12"
-                                Source="{StaticResource PrevImage}" />
+                                Source="{StaticResource PrevImage}"
+                                Width="12" />
                         </MenuItem.Icon>
                     </customControls:StyledMenuItem>
 
@@ -559,9 +574,9 @@
                         Theme="{StaticResource MainBg}">
                         <MenuItem.Icon>
                             <Image
-                                Width="12"
                                 Height="12"
-                                Source="{StaticResource NextImage}" />
+                                Source="{StaticResource NextImage}"
+                                Width="12" />
                         </MenuItem.Icon>
                     </customControls:StyledMenuItem>
 
@@ -575,9 +590,9 @@
                         Theme="{StaticResource MainBg}">
                         <MenuItem.Icon>
                             <Image
-                                Width="12"
                                 Height="12"
-                                Source="{StaticResource NextImage}" />
+                                Source="{StaticResource NextImage}"
+                                Width="12" />
                         </MenuItem.Icon>
                     </customControls:StyledMenuItem>
 
@@ -591,9 +606,9 @@
                         Theme="{StaticResource MainBg}">
                         <MenuItem.Icon>
                             <Image
-                                Width="12"
                                 Height="12"
-                                Source="{StaticResource PrevImage}" />
+                                Source="{StaticResource PrevImage}"
+                                Width="12" />
                         </MenuItem.Icon>
                     </customControls:StyledMenuItem>
 
@@ -607,9 +622,9 @@
                         Theme="{StaticResource MainBg}">
                         <MenuItem.Icon>
                             <Image
-                                Width="12"
                                 Height="12"
-                                Source="{StaticResource PrevImage}" />
+                                Source="{StaticResource PrevImage}"
+                                Width="12" />
                         </MenuItem.Icon>
                     </customControls:StyledMenuItem>
 
@@ -622,9 +637,9 @@
                         Theme="{StaticResource MainBg}">
                         <MenuItem.Icon>
                             <Image
-                                Width="12"
                                 Height="12"
-                                Source="{StaticResource FirstImage}" />
+                                Source="{StaticResource FirstImage}"
+                                Width="12" />
                         </MenuItem.Icon>
                     </customControls:StyledMenuItem>
 
@@ -637,9 +652,9 @@
                         Theme="{StaticResource MainBg}">
                         <MenuItem.Icon>
                             <Image
-                                Width="12"
                                 Height="12"
-                                Source="{StaticResource LastImage}" />
+                                Source="{StaticResource LastImage}"
+                                Width="12" />
                         </MenuItem.Icon>
                     </customControls:StyledMenuItem>
 
@@ -652,9 +667,9 @@
                         Theme="{StaticResource MainBg}">
                         <MenuItem.Icon>
                             <Image
-                                Width="14"
                                 Height="14"
-                                Source="{StaticResource NextFolderImage}" />
+                                Source="{StaticResource NextFolderImage}"
+                                Width="14" />
                         </MenuItem.Icon>
                     </customControls:StyledMenuItem>
 
@@ -667,9 +682,9 @@
                         Theme="{StaticResource MainBg}">
                         <MenuItem.Icon>
                             <Image
-                                Width="14"
                                 Height="14"
-                                Source="{StaticResource PrevFolderImage}" />
+                                Source="{StaticResource PrevFolderImage}"
+                                Width="14" />
                         </MenuItem.Icon>
                     </customControls:StyledMenuItem>
 
@@ -683,9 +698,9 @@
                         Theme="{StaticResource MainBg}">
                         <MenuItem.Icon>
                             <Image
-                                Width="14"
                                 Height="14"
-                                Source="{StaticResource ArchiveFile}" />
+                                Source="{StaticResource ArchiveFile}"
+                                Width="14" />
                         </MenuItem.Icon>
                     </customControls:StyledMenuItem>
 
@@ -699,9 +714,9 @@
                         Theme="{StaticResource MainBg}">
                         <MenuItem.Icon>
                             <Image
-                                Width="14"
                                 Height="14"
-                                Source="{StaticResource ArchiveFile}" />
+                                Source="{StaticResource ArchiveFile}"
+                                Width="14" />
                         </MenuItem.Icon>
                     </customControls:StyledMenuItem>
 
@@ -805,7 +820,7 @@
                 </customControls:StyledMenuItem>
 
                 <!--  Settings  -->
-                <customControls:StyledMenuItem x:Name="SettingsMenuItem" MaxWidth="{Binding TopTitlebarViewModel.MaxItemWidth.Value}">
+                <customControls:StyledMenuItem MaxWidth="{Binding TopTitlebarViewModel.MaxItemWidth.Value}" x:Name="SettingsMenuItem">
                     <MenuItem.Header>
                         <TextBlock Classes="txt" Text="{Binding Translation.Settings.Value, Mode=OneWay}" />
                     </MenuItem.Header>
@@ -834,7 +849,8 @@
                     <customControls:StyledMenuItem
                         Header="{CompiledBinding GlobalSettings.ScrollingText.Value,
                                                  Mode=OneWay}"
-                        IsChecked="{CompiledBinding GlobalSettings.IsScrollingEnabled.Value, Mode=OneWay}"
+                        IsChecked="{CompiledBinding GlobalSettings.IsScrollingEnabled.Value,
+                                                    Mode=OneWay}"
                         Theme="{StaticResource MainBg}"
                         ToggleType="CheckBox" />
 
@@ -844,7 +860,8 @@
                         CommandParameter="{x:Static keybindings:Actions.ZoomToFit}"
                         Header="{CompiledBinding Translation.ZoomToFit.Value,
                                                  Mode=OneWay}"
-                        IsChecked="{CompiledBinding GlobalSettings.IsZoomedToFit.Value, Mode=OneWay}"
+                        IsChecked="{CompiledBinding GlobalSettings.IsZoomedToFit.Value,
+                                                    Mode=OneWay}"
                         Theme="{StaticResource MainBg}"
                         ToggleType="CheckBox" />
 
@@ -854,7 +871,8 @@
                         CommandParameter="{x:Static keybindings:Actions.SetTopMost}"
                         Header="{CompiledBinding Translation.StayTopMost.Value,
                                                  Mode=OneWay}"
-                        IsChecked="{CompiledBinding GlobalSettings.IsTopMost.Value, Mode=OneWay}"
+                        IsChecked="{CompiledBinding GlobalSettings.IsTopMost.Value,
+                                                    Mode=OneWay}"
                         Theme="{StaticResource MainBg}"
                         ToggleType="CheckBox" />
 
@@ -883,7 +901,7 @@
                 </customControls:StyledMenuItem>
 
                 <!--  Help  -->
-                <customControls:StyledMenuItem x:Name="HelpMenuItem" MaxWidth="{Binding TopTitlebarViewModel.MaxItemWidth.Value}">
+                <customControls:StyledMenuItem MaxWidth="{Binding TopTitlebarViewModel.MaxItemWidth.Value}" x:Name="HelpMenuItem">
                     <MenuItem.Header>
                         <TextBlock Classes="txt" Text="{Binding Translation.Help.Value, Mode=OneWay}" />
                     </MenuItem.Header>
@@ -897,9 +915,9 @@
                         Theme="{StaticResource MainBg}">
                         <MenuItem.Icon>
                             <Image
-                                Width="12"
                                 Height="12"
-                                Source="{StaticResource AboutImage}" />
+                                Source="{StaticResource AboutImage}"
+                                Width="12" />
                         </MenuItem.Icon>
                     </customControls:StyledMenuItem>
 
@@ -912,18 +930,15 @@
                         Theme="{StaticResource MainBg}">
                         <MenuItem.Icon>
                             <Image
-                                Width="12"
                                 Height="12"
-                                Source="{StaticResource DownloadImage}" />
+                                Source="{StaticResource DownloadImage}"
+                                Width="12" />
                         </MenuItem.Icon>
                     </customControls:StyledMenuItem>
                 </customControls:StyledMenuItem>
             </customControls:StyledMenu>
 
             <customControls:IconButton
-                x:Name="MenuButton"
-                Width="30"
-                Margin="0"
                 Background="{DynamicResource TitleBarButtonBackground}"
                 BorderBrush="{DynamicResource TitleBarButtonBorder}"
                 BorderThickness="0,0,1,0"
@@ -934,12 +949,12 @@
                 IconHeight="16"
                 IconWidth="16"
                 IsRepeatEnabled="False"
-                IsVisible="{Binding TopTitlebarViewModel.IsMenuButtonVisible.Value}" />
+                IsVisible="{Binding TopTitlebarViewModel.IsMenuButtonVisible.Value}"
+                Margin="0"
+                Width="30"
+                x:Name="MenuButton" />
 
             <customControls:IconButton
-                x:Name="SearchButton"
-                Width="30"
-                Margin="2,3,7,3"
                 Background="Transparent"
                 Classes="AltHover"
                 Command="{Binding RunActionCommand}"
@@ -952,18 +967,18 @@
                 IconWidth="15"
                 IsEnabled="{Binding WindowTabs.ActiveTab.Value.FileInfo.Value, Converter={x:Static ObjectConverters.IsNotNull}, FallbackValue=False}"
                 IsTabStop="False"
-                IsVisible="{Binding TopTitlebarViewModel.IsMenuButtonVisible.Value}" />
+                IsVisible="{Binding TopTitlebarViewModel.IsMenuButtonVisible.Value}"
+                Margin="2,3,7,3"
+                Width="30"
+                x:Name="SearchButton" />
 
             <StackPanel
-                x:Name="WinBtnPanel"
                 DockPanel.Dock="Right"
                 IsVisible="{CompiledBinding TopTitlebarViewModel.IsBtnPanelVisible.Value}"
-                Orientation="Horizontal">
+                Orientation="Horizontal"
+                x:Name="WinBtnPanel">
 
                 <customControls:IconButton
-                    x:Name="MinimizeButton"
-                    Width="30"
-                    Margin="0,0"
                     Background="{DynamicResource TitleBarButtonBackground}"
                     BorderBrush="{DynamicResource TitleBarButtonBorder}"
                     BorderThickness="1,0,0,0"
@@ -975,11 +990,12 @@
                     Foreground="{DynamicResource TitleBarForeground}"
                     IconHeight="2"
                     IconWidth="12"
-                    IsRepeatEnabled="False" />
+                    IsRepeatEnabled="False"
+                    Margin="0,0"
+                    Width="30"
+                    x:Name="MinimizeButton" />
 
                 <customControls:IconButton
-                    x:Name="FullscreenButton"
-                    Width="30"
                     Background="{DynamicResource TitleBarButtonBackground}"
                     BorderBrush="{DynamicResource TitleBarButtonBorder}"
                     BorderThickness="1,0,1,0"
@@ -993,11 +1009,11 @@
                     IconWidth="12"
                     IsRepeatEnabled="False"
                     IsVisible="{CompiledBinding ShouldMaximizeBeShown.Value,
-                                                Mode=OneWay}" />
+                                                Mode=OneWay}"
+                    Width="30"
+                    x:Name="FullscreenButton" />
 
                 <customControls:IconButton
-                    x:Name="RestoreButton"
-                    Width="30"
                     Background="{DynamicResource TitleBarButtonBackground}"
                     Classes="hover"
                     Command="{CompiledBinding RunActionCommand}"
@@ -1008,11 +1024,11 @@
                     IconWidth="12"
                     IsRepeatEnabled="False"
                     IsVisible="{CompiledBinding !ShouldMaximizeBeShown.Value,
-                                                Mode=OneWay}" />
+                                                Mode=OneWay}"
+                    Width="30"
+                    x:Name="RestoreButton" />
 
                 <customControls:IconButton
-                    x:Name="CloseButton"
-                    Width="30"
                     Background="{DynamicResource TitleBarButtonBackground}"
                     Classes="hover"
                     ClickMode="Release"
@@ -1023,14 +1039,13 @@
                     IconHeight="10"
                     IconWidth="10"
                     IsRepeatEnabled="False"
-                    WindowDecorationProperties.ElementRole="CloseButton" />
+                    Width="30"
+                    WindowDecorationProperties.ElementRole="CloseButton"
+                    x:Name="CloseButton" />
 
             </StackPanel>
 
             <customControls:IconButton
-                x:Name="DropDownMenuButton"
-                Width="30"
-                Margin="2,3,7,3"
                 Background="Transparent"
                 BorderBrush="{DynamicResource TitleBarBorderColor}"
                 Classes="AltHover"
@@ -1043,12 +1058,12 @@
                 IconHeight="13"
                 IconWidth="13"
                 IsTabStop="False"
-                IsVisible="{Binding TopTitlebarViewModel.IsMenuButtonVisible.Value}" />
+                IsVisible="{Binding TopTitlebarViewModel.IsMenuButtonVisible.Value}"
+                Margin="2,3,7,3"
+                Width="30"
+                x:Name="DropDownMenuButton" />
 
             <customControls:IconButton
-                x:Name="CreateTabButton"
-                Width="30"
-                Margin="0,3,2,3"
                 Background="Transparent"
                 BorderBrush="{DynamicResource TitleBarBorderColor}"
                 Classes="AltHover"
@@ -1061,13 +1076,16 @@
                 IconHeight="13"
                 IconWidth="13"
                 IsTabStop="False"
-                IsVisible="{Binding !WindowTabs.ActiveTab.Value.Gallery.IsDocked.Value}" />
+                IsVisible="{Binding !WindowTabs.ActiveTab.Value.Gallery.IsDocked.Value}"
+                Margin="0,3,2,3"
+                Width="30"
+                x:Name="CreateTabButton" />
 
             <uc:EditableTitlebar
-                x:Name="EditableTitlebar"
                 Background="{DynamicResource EditableTitlebarBackground}"
                 Foreground="{DynamicResource EditableTitlebarForeground}"
-                IsVisible="{Binding TopTitlebarViewModel.IsEditableTitlebarVisible.Value}" />
+                IsVisible="{Binding TopTitlebarViewModel.IsEditableTitlebarVisible.Value}"
+                x:Name="EditableTitlebar" />
 
         </DockPanel>
     </Border>
