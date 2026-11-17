@@ -1,3 +1,4 @@
+using PicView.Core.Animation;
 using PicView.Core.ArchiveHandling;
 using PicView.Core.DebugTools;
 using PicView.Core.FileHistory;
@@ -447,12 +448,17 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
     {
         SecondaryModel = secondary;
         SecondaryImage.Value = secondary?.Image;
-        SecondaryImageType.Value = secondary?.ImageType;
         SecondaryFileInfo.Value = secondary?.FileInfo;
 
         Model = primary;
         FileInfo.Value = primary.FileInfo;
         Image.Value = primary.Image;
+
+        // After both images: a control that loses its player draws its image again, and the old one may be disposed by
+        // now, as when the next file is in another directory. Before the image types, so what reacts to a type finds
+        // the playback already there
+        Animation.Show(primary, secondary);
+        SecondaryImageType.Value = secondary?.ImageType;
         ImageType.Value = primary.ImageType;
 
         UpdateComparison(pairChanged: true);
@@ -523,11 +529,13 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
         if (IsFileAt(primary, path))
         {
             Follow(primary);
+            Animation.ReplacePrimary(file);
             FileInfo.Value = file;
         }
         else if (IsFileAt(secondary, path))
         {
             Follow(secondary!);
+            Animation.ReplaceSecondary(file);
             SecondaryFileInfo.Value = file;
         }
         else
@@ -587,6 +595,11 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
     /// The tab's Zoom Level and its two inputs, the Fit Scale and the Zoom Factor (ADR-0016).
     /// </summary>
     public TabZoom Zoom { get; } = new();
+
+    /// <summary>
+    /// The playbacks of the animated images the tab shows, one per image shown beside each other.
+    /// </summary>
+    public TabAnimation Animation { get; } = new();
 
     #endregion
 
@@ -906,9 +919,14 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
     /// <summary>
     /// Shows <paramref name="image"/> in place of the shown model's image, as a Stand-in: a thumbnail while the next
     /// image loads, or an Effects Render. What the tab shows is unchanged: neither model changes, nothing is recorded
-    /// and <see cref="Shown"/> does not fire.
+    /// and <see cref="Shown"/> does not fire. A Stand-in ends the animation playbacks.
     /// </summary>
-    public void ShowStandIn(object? image) => Image.Value = image;
+    public void ShowStandIn(object? image)
+    {
+        // The image first: a control that loses its player draws its image again, and the old one may be disposed
+        Image.Value = image;
+        Animation.End();
+    }
 
     /// <summary>
     /// Shows <paramref name="thumbnail"/> as the Stand-in while the next image loads, with the Loading title, and clears
@@ -1080,6 +1098,7 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
         FileInfo.Value = null;
         SecondaryFileInfo.Value = null;
         SecondaryModel = null;
+        Animation.End();
         // No files, so the position goes too: a new iterator must not light the buttons from the old list's place
         SetPosition(-1, 0);
     }
@@ -1100,6 +1119,7 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
         NavigationCts.Dispose();
         Orientation.Dispose();
         Zoom.Dispose();
+        Animation.Dispose();
         Hookups?.Dispose();
         Views?.Dispose();
         _viewsSubscription?.Dispose();

@@ -73,14 +73,12 @@
                         LastChildFill="False">
                         <customControls:PicBox
                             x:Name="OverlayImage"
-                            CurrentFileInfo="{Binding FileInfo.Value}"
                             DockPanel.Dock="Left"
                             ImageType="{Binding ImageType.Value}"
                             Source="{CompiledBinding Image.Value,
                                                      Converter={StaticResource DisplayableConverter}}" />
                         <customControls:PicBox
                             x:Name="SecondaryOverlayImage"
-                            CurrentFileInfo="{Binding SecondaryFileInfo.Value}"
                             DockPanel.Dock="Right"
                             ImageType="{Binding SecondaryImageType.Value}"
                             IsVisible="{CompiledBinding ParentWindowContext.GlobalSettings.IsSideBySide.Value}"

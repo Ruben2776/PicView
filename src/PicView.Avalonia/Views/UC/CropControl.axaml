@@ -91,7 +91,6 @@
                     </LayoutTransformControl.RenderTransform>
                     <customControls:PicBox
                         x:Name="ImageControl"
-                        CurrentFileInfo="{Binding FileInfo.Value}"
                         ImageType="{Binding ImageType.Value}"
                         Source="{Binding Image.Value}" />
                 </LayoutTransformControl>

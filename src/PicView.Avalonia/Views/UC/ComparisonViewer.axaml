@@ -42,15 +42,13 @@
                         Width="{CompiledBinding ParentWindowContext.ImageWidth.Value}">
                         <Grid x:Name="StackHost">
                             <customControls:PicBox
-                                CurrentFileInfo="{CompiledBinding $parent[uc:ComparisonViewer].Comparison.FileInfoA.Value}"
                                 ImageType="{CompiledBinding $parent[uc:ComparisonViewer].Comparison.ImageTypeA.Value}"
                                 Source="{CompiledBinding $parent[uc:ComparisonViewer].Comparison.ImageA.Value,
                                                          Converter={StaticResource DisplayableConverter}}"
                                 x:Name="ImageA" />
-                            <!--  No ImageType: an animation draws its frames without the blend, so only the first frame is compared  -->
+                            <!--  No ImageType, and no Playback on any image here: a comparison shows still images, so the first frame is compared (ADR-0033)  -->
                             <customControls:PicBox
                                 BlendMode="Difference"
-                                CurrentFileInfo="{CompiledBinding $parent[uc:ComparisonViewer].Comparison.FileInfoB.Value}"
                                 Source="{CompiledBinding $parent[uc:ComparisonViewer].Comparison.ImageB.Value,
                                                          Converter={StaticResource DisplayableConverter}}"
                                 Stretch="Fill"
@@ -84,7 +82,6 @@
                     <zoom:ZoomPanControl x:Name="SyncedLeftZoom">
                         <Grid Background="Transparent" x:Name="SyncedLeftContainer">
                             <customControls:PicBox
-                                CurrentFileInfo="{CompiledBinding $parent[uc:ComparisonViewer].Comparison.FileInfoA.Value}"
                                 HorizontalAlignment="Center"
                                 ImageType="{CompiledBinding $parent[uc:ComparisonViewer].Comparison.ImageTypeA.Value}"
                                 Source="{CompiledBinding $parent[uc:ComparisonViewer].Comparison.ImageA.Value,
@@ -135,7 +132,6 @@
                     <zoom:ZoomPanControl x:Name="SyncedRightZoom">
                         <Grid Background="Transparent" x:Name="SyncedRightContainer">
                             <customControls:PicBox
-                                CurrentFileInfo="{CompiledBinding $parent[uc:ComparisonViewer].Comparison.FileInfoB.Value}"
                                 HorizontalAlignment="Center"
                                 ImageType="{CompiledBinding $parent[uc:ComparisonViewer].Comparison.ImageTypeB.Value}"
                                 Source="{CompiledBinding $parent[uc:ComparisonViewer].Comparison.ImageB.Value,
