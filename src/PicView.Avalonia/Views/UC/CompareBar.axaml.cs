@@ -85,10 +85,10 @@ public partial class CompareBar : UserControl, IDisposable
                 var tr = tab.ParentWindowContext.Translation;
                 AlignHintText.Text = comparison.AlignmentStep.Value switch
                 {
-                    1 => tr.ComparisonAlignStepA1.Value,
-                    2 => tr.ComparisonAlignStepB1.Value,
-                    3 => tr.ComparisonAlignStepA2.Value,
-                    4 => tr.ComparisonAlignStepB2.Value,
+                    1 => tr.AlignStepA1.Value,
+                    2 => tr.AlignStepB1.Value,
+                    3 => tr.AlignStepA2.Value,
+                    4 => tr.AlignStepB2.Value,
                     _ => string.Empty
                 };
             }, DebugHelper.LogError(nameof(CompareBar), nameof(ComparisonViewModel.AlignmentStep)))
