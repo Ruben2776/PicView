@@ -40,7 +40,12 @@ public partial class HoverBar : UserControl, IDisposable
             }
 
             AddHandler(PointerPressedEvent, ManagePointerPressed, RoutingStrategies.Direct | RoutingStrategies.Tunnel);
-            mainWindow.UIHelper.GetMainView.SizeChanged += (_, args) => ApplyResponsiveResize(args.NewSize.Width);
+            // A window without its main view, as in a headless test, has nothing to follow the size of
+            if (mainWindow.UIHelper.GetMainView is { } mainView)
+            {
+                mainView.SizeChanged += (_, args) => ApplyResponsiveResize(args.NewSize.Width);
+            }
+
             ApplyResponsiveResize(Bounds.Width);
 
             if (Settings.Theme.GlassTheme)
@@ -213,7 +218,8 @@ public partial class HoverBar : UserControl, IDisposable
 
         BottomBorder.IsVisible = true;
 
-        if (TopLevel.GetTopLevel(this) is not MainWindow mainWindow)
+        // A window without its main view, as in a headless test, has no size to place the bar by
+        if (TopLevel.GetTopLevel(this) is not MainWindow { UIHelper.GetMainView: { } mainView } mainWindow)
         {
             return;
         }
@@ -221,7 +227,7 @@ public partial class HoverBar : UserControl, IDisposable
         // Make sure hover bar is above the bottom gallery if needed
         var isDockedGalleryShown = mainWindow.ViewModel is { } vm &&
                                    vm.WindowTabs.ActiveTab.CurrentValue.Gallery.IsDockedGalleryVisible.CurrentValue;
-        if (mainWindow.UIHelper.GetMainView.Bounds.Height > SizeDefaults.WindowMinSize)
+        if (mainView.Bounds.Height > SizeDefaults.WindowMinSize)
         {
             ApplyDetectionArea(isDockedGalleryShown);
         }

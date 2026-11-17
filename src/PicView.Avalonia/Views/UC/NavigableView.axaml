@@ -1,0 +1,50 @@
+<UserControl
+    x:Class="PicView.Avalonia.Views.UC.NavigableView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:buttons="clr-namespace:PicView.Avalonia.Views.UC.Buttons"
+    xmlns:gallery="clr-namespace:PicView.Avalonia.Views.Gallery"
+    xmlns:uc="clr-namespace:PicView.Avalonia.Views.UC"
+    xmlns:vm="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
+    x:DataType="vm:TabViewModel">
+    <!--  The gallery docks to an edge of this filling DockPanel (GalleryAnimationControl), so it is never reparented  -->
+    <DockPanel LastChildFill="True">
+        <gallery:GalleryView x:Name="GalleryView" ZIndex="1" />
+
+        <!--  The shown viewer's docked bar, moved here so it takes its own space at an edge, inside the gallery's  -->
+        <Panel x:Name="BarHost" IsVisible="{CompiledBinding !Gallery.IsGalleryExpanded.Value}" />
+
+        <Panel
+            x:Name="ContentPanel"
+            Background="{CompiledBinding ParentWindowContext.GlobalSettings.ImageBackground.Value,
+                                         Mode=OneWay}"
+            DockPanel.Dock="Left">
+            <ContentControl x:Name="Slot" />
+            <buttons:ClickArrowRight
+                x:Name="ClickArrowRight"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                Opacity="0"
+                ZIndex="2" />
+            <buttons:ClickArrowLeft
+                x:Name="ClickArrowLeft"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                Opacity="0"
+                ZIndex="2" />
+            <uc:HoverBar
+                x:Name="HoverBar"
+                VerticalAlignment="Bottom"
+                ZIndex="2" />
+            <buttons:GalleryShortcut
+                x:Name="GalleryShortcut"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Bottom"
+                IsVisible="{CompiledBinding !ParentWindowContext.IsBottomToolbarShown.Value}"
+                Opacity="0"
+                ZIndex="2" />
+            <!--  The shown viewer's zoom preview, moved here so it is above the chrome and takes the pointer there  -->
+            <Panel x:Name="OverlayHost" ZIndex="90" />
+        </Panel>
+    </DockPanel>
+</UserControl>

@@ -162,6 +162,17 @@ public static class KeybindCategoryDefinition
     public static List<(string FunctionName, string DisplayName)> GetImageControlEntries(LanguageModel t) =>
     [
         (Actions.SideBySide, t.SideBySide ?? string.Empty),
+        (Actions.Comparison, t.Comparison ?? string.Empty),
+        (Actions.ComparisonSwap, t.SwapAB ?? "Swap A/B"),
+        (Actions.ComparisonPin, t.PinA ?? "Pin A"),
+        (Actions.ComparisonModeNext, "Next comparison mode"),
+        (Actions.ComparisonModeOverlay, t.Overlay ?? "Overlay"),
+        (Actions.ComparisonModeSplit, t.Split ?? "Split"),
+        (Actions.ComparisonModeBlink, t.Blink ?? "Blink"),
+        (Actions.ComparisonModeDifference, t.Difference ?? "Difference"),
+        (Actions.ComparisonModeSynced, t.Synced ?? "Synced"),
+        (Actions.ComparisonPickA, t.PickA ?? "Pick A"),
+        (Actions.ComparisonPickB, t.PickB ?? "Pick B"),
         (Actions.ZoomToFit, t.ZoomToFit ?? string.Empty),
         (Actions.Flip, t.Flip ?? string.Empty),
         (Actions.Crop, t.Crop ?? string.Empty),

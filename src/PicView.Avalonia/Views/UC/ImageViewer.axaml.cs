@@ -6,6 +6,7 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Threading;
+using Avalonia.VisualTree;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.CustomControls.Zoom;
 using PicView.Avalonia.ImageTransformations;
@@ -18,7 +19,7 @@ using R3;
 
 namespace PicView.Avalonia.Views.UC;
 
-public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
+public partial class ImageViewer : UserControl, IDisposable, INavigableContent
 {
     private bool _isInitialized;
     private bool _isLoadedOnce;
@@ -35,25 +36,21 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
         DataContext = tab;
         InitializeComponent();
         ZoomPanControl.ScaleChanged += OnScaleChanged;
-        GalleryView.Initialize(tab);
         ImageControlHelper.TriggerScalingModeUpdate(MainImage, true);
         Loaded += OnLoaded;
     }
 
     private void OnLoaded(object? sender, RoutedEventArgs e)
     {
-        // The viewer is kept and loaded again each time it is shown after a crop or the menu, and its handlers
-        // and subscriptions last until it is disposed, so they are made on the first load only. Made on every
-        // load, one wheel step zoomed once more for each time the viewer had been shown again
+        // The viewer is kept and loaded again each time it is shown after a crop or the menu, and its subscriptions
+        // last until it is disposed, so they are made on the first load only. The wheel, magnify and pinch are
+        // routed by the NavigableView, which calls ZoomPointer and Magnify
         if (_isLoadedOnce)
         {
             return;
         }
 
         _isLoadedOnce = true;
-        AddHandler(PointerWheelChangedEvent, PreviewOnPointerWheelChanged, RoutingStrategies.Tunnel);
-        AddHandler(PointerTouchPadGestureMagnifyEvent, TouchMagnifyEvent, RoutingStrategies.Bubble);
-        AddHandler(PinchEvent, TouchMagnifyEvent, RoutingStrategies.Bubble);
 
         Dispatcher.UIThread.Post(InitializeImageTransformer, DispatcherPriority.Background);
 
@@ -187,8 +184,10 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
         // base64 images never go through file-based detection, so their MotionPhoto metadata
         // is always null and the overlays hide themselves. Images downloaded from a URL live
         // in a real temp file and intentionally behave like any local file.
-        MotionPhotoView.OnImageChanged(tabViewModel.Model);
-        SecondaryMotionPhotoView.OnImageChanged(tabViewModel.SecondaryModel);
+        // While comparing, no motion photo plays: a clip would cover the blended pair
+        var comparing = tabViewModel.IsComparing.Value;
+        MotionPhotoView.OnImageChanged(comparing ? null : tabViewModel.Model);
+        SecondaryMotionPhotoView.OnImageChanged(comparing ? null : tabViewModel.SecondaryModel);
         UpdateMotionPhotoBadgePositions();
     }
 
@@ -258,30 +257,27 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
     public void TriggerScalingModeUpdate(bool invalidate) =>
         ImageControlHelper.TriggerScalingModeUpdate(MainImage, invalidate);
 
-    private void TouchMagnifyEvent(object? sender, PointerDeltaEventArgs e) =>
+    void INavigableContent.Magnify(PointerDeltaEventArgs e) =>
         ZoomPanControl.ZoomWithPointerWheelCore(e.Delta.Y > 0, e.GetPosition(this));
 
-    private async ValueTask PreviewOnPointerWheelChanged(object? sender, PointerWheelEventArgs e) =>
-        await PreviewOnPointerWheelChangedAsync(e).ConfigureAwait(false);
+    Point INavigableContent.ZoomPointer(PointerEventArgs e) => e.GetPosition(ZoomPanControl);
 
-    private async ValueTask PreviewOnPointerWheelChangedAsync(PointerWheelEventArgs e)
+    ZoomPreviewer? INavigableContent.ZoomPreview => ZoomPreview;
+
+    Control? INavigableContent.DockedBar => null;
+
+    bool INavigableContent.TakesPress(PointerPressedEventArgs e) => false;
+
+    /// <inheritdoc/>
+    public void ShowFactor(double factor)
     {
-        if (GalleryView.IsPointerOver)
+        // Already there: setting the scale again would re-centre a panned view
+        if (ZoomPanControl.Scale.Equals(factor))
         {
             return;
         }
 
-        // The wheel only works on the image viewer the active tab shows
-        if (TopLevel.GetTopLevel(this) is not MainWindow
-            {
-                DataContext: MainWindowViewModel { WindowTabs.ActiveTab.CurrentValue.CurrentView.Value: ImageViewer }
-            } mainWindow)
-        {
-            return;
-        }
-
-        e.Handled = await mainWindow.KeybindRouter.WheelAsync(Keybind.FromWheel(e.Delta.Y, e.KeyModifiers),
-            e.Pointer.Type is PointerType.Touch, e.GetPosition(ZoomPanControl), this).ConfigureAwait(true);
+        ZoomPanControl.SetScaleImmediate(factor);
     }
 
     /// <summary>
@@ -335,36 +331,12 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
             }, DebugHelper.LogError(nameof(ImageViewer), nameof(InitializeImageTransformer))).AddTo(ref _disposables);
         }
         
-        // Correspond to change when index clicked on track
-        Observable.FromEvent<EventHandler<int>, int>(
-                handler => (sender, index) => handler(index),
-                handler => HoverBar.ProgressBar.ClickedOnTrack += handler,
-                handler => HoverBar.ProgressBar.ClickedOnTrack -= handler)
-            .SubscribeAwait(async (x, _) =>
-            {
-                await tab.ImageIterator.SkipToIndexAsync(x, tab.GetTabCancellation()).ConfigureAwait(false);
-            }, DebugHelper.LogError(nameof(ImageViewer), nameof(InitializeImageTransformer)), AwaitOperation.Drop)
-            .AddTo(ref _disposables);
-        // Correspond to change when index dragged on track
-        // wait for a 25ms pause in changes (debounce), and then emit the last value.
-        Observable.FromEvent<EventHandler<int>, int>(
-                handler => (sender, index) => handler(index),
-                handler => HoverBar.ProgressBar.DraggedOnTrack += handler,
-                handler => HoverBar.ProgressBar.DraggedOnTrack -= handler)
-            .Debounce(TimeSpan.FromMilliseconds(25)) // Debounce handles rapid events during drag
-            .SubscribeAwait(async (x, _) =>
-            {
-                await tab.ImageIterator.SkipToIndexAsync(x, tab.GetTabCancellation()).ConfigureAwait(false);
-            },DebugHelper.LogError(nameof(ImageViewer), nameof(InitializeImageTransformer)), AwaitOperation.Drop)
-            .AddTo(ref _disposables);
-        
         tab.Orientation.Current
             .Select(static orientation => orientation.IsFlipped)
             .DistinctUntilChanged()
             .Subscribe(_ => ShowFlip(),
             DebugHelper.LogError(nameof(ImageViewer), nameof(ShowFlip)))
             .AddTo(ref _disposables);
-        _disposables.Add(new HoverFadeButtonHandler(GalleryShortcut, GalleryShortcut.InnerButton));
     }
 
     #region Zoom
@@ -383,8 +355,13 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
                 TopLevel.GetTopLevel(this) as MainWindow, TimeSpan.FromSeconds(1));
         }
 
-        ZoomPreview.Margin = HoverBar.Opacity > 0
-            ? new Thickness(0, 0, 25, HoverBar.Bounds.Height / 2 + 25)
+        if (this.FindAncestorOfType<NavigableView>()?.HoverBar is not { } hoverBar)
+        {
+            return;
+        }
+
+        ZoomPreview.Margin = hoverBar.Opacity > 0
+            ? new Thickness(0, 0, 25, hoverBar.Bounds.Height / 2 + 25)
             : new Thickness(0, 0, 25, 25);
     }
 
@@ -424,6 +401,9 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
     /// Whether an image is shown, so that turning or flipping it means something.
     /// </summary>
     public bool HasImage => MainImage.Source is not null;
+
+    /// <inheritdoc/>
+    public bool IsZoomed => ZoomPanControl.Scale is not 1.0;
 
     /// <summary>
     /// Animates the next change of the tab's flip, as the Flip Action does; resetting it on a new image does not.
@@ -470,9 +450,6 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
     public void Dispose()
     {
         ZoomPanControl.ScaleChanged -= OnScaleChanged;
-        RemoveHandler(PointerWheelChangedEvent, PreviewOnPointerWheelChanged);
-        RemoveHandler(PointerTouchPadGestureMagnifyEvent, TouchMagnifyEvent);
-        RemoveHandler(PinchEvent, TouchMagnifyEvent);
         MainPanel.LayoutUpdated -= OnMotionPhotoBadgeAnchorChanged;
         MotionPhotoView.LayoutUpdated -= OnMotionPhotoBadgeAnchorChanged;
         SecondaryMotionPhotoView.LayoutUpdated -= OnMotionPhotoBadgeAnchorChanged;
@@ -485,9 +462,7 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
         SecondaryMotionPhotoView.PlaybackStopped -= OnMotionPhotoPlaybackStopped;
         SecondaryMotionPhotoView.FirstFrameShown -= OnMotionPhotoFirstFrameShown;
         SecondaryMotionPhotoView.Dispose();
-        GalleryView.Dispose();
         _disposables.Dispose();
-        HoverBar.Dispose();
         
         GC.SuppressFinalize(this);
     }

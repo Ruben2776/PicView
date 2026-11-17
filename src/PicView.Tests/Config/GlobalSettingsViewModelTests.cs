@@ -1,4 +1,4 @@
-using PicView.Core.Gallery;
+﻿using PicView.Core.Gallery;
 using PicView.Core.Localization;
 using PicView.Core.ViewModels;
 using R3;

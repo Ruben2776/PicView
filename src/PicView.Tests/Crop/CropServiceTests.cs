@@ -16,8 +16,8 @@ public class CropServiceTests
     [InlineData(ImageType.Bitmap, true, false)]
     [InlineData(ImageType.Svg, false, false)]
     [InlineData(ImageType.AnimatedGif, false, false)]
-    public void CanCrop_OnlyAStillBitmapNotSideBySide(ImageType type, bool sideBySide, bool expected)
-        => Assert.Equal(expected, CropManager.CanCrop(type, sideBySide));
+    public void CanCrop_OnlyAStillBitmapNotAPair(ImageType type, bool showsPair, bool expected)
+        => Assert.Equal(expected, CropManager.CanCrop(type, showsPair));
 
     [Fact]
     public void ShouldResetOrientation_SavedOverTheTabsFile_IsTrue()

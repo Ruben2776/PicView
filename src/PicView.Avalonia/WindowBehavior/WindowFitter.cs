@@ -218,7 +218,22 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
                 pair.Current)),
             vm.GlobalSettings.IsZoomedToFit.Skip(1).Subscribe(_ => FitSoon()),
             vm.GlobalSettings.IsScrollingEnabled.Skip(1).Subscribe(_ => FitSoon()),
-            vm.GlobalSettings.IsSideBySide.Skip(1).Subscribe(_ => FitSoon()),
+            // Only the shown tab's pair
+            vm.WindowTabs.ActiveTab.Select(static t => t.IsShowingPair.Skip(1)).Switch()
+                .Subscribe(_ => FitSoon()),
+            // Whether the shown tab's comparison lays its pair out beside each other: a comparison made or dropped
+            // changes the kind, and the synced mode puts the pair side by side
+            vm.WindowTabs.ActiveTab.Select(static t => t.ViewKind.AsObservable()
+                    .Select(_ => t.Comparison?.IsSynced.AsObservable() ?? Observable.Return(false)).Switch())
+                .Switch().Skip(1)
+                .Subscribe(_ => FitSoon()),
+            // Only the shown tab's docked compare bar: its thickness and its side change the Reserved Space
+            vm.WindowTabs.ActiveTab.Select(static t => t.ViewKind.AsObservable()
+                    .Select(_ => t.Comparison is { } c
+                        ? c.BarExtent.CombineLatest(c.BarPosition, static (_, _) => Unit.Default)
+                        : Observable.Return(Unit.Default)).Switch())
+                .Switch().Skip(1)
+                .Subscribe(_ => FitSoon()),
             vm.GlobalSettings.WindowMargin.Skip(1).Subscribe(_ => FitSoon()),
             // Only the shown tab's gallery, so a gallery docking in a background tab fits nothing. It may change off the
             // UI thread, as FitSoon allows
@@ -465,13 +480,20 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
         _tabsOwingNewImageFit.Add(tab);
         if (!ReferenceEquals(tab, vm.WindowTabs.ActiveTab.CurrentValue) ||
             vm.WindowModeState.CurrentValue.Mode is WindowMode.Minimized ||
-            PixelSizes.Of(tab, vm.WindowTabs.SharedCache, Settings.ImageScaling.ShowImageSideBySide) is not { } sizes)
+            PixelSizes.Of(tab, vm.WindowTabs.SharedCache, ShowsPairBeside(tab)) is not { } sizes)
         {
             return;
         }
 
         Fit(vm, sizes);
     }
+
+    /// <summary>
+    /// Whether the window fits <paramref name="tab"/>'s pair beside each other, passing the second size: side-by-side
+    /// does, and a comparison only in its synced mode, as the others stack the pair, so the window fits one image.
+    /// </summary>
+    internal static bool ShowsPairBeside(TabViewModel tab) =>
+        tab.Comparison is { } c ? c.IsSynced.Value : Settings.ImageScaling.ShowImageSideBySide;
 
     private void FitSoon()
     {
@@ -508,7 +530,7 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
             return;
         }
 
-        if (PixelSizes.Of(tab, vm.WindowTabs.SharedCache, Settings.ImageScaling.ShowImageSideBySide) is { } sizes)
+        if (PixelSizes.Of(tab, vm.WindowTabs.SharedCache, ShowsPairBeside(tab)) is { } sizes)
         {
             Fit(vm, sizes);
         }
@@ -688,11 +710,21 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
         };
     }
 
-    private static ReservedSpace GetReservedSpace(MainWindowViewModel vm)
+    internal static ReservedSpace GetReservedSpace(MainWindowViewModel vm)
     {
-        var gallery = vm.WindowTabs.ActiveTab.CurrentValue.Gallery;
+        var tab = vm.WindowTabs.ActiveTab.CurrentValue;
+        var gallery = tab.Gallery;
         var (galleryWidth, galleryHeight) =
             GalleryDocking.ReservedBy(gallery.Appearance.Value, gallery.Switcher.IsDocked.CurrentValue);
+        // A comparison's bar docks inside the gallery, at an edge of the view, so it takes room from the image too
+        if (tab.ViewKind.Value is TabViewKind.Comparison && tab.Comparison is { } comparison)
+        {
+            var (barWidth, barHeight) =
+                ComparisonBarDocking.ReservedBy(comparison.BarPosition.Value, comparison.BarExtent.Value);
+            galleryWidth += barWidth;
+            galleryHeight += barHeight;
+        }
+
         // What the window shows, not the settings: hiding the interface hides the bottom bar but keeps its setting
         return ReservedSpace.For(vm.WindowTabs.Tabs.CurrentValue.Count, vm.Interface.Value, galleryWidth,
             galleryHeight);

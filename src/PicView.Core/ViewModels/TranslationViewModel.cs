@@ -1,5 +1,4 @@
 using System.Globalization;
-using PicView.Core.Config;
 using PicView.Core.Localization;
 using R3;
 
@@ -27,6 +26,10 @@ public class TranslationViewModel
         AdjustTimingForZoom.Value = t.AdjustTimingForZoom;
         AdvanceBy10Images.Value = t.AdvanceBy10Images;
         AdvanceBy100Images.Value = t.AdvanceBy100Images;
+        AlignStepA1.Value = t.AlignStepA1;
+        AlignStepA2.Value = t.AlignStepA2;
+        AlignStepB1.Value = t.AlignStepB1;
+        AlignStepB2.Value = t.AlignStepB2;
         AllowZoomOut.Value = t.AllowZoomOut;
         Altitude.Value = t.Altitude;
         Appearance.Value = t.Appearance;
@@ -41,9 +44,12 @@ public class TranslationViewModel
         BitDepth.Value = t.BitDepth;
         BlackAndWhite.Value = t.BlackAndWhite;
         Blacks.Value = t.Blacks;
+        Blink.Value = t.Blink;
         Blue.Value = t.Blue;
         Blur.Value = t.Blur;
         Bottom.Value = t.Bottom;
+        Custom.Value = t.Custom;
+        Difference.Value = t.Difference;
         DockedGalleryItemSize.Value = t.DockedGalleryItemSize;
         DockedGalleryThumbnailStretch.Value = t.DockedGalleryThumbnailStretch;
         Brightness.Value = t.Brightness;
@@ -72,6 +78,8 @@ public class TranslationViewModel
         ColorRepresentation.Value = t.ColorRepresentation;
         Columns.Value = t.Columns;
         Comment.Value = t.Comment;
+        Comparison.Value = t.Comparison;
+        ComparisonTooltip.Value = t.ComparisonTooltip;
         CompressedBitsPixel.Value = t.CompressedBitsPixel;
         Compression.Value = t.Compression;
         ConstrainBackgroundToImage.Value = t.ConstrainBackgroundToImage;
@@ -159,6 +167,7 @@ public class TranslationViewModel
         Highlights.Value = t.Highlights;
         HighlightColor.Value = t.HighlightColor;
         HighQuality.Value = t.HighQuality;
+        HorizontalSplit.Value = t.HorizontalSplit;
         Hotkey.Value = t.Hotkey;
         Hue.Value = t.Hue;
         Image.Value = t.Image;
@@ -231,6 +240,7 @@ public class TranslationViewModel
         OriginalSize.Value = t.OriginalSize;
         OutputFolder.Value = t.OutputFolder;
         OutputSize.Value = t.OutputSize;
+        Overlay.Value = t.Overlay;
         Pan.Value = t.Pan;
         PaperSize.Value = t.PaperSize;
         Paste.Value = t.FilePaste;
@@ -238,7 +248,10 @@ public class TranslationViewModel
         Percentage.Value = t.Percentage;
         PermanentlyDelete.Value = t.PermanentlyDelete;
         PhotometricInterpretation.Value = t.PhotometricInterpretation;
+        PickA.Value = t.PickA;
+        PickB.Value = t.PickB;
         Pin.Value = t.Pin;
+        PinA.Value = t.PinA;
         Pinned.Value = t.Pinned;
         Pixels.Value = t.Pixels;
         PlayPause.Value = t.PlayPause;
@@ -248,6 +261,7 @@ public class TranslationViewModel
         Auto.Value = t.Auto;
         Portable.Value = t.Portable;
         PortableNotWritable.Value = t.PortableNotWritable;
+        ResetAlignment.Value = t.ResetAlignment;
         Roaming.Value = t.Roaming;
         Posterize.Value = t.Posterize;
         PrevArchive.Value = t.PrevArchive;
@@ -346,12 +360,16 @@ public class TranslationViewModel
         Software.Value = t.Software;
         Solarize.Value = t.Solarize;
         SortFilesBy.Value = t.SortFilesBy;
+        Split.Value = t.Split;
         Square.Value = t.Square;
         Start.Value = t.Start;
         StayCentered.Value = t.StayCentered;
         StayTopMost.Value = t.StayTopMost;
         Stretch.Value = t.Stretch;
+        StretchToMatch.Value = t.StretchToMatch;
         Subject.Value = t.Subject;
+        SwapAB.Value = t.SwapAB;
+        Synced.Value = t.Synced;
         Temperature.Value = t.Temperature;
         TabManagement.Value = t.TabManagement;
         Theme.Value = t.Theme;
@@ -367,6 +385,7 @@ public class TranslationViewModel
         Tonal.Value = t.Tonal;
         ToolWindows.Value = t.ToolWindows;
         Top.Value = t.Top;
+        TwoPointAlign.Value = t.TwoPointAlign;
         Unassociate.Value = t.Unassociate;
         UnFlip.Value = t.Unflip;
         Uniform.Value = t.Uniform;
@@ -377,6 +396,7 @@ public class TranslationViewModel
         UsingMouse.Value = t.UsingMouse;
         UsingTouchpad.Value = t.UsingTouchpad;
         Version.Value = t.Version;
+        VerticalSplit.Value = t.VerticalSplit;
         Vibrance.Value = t.Vibrance;
         View.Value = t.View;
         ViewLicenseFile.Value = t.ViewLicenseFile;
@@ -414,6 +434,10 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> AdjustTimingForZoom { get; } = new();
     public BindableReactiveProperty<string?> AdvanceBy100Images { get; } = new();
     public BindableReactiveProperty<string?> AdvanceBy10Images { get; } = new();
+    public BindableReactiveProperty<string?> AlignStepA1 { get; } = new();
+    public BindableReactiveProperty<string?> AlignStepA2 { get; } = new();
+    public BindableReactiveProperty<string?> AlignStepB1 { get; } = new();
+    public BindableReactiveProperty<string?> AlignStepB2 { get; } = new();
     public BindableReactiveProperty<string?> AllowZoomOut { get; } = new();
     public BindableReactiveProperty<string?> Altitude { get; } = new();
     public BindableReactiveProperty<string?> Appearance { get; } = new();
@@ -428,9 +452,12 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> BitDepth { get; } = new();
     public BindableReactiveProperty<string?> BlackAndWhite { get; } = new();
     public BindableReactiveProperty<string?> Blacks { get; } = new();
+    public BindableReactiveProperty<string?> Blink { get; } = new();
     public BindableReactiveProperty<string?> Blue { get; } = new();
     public BindableReactiveProperty<string?> Blur { get; } = new();
     public BindableReactiveProperty<string?> Bottom { get; } = new();
+    public BindableReactiveProperty<string?> Custom { get; } = new();
+    public BindableReactiveProperty<string?> Difference { get; } = new();
     public BindableReactiveProperty<string?> DockedGalleryItemSize { get; } = new();
     public BindableReactiveProperty<string?> DockedGalleryThumbnailStretch { get; } = new();
     public BindableReactiveProperty<string?> Brightness { get; } = new();
@@ -459,6 +486,8 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> ColorRepresentation { get; } = new();
     public BindableReactiveProperty<string?> Columns { get; } = new();
     public BindableReactiveProperty<string?> Comment { get; } = new();
+    public BindableReactiveProperty<string?> Comparison { get; } = new();
+    public BindableReactiveProperty<string?> ComparisonTooltip { get; } = new();
     public BindableReactiveProperty<string?> CompressedBitsPixel { get; } = new();
     public BindableReactiveProperty<string?> Compression { get; } = new();
     public BindableReactiveProperty<string?> ConstrainBackgroundToImage { get; } = new();
@@ -546,6 +575,7 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> HighlightColor { get; } = new();
     public BindableReactiveProperty<string?> Highlights { get; } = new();
     public BindableReactiveProperty<string?> HighQuality { get; } = new();
+    public BindableReactiveProperty<string?> HorizontalSplit { get; } = new();
     public BindableReactiveProperty<string?> Hotkey { get; } = new();
     public BindableReactiveProperty<string?> Hue { get; } = new();
     public BindableReactiveProperty<string?> Image { get; } = new();
@@ -618,6 +648,7 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> OriginalSize { get; } = new();
     public BindableReactiveProperty<string?> OutputFolder { get; } = new();
     public BindableReactiveProperty<string?> OutputSize { get; } = new();
+    public BindableReactiveProperty<string?> Overlay { get; } = new();
     public BindableReactiveProperty<string?> Pan { get; } = new();
     public BindableReactiveProperty<string?> PaperSize { get; } = new();
     public BindableReactiveProperty<string?> Paste { get; } = new();
@@ -625,7 +656,10 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> Percentage { get; } = new();
     public BindableReactiveProperty<string?> PermanentlyDelete { get; } = new();
     public BindableReactiveProperty<string?> PhotometricInterpretation { get; } = new();
+    public BindableReactiveProperty<string?> PickA { get; } = new();
+    public BindableReactiveProperty<string?> PickB { get; } = new();
     public BindableReactiveProperty<string?> Pin { get; } = new();
+    public BindableReactiveProperty<string?> PinA { get; } = new();
     public BindableReactiveProperty<string?> Pinned { get; } = new();
     public BindableReactiveProperty<string?> Pixels { get; } = new();
     public BindableReactiveProperty<string?> PlayPause { get; } = new();
@@ -633,6 +667,7 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> Auto { get; } = new();
     public BindableReactiveProperty<string?> Portable { get; } = new();
     public BindableReactiveProperty<string?> PortableNotWritable { get; } = new();
+    public BindableReactiveProperty<string?> ResetAlignment { get; } = new();
     public BindableReactiveProperty<string?> Roaming { get; } = new();
     public BindableReactiveProperty<string?> PresetDescription { get; } = new();
     public BindableReactiveProperty<string?> Presets { get; } = new();
@@ -733,12 +768,16 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> Software { get; } = new();
     public BindableReactiveProperty<string?> Solarize { get; } = new();
     public BindableReactiveProperty<string?> SortFilesBy { get; } = new();
+    public BindableReactiveProperty<string?> Split { get; } = new();
     public BindableReactiveProperty<string?> Square { get; } = new();
     public BindableReactiveProperty<string?> Start { get; } = new();
     public BindableReactiveProperty<string?> StayCentered { get; } = new();
     public BindableReactiveProperty<string?> StayTopMost { get; } = new();
     public BindableReactiveProperty<string?> Stretch { get; } = new();
+    public BindableReactiveProperty<string?> StretchToMatch { get; } = new();
     public BindableReactiveProperty<string?> Subject { get; } = new();
+    public BindableReactiveProperty<string?> SwapAB { get; } = new();
+    public BindableReactiveProperty<string?> Synced { get; } = new();
     public BindableReactiveProperty<string?> Temperature { get; } = new();
     public BindableReactiveProperty<string?> TabManagement { get; } = new();
     public BindableReactiveProperty<string?> Theme { get; } = new();
@@ -754,6 +793,7 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> Tonal { get; } = new();
     public BindableReactiveProperty<string?> ToolWindows { get; } = new();
     public BindableReactiveProperty<string?> Top { get; } = new();
+    public BindableReactiveProperty<string?> TwoPointAlign { get; } = new();
     public BindableReactiveProperty<string?> Unassociate { get; } = new();
     public BindableReactiveProperty<string?> UnFlip { get; } = new();
     public BindableReactiveProperty<string?> Uniform { get; } = new();
@@ -764,6 +804,7 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> UsingMouse { get; } = new();
     public BindableReactiveProperty<string?> UsingTouchpad { get; } = new();
     public BindableReactiveProperty<string?> Version { get; } = new();
+    public BindableReactiveProperty<string?> VerticalSplit { get; } = new();
     public BindableReactiveProperty<string?> Vibrance { get; } = new();
     public BindableReactiveProperty<string?> View { get; } = new();
     public BindableReactiveProperty<string?> ViewLicenseFile { get; } = new();

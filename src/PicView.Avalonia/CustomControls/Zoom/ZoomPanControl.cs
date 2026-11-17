@@ -43,6 +43,12 @@ public class ZoomPanControl : Decorator
     /// </summary>
     public bool IsSpaceHeld { get; private set; }
 
+    /// <summary>
+    /// Whether alignment points are being picked, so a press is a point instead of a pan. Only the
+    /// <see cref="ZoomPanHost.Comparison"/> host reads it.
+    /// </summary>
+    public bool IsAligning { get; set; }
+
     /// <summary>Raised when <see cref="IsSpaceHeld"/> changed, with the new value.</summary>
     public event Action<bool>? SpaceHeldChanged;
 
@@ -407,7 +413,9 @@ public class ZoomPanControl : Decorator
                 return;
             }
 
-            if (e.ClickCount is 2 && Settings.UIProperties.DoubleClickBehavior is 1)
+            // While aligning, a quick second point is not a double-click that resets the zoom
+            if (e.ClickCount is 2 && Settings.UIProperties.DoubleClickBehavior is 1 &&
+                !(Host is ZoomPanHost.Comparison && IsAligning))
             {
                 ResetZoom(Settings.Zoom.IsZoomAnimated);
                 return;
@@ -416,7 +424,7 @@ public class ZoomPanControl : Decorator
 
         var p = e.GetPosition(this);
         if (!StartsPan(Host, e.GetCurrentPoint(this).Properties.IsLeftButtonPressed, Scale, e.KeyModifiers,
-                IsSpaceHeld))
+                IsSpaceHeld, IsAligning))
         {
             return;
         }
@@ -466,10 +474,10 @@ public class ZoomPanControl : Decorator
 
     /// <summary>
     /// Whether a press starts a pan: a left press on an image zoomed in, which in the viewer is not a press with
-    /// Shift alone, and in the crop needs Space held.
+    /// Shift alone, in the crop needs Space held, and in the comparison is not made while aligning.
     /// </summary>
     internal static bool StartsPan(ZoomPanHost host, bool isLeftPressed, double scale, KeyModifiers modifiers,
-        bool isSpaceHeld)
+        bool isSpaceHeld, bool isAligning = false)
     {
         if (!isLeftPressed || !(Math.Abs(scale) > 1.0001))
         {
@@ -479,6 +487,11 @@ public class ZoomPanControl : Decorator
         if (host is ZoomPanHost.Crop)
         {
             return isSpaceHeld;
+        }
+
+        if (host is ZoomPanHost.Comparison && isAligning)
+        {
+            return false;
         }
 
         return modifiers != KeyModifiers.Shift;
@@ -621,6 +634,41 @@ public class ZoomPanControl : Decorator
         UpdatePreviewWindow();
 
         ViewChanged?.Invoke();
+    }
+
+    /// <summary>
+    /// Mirrors the scale and translation from <paramref name="source"/> without raising <see cref="ViewChanged"/>.
+    /// </summary>
+    public void SyncTransformFrom(ZoomPanControl source)
+    {
+        if (Child == null)
+        {
+            return;
+        }
+
+        SetTransitions(false);
+        SetScale(source.Scale);
+        TranslateX = source.TranslateX;
+        TranslateY = source.TranslateY;
+
+        if (_transformGroup == null)
+        {
+            _scaleTransform = new ScaleTransform();
+            _translateTransform = new TranslateTransform();
+            _transformGroup = new TransformGroup();
+            _transformGroup.Children.Add(_scaleTransform);
+            _transformGroup.Children.Add(_translateTransform);
+            Child.RenderTransform = _transformGroup;
+            Child.RenderTransformOrigin = new RelativePoint(0, 0, RelativeUnit.Absolute);
+        }
+
+        if (_scaleTransform is not null && _translateTransform is not null)
+        {
+            _scaleTransform.ScaleX = Scale;
+            _scaleTransform.ScaleY = Scale;
+            _translateTransform.X = TranslateX;
+            _translateTransform.Y = TranslateY;
+        }
     }
 
     private void SetTransitions(bool isAnimated)

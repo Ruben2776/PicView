@@ -1,0 +1,238 @@
+<UserControl
+    x:Class="PicView.Avalonia.Views.UC.ComparisonViewer"
+    x:DataType="vm:TabViewModel"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:converters="clr-namespace:PicView.Avalonia.Converters"
+    xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
+    xmlns:uc="clr-namespace:PicView.Avalonia.Views.UC"
+    xmlns:vm="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:zoom="clr-namespace:PicView.Avalonia.CustomControls.Zoom">
+    <UserControl.Resources>
+        <converters:DisplayableConverter x:Key="DisplayableConverter" />
+    </UserControl.Resources>
+    <!--  The tab is the DataContext, for its Orientation and the fitted size. The comparison is this viewer's own  -->
+    <Panel x:Name="MainPanel">
+        <!--  Stacked: B over A, for the overlay, split, blink and difference modes  -->
+        <LayoutTransformControl IsVisible="{CompiledBinding !$parent[uc:ComparisonViewer].Comparison.IsSynced.Value}" x:Name="StackTransform">
+            <LayoutTransformControl.LayoutTransform>
+                <RotateTransform Angle="{CompiledBinding Orientation.Degrees.Value}" />
+            </LayoutTransformControl.LayoutTransform>
+            <LayoutTransformControl.RenderTransform>
+                <ScaleTransform ScaleX="{CompiledBinding Orientation.ScaleX.Value}" />
+            </LayoutTransformControl.RenderTransform>
+            <zoom:ZoomPanControl Host="Comparison" x:Name="ZoomPanControl">
+                <!--
+                    The image viewer's scroll viewer, as large as the view, so the zoom control centres and pans the fitted
+                    pair exactly as it does the image, and a tall pair scrolls together while scrolling is on
+                -->
+                <customControls:AutoScrollViewer
+                    Focusable="False"
+                    Height="{CompiledBinding ParentWindowContext.ScrollViewerHeight.Value}"
+                    HorizontalScrollBarVisibility="Disabled"
+                    VerticalScrollBarVisibility="Disabled"
+                    Width="{CompiledBinding ParentWindowContext.ScrollViewerWidth.Value}"
+                    x:Name="StackScrollViewer">
+                    <Border
+                        Background="{CompiledBinding ParentWindowContext.GlobalSettings.ConstrainedImageBackground.Value,
+                                                     Mode=OneWay}"
+                        Height="{CompiledBinding ParentWindowContext.ImageHeight.Value}"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Width="{CompiledBinding ParentWindowContext.ImageWidth.Value}">
+                        <Grid x:Name="StackHost">
+                            <customControls:PicBox
+                                CurrentFileInfo="{CompiledBinding $parent[uc:ComparisonViewer].Comparison.FileInfoA.Value}"
+                                ImageType="{CompiledBinding $parent[uc:ComparisonViewer].Comparison.ImageTypeA.Value}"
+                                Source="{CompiledBinding $parent[uc:ComparisonViewer].Comparison.ImageA.Value,
+                                                         Converter={StaticResource DisplayableConverter}}"
+                                x:Name="ImageA" />
+                            <!--  No ImageType: an animation draws its frames without the blend, so only the first frame is compared  -->
+                            <customControls:PicBox
+                                BlendMode="Difference"
+                                CurrentFileInfo="{CompiledBinding $parent[uc:ComparisonViewer].Comparison.FileInfoB.Value}"
+                                Source="{CompiledBinding $parent[uc:ComparisonViewer].Comparison.ImageB.Value,
+                                                         Converter={StaticResource DisplayableConverter}}"
+                                Stretch="Fill"
+                                x:Name="ImageB" />
+                            <Canvas
+                                IsHitTestVisible="False"
+                                IsVisible="{CompiledBinding $parent[uc:ComparisonViewer].Comparison.IsAligning.Value}"
+                                x:Name="AlignMarkersCanvas" />
+                        </Grid>
+                    </Border>
+                </customControls:AutoScrollViewer>
+            </zoom:ZoomPanControl>
+        </LayoutTransformControl>
+        <!--  Synced: A and B side by side, zoomed and panned together  -->
+        <Grid
+            Background="Transparent"
+            ColumnDefinitions="*,2,*"
+            IsVisible="{CompiledBinding $parent[uc:ComparisonViewer].Comparison.IsSynced.Value}"
+            x:Name="SyncedGrid">
+            <Grid
+                Background="Transparent"
+                ClipToBounds="True"
+                Grid.Column="0">
+                <LayoutTransformControl>
+                    <LayoutTransformControl.LayoutTransform>
+                        <RotateTransform Angle="{CompiledBinding Orientation.Degrees.Value}" />
+                    </LayoutTransformControl.LayoutTransform>
+                    <LayoutTransformControl.RenderTransform>
+                        <ScaleTransform ScaleX="{CompiledBinding Orientation.ScaleX.Value}" />
+                    </LayoutTransformControl.RenderTransform>
+                    <zoom:ZoomPanControl x:Name="SyncedLeftZoom">
+                        <Grid Background="Transparent" x:Name="SyncedLeftContainer">
+                            <customControls:PicBox
+                                CurrentFileInfo="{CompiledBinding $parent[uc:ComparisonViewer].Comparison.FileInfoA.Value}"
+                                HorizontalAlignment="Center"
+                                ImageType="{CompiledBinding $parent[uc:ComparisonViewer].Comparison.ImageTypeA.Value}"
+                                Source="{CompiledBinding $parent[uc:ComparisonViewer].Comparison.ImageA.Value,
+                                                         Converter={StaticResource DisplayableConverter}}"
+                                VerticalAlignment="Center"
+                                x:Name="SyncedLeftImage" />
+                        </Grid>
+                    </zoom:ZoomPanControl>
+                </LayoutTransformControl>
+                <Border
+                    Background="#99181818"
+                    CornerRadius="10"
+                    HorizontalAlignment="Left"
+                    IsHitTestVisible="False"
+                    Margin="10"
+                    Padding="7,3"
+                    VerticalAlignment="Top">
+                    <TextBlock
+                        FontSize="11"
+                        FontWeight="SemiBold"
+                        Foreground="#FFEAEAEA"
+                        Text="A"
+                        x:Name="SyncedLeftBadgeText" />
+                </Border>
+                <Canvas IsHitTestVisible="False">
+                    <Path
+                        Data="M8,0 L8,16 M0,8 L16,8"
+                        Height="16"
+                        IsVisible="False"
+                        Stroke="#CCFFFFFF"
+                        StrokeThickness="1.2"
+                        Width="16"
+                        x:Name="SyncedLeftCrosshair" />
+                </Canvas>
+            </Grid>
+            <Border Background="{DynamicResource HoverBarBorderColor}" Grid.Column="1" />
+            <Grid
+                Background="Transparent"
+                ClipToBounds="True"
+                Grid.Column="2">
+                <LayoutTransformControl>
+                    <LayoutTransformControl.LayoutTransform>
+                        <RotateTransform Angle="{CompiledBinding Orientation.Degrees.Value}" />
+                    </LayoutTransformControl.LayoutTransform>
+                    <LayoutTransformControl.RenderTransform>
+                        <ScaleTransform ScaleX="{CompiledBinding Orientation.ScaleX.Value}" />
+                    </LayoutTransformControl.RenderTransform>
+                    <zoom:ZoomPanControl x:Name="SyncedRightZoom">
+                        <Grid Background="Transparent" x:Name="SyncedRightContainer">
+                            <customControls:PicBox
+                                CurrentFileInfo="{CompiledBinding $parent[uc:ComparisonViewer].Comparison.FileInfoB.Value}"
+                                HorizontalAlignment="Center"
+                                ImageType="{CompiledBinding $parent[uc:ComparisonViewer].Comparison.ImageTypeB.Value}"
+                                Source="{CompiledBinding $parent[uc:ComparisonViewer].Comparison.ImageB.Value,
+                                                         Converter={StaticResource DisplayableConverter}}"
+                                VerticalAlignment="Center"
+                                x:Name="SyncedRightImage" />
+                        </Grid>
+                    </zoom:ZoomPanControl>
+                </LayoutTransformControl>
+                <Border
+                    Background="#99181818"
+                    CornerRadius="10"
+                    HorizontalAlignment="Left"
+                    IsHitTestVisible="False"
+                    Margin="10"
+                    Padding="7,3"
+                    VerticalAlignment="Top">
+                    <TextBlock
+                        FontSize="11"
+                        FontWeight="SemiBold"
+                        Foreground="#FFEAEAEA"
+                        Text="B"
+                        x:Name="SyncedRightBadgeText" />
+                </Border>
+                <Canvas IsHitTestVisible="False">
+                    <Path
+                        Data="M8,0 L8,16 M0,8 L16,8"
+                        Height="16"
+                        IsVisible="False"
+                        Stroke="#CCFFFFFF"
+                        StrokeThickness="1.2"
+                        Width="16"
+                        x:Name="SyncedRightCrosshair" />
+                </Canvas>
+            </Grid>
+        </Grid>
+        <Panel
+            IsVisible="{CompiledBinding $parent[uc:ComparisonViewer].Comparison.IsSplit.Value}"
+            ZIndex="2"
+            x:Name="SplitOverlay">
+            <Border
+                Background="Transparent"
+                Cursor="SizeWestEast"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Stretch"
+                Width="16"
+                x:Name="SplitDividerHitStrip" />
+            <Border
+                Background="#E6FFFFFF"
+                BoxShadow="0 0 4 0 #99000000"
+                HorizontalAlignment="Left"
+                IsHitTestVisible="False"
+                VerticalAlignment="Stretch"
+                Width="2"
+                x:Name="SplitDividerLine" />
+            <Border
+                Background="#E6222222"
+                BorderBrush="#E6FFFFFF"
+                BorderThickness="1.5"
+                BoxShadow="0 2 8 0 #80000000"
+                CornerRadius="14"
+                Cursor="SizeWestEast"
+                Focusable="True"
+                Height="28"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Width="28"
+                x:Name="SplitHandle">
+                <Path
+                    Data="M5,8 L2,11 L5,14 M11,8 L14,11 L11,14 M2,11 L14,11"
+                    Height="14"
+                    HorizontalAlignment="Center"
+                    Margin="0,5,0,0"
+                    Stretch="Uniform"
+                    Stroke="#FFFFFFFF"
+                    StrokeJoin="Round"
+                    StrokeLineCap="Round"
+                    StrokeThickness="1.5"
+                    VerticalAlignment="Center"
+                    Width="14"
+                    x:Name="SplitHandleIcon" />
+            </Border>
+        </Panel>
+        <!--  Moved into the NavigableView's overlay host while this viewer is shown, above its chrome  -->
+        <uc:ZoomPreviewer
+            HorizontalAlignment="Right"
+            IsVisible="False"
+            Margin="0,0,25,25"
+            VerticalAlignment="Bottom"
+            ZIndex="90"
+            x:Name="ZoomPreview" />
+        <Panel
+            HorizontalAlignment="Center"
+            VerticalAlignment="Bottom"
+            ZIndex="3"
+            x:Name="CompareBarHost">
+            <uc:CompareBar x:Name="CompareBar" />
+        </Panel>
+    </Panel>
+</UserControl>

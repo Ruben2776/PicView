@@ -6,7 +6,10 @@ using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Interfaces;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.WindowBehavior;
+using PicView.Core.Config;
 using PicView.Core.Gallery;
+using PicView.Core.Navigation;
+using PicView.Tests.Navigation;
 using PicView.Core.Localization;
 using PicView.Core.Models;
 using PicView.Core.Sizing;
@@ -149,6 +152,9 @@ public class WindowFitterTests
     [AvaloniaFact]
     public void Follow_SideBySideTurnsOff_FitsTheOneImage()
     {
+        // The window follows whether the shown tab shows a pair, which follows side-by-side through the tab's services
+        _core.InitializeNavigation(TestTabServices.For(_core.SharedCache, globalSettings: _core.GlobalSettings),
+            new NavigationService(string.CompareOrdinal));
         var (fitter, vm, window) = CreateShownWindow(800, 600);
         using var following = fitter.Follow();
         vm.GlobalSettings.IsSideBySide.Value = true;
@@ -790,6 +796,68 @@ public class WindowFitterTests
         Dispatcher.UIThread.RunJobs();
 
         var extent = tab.Gallery.Appearance.Value.Extent;
+        Assert.True(extent > 0);
+        Assert.Contains(fits, static fitted => fitted.Cause is FitCause.Input);
+        Assert.Equal(heightBefore - extent, vm.ImageHeight.Value, precision: 6);
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public void GetReservedSpace_ComparingWithBarAtBottom_AddsItsThickness()
+    {
+        Settings.Comparison!.BarPosition = ComparisonBarPosition.Bottom;
+        var (_, vm, window) = CreateWindow();
+        var tab = vm.WindowTabs.ActiveTab.Value;
+        tab.Display(Model("a.jpg", 400, 300), Model("b.jpg", 400, 300));
+        tab.SetComparing(true);
+        Dispatcher.UIThread.RunJobs();
+
+        tab.Comparison!.BarExtent.Value = 40;
+
+        Assert.Equal(40, WindowFitter.GetReservedSpace(vm).GalleryHeight);
+        Assert.Equal(0, WindowFitter.GetReservedSpace(vm).GalleryWidth);
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public void GetReservedSpace_NotComparing_ReservesNoBar()
+    {
+        Settings.Comparison!.BarPosition = ComparisonBarPosition.Bottom;
+        var (_, vm, window) = CreateWindow();
+        var tab = vm.WindowTabs.ActiveTab.Value;
+        tab.Display(Model("a.jpg", 400, 300), Model("b.jpg", 400, 300));
+        tab.SetComparing(true);
+        Dispatcher.UIThread.RunJobs();
+        tab.Comparison!.BarExtent.Value = 40;
+
+        tab.SetComparing(false);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Equal(0, WindowFitter.GetReservedSpace(vm).GalleryHeight);
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public void Follow_BarExtentChanges_Fits()
+    {
+        Settings.Comparison!.BarPosition = ComparisonBarPosition.Bottom;
+        var (fitter, vm, window) = CreateShownWindow(800, 600);
+        using var following = fitter.Follow();
+        var tab = vm.WindowTabs.ActiveTab.Value;
+        tab.Display(Model("a.jpg", 1600, 1200), Model("b.jpg", 1600, 1200));
+        tab.SetComparing(true);
+        Dispatcher.UIThread.RunJobs();
+        var fits = new List<Fitted>();
+        using var listening = fitter.Fits.Subscribe(fits.Add);
+        tab.Comparison!.BarExtent.Value = 0;
+        Dispatcher.UIThread.RunJobs();
+        var heightBefore = vm.ImageHeight.Value;
+
+        tab.Comparison.BarExtent.Value = 40;
+        Dispatcher.UIThread.RunJobs();
+
+        // The shown window's own bar may measure itself as it lays out
+        var extent = tab.Comparison.BarExtent.Value;
         Assert.True(extent > 0);
         Assert.Contains(fits, static fitted => fitted.Cause is FitCause.Input);
         Assert.Equal(heightBefore - extent, vm.ImageHeight.Value, precision: 6);
@@ -1537,6 +1605,35 @@ public class WindowFitterTests
         Width = workAreaWidth, Height = workAreaHeight + 40, WorkingAreaWidth = workAreaWidth,
         WorkingAreaHeight = workAreaHeight, Scaling = 1
     };
+
+    [Fact]
+    public void ShowsPairBeside_Comparing_IsFalseEvenWithSideBySide()
+    {
+        // A comparison stacks the pair, so the window fits one image
+        Settings.ImageScaling.ShowImageSideBySide = true;
+        var tab = ComparingTab();
+
+        Assert.False(WindowFitter.ShowsPairBeside(tab));
+    }
+
+    [Fact]
+    public void ShowsPairBeside_SyncedMode_IsTrue()
+    {
+        var tab = ComparingTab();
+
+        tab.Comparison!.SetMode(ComparisonMode.Synced);
+
+        Assert.True(WindowFitter.ShowsPairBeside(tab));
+    }
+
+    private static TabViewModel ComparingTab()
+    {
+        var tab = new TabViewModel(null!, TestTabServices.For(
+            new SharedImageCache(static f => ValueTask.FromResult(new ImageModel { FileInfo = f }))));
+        tab.Display(Model("a.jpg", 400, 300), Model("b.jpg", 400, 300));
+        tab.SetComparing(true);
+        return tab;
+    }
 
     private static ImageModel Model(string name, uint width, uint height) =>
         new() { FileInfo = new FileInfo(name), PixelWidth = width, PixelHeight = height };

@@ -1,19 +1,19 @@
 <ResourceDictionary
+    x:ClassModifier="internal"
     xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
-    x:ClassModifier="internal">
-    <ControlTheme x:Key="{x:Type customControls:AutoScrollViewer}" TargetType="customControls:AutoScrollViewer">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <ControlTheme TargetType="customControls:AutoScrollViewer" x:Key="{x:Type customControls:AutoScrollViewer}">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Template">
             <ControlTemplate>
                 <Grid ColumnDefinitions="*,Auto" RowDefinitions="*,Auto">
                     <ScrollContentPresenter
-                        Name="PART_ContentPresenter"
-                        Padding="{TemplateBinding Padding}"
                         Background="{TemplateBinding Background}"
                         HorizontalSnapPointsAlignment="{TemplateBinding HorizontalSnapPointsAlignment}"
                         HorizontalSnapPointsType="{TemplateBinding HorizontalSnapPointsType}"
+                        Name="PART_ContentPresenter"
+                        Padding="{TemplateBinding Padding}"
                         ScrollViewer.IsScrollInertiaEnabled="{TemplateBinding IsScrollInertiaEnabled}"
                         VerticalSnapPointsAlignment="{TemplateBinding VerticalSnapPointsAlignment}"
                         VerticalSnapPointsType="{TemplateBinding VerticalSnapPointsType}">
@@ -25,21 +25,21 @@
                         </ScrollContentPresenter.GestureRecognizers>
                     </ScrollContentPresenter>
                     <ScrollBar
-                        Name="PART_HorizontalScrollBar"
-                        Grid.Row="1"
                         Grid.Column="0"
+                        Grid.Row="1"
+                        Name="PART_HorizontalScrollBar"
                         Orientation="Horizontal" />
                     <ScrollBar
-                        Name="PART_VerticalScrollBar"
-                        Grid.Row="0"
                         Grid.Column="1"
+                        Grid.Row="0"
+                        Name="PART_VerticalScrollBar"
                         Orientation="Vertical" />
-                    <Canvas Grid.Row="0" Grid.Column="0">
+                    <Canvas Grid.Column="0" Grid.Row="0">
                         <customControls:AutoScrollSign
-                            Name="PART_AutoScrollSign"
                             HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            IsVisible="False" />
+                            IsVisible="False"
+                            Name="PART_AutoScrollSign"
+                            VerticalAlignment="Center" />
                     </Canvas>
                 </Grid>
             </ControlTemplate>
@@ -47,17 +47,17 @@
 
     </ControlTheme>
 
-    <ControlTheme x:Key="Inline" TargetType="customControls:AutoScrollViewer">
+    <ControlTheme TargetType="customControls:AutoScrollViewer" x:Key="Inline">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Template">
             <ControlTemplate>
                 <Panel>
                     <ScrollContentPresenter
-                        Name="PART_ContentPresenter"
-                        Padding="{TemplateBinding Padding}"
                         Background="Transparent"
                         HorizontalSnapPointsAlignment="{TemplateBinding HorizontalSnapPointsAlignment}"
                         HorizontalSnapPointsType="{TemplateBinding HorizontalSnapPointsType}"
+                        Name="PART_ContentPresenter"
+                        Padding="{TemplateBinding Padding}"
                         ScrollViewer.IsScrollInertiaEnabled="{TemplateBinding IsScrollInertiaEnabled}"
                         VerticalSnapPointsAlignment="{TemplateBinding VerticalSnapPointsAlignment}"
                         VerticalSnapPointsType="{TemplateBinding VerticalSnapPointsType}">
@@ -73,33 +73,33 @@
                         Orientation="Horizontal"
                         Theme="{StaticResource Floating}" />
                     <ScrollBar
-                        Name="PART_VerticalScrollBar"
                         HorizontalAlignment="Right"
+                        Name="PART_VerticalScrollBar"
                         Orientation="Vertical"
                         Theme="{StaticResource Floating}" />
                     <Canvas>
                         <customControls:AutoScrollSign
-                            Name="PART_AutoScrollSign"
                             HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            IsVisible="False" />
+                            IsVisible="False"
+                            Name="PART_AutoScrollSign"
+                            VerticalAlignment="Center" />
                     </Canvas>
                 </Panel>
             </ControlTemplate>
         </Setter>
     </ControlTheme>
 
-    <ControlTheme x:Key="MenuScrollerOverlay" TargetType="customControls:AutoScrollViewer">
+    <ControlTheme TargetType="customControls:AutoScrollViewer" x:Key="MenuScrollerOverlay">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Template">
             <ControlTemplate>
                 <Panel>
                     <ScrollContentPresenter
-                        Name="PART_ContentPresenter"
-                        Padding="{TemplateBinding Padding}"
                         Background="Transparent"
                         HorizontalSnapPointsAlignment="{TemplateBinding HorizontalSnapPointsAlignment}"
                         HorizontalSnapPointsType="{TemplateBinding HorizontalSnapPointsType}"
+                        Name="PART_ContentPresenter"
+                        Padding="{TemplateBinding Padding}"
                         ScrollViewer.IsScrollInertiaEnabled="{TemplateBinding IsScrollInertiaEnabled}"
                         VerticalSnapPointsAlignment="{TemplateBinding VerticalSnapPointsAlignment}"
                         VerticalSnapPointsType="{TemplateBinding VerticalSnapPointsType}">
@@ -112,45 +112,44 @@
                     </ScrollContentPresenter>
 
                     <customControls:IconButton
-                        Height="30"
-                        VerticalAlignment="Top"
-                        HorizontalContentAlignment="Center"
-                        VerticalContentAlignment="Center"
                         Command="{Binding PageUp, RelativeSource={RelativeSource TemplatedParent}}"
                         Cursor="Hand"
                         Data="{StaticResource FilledArrowUpGeometry}"
                         Foreground="{TemplateBinding Foreground}"
+                        Height="30"
+                        HorizontalContentAlignment="Center"
                         IconHeight="16"
                         IconWidth="16"
-                        IsVisible="{Binding CanScrollUp, RelativeSource={RelativeSource TemplatedParent}}">
+                        IsVisible="{Binding CanScrollUp, RelativeSource={RelativeSource TemplatedParent}}"
+                        VerticalAlignment="Top"
+                        VerticalContentAlignment="Center">
                         <customControls:IconButton.Background>
-                            <LinearGradientBrush Opacity=".7" StartPoint="50%,0%" EndPoint="50%,100%">
-                                <GradientStop Offset="0" Color="#EE161616" />
-                                <GradientStop Offset="1" Color="#9B161616" />
+                            <LinearGradientBrush EndPoint="50%,100%" Opacity=".7" StartPoint="50%,0%">
+                                <GradientStop Color="#EE161616" Offset="0" />
+                                <GradientStop Color="#9B161616" Offset="1" />
                             </LinearGradientBrush>
                         </customControls:IconButton.Background>
 
                     </customControls:IconButton>
 
                     <customControls:IconButton
-                        Height="30"
-                        VerticalAlignment="Bottom"
-                        HorizontalContentAlignment="Center"
-                        VerticalContentAlignment="Center"
                         Command="{Binding PageDown, RelativeSource={RelativeSource TemplatedParent}}"
                         Cursor="Hand"
                         Data="{StaticResource FilledArrowDownGeometry}"
                         Foreground="{TemplateBinding Foreground}"
+                        Height="30"
+                        HorizontalContentAlignment="Center"
                         IconHeight="16"
                         IconWidth="16"
-                        IsVisible="{Binding CanScrollDown, RelativeSource={RelativeSource TemplatedParent}}">
+                        IsVisible="{Binding CanScrollDown, RelativeSource={RelativeSource TemplatedParent}}"
+                        VerticalAlignment="Bottom"
+                        VerticalContentAlignment="Center">
                         <customControls:IconButton.Background>
-                            <LinearGradientBrush Opacity=".7" StartPoint="50%,0%" EndPoint="50%,100%">
-                                <GradientStop Offset="0" Color="#EE161616" />
-                                <GradientStop Offset="1" Color="#9B161616" />
+                            <LinearGradientBrush EndPoint="50%,100%" Opacity=".7" StartPoint="50%,0%">
+                                <GradientStop Color="#EE161616" Offset="0" />
+                                <GradientStop Color="#9B161616" Offset="1" />
                             </LinearGradientBrush>
                         </customControls:IconButton.Background>
-
                     </customControls:IconButton>
 
                     <ScrollBar
@@ -158,34 +157,31 @@
                         Orientation="Horizontal"
                         Theme="{StaticResource FloatingSlim}" />
                     <ScrollBar
-                        Name="PART_VerticalScrollBar"
                         HorizontalAlignment="Right"
+                        Name="PART_VerticalScrollBar"
                         Orientation="Vertical"
                         Theme="{StaticResource FloatingSlim}"
                         Visibility="Hidden" />
 
                     <Canvas>
                         <customControls:AutoScrollSign
-                            Name="PART_AutoScrollSign"
                             HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            IsVisible="False" />
+                            IsVisible="False"
+                            Name="PART_AutoScrollSign"
+                            VerticalAlignment="Center" />
                     </Canvas>
                 </Panel>
             </ControlTemplate>
         </Setter>
     </ControlTheme>
 
-    <ControlTheme x:Key="ClickableMenuScrollButtons" TargetType="customControls:AutoScrollViewer">
+    <ControlTheme TargetType="customControls:AutoScrollViewer" x:Key="ClickableMenuScrollButtons">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Template">
             <ControlTemplate>
                 <DockPanel>
 
                     <customControls:IconButton
-                        Width="35"
-                        HorizontalContentAlignment="Center"
-                        VerticalContentAlignment="Center"
                         Background="{DynamicResource PopUpBackgroundColor}"
                         BorderBrush="{DynamicResource PopUpMainBorderColor}"
                         BorderThickness="1,0,0,0"
@@ -194,14 +190,14 @@
                         Data="{StaticResource FilledChevronRightGeometry}"
                         DockPanel.Dock="Right"
                         Foreground="{TemplateBinding Foreground}"
+                        HorizontalContentAlignment="Center"
                         IconHeight="16"
                         IconWidth="16"
-                        IsVisible="{Binding CanScrollRight, RelativeSource={RelativeSource TemplatedParent}}" />
+                        IsVisible="{Binding CanScrollRight, RelativeSource={RelativeSource TemplatedParent}}"
+                        VerticalContentAlignment="Center"
+                        Width="35" />
 
                     <customControls:IconButton
-                        Width="35"
-                        HorizontalContentAlignment="Center"
-                        VerticalContentAlignment="Center"
                         Background="{DynamicResource PopUpBackgroundColor}"
                         BorderBrush="{DynamicResource PopUpMainBorderColor}"
                         BorderThickness="0,0,1,0"
@@ -210,17 +206,20 @@
                         Data="{StaticResource FilledChevronLeftGeometry}"
                         DockPanel.Dock="Left"
                         Foreground="{TemplateBinding Foreground}"
+                        HorizontalContentAlignment="Center"
                         IconHeight="16"
                         IconWidth="16"
-                        IsVisible="{Binding CanScrollLeft, RelativeSource={RelativeSource TemplatedParent}}" />
+                        IsVisible="{Binding CanScrollLeft, RelativeSource={RelativeSource TemplatedParent}}"
+                        VerticalContentAlignment="Center"
+                        Width="35" />
 
                     <Panel>
                         <ScrollContentPresenter
-                            Name="PART_ContentPresenter"
-                            Padding="{TemplateBinding Padding}"
                             Background="Transparent"
                             HorizontalSnapPointsAlignment="{TemplateBinding HorizontalSnapPointsAlignment}"
                             HorizontalSnapPointsType="{TemplateBinding HorizontalSnapPointsType}"
+                            Name="PART_ContentPresenter"
+                            Padding="{TemplateBinding Padding}"
                             ScrollViewer.IsScrollInertiaEnabled="{TemplateBinding IsScrollInertiaEnabled}"
                             VerticalSnapPointsAlignment="{TemplateBinding VerticalSnapPointsAlignment}"
                             VerticalSnapPointsType="{TemplateBinding VerticalSnapPointsType}">
@@ -234,10 +233,10 @@
 
                         <Canvas>
                             <customControls:AutoScrollSign
-                                Name="PART_AutoScrollSign"
                                 HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                IsVisible="False" />
+                                IsVisible="False"
+                                Name="PART_AutoScrollSign"
+                                VerticalAlignment="Center" />
                         </Canvas>
                     </Panel>
 

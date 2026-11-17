@@ -118,7 +118,7 @@ A tab is Busy while an operation on it holds a busy claim: a crop save, an optim
 _Avoid_: loading indicator shown, busy flag
 
 **Tab View**:
-Which of three views a tab shows, derived from its own state: the crop control while a crop is open; otherwise the image viewer while the tab shows something or its Title Phase is Loading or Downloading; otherwise the start-up menu. The tab derives it; one adapter per Main Window makes the control it shows, once per tab, and nothing assigns a view into a tab.
+Which of four views a tab shows, derived from its own state: the crop control while a crop is open; otherwise the comparison viewer while the tab compares and shows something; otherwise the image viewer while the tab shows something or its Title Phase is Loading or Downloading; otherwise the start-up menu. The tab derives it; one adapter per Main Window makes the control it shows, and nothing assigns a view into a tab. The image viewer and the comparison viewer are shown in the same `NavigableView`, which holds the gallery, the click arrows, the hover bar and the gallery shortcut around them; the crop control and the menu are shown without one.
 _Avoid_: Current view (as something set), switch to the viewer, switch to the start-up menu, restore the view
 
 **View History**:

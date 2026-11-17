@@ -2,6 +2,7 @@ using System.Collections.Frozen;
 using Avalonia.Threading;
 using PicView.Avalonia.Clipboard;
 using PicView.Avalonia.ColorManagement;
+using PicView.Avalonia.Comparison;
 using PicView.Avalonia.Crop;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.FileSystem;
@@ -233,6 +234,17 @@ public class FunctionsMapper : IActionRunner
             // Misc
             Actions.ChangeBackground => ChangeBackground,
             Actions.SideBySide => SideBySide,
+            Actions.Comparison => Comparison,
+            Actions.ComparisonSwap => ComparisonSwap,
+            Actions.ComparisonPin => ComparisonPin,
+            Actions.ComparisonModeNext => ComparisonModeNext,
+            Actions.ComparisonModeOverlay => ComparisonModeOverlay,
+            Actions.ComparisonModeSplit => ComparisonModeSplit,
+            Actions.ComparisonModeBlink => ComparisonModeBlink,
+            Actions.ComparisonModeDifference => ComparisonModeDifference,
+            Actions.ComparisonModeSynced => ComparisonModeSynced,
+            Actions.ComparisonPickA => ComparisonPickA,
+            Actions.ComparisonPickB => ComparisonPickB,
             Actions.Slideshow => Slideshow,
             Actions.ColorPicker => ColorPicker,
             Actions.Restart => Restart,
@@ -727,6 +739,49 @@ public class FunctionsMapper : IActionRunner
         await BackgroundManager.ChangeBackgroundAsync(_vm).ConfigureAwait(false);
 
     private ValueTask SideBySide() => ToggleHelper.Toggle(_vm.GlobalSettings.IsSideBySide);
+
+    // Comparing is the active tab's own
+    private ValueTask Comparison()
+    {
+        var tab = _vm.WindowTabs.ActiveTab.CurrentValue;
+        tab.SetComparing(!tab.IsComparing.Value);
+        return ValueTask.CompletedTask;
+    }
+
+    private ValueTask ComparisonSwap()
+    {
+        _vm.WindowTabs.ActiveTab.CurrentValue.Comparison?.Swap();
+        return ValueTask.CompletedTask;
+    }
+
+    private ValueTask ComparisonPin()
+    {
+        _vm.WindowTabs.ActiveTab.CurrentValue.Comparison?.TogglePin();
+        return ValueTask.CompletedTask;
+    }
+
+    private ValueTask ComparisonModeNext() =>
+        SetComparisonMode(ComparisonViewModel.Next(
+            _vm.WindowTabs.ActiveTab.CurrentValue.Comparison?.Mode.Value ?? Settings.Comparison!.Mode));
+
+    private ValueTask ComparisonModeOverlay() => SetComparisonMode(ComparisonMode.Overlay);
+    private ValueTask ComparisonModeSplit() => SetComparisonMode(ComparisonMode.Split);
+    private ValueTask ComparisonModeBlink() => SetComparisonMode(ComparisonMode.Blink);
+    private ValueTask ComparisonModeDifference() => SetComparisonMode(ComparisonMode.Difference);
+    private ValueTask ComparisonModeSynced() => SetComparisonMode(ComparisonMode.Synced);
+
+    private ValueTask ComparisonPickA() => ComparisonPicker.PickAsync(_vm, _mainWindow, ComparisonSlot.A);
+    private ValueTask ComparisonPickB() => ComparisonPicker.PickAsync(_vm, _mainWindow, ComparisonSlot.B);
+
+    // The mode is remembered for the next comparison too, and turns comparing on in the active tab
+    private ValueTask SetComparisonMode(ComparisonMode mode)
+    {
+        var tab = _vm.WindowTabs.ActiveTab.CurrentValue;
+        Settings.Comparison!.Mode = mode;
+        tab.Comparison?.SetMode(mode);
+        tab.SetComparing(true);
+        return ValueTask.CompletedTask;
+    }
 
     /// <inheritdoc cref="Core.Navigation.Interfaces.IImageIterator.ReloadAsync"/>
     private async ValueTask Reload()
