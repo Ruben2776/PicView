@@ -13,7 +13,6 @@
             <Setter Property="Background" Value="Transparent" />
             <Setter Property="BorderBrush" Value="Transparent" />
             <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="CornerRadius" Value="4" />
             <Setter Property="Padding" Value="11,5" />
             <Setter Property="Foreground" Value="{DynamicResource MainTextColorFaded}" />
             <Setter Property="VerticalContentAlignment" Value="Center" />
@@ -69,6 +68,14 @@
         <!--  The blink interval's selected text is white on the highlight  -->
         <Style Selector="NumericUpDown#BlinkIntervalBox /template/ TextBox#PART_TextBox">
             <Setter Property="SelectionForegroundBrush" Value="White" />
+        </Style>
+        <!--  A pill's buttons fill the pill rather than keep their own height, so it is no thicker than the bar's row  -->
+        <Style Selector="Border.contextPill Button.compareIconBtn, Border.contextPill RepeatButton.compareIconBtn">
+            <Setter Property="Height" Value="NaN" />
+        </Style>
+        <!--  The position button fills its space, padded 5 inside on every side wherever the bar docks, as tall as the other buttons  -->
+        <Style Selector="Button#BarPositionButton">
+            <Setter Property="Padding" Value="5" />
         </Style>
         <!--  Horizontal at the top and bottom; the vertical class at the left and right stacks the groups  -->
         <Style Selector="StackPanel.barGroup">
@@ -241,6 +248,7 @@
                     <!--  Contextual Controls: Split Orientation  -->
                     <Border
                         Background="{DynamicResource ComparePillGroupBackground}"
+                        Classes="contextPill"
                         CornerRadius="16"
                         IsVisible="{CompiledBinding Comparison.IsSplit.Value}"
                         Padding="2"
@@ -250,28 +258,29 @@
                                 Classes="compareIconBtn"
                                 Classes.active="{CompiledBinding !Comparison.IsSplitHorizontal.Value}"
                                 Click="OnSplitVerticalClick"
-                                x:Name="SplitVerticalButton"
                                 CornerRadius="16,0,0,16"
                                 Icon="{StaticResource SeparatorVerticalImage}"
                                 IconHeight="14"
                                 IconWidth="14"
-                                ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.ComparisonSplitVertical.Value}" />
+                                ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.ComparisonSplitVertical.Value}"
+                                x:Name="SplitVerticalButton" />
                             <customControls:IconButton
                                 Classes="compareIconBtn"
                                 Classes.active="{CompiledBinding Comparison.IsSplitHorizontal.Value}"
                                 Click="OnSplitHorizontalClick"
-                                x:Name="SplitHorizontalButton"
                                 CornerRadius="0,16,16,0"
                                 Icon="{StaticResource SeparatorHorizontalImage}"
                                 IconHeight="14"
                                 IconWidth="14"
-                                ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.ComparisonSplitHorizontal.Value}" />
+                                ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.ComparisonSplitHorizontal.Value}"
+                                x:Name="SplitHorizontalButton" />
                         </StackPanel>
                     </Border>
 
                     <!--  Contextual Controls: Blink Timing  -->
                     <Border
                         Background="{DynamicResource ComparePillGroupBackground}"
+                        Classes="contextPill"
                         CornerRadius="16"
                         IsVisible="{CompiledBinding Comparison.IsBlink.Value}"
                         Padding="2"
@@ -292,7 +301,6 @@
                                 <TextBlock Classes="txt" Text="{CompiledBinding ParentWindowContext.Translation.ComparisonCustom.Value}" />
                             </Button>
                             <NumericUpDown
-                                x:Name="BlinkIntervalBox"
                                 Foreground="{DynamicResource MainTextColor}"
                                 FormatString="0.0"
                                 Height="26"
@@ -305,7 +313,8 @@
                                 Value="{CompiledBinding Comparison.BlinkInterval.Value,
                                                         Mode=TwoWay}"
                                 VerticalAlignment="Center"
-                                Width="84" />
+                                Width="84"
+                                x:Name="BlinkIntervalBox" />
                         </StackPanel>
                     </Border>
 
@@ -365,12 +374,12 @@
                             Classes="compareIconBtn"
                             Command="{CompiledBinding ParentWindowContext.RunActionCommand}"
                             CommandParameter="{x:Static keybindings:Actions.ZoomIn}"
-                            x:Name="ZoomInButton"
                             Foreground="{DynamicResource MainTextColor}"
                             Icon="{StaticResource ZoomInImage}"
                             IconHeight="14"
                             IconWidth="14"
-                            ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.ZoomIn.Value}" />
+                            ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.ZoomIn.Value}"
+                            x:Name="ZoomInButton" />
                     </StackPanel>
 
                     <!--  Swap A / B  -->
@@ -379,11 +388,11 @@
                         Classes.active="{CompiledBinding Comparison.IsSwapped.Value}"
                         Command="{CompiledBinding ParentWindowContext.RunActionCommand}"
                         CommandParameter="{x:Static keybindings:Actions.ComparisonSwap}"
-                        x:Name="SwapButton"
                         Icon="{StaticResource LeftRightArrowsImage}"
                         IconHeight="14"
                         IconWidth="14"
-                        ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.ComparisonSwap.Value}" />
+                        ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.ComparisonSwap.Value}"
+                        x:Name="SwapButton" />
 
                     <!--  Pin Pair  -->
                     <customControls:IconButton
@@ -421,7 +430,6 @@
                         Classes.active="{CompiledBinding Comparison.IsAligning.Value}"
                         Click="OnAlignClick"
                         Data="{StaticResource ComparisonAlignGeometry}"
-                        Foreground="{DynamicResource MainTextColor}"
                         IconHeight="12"
                         IconWidth="12"
                         IsVisible="{CompiledBinding !Comparison.IsSynced.Value}"

@@ -154,6 +154,73 @@ public class CompareBarTests
             }
         });
 
+    [AvaloniaTheory]
+    [InlineData(ComparisonBarPosition.Bottom)]
+    [InlineData(ComparisonBarPosition.Left)]
+    public void CompareBar_SplitOrBlink_KeepsItsThickness(ComparisonBarPosition position) =>
+        WithWindow((window, _, tab) =>
+        {
+            Settings.Comparison!.BarPosition = position;
+            var bar = Compare(window, tab, ComparisonMode.Overlay);
+            window.Width = 1600;
+            window.Height = 1200;
+            Settle(window);
+            var vertical = position is ComparisonBarPosition.Left;
+            double Thickness() => vertical ? bar.Bounds.Width : bar.Bounds.Height;
+            var overlay = Thickness();
+
+            foreach (var mode in new[] { ComparisonMode.Split, ComparisonMode.Blink, ComparisonMode.Difference })
+            {
+                tab.Comparison!.SetMode(mode);
+                Settle(window);
+                Assert.Equal(overlay, Thickness(), precision: 1);
+            }
+
+            tab.Comparison!.SetMode(ComparisonMode.Blink);
+            tab.Comparison.IsBlinkFast.Value = false;
+            Settle(window);
+            Assert.Equal(overlay, Thickness(), precision: 1);
+        });
+
+    [AvaloniaTheory]
+    [InlineData(ComparisonBarPosition.Bottom)]
+    [InlineData(ComparisonBarPosition.Top)]
+    [InlineData(ComparisonBarPosition.Left)]
+    [InlineData(ComparisonBarPosition.Right)]
+    public void CompareBar_PositionButton_IsPaddedAndFillsTheBar(ComparisonBarPosition position) =>
+        WithWindow((window, _, tab) =>
+        {
+            Settings.Comparison!.BarPosition = position;
+            var bar = Compare(window, tab);
+            var button = Assert.IsType<TextIconButton>(bar.FindControl<TextIconButton>("BarPositionButton"));
+            var row = Assert.IsType<ContextualStackPanel>(button.Parent);
+            var vertical = position is ComparisonBarPosition.Left or ComparisonBarPosition.Right;
+
+            Assert.Equal(new Thickness(5), button.Padding);
+            Assert.Equal(default, button.Margin);
+            // Across the bar it is as thick as the row, so its hover covers the bar's whole thickness
+            Assert.Equal(vertical ? row.Bounds.Width : row.Bounds.Height,
+                vertical ? button.Bounds.Width : button.Bounds.Height, precision: 1);
+            if (vertical)
+            {
+                // At the sides it is about as tall as a mode button, not just its content
+                var mode = Assert.IsType<TextIconButton>(bar.FindControl<TextIconButton>("OverlayModeButton"));
+                Assert.InRange(button.Bounds.Height, mode.Bounds.Height - 4, mode.Bounds.Height + 4);
+            }
+        });
+
+    [AvaloniaFact]
+    public void CompareBar_Aligning_HasAWhiteAlignIcon() => WithWindow((window, _, tab) =>
+    {
+        var bar = Compare(window, tab, ComparisonMode.Overlay);
+        tab.Comparison!.ToggleAligning();
+        Settle(window);
+        var align = Assert.IsType<IconButton>(bar.FindControl<IconButton>("AlignButton"));
+
+        Assert.Contains("active", align.Classes, StringComparer.Ordinal);
+        Assert.Equal(Colors.White, Assert.IsAssignableFrom<ISolidColorBrush>(align.Foreground).Color);
+    });
+
     [AvaloniaFact]
     public void CompareBar_HoveredPickButton_HasWhiteText() => WithWindow((window, _, tab) =>
     {
