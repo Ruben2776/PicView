@@ -48,7 +48,7 @@
                                 <Grid DockPanel.Dock="Left">
                                     <customControls:PicBox
                                         x:Name="MainImage"
-                                        CurrentFileInfo="{Binding FileInfo.Value}"
+                                        Playback="{Binding Animation.Primary.Value}"
                                         ImageType="{Binding ImageType.Value}"
                                         Source="{CompiledBinding Image.Value,
                                                                  Converter={StaticResource DisplayableConverter}}" />
@@ -57,7 +57,7 @@
                                 <Grid DockPanel.Dock="Right" IsVisible="{CompiledBinding ParentWindowContext.GlobalSettings.IsSideBySide.Value}">
                                     <customControls:PicBox
                                         x:Name="SecondaryImage"
-                                        CurrentFileInfo="{Binding SecondaryFileInfo.Value}"
+                                        Playback="{Binding Animation.Secondary.Value}"
                                         ImageType="{Binding SecondaryImageType.Value}"
                                         Source="{CompiledBinding SecondaryImage.Value,
                                                                  Converter={StaticResource DisplayableConverter}}" />

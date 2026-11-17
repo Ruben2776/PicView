@@ -5,15 +5,20 @@ using PicView.Core.DebugTools;
 
 namespace PicView.Avalonia.AnimatedImage;
 
+/// <summary>
+///     Draws the frames of one <see cref="AnimationPlayer" /> on the compositor thread. A player sent as a message
+///     replaces the current one; <see cref="CloseMessage" /> ends it. The handler is the one that disposes a player it
+///     was given, so nothing is disposed while it draws.
+/// </summary>
 public class CustomVisualHandler : CompositionCustomVisualHandler
 {
-    private TimeSpan _animationElapsed;
-    private TimeSpan? _lastServerTime;
-    private IGifInstance? _currentInstance;
-    private bool _running;
-
     public static readonly object StopMessage = new(),
-        StartMessage = new();
+        StartMessage = new(),
+        CloseMessage = new();
+
+    private TimeSpan? _lastServerTime;
+    private AnimationPlayer? _player;
+    private bool _running;
 
     public override void OnMessage(object message)
     {
@@ -27,44 +32,60 @@ public class CustomVisualHandler : CompositionCustomVisualHandler
         {
             _running = false;
         }
-        else if (message is IGifInstance instance)
+        else if (message == CloseMessage)
         {
-            _currentInstance?.Dispose();
-            _currentInstance = instance;
-            _animationElapsed = TimeSpan.Zero;
+            if (_player is null)
+            {
+                return;
+            }
+
+            _player.Dispose();
+            _player = null;
+            if (_running)
+            {
+                Invalidate();
+            }
+        }
+        else if (message is AnimationPlayer player)
+        {
+            _player?.Dispose();
+            _player = player;
+            _lastServerTime = null;
+            if (_running)
+            {
+                RegisterForNextAnimationFrameUpdate();
+            }
         }
     }
 
     public override void OnAnimationFrameUpdate()
     {
-        if (!_running)
+        if (!_running || _player is null)
+        {
             return;
+        }
+
         Invalidate();
         RegisterForNextAnimationFrameUpdate();
     }
 
     public override void OnRender(ImmediateDrawingContext drawingContext)
     {
-        if (_running)
+        if (_player is null)
         {
-            if (_lastServerTime.HasValue)
-                _animationElapsed += (CompositionNow - _lastServerTime.Value);
-            _lastServerTime = CompositionNow;
+            return;
         }
+
+        var now = CompositionNow;
+        var elapsed = _lastServerTime is { } last ? now - last : TimeSpan.Zero;
+        _lastServerTime = now;
 
         try
         {
-            if (_currentInstance is null || _currentInstance.IsDisposed)
-                return;
-
-            var bitmap = _currentInstance.ProcessFrameTime(_animationElapsed);
+            var bitmap = _player.Frame(elapsed);
             if (bitmap is not null)
             {
-                drawingContext.DrawBitmap(
-                    bitmap,
-                    new Rect(_currentInstance.GifPixelSize.ToSize(1)),
-                    GetRenderBounds()
-                );
+                drawingContext.DrawBitmap(bitmap, new Rect(_player.Size.ToSize(1)), GetRenderBounds());
             }
         }
         catch (Exception e)

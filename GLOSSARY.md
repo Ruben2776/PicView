@@ -151,6 +151,10 @@ _Avoid_: Fast thumbnail, quick preview
 A Thumbnail made for the size a Masonry or Rows tile shows it at, in device pixels, so the tile is sharp. The app keeps the most recently used ones up to a memory budget and drops the oldest first, whichever tab asked. A tile whose Tile Thumbnail was dropped shows its ordinary Thumbnail until a new one is made.
 _Avoid_: Sharp thumbnail, full-size thumbnail, HQ thumbnail
 
+**Animation Playback**:
+The paused state, speed and position of one animated file a Tab shows. A Tab has one for the shown image and one for the image beside it when viewing side by side. Each shown file gets a new one, which starts playing from its first frame; a Stand-in ends them. It always loops.
+_Avoid_: Animation instance, GIF instance, animation state
+
 ## Archives
 
 **Archive Opening**:

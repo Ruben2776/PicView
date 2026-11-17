@@ -1,6 +1,5 @@
 ﻿using System.Numerics;
 using Avalonia;
-using Avalonia.Animation;
 using Avalonia.Automation;
 using Avalonia.Automation.Peers;
 using Avalonia.Controls;
@@ -11,6 +10,7 @@ using Avalonia.Rendering.Composition;
 using ImageMagick;
 using PicView.Avalonia.AnimatedImage;
 using PicView.Avalonia.ImageHandling;
+using PicView.Core.Animation;
 using PicView.Core.DebugTools;
 using PicView.Core.ImageDecoding;
 using PicView.Core.ViewModels;
@@ -55,12 +55,15 @@ public class PicBox : Control
     public static readonly StyledProperty<ImageType?> ImageTypeProperty =
         AvaloniaProperty.Register<PicBox, ImageType?>(nameof(ImageType));
     
-    public static readonly StyledProperty<FileInfo?> CurrentFileInfoProperty =
-        AvaloniaProperty.Register<PicBox, FileInfo?>(nameof(CurrentFileInfo));
-    
+    /// <summary>
+    ///     Defines the <see cref="Playback" /> property.
+    /// </summary>
+    public static readonly StyledProperty<AnimationPlayback?> PlaybackProperty =
+        AvaloniaProperty.Register<PicBox, AnimationPlayback?>(nameof(Playback));
+
     private CompositionCustomVisual? _customVisual;
-    private FileStream? _stream;
-    private IGifInstance? _animInstance;
+    private bool _isAttached;
+    private int _openTicket;
 
     /// <summary>
     ///     Gets or sets the image type.
@@ -72,12 +75,24 @@ public class PicBox : Control
         set => SetValue(ImageTypeProperty, value);
     }
 
-    public FileInfo? CurrentFileInfo
+    /// <summary>
+    ///     Gets or sets the playback of the animated image shown, or null to show <see cref="Source" /> still.
+    /// </summary>
+    public AnimationPlayback? Playback
     {
-        get => GetValue(CurrentFileInfoProperty);
-        set => SetValue(CurrentFileInfoProperty, value);
+        get => GetValue(PlaybackProperty);
+        set => SetValue(PlaybackProperty, value);
     }
-    
+
+    /// <summary>Opens the player of a playback; runs off the UI thread. Tests replace it.</summary>
+    internal Func<AnimationPlayback, AnimationPlayer> OpenPlayer { get; set; } = AnimationPlayer.Open;
+
+    /// <summary>The player handed to the compositor handler; null while none is running.</summary>
+    internal AnimationPlayer? Player { get; private set; }
+
+    /// <summary>Completes when the latest open has been handed over, disposed or has failed.</summary>
+    internal Task Opening { get; private set; } = Task.CompletedTask;
+
     /// <summary>
     /// Gets or sets the image that will be displayed.
     /// </summary>
@@ -128,91 +143,144 @@ public class PicBox : Control
     }
 
     #region Animation
-    
-    private void UpdateAnimatedSource()
+
+    protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
     {
-        CreateVisual();
-        Source = Source as Bitmap;
+        base.OnPropertyChanged(change);
+
+        if (change.Property == PlaybackProperty)
+        {
+            ClosePlayer();
+            Opening = OpenPlayerAsync(Playback);
+        }
+        else if (change.Property == BoundsProperty)
+        {
+            ResizeVisual();
+        }
     }
-    
-    private void UpdateAnimationInstance(FileStream fileStream)
+
+    protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
     {
-        _animInstance?.Dispose();
+        base.OnAttachedToVisualTree(e);
+        _isAttached = true;
+        Opening = OpenPlayerAsync(Playback);
+    }
+
+    protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        base.OnDetachedFromVisualTree(e);
+        _isAttached = false;
+        ClosePlayer();
+        DestroyVisual();
+    }
+
+    /// <summary>
+    ///     Opens the playback's player off the UI thread and hands it to the compositor handler, which owns it from then
+    ///     on. A player whose open was overtaken by a newer one, or by leaving the tree, was never handed over and is
+    ///     disposed here.
+    /// </summary>
+    private async Task OpenPlayerAsync(AnimationPlayback? playback)
+    {
+        if (playback is null || !_isAttached)
+        {
+            return;
+        }
+
+        var ticket = ++_openTicket;
+        var open = OpenPlayer;
+        AnimationPlayer player;
         try
         {
-            _animInstance = ImageType switch
-            {
-                ImageType.AnimatedGif => new GifInstance(fileStream),
-                ImageType.AnimatedAvif => new AvifInstance(fileStream),
-                _ => new WebpInstance(fileStream)
-            };
+            // Continues on the UI thread, where the control and its visual are touched
+            player = await Task.Run(() => open(playback)).ConfigureAwait(true);
         }
         catch (Exception e)
         {
-            DebugHelper.LogDebug(nameof(PicBox), nameof(UpdateAnimatedSource), e);
+            DebugHelper.LogDebug(nameof(PicBox), nameof(OpenPlayerAsync), e);
+            return;
         }
 
-        _animInstance.IterationCount = IterationCount.Infinite;
-        if (_customVisual is null)
+        if (ticket != _openTicket || !_isAttached)
         {
-            CreateVisual();
+            player.Dispose();
+            return;
         }
-        _customVisual?.SendHandlerMessage(_animInstance);
-        AnimationUpdate();
+
+        var visual = CreateVisual();
+        if (visual is null)
+        {
+            player.Dispose();
+            return;
+        }
+
+        visual.SendHandlerMessage(player);
+        Player = player;
+        InvalidateVisual();
     }
 
-    private void AnimationUpdate()
+    /// <summary>Ends the running player, if any, and makes an open still running stale.</summary>
+    private void ClosePlayer()
     {
-        if (_customVisual is null)
+        _openTicket++;
+        if (Player is null)
         {
-            CreateVisual();
+            return;
         }
 
-        var sourceSize = Bounds.Size;
-
-        _customVisual.Size = new Vector2((float)sourceSize.Width, (float)sourceSize.Height);
-        _customVisual.Offset = new Vector3(0, 0, 0);
+        _customVisual?.SendHandlerMessage(CustomVisualHandler.CloseMessage);
+        Player = null;
+        InvalidateVisual();
     }
 
-    private void CreateVisual()
+    private CompositionCustomVisual? CreateVisual()
     {
+        if (_customVisual is not null)
+        {
+            return _customVisual;
+        }
+
         try
         {
             var compositor = ElementComposition.GetElementVisual(this)?.Compositor;
-            if (compositor == null || _customVisual?.Compositor == compositor)
+            if (compositor is null)
             {
-                return;
+                return null;
             }
 
-            _customVisual ??= compositor.CreateCustomVisual(new CustomVisualHandler());
+            _customVisual = compositor.CreateCustomVisual(new CustomVisualHandler());
             ElementComposition.SetElementChildVisual(this, _customVisual);
             _customVisual.SendHandlerMessage(CustomVisualHandler.StartMessage);
+            ResizeVisual();
         }
         catch (Exception e)
         {
             DebugHelper.LogDebug(nameof(PicBox), nameof(CreateVisual), e);
-            _customVisual?.SendHandlerMessage(CustomVisualHandler.StartMessage);
         }
+
+        return _customVisual;
+    }
+
+    private void ResizeVisual()
+    {
+        if (_customVisual is null)
+        {
+            return;
+        }
+
+        var size = Bounds.Size;
+        _customVisual.Size = new Vector2((float)size.Width, (float)size.Height);
     }
 
     private void DestroyVisual()
     {
-        if (_customVisual == null)
+        if (_customVisual is null)
         {
             return;
         }
 
         _customVisual.SendHandlerMessage(CustomVisualHandler.StopMessage);
+        ElementComposition.SetElementChildVisual(this, null);
         _customVisual = null;
-    }
-
-    private void CleanupAnimatedResources()
-    {
-        DestroyVisual();
-        _animInstance?.Dispose();
-        _animInstance = null;
-        _stream?.Dispose();
-        _stream = null;
     }
 
     #endregion
@@ -240,6 +308,12 @@ public class PicBox : Control
 
     private void RenderImageSource(DrawingContext context, IImage source)
     {
+        // A running animation draws over the whole control; the still image under it would show through transparency
+        if (Player is not null)
+        {
+            return;
+        }
+
         var viewPort = new Rect(Bounds.Size);
         var sourceSize = GetImageSize(source);
 
@@ -263,7 +337,6 @@ public class PicBox : Control
             using (context.PushRenderOptions(options))
             {
                 context.DrawImage(source, sourceRect, destRect);
-                RenderAnimatedImageIfRequired(context);
             }
         }
         catch (ObjectDisposedException e)
@@ -331,19 +404,6 @@ public class PicBox : Control
         }
     }
     
-    private void RenderAnimatedImageIfRequired(DrawingContext context)
-    {
-        if (ImageType is not (ImageType.AnimatedGif or ImageType.AnimatedWebp or ImageType.AnimatedAvif) || CurrentFileInfo is null)
-        {
-            CleanupAnimatedResources();
-            return;
-        }
-        
-        context.Dispose(); // Fixes transparent images
-        _stream = new FileStream(CurrentFileInfo.FullName, FileMode.Open, FileAccess.Read);
-        UpdateAnimationInstance(_stream);
-    }
-
     private void HandleInvalidSource()
     {
         // TODO
