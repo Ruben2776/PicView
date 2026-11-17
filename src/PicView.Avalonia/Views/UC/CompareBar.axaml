@@ -19,8 +19,9 @@
             <Setter Property="VerticalContentAlignment" Value="Center" />
             <Setter Property="HorizontalContentAlignment" Value="Center" />
         </Style>
+        <!--  An active button's text and icon are white in both themes  -->
         <Style Selector="Button.compareBtn.active, RepeatButton.compareBtn.active">
-            <Setter Property="Foreground" Value="{DynamicResource MainTextColor}" />
+            <Setter Property="Foreground" Value="White" />
             <Setter Property="Background" Value="{DynamicResource ComparePillActiveBackground}" />
             <Setter Property="BorderBrush" Value="{DynamicResource ComparePillActiveBorder}" />
         </Style>
@@ -28,29 +29,34 @@
             <Setter Property="Background" Value="Transparent" />
             <Setter Property="BorderBrush" Value="Transparent" />
             <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="Width" Value="30" />
+            <Setter Property="MinWidth" Value="30" />
             <Setter Property="Height" Value="30" />
             <Setter Property="Padding" Value="0" />
             <Setter Property="VerticalContentAlignment" Value="Center" />
             <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="Foreground" Value="{DynamicResource MainTextColor}" />
         </Style>
         <Style Selector="Button.compareIconBtn:not(.active):pointerover, RepeatButton.compareIconBtn:not(.active):pointerover">
             <Setter Property="Foreground" Value="{DynamicResource MainTextColor}" />
             <Setter Property="Background" Value="{DynamicResource ComparePillHoverBackground}" />
         </Style>
         <Style Selector="Button.compareIconBtn.active, RepeatButton.compareIconBtn.active">
-            <Setter Property="Foreground" Value="{DynamicResource MainTextColor}" />
+            <Setter Property="Foreground" Value="White" />
             <Setter Property="Background" Value="{DynamicResource ComparePillActiveBackground}" />
             <Setter Property="BorderBrush" Value="{DynamicResource ComparePillActiveBorder}" />
         </Style>
         <Style Selector="Button.compareIconBtn:disabled, RepeatButton.compareIconBtn:disabled">
             <Setter Property="Opacity" Value="{StaticResource ThemeDisabledOpacity}" />
         </Style>
-        <Style Selector="Button.compareIconBtn Path, Button.comparePill Path">
-            <Setter Property="Stroke" Value="{DynamicResource MainTextColorFaded}" />
-        </Style>
-        <Style Selector="Button.compareIconBtn:not(.active):pointerover Path, Button.compareIconBtn.active Path, Button.comparePill:not(.active):pointerover Path, Button.comparePill.active Path">
+        <Style Selector="Button.compareIconBtn:not(.active):pointerover Path, Button.comparePill:not(.active):pointerover Path">
             <Setter Property="Stroke" Value="{DynamicResource MainTextColor}" />
+        </Style>
+        <Style Selector="Button.compareIconBtn.active Path, Button.comparePill.active Path">
+            <Setter Property="Stroke" Value="White" />
+        </Style>
+        <!--  The txt class sets its own foreground, so an active button's text is set white here  -->
+        <Style Selector="Button.compareBtn.active TextBlock.txt, RepeatButton.compareBtn.active TextBlock.txt">
+            <Setter Property="Foreground" Value="White" />
         </Style>
         <!--  Horizontal at the top and bottom; the vertical class at the left and right stacks the groups  -->
         <Style Selector="StackPanel.barGroup">
@@ -80,6 +86,13 @@
         <!--  At the sides the contextual rows fit the width the permanent rows give  -->
         <Style Selector="uc|CompareBar.vertical TextBlock#AlignHintText">
             <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
+        <!--  The overlay's A, slider and B column sits in the middle of the side bar  -->
+        <Style Selector="uc|CompareBar.vertical StackPanel#OverlayGroup">
+            <Setter Property="HorizontalAlignment" Value="Center" />
+        </Style>
+        <Style Selector="uc|CompareBar.vertical StackPanel#OverlayGroup &gt; TextBlock">
+            <Setter Property="HorizontalAlignment" Value="Center" />
         </Style>
         <Style Selector="uc|CompareBar.vertical NumericUpDown">
             <Setter Property="Width" Value="NaN" />
@@ -115,8 +128,8 @@
     </UserControl.Styles>
 
     <Border
-        Background="{DynamicResource PopUpBackgroundColor}"
-        BorderBrush="{DynamicResource PopUpMainBorderColor}"
+        Background="{DynamicResource MenuBackgroundColor}"
+        BorderBrush="{DynamicResource ComparePillActiveBorder}"
         x:Name="BarBorder">
         <DockPanel>
             <!--  Close Comparison: kept at the end of the bar, outside the scrolling row  -->
@@ -125,6 +138,7 @@
                 Command="{CompiledBinding ParentWindowContext.RunActionCommand}"
                 CommandParameter="{x:Static keybindings:Actions.Comparison}"
                 Data="{StaticResource CloseGeometry}"
+                Foreground="{DynamicResource MainTextColor}"
                 IconHeight="11"
                 IconWidth="11"
                 ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.Close.Value}"
@@ -137,51 +151,66 @@
                 <customControls:ContextualStackPanel Classes="barGroup" Spacing="6">
 
                     <StackPanel Classes="barGroup" Spacing="2">
-                        <Button
+                        <customControls:TextIconButton
                             Classes="compareBtn"
-                            Classes.MenuItemHover="{CompiledBinding !Comparison.IsOverlay.Value}"
                             Classes.active="{CompiledBinding Comparison.IsOverlay.Value}"
                             Command="{CompiledBinding ParentWindowContext.RunActionCommand}"
                             CommandParameter="{x:Static keybindings:Actions.ComparisonModeOverlay}"
-                            x:Name="OverlayModeButton">
-                            <TextBlock Classes="txt" Text="{CompiledBinding ParentWindowContext.Translation.ComparisonOverlay.Value}" />
-                        </Button>
-                        <Button
+                            Foreground="{DynamicResource MainTextColor}"
+                            Icon="{StaticResource BlendImage}"
+                            IconHeight="12"
+                            IconMargin="0,0,5,0"
+                            IconWidth="12"
+                            Text="{CompiledBinding ParentWindowContext.Translation.ComparisonOverlay.Value}"
+                            x:Name="OverlayModeButton" />
+                        <customControls:TextIconButton
                             Classes="compareBtn"
-                            Classes.MenuItemHover="{CompiledBinding !Comparison.IsSplit.Value}"
                             Classes.active="{CompiledBinding Comparison.IsSplit.Value}"
                             Command="{CompiledBinding ParentWindowContext.RunActionCommand}"
                             CommandParameter="{x:Static keybindings:Actions.ComparisonModeSplit}"
-                            x:Name="SplitModeButton">
-                            <TextBlock Classes="txt" Text="{CompiledBinding ParentWindowContext.Translation.ComparisonSplit.Value}" />
-                        </Button>
-                        <Button
+                            Foreground="{DynamicResource MainTextColor}"
+                            Icon="{StaticResource SplitImage}"
+                            IconHeight="12"
+                            IconMargin="0,0,5,0"
+                            IconWidth="12"
+                            Text="{CompiledBinding ParentWindowContext.Translation.ComparisonSplit.Value}"
+                            x:Name="SplitModeButton" />
+                        <customControls:TextIconButton
                             Classes="compareBtn"
-                            Classes.MenuItemHover="{CompiledBinding !Comparison.IsSynced.Value}"
                             Classes.active="{CompiledBinding Comparison.IsSynced.Value}"
                             Command="{CompiledBinding ParentWindowContext.RunActionCommand}"
                             CommandParameter="{x:Static keybindings:Actions.ComparisonModeSynced}"
-                            x:Name="SyncedModeButton">
-                            <TextBlock Classes="txt" Text="{CompiledBinding ParentWindowContext.Translation.ComparisonSideBySideSynced.Value}" />
-                        </Button>
-                        <Button
+                            Foreground="{DynamicResource MainTextColor}"
+                            Icon="{StaticResource Columns2Image}"
+                            IconHeight="12"
+                            IconMargin="0,0,5,0"
+                            IconWidth="12"
+                            Text="{CompiledBinding ParentWindowContext.Translation.ComparisonSideBySideSynced.Value}"
+                            x:Name="SyncedModeButton" />
+                        <customControls:TextIconButton
                             Classes="compareBtn"
-                            Classes.MenuItemHover="{CompiledBinding !Comparison.IsBlink.Value}"
                             Classes.active="{CompiledBinding Comparison.IsBlink.Value}"
                             Command="{CompiledBinding ParentWindowContext.RunActionCommand}"
                             CommandParameter="{x:Static keybindings:Actions.ComparisonModeBlink}"
-                            x:Name="BlinkModeButton">
-                            <TextBlock Classes="txt" Text="{CompiledBinding ParentWindowContext.Translation.ComparisonBlink.Value}" />
-                        </Button>
-                        <Button
+                            Foreground="{DynamicResource MainTextColor}"
+                            Icon="{StaticResource TimerImage}"
+                            IconHeight="12"
+                            IconMargin="0,0,5,0"
+                            IconWidth="12"
+                            Text="{CompiledBinding ParentWindowContext.Translation.ComparisonBlink.Value}"
+                            x:Name="BlinkModeButton" />
+                        <customControls:TextIconButton
                             Classes="compareBtn"
-                            Classes.MenuItemHover="{CompiledBinding !Comparison.IsDifference.Value}"
                             Classes.active="{CompiledBinding Comparison.IsDifference.Value}"
                             Command="{CompiledBinding ParentWindowContext.RunActionCommand}"
                             CommandParameter="{x:Static keybindings:Actions.ComparisonModeDifference}"
-                            x:Name="DifferenceModeButton">
-                            <TextBlock Classes="txt" Text="{CompiledBinding ParentWindowContext.Translation.ComparisonDifference.Value}" />
-                        </Button>
+                            Foreground="{DynamicResource MainTextColor}"
+                            Icon="{StaticResource DiffImage}"
+                            IconHeight="12"
+                            IconMargin="0,0,5,0"
+                            IconWidth="12"
+                            Text="{CompiledBinding ParentWindowContext.Translation.ComparisonDifference.Value}"
+                            x:Name="DifferenceModeButton" />
                     </StackPanel>
 
                     <!--  Contextual Controls: Overlay Opacity  -->
@@ -190,7 +219,8 @@
                         IsVisible="{CompiledBinding Comparison.IsOverlay.Value}"
                         Spacing="6"
                         VerticalAlignment="Center"
-                        customControls:ContextualStackPanel.IsContextual="True">
+                        customControls:ContextualStackPanel.IsContextual="True"
+                        x:Name="OverlayGroup">
                         <TextBlock Classes="txt" Text="A" />
                         <Slider
                             Maximum="1"
@@ -215,8 +245,8 @@
                                 Click="OnSplitVerticalClick"
                                 CornerRadius="16,0,0,16"
                                 Icon="{StaticResource SeparatorVerticalImage}"
-                                IconHeight="12"
-                                IconWidth="12"
+                                IconHeight="14"
+                                IconWidth="14"
                                 ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.ComparisonSplitVertical.Value}" />
                             <customControls:IconButton
                                 Classes="compareIconBtn"
@@ -224,8 +254,8 @@
                                 Click="OnSplitHorizontalClick"
                                 CornerRadius="0,16,16,0"
                                 Icon="{StaticResource SeparatorHorizontalImage}"
-                                IconHeight="12"
-                                IconWidth="12"
+                                IconHeight="14"
+                                IconWidth="14"
                                 ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.ComparisonSplitHorizontal.Value}" />
                         </StackPanel>
                     </Border>
@@ -276,21 +306,23 @@
                     <Border Background="{DynamicResource ComparePillGroupBackground}" CornerRadius="10">
                         <StackPanel Classes="barGroup" Spacing="2">
                             <Button
-                                Classes="compareBtn MenuItemHover"
+                                Classes="compareBtn"
                                 Command="{CompiledBinding ParentWindowContext.RunActionCommand}"
                                 CommandParameter="{x:Static keybindings:Actions.ComparisonPickA}"
                                 CornerRadius="10,0,0,10"
                                 Padding="9,4"
-                                ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.ComparisonPickA.Value}">
+                                ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.ComparisonPickA.Value}"
+                                x:Name="PickAButton">
                                 <TextBlock Classes="txt" Text="A" />
                             </Button>
                             <Button
-                                Classes="compareBtn MenuItemHover"
+                                Classes="compareBtn"
                                 Command="{CompiledBinding ParentWindowContext.RunActionCommand}"
                                 CommandParameter="{x:Static keybindings:Actions.ComparisonPickB}"
                                 CornerRadius="0,10,10,0"
                                 Padding="9,4"
-                                ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.ComparisonPickB.Value}">
+                                ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.ComparisonPickB.Value}"
+                                x:Name="PickBButton">
                                 <TextBlock Classes="txt" Text="B" />
                             </Button>
                         </StackPanel>
@@ -302,14 +334,14 @@
                             Classes="compareIconBtn"
                             Command="{CompiledBinding ParentWindowContext.RunActionCommand}"
                             CommandParameter="{x:Static keybindings:Actions.ZoomOut}"
+                            Foreground="{DynamicResource MainTextColor}"
                             Icon="{StaticResource ZoomOutImage}"
                             IconHeight="14"
                             IconWidth="14"
                             ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.ZoomOut.Value}"
                             x:Name="ZoomOutButton" />
                         <TextBlock
-                            FontSize="11.5"
-                            Foreground="{DynamicResource MainTextColor}"
+                            Classes="txt"
                             MinWidth="38"
                             Text="100%"
                             TextAlignment="Center"
@@ -319,6 +351,7 @@
                             Classes="compareIconBtn"
                             Command="{CompiledBinding ParentWindowContext.RunActionCommand}"
                             CommandParameter="{x:Static keybindings:Actions.ZoomIn}"
+                            Foreground="{DynamicResource MainTextColor}"
                             Icon="{StaticResource ZoomInImage}"
                             IconHeight="14"
                             IconWidth="14"
@@ -372,6 +405,7 @@
                         Classes.active="{CompiledBinding Comparison.IsAligning.Value}"
                         Click="OnAlignClick"
                         Data="{StaticResource ComparisonAlignGeometry}"
+                        Foreground="{DynamicResource MainTextColor}"
                         IconHeight="12"
                         IconWidth="12"
                         IsVisible="{CompiledBinding !Comparison.IsSynced.Value}"
@@ -382,6 +416,7 @@
                     <customControls:IconButton
                         Classes="compareIconBtn"
                         Click="OnResetAlignClick"
+                        Foreground="{DynamicResource MainTextColor}"
                         Icon="{StaticResource ResetImage}"
                         IconHeight="12"
                         IconWidth="12"
@@ -400,21 +435,24 @@
 
                     <!--  Reset Zoom  -->
                     <customControls:IconButton
-                        Classes="compareBtn MenuItemHover"
+                        Classes="compareBtn"
                         Command="{CompiledBinding ParentWindowContext.RunActionCommand}"
                         CommandParameter="{x:Static keybindings:Actions.ResetZoom}"
+                        Foreground="{DynamicResource MainTextColor}"
                         Icon="{StaticResource RefreshCcwOff}"
-                        IconHeight="13"
-                        IconWidth="13"
-                        ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.ResetZoom.Value}" />
+                        IconHeight="16"
+                        IconWidth="16"
+                        ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.ResetZoom.Value}"
+                        x:Name="ResetZoomButton" />
 
                     <!--  Bar Position  -->
                     <customControls:TextIconButton
                         Background="Transparent"
+                        Foreground="{DynamicResource MainTextColor}"
                         Icon="{StaticResource PanelBottomDashedImage}"
-                        IconHeight="14"
+                        IconHeight="16"
                         IconMargin="0,0,5,0"
-                        IconWidth="14"
+                        IconWidth="16"
                         x:Name="BarPositionButton">
                         <Button.Flyout>
                             <MenuFlyout>
