@@ -4,6 +4,7 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Headless;
 using Avalonia.Interactivity;
 using Avalonia.Layout;
+using Avalonia.Media;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using PicView.Avalonia.CustomControls;
@@ -83,6 +84,47 @@ public class CompareBarTests
     });
 
     [AvaloniaTheory]
+    [InlineData(true, "MenuItemHover")]
+    [InlineData(false, "hover")]
+    public void CompareBar_TextIconButtons_TakeTheThemesHoverAndAreWhiteWhenActive(bool dark, string hover) =>
+        WithWindow((window, _, tab) =>
+        {
+            var wasDark = Settings.Theme.Dark;
+            Settings.Theme.Dark = dark;
+            try
+            {
+                var bar = Compare(window, tab, ComparisonMode.Overlay);
+                var overlay = Assert.IsType<TextIconButton>(bar.FindControl<TextIconButton>("OverlayModeButton"));
+                var split = Assert.IsType<TextIconButton>(bar.FindControl<TextIconButton>("SplitModeButton"));
+                var position = Assert.IsType<TextIconButton>(bar.FindControl<TextIconButton>("BarPositionButton"));
+
+                Assert.Contains(hover, split.Classes, StringComparer.Ordinal);
+                Assert.Contains(hover, position.Classes, StringComparer.Ordinal);
+                Assert.DoesNotContain(hover, overlay.Classes, StringComparer.Ordinal);
+
+                // The active mode's text and icon are white
+                Assert.Equal(Colors.White, Assert.IsAssignableFrom<ISolidColorBrush>(overlay.Foreground).Color);
+                Assert.All(IconPens(overlay), pen =>
+                    Assert.Equal(Colors.White, Assert.IsAssignableFrom<ISolidColorBrush>(pen.Brush).Color));
+                Assert.All(IconPens(split), pen =>
+                    Assert.NotEqual(Colors.White, Assert.IsAssignableFrom<ISolidColorBrush>(pen.Brush).Color));
+
+                // A hovered one turns white too
+                window.MouseMove(BoundsIn(window, split).Center);
+                Settle(window);
+                Assert.Equal(Colors.White, Assert.IsAssignableFrom<ISolidColorBrush>(split.Foreground).Color);
+            }
+            finally
+            {
+                Settings.Theme.Dark = wasDark;
+            }
+        });
+
+    private static IEnumerable<Pen> IconPens(TextIconButton button) =>
+        Assert.IsType<DrawingGroup>(button.LocalIconCopy?.Drawing).Children.OfType<GeometryDrawing>()
+            .Select(d => d.Pen).OfType<Pen>();
+
+    [AvaloniaTheory]
     [InlineData(ComparisonBarPosition.Bottom, Dock.Right)]
     [InlineData(ComparisonBarPosition.Left, Dock.Bottom)]
     public void CompareBar_CloseButton_SitsAtTheEndOfTheBar(ComparisonBarPosition position, Dock dock)
@@ -139,6 +181,9 @@ public class CompareBarTests
         {
             Settings.Comparison!.BarPosition = position;
             var bar = Compare(window, tab);
+            // Wide enough for the whole row at the top and bottom, so it is shorter than the edge it docks to
+            window.Width = 1600;
+            Settle(window);
             var nav = Assert.IsType<NavigableView>(ViewOf(tab));
             // The bar's background may span the edge (its look is the owner's); its row of controls is only as long as
             // its content

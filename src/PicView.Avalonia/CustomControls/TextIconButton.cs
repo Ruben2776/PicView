@@ -148,6 +148,8 @@ public class TextIconButton : Button
         else if (change.Property == ForegroundProperty)
         {
             _textBlock.Foreground = Foreground;
+            _pathIcon.Foreground = Foreground;
+            ApplyInitialIconColors();
         }
         else if (change.Property == FontSizeProperty)
         {
@@ -248,9 +250,9 @@ public class TextIconButton : Button
         if (_localIconCopy?.Drawing is not DrawingGroup drawingGroup) return;
 
         var isGlass = Settings.Theme?.GlassTheme == true;
-        var brush = isGlass 
-            ? UIHelper.GetBrush("SecondaryTextColor") 
-            : UIHelper.GetBrush("MainTextColor");
+        var brush = isGlass
+            ? UIHelper.GetBrush("SecondaryTextColor")
+            : IconBrush;
 
         foreach (var drawing in drawingGroup.Children)
         {
@@ -260,6 +262,10 @@ public class TextIconButton : Button
             }
         }
     }
+
+    // The icon takes a foreground set on the button or by its styles, and the main text color otherwise
+    private IBrush IconBrush =>
+        IsSet(ForegroundProperty) && Foreground is { } foreground ? foreground : UIHelper.GetBrush("MainTextColor");
 
     private void OnPointerEntered(object? sender, PointerEventArgs? e)
     {
@@ -297,7 +303,7 @@ public class TextIconButton : Button
         }
         Dispatcher.UIThread.Post(() =>
         {
-            _textBlock.Foreground = UIHelper.GetBrush("MainTextColor");
+            _textBlock.Foreground = IconBrush;
             _pathIcon.Foreground = Foreground;
 
             if (Settings.Theme.GlassTheme)
@@ -314,7 +320,7 @@ public class TextIconButton : Button
             {
                 if (drawing is GeometryDrawing { Pen: Pen pen })
                 {
-                    pen.Brush = Foreground;
+                    pen.Brush = IconBrush;
                 }
             }
         });
