@@ -54,7 +54,6 @@
 
             <!--  Compare bar  -->
             <Color x:Key="ComparePillGroupBackground">#FF363636</Color>
-            <Color x:Key="ComparePillHoverBackground">#18FFFFFF</Color>
             <Color x:Key="ComparePillActiveBackground">#24FFFFFF</Color>
             <Color x:Key="ComparePillActiveBorder">#40FFFFFF</Color>
 
@@ -227,10 +226,9 @@
             <Color x:Key="HoverBarHoverColor">#C7C3EB</Color>
 
             <!--  Compare bar  -->
-            <Color x:Key="ComparePillGroupBackground">#10000000</Color>
-            <Color x:Key="ComparePillHoverBackground">#14000000</Color>
+            <Color x:Key="ComparePillGroupBackground">#FFF0F0F0</Color>
             <Color x:Key="ComparePillActiveBackground">#22000000</Color>
-            <Color x:Key="ComparePillActiveBorder">#38000000</Color>
+            <Color x:Key="ComparePillActiveBorder">#FFF2F2F2</Color>
 
             <!--  MENUS & DROPDOWNS  -->
             <Color x:Key="MenuBackgroundColor">#fff</Color>

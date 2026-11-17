@@ -22,6 +22,9 @@ public partial class CompareBar : UserControl, IDisposable
         InitializeComponent();
         // Bubbled, so a slider or number box under the pointer takes the wheel first
         BarScroll.AddHandler(PointerWheelChangedEvent, OnBarScrollWheelChanged);
+        PickAButton.Classes.Add(HoverClass);
+        PickBButton.Classes.Add(HoverClass);
+        ResetZoomButton.Classes.Add(HoverClass);
         DataContextChanged += (_, _) => SubscribeToTab();
         AttachedToVisualTree += (_, _) => SubscribeToTab();
         DetachedFromVisualTree += (_, _) => Dispose();
@@ -56,6 +59,12 @@ public partial class CompareBar : UserControl, IDisposable
         {
             return;
         }
+
+        HoverUnlessActive(OverlayModeButton, comparison.IsOverlay);
+        HoverUnlessActive(SplitModeButton, comparison.IsSplit);
+        HoverUnlessActive(SyncedModeButton, comparison.IsSynced);
+        HoverUnlessActive(BlinkModeButton, comparison.IsBlink);
+        HoverUnlessActive(DifferenceModeButton, comparison.IsDifference);
 
         comparison.AlignmentStep.AsObservable()
             .SubscribeOnUIThread(() =>
@@ -115,6 +124,16 @@ public partial class CompareBar : UserControl, IDisposable
             .Subscribe(_ => ReportExtent(comparison))
             .AddTo(ref _subscriptions);
     }
+
+    // The light theme's hover is the hover class; the dark theme's is the menu item hover
+    internal static string HoverClass => Settings.Theme?.Dark is false ? "hover" : "MenuItemHover";
+
+    // A mode button takes the hover style only while it is not the active mode
+    private void HoverUnlessActive(Button button, IReadOnlyBindableReactiveProperty<bool> isActive) =>
+        isActive.AsObservable()
+            .SubscribeOnUIThread(() => button.Classes.Set(HoverClass, !isActive.Value),
+                DebugHelper.LogError(nameof(CompareBar), nameof(HoverUnlessActive)))
+            .AddTo(ref _subscriptions);
 
     private void ReportExtent(ComparisonViewModel comparison)
     {

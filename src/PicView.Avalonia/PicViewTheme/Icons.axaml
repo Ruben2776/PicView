@@ -1113,6 +1113,133 @@
         </DrawingGroup>
     </DrawingImage>
 
+    <DrawingImage x:Key="BlendImage">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Geometry="F1 M8,9 A7,7,0,1,0,22,9 A7,7,0,1,0,8,9 Z">
+                    <GeometryDrawing.Pen>
+                        <Pen
+                            Brush="#FF000000"
+                            LineCap="Round"
+                            LineJoin="Round"
+                            Thickness="2" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+                <GeometryDrawing Geometry="F1 M2,15 A7,7,0,1,0,16,15 A7,7,0,1,0,2,15 Z">
+                    <GeometryDrawing.Pen>
+                        <Pen
+                            Brush="#FF000000"
+                            LineCap="Round"
+                            LineJoin="Round"
+                            Thickness="2" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
+    <DrawingImage x:Key="SplitImage">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Geometry="F1 M16,3 h5 v5">
+                    <GeometryDrawing.Pen>
+                        <Pen
+                            Brush="#FF000000"
+                            LineCap="Round"
+                            LineJoin="Round"
+                            Thickness="2" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+                <GeometryDrawing Geometry="F1 M8,3 H3 v5">
+                    <GeometryDrawing.Pen>
+                        <Pen
+                            Brush="#FF000000"
+                            LineCap="Round"
+                            LineJoin="Round"
+                            Thickness="2" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+                <GeometryDrawing Geometry="F1 M12,22 v-8.3 a4,4,0,0,0,-1.172,-2.872 L3,3">
+                    <GeometryDrawing.Pen>
+                        <Pen
+                            Brush="#FF000000"
+                            LineCap="Round"
+                            LineJoin="Round"
+                            Thickness="2" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+                <GeometryDrawing Geometry="F1 m15,9 l6,-6">
+                    <GeometryDrawing.Pen>
+                        <Pen
+                            Brush="#FF000000"
+                            LineCap="Round"
+                            LineJoin="Round"
+                            Thickness="2" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
+    <DrawingImage x:Key="Columns2Image">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Geometry="F1 M5,3 H19 A2,2,0,0,1,21,5 V19 A2,2,0,0,1,19,21 H5 A2,2,0,0,1,3,19 V5 A2,2,0,0,1,5,3 Z">
+                    <GeometryDrawing.Pen>
+                        <Pen
+                            Brush="#FF000000"
+                            LineCap="Round"
+                            LineJoin="Round"
+                            Thickness="2" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+                <GeometryDrawing Geometry="F1 M12,3 v18">
+                    <GeometryDrawing.Pen>
+                        <Pen
+                            Brush="#FF000000"
+                            LineCap="Round"
+                            LineJoin="Round"
+                            Thickness="2" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
+    <DrawingImage x:Key="DiffImage">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Geometry="F1 M12,3 v14">
+                    <GeometryDrawing.Pen>
+                        <Pen
+                            Brush="#FF000000"
+                            LineCap="Round"
+                            LineJoin="Round"
+                            Thickness="2" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+                <GeometryDrawing Geometry="F1 M5,10 h14">
+                    <GeometryDrawing.Pen>
+                        <Pen
+                            Brush="#FF000000"
+                            LineCap="Round"
+                            LineJoin="Round"
+                            Thickness="2" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+                <GeometryDrawing Geometry="F1 M5,21 h14">
+                    <GeometryDrawing.Pen>
+                        <Pen
+                            Brush="#FF000000"
+                            LineCap="Round"
+                            LineJoin="Round"
+                            Thickness="2" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
     <DrawingImage x:Key="AboutImage">
         <DrawingGroup>
             <GeometryDrawing Geometry="F1 M160 164C160 154 161.44 131 193.54 104.54C212.6 88.83 235.49 84.28 256 84C274.73 83.77 291.47 86.94 301.48 91.82C318.59 100.2 352 120.6 352 164C352 209.67 322.82 230.37 289.65 253.18C256.48 275.99 248 290.36 248 316">
