@@ -84,6 +84,19 @@ public class SlideshowRulesTests
         Assert.Equal(1, _next);
     }
 
+    [Fact]
+    public async Task Toggle_DefaultSettings_TicksEveryFiveSeconds()
+    {
+        SetDefaults();
+        var slideshow = Create();
+        await slideshow.Toggle(0, isKeyHeldDown: false);
+
+        _clock.Advance(TimeSpan.FromSeconds(4.9));
+        Assert.Equal(0, _next);
+        _clock.Advance(TimeSpan.FromSeconds(0.1));
+        Assert.Equal(1, _next);
+    }
+
     [Theory]
     [InlineData(0)]
     [InlineData(-3)]

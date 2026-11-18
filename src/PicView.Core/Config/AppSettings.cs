@@ -174,10 +174,9 @@ public class UIProperties
     public int BgColorChoice { get; set; } = 0;
 
     /// <summary>
-    /// Gets or sets the time interval, in milliseconds, for the slideshow transition in the application's UI.
-    /// Determines how long each slide is displayed during a slideshow.
+    /// Gets or sets the time, in seconds, each image is shown during a slideshow; the settings slider gives 1 to 120.
     /// </summary>
-    public double SlideShowTimer { get; set; } = 5000;
+    public double SlideShowTimer { get; set; } = 5;
 
     /// <summary>
     /// Determines whether the application should open pictures in the same window
