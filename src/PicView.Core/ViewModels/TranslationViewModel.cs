@@ -119,7 +119,7 @@ public class TranslationViewModel
         ExposureTime.Value = t.ExposureTime;
         Favorites.Value = t.Favorites;
         File.Value = string.Concat(t.File[0].ToString().ToUpper(CultureInfo.CurrentCulture), t.File.AsSpan(1));
-        Files.Value = string.Concat(t.File[0].ToString().ToLower(CultureInfo.CurrentCulture), t.File.AsSpan(1));
+        Files.Value = string.Concat(t.Files[0].ToString().ToLower(CultureInfo.CurrentCulture), t.Files.AsSpan(1));
         FileAssociations.Value = t.FileAssociations;
         FileConversion.Value = t.FileConversion;
         FileCopyPath.Value = t.FileCopyPath;
