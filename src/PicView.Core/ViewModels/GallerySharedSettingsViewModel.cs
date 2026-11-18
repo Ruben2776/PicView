@@ -1,34 +1,37 @@
-using System.Diagnostics;
+using PicView.Core.Config;
 using PicView.Core.DebugTools;
 using PicView.Core.Gallery;
 using R3;
 
 namespace PicView.Core.ViewModels;
 
+/// <summary>
+/// The gallery settings every tab shares publish their changes (ADR-0020): each is a bindable over its stored value,
+/// and its write-through is the one writer of that stored value, followed by one coalesced save. The constructor
+/// subscribes only the derived flags; the write-throughs and the commands start in <see cref="Start"/>, so a change
+/// before it writes and saves nothing (ADR-0034).
+/// </summary>
 public class GallerySharedSettingsViewModel
 {
-    private readonly Func<ValueTask<bool>> _save;
-    private Task _saving = Task.CompletedTask;
-    private bool _isInitialized;
+    private readonly Lock _startLock = new();
+    private bool _isStarted;
+    private readonly CoalescedSave _coalescedSave;
 
     /// <param name="save">Saves the settings; null means <see cref="SettingsManager.SaveSettingsAsync"/>.</param>
     public GallerySharedSettingsViewModel(Func<ValueTask<bool>>? save = null)
     {
-        _save = save ?? SaveSettingsAsync;
+        _coalescedSave = new CoalescedSave(save ?? SaveSettingsAsync, nameof(GallerySharedSettingsViewModel));
+
         ExpandedGalleryDisplayMode =
             new BindableReactiveProperty<GalleryDisplayMode>(Settings.Gallery.ExpandedGalleryDisplayMode);
-
-        // The write-through subscribes first, so a later subscriber that reads the record sees the new value (ADR-0020)
-        ExpandedGalleryDisplayMode.Skip(1).Subscribe(mode =>
-        {
-            Settings.Gallery.ExpandedGalleryDisplayMode = mode;
-            if (GalleryDisplayModes.ShowsTiles(mode))
-            {
-                Settings.Gallery.RowsWasLastUsedDisplayMode = mode is GalleryDisplayMode.Rows;
-            }
-
-            _saving = SaveAsync();
-        }, DebugHelper.LogError(nameof(GallerySharedSettingsViewModel), nameof(ExpandedGalleryDisplayMode)));
+        DockedGalleryStretchMode = new BindableReactiveProperty<GalleryStretchMode>(Settings.Gallery.DockedGalleryStretchMode);
+        ExpandedGalleryStretchMode =
+            new BindableReactiveProperty<GalleryStretchMode>(Settings.Gallery.ExpandedGalleryStretchMode);
+        DockedGalleryItemSize = new BindableReactiveProperty<double>(Settings.Gallery.DockedGalleryItemSize);
+        ExpandedGalleryItemSize = new BindableReactiveProperty<double>(Settings.Gallery.ExpandedGalleryItemSize);
+        GalleryItemSpacing = new BindableReactiveProperty<double>(Settings.Gallery.ItemSpacing);
+        GalleryLineSpacing = new BindableReactiveProperty<double>(Settings.Gallery.LineSpacing);
+        ShowMotionPhotoBadges = new BindableReactiveProperty<bool>(Settings.Gallery.ShowMotionPhotoBadges);
 
         IsExpandedDisplayModeColumns = ExpandedGalleryDisplayMode
             .Select(static mode => mode is GalleryDisplayMode.Columns)
@@ -43,20 +46,35 @@ public class GallerySharedSettingsViewModel
             .Select(GalleryDisplayModes.ShowsTiles)
             .ToReadOnlyBindableReactiveProperty();
 
-        SetExpandedDisplayModeCommand.Subscribe(mode =>
-        {
-            ExpandedGalleryDisplayMode.Value = GalleryDisplayModes.Validate(mode);
-        }, DebugHelper.LogError(nameof(GallerySharedSettingsViewModel), nameof(SetExpandedDisplayModeCommand)));
+        IsDockedStretchUniform = DockedGalleryStretchMode
+            .Select(static mode => mode is GalleryStretchMode.Uniform)
+            .ToReadOnlyBindableReactiveProperty();
+        IsDockedStretchUniformToFill = DockedGalleryStretchMode
+            .Select(static mode => mode is GalleryStretchMode.UniformToFill)
+            .ToReadOnlyBindableReactiveProperty();
+        IsDockedStretchSquare = DockedGalleryStretchMode
+            .Select(static mode => mode is GalleryStretchMode.Square)
+            .ToReadOnlyBindableReactiveProperty();
+        IsDockedStretchSquareFill = DockedGalleryStretchMode
+            .Select(static mode => mode is GalleryStretchMode.FillSquare)
+            .ToReadOnlyBindableReactiveProperty();
 
-        ToggleExpandedDisplayModeCommand.Subscribe(_ =>
-        {
-            ExpandedGalleryDisplayMode.Value = GalleryDisplayModes.Toggle(ExpandedGalleryDisplayMode.Value,
-                Settings.Gallery.RowsWasLastUsedDisplayMode);
-        }, DebugHelper.LogError(nameof(GallerySharedSettingsViewModel), nameof(ToggleExpandedDisplayModeCommand)));
+        IsExpandedStretchUniform = ExpandedGalleryStretchMode
+            .Select(static mode => mode is GalleryStretchMode.Uniform)
+            .ToReadOnlyBindableReactiveProperty();
+        IsExpandedStretchUniformToFill = ExpandedGalleryStretchMode
+            .Select(static mode => mode is GalleryStretchMode.UniformToFill)
+            .ToReadOnlyBindableReactiveProperty();
+        IsExpandedStretchSquare = ExpandedGalleryStretchMode
+            .Select(static mode => mode is GalleryStretchMode.Square)
+            .ToReadOnlyBindableReactiveProperty();
+        IsExpandedStretchSquareFill = ExpandedGalleryStretchMode
+            .Select(static mode => mode is GalleryStretchMode.FillSquare)
+            .ToReadOnlyBindableReactiveProperty();
     }
 
     /// <summary>The save in flight, completed when idle. For tests.</summary>
-    internal Task Saving => _saving;
+    internal Task Saving => _coalescedSave.Saving;
 
     /// <summary>
     /// The Expanded Gallery's display mode, app-wide. Only the two display mode commands write it, and it writes
@@ -77,32 +95,25 @@ public class GallerySharedSettingsViewModel
     /// <summary>Whether the display mode shows tiles, which is Masonry and Rows.</summary>
     public IReadOnlyBindableReactiveProperty<bool> IsExpandedDisplayModeTiles { get; }
 
+    /// <summary>Sets the Docked Gallery's Thumbnail Stretch; an unknown value is ignored.</summary>
     public ReactiveCommand<GalleryStretchMode> SetDockedStretchModeCommand { get; } = new();
+
+    /// <summary>Sets the Expanded Gallery's Thumbnail Stretch; an unknown value is ignored.</summary>
     public ReactiveCommand<GalleryStretchMode> SetExpandedStretchModeCommand { get; } = new();
-    
-    public BindableReactiveProperty<bool> IsDockedStretchUniform { get; } =
-        new(Settings.Gallery.DockedGalleryStretchMode == GalleryStretchMode.Uniform);
-    public BindableReactiveProperty<bool> IsDockedStretchUniformToFill { get; } =
-        new(Settings.Gallery.DockedGalleryStretchMode == GalleryStretchMode.UniformToFill);
-    public BindableReactiveProperty<bool> IsDockedStretchSquare { get; } =
-        new(Settings.Gallery.DockedGalleryStretchMode == GalleryStretchMode.Square);
-    public BindableReactiveProperty<bool> IsDockedStretchSquareFill { get; } =
-        new(Settings.Gallery.DockedGalleryStretchMode == GalleryStretchMode.FillSquare);
-    
-    public BindableReactiveProperty<bool> IsExpandedStretchUniform { get; } =
-        new(Settings.Gallery.ExpandedGalleryStretchMode == GalleryStretchMode.Uniform);
-    public BindableReactiveProperty<bool> IsExpandedStretchUniformToFill { get; } =
-        new(Settings.Gallery.ExpandedGalleryStretchMode == GalleryStretchMode.UniformToFill);
-    public BindableReactiveProperty<bool> IsExpandedStretchSquare { get; } =
-        new(Settings.Gallery.ExpandedGalleryStretchMode == GalleryStretchMode.Square);
-    public BindableReactiveProperty<bool> IsExpandedStretchSquareFill { get; } =
-        new(Settings.Gallery.ExpandedGalleryStretchMode == GalleryStretchMode.FillSquare);
 
-    public BindableReactiveProperty<bool> ShowMotionPhotoBadges { get; } =
-        new(Settings.Gallery.ShowMotionPhotoBadges);
+    public IReadOnlyBindableReactiveProperty<bool> IsDockedStretchUniform { get; }
+    public IReadOnlyBindableReactiveProperty<bool> IsDockedStretchUniformToFill { get; }
+    public IReadOnlyBindableReactiveProperty<bool> IsDockedStretchSquare { get; }
+    public IReadOnlyBindableReactiveProperty<bool> IsDockedStretchSquareFill { get; }
 
-    public BindableReactiveProperty<double> DockedGalleryItemSize { get; } =
-        new(Settings.Gallery.DockedGalleryItemSize);
+    public IReadOnlyBindableReactiveProperty<bool> IsExpandedStretchUniform { get; }
+    public IReadOnlyBindableReactiveProperty<bool> IsExpandedStretchUniformToFill { get; }
+    public IReadOnlyBindableReactiveProperty<bool> IsExpandedStretchSquare { get; }
+    public IReadOnlyBindableReactiveProperty<bool> IsExpandedStretchSquareFill { get; }
+
+    public BindableReactiveProperty<bool> ShowMotionPhotoBadges { get; }
+
+    public BindableReactiveProperty<double> DockedGalleryItemSize { get; }
 
     public BindableReactiveProperty<double> DockedGalleryMaxItemSize { get; } =
         new(GalleryDefaults.MaxDockedGalleryItemHeight);
@@ -110,8 +121,7 @@ public class GallerySharedSettingsViewModel
     public BindableReactiveProperty<double> DockedGalleryMinItemSize { get; } =
         new(GalleryDefaults.MinDockedGalleryItemHeight);
 
-    public BindableReactiveProperty<double> ExpandedGalleryItemSize { get; } =
-        new(Settings.Gallery.ExpandedGalleryItemSize);
+    public BindableReactiveProperty<double> ExpandedGalleryItemSize { get; }
 
     public BindableReactiveProperty<double> ExpandedGalleryMaxItemSize { get; } =
         new(GalleryDefaults.MaxExpandedGalleryItemHeight);
@@ -119,98 +129,67 @@ public class GallerySharedSettingsViewModel
     public BindableReactiveProperty<double> ExpandedGalleryMinItemSize { get; } =
         new(GalleryDefaults.MinExpandedGalleryItemHeight);
 
-    public BindableReactiveProperty<double> GalleryItemSpacing { get; } = new(Settings.Gallery.ItemSpacing);
-    public BindableReactiveProperty<double> GalleryLineSpacing { get; } = new(Settings.Gallery.LineSpacing);
+    public BindableReactiveProperty<double> GalleryItemSpacing { get; }
+    public BindableReactiveProperty<double> GalleryLineSpacing { get; }
 
-    public BindableReactiveProperty<GalleryStretchMode> DockedGalleryStretchMode { get; } =
-        new(Settings.Gallery.DockedGalleryStretchMode);
+    public BindableReactiveProperty<GalleryStretchMode> DockedGalleryStretchMode { get; }
 
-    public BindableReactiveProperty<GalleryStretchMode> ExpandedGalleryStretchMode { get; } =
-        new(Settings.Gallery.ExpandedGalleryStretchMode);
+    public BindableReactiveProperty<GalleryStretchMode> ExpandedGalleryStretchMode { get; }
 
-    public void Initialize()
+    /// <summary>
+    /// Starts the write-throughs of the gallery settings and their commands. Idempotent and safe from any thread; a
+    /// concurrent caller returns only after the subscriptions exist.
+    /// </summary>
+    public void Start()
     {
-        if (_isInitialized)
+        lock (_startLock)
         {
-            return;
-        }
-
-        _isInitialized = true;
-#if DEBUG
-        Debug.Assert(Settings?.Gallery is not null);
-#endif
-        SetDockedStretchModeCommand.Subscribe(mode =>
-        {
-            GallerySettingsConverter.UpdateDockedGalleryStretchMode(this, mode);
-        }, DebugHelper.LogError(nameof(GallerySharedSettingsViewModel), nameof(Initialize)));
-        
-        SetExpandedStretchModeCommand.Subscribe(mode =>
-        {
-            GallerySettingsConverter.UpdateExpandedGalleryStretchMode(this, mode);
-        }, DebugHelper.LogError(nameof(GallerySharedSettingsViewModel), nameof(Initialize)));
-        
-        ToggleGalleryVisibilitySubscription();
-
-        Observable.EveryValueChanged(Settings.Gallery, x => x.DockedGalleryItemSize)
-            .Subscribe(x =>
+            if (_isStarted)
             {
-                DockedGalleryItemSize.Value = x;
-            }, DebugHelper.LogError(nameof(GallerySharedSettingsViewModel), nameof(Settings.Gallery.DockedGalleryItemSize)));
+                return;
+            }
 
-        Observable.EveryValueChanged(Settings.Gallery, x => x.ExpandedGalleryItemSize)
-            .Subscribe(x =>
+            // The write-throughs subscribe first, so a later subscriber that reads the record sees the new value (ADR-0020)
+            ExpandedGalleryDisplayMode.Skip(1).Subscribe(mode =>
             {
-                ExpandedGalleryItemSize.Value = x;
-            }, DebugHelper.LogError(nameof(GallerySharedSettingsViewModel), nameof(Settings.Gallery.ExpandedGalleryItemSize)));
+                Settings.Gallery.ExpandedGalleryDisplayMode = mode;
+                if (GalleryDisplayModes.ShowsTiles(mode))
+                {
+                    Settings.Gallery.RowsWasLastUsedDisplayMode = mode is GalleryDisplayMode.Rows;
+                }
 
-        Observable.EveryValueChanged(Settings.Gallery, x => x.ItemSpacing)
-            .Subscribe(x =>
-            {
-                GalleryItemSpacing.Value = x;
-            }, DebugHelper.LogError(nameof(GallerySharedSettingsViewModel), nameof(Settings.Gallery.ItemSpacing)));
+                _coalescedSave.Soon();
+            }, DebugHelper.LogError(nameof(GallerySharedSettingsViewModel), nameof(ExpandedGalleryDisplayMode)));
 
-        Observable.EveryValueChanged(Settings.Gallery, x => x.LineSpacing)
-            .Subscribe(x =>
+            DockedGalleryStretchMode.Skip(1).Subscribe(mode =>
             {
-                GalleryLineSpacing.Value = x;
-            }, DebugHelper.LogError(nameof(GallerySharedSettingsViewModel), nameof(Settings.Gallery.LineSpacing)));
-
-        Observable.EveryValueChanged(Settings.Gallery, x => x.DockedGalleryStretchMode)
-            .Subscribe(x =>
-            {
-                GallerySettingsConverter.UpdateDockedGalleryStretchMode(this, x);
+                Settings.Gallery.DockedGalleryStretchMode = mode;
+                _coalescedSave.Soon();
             }, DebugHelper.LogError(nameof(GallerySharedSettingsViewModel), nameof(DockedGalleryStretchMode)));
 
-        Observable.EveryValueChanged(Settings.Gallery, x => x.ExpandedGalleryStretchMode)
-            .Subscribe(x =>
+            ExpandedGalleryStretchMode.Skip(1).Subscribe(mode =>
             {
-                GallerySettingsConverter.UpdateExpandedGalleryStretchMode(this, x);
+                Settings.Gallery.ExpandedGalleryStretchMode = mode;
+                _coalescedSave.Soon();
             }, DebugHelper.LogError(nameof(GallerySharedSettingsViewModel), nameof(ExpandedGalleryStretchMode)));
 
-
-        DockedGalleryItemSize
-            .Skip(1)
-            .SubscribeAwait(async (x, _) =>
+            DockedGalleryItemSize.Skip(1).Subscribe(size =>
             {
-                Settings.Gallery.DockedGalleryItemSize = x;
-                await SaveSettingsAsync().ConfigureAwait(false);
-            }, DebugHelper.LogError(nameof(GallerySharedSettingsViewModel), nameof(GalleryItemSpacing)));
+                Settings.Gallery.DockedGalleryItemSize = size;
+                _coalescedSave.Soon();
+            }, DebugHelper.LogError(nameof(GallerySharedSettingsViewModel), nameof(DockedGalleryItemSize)));
 
-        ExpandedGalleryItemSize
-            .Skip(1)
-            .SubscribeAwait(async (x, _) =>
+            ExpandedGalleryItemSize.Skip(1).Subscribe(size =>
             {
-                Settings.Gallery.ExpandedGalleryItemSize = x;
-                await SaveSettingsAsync().ConfigureAwait(false);
-            }, DebugHelper.LogError(nameof(GallerySharedSettingsViewModel), nameof(GalleryItemSpacing)));
+                Settings.Gallery.ExpandedGalleryItemSize = size;
+                _coalescedSave.Soon();
+            }, DebugHelper.LogError(nameof(GallerySharedSettingsViewModel), nameof(ExpandedGalleryItemSize)));
 
-        GalleryItemSpacing
-            .Skip(1)
-            .SubscribeAwait(async (x, _) =>
+            GalleryItemSpacing.Skip(1).Subscribe(spacing =>
             {
                 // A spacing below the minimum is not accepted: the slider is put back on the accepted one
-                var accepted = GalleryDefaults.AcceptedItemSpacing(x);
-                if (Math.Abs(accepted - x) > 0.001)
+                var accepted = GalleryDefaults.AcceptedItemSpacing(spacing);
+                if (Math.Abs(accepted - spacing) > 0.001)
                 {
                     GalleryItemSpacing.Value = accepted;
                 }
@@ -218,17 +197,15 @@ public class GallerySharedSettingsViewModel
                 if (Math.Abs(Settings.Gallery.ItemSpacing - accepted) > 0.001)
                 {
                     Settings.Gallery.ItemSpacing = accepted;
-                    await SaveSettingsAsync().ConfigureAwait(false);
+                    _coalescedSave.Soon();
                 }
             }, DebugHelper.LogError(nameof(GallerySharedSettingsViewModel), nameof(GalleryItemSpacing)));
 
-        GalleryLineSpacing
-            .Skip(1)
-            .SubscribeAwait(async (x, _) =>
+            GalleryLineSpacing.Skip(1).Subscribe(spacing =>
             {
                 // A spacing below the minimum is not accepted: the slider is put back on the accepted one
-                var accepted = GalleryDefaults.AcceptedLineSpacing(x);
-                if (Math.Abs(accepted - x) > 0.001)
+                var accepted = GalleryDefaults.AcceptedLineSpacing(spacing);
+                if (Math.Abs(accepted - spacing) > 0.001)
                 {
                     GalleryLineSpacing.Value = accepted;
                 }
@@ -236,59 +213,47 @@ public class GallerySharedSettingsViewModel
                 if (Math.Abs(Settings.Gallery.LineSpacing - accepted) > 0.001)
                 {
                     Settings.Gallery.LineSpacing = accepted;
-                    await SaveSettingsAsync().ConfigureAwait(false);
+                    _coalescedSave.Soon();
                 }
             }, DebugHelper.LogError(nameof(GallerySharedSettingsViewModel), nameof(GalleryLineSpacing)));
-    }
 
-    private async Task SaveAsync()
-    {
-        try
-        {
-            await _save().ConfigureAwait(false);
+            ShowMotionPhotoBadges.Skip(1).Subscribe(show =>
+            {
+                if (Settings.Gallery.ShowMotionPhotoBadges != show)
+                {
+                    Settings.Gallery.ShowMotionPhotoBadges = show;
+                    _coalescedSave.Soon();
+                }
+            }, DebugHelper.LogError(nameof(GallerySharedSettingsViewModel), nameof(ShowMotionPhotoBadges)));
+
+            SetExpandedDisplayModeCommand.Subscribe(mode =>
+            {
+                ExpandedGalleryDisplayMode.Value = GalleryDisplayModes.Validate(mode);
+            }, DebugHelper.LogError(nameof(GallerySharedSettingsViewModel), nameof(SetExpandedDisplayModeCommand)));
+
+            ToggleExpandedDisplayModeCommand.Subscribe(_ =>
+            {
+                ExpandedGalleryDisplayMode.Value = GalleryDisplayModes.Toggle(ExpandedGalleryDisplayMode.Value,
+                    Settings.Gallery.RowsWasLastUsedDisplayMode);
+            }, DebugHelper.LogError(nameof(GallerySharedSettingsViewModel), nameof(ToggleExpandedDisplayModeCommand)));
+
+            SetDockedStretchModeCommand.Subscribe(mode =>
+            {
+                if (Enum.IsDefined(mode))
+                {
+                    DockedGalleryStretchMode.Value = mode;
+                }
+            }, DebugHelper.LogError(nameof(GallerySharedSettingsViewModel), nameof(SetDockedStretchModeCommand)));
+
+            SetExpandedStretchModeCommand.Subscribe(mode =>
+            {
+                if (Enum.IsDefined(mode))
+                {
+                    ExpandedGalleryStretchMode.Value = mode;
+                }
+            }, DebugHelper.LogError(nameof(GallerySharedSettingsViewModel), nameof(SetExpandedStretchModeCommand)));
+
+            _isStarted = true;
         }
-        catch (Exception e)
-        {
-            DebugHelper.LogDebug(nameof(GallerySharedSettingsViewModel), nameof(SaveAsync), e);
-        }
-    }
-
-    private void ToggleGalleryVisibilitySubscription()
-    {
-#if DEBUG
-        Debug.Assert(Settings?.Gallery is not null);
-#endif
-
-        ShowMotionPhotoBadges
-            .Skip(1)
-            .SubscribeAwait(async (x, _) =>
-            {
-                if (Settings.Gallery.ShowMotionPhotoBadges != x)
-                {
-                    Settings.Gallery.ShowMotionPhotoBadges = x;
-                    await SaveSettingsAsync().ConfigureAwait(false);
-                }
-            }, result =>
-            {
-#if DEBUG
-                if (result is { IsFailure: true, Exception: not null })
-                {
-                    DebugHelper.LogDebug(nameof(GallerySharedSettingsViewModel), nameof(Initialize),
-                        result.Exception);
-                }
-#endif
-            });
-
-        Observable.EveryValueChanged(Settings.Gallery, x => x.ShowMotionPhotoBadges)
-            .Subscribe(x => { ShowMotionPhotoBadges.Value = x; }, result =>
-            {
-#if DEBUG
-                if (result is { IsFailure: true, Exception: not null })
-                {
-                    DebugHelper.LogDebug(nameof(GallerySharedSettingsViewModel), nameof(Initialize),
-                        result.Exception);
-                }
-#endif
-            });
     }
 }

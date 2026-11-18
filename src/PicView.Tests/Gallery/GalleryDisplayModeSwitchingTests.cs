@@ -220,7 +220,7 @@ public class GalleryDisplayModeSwitchingTests
             saves++;
             return ValueTask.FromResult(true);
         });
-        core.GallerySettings.Initialize();
+        core.GallerySettings.Start();
         var idle = core.GallerySettings.Saving;
         var published = 0;
         using var subscription = core.GallerySettings.ExpandedGalleryDisplayMode.Skip(1).Subscribe(_ => published++);
@@ -274,7 +274,7 @@ public class GalleryDisplayModeSwitchingTests
     private static void WithGallerySettings(Action<CoreViewModel, GallerySettingsView> test)
     {
         var core = NewCore();
-        core.GallerySettings.Initialize();
+        core.GallerySettings.Start();
         var view = new GallerySettingsView();
         var window = new Window { DataContext = core, Content = view };
         window.Show();
@@ -302,7 +302,7 @@ public class GalleryDisplayModeSwitchingTests
     private static void WithGalleryView(Action<CoreViewModel, TabViewModel, GalleryView> test)
     {
         var core = NewCore();
-        core.GallerySettings.Initialize();
+        core.GallerySettings.Start();
         var vm = new MainWindowViewModel(core, core.Translation, core.GlobalSettings!, core.GallerySettings);
         var tab = vm.WindowTabs.ActiveTab.Value;
         var application = Application.Current!;

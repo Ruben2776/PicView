@@ -181,7 +181,7 @@ public class GalleryViewModelTests
     [Fact]
     public void Appearance_DisplayModeChanged_WhileExpanded_FollowsIt()
     {
-        var shared = new GallerySharedSettingsViewModel(NoSave);
+        var shared = StartedGallerySettings.New(NoSave);
         using var gallery = new GalleryViewModel(NoSave);
         gallery.Initialize(shared);
         gallery.Switcher.ToggleExpanded();
@@ -202,7 +202,7 @@ public class GalleryViewModelTests
     [Fact]
     public void Appearance_DisplayModeChanged_WhileDocked_PublishesNothingUntilExpanded()
     {
-        var shared = new GallerySharedSettingsViewModel(NoSave);
+        var shared = StartedGallerySettings.New(NoSave);
         using var gallery = new GalleryViewModel(NoSave);
         gallery.Initialize(shared);
         gallery.Switcher.Start(true);
@@ -226,7 +226,7 @@ public class GalleryViewModelTests
     public void Appearance_DisplayModeChanged_ReachesEveryExpandedTab()
     {
         // One shared view model serves every tab and every Main Window (Review Focus 1)
-        var shared = new GallerySharedSettingsViewModel(NoSave);
+        var shared = StartedGallerySettings.New(NoSave);
         using var first = new GalleryViewModel(NoSave);
         using var second = new GalleryViewModel(NoSave);
         first.Initialize(shared);
@@ -244,7 +244,7 @@ public class GalleryViewModelTests
     [Fact]
     public void Appearance_DisplayModeChanged_WhileHidden_PublishesNothingAndComesBackInTheNewMode()
     {
-        var shared = new GallerySharedSettingsViewModel(NoSave);
+        var shared = StartedGallerySettings.New(NoSave);
         using var gallery = new GalleryViewModel(NoSave);
         gallery.Initialize(shared);
         gallery.Switcher.ToggleExpanded();
@@ -269,7 +269,7 @@ public class GalleryViewModelTests
     [Fact]
     public void Appearance_DisplayModeChanged_TwoExpandedTabsSharingTheSettings_BothFollowIt()
     {
-        var shared = new GallerySharedSettingsViewModel(NoSave);
+        var shared = StartedGallerySettings.New(NoSave);
         using var first = new GalleryViewModel(NoSave);
         using var second = new GalleryViewModel(NoSave);
         first.Initialize(shared);
@@ -302,7 +302,7 @@ public class GalleryViewModelTests
     public void Appearance_DisplayModeChanged_WhileAnExpandedGalleryIsHidden_PublishesNothingUntilItIsShownAgain(
         bool byFileLimit)
     {
-        var shared = new GallerySharedSettingsViewModel(NoSave);
+        var shared = StartedGallerySettings.New(NoSave);
         using var gallery = new GalleryViewModel(NoSave);
         gallery.Initialize(shared);
         gallery.Switcher.ToggleExpanded();

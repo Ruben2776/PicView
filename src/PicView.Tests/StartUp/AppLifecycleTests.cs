@@ -26,6 +26,7 @@ using PicView.Core.Config;
 using PicView.Core.Favorites;
 using PicView.Core.FileHandling;
 using PicView.Core.FileHistory;
+using PicView.Core.Gallery;
 using PicView.Core.ImageDecoding;
 using PicView.Core.IPlatform;
 using PicView.Core.Keybindings;
@@ -100,7 +101,8 @@ public class AppLifecycleTests : IAsyncDisposable
                 file.Extension.Equals(".tif", StringComparison.OrdinalIgnoreCase)
                     ? ThreePageTiff(file)
                     : new ImageModel { FileInfo = file });
-        }, new GlobalSettingsViewModel(static () => ValueTask.FromResult(true)));
+        }, new GlobalSettingsViewModel(static () => ValueTask.FromResult(true)),
+            saveGallerySettings: static () => ValueTask.FromResult(true));
         _provider = new LifecycleWindowProvider(_core);
         _sharedFiles = new FolderSharedFiles(_folder);
     }
@@ -159,6 +161,21 @@ public class AppLifecycleTests : IAsyncDisposable
         var toggled = !_core.GlobalSettings.IsLooping.Value;
         _core.GlobalSettings.IsLooping.Value = toggled;
         Assert.Equal(toggled, Settings.UIProperties.Looping);
+    }
+
+    [AvaloniaFact]
+    public async Task StartAsync_FirstWindowShownWithoutAFile_GallerySettingsWriteTheirStoredValue()
+    {
+        var app = CreateApp();
+
+        await app.StartAsync(settingsExists: true, []);
+        await WaitUntilOpenedAsync(app.MainWindows.Open[0]);
+
+        var gallerySettings = _core.GallerySettings;
+        gallerySettings.SetDockedStretchModeCommand.Execute(GalleryStretchMode.Square);
+        gallerySettings.DockedGalleryItemSize.Value = 99;
+        Assert.Equal(GalleryStretchMode.Square, Settings.Gallery.DockedGalleryStretchMode);
+        Assert.Equal(99, Settings.Gallery.DockedGalleryItemSize);
     }
 
     [AvaloniaFact]

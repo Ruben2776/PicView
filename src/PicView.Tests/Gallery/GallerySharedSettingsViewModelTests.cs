@@ -14,11 +14,15 @@ public class GallerySharedSettingsViewModelTests
         SetDefaults();
     }
 
-    private GallerySharedSettingsViewModel Create() => new(() =>
+    private GallerySharedSettingsViewModel Create() => StartedGallerySettings.New(CountingSave);
+
+    private GallerySharedSettingsViewModel Unstarted() => new(CountingSave);
+
+    private ValueTask<bool> CountingSave()
     {
         _saves++;
         return ValueTask.FromResult(true);
-    });
+    }
 
     [Theory]
     [InlineData(GalleryDisplayMode.Columns, true, false, false, false)]
@@ -29,7 +33,7 @@ public class GallerySharedSettingsViewModelTests
     {
         Settings.Gallery.ExpandedGalleryDisplayMode = stored;
 
-        var shared = Create();
+        var shared = Unstarted();
 
         Assert.Equal(stored, shared.ExpandedGalleryDisplayMode.Value);
         Assert.Equal(columns, shared.IsExpandedDisplayModeColumns.Value);
@@ -128,6 +132,7 @@ public class GallerySharedSettingsViewModelTests
     public async Task WriteThrough_SaveThrows_KeepsWritingTheRecord()
     {
         var shared = new GallerySharedSettingsViewModel(() => throw new IOException("disk full"));
+        shared.Start();
 
         shared.SetExpandedDisplayModeCommand.Execute(GalleryDisplayMode.Masonry);
         await shared.Saving;
@@ -136,5 +141,127 @@ public class GallerySharedSettingsViewModelTests
 
         Assert.Equal(GalleryDisplayMode.Rows, shared.ExpandedGalleryDisplayMode.Value);
         Assert.Equal(GalleryDisplayMode.Rows, Settings.Gallery.ExpandedGalleryDisplayMode);
+    }
+
+    public static TheoryData<bool, GalleryStretchMode, bool, bool, bool, bool> Stretches => new()
+    {
+        // docked, mode, uniform, uniformToFill, square, squareFill
+        { true, GalleryStretchMode.Uniform, true, false, false, false },
+        { true, GalleryStretchMode.Square, false, false, true, false },
+        { true, GalleryStretchMode.FillSquare, false, false, false, true },
+        { false, GalleryStretchMode.UniformToFill, false, true, false, false },
+        { false, GalleryStretchMode.Square, false, false, true, false },
+        { false, GalleryStretchMode.FillSquare, false, false, false, true },
+    };
+
+    [Theory, MemberData(nameof(Stretches))]
+    public void SetStretchModeCommand_AnotherMode_WritesTheRecordSavesOnceAndSetsOneFlag(bool docked,
+        GalleryStretchMode mode, bool uniform, bool uniformToFill, bool square, bool squareFill)
+    {
+        var shared = Create();
+
+        (docked ? shared.SetDockedStretchModeCommand : shared.SetExpandedStretchModeCommand).Execute(mode);
+
+        Assert.Equal(mode, docked ? Settings.Gallery.DockedGalleryStretchMode : Settings.Gallery.ExpandedGalleryStretchMode);
+        Assert.Equal(mode, (docked ? shared.DockedGalleryStretchMode : shared.ExpandedGalleryStretchMode).Value);
+        Assert.Equal(uniform, (docked ? shared.IsDockedStretchUniform : shared.IsExpandedStretchUniform).Value);
+        Assert.Equal(uniformToFill, (docked ? shared.IsDockedStretchUniformToFill : shared.IsExpandedStretchUniformToFill).Value);
+        Assert.Equal(square, (docked ? shared.IsDockedStretchSquare : shared.IsExpandedStretchSquare).Value);
+        Assert.Equal(squareFill, (docked ? shared.IsDockedStretchSquareFill : shared.IsExpandedStretchSquareFill).Value);
+        Assert.Equal(1, _saves);
+    }
+
+    [Fact]
+    public void SetStretchModeCommand_SameOrUnknownMode_WritesAndSavesNothing()
+    {
+        var shared = Create();
+        var docked = Settings.Gallery.DockedGalleryStretchMode;
+
+        shared.SetDockedStretchModeCommand.Execute(docked);
+        shared.SetDockedStretchModeCommand.Execute((GalleryStretchMode)2);
+
+        Assert.Equal(docked, shared.DockedGalleryStretchMode.Value);
+        Assert.Equal(docked, Settings.Gallery.DockedGalleryStretchMode);
+        Assert.True(shared.IsDockedStretchUniformToFill.Value);
+        Assert.Equal(0, _saves);
+    }
+
+    [Fact]
+    public void SizesSpacingsAndBadge_Changed_WriteTheRecordAndSaveThroughTheInjectedSave()
+    {
+        var shared = Create();
+
+        shared.DockedGalleryItemSize.Value = 77;
+        shared.ExpandedGalleryItemSize.Value = 222;
+        shared.GalleryItemSpacing.Value = 12;
+        shared.GalleryLineSpacing.Value = 9;
+        shared.ShowMotionPhotoBadges.Value = !Settings.Gallery.ShowMotionPhotoBadges;
+
+        Assert.Equal(77, Settings.Gallery.DockedGalleryItemSize);
+        Assert.Equal(222, Settings.Gallery.ExpandedGalleryItemSize);
+        Assert.Equal(12, Settings.Gallery.ItemSpacing);
+        Assert.Equal(9, Settings.Gallery.LineSpacing);
+        Assert.Equal(shared.ShowMotionPhotoBadges.Value, Settings.Gallery.ShowMotionPhotoBadges);
+        Assert.Equal(5, _saves);
+    }
+
+    [Fact]
+    public void AnySetting_ChangedBeforeStart_WritesAndSavesNothing()
+    {
+        var shared = Unstarted();
+        var before = (Settings.Gallery.DockedGalleryStretchMode, Settings.Gallery.DockedGalleryItemSize,
+            Settings.Gallery.ItemSpacing, Settings.Gallery.ExpandedGalleryDisplayMode);
+
+        shared.SetDockedStretchModeCommand.Execute(GalleryStretchMode.Square);
+        shared.SetExpandedDisplayModeCommand.Execute(GalleryDisplayMode.Rows);
+        shared.DockedGalleryItemSize.Value = 77;
+        shared.GalleryItemSpacing.Value = 12;
+
+        Assert.Equal(before, (Settings.Gallery.DockedGalleryStretchMode, Settings.Gallery.DockedGalleryItemSize,
+            Settings.Gallery.ItemSpacing, Settings.Gallery.ExpandedGalleryDisplayMode));
+        Assert.Equal(0, _saves);
+    }
+
+    [Fact]
+    public void Start_CalledTwiceAndFromManyThreads_SavesOncePerChange()
+    {
+        var shared = Unstarted();
+
+        Parallel.For(0, 16, _ => shared.Start());
+        shared.Start();
+        shared.DockedGalleryItemSize.Value = 77;
+
+        Assert.Equal(1, _saves);
+    }
+
+    [Fact]
+    public async Task ItemSize_ChangedManyTimesWhileOneSaveRuns_SavesOnceMoreWithTheLastValue()
+    {
+        var saves = 0;
+        var gate = new TaskCompletionSource<bool>();
+        var shared = StartedGallerySettings.New(async () => { saves++; return await gate.Task; });
+
+        for (var size = 60; size <= 100; size += 10)
+        {
+            shared.DockedGalleryItemSize.Value = size;
+        }
+        gate.SetResult(true);
+        await shared.Saving;
+
+        Assert.Equal(100, Settings.Gallery.DockedGalleryItemSize);
+        Assert.Equal(2, saves);
+    }
+
+    [Fact]
+    public async Task ItemSize_SaveThrows_KeepsWritingTheRecord()
+    {
+        var shared = StartedGallerySettings.New(() => throw new IOException("disk full"));
+
+        shared.DockedGalleryItemSize.Value = 77;
+        await shared.Saving;
+        shared.DockedGalleryItemSize.Value = 88;
+        await shared.Saving;
+
+        Assert.Equal(88, Settings.Gallery.DockedGalleryItemSize);
     }
 }

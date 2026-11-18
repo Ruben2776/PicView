@@ -100,6 +100,18 @@ public class ThumbnailStretchTests
         Assert.Same(view.FindControl<ComboBoxItem>(itemName), comboBox.SelectedItem);
     }
 
+    [AvaloniaFact]
+    public void SettingsComboBox_StretchPickedWithNoTab_WritesTheRecord()
+    {
+        var (core, view) = ShowGallerySettings();
+        var comboBox = view.FindControl<ComboBox>("DockedGalleryComboBox")!;
+
+        comboBox.SelectedItem = view.FindControl<ComboBoxItem>("DockedGallerySquareItem");
+
+        Assert.Equal(GalleryStretchMode.Square, Settings.Gallery.DockedGalleryStretchMode);
+        Assert.True(core.GallerySettings.IsDockedStretchSquare.Value);
+    }
+
     [Theory]
     [InlineData(GalleryStretchMode.Uniform, Stretch.Uniform)]
     [InlineData(GalleryStretchMode.Square, Stretch.Uniform)]
@@ -124,8 +136,10 @@ public class ThumbnailStretchTests
 
     private static (CoreViewModel Core, GallerySettingsView View) ShowGallerySettings()
     {
-        var core = new CoreViewModel(null, _ => ValueTask.FromResult(new ImageModel()));
-        core.GallerySettings.Initialize();
+        // The stretch saves through the delegate, so no test here writes the settings file
+        var core = new CoreViewModel(null, _ => ValueTask.FromResult(new ImageModel()),
+            saveGallerySettings: static () => ValueTask.FromResult(true));
+        core.GallerySettings.Start();
         var view = new GallerySettingsView();
         var window = new Window { DataContext = core, Content = view };
         window.Show();

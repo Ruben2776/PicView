@@ -26,6 +26,5 @@ public static class TabNavigationInitializer
     internal static void InitializeGallery(CoreViewModel core, TabViewModel tab)
     {
         tab.Gallery.Initialize(core.GallerySettings);
-        core.GallerySettings.Initialize();
     }
 }
