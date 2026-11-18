@@ -126,18 +126,17 @@ public class GalleryViewModel : IDisposable
                 shared.ExpandedGalleryStretchMode,
                 shared.ExpandedGalleryDisplayMode,
                 dockPositions.Prepend(gallery.DockPosition),
-                Observable.EveryValueChanged(gallery, g => g.ItemSpacing).Prepend(gallery.ItemSpacing),
+                shared.GalleryItemSpacing.Select(GalleryDefaults.AcceptedItemSpacing),
                 static (mode, dockedSize, expandedSize, dockedStretch, expandedStretch, displayMode, _, spacing) =>
                     ComputeAppearance(mode, dockedSize, expandedSize, dockedStretch, expandedStretch, spacing,
                         displayMode))
             .Subscribe(x => _appearance.Value = x, DebugHelper.LogError(nameof(GalleryViewModel), nameof(Initialize)))
             .AddTo(ref _disposables);
 
-        Observable.EveryValueChanged(gallery, g => g.LineSpacing)
-            .Subscribe(x =>
-            {
-                LineSpacing.Value = x;
-            }, DebugHelper.LogError(nameof(GalleryViewModel), nameof(Initialize)))
+        // A refused spacing is set back from inside the write-through, so a follower sees the refused value last
+        shared.GalleryLineSpacing
+            .Select(GalleryDefaults.AcceptedLineSpacing)
+            .Subscribe(x => LineSpacing.Value = x, DebugHelper.LogError(nameof(GalleryViewModel), nameof(Initialize)))
             .AddTo(ref _disposables);
 
         ToggleExpandedCommand.Subscribe(_ => Switcher.ToggleExpanded(),
