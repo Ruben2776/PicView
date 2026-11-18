@@ -152,6 +152,24 @@ public class AppLifecycleTests : IAsyncDisposable
     }
 
     [AvaloniaFact]
+    public async Task StartAsync_LanguageLoaded_FillsTheMenuTexts()
+    {
+        var app = CreateApp();
+
+        await app.StartAsync(settingsExists: true, []);
+
+        // The language loads on a background thread; the menu texts follow it (ADR-0036)
+        var deadline = DateTime.UtcNow.AddSeconds(10);
+        while (string.IsNullOrEmpty(_core.GlobalSettings.LoopingText.Value) && DateTime.UtcNow < deadline)
+        {
+            await Task.Delay(20);
+        }
+
+        Assert.False(string.IsNullOrEmpty(_core.GlobalSettings.LoopingText.Value));
+        Assert.False(string.IsNullOrEmpty(_core.GlobalSettings.InterfaceText.Value));
+    }
+
+    [AvaloniaFact]
     public async Task StartAsync_FirstWindowShown_ActionSettingsWriteTheirStoredValue()
     {
         var app = CreateApp();

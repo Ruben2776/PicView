@@ -5,8 +5,22 @@ namespace PicView.Tests.Localization;
 public partial class TranslationBindingTests
 {
     // A binding whose path stops at the translation's bindable shows the bindable, not its text.
-    [GeneratedRegex(@"Binding\s+(Path=)?([\w.]*\.)?Translation\.\w+\s*[,}]")]
+    // Whatever leads up to it: Translation.X, $parent[Window].((vm:T)DataContext).Translation.X, #Name.(...).Translation.X
+    [GeneratedRegex(@"\bTranslation\.\w+\b(?!\.Value\b)")]
     private static partial Regex BindingWithoutValue();
+
+    [Theory]
+    [InlineData("Text=\"{CompiledBinding Translation.Copy}\"", true)]
+    [InlineData("Header=\"{Binding Translation.Copy, Mode=OneWay}\"", true)]
+    [InlineData("Header=\"{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.Copy}\"", true)]
+    [InlineData("Header=\"{CompiledBinding #MainTabControl.((viewModels:CoreViewModel)DataContext).Translation.Copy, Mode=OneWay}\"", true)]
+    [InlineData("Text=\"{CompiledBinding Translation.Copy.Value}\"", false)]
+    [InlineData("Header=\"{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.Copy.Value}\"", false)]
+    [InlineData("Text=\"{CompiledBinding Translation.Copy.Value,\"", false)]
+    public void BindingWithoutValue_Line_IsSeenOnlyWhenValueIsMissing(string line, bool seen)
+    {
+        Assert.Equal(seen, BindingWithoutValue().IsMatch(line));
+    }
 
     [Fact]
     public void AxamlBindings_OnATranslation_EndInValue()
