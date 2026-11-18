@@ -1,4 +1,3 @@
-using Slideshow = PicView.Avalonia.Navigation.Slideshow;
 using Avalonia.Controls;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Gallery;
@@ -75,7 +74,7 @@ public sealed class ContextualActionHandler(MainWindow window, MainWindowViewMod
             // Until then an animated image claims nothing, so its Keybinds fall through as usual.
 
             case (InputMode.Slideshow, Cancel):
-                Slideshow.StopSlideshow(vm);
+                vm.Slideshow.Stop();
                 return true;
             case (InputMode.Slideshow, PlayPause):
                 // TODO: Pause and resume the slideshow. Claimed so Space does not run its ordinary Action meanwhile.

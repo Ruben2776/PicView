@@ -317,9 +317,9 @@ public abstract class MainWindow : Window, IMainWindow
         }
 
         // Handle slideshow
-        if (Slideshow.IsRunning)
+        if (vm.Slideshow.IsRunning)
         {
-            Slideshow.StopSlideshow(vm);
+            vm.Slideshow.Stop();
             return;
         }
         

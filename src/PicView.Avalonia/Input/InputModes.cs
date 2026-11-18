@@ -1,5 +1,4 @@
 using PicView.Avalonia.CustomControls;
-using PicView.Avalonia.Navigation;
 using PicView.Avalonia.Views.UC;
 using PicView.Core.ImageDecoding;
 using PicView.Core.ViewModels;
@@ -25,7 +24,7 @@ public static class InputModes
             IsRenaming: vm.IsEditableTitlebarOpen.CurrentValue,
             IsCropping: activeTab?.CropService?.IsCropping ?? false,
             IsMotionPhotoActive: activeTab?.CurrentView.Value is NavigableView { Viewer: ImageViewer { IsMotionPhotoActive: true } },
-            IsSlideshowRunning: Slideshow.IsRunning,
+            IsSlideshowRunning: vm.Slideshow.IsRunning,
             IsAnimatedImageActive: activeTab?.Model?.ImageType is
                 ImageType.AnimatedGif or ImageType.AnimatedWebp or ImageType.AnimatedAvif,
             IsGalleryExpanded: activeTab?.Gallery.IsGalleryExpanded.CurrentValue ?? false);

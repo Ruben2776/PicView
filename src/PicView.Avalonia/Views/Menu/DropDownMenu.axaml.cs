@@ -132,52 +132,60 @@ public partial class DropDownMenu : AnimatedMenu
             .AddTo(ref _disposables);
     }
 
+    private void StartSlideshow(int milliseconds)
+    {
+        if (_mainWindow.ViewModel is { } vm)
+        {
+            _ = vm.Slideshow.Toggle(milliseconds, isKeyHeldDown: false);
+        }
+    }
+
     private void SlideShow120SecOnClick(object? sender, RoutedEventArgs e)
     {
         CloseDropDownMenu();
-        _ = Slideshow.StartSlideshow(_mainWindow, 120000);
+        StartSlideshow(120000);
     }
 
     private void SlideShow90SecOnClick(object? sender, RoutedEventArgs e)
     {
         CloseDropDownMenu();
-        _ = Slideshow.StartSlideshow(_mainWindow, 90000);
+        StartSlideshow(90000);
     }
 
     private void SlideShow60SecOnClick(object? sender, RoutedEventArgs e)
     {
         CloseDropDownMenu();
-        _ = Slideshow.StartSlideshow(_mainWindow, 60000);
+        StartSlideshow(60000);
     }
 
     private void SlideShow30SecOnClick(object? sender, RoutedEventArgs e)
     {
         CloseDropDownMenu();
-        _ = Slideshow.StartSlideshow(_mainWindow, 30000);
+        StartSlideshow(30000);
     }
 
     private void SlideShow20SecOnClick(object? sender, RoutedEventArgs e)
     {
         CloseDropDownMenu();
-        _ = Slideshow.StartSlideshow(_mainWindow, 20000);
+        StartSlideshow(20000);
     }
 
     private void SlideShow10SecOnClick(object? sender, RoutedEventArgs e)
     {
         CloseDropDownMenu();
-        _ = Slideshow.StartSlideshow(_mainWindow, 10000);
+        StartSlideshow(10000);
     }
 
     private void SlideShow5SecOnClick(object? sender, RoutedEventArgs e)
     {
         CloseDropDownMenu();
-        _ = Slideshow.StartSlideshow(_mainWindow, 5000);
+        StartSlideshow(5000);
     }
 
     private void SlideShow2SecOnClick(object? sender, RoutedEventArgs e)
     {
         CloseDropDownMenu();
-        _ = Slideshow.StartSlideshow(_mainWindow, 2000);
+        StartSlideshow(2000);
     }
 
     private ObservableCollection<T> Mirror<T>(ObservableList<T> source) =>

@@ -1,4 +1,3 @@
-using Slideshow = PicView.Avalonia.Navigation.Slideshow;
 using Avalonia;
 using Avalonia.Threading;
 using ImageMagick;
@@ -43,9 +42,9 @@ public class SlideshowTests
         {
             Assert.True(vm.WindowTabs.ActiveTab.CurrentValue.CanNavigateForwards.Value);
 
-            await Slideshow.StartSlideshow(window, 60000);
+            await vm.Slideshow.Toggle(60000, isKeyHeldDown: false);
             Assert.True(vm.IsFullscreen.Value);
-            Slideshow.StopSlideshow(vm);
+            vm.Slideshow.Stop();
 
             var expected = WindowPlacement.Centered(window.WindowFitter.Screen, window.ClientSize.Width,
                 window.ClientSize.Height);
@@ -54,7 +53,7 @@ public class SlideshowTests
             Pump(() => window.Position == centered);
 
             Assert.Equal(centered, window.Position);
-            Assert.False(Slideshow.IsRunning);
+            Assert.False(vm.Slideshow.IsRunning);
         }
         finally
         {
@@ -68,9 +67,9 @@ public class SlideshowTests
         var (window, vm) = CreateWindow(autoFit: false);
         try
         {
-            await Slideshow.StartSlideshow(window, 60000);
+            await vm.Slideshow.Toggle(60000, isKeyHeldDown: false);
             Assert.True(vm.IsFullscreen.Value);
-            Slideshow.StopSlideshow(vm);
+            vm.Slideshow.Stop();
             Pump(() => false);
 
             Assert.False(vm.IsFullscreen.Value);
