@@ -40,6 +40,10 @@ _Avoid_: Enter action, OK button
 An Input Mode that overrides specific Actions, disallows Actions that need a still image (such as `Crop`), and lets every other Keybind work as usual. Slideshow, Motion Photo, Animated Image and Gallery are non-blocking.
 _Avoid_: Overlay mode, passive mode
 
+**Slideshow**:
+A Main Window going to its next file on a timer, shown fullscreen while it runs. Each Main Window has its own, with its own interval, and several can run at once. It puts only its own window in the Slideshow Input Mode, so another window's Keybinds, Escape and Close leave it alone. It stops when its window leaves fullscreen any other way and when the window closes. The screensaver stays off while any window runs one.
+_Avoid_: Slide show, autoplay
+
 **Window Action**:
 An Action whose only effect is to open a window of its own, or bring it forward: About, Settings, Image Information, Effects, Convert, Keybindings, Batch Resize, Resize and File Associations. Crop and Dialog let them run, since the window works outside the main view; an open menu closes as the window opens, and an open pop-up stays. Print is not one, since it may print at once.
 _Avoid_: Tool Window Action, since Settings, About, Keybindings and File Associations are not Tool Windows
