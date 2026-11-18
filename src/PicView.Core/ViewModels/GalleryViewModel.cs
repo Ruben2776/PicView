@@ -117,7 +117,10 @@ public class GalleryViewModel : IDisposable
             .AddTo(ref _disposables);
 
         // The dock position and the hover bar inputs are read when the record is computed, so a dock move published
-        // before the poll sees it, as DockAt does, already has its edge; the poll only says when to compute again
+        // before the poll sees it, as DockAt does, already has its edge; the poll only says when to compute again.
+        // The item and line spacing go through Select(Accepted...Spacing) below: a refused spacing is set back from
+        // inside the write-through, so a follower subscribed after the settings start is notified of the refused
+        // value last, and the accepted value is what it must keep
         Observable.CombineLatest(
                 Switcher.ShownMode,
                 shared.DockedGalleryItemSize,
@@ -126,18 +129,17 @@ public class GalleryViewModel : IDisposable
                 shared.ExpandedGalleryStretchMode,
                 shared.ExpandedGalleryDisplayMode,
                 dockPositions.Prepend(gallery.DockPosition),
-                Observable.EveryValueChanged(gallery, g => g.ItemSpacing).Prepend(gallery.ItemSpacing),
+                shared.GalleryItemSpacing.Select(GalleryDefaults.AcceptedItemSpacing),
                 static (mode, dockedSize, expandedSize, dockedStretch, expandedStretch, displayMode, _, spacing) =>
                     ComputeAppearance(mode, dockedSize, expandedSize, dockedStretch, expandedStretch, spacing,
                         displayMode))
             .Subscribe(x => _appearance.Value = x, DebugHelper.LogError(nameof(GalleryViewModel), nameof(Initialize)))
             .AddTo(ref _disposables);
 
-        Observable.EveryValueChanged(gallery, g => g.LineSpacing)
-            .Subscribe(x =>
-            {
-                LineSpacing.Value = x;
-            }, DebugHelper.LogError(nameof(GalleryViewModel), nameof(Initialize)))
+        // Accepted line spacing, for the reason given at the item spacing above
+        shared.GalleryLineSpacing
+            .Select(GalleryDefaults.AcceptedLineSpacing)
+            .Subscribe(x => LineSpacing.Value = x, DebugHelper.LogError(nameof(GalleryViewModel), nameof(Initialize)))
             .AddTo(ref _disposables);
 
         ToggleExpandedCommand.Subscribe(_ => Switcher.ToggleExpanded(),

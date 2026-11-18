@@ -337,6 +337,7 @@ public sealed class AppLifecycle
         var settings = _core.GlobalSettings;
         // The write-throughs first, so each follower below is notified after the stored value is written
         settings.InitializeActionSettings();
+        _core.GallerySettings.Start();
         // All live for the process, as IPC does
         _ = BackgroundManager.Follow(settings);
         _ = settings.IsOpeningInSameWindow.Skip(1).Subscribe(sameWindow =>

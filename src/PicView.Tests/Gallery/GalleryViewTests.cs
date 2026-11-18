@@ -257,6 +257,7 @@ public class GalleryViewTests
     {
         WithShownDockedGallery((core, _, view, _) =>
         {
+            core.GallerySettings.Start();
             var toggle = core.GallerySettings.ToggleExpandedDisplayModeCommand;
             var toTiles = view.FindControl<IconButton>("ToTilesButton")!;
             var toColumns = view.FindControl<IconButton>("ToColumnsButton")!;

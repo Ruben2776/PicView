@@ -81,7 +81,7 @@ public class GallerySpacingLimitsTests
     public void SpacingsSetBelowTheLimits_AreNotAccepted()
     {
         var shared = new GallerySharedSettingsViewModel(() => ValueTask.FromResult(true));
-        shared.Initialize();
+        shared.Start();
 
         shared.GalleryItemSpacing.Value = 0;
         shared.GalleryLineSpacing.Value = 3;
@@ -96,7 +96,7 @@ public class GallerySpacingLimitsTests
     public void SpacingsSetWithinTheLimits_AreStoredAsSet()
     {
         var shared = new GallerySharedSettingsViewModel(() => ValueTask.FromResult(true));
-        shared.Initialize();
+        shared.Start();
 
         shared.GalleryItemSpacing.Value = 12;
         shared.GalleryLineSpacing.Value = 9;

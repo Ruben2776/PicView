@@ -895,7 +895,8 @@ public sealed class GalleryTileSharpeningTests : IDisposable
     // Runs only the jobs: the small thumbnails of new containers may wait behind the held slot
     private void SwitchDisplayModeTo(GalleryDisplayMode mode)
     {
-        _core!.GallerySettings.SetExpandedDisplayModeCommand.Execute(mode);
+        _core!.GallerySettings.Start();
+        _core.GallerySettings.SetExpandedDisplayModeCommand.Execute(mode);
         Dispatcher.UIThread.RunJobs();
         RenderFrame();
         Assert.Equal(mode, _panel!.DisplayMode);

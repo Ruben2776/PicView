@@ -124,8 +124,10 @@ public class ThumbnailStretchTests
 
     private static (CoreViewModel Core, GallerySettingsView View) ShowGallerySettings()
     {
-        var core = new CoreViewModel(null, _ => ValueTask.FromResult(new ImageModel()));
-        core.GallerySettings.Initialize();
+        // The stretch saves through the delegate, so no test here writes the settings file
+        var core = new CoreViewModel(null, _ => ValueTask.FromResult(new ImageModel()),
+            saveGallerySettings: static () => ValueTask.FromResult(true));
+        core.GallerySettings.Start();
         var view = new GallerySettingsView();
         var window = new Window { DataContext = core, Content = view };
         window.Show();

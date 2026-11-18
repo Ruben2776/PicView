@@ -179,9 +179,65 @@ public class GalleryViewModelTests
     }
 
     [Fact]
-    public void Appearance_DisplayModeChanged_WhileExpanded_FollowsIt()
+    public void Initialize_SharedItemSpacingChanged_AppearanceTakesItAtOnce()
     {
         var shared = new GallerySharedSettingsViewModel(NoSave);
+        using var gallery = new GalleryViewModel(NoSave);
+        gallery.Initialize(shared);
+        gallery.Switcher.ToggleExpanded();
+
+        shared.GalleryItemSpacing.Value = 12;
+
+        Assert.Equal(12, gallery.Appearance.Value.ItemSpacing);
+    }
+
+    [Fact]
+    public void Initialize_SharedLineSpacingChanged_LineSpacingTakesItAtOnce()
+    {
+        var shared = new GallerySharedSettingsViewModel(NoSave);
+        using var gallery = new GalleryViewModel(NoSave);
+        gallery.Initialize(shared);
+
+        shared.GalleryLineSpacing.Value = 9;
+
+        Assert.Equal(9, gallery.LineSpacing.Value);
+    }
+
+    [Fact]
+    public void Initialize_TwoTabsOneOpenedAfterAChange_BothTakeTheSharedSpacing()
+    {
+        var shared = StartedGallerySettings.New(NoSave);
+        using var first = new GalleryViewModel(NoSave);
+        first.Initialize(shared);
+        first.Switcher.ToggleExpanded();
+        shared.GalleryItemSpacing.Value = 12;
+        using var second = new GalleryViewModel(NoSave);
+        second.Initialize(shared);
+        second.Switcher.ToggleExpanded();
+
+        Assert.Equal(12, first.Appearance.Value.ItemSpacing);
+        Assert.Equal(12, second.Appearance.Value.ItemSpacing);
+    }
+
+    [Fact]
+    public void Initialize_TabOpenedAfterStartAndASpacingIsRefused_TakesTheAcceptedSpacing()
+    {
+        var shared = StartedGallerySettings.New(NoSave);
+        using var gallery = new GalleryViewModel(NoSave);
+        gallery.Initialize(shared);
+        gallery.Switcher.ToggleExpanded();
+
+        shared.GalleryItemSpacing.Value = 0;
+        shared.GalleryLineSpacing.Value = 3;
+
+        Assert.Equal(5, gallery.Appearance.Value.ItemSpacing);
+        Assert.Equal(8, gallery.LineSpacing.Value);
+    }
+
+    [Fact]
+    public void Appearance_DisplayModeChanged_WhileExpanded_FollowsIt()
+    {
+        var shared = StartedGallerySettings.New(NoSave);
         using var gallery = new GalleryViewModel(NoSave);
         gallery.Initialize(shared);
         gallery.Switcher.ToggleExpanded();
@@ -202,7 +258,7 @@ public class GalleryViewModelTests
     [Fact]
     public void Appearance_DisplayModeChanged_WhileDocked_PublishesNothingUntilExpanded()
     {
-        var shared = new GallerySharedSettingsViewModel(NoSave);
+        var shared = StartedGallerySettings.New(NoSave);
         using var gallery = new GalleryViewModel(NoSave);
         gallery.Initialize(shared);
         gallery.Switcher.Start(true);
@@ -226,7 +282,7 @@ public class GalleryViewModelTests
     public void Appearance_DisplayModeChanged_ReachesEveryExpandedTab()
     {
         // One shared view model serves every tab and every Main Window (Review Focus 1)
-        var shared = new GallerySharedSettingsViewModel(NoSave);
+        var shared = StartedGallerySettings.New(NoSave);
         using var first = new GalleryViewModel(NoSave);
         using var second = new GalleryViewModel(NoSave);
         first.Initialize(shared);
@@ -244,7 +300,7 @@ public class GalleryViewModelTests
     [Fact]
     public void Appearance_DisplayModeChanged_WhileHidden_PublishesNothingAndComesBackInTheNewMode()
     {
-        var shared = new GallerySharedSettingsViewModel(NoSave);
+        var shared = StartedGallerySettings.New(NoSave);
         using var gallery = new GalleryViewModel(NoSave);
         gallery.Initialize(shared);
         gallery.Switcher.ToggleExpanded();
@@ -269,7 +325,7 @@ public class GalleryViewModelTests
     [Fact]
     public void Appearance_DisplayModeChanged_TwoExpandedTabsSharingTheSettings_BothFollowIt()
     {
-        var shared = new GallerySharedSettingsViewModel(NoSave);
+        var shared = StartedGallerySettings.New(NoSave);
         using var first = new GalleryViewModel(NoSave);
         using var second = new GalleryViewModel(NoSave);
         first.Initialize(shared);
@@ -302,7 +358,7 @@ public class GalleryViewModelTests
     public void Appearance_DisplayModeChanged_WhileAnExpandedGalleryIsHidden_PublishesNothingUntilItIsShownAgain(
         bool byFileLimit)
     {
-        var shared = new GallerySharedSettingsViewModel(NoSave);
+        var shared = StartedGallerySettings.New(NoSave);
         using var gallery = new GalleryViewModel(NoSave);
         gallery.Initialize(shared);
         gallery.Switcher.ToggleExpanded();
