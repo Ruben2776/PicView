@@ -100,7 +100,7 @@ public class AppLifecycleTests : IAsyncDisposable
                 file.Extension.Equals(".tif", StringComparison.OrdinalIgnoreCase)
                     ? ThreePageTiff(file)
                     : new ImageModel { FileInfo = file });
-        }, StartedSettings.New());
+        }, new GlobalSettingsViewModel(static () => ValueTask.FromResult(true)));
         _provider = new LifecycleWindowProvider(_core);
         _sharedFiles = new FolderSharedFiles(_folder);
     }
@@ -146,6 +146,53 @@ public class AppLifecycleTests : IAsyncDisposable
         var tab = ViewModelOf(app.MainWindows.Open[0]).WindowTabs.ActiveTab.CurrentValue;
         Assert.Equal(TitlePhase.None, tab.Titles.Phase);
         Assert.Equal(TranslationManager.Translation.NoImage, tab.Titles.Title);
+    }
+
+    [AvaloniaFact]
+    public async Task StartAsync_FirstWindowShown_ActionSettingsWriteTheirStoredValue()
+    {
+        var app = CreateApp();
+
+        await app.StartAsync(settingsExists: true, []);
+        await WaitUntilOpenedAsync(app.MainWindows.Open[0]);
+
+        var toggled = !_core.GlobalSettings.IsLooping.Value;
+        _core.GlobalSettings.IsLooping.Value = toggled;
+        Assert.Equal(toggled, Settings.UIProperties.Looping);
+    }
+
+    [AvaloniaFact]
+    public async Task StartAsync_SubdirectoriesToggledOnTheStartUpMenu_WritesAndRestartsTheWatches()
+    {
+        var watcher = new RecordingWatcher();
+        _core.InitializeNavigation(
+            TestTabServices.For(_core.SharedCache, null,
+                watcher, platform: new NoPlatform(),
+                globalSettings: _core.GlobalSettings),
+            new NavigationService(string.CompareOrdinal));
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        await WaitUntilOpenedAsync(app.MainWindows.Open[0]);
+
+        var toggled = !_core.GlobalSettings.IsIncludingSubdirectories.Value;
+        _core.GlobalSettings.IsIncludingSubdirectories.Value = toggled;
+
+        Assert.Equal(toggled, Settings.Sorting.IncludeSubDirectories);
+        Assert.Equal(1, watcher.Restarts);
+        Assert.Equal(toggled, watcher.StoredWhenRestarted);
+    }
+
+    [AvaloniaFact]
+    public async Task StartAsync_FirstWindowShown_ExtraSettingsAreNotStarted()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        await WaitUntilOpenedAsync(app.MainWindows.Open[0]);
+        var margin = Settings.WindowProperties.Margin;
+
+        _core.GlobalSettings.WindowMargin.Value = 42;
+
+        Assert.Equal(margin, Settings.WindowProperties.Margin);
     }
 
     [AvaloniaFact]
@@ -1747,6 +1794,25 @@ public class AppLifecycleTests : IAsyncDisposable
         return path;
     }
 
+    // The first window opens through the dispatcher, after App Start has returned
+    private static async Task WaitUntilOpenedAsync(MainWindow window)
+    {
+        var opened = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        window.Opened += (_, _) => opened.TrySetResult();
+        if (window.IsVisible)
+        {
+            opened.TrySetResult();
+        }
+
+        var deadline = DateTime.UtcNow + WaitLimit;
+        while (!opened.Task.IsCompleted && DateTime.UtcNow < deadline)
+        {
+            await Task.Delay(10, TestContext.Current.CancellationToken);
+            Dispatcher.UIThread.RunJobs();
+        }
+    }
+
+
     // Records the tab it was last asked to watch
     private sealed class RecordingWatcher : IFileWatcherService
     {
@@ -1754,7 +1820,14 @@ public class AppLifecycleTests : IAsyncDisposable
 
         public void Watch(TabViewModel tab, string? directory = null) => WatchedTab = tab;
         public void Unwatch(TabViewModel tab) { }
-        public void RestartWatches() { }
+        public void RestartWatches()
+        {
+            Restarts++;
+            StoredWhenRestarted = Settings.Sorting.IncludeSubDirectories;
+        }
+
+        public int Restarts { get; private set; }
+        public bool? StoredWhenRestarted { get; private set; }
     }
 
     // Holds the load of the file at path until the test sets its model
