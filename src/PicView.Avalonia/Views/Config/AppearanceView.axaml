@@ -28,7 +28,7 @@
                                        Mode=OneWay}" />
         </StackPanel>
 
-        <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.ThemeSearchTags}" Classes="searchBorder">
+        <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.ThemeSearchTags}" Classes="searchBorder">
             <StackPanel>
                 <TextBlock
                     Margin="0,20,0,20"
@@ -85,7 +85,7 @@
             </StackPanel>
         </Border>
 
-        <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.ColorSearchTags}" Classes="searchBorder">
+        <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.ColorSearchTags}" Classes="searchBorder">
             <StackPanel>
                 <TextBlock
                     Margin="0,5,0,20"
@@ -241,7 +241,7 @@
             </StackPanel>
         </Border>
 
-        <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.BackgroundSearchTags}" Classes="searchBorder">
+        <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.BackgroundSearchTags}" Classes="searchBorder">
             <StackPanel>
                 <TextBlock
                     Margin="0,20,0,10"
@@ -417,7 +417,7 @@
             </StackPanel>
         </Border>
 
-        <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.BackgroundConstrainSearchTags}" Classes="searchBorder">
+        <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.BackgroundConstrainSearchTags}" Classes="searchBorder">
             <customControls:TextToggleButton
                 x:Name="ConstrainingBackgroundColorToggleButton"
                 Classes="MenuItemHover settingsToggleButton"

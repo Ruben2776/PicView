@@ -23,7 +23,7 @@
                                        Mode=OneWay}" />
         </StackPanel>
 
-        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.GalleryDockSearchTags}">
+        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.GalleryDockSearchTags}">
             <StackPanel>
                 <customControls:TextIconButton
                     Classes="MenuItemHover settingsTextIconButton"
@@ -91,7 +91,7 @@
             </StackPanel>
         </Border>
 
-        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.GalleryVisibilitySearchTags}">
+        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.GalleryVisibilitySearchTags}">
             <StackPanel>
                 <customControls:TextIconButton
                     Classes="MenuItemHover settingsTextIconButton"
@@ -117,7 +117,7 @@
             </StackPanel>
         </Border>
 
-        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.GallerySizeSearchTags}">
+        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.GallerySizeSearchTags}">
             <StackPanel>
 
                 <TextBlock
@@ -221,7 +221,7 @@
             </StackPanel>
         </Border>
 
-        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.GalleryDisplayModeSearchTags}">
+        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.GalleryDisplayModeSearchTags}">
             <StackPanel>
                 <TextBlock
                     Classes="txt"
@@ -261,7 +261,7 @@
             </StackPanel>
         </Border>
 
-        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.GalleryStretchSearchTags}">
+        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.GalleryStretchSearchTags}">
             <StackPanel>
                 <TextBlock
                     Classes="txt"
@@ -350,7 +350,7 @@
         </Border>
 
         <!--  Gallery Mouse wheel  -->
-        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.GalleryDockSearchTags}">
+        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.GalleryDockSearchTags}">
             <StackPanel>
                 <TextBlock
                     Classes="txt"

@@ -22,7 +22,7 @@
                                        Mode=OneWay}" />
         </StackPanel>
 
-        <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.WindowScalingSearchTags}" Classes="searchBorder">
+        <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.WindowScalingSearchTags}" Classes="searchBorder">
             <StackPanel>
                 <TextBlock
                     Margin="0,20,0,20"
@@ -76,7 +76,7 @@
             Text="{CompiledBinding Translation.WindowManagement.Value,
                                    Mode=OneWay}" />
 
-        <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.WindowTopMostSearchTags}" Classes="searchBorder">
+        <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.WindowTopMostSearchTags}" Classes="searchBorder">
             <customControls:TextToggleButton
                 x:Name="TopMostToggleButton"
                 Classes="MenuItemHover settingsToggleButton"
@@ -86,7 +86,7 @@
                                        Mode=OneWay}" />
         </Border>
 
-        <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.WindowCenteredSearchTags}" Classes="searchBorder">
+        <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.WindowCenteredSearchTags}" Classes="searchBorder">
             <customControls:TextToggleButton
                 x:Name="StayCenteredToggleButton"
                 Classes="MenuItemHover settingsToggleButton"
@@ -96,7 +96,7 @@
                                        Mode=OneWay}" />
         </Border>
 
-        <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.WindowSameWindowSearchTags}" Classes="searchBorder">
+        <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.WindowSameWindowSearchTags}" Classes="searchBorder">
             <customControls:TextToggleButton
                 x:Name="OpenInSameWindowToggleButton"
                 Classes="MenuItemHover settingsToggleButton"
@@ -106,7 +106,7 @@
                                        Mode=OneWay}" />
         </Border>
 
-        <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.WindowEscSearchTags}" Classes="searchBorder">
+        <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.WindowEscSearchTags}" Classes="searchBorder">
             <customControls:TextToggleButton
                 x:Name="ShowConfirmationEscToggleButton"
                 Classes="MenuItemHover settingsToggleButton"
@@ -115,7 +115,7 @@
                                        Mode=OneWay}" />
         </Border>
 
-        <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.WindowEscFullscreenSearchTags}" Classes="searchBorder">
+        <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.WindowEscFullscreenSearchTags}" Classes="searchBorder">
             <customControls:TextToggleButton
                 x:Name="EscLeavesFullscreenToggleButton"
                 Classes="MenuItemHover settingsToggleButton"

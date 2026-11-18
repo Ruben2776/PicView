@@ -23,7 +23,7 @@
         </StackPanel>
 
         <!--  Scroll  -->
-        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.ImageScrollingSearchTags}">
+        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.ImageScrollingSearchTags}">
             <customControls:TextToggleButton
                 Classes="MenuItemHover settingsToggleButton"
                 Command="{CompiledBinding MainWindows.ActiveWindow.Value.RunActionCommand}"
@@ -36,7 +36,7 @@
         </Border>
 
         <!--  Side by side  -->
-        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.ImageSideBySideSearchTags}">
+        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.ImageSideBySideSearchTags}">
             <customControls:TextToggleButton
                 Classes="MenuItemHover settingsToggleButton"
                 Command="{CompiledBinding MainWindows.ActiveWindow.Value.RunActionCommand}"
@@ -49,7 +49,7 @@
         </Border>
 
         <!--  Autoplay motion photos  -->
-        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.MotionPhotoSearchTags}">
+        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.MotionPhotoSearchTags}">
             <customControls:TextToggleButton
                 Classes="MenuItemHover settingsToggleButton"
                 IsChecked="{CompiledBinding SettingsViewModel.IsAutoPlayingMotionPhotos.Value,
@@ -60,7 +60,7 @@
         </Border>
 
         <!--  Aliasing  -->
-        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.ImageScalingSearchTags}">
+        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.ImageScalingSearchTags}">
             <StackPanel>
                 <TextBlock
                     Classes="txt bold"

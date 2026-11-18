@@ -15,6 +15,7 @@ public class SettingsViewModel : IDisposable
     private readonly GlobalSettingsViewModel _globalSettings;
     private readonly Stack<NavigationState> _backStack = new();
     private DisposableBag _disposables;
+    private List<SettingsSearchItem> _allSuggestions;
     private readonly Stack<NavigationState> _forwardStack = new();
     private NavigationState _currentState;
     private bool _isNavigatingHistory;
@@ -46,12 +47,6 @@ public class SettingsViewModel : IDisposable
             new SettingsCategoryItem(translation.FileAssociations, "FileAssociationImage", SettingsCategory.FileAssociations)
         ];
         
-        MouseDoubleClickBehaviors = new BindableReactiveProperty<string[]>(
-        [
-            TranslationManager.Translation.None!,
-            TranslationManager.Translation.ResetZoom!,
-            TranslationManager.Translation.ToggleFullscreen!
-        ]);
         MouseDoubleClickBehaviorIndex = new BindableReactiveProperty<int>(Settings.UIProperties.DoubleClickBehavior);
 
         NavigateToCategoryCommand = new ReactiveCommand<SettingsCategory>();
@@ -103,30 +98,19 @@ public class SettingsViewModel : IDisposable
         }).AddTo(ref _disposables);
 
         // Search Initialization
-        SearchData = new SettingsSearchData();
-        var allSuggestions = SettingsSearchIndex.Build(SearchData);
-        
+        var searchData = new SettingsSearchData();
+        SearchData = new BindableReactiveProperty<SettingsSearchData>(searchData);
+        _allSuggestions = SettingsSearchIndex.Build(searchData);
+
         ClearSearchCommand = new ReactiveCommand(_ => SearchQuery.Value = string.Empty).AddTo(ref _disposables);
 
-        SearchQuery.Subscribe(query =>
-        {
-            var hasText = !string.IsNullOrEmpty(query);
-            IsSearchVisible.Value = hasText;
-
-            if (hasText)
-            {
-                IsOverviewVisible.Value = false;
-                Suggestions.Value = allSuggestions
-                    .Where(x => x.Name.Contains(query, StringComparison.InvariantCultureIgnoreCase) ||
-                                x.Tags.Contains(query, StringComparison.InvariantCultureIgnoreCase))
-                    .ToList();
-            }
-            else
-            {
-                Suggestions.Value = [];
-            }
-        }, DebugHelper.LogError(nameof(SettingsViewModel), nameof(SearchQuery)))
+        SearchQuery.Subscribe(Search, DebugHelper.LogError(nameof(SettingsViewModel), nameof(SearchQuery)))
         .AddTo(ref _disposables);
+
+        // The tags and suggestions are text this window keeps, so they are rebuilt when the language changes
+        translation.LanguageChanged.Subscribe(_ => Retranslate(),
+                DebugHelper.LogError(nameof(SettingsViewModel), nameof(Retranslate)))
+            .AddTo(ref _disposables);
 
         SelectedSuggestion.Subscribe(item =>
         {
@@ -143,6 +127,41 @@ public class SettingsViewModel : IDisposable
         UpdateNavigationProperties();
     }
     
+    private void Search(string query)
+    {
+        var hasText = !string.IsNullOrEmpty(query);
+        IsSearchVisible.Value = hasText;
+
+        if (hasText)
+        {
+            IsOverviewVisible.Value = false;
+            Suggestions.Value = _allSuggestions
+                .Where(x => x.Name.Contains(query, StringComparison.InvariantCultureIgnoreCase) ||
+                            x.Tags.Contains(query, StringComparison.InvariantCultureIgnoreCase))
+                .ToList();
+        }
+        else
+        {
+            Suggestions.Value = [];
+        }
+    }
+
+    /// <summary>
+    /// Rebuilds the search tags and suggestions from the current language. A query that is showing suggestions is
+    /// run again, so they are in the new language; a closed suggestion list stays closed.
+    /// </summary>
+    private void Retranslate()
+    {
+        var searchData = new SettingsSearchData();
+        _allSuggestions = SettingsSearchIndex.Build(searchData);
+        SearchData.Value = searchData;
+
+        if (Suggestions.Value is { Count: > 0 })
+        {
+            Search(SearchQuery.Value);
+        }
+    }
+
     public void Initialize(IThemeService themeService, ILanguageService languageService, IImageSettingsService imageSettingsService)
     {
         _themeService = themeService;
@@ -175,7 +194,6 @@ public class SettingsViewModel : IDisposable
     public BindableReactiveProperty<bool> IsAutoPlayingMotionPhotos { get; } = new(Settings.UIProperties.AutoPlayMotionPhotos);
 
     // Mouse
-    public BindableReactiveProperty<string[]> MouseDoubleClickBehaviors { get; }
     public BindableReactiveProperty<int> MouseDoubleClickBehaviorIndex { get; }
 
     // Language
@@ -238,7 +256,7 @@ public class SettingsViewModel : IDisposable
     public ReactiveCommand ClearSearchCommand { get; }
 
     // Search properties (Tags and Visibility)
-    public SettingsSearchData SearchData { get; }
+    public BindableReactiveProperty<SettingsSearchData> SearchData { get; }
     public BindableReactiveProperty<List<SettingsSearchItem>> Suggestions { get; } = new();
     public BindableReactiveProperty<SettingsSearchItem?> SelectedSuggestion { get; } = new();
 
@@ -267,7 +285,6 @@ public class SettingsViewModel : IDisposable
             SlideshowSpeed,
             ZoomSpeed,
             MouseDoubleClickBehaviorIndex,
-            MouseDoubleClickBehaviors,
             NavigateToCategoryCommand,
             IsOverviewVisible,
             SelectedCategory,

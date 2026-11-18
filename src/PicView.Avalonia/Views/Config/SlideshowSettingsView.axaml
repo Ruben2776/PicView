@@ -9,7 +9,7 @@
 
     <StackPanel HorizontalAlignment="Center" Orientation="Vertical">
 
-        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.SlideshowSearchTags}">
+        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.SlideshowSearchTags}">
             <StackPanel>
                 <StackPanel Orientation="Horizontal" Spacing="12">
                     <Image

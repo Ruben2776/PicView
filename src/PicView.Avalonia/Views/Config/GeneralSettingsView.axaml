@@ -24,7 +24,7 @@
 
         <Border
             Margin="0,10,0,0"
-            ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.StartUpSearchTags}"
+            ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.StartUpSearchTags}"
             Classes="searchBorder">
             <StackPanel>
                 <TextBlock
@@ -55,7 +55,7 @@
             Text="{CompiledBinding Translation.FileManagement.Value,
                                    Mode=OneWay}" />
 
-        <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.DeleteFileDialogSearchTags}" Classes="searchBorder">
+        <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.DeleteFileDialogSearchTags}" Classes="searchBorder">
             <StackPanel>
                 <customControls:TextToggleButton
                     x:Name="DeletingToggleButton"
@@ -75,7 +75,7 @@
             </StackPanel>
         </Border>
 
-        <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.FileHistorySearchTags}" Classes="searchBorder">
+        <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.FileHistorySearchTags}" Classes="searchBorder">
             <customControls:TextToggleButton
                 x:Name="FileHistoryToggleButton"
                 Classes="MenuItemHover settingsToggleButton"
@@ -86,7 +86,7 @@
                                        Mode=OneWay}" />
         </Border>
 
-        <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.FileHistorySearchTags}" Classes="searchBorder">
+        <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.FileHistorySearchTags}" Classes="searchBorder">
             <customControls:TextToggleButton
                 x:Name="ShowFullPathInTitleBarToggleButton"
                 Classes="MenuItemHover settingsToggleButton"
@@ -97,7 +97,7 @@
                                        Mode=OneWay}" />
         </Border>
 
-        <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.WhenDeletingFileSearchTags}" Classes="searchBorder">
+        <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.WhenDeletingFileSearchTags}" Classes="searchBorder">
             <StackPanel>
                 <TextBlock
                     Margin="0,20,0,10"

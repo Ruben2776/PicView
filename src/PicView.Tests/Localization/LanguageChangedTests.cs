@@ -10,6 +10,12 @@ namespace PicView.Tests.Localization;
 [Collection("Sequential")]
 public class LanguageChangedTests
 {
+    public LanguageChangedTests()
+    {
+        // GlobalSettingsViewModel reads the settings record when it is made
+        SetDefaults();
+    }
+
     private static LanguageModel Model() => new() { File = "file", Files = "files" };
 
     [Fact]

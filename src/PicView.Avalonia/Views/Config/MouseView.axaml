@@ -21,7 +21,7 @@
                                        Mode=OneWay}" />
         </StackPanel>
 
-        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.MouseDoubleClickSearchTags}">
+        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.MouseDoubleClickSearchTags}">
             <StackPanel>
                 <TextBlock
                     Classes="txt bold"
@@ -33,16 +33,20 @@
                     BorderThickness="1"
                     FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
                     Foreground="{DynamicResource MainTextColor}"
-                    ItemsSource="{CompiledBinding SettingsViewModel.MouseDoubleClickBehaviors.Value}"
                     Margin="0,6,0,15"
                     Padding="5,7,0,7"
                     SelectedIndex="{CompiledBinding SettingsViewModel.MouseDoubleClickBehaviorIndex.Value}"
                     Width="300"
-                    x:Name="DoubleClickBox" />
+                    x:Name="DoubleClickBox">
+                    <!--  Fixed items bound to the translations: replacing an item list would clear the selection  -->
+                    <ComboBoxItem Content="{CompiledBinding Translation.None.Value, Mode=OneWay}" />
+                    <ComboBoxItem Content="{CompiledBinding Translation.ResetZoom.Value, Mode=OneWay}" />
+                    <ComboBoxItem Content="{CompiledBinding Translation.ToggleFullscreen.Value, Mode=OneWay}" />
+                </ComboBox>
             </StackPanel>
         </Border>
 
-        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.MouseTouchpadSearchTags}">
+        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.MouseTouchpadSearchTags}">
             <StackPanel>
                 <customControls:TextIconButton
                     Classes="MenuItemHover settingsTextIconButton"
