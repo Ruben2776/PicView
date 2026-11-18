@@ -550,7 +550,7 @@ public class SecondaryWindowOpenerTests
 
         public bool DisposableAbout { get; set; }
 
-        public MainWindow CreateMainWindow(TabViewModel? firstTab = null) => throw new NotSupportedException();
+        public MainWindow CreateMainWindow(TabViewModel? firstTab = null, WindowSettings? windowSettings = null) => throw new NotSupportedException();
         public IWindowModeAdapter CreateWindowModeAdapter() => throw new NotSupportedException();
         public Window CreateAboutWindow() => DisposableAbout ? new DisposableWindow() : new Window();
         public Window CreateBatchResizeWindow() => new();

@@ -2446,7 +2446,7 @@ public class AppLifecycleTests : IAsyncDisposable
         public List<Window> ConvertWindows { get; } = [];
         public List<Window> EffectsWindows { get; } = [];
 
-        public MainWindow CreateMainWindow(TabViewModel? firstTab = null)
+        public MainWindow CreateMainWindow(TabViewModel? firstTab = null, WindowSettings? windowSettings = null)
         {
             var window = new TestMainWindow(new NoOpModeAdapter(), this);
             window.DataContext = new MainWindowViewModel(core, core.Translation, core.GlobalSettings!,

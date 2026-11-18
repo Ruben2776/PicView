@@ -28,6 +28,36 @@ public class MainWindowViewModelTests
         WindowModeState.Start(new RememberedWindowMode(true, false, false), isAppStart: true);
 
     [Fact]
+    public void Constructor_NoWindowSettings_SeedsThemFromTheRecord()
+    {
+        Settings.WindowProperties!.AutoFit = true;
+        Settings.WindowProperties.TopMost = true;
+        using var vm = new MainWindowViewModel(null!, null!, null!, null!);
+        Assert.True(vm.WindowModeState.CurrentValue.AutoFit);
+        Assert.True(vm.WindowSettings.IsTopMost.Value);
+    }
+
+    [Fact]
+    public void Constructor_GivenWindowSettings_StartsFromThemNotTheRecord()
+    {
+        Settings.WindowProperties!.AutoFit = false;
+        using var given = WindowSettings.FromRecord(Settings).CopyFor(new RememberedWindowMode(false, false, AutoFit: true));
+        using var vm = new MainWindowViewModel(null!, null!, null!, null!, windowSettings: given);
+        Assert.Same(given, vm.WindowSettings);
+        Assert.True(vm.WindowModeState.CurrentValue.AutoFit);
+    }
+
+    [Fact]
+    public void StoreWindowSettings_WritesTheLiveRememberedMode()
+    {
+        using var vm = new MainWindowViewModel(null!, null!, null!, null!);
+        vm.WindowModeState.Value = vm.WindowModeState.CurrentValue.SetAutoFit(true);
+        var record = GetDefaults();
+        vm.StoreWindowSettings(record);
+        Assert.True(record.WindowProperties!.AutoFit);
+    }
+
+    [Fact]
     public void Interface_AtConstruction_FollowsTheSettingsInNormalMode()
     {
         var vm = NewWindow();

@@ -14,7 +14,7 @@ public partial class LinuxMainWindow : MainWindow
     }
 
     /// <param name="firstTab">A tab moved out of another Main Window, for a window that opens with it.</param>
-    public LinuxMainWindow(TabViewModel? firstTab)
+    public LinuxMainWindow(TabViewModel? firstTab, WindowSettings? windowSettings = null)
     {
         if (Application.Current!.DataContext is not CoreViewModel core)
         {
@@ -22,7 +22,7 @@ public partial class LinuxMainWindow : MainWindow
         }
 
         Debug.Assert(core.GlobalSettings != null);
-        var mainWindowViewModel = new MainWindowViewModel(core, core.Translation, core.GlobalSettings, core.GallerySettings, firstTab);
+        var mainWindowViewModel = new MainWindowViewModel(core, core.Translation, core.GlobalSettings, core.GallerySettings, firstTab, windowSettings);
         DataContext = mainWindowViewModel;
 
         InitializeComponent();

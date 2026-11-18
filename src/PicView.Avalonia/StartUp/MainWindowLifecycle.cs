@@ -281,9 +281,9 @@ public sealed class MainWindowLifecycle
         LastFile.Remember(vm.WindowTabs.ActiveTab.CurrentValue);
     }
 
-    private MainWindow Create(TabViewModel? firstTab = null, bool setMainWindow = true, bool opensSource = false)
+    private MainWindow Create(TabViewModel? firstTab = null, bool setMainWindow = true, bool opensSource = false, WindowSettings? windowSettings = null)
     {
-        var window = _provider.CreateMainWindow(firstTab);
+        var window = _provider.CreateMainWindow(firstTab, windowSettings);
         var vm = ViewModelOf(window);
         // A window keeps the view model it is created with, so hand it over once here
         window.ViewModel = vm;

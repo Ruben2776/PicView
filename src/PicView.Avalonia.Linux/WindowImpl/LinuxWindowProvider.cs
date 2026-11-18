@@ -13,7 +13,7 @@ namespace PicView.Avalonia.Linux.WindowImpl;
 
 public class LinuxWindowProvider : IWindowProvider
 {
-    public MainWindow CreateMainWindow(TabViewModel? firstTab = null) => new LinuxMainWindow(firstTab);
+    public MainWindow CreateMainWindow(TabViewModel? firstTab = null, WindowSettings? windowSettings = null) => new LinuxMainWindow(firstTab, windowSettings);
 
     public IWindowModeAdapter CreateWindowModeAdapter() => new LinuxWindowModeAdapter();
 

@@ -1,3 +1,4 @@
+using PicView.Core.Config;
 using PicView.Core.IPlatform;
 using PicView.Core.Navigation;
 using PicView.Core.Sizing;
@@ -56,8 +57,12 @@ public class MainWindowViewModel : IDisposable
     /// <summary>
     /// This window's Window Mode, which only its <see cref="WindowModeSwitcher"/> changes.
     /// </summary>
-    public ReactiveProperty<WindowModeState> WindowModeState { get; } =
-        new(Sizing.WindowModeState.Opening(Settings.WindowProperties.AutoFit));
+    public ReactiveProperty<WindowModeState> WindowModeState { get; }
+
+    /// <summary>
+    /// The settings this window owns, seeded when it opened.
+    /// </summary>
+    public WindowSettings WindowSettings { get; }
 
     public IWindowModeSwitcher? WindowModeSwitcher { get; set; }
 
@@ -120,8 +125,11 @@ public class MainWindowViewModel : IDisposable
     #endregion
 
     /// <param name="firstTab">A tab moved out of another Main Window, for a window that opens with it.</param>
-    public MainWindowViewModel(CoreViewModel core, TranslationViewModel translations, GlobalSettingsViewModel globalSettings, GallerySharedSettingsViewModel gallerySettings, TabViewModel? firstTab = null)
+    /// <param name="windowSettings">The Window Settings the window starts with; the record's when none is given.</param>
+    public MainWindowViewModel(CoreViewModel core, TranslationViewModel translations, GlobalSettingsViewModel globalSettings, GallerySharedSettingsViewModel gallerySettings, TabViewModel? firstTab = null, WindowSettings? windowSettings = null)
     {
+        WindowSettings = windowSettings ?? WindowSettings.FromRecord(Settings);
+        WindowModeState = new(Sizing.WindowModeState.Opening(WindowSettings.StartingMode.AutoFit));
         Core = core;
         Translation = translations;
         GlobalSettings = globalSettings;
@@ -182,10 +190,17 @@ public class MainWindowViewModel : IDisposable
             core?.Time ?? TimeProvider.System);
     }
 
+    /// <summary>
+    /// Writes this window's Window Settings, its remembered Window Mode included, into the record.
+    /// </summary>
+    public void StoreWindowSettings(AppSettings record) =>
+        WindowSettings.Store(record, WindowModeState.CurrentValue.Remembered);
+
     public void Dispose()
     {
+        // Null until the dialog first opens
+        ResizeImageViewModel?.Dispose();
         Disposable.Dispose(
-            ResizeImageViewModel,
             ScrollViewerWidth,
             ScrollViewerHeight,
             WindowMaxWidth,

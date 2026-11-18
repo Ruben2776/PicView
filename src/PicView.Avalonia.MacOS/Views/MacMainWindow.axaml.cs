@@ -16,14 +16,14 @@ public partial class MacMainWindow : MainWindow
     }
 
     /// <param name="firstTab">A tab moved out of another Main Window, for a window that opens with it.</param>
-    public MacMainWindow(CoreViewModel? core, TabViewModel? firstTab = null)
+    public MacMainWindow(CoreViewModel? core, TabViewModel? firstTab = null, WindowSettings? windowSettings = null)
     {
         core ??= Application.Current?.DataContext as CoreViewModel;
         if (core is null)
         {
             return;
         }
-        var mainWindowViewModel = new MainWindowViewModel(core, core.Translation, core.GlobalSettings, core.GallerySettings, firstTab);
+        var mainWindowViewModel = new MainWindowViewModel(core, core.Translation, core.GlobalSettings, core.GallerySettings, firstTab, windowSettings);
         DataContext = mainWindowViewModel;
 
         InitializeComponent();
