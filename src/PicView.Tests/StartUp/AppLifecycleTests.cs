@@ -1,3 +1,4 @@
+using PicView.Tests.Config;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Reflection;
@@ -99,7 +100,7 @@ public class AppLifecycleTests : IAsyncDisposable
                 file.Extension.Equals(".tif", StringComparison.OrdinalIgnoreCase)
                     ? ThreePageTiff(file)
                     : new ImageModel { FileInfo = file });
-        }, new GlobalSettingsViewModel(static () => ValueTask.FromResult(true)));
+        }, StartedSettings.New());
         _provider = new LifecycleWindowProvider(_core);
         _sharedFiles = new FolderSharedFiles(_folder);
     }

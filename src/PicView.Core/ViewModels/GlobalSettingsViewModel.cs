@@ -8,10 +8,14 @@ namespace PicView.Core.ViewModels;
 
 /// <summary>
 /// The fourteen toggled settings publish their changes (ADR-0020): each is a bindable over its stored value, and the
-/// write-through here is the one writer of that stored value, followed by one coalesced save.
+/// write-through here is the one writer of that stored value, followed by one coalesced save. The constructor
+/// subscribes nothing: the write-throughs start in two groups, <see cref="InitializeActionSettings"/> and
+/// <see cref="InitializeExtraSettings"/>, so a change before them writes and saves nothing.
 /// </summary>
 public class GlobalSettingsViewModel
 {
+    private readonly Lock _initializeLock = new();
+    private bool _isActionSettingsInitialized;
     private bool _isExtraSettingsInitialized;
     private readonly Func<ValueTask<bool>> _save;
     private int _saveState; // 0 idle; 1 a save runs; 2 a save runs and a change landed since it began
@@ -140,23 +144,37 @@ public class GlobalSettingsViewModel
         WindowMargin = new BindableReactiveProperty<double>(Settings.WindowProperties.Margin < 0 ? NegativeMarginReplacement : Settings.WindowProperties.Margin);
 
         SyncConfigLocation(Settings.StartUp.ConfigLocation);
+    }
 
-        Follow(IsLooping, value => Settings.UIProperties.Looping = value, rephrases: true);
-        Follow(IsSideBySide, value => Settings.ImageScaling.ShowImageSideBySide = value);
-        Follow(IsScrollingEnabled, value => Settings.Zoom.ScrollEnabled = value, rephrases: true);
-        Follow(IsZoomedToFit, value => Settings.ImageScaling.ZoomToFit = value);
-        Follow(IsIncludingSubdirectories, value => Settings.Sorting.IncludeSubDirectories = value);
-        Follow(IsFileHistoryEnabled, value => Settings.Navigation.IsFileHistoryEnabled = value, rephrases: true);
-        Follow(IsShowingFullPathInTitleBar, value => Settings.UIProperties.ShowFullPathInTitleBar = value);
-        Follow(IsShowingTaskbarProgress, value => Settings.UIProperties.IsTaskbarProgressEnabled = value);
-        Follow(IsOpeningInSameWindow, value => Settings.UIProperties.OpenInSameWindow = value);
-        Follow(IsConstrainingBackgroundColor, value => Settings.UIProperties.IsConstrainBackgroundColorEnabled = value);
-        Follow(IsTopMost, value => Settings.WindowProperties.TopMost = value);
-        Follow(ShowInterface, value => Settings.UIProperties.ShowInterface = value, rephrases: true);
-        Follow(ShowBottomBar, value => Settings.UIProperties.ShowBottomNavBar = value, rephrases: true);
-        Follow(ShowHoverBar, value => Settings.UIProperties.ShowHoverNavigationBar = value, rephrases: true);
-        Follow(ShowFadeButtons, value => Settings.UIProperties.ShowAltInterfaceButtons = value);
-        Follow(WindowMargin, value => Settings.WindowProperties.Margin = value);
+    /// <summary>
+    /// Starts the write-throughs of the fourteen settings the Actions toggle. Idempotent and safe from any thread;
+    /// a concurrent caller returns only after the subscriptions exist.
+    /// </summary>
+    public void InitializeActionSettings()
+    {
+        lock (_initializeLock)
+        {
+            if (_isActionSettingsInitialized)
+            {
+                return;
+            }
+
+            Follow(IsLooping, value => Settings.UIProperties.Looping = value, rephrases: true);
+            Follow(IsSideBySide, value => Settings.ImageScaling.ShowImageSideBySide = value);
+            Follow(IsScrollingEnabled, value => Settings.Zoom.ScrollEnabled = value, rephrases: true);
+            Follow(IsZoomedToFit, value => Settings.ImageScaling.ZoomToFit = value);
+            Follow(IsIncludingSubdirectories, value => Settings.Sorting.IncludeSubDirectories = value);
+            Follow(IsFileHistoryEnabled, value => Settings.Navigation.IsFileHistoryEnabled = value, rephrases: true);
+            Follow(IsShowingFullPathInTitleBar, value => Settings.UIProperties.ShowFullPathInTitleBar = value);
+            Follow(IsShowingTaskbarProgress, value => Settings.UIProperties.IsTaskbarProgressEnabled = value);
+            Follow(IsOpeningInSameWindow, value => Settings.UIProperties.OpenInSameWindow = value);
+            Follow(IsConstrainingBackgroundColor, value => Settings.UIProperties.IsConstrainBackgroundColorEnabled = value);
+            Follow(IsTopMost, value => Settings.WindowProperties.TopMost = value);
+            Follow(ShowInterface, value => Settings.UIProperties.ShowInterface = value, rephrases: true);
+            Follow(ShowBottomBar, value => Settings.UIProperties.ShowBottomNavBar = value, rephrases: true);
+            Follow(ShowHoverBar, value => Settings.UIProperties.ShowHoverNavigationBar = value, rephrases: true);
+            _isActionSettingsInitialized = true;
+        }
     }
 
     /// <summary>
@@ -174,20 +192,26 @@ public class GlobalSettingsViewModel
     }
 
     /// <summary>
-    /// Extra settings, that are not reached through the main window.
+    /// Starts the write-throughs of the extra settings, that are not reached through the main window. Idempotent and
+    /// safe from any thread; a concurrent caller returns only after the subscriptions exist.
     /// </summary>
     public void InitializeExtraSettings()
     {
-        if (_isExtraSettingsInitialized)
+        lock (_initializeLock)
         {
-            return;
-        }
-        _isExtraSettingsInitialized = true;
+            if (_isExtraSettingsInitialized)
+            {
+                return;
+            }
 
-        GalleryMouseWheelBehavior
-            .Subscribe(x => {
-                Settings.Gallery.GalleryMouseWheelBehavior = (GalleryMouseWheel)x;
-            }, DebugHelper.LogError(nameof(GlobalSettingsViewModel), nameof(GalleryMouseWheelBehavior)));
+            Follow(ShowFadeButtons, value => Settings.UIProperties.ShowAltInterfaceButtons = value);
+            Follow(WindowMargin, value => Settings.WindowProperties.Margin = value);
+            GalleryMouseWheelBehavior
+                .Subscribe(x => {
+                    Settings.Gallery.GalleryMouseWheelBehavior = (GalleryMouseWheel)x;
+                }, DebugHelper.LogError(nameof(GlobalSettingsViewModel), nameof(GalleryMouseWheelBehavior)));
+            _isExtraSettingsInitialized = true;
+        }
     }
 
     private void Follow<T>(BindableReactiveProperty<T> setting, Action<T> write, bool rephrases = false)

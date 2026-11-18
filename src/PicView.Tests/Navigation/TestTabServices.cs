@@ -1,3 +1,4 @@
+using PicView.Tests.Config;
 using PicView.Core.FileSorting;
 using PicView.Core.IPlatform;
 using PicView.Core.Models;
@@ -20,7 +21,7 @@ public static class TestTabServices
         IPlatformSpecificService? platform = null, GlobalSettingsViewModel? globalSettings = null) =>
         new(cache, thumbnails ?? NoThumbnails(cache), watcher ?? new NoFileWatcher(),
             imageLoader ?? new NoImageModelLoader(), platform ?? new OrdinalPlatform(),
-            globalSettings ?? new GlobalSettingsViewModel(static () => ValueTask.FromResult(true)));
+            globalSettings ?? StartedSettings.New());
 
     /// <summary>
     /// Thumbnails that are never given, for a suite whose tabs need them but show no gallery.

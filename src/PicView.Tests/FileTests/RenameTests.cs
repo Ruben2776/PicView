@@ -1,3 +1,4 @@
+using PicView.Tests.Config;
 using ImageMagick;
 using PicView.Avalonia.UI;
 using PicView.Core.FileHandling;
@@ -152,7 +153,7 @@ public class RenameTests : IDisposable
         core.InitializeNavigation(
             TestTabServices.For(core.SharedCache, null),
             new NavigationService(string.CompareOrdinal));
-        var vm = new MainWindowViewModel(core, new TranslationViewModel(), new GlobalSettingsViewModel(),
+        var vm = new MainWindowViewModel(core, new TranslationViewModel(), StartedSettings.New(),
             new GallerySharedSettingsViewModel()) { ToolTip = new ToolTipViewModel() };
         core.MainWindows.MainWindows.Add(vm);
         var tab = vm.WindowTabs.ActiveTab.Value;
@@ -167,7 +168,7 @@ public class RenameTests : IDisposable
 
     private (MainWindowViewModel Vm, TabViewModel Tab) CreateTab(string path)
     {
-        var vm = new MainWindowViewModel(null!, new TranslationViewModel(), new GlobalSettingsViewModel(),
+        var vm = new MainWindowViewModel(null!, new TranslationViewModel(), StartedSettings.New(),
             new GallerySharedSettingsViewModel()) { ToolTip = new ToolTipViewModel() };
         var tab = vm.WindowTabs.ActiveTab.Value;
         var fileInfo = new FileInfo(path);

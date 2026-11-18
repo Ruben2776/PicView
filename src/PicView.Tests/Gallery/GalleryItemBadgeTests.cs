@@ -1,3 +1,4 @@
+using PicView.Tests.Config;
 using Avalonia.Controls;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
@@ -33,7 +34,7 @@ public class GalleryItemBadgeTests
         {
             _gallerySettings = new GallerySharedSettingsViewModel();
             var mainVm = new MainWindowViewModel(null!, new TranslationViewModel(),
-                new GlobalSettingsViewModel(), _gallerySettings);
+                StartedSettings.New(), _gallerySettings);
             _itemVm = new GalleryItemViewModel { IsMotionPhoto = { Value = true } };
 
             var window = new Window { DataContext = mainVm };

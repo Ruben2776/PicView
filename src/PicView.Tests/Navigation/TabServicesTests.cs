@@ -1,3 +1,4 @@
+using PicView.Tests.Config;
 using ImageMagick;
 using PicView.Core.FileSorting;
 using PicView.Core.IPlatform;
@@ -110,7 +111,7 @@ public class TabServicesTests
 
     private static CoreViewModel CreateCore() =>
         new(new MockPlatformSpecificService(), file => ValueTask.FromResult(new ImageModel { FileInfo = file }),
-            new GlobalSettingsViewModel(static () => ValueTask.FromResult(true)));
+            StartedSettings.New());
 
     private static TabServices ServicesFor(CoreViewModel core) =>
         new(core.SharedCache, TestTabServices.NoThumbnails(core.SharedCache), new MockFileWatcherService(),

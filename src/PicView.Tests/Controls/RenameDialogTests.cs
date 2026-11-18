@@ -1,3 +1,4 @@
+using PicView.Tests.Config;
 using Avalonia.Controls;
 using Avalonia.Threading;
 using PicView.Avalonia.Views.UC.PopUps;
@@ -25,7 +26,7 @@ public class RenameDialogTests
     public void Opening_SelectsTheNameWithoutTheExtension(string fileName, string selected)
     {
         var core = new CoreViewModel(null, _ => ValueTask.FromResult(new ImageModel()),
-            new GlobalSettingsViewModel(static () => ValueTask.FromResult(true)));
+            StartedSettings.New());
         var vm = new MainWindowViewModel(core, core.Translation, core.GlobalSettings, core.GallerySettings);
         vm.WindowTabs.ActiveTab.Value.FileInfo.Value = new FileInfo(Path.Combine(Path.GetTempPath(), fileName));
         var dialog = new RenameDialog { DataContext = vm };

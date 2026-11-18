@@ -1,3 +1,4 @@
+using PicView.Tests.Config;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Threading;
@@ -33,7 +34,7 @@ public class WindowFitterTests
         Settings.WindowProperties.AutoFit = false;
         Settings.ImageScaling.ZoomToFit = false;
         _core = new CoreViewModel(null, _ => ValueTask.FromResult(new ImageModel()),
-            new GlobalSettingsViewModel(static () => ValueTask.FromResult(true)));
+            StartedSettings.New());
     }
 
     [AvaloniaFact]

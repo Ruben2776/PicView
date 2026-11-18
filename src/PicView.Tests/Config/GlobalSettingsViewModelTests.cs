@@ -26,9 +26,11 @@ public class GlobalSettingsViewModelTests
         return ValueTask.FromResult(true);
     }
 
-    private GlobalSettingsViewModel New() => new(CountingSave);
+    private GlobalSettingsViewModel New() => StartedSettings.New(CountingSave);
 
-    public static TheoryData<string, Func<GlobalSettingsViewModel, BindableReactiveProperty<bool>>, Func<bool>> Published => new()
+    private GlobalSettingsViewModel Unstarted() => new(CountingSave);
+
+    public static TheoryData<string, Func<GlobalSettingsViewModel, BindableReactiveProperty<bool>>, Func<bool>> ActionSettings => new()
     {
         { "Looping", s => s.IsLooping, () => Settings.UIProperties.Looping },
         { "SideBySide", s => s.IsSideBySide, () => Settings.ImageScaling.ShowImageSideBySide },
@@ -44,8 +46,97 @@ public class GlobalSettingsViewModelTests
         { "Interface", s => s.ShowInterface, () => Settings.UIProperties.ShowInterface },
         { "BottomBar", s => s.ShowBottomBar, () => Settings.UIProperties.ShowBottomNavBar },
         { "HoverBar", s => s.ShowHoverBar, () => Settings.UIProperties.ShowHoverNavigationBar },
-        { "FadeButtons", s => s.ShowFadeButtons, () => Settings.UIProperties.ShowAltInterfaceButtons },
     };
+
+    public static TheoryData<string, Func<GlobalSettingsViewModel, BindableReactiveProperty<bool>>, Func<bool>> Published
+    {
+        get
+        {
+            var all = new TheoryData<string, Func<GlobalSettingsViewModel, BindableReactiveProperty<bool>>, Func<bool>>();
+            foreach (var row in ActionSettings)
+            {
+                all.Add(row);
+            }
+            all.Add("FadeButtons", s => s.ShowFadeButtons, () => Settings.UIProperties.ShowAltInterfaceButtons);
+            return all;
+        }
+    }
+
+    [Theory, MemberData(nameof(Published))]
+    public void Setting_ChangedBeforeInitialize_WritesAndSavesNothing(string _,
+        Func<GlobalSettingsViewModel, BindableReactiveProperty<bool>> pick, Func<bool> stored)
+    {
+        var setting = pick(Unstarted());
+        var before = stored();
+
+        setting.Value = !before;
+
+        Assert.Equal(before, stored());
+        Assert.Equal(0, _saves);
+    }
+
+    [Theory, MemberData(nameof(ActionSettings))]
+    public void InitializeActionSettings_ActionSettingChanged_WritesAndSavesOnce(string _,
+        Func<GlobalSettingsViewModel, BindableReactiveProperty<bool>> pick, Func<bool> stored)
+    {
+        var settings = Unstarted();
+        settings.InitializeActionSettings();
+        var before = stored();
+
+        pick(settings).Value = !before;
+
+        Assert.Equal(!before, stored());
+        Assert.Equal(1, _saves);
+    }
+
+    [Fact]
+    public void InitializeActionSettings_ExtraSettingsChanged_WriteNothingUntilInitializeExtraSettings()
+    {
+        var settings = Unstarted();
+        settings.InitializeActionSettings();
+        var fade = Settings.UIProperties.ShowAltInterfaceButtons;
+        var wheel = Settings.Gallery.GalleryMouseWheelBehavior;
+
+        settings.ShowFadeButtons.Value = !fade;
+        settings.WindowMargin.Value = 42;
+        settings.GalleryMouseWheelBehavior.Value = (int)GalleryMouseWheel.Navigate;
+
+        Assert.Equal(fade, Settings.UIProperties.ShowAltInterfaceButtons);
+        Assert.NotEqual(42, Settings.WindowProperties.Margin);
+        Assert.Equal(wheel, Settings.Gallery.GalleryMouseWheelBehavior);
+        Assert.Equal(0, _saves);
+
+        settings.InitializeExtraSettings();
+        settings.WindowMargin.Value = 43;
+        Assert.Equal(43, Settings.WindowProperties.Margin);
+        Assert.Equal(1, _saves);
+    }
+
+    [Fact]
+    public void Initializers_CalledTwice_SaveOncePerChange()
+    {
+        var settings = Unstarted();
+        settings.InitializeActionSettings();
+        settings.InitializeActionSettings();
+        settings.InitializeExtraSettings();
+        settings.InitializeExtraSettings();
+
+        settings.IsLooping.Value = !Settings.UIProperties.Looping;
+        Assert.Equal(1, _saves);
+        settings.WindowMargin.Value = 42;
+        Assert.Equal(2, _saves);
+    }
+
+    [Fact]
+    public void InitializeActionSettings_CalledFromManyThreads_SavesOncePerChange()
+    {
+        var settings = Unstarted();
+
+        Parallel.For(0, 16, _ => settings.InitializeActionSettings());
+        settings.IsLooping.Value = !Settings.UIProperties.Looping;
+
+        Assert.Equal(1, _saves);
+    }
 
     [Theory, MemberData(nameof(Published))]
     public void Setting_Changed_WritesItsStoredValueAndSavesOnce(string _,
@@ -108,6 +199,8 @@ public class GlobalSettingsViewModelTests
         var saves = 0;
         var settings = new GlobalSettingsViewModel(() =>
             Interlocked.Increment(ref saves) is 1 ? new ValueTask<bool>(gate.Task) : ValueTask.FromResult(true));
+        settings.InitializeActionSettings();
+        settings.InitializeExtraSettings();
 
         settings.IsLooping.Value = true; // save 1 starts and is held
         settings.IsScrollingEnabled.Value = true; // two changes land while it runs
@@ -131,6 +224,8 @@ public class GlobalSettingsViewModelTests
             }
             return ValueTask.FromResult(true);
         });
+        settings.InitializeActionSettings();
+        settings.InitializeExtraSettings();
 
         settings.IsLooping.Value = true;
         await settings.Saving;
@@ -175,7 +270,7 @@ public class GlobalSettingsViewModelTests
     }
 
     [Fact]
-    public void Subscriber_MadeAfterConstruction_ReadsTheStoredValueAlreadyWritten()
+    public void Subscriber_MadeAfterInitialize_ReadsTheStoredValueAlreadyWritten()
     {
         var settings = New();
         bool? storedWhenNotified = null;

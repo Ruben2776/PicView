@@ -1,3 +1,4 @@
+using PicView.Tests.Config;
 using System.Collections.Concurrent;
 using System.Net;
 using System.Net.Sockets;
@@ -1308,7 +1309,7 @@ public class TabLoadTests : IDisposable
         var a = await WriteImageAsync("a.jpg");
         var platform = new MockPlatformSpecificService();
         var core = new CoreViewModel(platform, file => ValueTask.FromResult(new ImageModel { FileInfo = file }),
-            new GlobalSettingsViewModel(static () => ValueTask.FromResult(true)));
+            StartedSettings.New());
         core.InitializeNavigation(
             new TabServices(core.SharedCache, TestTabServices.NoThumbnails(core.SharedCache), _mockFileWatcherService,
                 _mockImageModelLoader, platform, core.GlobalSettings),
@@ -1430,7 +1431,7 @@ public class TabLoadTests : IDisposable
         var dummyParent = parentVm ?? new MainWindowViewModel(null!, null!, null!, null!);
         var services = new TabServices(cache ?? _cache, TestTabServices.NoThumbnails(cache ?? _cache),
             watcher ?? _mockFileWatcherService, _mockImageModelLoader, platform ?? new MockPlatformSpecificService(),
-            new GlobalSettingsViewModel(static () => ValueTask.FromResult(true)));
+            StartedSettings.New());
         var tab = new TabViewModel(dummyParent, services, writer);
         if (withIterator)
         {

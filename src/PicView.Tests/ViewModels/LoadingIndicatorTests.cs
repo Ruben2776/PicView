@@ -1,3 +1,4 @@
+using PicView.Tests.Config;
 using PicView.Core.Localization;
 using PicView.Core.Models;
 using PicView.Core.ViewModels;
@@ -20,7 +21,7 @@ public class LoadingIndicatorTests
         TranslationManager.Init();
         ObservableSystem.DefaultFrameProvider = new MockFrameProvider();
         _core = new CoreViewModel(null, _ => ValueTask.FromResult(new ImageModel()),
-            new GlobalSettingsViewModel(static () => ValueTask.FromResult(true)));
+            StartedSettings.New());
     }
 
     private MainWindowViewModel NewWindow(TabViewModel? firstTab = null) =>

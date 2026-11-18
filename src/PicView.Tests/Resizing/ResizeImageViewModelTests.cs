@@ -1,3 +1,4 @@
+using PicView.Tests.Config;
 using ImageMagick;
 using PicView.Core.Extensions;
 using PicView.Core.Models;
@@ -38,7 +39,7 @@ public class ResizeImageViewModelTests
     {
         SetDefaults();
 
-        var globalSettings = new GlobalSettingsViewModel();
+        var globalSettings = StartedSettings.New();
         var gallerySettings = new GallerySharedSettingsViewModel();
         var translations = new TranslationViewModel();
         // A converted file shows through the tab's Load, which needs the services

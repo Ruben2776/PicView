@@ -1,3 +1,4 @@
+using PicView.Tests.Config;
 using PicView.Core.ViewModels;
 using PicView.Core.Config;
 using PicView.Core.Localization;
@@ -65,7 +66,7 @@ public class SettingsViewModelTests
         Assert.Equal(SettingsCategory.General, vm.SelectedCategory.Value);
     }
     
-    private static GlobalSettingsViewModel NewSettings() => new(static () => ValueTask.FromResult(true));
+    private static GlobalSettingsViewModel NewSettings() => StartedSettings.New();
 
     [Fact]
     public void ToggleFadeButtons_WritesThePublishedSetting()
