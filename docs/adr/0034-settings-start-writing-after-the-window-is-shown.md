@@ -13,6 +13,6 @@ A follower that subscribes before the window is shown is notified before the wri
 ## Consequences
 
 - A new published setting picks its group by whether an Action can change it: if one can, it is in `InitializeActionSettings`; if only the Settings window can, it is in `InitializeExtraSettings`.
-- No subscription on a setting is made before the first Main Window is opened, and a change before an initializer writes and saves nothing.
+- No write-through, and none of App Start's own followers, starts before the first Main Window is opened; a window's and a tab's own followers still subscribe as they are made. A tab loading at App Start may start the write-throughs slightly before the window is shown on some paths (the window show is posted, not awaited, when AutoFit is off for a side-by-side pair or the size ping fails); no toggle can be lost either way, as both precede any input. A change before an initializer writes and saves nothing.
 - A follower that reads the record synchronously calls `InitializeActionSettings()` before it subscribes, as the tab does; one that may subscribe earlier reads the published value.
 - Supersedes ADR-0020's "the fourteen are eager" and "made first in the constructor"; the rest of it holds, including that the write-through subscribes before a later follower, so that follower reads the new value.

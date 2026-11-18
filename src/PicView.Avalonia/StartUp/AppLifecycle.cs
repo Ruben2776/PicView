@@ -314,6 +314,7 @@ public sealed class AppLifecycle
     }
 
     // No setting is followed before the first Main Window is open, so it shows without the cost
+    // A first window closed before it opens never follows, which is fine as nothing can then be toggled
     private void FollowOnceOpened(MainWindow window)
     {
         if (window.IsVisible)

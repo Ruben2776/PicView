@@ -1810,8 +1810,9 @@ public class AppLifecycleTests : IAsyncDisposable
             await Task.Delay(10, TestContext.Current.CancellationToken);
             Dispatcher.UIThread.RunJobs();
         }
-    }
 
+        Assert.True(opened.Task.IsCompleted, "The first window did not open in time");
+    }
 
     // Records the tab it was last asked to watch
     private sealed class RecordingWatcher : IFileWatcherService

@@ -493,7 +493,7 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
     /// does, and a comparison only in its synced mode, as the others stack the pair, so the window fits one image.
     /// Side-by-side is read from <paramref name="settings"/> as they publish it, or the stored setting without them.
     /// </summary>
-    internal static bool ShowsPairBeside(TabViewModel tab, GlobalSettingsViewModel? settings = null) =>
+    internal static bool ShowsPairBeside(TabViewModel tab, GlobalSettingsViewModel? settings) =>
         tab.Comparison is { } c
             ? c.IsSynced.Value
             : settings?.IsSideBySide.CurrentValue ?? Settings.ImageScaling.ShowImageSideBySide;
@@ -628,6 +628,7 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
             SecondImageHeight = sizes.SecondHeight,
             QuarterTurns = sizes.QuarterTurns,
             Mode = state.FitMode,
+            // Read as published, as the fitter follows before the write-through starts (ADR-0034)
             ZoomToFit = vm.GlobalSettings.IsZoomedToFit.CurrentValue,
             ScrollEnabled = vm.GlobalSettings.IsScrollingEnabled.CurrentValue,
             Screen = screen,

@@ -114,7 +114,7 @@ public class WindowFitterTests
     }
 
     [AvaloniaFact]
-    public void ZoomToFit_ToggledWhenFitterFollowedBeforeTheWriteThrough_FitsWithTheNewValue()
+    public void ZoomToFit_ToggledWithoutTheWriteThrough_FitsWithThePublishedValue()
     {
         var settings = new GlobalSettingsViewModel(static () => ValueTask.FromResult(true));
         var core = new CoreViewModel(null, _ => ValueTask.FromResult(new ImageModel()), settings);
@@ -1638,7 +1638,7 @@ public class WindowFitterTests
         Settings.ImageScaling.ShowImageSideBySide = true;
         var tab = ComparingTab();
 
-        Assert.False(WindowFitter.ShowsPairBeside(tab));
+        Assert.False(WindowFitter.ShowsPairBeside(tab, null));
     }
 
     [Fact]
@@ -1648,7 +1648,7 @@ public class WindowFitterTests
 
         tab.Comparison!.SetMode(ComparisonMode.Synced);
 
-        Assert.True(WindowFitter.ShowsPairBeside(tab));
+        Assert.True(WindowFitter.ShowsPairBeside(tab, null));
     }
 
     private static TabViewModel ComparingTab()

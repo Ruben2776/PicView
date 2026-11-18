@@ -967,6 +967,8 @@ public class TabLoadTests : IDisposable
         settings.IsIncludingSubdirectories.Value = true;
 
         Assert.True(await storedWhenRelisted.Task.WaitAsync(WaitLimit, TestContext.Current.CancellationToken));
+        // The relist runs on, so let it finish before the directory goes
+        await WaitUntil(() => tab.ImageIterator!.Files.Count == 2, () => "the relist");
     }
 
     [Fact]
