@@ -33,32 +33,47 @@ public sealed class AppLifecycle
     private readonly CoreViewModel _core;
     private readonly ISharedFiles _sharedFiles;
     private readonly Action _exit;
-    private readonly Action _startNewProcess;
+    private readonly Action<string?, bool> _startNewProcess;
+    private readonly HandOverListener? _handOvers;
+
+    // The hand-overs taken and not opened yet, which App Shutdown owes a PicView to open in. Guarded by the lock,
+    // with whether any more are taken, so one is either opened here or handed to a new process, never neither
+    private readonly Lock _handOverLock = new();
+
+    // The dispatcher of the thread the app was made on, for what arrives on a pool thread
+    private readonly Dispatcher _dispatcher = Dispatcher.UIThread;
+    private readonly List<TakenHandOver> _takenHandOvers = [];
+    private bool _takesNoHandOvers;
     private MainWindow? _firstWindow;
     private bool _launchFileArrived;
     private string? _launchFileBeforeStart;
 
     /// <param name="core">The view model every Main Window shares.</param>
     /// <param name="provider">Creates this platform's windows.</param>
-    public AppLifecycle(CoreViewModel core, IWindowProvider provider)
+    /// <param name="handOvers">Takes what PicViews started later hand over, or null on a platform that brings a later
+    /// start to the running PicView itself.</param>
+    public AppLifecycle(CoreViewModel core, IWindowProvider provider, HandOverListener? handOvers = null)
         : this(core, provider, new SharedFiles(core.PlatformService), () => Environment.Exit(0),
-            ProcessHelper.StartNewProcess)
+            ProcessHelper.StartNewProcess, handOvers)
     {
         Current = this;
     }
 
     /// <param name="sharedFiles">Loads and saves what every Main Window shares.</param>
     /// <param name="exit">Ends the process, last of all at App Shutdown.</param>
-    /// <param name="startNewProcess">Starts a new PicView with no arguments, when restarting.</param>
+    /// <param name="startNewProcess">Starts a new PicView process with a Source or none. True starts one that runs
+    /// its own App Start whatever is running, when restarting; false one that hands over as any start does.</param>
     /// <param name="core">The view model every Main Window shares.</param>
     /// <param name="provider">Creates this platform's windows.</param>
+    /// <param name="handOvers">Takes what PicViews started later hand over.</param>
     internal AppLifecycle(CoreViewModel core, IWindowProvider provider, ISharedFiles sharedFiles, Action exit,
-        Action startNewProcess)
+        Action<string?, bool> startNewProcess, HandOverListener? handOvers = null)
     {
         _core = core;
         _sharedFiles = sharedFiles;
         _exit = exit;
         _startNewProcess = startNewProcess;
+        _handOvers = handOvers;
         MainWindows = new MainWindowLifecycle(core, provider, this);
         AppWindows = new SecondaryWindowOpener(() => MainWindows.MostRecentlyActive, provider, () => null);
         AppToolWindows = new SecondaryWindowOpener(() => MainWindows.MostRecentlyActive, provider, () => null);
@@ -144,6 +159,8 @@ public sealed class AppLifecycle
         }
 
         IsShuttingDown = true;
+        // First, so a PicView started from here on, as the one a restart starts, runs its own App Start
+        var unopened = StopTakingHandOvers();
         // Closing Batch Resize cancels a run that is still going
         AppToolWindows.CloseAll();
         // Closing Effects records where it is, and saves it
@@ -169,10 +186,44 @@ public sealed class AppLifecycle
         if (restart is not null)
         {
             await restart().ConfigureAwait(true);
-            _startNewProcess();
+            // Its own process, or a PicView that is still listening would take it and keep its own settings
+            _startNewProcess(null, true);
+        }
+
+        // After the save, so the PicView that opens them reads what this one left
+        foreach (var source in unopened)
+        {
+            _startNewProcess(source, false);
         }
 
         _exit();
+    }
+
+    /// <summary>
+    /// Stops the listener and takes no more hand-overs.
+    /// </summary>
+    /// <returns>The Sources that were taken and never opened: those the listener held for an App Start that did not
+    /// get to them, and those still waiting for the UI thread.</returns>
+    private List<string?> StopTakingHandOvers()
+    {
+        List<string?> unopened = [];
+        if (_handOvers is not null)
+        {
+            unopened.AddRange(_handOvers.Stop());
+        }
+
+        lock (_handOverLock)
+        {
+            _takesNoHandOvers = true;
+            foreach (var taken in _takenHandOvers)
+            {
+                unopened.Add(taken.Source);
+            }
+
+            _takenHandOvers.Clear();
+        }
+
+        return unopened;
     }
 
     /// <summary>
@@ -195,8 +246,9 @@ public sealed class AppLifecycle
     }
 
     /// <summary>
-    /// Runs App Start: handles a file-association argument or passes the launch on to an already running PicView, and
-    /// otherwise opens the first Main Window and loads what every Main Window shares.
+    /// Runs App Start: handles a file-association argument, and otherwise opens the first Main Window, loads what every
+    /// Main Window shares and begins taking what PicViews started later hand over. A PicView that started while
+    /// another was running has handed its Source over and exited before this (ADR-0037).
     /// </summary>
     /// <param name="settingsExists">Whether a settings file was found, as opposed to defaults being used.</param>
     /// <param name="args">The command-line arguments, starting with the program.</param>
@@ -205,17 +257,10 @@ public sealed class AppLifecycle
     /// <returns>Completes once App Start has finished, after the first Main Window is shown.</returns>
     public async Task StartAsync(bool settingsExists, IReadOnlyList<string> args, bool launchFileMayFollow = false)
     {
-        var source = args.Count > 1 ? args[1] : null;
+        var source = SingleProcess.SourceOf(args, first: 1);
         if (source?.StartsWith("associate:", StringComparison.OrdinalIgnoreCase) == true)
         {
             await ProcessFileAssociationAsync(source).ConfigureAwait(false);
-            return;
-        }
-
-        if (source is not null && !OperatingSystem.IsMacOS() && Settings.UIProperties.OpenInSameWindow &&
-            ProcessHelper.CheckIfAnotherInstanceIsRunning())
-        {
-            IPC.SendWithArgs(args.ToArray());
             return;
         }
 
@@ -225,6 +270,8 @@ public sealed class AppLifecycle
         var (window, settingUp) = MainWindows.OpenAtAppStart(source, launchFileMayFollow ? () => _launchFileArrived : null);
         _firstWindow = window;
         FollowOnceOpened(window);
+        // Those held while the first Main Window was not there yet open now, each after this window's own start
+        _handOvers?.Attach(ReceiveHandOver);
         if (_launchFileBeforeStart is { } early)
         {
             _launchFileBeforeStart = null;
@@ -244,27 +291,15 @@ public sealed class AppLifecycle
         ResourceLimits.LimitMemory(new Percentage(80));
         GCSettings.LatencyMode = GCLatencyMode.LowLatency;
         var loading = _sharedFiles.LoadAsync();
-        Dispatcher.UIThread.Post(() =>
-        {
-            if (!OperatingSystem.IsMacOS())
-            {
-                // macOS already opens files in the same window, the other platforms need IPC for it
-                if (Settings.UIProperties.OpenInSameWindow && !ProcessHelper.CheckIfAnotherInstanceIsRunning())
-                {
-                    _ = IPC.StartListeningForArguments();
-                }
-            }
-
-            Application.Current.Name = "PicView";
-        }, DispatcherPriority.Background);
+        Dispatcher.UIThread.Post(() => Application.Current.Name = "PicView", DispatcherPriority.Background);
 
         await Task.WhenAll(settingUp, loading).ConfigureAwait(true);
     }
 
     /// <summary>
     /// Opens a file the operating system launched PicView with. The first one, while App Start shows the first Main
-    /// Window, opens there and continues from where the user left off; a later one opens in the most recently active
-    /// Main Window, or in a new PicView when files should not open in the same window.
+    /// Window, opens there and continues from where the user left off; a later one opens as a hand-over does, in the
+    /// Active Main Window or in a new Main Window, following the open in same window setting.
     /// </summary>
     public async Task OpenLaunchFileAsync(string path)
     {
@@ -283,19 +318,100 @@ public sealed class AppLifecycle
             return;
         }
 
-        if (!Settings.UIProperties.OpenInSameWindow || MainWindows.MostRecentlyActive is not { } window)
+        await OpenHandOverAsync(path).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Takes the Source another PicView process was started with, null when it was started with none, and opens it on
+    /// the UI thread. Callable from any thread.
+    /// </summary>
+    /// <returns>False once App Shutdown has begun. One taken before that and not opened by the time App Shutdown
+    /// ends is given to a new PicView process.</returns>
+    internal bool ReceiveHandOver(string? source)
+    {
+        var taken = new TakenHandOver(source);
+        lock (_handOverLock)
         {
-            ProcessHelper.StartNewProcess(path);
+            if (_takesNoHandOvers)
+            {
+                return false;
+            }
+
+            _takenHandOvers.Add(taken);
+        }
+
+        _dispatcher.Post(() => _ = OpenAndLogAsync(taken), DispatcherPriority.Background);
+        return true;
+    }
+
+    private sealed record TakenHandOver(string? Source);
+
+    private async Task OpenAndLogAsync(TakenHandOver taken)
+    {
+        lock (_handOverLock)
+        {
+            // App Shutdown got to it first, and starts a PicView for it
+            if (!_takenHandOvers.Remove(taken))
+            {
+                return;
+            }
+        }
+
+        try
+        {
+            await OpenHandOverAsync(taken.Source).ConfigureAwait(true);
+        }
+        catch (Exception e)
+        {
+            DebugHelper.LogDebug(nameof(AppLifecycle), nameof(ReceiveHandOver), e);
+        }
+    }
+
+    /// <summary>
+    /// Opens a Source that reached the running PicView from outside it: one another PicView process handed over, or a
+    /// file the operating system launched PicView with again. With open in same window on, it opens in the Active Main
+    /// Window, and a start without a Source only brings that window to the front. With it off, or with no Main Window
+    /// open, it opens in a new Main Window, opened from the Active Main Window, which shows a Fresh Tab when there is
+    /// no Source. One taken just as App Shutdown began goes to a new PicView process instead, so it is not lost.
+    /// </summary>
+    internal async Task OpenHandOverAsync(string? source)
+    {
+        if (!_dispatcher.CheckAccess())
+        {
+            await _dispatcher.InvokeAsync(() => OpenHandOverAsync(source)).ConfigureAwait(false);
             return;
         }
 
-        await Dispatcher.UIThread.InvokeAsync(() =>
+        var active = MainWindows.MostRecentlyActive;
+        switch (HandOverReceipt.Respond(IsShuttingDown, Settings.UIProperties.OpenInSameWindow, source is not null,
+                    active is not null))
         {
-            window.Activate();
-            // Opening reads the active window's view model, and activating may report back later
-            _core.MainWindows.ActiveWindow.Value = window.DataContext as MainWindowViewModel;
-        }, DispatcherPriority.Send);
-        await SourceOpener.OpenAsync(window, _core, path).ConfigureAwait(false);
+            case HandOverResponse.Refuse:
+                _startNewProcess(source, false);
+                break;
+            case HandOverResponse.OpenInActiveMainWindow:
+                await BringToFrontAsync(active!).ConfigureAwait(true);
+                // Need to stop taskbar progress if it's running, otherwise the new one will not be updated
+                _core.PlatformService?.StopTaskbarProgress();
+                // Off the UI thread, as every Source opens
+                await Task.Run(() => SourceOpener.OpenAsync(active!, _core, source!).AsTask()).ConfigureAwait(false);
+                break;
+            case HandOverResponse.ActivateActiveMainWindow:
+                await BringToFrontAsync(active!).ConfigureAwait(true);
+                break;
+            default:
+                await MainWindows.OpenNewAsync(active, source).ConfigureAwait(false);
+                break;
+        }
+    }
+
+    // A minimized window is shown again first, in the Window Mode it had, or the user would see nothing happen
+    private async Task BringToFrontAsync(MainWindow window)
+    {
+        await window.WindowModeSwitcher.LeaveMinimized().ConfigureAwait(true);
+        window.Activate();
+        // Opening reads the active window's view model, and activating may report back later
+        _core.MainWindows.ActiveWindow.Value = window.DataContext as MainWindowViewModel;
     }
 
     private void ApplySharedSettings(bool settingsExists)
@@ -339,19 +455,8 @@ public sealed class AppLifecycle
         // The write-throughs first, so each follower below is notified after the stored value is written
         settings.InitializeActionSettings();
         _core.GallerySettings.Start();
-        // All live for the process, as IPC does
+        // Both live for the process. Open in same window has no follower: each hand-over reads it as it arrives
         _ = BackgroundManager.Follow(settings);
-        _ = settings.IsOpeningInSameWindow.Skip(1).Subscribe(sameWindow =>
-        {
-            if (sameWindow)
-            {
-                _ = IPC.StartListeningForArguments();
-            }
-            else
-            {
-                IPC.StopListening();
-            }
-        });
         if (_core.SharedFileWatcher is { } fileWatcher)
         {
             // Every tab's watch follows the setting

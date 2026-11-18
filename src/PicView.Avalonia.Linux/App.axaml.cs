@@ -6,6 +6,7 @@ using PicView.Avalonia.StartUp;
 using PicView.Core.FileSorting;
 using PicView.Core.IPlatform;
 using PicView.Core.Linux.FileFunctions;
+using PicView.Core.ProcessHandling;
 using PicView.Core.ViewModels;
 
 #pragma warning disable CS0618 // Type or member is obsolete
@@ -33,7 +34,7 @@ public class App : Application, IPlatformSpecificService
         _coreViewModel = new CoreViewModel(this, GetImageModel.GetImageModelAsync);
         DataContext = _coreViewModel;
 
-        _ = new AppLifecycle(_coreViewModel, new LinuxWindowProvider())
+        _ = new AppLifecycle(_coreViewModel, new LinuxWindowProvider(), SingleProcess.Listener)
             .StartAsync(settingsExists, Environment.GetCommandLineArgs());
     }
 

@@ -1,5 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
+using PicView.Core.ProcessHandling;
+using PicView.Core.WindowsNT;
 
 namespace PicView.Avalonia.Win32;
 
@@ -10,8 +12,16 @@ internal class Program
     // SynchronizationContext-reliant code before AppMain is called: things aren't initialized
     // yet and stuff might break.
     [STAThread]
-    public static void Main(string[] args) => BuildAvaloniaApp()
-        .StartWithClassicDesktopLifetime(args, ShutdownMode.OnExplicitShutdown);
+    public static void Main(string[] args)
+    {
+        // A PicView that is already running opens what this one was started with, and may take the foreground for it
+        if (SingleProcess.HandOverAtStart(args, NativeMethods.AllowPipeServerToTakeForeground))
+        {
+            return;
+        }
+
+        BuildAvaloniaApp().StartWithClassicDesktopLifetime(args, ShutdownMode.OnExplicitShutdown);
+    }
 
     // Avalonia configuration, don't remove; also used by visual designer.
     public static AppBuilder BuildAvaloniaApp()

@@ -32,6 +32,10 @@ public sealed class MainWindowLifecycle
     private readonly List<MainWindow> _open = [];
     private readonly HashSet<MainWindow> _closing = [];
 
+    // The dispatcher of the thread the app was made on, which every Main Window is made on. A pool thread can have
+    // a dispatcher of its own, so what Dispatcher.UIThread is there is not asked
+    private readonly Dispatcher _dispatcher = Dispatcher.UIThread;
+
     internal MainWindowLifecycle(CoreViewModel core, IWindowProvider provider, AppLifecycle app)
     {
         _core = core;
@@ -64,20 +68,58 @@ public sealed class MainWindowLifecycle
     public MainWindow? MostRecentlyActive { get; private set; }
 
     /// <summary>
-    /// Opens a new Main Window whose tab derives the start-up menu.
+    /// Opens a new Main Window, on top of the window it is opened from and at its size, and brings it to the front. Its
+    /// tab derives the start-up menu, or shows <paramref name="source"/> when one is given.
     /// </summary>
-    /// <returns>Completes once the window is set up, after it is shown.</returns>
-    public async Task<MainWindow> OpenNewAsync(MainWindow senderWindow)
+    /// <param name="senderWindow">The window it is opened from, or null when no Main Window is open, as while only
+    /// Batch Resize is; it then opens where the last Main Window was.</param>
+    /// <param name="source">What the new window shows; it says Loading from the start, so no menu is made for it. The
+    /// window is already visible and sized, so the Source loads through Core, not in the startup order (ADR-0005).</param>
+    /// <returns>Completes once the window is set up, after it is shown, and its Source has loaded or failed.</returns>
+    public async Task<MainWindow> OpenNewAsync(MainWindow? senderWindow, string? source = null)
     {
-        var window = await Dispatcher.UIThread.InvokeAsync(() => Create());
-        await Dispatcher.UIThread.InvokeAsync(() =>
+        // Callable from any thread: everything here but the load itself touches windows
+        if (!_dispatcher.CheckAccess())
+        {
+            return await _dispatcher.InvokeAsync(() => OpenNewAsync(senderWindow, source)).ConfigureAwait(false);
+        }
+
+        var window = Create(opensSource: source is not null);
+        // A first Main Window that App Start has not shown yet has no size or place to pass on
+        if (senderWindow is { IsVisible: true })
         {
             WindowFunctions.SaveSize(senderWindow);
-            WindowFunctions.HandleWindowScalingMode(window, isAppStart: false);
-            window.Show();
-        });
+        }
+
+        WindowFunctions.HandleWindowScalingMode(window, isAppStart: false);
+        window.Show();
+        window.Activate();
 
         await SetUpShownWindow(window, isAppStart: false).ConfigureAwait(true);
+        if (source is null)
+        {
+            return window;
+        }
+
+        // The ticket Create's Loading had is replaced, so a Source that opens nothing leaves no Loading behind
+        var tab = ViewModelOf(window).WindowTabs.ActiveTab.CurrentValue;
+        var ticket = tab.SetLoading();
+        var loaded = false;
+        try
+        {
+            // Off the UI thread, as every Source opens
+            var result = await Task.Run(() => SourceOpener.OpenAsync(window, _core, source, tab: tab).AsTask())
+                .ConfigureAwait(true);
+            loaded = result.Outcome is LoadOutcome.Loaded;
+        }
+        finally
+        {
+            if (!loaded)
+            {
+                tab.EndLoading(ticket);
+            }
+        }
+
         return window;
     }
 

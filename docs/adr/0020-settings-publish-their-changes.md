@@ -19,7 +19,7 @@ Before this, `SettingsUpdater` held ten toggles that each hand-wrote the static,
 ## Consequences
 
 - A new published setting is one bindable, one `Follow` and subscribers, never a mirror or a poke. Both pokes are deleted.
-- The record keeps one writer per published setting, its write-through, and its roughly 400 plain readers; `SideBySidePair`, `FileAndDirectoryNavigator`, `FileHistoryManager` and `IPC` keep reading it.
+- The record keeps one writer per published setting, its write-through, and its roughly 400 plain readers; `SideBySidePair`, `FileAndDirectoryNavigator`, `FileHistoryManager` and `IPC` keep reading it. (`IPC` is gone since ADR-0037, and with it the app's follower of open in same window: each hand-over reads the record.)
 - `TwoWay` bindings on a setting are not allowed: with a write-through, a checkbox that both binds `TwoWay` and runs the Action would toggle twice.
 - The write-through subscribes first, so a later subscriber that reads the record sees the new value (see ADR-0034 for followers that subscribe before it starts).
 - When the write-throughs start is superseded by ADR-0034: the fourteen start once the first Main Window is opened, the extra settings (`InitializeExtraSettings`) when the Settings window is made.

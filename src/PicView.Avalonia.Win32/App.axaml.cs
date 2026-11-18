@@ -39,7 +39,7 @@ public class App : Application, IPlatformSpecificService
         _coreViewModel = new CoreViewModel(this, GetImageModel.GetImageModelAsync);
         DataContext = _coreViewModel;
 
-        _ = new AppLifecycle(_coreViewModel, new Win32WindowProvider())
+        _ = new AppLifecycle(_coreViewModel, new Win32WindowProvider(), SingleProcess.Listener)
             .StartAsync(settingsExists, Environment.GetCommandLineArgs());
     }
 

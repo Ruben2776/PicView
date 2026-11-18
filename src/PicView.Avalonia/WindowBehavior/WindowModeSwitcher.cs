@@ -30,6 +30,12 @@ public sealed class WindowModeSwitcher(
 
     public ValueTask LeaveTopMode() => ChangeAsync(static state => state.LeaveTopMode());
 
+    /// <summary>
+    /// Shows a minimized window again, in the mode it had before it was minimized. Any other window is left as it is.
+    /// </summary>
+    public ValueTask LeaveMinimized() =>
+        ChangeAsync(static state => state.Mode is WindowMode.Minimized ? state.LeaveTopMode() : state);
+
     public ValueTask SetAutoFit(bool autoFit) => ChangeAsync(state => state.SetAutoFit(autoFit));
 
     public ValueTask ResizedByHand() => ChangeAsync(static state => state.ResizedByHand());

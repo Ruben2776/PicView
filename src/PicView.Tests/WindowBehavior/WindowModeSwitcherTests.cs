@@ -127,6 +127,35 @@ public class WindowModeSwitcherTests
     }
 
     [AvaloniaFact]
+    public async Task LeaveMinimized_AMinimizedWindow_GivesBackTheModeItHadWithoutSaving()
+    {
+        Settings.WindowProperties.Maximized = true;
+        var (switcher, adapter, vm, _) = CreateWindow();
+        switcher.Start(isAppStart: true);
+        await switcher.OnNativeStateAsync(WindowState.Minimized);
+
+        await switcher.LeaveMinimized();
+
+        Assert.Equal([WindowMode.Maximized, WindowMode.Maximized], adapter.Entered);
+        Assert.Equal(WindowMode.Maximized, vm.WindowModeState.Value.Mode);
+        Assert.Equal(0, _saves);
+    }
+
+    [AvaloniaFact]
+    public async Task LeaveMinimized_AWindowThatIsNotMinimized_IsLeftAsItIs()
+    {
+        Settings.WindowProperties.Maximized = true;
+        var (switcher, adapter, vm, _) = CreateWindow();
+        switcher.Start(isAppStart: true);
+
+        await switcher.LeaveMinimized();
+
+        Assert.Equal([WindowMode.Maximized], adapter.Entered);
+        Assert.Equal(WindowMode.Maximized, vm.WindowModeState.Value.Mode);
+        Assert.Equal(0, _saves);
+    }
+
+    [AvaloniaFact]
     public async Task OnNativeState_FullscreenFromTheOperatingSystem_IsSaved()
     {
         var (switcher, _, vm, _) = CreateWindow();

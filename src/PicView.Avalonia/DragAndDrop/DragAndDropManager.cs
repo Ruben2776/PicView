@@ -10,7 +10,7 @@ using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.Views.UC;
 using PicView.Core.FileHandling;
-using PicView.Core.ProcessHandling;
+using PicView.Core.DebugTools;
 using PicView.Core.Sizing;
 using PicView.Core.Svg;
 using PicView.Core.ViewModels;
@@ -48,7 +48,7 @@ public static class DragAndDropManager
         // Handle opening additional files in new windows if needed
         if (files.Length > 1)
         {
-            _ = Task.Run(() => HandleAdditionalFiles(files.Skip(1)));
+            _ = Task.Run(() => HandleAdditionalFiles(files.Skip(1), mainWindow));
         }
         
         var path = firstFile.Path.LocalPath;
@@ -111,9 +111,10 @@ public static class DragAndDropManager
 
     #region Private Helpers
 
-    private static void HandleAdditionalFiles(IEnumerable<IStorageItem> additionalFiles)
+    // Each further file opens in a new Main Window of this PicView, opened from the one they were dropped on
+    private static async Task HandleAdditionalFiles(IEnumerable<IStorageItem> additionalFiles, MainWindow mainWindow)
     {
-        if (Settings.UIProperties.OpenInSameWindow)
+        if (Settings.UIProperties.OpenInSameWindow || mainWindow.Lifecycle is not { } lifecycle)
         {
             return;
         }
@@ -121,9 +122,18 @@ public static class DragAndDropManager
         foreach (var file in additionalFiles)
         {
             var filepath = file.Path.LocalPath;
-            if (filepath.IsSupported())
+            if (!filepath.IsSupported())
             {
-                ProcessHelper.StartNewProcess(filepath);
+                continue;
+            }
+
+            try
+            {
+                await lifecycle.OpenNewAsync(mainWindow, filepath).ConfigureAwait(false);
+            }
+            catch (Exception e)
+            {
+                DebugHelper.LogDebug(nameof(DragAndDropManager), nameof(HandleAdditionalFiles), e);
             }
         }
     }

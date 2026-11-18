@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
+using Microsoft.Win32.SafeHandles;
 
 namespace PicView.Core.WindowsNT;
 
@@ -15,6 +16,27 @@ public static partial class NativeMethods
     [return: MarshalAs(UnmanagedType.Bool)]
     public static partial bool SetCursorPos(int x, int y);    
     
+    [LibraryImport("User32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static partial bool AllowSetForegroundWindow(uint dwProcessId);
+
+    [LibraryImport("kernel32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static partial bool GetNamedPipeServerProcessId(SafePipeHandle Pipe, out uint ServerProcessId);
+
+    /// <summary>
+    /// Lets the process at the other end of <paramref name="pipe"/> bring a window of its own to the front. Windows
+    /// only lets the process the user just started do that, so a PicView that hands its Source over passes the right
+    /// on to the running PicView, which shows the Source.
+    /// </summary>
+    public static void AllowPipeServerToTakeForeground(SafePipeHandle pipe)
+    {
+        if (GetNamedPipeServerProcessId(pipe, out var processId))
+        {
+            AllowSetForegroundWindow(processId);
+        }
+    }
+
     // Notify the system about the change
     [LibraryImport("shell32.dll")]
     public static partial void SHChangeNotify(int wEventId, int uFlags, IntPtr dwItem1, IntPtr dwItem2);

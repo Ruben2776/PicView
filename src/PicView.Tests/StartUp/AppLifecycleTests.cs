@@ -35,6 +35,7 @@ using PicView.Core.Models;
 using PicView.Core.Navigation;
 using PicView.Core.Navigation.Interfaces;
 using PicView.Core.Navigation.Tiff;
+using PicView.Core.ProcessHandling;
 using PicView.Core.Sizing;
 using PicView.Core.Titles;
 using PicView.Core.Update;
@@ -932,6 +933,387 @@ public class AppLifecycleTests : IAsyncDisposable
 
         Assert.NotSame(firstView, ViewOf(first));
         Assert.Same(secondView, ViewOf(second));
+    }
+
+    [AvaloniaFact]
+    public async Task OpenLaunchFileAsync_AfterAppStartWithSameWindowOff_OpensInANewMainWindowOfThisPicView()
+    {
+        Settings.UIProperties.OpenInSameWindow = false;
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var first = app.MainWindows.Open[0];
+        var firstView = ViewOf(first);
+        var launched = await WriteImageAsync("launched.jpg");
+
+        await app.OpenLaunchFileAsync(launched);
+        await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Background);
+
+        Assert.Equal(2, app.MainWindows.Open.Count);
+        Assert.Same(firstView, ViewOf(first));
+        Assert.Equal(launched, ShownFileOf(app.MainWindows.Open[1]));
+        Assert.Empty(_steps);
+    }
+
+    [AvaloniaFact]
+    public async Task OpenHandOverAsync_SameWindowOffWithASource_OpensItInANewMainWindow()
+    {
+        Settings.UIProperties.OpenInSameWindow = false;
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var first = app.MainWindows.Open[0];
+        var firstView = ViewOf(first);
+        var handedOver = await WriteImageAsync("handed over.jpg");
+
+        await app.OpenHandOverAsync(handedOver);
+        await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Background);
+
+        Assert.Equal(2, app.MainWindows.Open.Count);
+        var opened = app.MainWindows.Open[1];
+        Assert.True(opened.IsVisible);
+        Assert.Same(opened, app.MainWindows.MostRecentlyActive);
+        Assert.Equal(handedOver, ShownFileOf(opened));
+        Assert.Same(firstView, ViewOf(first));
+        Assert.Empty(_steps);
+    }
+
+    [AvaloniaFact]
+    public async Task OpenHandOverAsync_SameWindowOffWithASourceThatCannotBeOpened_LeavesTheNewMainWindowNotLoading()
+    {
+        Settings.UIProperties.OpenInSameWindow = false;
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+
+        await app.OpenHandOverAsync(Path.Combine(_folder, "missing.jpg"));
+        await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Background);
+
+        Assert.Equal(2, app.MainWindows.Open.Count);
+        var tab = ViewModelOf(app.MainWindows.Open[1]).WindowTabs.ActiveTab.CurrentValue;
+        Assert.NotEqual(TitlePhase.Loading, tab.Titles.Phase);
+    }
+
+    [AvaloniaFact]
+    public async Task OpenHandOverAsync_SameWindowOffWithoutASource_OpensANewMainWindowWithAFreshTab()
+    {
+        Settings.UIProperties.OpenInSameWindow = false;
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        Dispatcher.UIThread.RunJobs();
+        var first = app.MainWindows.Open[0];
+        first.Position = new PixelPoint(123, 45);
+
+        await app.OpenHandOverAsync(null);
+        await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Background);
+
+        Assert.Equal(2, app.MainWindows.Open.Count);
+        var opened = app.MainWindows.Open[1];
+        Assert.True(opened.IsVisible);
+        Assert.IsType<StartUpMenu>(ViewOf(opened));
+        Assert.False(ViewModelOf(opened).WindowTabs.ActiveTab.CurrentValue.IsInitialized);
+        // On top of the Active Main Window, as a new window opens on its opener
+        Assert.Equal(first.Position, opened.Position);
+    }
+
+    [AvaloniaFact]
+    public async Task OpenHandOverAsync_SameWindowOnWithASource_OpensItInTheActiveMainWindow()
+    {
+        Settings.UIProperties.OpenInSameWindow = true;
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var first = app.MainWindows.Open[0];
+        var second = await app.MainWindows.OpenNewAsync(app.MainWindows.Open[0]);
+        first.Activate();
+        await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Background);
+        var secondView = ViewOf(second);
+        var handedOver = await WriteImageAsync("handed over.jpg");
+
+        await app.OpenHandOverAsync(handedOver);
+        await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Background);
+
+        Assert.Equal(2, app.MainWindows.Open.Count);
+        Assert.Equal(handedOver, ShownFileOf(first));
+        Assert.Same(secondView, ViewOf(second));
+    }
+
+    [AvaloniaFact]
+    public async Task OpenHandOverAsync_SameWindowOnWithoutASource_BringsTheActiveMainWindowToTheFrontAndOpensNothing()
+    {
+        Settings.UIProperties.OpenInSameWindow = true;
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var first = app.MainWindows.Open[0];
+        await WaitUntilOpenedAsync(first);
+        var firstView = ViewOf(first);
+        // The window's own activation on opening has passed; the headless platform keeps no window in front of
+        // another, so being activated again is what can be seen
+        await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Background);
+        Dispatcher.UIThread.RunJobs();
+        var activations = 0;
+        first.Activated += (_, _) => activations++;
+
+        await app.OpenHandOverAsync(null);
+        await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Background);
+
+        Assert.Equal(1, activations);
+        Assert.Same(first, Assert.Single(app.MainWindows.Open));
+        Assert.Same(firstView, ViewOf(first));
+        Assert.Empty(_steps);
+    }
+
+    // That it comes back in the Window Mode it had is the switcher's rule, tested with it; the headless platform
+    // reports a maximized window back as Normal
+    [AvaloniaTheory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task OpenHandOverAsync_SameWindowOnWithTheActiveMainWindowMinimized_ShowsItAgain(bool withSource)
+    {
+        Settings.UIProperties.OpenInSameWindow = true;
+        _provider.EntersNativeStates = true;
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var first = app.MainWindows.Open[0];
+        await WaitUntilOpenedAsync(first);
+        var vm = ViewModelOf(first);
+        first.WindowState = WindowState.Minimized;
+        await WaitUntilAsync(() => vm.WindowModeState.CurrentValue.Mode is WindowMode.Minimized);
+        var modeWhenMinimized = vm.WindowModeState.CurrentValue.Mode;
+        await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Background);
+        Dispatcher.UIThread.RunJobs();
+        var activations = 0;
+        first.Activated += (_, _) => activations++;
+        var handedOver = withSource ? await WriteImageAsync("handed over.jpg") : null;
+
+        await app.OpenHandOverAsync(handedOver);
+        await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Background);
+
+        Assert.Equal(WindowMode.Minimized, modeWhenMinimized);
+        Assert.Equal(WindowMode.Normal, vm.WindowModeState.CurrentValue.Mode);
+        Assert.Equal(WindowState.Normal, first.WindowState);
+        Assert.Equal(1, activations);
+        Assert.Same(first, Assert.Single(app.MainWindows.Open));
+        Assert.Equal(handedOver, ShownFileOf(first));
+    }
+
+    [AvaloniaFact]
+    public async Task OpenHandOverAsync_SameWindowOffWithTheActiveMainWindowMinimized_OpensAVisibleWindowWhereTheLastOneWas()
+    {
+        Settings.UIProperties.OpenInSameWindow = false;
+        Settings.WindowProperties.AutoFit = false;
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var first = app.MainWindows.Open[0];
+        await WaitUntilOpenedAsync(first);
+        first.Position = new PixelPoint(123, 45);
+        WindowFunctions.SaveSize(first);
+        var widthBefore = Settings.WindowProperties.Width;
+        first.WindowState = WindowState.Minimized;
+        await WaitUntilAsync(() => ViewModelOf(first).WindowModeState.CurrentValue.Mode is WindowMode.Minimized);
+        // Where Windows says a minimized window is
+        first.Position = new PixelPoint(-32000, -32000);
+
+        await app.OpenHandOverAsync(null);
+        await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Background);
+
+        Assert.Equal(2, app.MainWindows.Open.Count);
+        var opened = app.MainWindows.Open[1];
+        Assert.True(opened.IsVisible);
+        Assert.Equal(WindowMode.Normal, ViewModelOf(opened).WindowModeState.CurrentValue.Mode);
+        Assert.NotEqual(WindowState.Minimized, opened.WindowState);
+        Assert.Equal(new PixelPoint(123, 45), opened.Position);
+        Assert.Equal(123, Settings.WindowProperties.Left);
+        Assert.Equal(45, Settings.WindowProperties.Top);
+        Assert.Equal(widthBefore, Settings.WindowProperties.Width);
+        // The opener is left as the user had it
+        Assert.Equal(WindowMode.Minimized, ViewModelOf(first).WindowModeState.CurrentValue.Mode);
+    }
+
+    [AvaloniaFact]
+    public async Task OpenNewAsync_WithASourceFromAPoolThread_OpensItOnTheUiThread()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var first = app.MainWindows.Open[0];
+        var dropped = await WriteImageAsync("dropped.jpg");
+
+        // As the further files of a drop are opened
+        var opening = Task.Run(() => app.MainWindows.OpenNewAsync(first, dropped),
+            TestContext.Current.CancellationToken);
+        await WaitUntilAsync(() => opening.IsCompleted);
+
+        var opened = await opening;
+        Assert.Equal(2, app.MainWindows.Open.Count);
+        Assert.True(opened.IsVisible);
+        Assert.Equal(dropped, ShownFileOf(opened));
+    }
+
+    [AvaloniaFact]
+    public async Task StartAsync_StartedAsItsOwnProcess_OpensTheSourceAfterThatArgument()
+    {
+        Settings.WindowProperties.AutoFit = false;
+        _provider.GivesBars = true;
+        var a = WritePng("a.png");
+        var app = CreateApp();
+
+        await app.StartAsync(settingsExists: true, ["PicView", SingleProcess.OwnProcessArgument, a]);
+
+        await WaitUntilAsync(() => ShownFileOf(app.MainWindows.Open[0]) == a);
+    }
+
+    [AvaloniaFact]
+    public async Task StartAsync_StartedAsItsOwnProcessWithoutASource_ShowsTheStartUpMenu()
+    {
+        var app = CreateApp();
+
+        await app.StartAsync(settingsExists: true, ["PicView", SingleProcess.OwnProcessArgument]);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.IsType<StartUpMenu>(ViewOf(app.MainWindows.Open[0]));
+    }
+
+    [AvaloniaFact]
+    public async Task ShutdownAsync_AHandOverTakenAndNotOpenedYet_StartsANewPicViewWithItBeforeExiting()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var handedOver = Path.Combine(_folder, "a.jpg");
+
+        // Taken, and App Shutdown begins before the UI thread gets to it
+        Assert.True(app.ReceiveHandOver(handedOver));
+        Assert.True(app.ReceiveHandOver(null));
+        await app.ShutdownAsync();
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Empty(app.MainWindows.Open);
+        Assert.Equal(
+            ["start new PicView with " + handedOver, "start new PicView without a Source", "exit"], _steps);
+    }
+
+    [AvaloniaFact]
+    public async Task ShutdownAsync_AHandOverHeldForAnAppStartThatNeverTookIt_StartsANewPicViewWithIt()
+    {
+        var pipe = "PicViewTests-" + Guid.NewGuid().ToString("N");
+        var listener = new HandOverListener(pipe);
+        Assert.True(listener.TryStart());
+        var app = CreateApp(listener);
+        var handedOver = Path.Combine(_folder, "a.jpg");
+        Assert.True(await HandOverSender.TrySendAsync(pipe, handedOver, TimeSpan.FromSeconds(2), WaitLimit));
+        // Held once the PicView that sent it has confirmed, a moment after it was answered
+        await WaitUntilAsync(() => listener.Held == 1);
+
+        // App Shutdown without App Start having opened a Main Window, as when the first one closes before it opens
+        await app.ShutdownAsync();
+
+        Assert.Equal(["start new PicView with " + handedOver, "exit"], _steps);
+    }
+
+    [AvaloniaFact]
+    public async Task OpenHandOverAsync_SameWindowOnWithOnlyBatchResizeOpen_OpensItInANewMainWindow()
+    {
+        Settings.UIProperties.OpenInSameWindow = true;
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var main = app.MainWindows.Open[0];
+        await main.MainWindowInitializer.ShowBatchResizeWindow();
+        await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Background);
+        await app.MainWindows.CloseAsync(main);
+        var handedOver = await WriteImageAsync("handed over.jpg");
+
+        await app.OpenHandOverAsync(handedOver);
+        await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Background);
+
+        Assert.Equal(handedOver, ShownFileOf(Assert.Single(app.MainWindows.Open)));
+        Assert.Equal(0, _exits);
+    }
+
+    [AvaloniaFact]
+    public async Task ReceiveHandOver_WhilePicViewRuns_TakesItAndOpensItOnTheUiThread()
+    {
+        Settings.UIProperties.OpenInSameWindow = false;
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var handedOver = await WriteImageAsync("handed over.jpg");
+
+        // From a pool thread, as the listener calls it
+        var taken = await Task.Run(() => app.ReceiveHandOver(handedOver), TestContext.Current.CancellationToken);
+        await WaitUntilAsync(() => app.MainWindows.Open.Count == 2 && ShownFileOf(app.MainWindows.Open[1]) == handedOver);
+
+        Assert.True(taken);
+        Assert.Equal(handedOver, ShownFileOf(app.MainWindows.Open[1]));
+    }
+
+    [AvaloniaFact]
+    public async Task ReceiveHandOver_AfterAppShutdownBegan_RefusesIt()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        await app.ShutdownAsync();
+
+        var taken = app.ReceiveHandOver(Path.Combine(_folder, "a.jpg"));
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.False(taken);
+        Assert.Empty(app.MainWindows.Open);
+        Assert.Equal(["exit"], _steps);
+    }
+
+    [AvaloniaFact]
+    public async Task OpenHandOverAsync_TakenJustBeforeAppShutdownBegan_StartsANewPicViewWithIt()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var handedOver = Path.Combine(_folder, "a.jpg");
+        await app.ShutdownAsync();
+
+        await app.OpenHandOverAsync(handedOver);
+
+        Assert.Empty(app.MainWindows.Open);
+        Assert.Equal(["exit", "start new PicView with " + handedOver], _steps);
+    }
+
+    [AvaloniaFact]
+    public async Task StartAsync_WithAListener_OpensWhatAnotherPicViewHandsOver()
+    {
+        Settings.UIProperties.OpenInSameWindow = false;
+        var pipe = "PicViewTests-" + Guid.NewGuid().ToString("N");
+        var listener = new HandOverListener(pipe);
+        Assert.True(listener.TryStart());
+        var app = CreateApp(listener);
+        var early = await WriteImageAsync("early.jpg");
+        var later = await WriteImageAsync("later.jpg");
+        // Handed over while App Start has not opened the first Main Window yet
+        var earlyTaken = await HandOverSender.TrySendAsync(pipe, early, TimeSpan.FromSeconds(2), WaitLimit);
+
+        await app.StartAsync(settingsExists: true, []);
+        await WaitUntilAsync(() => app.MainWindows.Open.Count == 2 && ShownFileOf(app.MainWindows.Open[1]) == early);
+        var laterTaken = await HandOverSender.TrySendAsync(pipe, later, TimeSpan.FromSeconds(2), WaitLimit);
+        await WaitUntilAsync(() => app.MainWindows.Open.Count == 3 && ShownFileOf(app.MainWindows.Open[2]) == later);
+
+        Assert.True(earlyTaken);
+        Assert.True(laterTaken);
+        Assert.Equal(3, app.MainWindows.Open.Count);
+        Assert.Equal(early, ShownFileOf(app.MainWindows.Open[1]));
+        Assert.Equal(later, ShownFileOf(app.MainWindows.Open[2]));
+    }
+
+    [AvaloniaFact]
+    public async Task RestartAsync_WithAListener_TakesNoHandOverFromThePicViewItStarts()
+    {
+        var pipe = "PicViewTests-" + Guid.NewGuid().ToString("N");
+        var listener = new HandOverListener(pipe);
+        Assert.True(listener.TryStart());
+        var app = CreateApp(listener);
+        await app.StartAsync(settingsExists: true, []);
+        bool? listeningBeforeTheNewPicViewStarted = null;
+
+        await app.RestartAsync(() =>
+        {
+            listeningBeforeTheNewPicViewStarted = listener.IsListening;
+            return Task.CompletedTask;
+        });
+        var taken = await HandOverSender.TrySendAsync(pipe, null, TimeSpan.Zero, WaitLimit);
+
+        Assert.False(listeningBeforeTheNewPicViewStarted);
+        Assert.False(taken);
+        Assert.Equal(["start new PicView", "exit"], _steps);
     }
 
     [AvaloniaFact]
@@ -1995,13 +2377,33 @@ public class AppLifecycleTests : IAsyncDisposable
         TabNavigationInitializer.Initialize(_core, vm, vm.WindowTabs.ActiveTab.CurrentValue);
     }
 
-    private AppLifecycle CreateApp()
+    private static string? ShownFileOf(MainWindow window) =>
+        ViewModelOf(window).WindowTabs.ActiveTab.CurrentValue.Model?.FileInfo?.FullName;
+
+    // What a hand-over opens is posted to the UI thread, and its Source loads on another
+    private static async Task WaitUntilAsync(Func<bool> condition)
+    {
+        var deadline = DateTime.UtcNow + WaitLimit;
+        while (!condition() && DateTime.UtcNow < deadline)
+        {
+            await Task.Delay(10, TestContext.Current.CancellationToken);
+            Dispatcher.UIThread.RunJobs();
+        }
+
+        Assert.True(condition(), "What was waited for did not happen in time");
+    }
+
+    private AppLifecycle CreateApp(HandOverListener? handOvers = null)
     {
         var app = new AppLifecycle(_core, _provider, _sharedFiles, () =>
         {
             _exits++;
             _steps.Add("exit");
-        }, () => _steps.Add("start new PicView"));
+        }, (source, ownProcess) => _steps.Add(source is not null
+            ? "start new PicView with " + source
+            : ownProcess
+                ? "start new PicView"
+                : "start new PicView without a Source"), handOvers);
         _apps.Add(app);
         return app;
     }
@@ -2063,7 +2465,11 @@ public class AppLifecycleTests : IAsyncDisposable
             return window;
         }
 
-        public IWindowModeAdapter CreateWindowModeAdapter() => new NoOpModeAdapter();
+        // Whether a window enters its native states as on Windows, for a test that minimizes one
+        public bool EntersNativeStates { get; set; }
+
+        public IWindowModeAdapter CreateWindowModeAdapter() =>
+            EntersNativeStates ? new NativeModeAdapter() : new NoOpModeAdapter();
         public Window CreateAboutWindow()
         {
             var window = Track(new Window());
@@ -2166,6 +2572,15 @@ public class AppLifecycleTests : IAsyncDisposable
     {
         public override long GetFrameCount() => 0;
         public override void Register(IFrameRunnerWorkItem callback) => callback.MoveNext(0);
+    }
+
+    // What the Windows adapter does
+    private sealed class NativeModeAdapter : IWindowModeAdapter
+    {
+        public bool SkipsInitialNativeState => false;
+
+        public void EnterNativeState(MainWindow window, WindowModeState state) =>
+            WindowModeSwitcher.SetNativeState(window, state.Mode);
     }
 
     private sealed class NoOpModeAdapter : IWindowModeAdapter

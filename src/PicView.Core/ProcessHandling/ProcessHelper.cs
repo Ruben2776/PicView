@@ -67,60 +67,36 @@ public static class ProcessHelper
     }
 
     /// <summary>
-    ///     Starts a new instance of the current process with the provided file argument.
+    /// Starts a new PicView process.
     /// </summary>
-    /// <param name="argument">The file argument to be passed to the new instance of the current process.</param>
-    public static void StartNewProcess(string argument)
+    /// <param name="source">The Source it opens, or null for none.</param>
+    /// <param name="ownProcess">Whether it runs its own App Start whatever else is running, as a restarted PicView
+    /// does. Otherwise it hands its Source over to a PicView that is running, as any start does (ADR-0037).</param>
+    public static void StartNewProcess(string? source = null, bool ownProcess = false)
     {
-        var pathToExe = GetPathToProcess();
-
-        // Sanitize file name
-        var args = argument.Replace(@"\\", @"\");
-        args = args.Insert(0, @"""");
-        args = args.Insert(args.Length - 1, @"""");
-
         using Process process = new();
-        process.StartInfo.FileName = pathToExe;
-        process.StartInfo.Arguments = args;
+        process.StartInfo = StartInfoFor(GetPathToProcess(), source, ownProcess);
         process.Start();
     }
 
     /// <summary>
-    ///     Starts a new instance of the current process.
+    /// How <see cref="StartNewProcess"/> starts PicView. The Source is one argument exactly as given, whatever spaces,
+    /// quotes or backslashes it has.
     /// </summary>
-    public static void StartNewProcess()
+    internal static ProcessStartInfo StartInfoFor(string? pathToExe, string? source, bool ownProcess)
     {
-        var pathToExe = GetPathToProcess();
-
-        using Process process = new();
-        process.StartInfo.FileName = pathToExe;
-        process.Start();
-    }
-
-    /// <summary>
-    ///     Determines whether another instance of the application is already running.
-    /// </summary>
-    /// <returns>
-    ///     <c>true</c> if another instance of the application is already running; otherwise, <c>false</c>.
-    /// </returns>
-    public static bool CheckIfAnotherInstanceIsRunning()
-    {
-        try
+        var info = new ProcessStartInfo { FileName = pathToExe };
+        if (ownProcess)
         {
-            // Get the current process name without the extension
-            var currentProcessName = Process.GetCurrentProcess().ProcessName;
-
-            // Check for other processes with the same name
-            var processes = Process.GetProcessesByName(currentProcessName);
-
-            // If there is more than one process, another instance is running
-            return processes.Length > 1;
+            info.ArgumentList.Add(SingleProcess.OwnProcessArgument);
         }
-        catch (Exception exception)
+
+        if (source is not null)
         {
-            DebugHelper.LogDebug(nameof(ProcessHelper), nameof(CheckIfAnotherInstanceIsRunning), exception);
-            return false;
+            info.ArgumentList.Add(source);
         }
+
+        return info;
     }
 
     /// <summary>

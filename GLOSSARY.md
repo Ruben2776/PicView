@@ -51,7 +51,7 @@ _Avoid_: Tool Window Action, since Settings, About, Keybindings and File Associa
 ## Windows
 
 **Main Window**:
-A window that shows tabs of images. PicView can have several: one opens at App Start, and more open as a new window or when a tab is dragged out of one. Closing one that is not the last ends only that window. Closing the last one is App Shutdown, unless Batch Resize is open: then PicView keeps running until Batch Resize closes too.
+A window that shows tabs of images. PicView can have several, all in one process: one opens at App Start, and more open as a new window, when a tab is dragged out of one, or when PicView is started again while it runs and files do not open in the same window. Closing one that is not the last ends only that window. Closing the last one is App Shutdown, unless Batch Resize is open: then PicView keeps running until Batch Resize closes too.
 What sits inside a Main Window (its buttons, menus, views and pop-ups) acts on that Main Window, even while another one is the Active Main Window.
 _Avoid_: Viewer window, image window
 
@@ -72,8 +72,8 @@ A window that belongs to PicView as a whole rather than to a Main Window: Settin
 _Avoid_: Secondary window, global window, singleton window
 
 **App Start**:
-What runs once when the PicView process starts, around its first Main Window: loading the settings, the Keymap, file history and favorites. A Main Window opened later never repeats it.
-_Avoid_: Initialization, boot
+What runs once when the PicView process starts, around its first Main Window: loading the settings, the Keymap, file history and favorites. A Main Window opened later never repeats it. Starting PicView again while it runs does not run it again either: the new process hands its Source over to the running PicView and exits, and the running one opens it, in the Active Main Window when files open in the same window, else in a new Main Window. Only when the running PicView does not take the Source, as once App Shutdown has begun, does the new process run its own App Start.
+_Avoid_: Initialization, boot, instance (for a PicView process)
 
 **App Shutdown**:
 What runs once when the PicView process ends, whether the last Main Window closes (or Batch Resize, when it outlives them), the user quits, an update is installed, or PicView restarts. It closes every Main Window, saves what they share and deletes the temp files. The most recently active Main Window is the one whose file and size are remembered.
