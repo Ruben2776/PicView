@@ -17,9 +17,7 @@ public class GlobalSettingsViewModel
     private readonly Lock _initializeLock = new();
     private bool _isActionSettingsInitialized;
     private bool _isExtraSettingsInitialized;
-    private readonly Func<ValueTask<bool>> _save;
-    private int _saveState; // 0 idle; 1 a save runs; 2 a save runs and a change landed since it began
-    private Task _saving = Task.CompletedTask;
+    private readonly CoalescedSave _coalescedSave;
 
     public BindableReactiveProperty<bool> IsLooping { get; }
 
@@ -118,12 +116,12 @@ public class GlobalSettingsViewModel
     }
 
     /// <summary>The save loop in flight, completed when idle. For tests.</summary>
-    internal Task Saving => _saving;
+    internal Task Saving => _coalescedSave.Saving;
 
     /// <param name="save">Saves the settings; null means <see cref="SettingsManager.SaveSettingsAsync"/>.</param>
     public GlobalSettingsViewModel(Func<ValueTask<bool>>? save = null)
     {
-        _save = save ?? SaveSettingsAsync;
+        _coalescedSave = new CoalescedSave(save ?? SaveSettingsAsync, nameof(GlobalSettingsViewModel));
 
         IsLooping = new BindableReactiveProperty<bool>(Settings.UIProperties.Looping);
         IsSideBySide = new BindableReactiveProperty<bool>(Settings.ImageScaling.ShowImageSideBySide);
@@ -227,44 +225,5 @@ public class GlobalSettingsViewModel
         }, DebugHelper.LogError(nameof(GlobalSettingsViewModel), nameof(Follow)));
     }
 
-    internal void SaveSoon()
-    {
-        while (true)
-        {
-            if (Interlocked.CompareExchange(ref _saveState, 1, 0) is 0)
-            {
-                _saving = SaveUntilClean();
-                return;
-            }
-
-            // A save runs: mark that a change landed (1 -> 2), or it is already marked. If the save ended between
-            // the two checks the state is 0 again, so go round and start one
-            if (Interlocked.CompareExchange(ref _saveState, 2, 1) is 1 or 2)
-            {
-                return;
-            }
-        }
-    }
-
-    private async Task SaveUntilClean()
-    {
-        while (true)
-        {
-            try
-            {
-                await _save().ConfigureAwait(false);
-            }
-            catch (Exception e)
-            {
-                DebugHelper.LogDebug(nameof(GlobalSettingsViewModel), nameof(SaveUntilClean), e);
-            }
-
-            // Clean: a change after this starts its own save. Otherwise a change landed meanwhile, so save once more
-            if (Interlocked.CompareExchange(ref _saveState, 0, 1) is 1)
-            {
-                return;
-            }
-            Interlocked.CompareExchange(ref _saveState, 1, 2);
-        }
-    }
+    internal void SaveSoon() => _coalescedSave.Soon();
 }
