@@ -11,13 +11,21 @@ public partial class WindowSettingRecordReadsTests
     [GeneratedRegex(@"\bWindowProperties[!?]?\.(Margin|EscLeavesFullscreen)\b")]
     private static partial Regex AppWideRead();
 
-    // Secondary windows keep their own remembered placement in a RememberedWindowConfig,
-    // exposed as <something>Config.WindowProperties. Those are not the app settings record.
-    [GeneratedRegex(@"\w*Config[!?]?\.WindowProperties\b", RegexOptions.IgnoreCase)]
-    private static partial Regex SecondaryWindowConfigRead();
-
     private static readonly string[] SkippedSegments = ["bin", "obj", "PicView.Tests", "PicView.Benchmarks"];
-    private static readonly string[] AllowedFiles = ["WindowSettings.cs", "AppSettings.cs", "SettingsManager.cs", "RememberedWindowConfig.cs"];
+    // Exempt because they read WindowSettings itself or a tool window's own remembered placement (a different
+    // WindowProperties); a new entry needs the same reason. Paths are relative to src.
+    private static readonly string[] AllowedFiles =
+    [
+        @"PicView.Core/ViewModels/WindowSettings.cs",
+        @"PicView.Core/Config/AppSettings.cs",
+        @"PicView.Core/Config/SettingsManager.cs",
+        @"PicView.Core/Config/RememberedWindowConfig.cs",
+        @"PicView.Avalonia/Services/WindowInitializer.cs",
+        @"PicView.Avalonia/Printing/PrintJobStarter.cs",
+        @"PicView.Avalonia.Win32/Views/SettingsWindow.axaml.cs",
+        @"PicView.Avalonia.Linux/Views/SettingsWindow.axaml.cs",
+        @"PicView.Avalonia.MacOS/Views/SettingsWindow.axaml.cs"
+    ];
 
     private static bool Offends(string line)
     {
@@ -27,7 +35,7 @@ public partial class WindowSettingRecordReadsTests
             return false;
         }
 
-        var stripped = SecondaryWindowConfigRead().Replace(AppWideRead().Replace(line, string.Empty), string.Empty);
+        var stripped = AppWideRead().Replace(line, string.Empty);
         return WindowPropertiesWord().IsMatch(stripped);
     }
 
@@ -36,8 +44,8 @@ public partial class WindowSettingRecordReadsTests
     [InlineData("_ = Settings.WindowProperties!.AutoFit;", true)]
     [InlineData("var m = Settings.WindowProperties.Margin;", false)]
     [InlineData("if (Settings.WindowProperties?.EscLeavesFullscreen == true)", false)]
-    [InlineData("config.WindowProperties!.LastTab = 1;", false)]
-    [InlineData("vm.InfoWindow.ImageInfoWindowConfig?.WindowProperties is null", false)]
+    [InlineData("config.WindowProperties!.LastTab = 1;", true)]
+    [InlineData("appConfig.WindowProperties!.TopMost = true;", true)]
     [InlineData("IWindowProperties x;", false)]
     [InlineData("RememberedWindowProperties x;", false)]
     [InlineData("// Settings.WindowProperties.AutoFit", false)]
@@ -56,7 +64,7 @@ public partial class WindowSettingRecordReadsTests
             var relative = Path.GetRelativePath(SourceTree.Src, file);
             var segments = relative.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
             if (segments.Any(s => SkippedSegments.Contains(s, StringComparer.Ordinal)) ||
-                AllowedFiles.Contains(segments[^1], StringComparer.Ordinal))
+                AllowedFiles.Contains(string.Join('/', segments), StringComparer.Ordinal))
             {
                 continue;
             }
