@@ -10,11 +10,22 @@ public class CoreViewModel(
     IPlatformSpecificService? platformSpecificService,
     Func<FileInfo, ValueTask<ImageModel>> imageLoader,
     GlobalSettingsViewModel? globalSettings = null,
-    Func<ValueTask<bool>>? saveGallerySettings = null)
+    Func<ValueTask<bool>>? saveGallerySettings = null,
+    TimeProvider? timeProvider = null)
 {
     // Shared Services
     public IPlatformSpecificService? PlatformService { get; } = platformSpecificService;
     public SharedImageCache SharedCache { get; } = new(imageLoader);
+
+    /// <summary>
+    /// The clock slideshows tick on; tests give their own.
+    /// </summary>
+    public TimeProvider Time { get; } = timeProvider ?? TimeProvider.System;
+
+    /// <summary>
+    /// Keeps the screensaver off while any Main Window runs a slideshow.
+    /// </summary>
+    public ScreensaverHold Screensaver { get; } = new(platformSpecificService);
 
     /// <summary>
     /// The services every tab of every Main Window is created with, set once. Null until
