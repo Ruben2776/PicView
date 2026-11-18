@@ -43,6 +43,21 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
     /// </summary>
     public MainWindowViewModel ParentWindowContext { get; internal set; } = parentWindowContext;
 
+    private readonly ReactiveProperty<WindowSettings?> _currentWindowSettings =
+        new(parentWindowContext?.WindowSettings);
+
+    /// <summary>
+    /// The Window Settings of the Main Window this tab is in. Publishes again when the tab enters another window;
+    /// null only for a tab without a window (tests).
+    /// </summary>
+    public ReadOnlyReactiveProperty<WindowSettings?> CurrentWindowSettings => _currentWindowSettings;
+
+    /// <summary>
+    /// Publishes the settings of <see cref="ParentWindowContext"/>. Called by <see cref="TabOverviewViewModel"/>, the
+    /// one writer of a tab's window.
+    /// </summary>
+    internal void FollowWindow() => _currentWindowSettings.Value = ParentWindowContext?.WindowSettings;
+
     /// Unique identifier for this tab.
     public uint Id { get; } = TabIDGenerator.GetNextId();
 
@@ -1126,6 +1141,7 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
         Views?.Dispose();
         _viewsSubscription?.Dispose();
         _currentView.Dispose();
+        _currentWindowSettings.Dispose();
         _titles?.Dispose();
         lock (_comparisonGate)
         {

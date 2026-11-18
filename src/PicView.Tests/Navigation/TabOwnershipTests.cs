@@ -143,6 +143,73 @@ public class TabOwnershipTests
     }
 
     [Fact]
+    public void CurrentWindowSettings_NewTab_AreItsWindows()
+    {
+        var window = CreateWindow();
+        var tab = window.WindowTabs.CreateTab();
+        Assert.Same(window.WindowSettings, tab.CurrentWindowSettings.CurrentValue);
+    }
+
+    [Fact]
+    public void CurrentWindowSettings_TabMovedToAnotherWindow_BecomeThatWindows()
+    {
+        var source = CreateWindow();
+        var target = CreateWindow();
+        var tab = source.WindowTabs.CreateTab();
+        var seen = new List<WindowSettings?>();
+        using var _ = tab.CurrentWindowSettings.Subscribe(seen.Add);
+
+        source.WindowTabs.MoveTab(tab, target.WindowTabs);
+
+        Assert.Equal([source.WindowSettings, target.WindowSettings], seen);
+    }
+
+    [Fact]
+    public void CurrentWindowSettings_TabMovedOutIntoANewWindow_BecomeThatWindows()
+    {
+        var source = CreateWindow();
+        var tab = source.WindowTabs.CreateTab();
+        source.WindowTabs.MoveOut(tab);
+        Assert.Same(source.WindowSettings, tab.CurrentWindowSettings.CurrentValue);
+
+        var window = CreateWindow(firstTab: tab);
+
+        Assert.Same(window.WindowSettings, tab.CurrentWindowSettings.CurrentValue);
+    }
+
+    [Fact]
+    public void MoveTab_PublishesTheNewWindowsSettingsAfterTheTabIsAttachedThere()
+    {
+        var targetHookups = new RecordingHookups();
+        var source = CreateWindow();
+        var target = CreateWindow(targetHookups);
+        var tab = source.WindowTabs.CreateTab();
+        source.WindowTabs.HookUp(tab);
+        var inTabs = false;
+        var attached = false;
+        using var _ = tab.CurrentWindowSettings.Subscribe(settings =>
+        {
+            if (!ReferenceEquals(settings, target.WindowSettings))
+            {
+                return;
+            }
+            inTabs = target.WindowTabs.Tabs.Value.Contains(tab);
+            attached = targetHookups.Attached.Contains(tab);
+        });
+
+        source.WindowTabs.MoveTab(tab, target.WindowTabs);
+
+        Assert.True(inTabs);
+        Assert.True(attached);
+    }
+
+    [Fact]
+    public void CurrentWindowSettings_TabWithoutAWindow_AreNull()
+    {
+        Assert.Null(new TabViewModel(null!).CurrentWindowSettings.CurrentValue);
+    }
+
+    [Fact]
     public void NewWindow_OpenedWithAMovedTab_HasOnlyThatTabAndAttachesIt()
     {
         var source = CreateWindow(new RecordingHookups());

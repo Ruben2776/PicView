@@ -55,6 +55,7 @@ public class TabOverviewViewModel
         else
         {
             firstTab.ParentWindowContext = parentVm;
+            firstTab.FollowWindow();
             Tabs.Value.Add(firstTab);
             ActiveTab = new BindableReactiveProperty<TabViewModel>(firstTab);
         }
@@ -225,10 +226,11 @@ public class TabOverviewViewModel
     /// </summary>
     private void Adopt(TabViewModel tab, int? index)
     {
-        Tabs.Value.Insert(Math.Clamp(index ?? Tabs.Value.Count, 0, Tabs.Value.Count), tab);
         tab.ParentWindowContext = _parentVm;
+        Tabs.Value.Insert(Math.Clamp(index ?? Tabs.Value.Count, 0, Tabs.Value.Count), tab);
         AttachViews(tab);
         Attach(tab);
+        tab.FollowWindow();
         SelectTab(tab);
     }
 
