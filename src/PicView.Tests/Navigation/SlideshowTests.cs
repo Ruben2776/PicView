@@ -1,3 +1,4 @@
+using Slideshow = PicView.Avalonia.Navigation.Slideshow;
 using Avalonia;
 using Avalonia.Threading;
 using ImageMagick;

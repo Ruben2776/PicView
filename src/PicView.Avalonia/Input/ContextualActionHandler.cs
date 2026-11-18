@@ -1,3 +1,4 @@
+using Slideshow = PicView.Avalonia.Navigation.Slideshow;
 using Avalonia.Controls;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Gallery;
