@@ -66,6 +66,23 @@ public class SettingsViewModelTests
         Assert.Equal(SettingsCategory.General, vm.SelectedCategory.Value);
     }
     
+    [Fact]
+    public void Constructor_UnstartedSettings_StartsTheExtraSettingsOnly()
+    {
+        var saves = 0;
+        var settings = new GlobalSettingsViewModel(() => { saves++; return ValueTask.FromResult(true); });
+        using var vm = new SettingsViewModel(new TranslationViewModel(), settings);
+        using var again = new SettingsViewModel(new TranslationViewModel(), settings);
+        var looping = Settings.UIProperties.Looping;
+
+        vm.WindowMargin.Value = 42;
+        settings.IsLooping.Value = !looping;
+
+        Assert.Equal(42, Settings.WindowProperties.Margin);
+        Assert.Equal(1, saves);
+        Assert.Equal(looping, Settings.UIProperties.Looping);
+    }
+
     private static GlobalSettingsViewModel NewSettings() => StartedSettings.New();
 
     [Fact]
