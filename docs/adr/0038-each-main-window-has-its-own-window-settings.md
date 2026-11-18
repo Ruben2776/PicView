@@ -19,6 +19,8 @@ Before this, every Setting was app-wide. `WindowModeSwitcher.Change` wrote Fulls
 - The Settings window shows and edits the Active Main Window. Stay Centered binds two-way, which ADR-0020 allows where no Action writes the setting; top most runs its Action.
 - `GlobalSettingsViewModel` publishes thirteen settings now. `InitializeActionSettings` starts thirteen.
 - `MainWindowLifecycle.CloseAsync` disposes the window's `WindowSettings`.
+- A window's `WindowSettings` is disposed when the window closes. After that, reading still works, but setting a value or subscribing throws `ObjectDisposedException`, so a follower that switches on a tab's `CurrentWindowSettings` must not subscribe to a closed window's object.
+- A tab moved out into a new window publishes that window's settings from the `TabOverviewViewModel` constructor, before the tab is in the collection and before views and hookups are attached, unlike `Adopt`, which publishes after attach. Nothing follows `CurrentWindowSettings` yet; the first follower (the next slice) must move that publish to after attach or tolerate it.
 - Two trackers stay, as before: seeding and the Settings window use `MainWindows.ActiveWindow`; storing at a multi-window App Shutdown uses `MostRecentlyActive`.
 - The settings file keeps its shape and its version; no migration.
 - Supersedes ADR-0006's "the settings only remember the mode a new window starts in", ADR-0007's account of what a closing window stores, ADR-0020's "every Main Window follows top most; the setting is app-wide" and its count of fourteen, ADR-0022's `OpenNewAsync` saving its opener's size and position, and ADR-0034's fourteen in `InitializeActionSettings`.

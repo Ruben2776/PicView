@@ -94,7 +94,11 @@ public class App : Application, IPlatformSpecificService
    public async Task<bool> CutFile(string filePath)
    {
        // Cut isn't a supported operation on macOS
-       await _coreViewModel.MainWindows.ActiveWindow.CurrentValue.ActionRunner.Run(Actions.CopyFile).ConfigureAwait(false);
+       if (_coreViewModel.MainWindows.ActiveWindow.CurrentValue is { } activeWindow)
+       {
+           await activeWindow.ActionRunner.Run(Actions.CopyFile).ConfigureAwait(false);
+       }
+
        return true;
    }
     

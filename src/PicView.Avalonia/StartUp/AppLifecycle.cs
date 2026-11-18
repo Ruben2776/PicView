@@ -130,8 +130,8 @@ public sealed class AppLifecycle
     }
 
     /// <summary>
-    /// Runs App Shutdown: closes every Main Window, remembering the file and size of the most recently active one, saves
-    /// what they share, deletes the temp files and ends the process.
+    /// Runs App Shutdown: closes every Main Window, remembering the file and storing the Window Settings of the most recently
+    /// active one, saves what they share, deletes the temp files and ends the process.
     /// </summary>
     public Task ShutdownAsync() => ShutdownAsync(restart: null);
 

@@ -8,7 +8,7 @@ namespace PicView.Avalonia.SettingsManagement;
 
 public static class ToggleHelper
 {
-    // The write-through saves, and what reacts to the setting subscribes (ADR-0020)
+    // Whatever stores the setting saves it (a write-through, or the window closing for a Window Setting), and what reacts to the setting subscribes (ADR-0020)
     public static ValueTask Toggle(BindableReactiveProperty<bool> setting)
     {
         setting.Value = !setting.Value;

@@ -16,8 +16,7 @@ public interface IWindowModeSwitcher
     ValueTask LeaveTopMode();
 
     /// <summary>
-    /// Turns AutoFit on or off for this window, without writing it to the settings record. Turning it on or off from the
-    /// menus applies to every window.
+    /// Turns AutoFit on or off for this window, without writing it to the settings record.
     /// </summary>
     ValueTask SetAutoFit(bool autoFit);
 

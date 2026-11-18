@@ -34,8 +34,7 @@ public partial class EffectsView : UserControl
         CloseItem.Click += (_, _) => CloseWindow();
 
         effects.Rendered
-            .Subscribe(magick =>
-                core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.ActiveTab.Value.ShowStandIn(
+            .Subscribe(magick => core.MainWindows.ActiveWindow.CurrentValue?.WindowTabs.ActiveTab.Value.ShowStandIn(
                     magick.ToWriteableBitmap()), DebugHelper.LogError(nameof(EffectsView), nameof(effects.Rendered)))
             .AddTo(ref _disposables);
     }
@@ -63,7 +62,10 @@ public partial class EffectsView : UserControl
             return;
         }
         await Dispatcher.UIThread.InvokeAsync(effects.DiscardEffects);
-        await core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.ReloadAsync().ConfigureAwait(false);
+        if (core.MainWindows.ActiveWindow.CurrentValue is { } activeWindow)
+        {
+            await activeWindow.WindowTabs.ReloadAsync().ConfigureAwait(false);
+        }
     }
 
     private void OnPointerPressed(object? sender, PointerPressedEventArgs e)

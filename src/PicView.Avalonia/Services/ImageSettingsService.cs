@@ -14,7 +14,12 @@ public class ImageSettingsService : IImageSettingsService
             return;
         }
 
-        if (core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.ActiveTab.CurrentValue.CurrentView.Value is NavigableView { Viewer: { } viewer })
+        if (core.MainWindows.ActiveWindow.CurrentValue is not { } activeWindow)
+        {
+            return;
+        }
+
+        if (activeWindow.WindowTabs.ActiveTab.CurrentValue.CurrentView.Value is NavigableView { Viewer: { } viewer })
         {
             viewer.TriggerScalingModeUpdate(nearestNeighbor);
         }
