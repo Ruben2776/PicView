@@ -378,7 +378,7 @@
                 CommandParameter="{x:Static keybindings:Actions.SetTopMost}"
                 Header="{CompiledBinding Translation.StayTopMost.Value,
                                          Mode=OneWay}"
-                IsChecked="{CompiledBinding GlobalSettings.IsTopMost.Value, Mode=OneWay}"
+                IsChecked="{CompiledBinding WindowSettings.IsTopMost.Value, Mode=OneWay}"
                 ToggleType="CheckBox" />
 
             <!--  Toggle auto fit  -->

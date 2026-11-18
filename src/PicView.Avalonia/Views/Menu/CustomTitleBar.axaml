@@ -871,7 +871,7 @@
                         CommandParameter="{x:Static keybindings:Actions.SetTopMost}"
                         Header="{CompiledBinding Translation.StayTopMost.Value,
                                                  Mode=OneWay}"
-                        IsChecked="{CompiledBinding GlobalSettings.IsTopMost.Value,
+                        IsChecked="{CompiledBinding WindowSettings.IsTopMost.Value,
                                                     Mode=OneWay}"
                         Theme="{StaticResource MainBg}"
                         ToggleType="CheckBox" />

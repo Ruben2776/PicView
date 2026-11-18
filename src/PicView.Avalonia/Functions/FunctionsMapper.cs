@@ -536,10 +536,10 @@ public class FunctionsMapper : IActionRunner
         _mainWindow.WindowModeSwitcher.ToggleFullscreen();
     
     /// <summary>
-    /// Turns top most on or off for every Main Window.
+    /// Turns top most on or off for this Main Window.
     /// </summary>
     private ValueTask SetTopMost() =>
-        ToggleHelper.Toggle(_vm.GlobalSettings.IsTopMost);
+        ToggleHelper.Toggle(_vm.WindowSettings.IsTopMost);
 
     #endregion
     

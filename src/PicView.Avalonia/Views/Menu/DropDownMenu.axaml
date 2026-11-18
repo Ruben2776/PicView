@@ -688,7 +688,7 @@
                             CommandParameter="{x:Static keybindings:Actions.SetTopMost}"
                             Focusable="True"
                             Foreground="{DynamicResource MainTextColor}"
-                            IsChecked="{Binding GlobalSettings.IsTopMost.Value, Mode=OneWay}"
+                            IsChecked="{Binding WindowSettings.IsTopMost.Value, Mode=OneWay}"
                             IsTabStop="True"
                             Padding="7,0"
                             Text="{Binding Translation.StayTopMost.Value}"

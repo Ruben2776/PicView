@@ -150,7 +150,7 @@
                     Command="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).RunActionCommand}"
                     CommandParameter="{x:Static keybindings:Actions.SetTopMost}"
                     Foreground="{DynamicResource MainTextColor}"
-                    IsChecked="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).GlobalSettings.IsTopMost.Value, Mode=OneWay}"
+                    IsChecked="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).WindowSettings.IsTopMost.Value, Mode=OneWay}"
                     Text="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).Translation.StayTopMost.Value,
                                            Mode=OneWay}"
                     TextMaxWidth="155"

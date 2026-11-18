@@ -363,15 +363,15 @@ public sealed class MainWindowLifecycle
         ?? throw new InvalidOperationException("A main window needs a MainWindowViewModel as its DataContext.");
 
     /// <summary>
-    /// Every Main Window follows the two window settings, top most and the taskbar progress (ADR-0020).
+    /// Every Main Window follows its own top most and the shared taskbar progress setting (ADR-0020).
     /// </summary>
     internal static IDisposable FollowSettings(MainWindow window)
     {
         var vm = ViewModelOf(window);
         var settings = vm.GlobalSettings;
         return Disposable.Combine(
-            // Not Skip(1), so a new window takes the setting as it is
-            settings.IsTopMost.Subscribe(topMost => Dispatcher.UIThread.Post(() => window.Topmost = topMost)),
+            // Not Skip(1), so a new window takes its top most as it is seeded
+            vm.WindowSettings.IsTopMost.Subscribe(topMost => Dispatcher.UIThread.Post(() => window.Topmost = topMost)),
             settings.IsShowingTaskbarProgress.Skip(1).Subscribe(shown => Dispatcher.UIThread.Post(() =>
             {
                 if (shown)

@@ -6,7 +6,7 @@ using R3;
 namespace PicView.Tests.Config;
 
 /// <summary>
-/// The fourteen toggled settings publish their changes (ADR-0020): each writes its stored value before any
+/// The thirteen toggled settings publish their changes (ADR-0020): each writes its stored value before any
 /// subscriber hears of it, and a change saves the settings once, however many land during a save.
 /// </summary>
 [Collection("Sequential")]
@@ -42,7 +42,6 @@ public class GlobalSettingsViewModelTests
         { "TaskbarProgress", s => s.IsShowingTaskbarProgress, () => Settings.UIProperties.IsTaskbarProgressEnabled },
         { "OpenInSameWindow", s => s.IsOpeningInSameWindow, () => Settings.UIProperties.OpenInSameWindow },
         { "ConstrainBackground", s => s.IsConstrainingBackgroundColor, () => Settings.UIProperties.IsConstrainBackgroundColorEnabled },
-        { "TopMost", s => s.IsTopMost, () => Settings.WindowProperties.TopMost },
         { "Interface", s => s.ShowInterface, () => Settings.UIProperties.ShowInterface },
         { "BottomBar", s => s.ShowBottomBar, () => Settings.UIProperties.ShowBottomNavBar },
         { "HoverBar", s => s.ShowHoverBar, () => Settings.UIProperties.ShowHoverNavigationBar },

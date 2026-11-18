@@ -653,7 +653,7 @@
                     <!--  Command="{CompiledBinding SetTopMostCommand}"  -->
                     <!--  Header="{CompiledBinding Translation.StayTopMost.Value,  -->
                     <!--  Mode=OneWay}"  -->
-                    <!--  IsChecked="{CompiledBinding GlobalSettings.IsTopMost.Value}"  -->
+                    <!--  IsChecked="{CompiledBinding WindowSettings.IsTopMost.Value}"  -->
                     <!--  ToggleType="CheckBox" />  -->
 
                     <NativeMenuItemSeparator />

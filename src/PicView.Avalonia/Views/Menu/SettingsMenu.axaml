@@ -197,7 +197,7 @@
                         Command="{CompiledBinding RunActionCommand}"
                         CommandParameter="{x:Static keybindings:Actions.SetTopMost}"
                         Foreground="{DynamicResource MainTextColor}"
-                        IsChecked="{CompiledBinding GlobalSettings.IsTopMost.Value, Mode=OneWay}"
+                        IsChecked="{CompiledBinding WindowSettings.IsTopMost.Value, Mode=OneWay}"
                         Text="{CompiledBinding Translation.StayTopMost.Value,
                                                Mode=OneWay}"
                         TextMaxWidth="150"

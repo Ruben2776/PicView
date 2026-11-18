@@ -639,19 +639,38 @@ public class AppLifecycleTests : IAsyncDisposable
     }
 
     [AvaloniaFact]
-    public async Task TopMost_Changed_EveryMainWindowFollows()
+    public async Task TopMost_ChangedInOneMainWindow_OnlyThatWindowFollows()
     {
+        Settings.WindowProperties.TopMost = false;
         var app = CreateApp();
         await app.StartAsync(settingsExists: true, []);
-        await app.MainWindows.OpenNewAsync(app.MainWindows.Open[0]);
+        var first = app.MainWindows.Open[0];
+        var second = await app.MainWindows.OpenNewAsync(first);
         Dispatcher.UIThread.RunJobs();
-        Assert.Equal(2, _provider.Created.Count);
-        Assert.All(_provider.Created, w => Assert.False(w.Topmost));
+        Assert.False(first.Topmost);
+        Assert.False(second.Topmost);
 
-        _core.GlobalSettings.IsTopMost.Value = true;
+        ViewModelOf(first).WindowSettings.IsTopMost.Value = true;
         Dispatcher.UIThread.RunJobs();
 
-        Assert.All(_provider.Created, w => Assert.True(w.Topmost));
+        Assert.True(first.Topmost);
+        Assert.False(second.Topmost);
+        Assert.False(Settings.WindowProperties.TopMost);
+    }
+
+    [AvaloniaFact]
+    public async Task TopMost_ANewWindowFromATopMostOne_StartsTopMost()
+    {
+        Settings.WindowProperties.TopMost = false;
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var first = app.MainWindows.Open[0];
+        ViewModelOf(first).WindowSettings.IsTopMost.Value = true;
+
+        var opened = await app.MainWindows.OpenNewAsync(first);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.True(opened.Topmost);
     }
 
     [AvaloniaFact]
