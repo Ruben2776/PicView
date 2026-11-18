@@ -185,6 +185,9 @@ public sealed class MainWindowLifecycle
             return;
         }
 
+        // First, so no tick or stop of its slideshow runs while the window hides, and its screensaver hold ends with it
+        vm.Slideshow.Dispose();
+
         var remembers = !_app.IsShuttingDown;
         if (remembers)
         {

@@ -57,6 +57,7 @@ public class AppLifecycleTests : IAsyncDisposable
     private readonly string _folder;
     private readonly CoreViewModel _core;
     private readonly NoPlatform _platform = new();
+    private readonly ManualTimeProvider _clock = new();
     private readonly FolderSharedFiles _sharedFiles;
     private readonly LifecycleWindowProvider _provider;
     private readonly List<string> _steps = [];
@@ -102,7 +103,7 @@ public class AppLifecycleTests : IAsyncDisposable
                     ? ThreePageTiff(file)
                     : new ImageModel { FileInfo = file });
         }, new GlobalSettingsViewModel(static () => ValueTask.FromResult(true)),
-            saveGallerySettings: static () => ValueTask.FromResult(true));
+            saveGallerySettings: static () => ValueTask.FromResult(true), timeProvider: _clock);
         _provider = new LifecycleWindowProvider(_core);
         _sharedFiles = new FolderSharedFiles(_folder);
     }
@@ -560,6 +561,64 @@ public class AppLifecycleTests : IAsyncDisposable
         await app.MainWindows.OpenNewAsync(app.MainWindows.Open[0]);
 
         Assert.Contains(FileHistoryManager.AllEntries, entry => entry.Path == path);
+    }
+
+    [AvaloniaFact]
+    public async Task CloseAsync_WindowRunningSlideshow_StopsItAndReleasesScreensaver()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var (second, vm) = await OpenSlideshowWindowAsync(app);
+        var iterator = vm.WindowTabs.ActiveTab.CurrentValue.ImageIterator!;
+        var shown = iterator.CurrentIndex;
+
+        await app.MainWindows.CloseAsync(second);
+        _clock.Advance(TimeSpan.FromSeconds(10));
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.False(vm.Slideshow.IsRunning);
+        Assert.False(_core.Screensaver.IsHeld);
+        Assert.Equal(shown, iterator.CurrentIndex);
+    }
+
+    [AvaloniaFact]
+    public async Task CloseAsync_OtherWindow_LeavesSlideshowRunning()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var first = app.MainWindows.Open[0];
+        var (_, vm) = await OpenSlideshowWindowAsync(app);
+
+        await app.MainWindows.CloseAsync(first);
+
+        Assert.True(vm.Slideshow.IsRunning);
+        Assert.True(_core.Screensaver.IsHeld);
+    }
+
+    [AvaloniaFact]
+    public async Task ShutdownAsync_SlideshowRunning_ReleasesScreensaver()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        await OpenSlideshowWindowAsync(app);
+
+        await app.ShutdownAsync();
+
+        Assert.False(_core.Screensaver.IsHeld);
+    }
+
+    // A second Main Window showing the first of two files, with a slideshow running in it
+    private async Task<(MainWindow Window, MainWindowViewModel Vm)> OpenSlideshowWindowAsync(AppLifecycle app)
+    {
+        var second = await app.MainWindows.OpenNewAsync(app.MainWindows.Open[0]);
+        var a = await WriteImageAsync("a.jpg");
+        await WriteImageAsync("b.jpg");
+        await SourceOpener.OpenAsync(second, _core, a);
+        Dispatcher.UIThread.RunJobs();
+        var vm = (MainWindowViewModel)second.DataContext!;
+        await vm.Slideshow.Toggle(2000, isKeyHeldDown: false);
+        Assert.True(vm.Slideshow.IsRunning);
+        return (second, vm);
     }
 
     [AvaloniaFact]
