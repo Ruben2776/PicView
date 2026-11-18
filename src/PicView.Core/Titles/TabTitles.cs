@@ -300,7 +300,10 @@ public sealed class TabTitles : INotifyPropertyChanged, IDisposable
                 titles = ImageTitleFormatter.GenerateTitleStrings(first, zoom);
             }
 
-            _title = Settings.UIProperties.ShowFullPathInTitleBar ? titles.FilePathTitle : titles.BaseTitle;
+            // The published value, as a binding reads the titles inside its notification, maybe before the write-through
+            var fullPath = _tab.Services?.GlobalSettings.IsShowingFullPathInTitleBar.CurrentValue
+                           ?? Settings.UIProperties.ShowFullPathInTitleBar;
+            _title = fullPath ? titles.FilePathTitle : titles.BaseTitle;
             _windowTitle = titles.TitleWithAppName;
             _titleTooltip = titles.FilePathTitle;
             _tabTitle = showsPair

@@ -114,6 +114,29 @@ public class WindowFitterTests
     }
 
     [AvaloniaFact]
+    public void ZoomToFit_ToggledWhenFitterFollowedBeforeTheWriteThrough_FitsWithTheNewValue()
+    {
+        var settings = new GlobalSettingsViewModel(static () => ValueTask.FromResult(true));
+        var core = new CoreViewModel(null, _ => ValueTask.FromResult(new ImageModel()), settings);
+        var (fitter, vm, _) = CreateWindow(core: core);
+        using var following = fitter.Follow();
+        // The write-through is left unstarted: the Fit is posted, so it would run after a started one anyway, and only
+        // a Fit that reads the published value fits with the new one without it
+        var tab = vm.WindowTabs.ActiveTab.Value;
+        tab.Display(Model("a.jpg", 400, 300));
+        Dispatcher.UIThread.RunJobs();
+        Assert.Equal(100, tab.Zoom.Level.CurrentValue);
+
+        vm.GlobalSettings.IsZoomedToFit.Value = true;
+        Dispatcher.UIThread.RunJobs();
+
+        // Upscaled to fill the 800×600 content less the reserved space, so the exact percent follows the fit
+        Assert.True(tab.Zoom.Level.CurrentValue > 100);
+        Assert.Equal(Convert.ToInt32(tab.Zoom.FitScale * 100), tab.Zoom.Level.CurrentValue);
+        Assert.Equal(400 * tab.Zoom.FitScale, vm.ImageWidth.Value, precision: 6);
+    }
+
+    [AvaloniaFact]
     public void Follow_ZoomToFitTurnsOn_FitsTheShownWindow()
     {
         var (fitter, vm, window) = CreateShownWindow(800, 600);
@@ -174,7 +197,7 @@ public class WindowFitterTests
     [AvaloniaFact]
     public void Follow_PairWhoseSecondSizeIsNotKnownYet_WaitsInsteadOfFittingOneImage()
     {
-        Settings.ImageScaling.ShowImageSideBySide = true;
+        _core.GlobalSettings.IsSideBySide.Value = true;
         var (fitter, vm, _) = CreateWindow();
         using var following = fitter.Follow();
         vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 400, 300), Model("b.jpg", 0, 0));
@@ -1578,11 +1601,12 @@ public class WindowFitterTests
 
     private (WindowFitter Fitter, MainWindowViewModel Vm, MainWindow Window) CreateWindow(
         Func<ScreenSize>? readScreen = null, Func<Size>? readContentSize = null,
-        Observable<Size>? contentBounds = null, Observable<Unit>? screenChanges = null)
+        Observable<Size>? contentBounds = null, Observable<Unit>? screenChanges = null, CoreViewModel? core = null)
     {
+        core ??= _core;
         var window = new TestMainWindow(new NativeStateAdapter());
-        var vm = new MainWindowViewModel(_core, _core.Translation, _core.GlobalSettings!,
-            _core.GallerySettings);
+        var vm = new MainWindowViewModel(core, core.Translation, core.GlobalSettings!,
+            core.GallerySettings);
         window.DataContext = vm;
         vm.WindowTabs.SetViewFactory(new TabViews(window));
         return (new WindowFitter(window, readContentSize ?? (() => ContentSize), readScreen, contentBounds,
