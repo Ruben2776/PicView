@@ -25,7 +25,7 @@
                 Command="{CompiledBinding Exif.SetExifRating1Command}"
                 CommandParameter="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value}"
                 Foreground="{DynamicResource MainTextColor}"
-                ToolTip.Tip="{Binding Translation._1Star, Mode=OneWay}">
+                ToolTip.Tip="{Binding Translation._1Star.Value, Mode=OneWay}">
                 <Image
                     x:Name="Star1Icon"
                     Width="20"
@@ -46,7 +46,7 @@
                 Background="Transparent"
                 Command="{CompiledBinding Exif.SetExifRating2Command}"
                 CommandParameter="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value}"
-                ToolTip.Tip="{Binding Translation._2Star, Mode=OneWay}">
+                ToolTip.Tip="{Binding Translation._2Star.Value, Mode=OneWay}">
                 <Image
                     x:Name="Star2Icon"
                     Width="20"
@@ -67,7 +67,7 @@
                 Background="Transparent"
                 Command="{CompiledBinding Exif.SetExifRating3Command}"
                 CommandParameter="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value}"
-                ToolTip.Tip="{Binding Translation._3Star, Mode=OneWay}">
+                ToolTip.Tip="{Binding Translation._3Star.Value, Mode=OneWay}">
                 <Image
                     x:Name="Star3Icon"
                     Width="20"
@@ -88,7 +88,7 @@
                 Background="Transparent"
                 Command="{CompiledBinding Exif.SetExifRating4Command}"
                 CommandParameter="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value}"
-                ToolTip.Tip="{Binding Translation._4Star, Mode=OneWay}">
+                ToolTip.Tip="{Binding Translation._4Star.Value, Mode=OneWay}">
                 <Image
                     x:Name="Star4Icon"
                     Width="20"
@@ -109,7 +109,7 @@
                 Background="Transparent"
                 Command="{CompiledBinding Exif.SetExifRating5Command}"
                 CommandParameter="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value}"
-                ToolTip.Tip="{Binding Translation._5Star, Mode=OneWay}">
+                ToolTip.Tip="{Binding Translation._5Star.Value, Mode=OneWay}">
                 <Image
                     x:Name="Star5Icon"
                     Width="20"

@@ -16,7 +16,7 @@
                 HorizontalAlignment="Center"
                 Classes="txt bold"
                 FontSize="14"
-                Text="{CompiledBinding Translation.ToolWindows}" />
+                Text="{CompiledBinding Translation.ToolWindows.Value}" />
 
             <Border
                 Background="{DynamicResource MenuBackgroundColor}"
@@ -161,7 +161,7 @@
                 HorizontalAlignment="Center"
                 Classes="txt bold"
                 FontSize="14"
-                Text="{CompiledBinding Translation.AdditionalFunctions}" />
+                Text="{CompiledBinding Translation.AdditionalFunctions.Value}" />
 
             <WrapPanel MaxWidth="375" Orientation="Horizontal">
 

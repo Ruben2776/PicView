@@ -233,7 +233,7 @@
                 HorizontalAlignment="Center"
                 Classes="txt bold"
                 Foreground="{StaticResource SecondaryTextColor}"
-                Text="{CompiledBinding Translation.Credits}" />
+                Text="{CompiledBinding Translation.Credits.Value}" />
 
             <HyperlinkButton
                 Margin="0,1,0,5"

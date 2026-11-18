@@ -535,7 +535,7 @@
                     <customControls:StyledMenuItem
                         Command="{Binding RunActionCommand}"
                         CommandParameter="{x:Static keybindings:Actions.Next}"
-                        Header="{Binding Translation.NextImage, Mode=OneWay}"
+                        Header="{Binding Translation.NextImage.Value, Mode=OneWay}"
                         IsEnabled="{Binding WindowTabs.ActiveTab.Value.CanNavigateForwards.Value}"
                         StaysOpenOnClick="True"
                         Theme="{StaticResource MainBg}">
@@ -551,7 +551,7 @@
                     <customControls:StyledMenuItem
                         Command="{Binding RunActionCommand}"
                         CommandParameter="{x:Static keybindings:Actions.Prev}"
-                        Header="{Binding Translation.PrevImage, Mode=OneWay}"
+                        Header="{Binding Translation.PrevImage.Value, Mode=OneWay}"
                         IsEnabled="{Binding WindowTabs.ActiveTab.Value.CanNavigateForwards.Value}"
                         StaysOpenOnClick="True"
                         Theme="{StaticResource MainBg}">
@@ -568,7 +568,7 @@
                     <customControls:StyledMenuItem
                         Command="{Binding RunActionCommand}"
                         CommandParameter="{x:Static keybindings:Actions.Next10}"
-                        Header="{Binding Translation.AdvanceBy10Images, Mode=OneWay}"
+                        Header="{Binding Translation.AdvanceBy10Images.Value, Mode=OneWay}"
                         IsEnabled="{Binding WindowTabs.ActiveTab.Value.CanNavigateForwards.Value}"
                         StaysOpenOnClick="True"
                         Theme="{StaticResource MainBg}">
@@ -584,7 +584,7 @@
                     <customControls:StyledMenuItem
                         Command="{Binding RunActionCommand}"
                         CommandParameter="{x:Static keybindings:Actions.Next100}"
-                        Header="{Binding Translation.AdvanceBy100Images, Mode=OneWay}"
+                        Header="{Binding Translation.AdvanceBy100Images.Value, Mode=OneWay}"
                         IsEnabled="{Binding WindowTabs.ActiveTab.Value.CanNavigateForwards.Value}"
                         StaysOpenOnClick="True"
                         Theme="{StaticResource MainBg}">

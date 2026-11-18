@@ -21,7 +21,7 @@
                 CornerRadius="6">
                 <Border.ContextMenu>
                     <ContextMenu>
-                        <customControls:StyledMenuItem Header="{CompiledBinding Translation.Cancel, Mode=OneWay}">
+                        <customControls:StyledMenuItem Header="{CompiledBinding Translation.Cancel.Value, Mode=OneWay}">
                             <MenuItem.Icon>
                                 <Path Classes="RestorePath" />
                             </MenuItem.Icon>
@@ -160,7 +160,7 @@
                             <TextBlock
                                 Margin="0,5,0,0"
                                 Classes="txt"
-                                Text="{CompiledBinding Translation.SelectFiles}"
+                                Text="{CompiledBinding Translation.SelectFiles.Value}"
                                 TextAlignment="Center" />
                         </StackPanel>
                     </TabItem.Header>
@@ -179,7 +179,7 @@
                             <TextBlock
                                 Margin="0,5,0,0"
                                 Classes="txt"
-                                Text="{CompiledBinding Translation.ResizeSettings}"
+                                Text="{CompiledBinding Translation.ResizeSettings.Value}"
                                 TextAlignment="Center" />
                         </StackPanel>
                     </TabItem.Header>
@@ -198,7 +198,7 @@
                             <TextBlock
                                 Margin="0,5,0,0"
                                 Classes="txt"
-                                Text="{CompiledBinding Translation.Thumbnail}"
+                                Text="{CompiledBinding Translation.Thumbnail.Value}"
                                 TextAlignment="Center" />
                         </StackPanel>
                     </TabItem.Header>
@@ -225,7 +225,7 @@
                     IconHeight="16"
                     IconMargin="5,0,10,0"
                     IconWidth="16"
-                    Text="{CompiledBinding Translation.AddFiles}" />
+                    Text="{CompiledBinding Translation.AddFiles.Value}" />
                 <customControls:TextIconButton
                     x:Name="AddFolderButton"
                     Padding="7"
@@ -238,7 +238,7 @@
                     IconHeight="16"
                     IconMargin="5,0,10,0"
                     IconWidth="16"
-                    Text="{CompiledBinding Translation.AddFolder}" />
+                    Text="{CompiledBinding Translation.AddFolder.Value}" />
 
             </StackPanel>
 
@@ -305,7 +305,7 @@
                             <TextBlock
                                 Classes="txt"
                                 Foreground="{DynamicResource MainTextColorFaded}"
-                                Text="{CompiledBinding Translation.Files}" />
+                                Text="{CompiledBinding Translation.Files.Value}" />
                         </StackPanel>
 
                         <!--  clear  -->

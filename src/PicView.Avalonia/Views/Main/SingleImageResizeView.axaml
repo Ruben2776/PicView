@@ -63,7 +63,7 @@
                                 CornerRadius="4"
                                 Foreground="{DynamicResource MainTextColor}"
                                 Text="{Binding ResizeImageViewModel.DesiredPixelHeight.Value, Mode=TwoWay}"
-                                ToolTip.Tip="{CompiledBinding Translation.SizeTooltip,
+                                ToolTip.Tip="{CompiledBinding Translation.SizeTooltip.Value,
                                                               Mode=OneWay}" />
                         </StackPanel>
                     </StackPanel>

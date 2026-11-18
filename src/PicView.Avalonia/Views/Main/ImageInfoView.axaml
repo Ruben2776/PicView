@@ -315,7 +315,7 @@
                 <customControls:StyledMenuItem
                     Command="{CompiledBinding RunActionCommand}"
                     CommandParameter="{x:Static keybindings:Actions.CopyFilePath}"
-                    Header="{Binding Translation.FileCopyPath, Mode=OneWay}"
+                    Header="{Binding Translation.FileCopyPath.Value, Mode=OneWay}"
                     IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value,
                                                 Converter={x:Static ObjectConverters.IsNotNull},
                                                 FallbackValue=False}">
@@ -333,7 +333,7 @@
                                                 FallbackValue=False}">
                     <MenuItem.Header>
                         <TextBlock>
-                            <Run Text="{CompiledBinding Translation.Copy, Mode=OneWay}" />
+                            <Run Text="{CompiledBinding Translation.Copy.Value, Mode=OneWay}" />
                             <Run Text=" base64" />
                         </TextBlock>
                     </MenuItem.Header>
@@ -348,7 +348,7 @@
                 <customControls:StyledMenuItem
                     Command="{CompiledBinding RunActionCommand}"
                     CommandParameter="{x:Static keybindings:Actions.DuplicateFile}"
-                    Header="{CompiledBinding Translation.DuplicateFile,
+                    Header="{CompiledBinding Translation.DuplicateFile.Value,
                                              Mode=OneWay}"
                     IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value,
                                                 Converter={x:Static ObjectConverters.IsNotNull},
@@ -491,7 +491,7 @@
                                 CopyText="{CompiledBinding Exif.PixelWidth.Value,
                                                            Mode=OneWay}"
                                 IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
-                                ToolTip.Tip="{CompiledBinding Translation.Copy,
+                                ToolTip.Tip="{CompiledBinding Translation.Copy.Value,
                                                               Mode=OneWay}">
                                 <Path Classes="CopyPath Xl" />
                             </customControls:CopyButton>
@@ -572,7 +572,7 @@
                                 CopyText="{CompiledBinding Exif.Resolution.Value,
                                                            Mode=OneWay}"
                                 IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
-                                ToolTip.Tip="{CompiledBinding Translation.Copy,
+                                ToolTip.Tip="{CompiledBinding Translation.Copy.Value,
                                                               Mode=OneWay}">
                                 <Path Classes="CopyPath Xl" />
                             </customControls:CopyButton>
@@ -1219,7 +1219,7 @@
                                     Width="{CompiledBinding InfoWindow.TextWidth}"
                                     Margin="0,8,2,0"
                                     Classes="txt"
-                                    Text="{CompiledBinding Translation.Altitude,
+                                    Text="{CompiledBinding Translation.Altitude.Value,
                                                            Mode=OneWay}" />
                                 <customControls:FuncTextBox
                                     x:Name="AltitudeBox"
@@ -1464,7 +1464,7 @@
                                     CopyText="{CompiledBinding Exif.CameraMaker.Value,
                                                                Mode=OneWay}"
                                     IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
-                                    ToolTip.Tip="{CompiledBinding Translation.Copy,
+                                    ToolTip.Tip="{CompiledBinding Translation.Copy.Value,
                                                                   Mode=OneWay}">
                                     <Path Classes="CopyPath Xl" />
                                 </customControls:CopyButton>
@@ -1695,7 +1695,7 @@
                                     Width="{CompiledBinding InfoWindow.TextWidth}"
                                     Margin="0,8,2,0"
                                     Classes="txt"
-                                    Text="{CompiledBinding Translation.FocalLength35mm,
+                                    Text="{CompiledBinding Translation.FocalLength35mm.Value,
                                                            Mode=OneWay}" />
                                 <customControls:FuncTextBox
                                     x:Name="FocalLength35mmBox"

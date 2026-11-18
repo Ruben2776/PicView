@@ -32,7 +32,7 @@
             <!--  Prev  -->
             <customControls:StyledMenuItem
                 Command="{CompiledBinding WindowTabs.PrevFile}"
-                Header="{CompiledBinding Translation.PrevImage,
+                Header="{CompiledBinding Translation.PrevImage.Value,
                                          Mode=OneWay}"
                 IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.CanNavigateBackwards.Value,
                                             FallbackValue=False}"
@@ -51,7 +51,7 @@
             <!--  Next 10  -->
             <customControls:StyledMenuItem
                 Command="{CompiledBinding WindowTabs.Next10}"
-                Header="{CompiledBinding Translation.AdvanceBy10Images,
+                Header="{CompiledBinding Translation.AdvanceBy10Images.Value,
                                          Mode=OneWay}"
                 IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.CanNavigateForwards.Value}"
                 StaysOpenOnClick="True">
