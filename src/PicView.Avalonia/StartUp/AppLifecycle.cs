@@ -168,7 +168,7 @@ public sealed class AppLifecycle
         var mostRecent = MainWindows.MostRecentlyActive;
         if (mostRecent is not null)
         {
-            WindowFunctions.SaveSize(mostRecent);
+            MainWindowLifecycle.StoreWindowSettings(mostRecent);
         }
 
         foreach (var window in MainWindows.Open.ToArray())

@@ -16,11 +16,12 @@ public static class WindowFunctions
     
     /// <summary>
     /// Sizes and places a new window for the mode it is about to start in, before it is shown. An AutoFit window at App
-    /// Start opens centered on its screen; with <paramref name="adjustPos"/>, a window takes the saved size and position,
-    /// which a window opened while PicView runs saved from its opener.
+    /// Start opens centered on its screen; with <paramref name="adjustPos"/>, a window takes the size and position in its
+    /// Window Settings, which a window opened while PicView runs copied from its opener.
     /// </summary>
     /// <param name="isAppStart">Whether this is the first window at app start, the only one that may start fullscreen.</param>
-    /// <param name="adjustPos">Whether to give the window the saved size and position; false when it is placed already.</param>
+    /// <param name="adjustPos">Whether to give the window the size and position in its Window Settings; false when it is
+    /// placed already.</param>
     public static void HandleWindowScalingMode(MainWindow window, bool isAppStart, bool adjustPos = true)
     {
         if (Settings.WindowProperties.Margin < 0)
@@ -28,7 +29,12 @@ public static class WindowFunctions
             Settings.WindowProperties.Margin = GlobalSettingsViewModel.NegativeMarginReplacement;
         }
 
-        var starting = WindowModeSwitcher.Starting(isAppStart);
+        if (window.DataContext is not MainWindowViewModel vm)
+        {
+            return;
+        }
+
+        var starting = WindowModeSwitcher.Starting(vm, isAppStart);
         if (starting.Mode is not WindowMode.Normal)
         {
             InitializeWindowPosition(window);
@@ -96,9 +102,10 @@ public static class WindowFunctions
     #region Window Size and Position
 
     /// <summary>
-    /// Remembers the window's position, and its size unless it is maximized or fullscreen.
+    /// Remembers the window's size and position in its Window Settings when it is in Normal mode. A window in another
+    /// mode, or one the operating system shows in another state, keeps the last Normal ones.
     /// </summary>
-    public static void SaveSize(Window window)
+    public static void RememberBounds(Window window)
     {
         if (Dispatcher.CurrentDispatcher.CheckAccess())
         {
@@ -113,16 +120,15 @@ public static class WindowFunctions
 
         void Set()
         {
-            if (window.DataContext is MainWindowViewModel { WindowModeState.CurrentValue.Mode: not WindowMode.Normal }
-                || window.WindowState is WindowState.Minimized)
+            if (window.DataContext is not MainWindowViewModel vm
+                || vm.WindowModeState.CurrentValue.Mode is not WindowMode.Normal
+                || window.WindowState is not WindowState.Normal)
             {
                 return;
             }
-            Settings.WindowProperties.Top = window.Position.Y;
-            Settings.WindowProperties.Left = window.Position.X;
 
-            Settings.WindowProperties.Width = window.Bounds.Width;
-            Settings.WindowProperties.Height = window.Bounds.Height;
+            vm.WindowSettings.Bounds = new NormalBounds(window.Position.X, window.Position.Y, window.Bounds.Width,
+                window.Bounds.Height);
         }
     }
 
@@ -149,8 +155,14 @@ public static class WindowFunctions
 
         void Set()
         {
-            window.Width = Settings.WindowProperties.Width;
-            window.Height = Settings.WindowProperties.Height;
+            if (window.DataContext is not MainWindowViewModel vm)
+            {
+                return;
+            }
+
+            var bounds = vm.WindowSettings.Bounds;
+            window.Width = bounds.Width;
+            window.Height = bounds.Height;
             PlaceFromSettings(window);
         }
     }
@@ -172,16 +184,21 @@ public static class WindowFunctions
     }
 
     /// <summary>
-    /// Puts a window that is not shown yet at the saved position, or in the center of the screen when the saved
-    /// position is on none of the screens connected now, such as Windows' minimized position (-32000, -32000) or a
+    /// Puts a window that is not shown yet at the position in its Window Settings, or in the center of the screen when
+    /// that position is on none of the screens connected now, such as Windows' minimized position (-32000, -32000) or a
     /// monitor that has since been unplugged. Positions left of or above the primary screen are negative and valid.
     /// </summary>
     private static void PlaceFromSettings(Window window)
     {
-        var properties = Settings.WindowProperties;
-        var left = (int)properties.Left;
-        var top = (int)properties.Top;
-        if (!RememberedPlacement.IsOnAScreen(left, top, properties.Width, properties.Height, ScreenAreas(window)))
+        if (window.DataContext is not MainWindowViewModel vm)
+        {
+            return;
+        }
+
+        var bounds = vm.WindowSettings.Bounds;
+        var left = (int)bounds.Left;
+        var top = (int)bounds.Top;
+        if (!RememberedPlacement.IsOnAScreen(left, top, bounds.Width, bounds.Height, ScreenAreas(window)))
         {
             window.WindowStartupLocation = WindowStartupLocation.CenterScreen;
             return;

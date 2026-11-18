@@ -618,7 +618,7 @@ public class TabViewsTests
             ((IZoomScrollTarget)comparison).ZoomIn();
             Settle(window);
             Assert.NotEqual(1, ZoomOf(comparison).Scale);
-            var switcher = new WindowModeSwitcher(window, new NoNativeState(), static () => ValueTask.FromResult(true));
+            var switcher = new WindowModeSwitcher(window, new NoNativeState());
 
             await switcher.ToggleFullscreen().ConfigureAwait(true);
             Settle(window);

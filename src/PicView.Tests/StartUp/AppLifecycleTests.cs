@@ -860,6 +860,99 @@ public class AppLifecycleTests : IAsyncDisposable
     }
 
     [AvaloniaFact]
+    public async Task CloseAsync_NotTheLastMainWindow_StoresItsWindowSettings()
+    {
+        Settings.WindowProperties.AutoFit = false;
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var second = await app.MainWindows.OpenNewAsync(app.MainWindows.Open[0]);
+        await second.WindowModeSwitcher.SetAutoFit(true);
+        var recordBeforeClose = Settings.WindowProperties.AutoFit;
+        var savesBeforeClose = _sharedFiles.Saves;
+
+        await app.MainWindows.CloseAsync(second);
+
+        Assert.False(recordBeforeClose);
+        Assert.True(Settings.WindowProperties.AutoFit);
+        Assert.Equal(savesBeforeClose + 1, _sharedFiles.Saves);
+    }
+
+    [AvaloniaFact]
+    public async Task CloseAsync_TheLastToCloseWins()
+    {
+        Settings.WindowProperties.AutoFit = false;
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var first = app.MainWindows.Open[0];
+        var second = await app.MainWindows.OpenNewAsync(first);
+        await second.WindowModeSwitcher.SetAutoFit(false);
+        await first.WindowModeSwitcher.SetAutoFit(true);
+
+        await app.MainWindows.CloseAsync(first);
+        await app.MainWindows.CloseAsync(second);
+
+        Assert.False(Settings.WindowProperties.AutoFit);
+    }
+
+    [AvaloniaFact]
+    public async Task ShutdownAsync_SeveralMainWindows_StoresTheMostRecentlyActiveOne()
+    {
+        Settings.WindowProperties.AutoFit = false;
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var first = app.MainWindows.Open[0];
+        await first.WindowModeSwitcher.SetAutoFit(true);
+        var second = await app.MainWindows.OpenNewAsync(first);
+        await second.WindowModeSwitcher.SetAutoFit(false);
+        await ActivateAsync(first);
+
+        await app.ShutdownAsync();
+
+        Assert.True(Settings.WindowProperties.AutoFit);
+    }
+
+    [AvaloniaFact]
+    public async Task ModeChange_WithoutAClose_LeavesTheRecordAlone()
+    {
+        var maximizedBefore = Settings.WindowProperties.Maximized;
+        var autoFitBefore = Settings.WindowProperties.AutoFit;
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var window = app.MainWindows.Open[0];
+
+        await window.WindowModeSwitcher.ToggleMaximized();
+        await window.WindowModeSwitcher.SetAutoFit(!autoFitBefore);
+        var remembered = ViewModelOf(window).WindowModeState.CurrentValue.Remembered;
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Equal(new RememberedWindowMode(false, !maximizedBefore, !autoFitBefore), remembered);
+        Assert.Equal(maximizedBefore, Settings.WindowProperties.Maximized);
+        Assert.Equal(autoFitBefore, Settings.WindowProperties.AutoFit);
+    }
+
+    [AvaloniaFact]
+    public async Task CloseAsync_MaximizedWindow_StoresItsModeAndKeepsTheLastNormalBounds()
+    {
+        Settings.WindowProperties.AutoFit = false;
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var first = app.MainWindows.Open[0];
+        var second = await app.MainWindows.OpenNewAsync(first);
+        Dispatcher.UIThread.RunJobs();
+        second.Position = new PixelPoint(123, 45);
+
+        await second.WindowModeSwitcher.ToggleMaximized();
+        // Where a maximized window sits, at the origin of its work area
+        second.Position = new PixelPoint(0, 0);
+        await app.MainWindows.CloseAsync(second);
+
+        Assert.True(Settings.WindowProperties.Maximized);
+        Assert.Equal(123, Settings.WindowProperties.Left);
+        Assert.Equal(45, Settings.WindowProperties.Top);
+        Assert.NotEqual(-32000, Settings.WindowProperties.Left);
+    }
+
+    [AvaloniaFact]
     public async Task ShutdownAsync_StartsNoNewPicView()
     {
         var app = CreateApp();
@@ -1098,13 +1191,14 @@ public class AppLifecycleTests : IAsyncDisposable
     {
         Settings.UIProperties.OpenInSameWindow = false;
         Settings.WindowProperties.AutoFit = false;
+        // Where the window was last in Normal mode, which it opens at
+        Settings.WindowProperties.Left = 123;
+        Settings.WindowProperties.Top = 45;
         var app = CreateApp();
         await app.StartAsync(settingsExists: true, []);
         var first = app.MainWindows.Open[0];
         await WaitUntilOpenedAsync(first);
-        first.Position = new PixelPoint(123, 45);
-        WindowFunctions.SaveSize(first);
-        var widthBefore = Settings.WindowProperties.Width;
+        var openedAt = first.Position;
         first.WindowState = WindowState.Minimized;
         await WaitUntilAsync(() => ViewModelOf(first).WindowModeState.CurrentValue.Mode is WindowMode.Minimized);
         // Where Windows says a minimized window is
@@ -1118,10 +1212,8 @@ public class AppLifecycleTests : IAsyncDisposable
         Assert.True(opened.IsVisible);
         Assert.Equal(WindowMode.Normal, ViewModelOf(opened).WindowModeState.CurrentValue.Mode);
         Assert.NotEqual(WindowState.Minimized, opened.WindowState);
+        Assert.Equal(new PixelPoint(123, 45), openedAt);
         Assert.Equal(new PixelPoint(123, 45), opened.Position);
-        Assert.Equal(123, Settings.WindowProperties.Left);
-        Assert.Equal(45, Settings.WindowProperties.Top);
-        Assert.Equal(widthBefore, Settings.WindowProperties.Width);
         // The opener is left as the user had it
         Assert.Equal(WindowMode.Minimized, ViewModelOf(first).WindowModeState.CurrentValue.Mode);
     }
@@ -2450,7 +2542,7 @@ public class AppLifecycleTests : IAsyncDisposable
         {
             var window = new TestMainWindow(new NoOpModeAdapter(), this);
             window.DataContext = new MainWindowViewModel(core, core.Translation, core.GlobalSettings!,
-                core.GallerySettings, firstTab);
+                core.GallerySettings, firstTab, windowSettings);
             Created.Add(window);
             if (GivesBars)
             {

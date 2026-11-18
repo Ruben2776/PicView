@@ -83,7 +83,7 @@ public class SlideshowInputModeTests
         var vm = new MainWindowViewModel(core, core.Translation, core.GlobalSettings!, core.GallerySettings, tab);
         window.DataContext = vm;
         window.ViewModel = vm;
-        var switcher = new WindowModeSwitcher(window, adapter, () => ValueTask.FromResult(true));
+        var switcher = new WindowModeSwitcher(window, adapter);
         vm.WindowModeSwitcher = switcher;
         switcher.Start(isAppStart: true);
         window.Show();

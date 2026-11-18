@@ -1,7 +1,8 @@
 namespace PicView.Core.IPlatform;
 
 /// <summary>
-/// Changes one window's Window Mode, and saves the mode the settings remember when the user changed it.
+/// Changes one window's Window Mode. The window keeps its remembered mode, and stores it in the settings record only
+/// when it closes.
 /// </summary>
 public interface IWindowModeSwitcher
 {
@@ -15,7 +16,8 @@ public interface IWindowModeSwitcher
     ValueTask LeaveTopMode();
 
     /// <summary>
-    /// Turns AutoFit on or off for this window. Turning it on or off from the menus applies to every window.
+    /// Turns AutoFit on or off for this window, without writing it to the settings record. Turning it on or off from the
+    /// menus applies to every window.
     /// </summary>
     ValueTask SetAutoFit(bool autoFit);
 

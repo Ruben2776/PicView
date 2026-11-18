@@ -1132,6 +1132,8 @@ public class WindowFitterTests
     [AvaloniaFact]
     public void Follow_AttachedBeforeTheMode_FullscreenStartFits()
     {
+        // Before the window is made, which takes the mode it starts in from the settings record then
+        Settings.WindowProperties.Fullscreen = true;
         var (fitter, vm, window) = CreateWindow(() => Screen(1280, 720));
         using var following = fitter.Follow();
         vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 4000, 300));
@@ -1140,8 +1142,7 @@ public class WindowFitterTests
         Assert.Equal(ContentSize.Width, vm.ImageWidth.Value);
         var fits = new List<Fitted>();
         using var listening = fitter.Fits.Subscribe(fits.Add);
-        Settings.WindowProperties.Fullscreen = true;
-        var switcher = new WindowModeSwitcher(window, new NativeStateAdapter(), () => ValueTask.FromResult(true));
+        var switcher = new WindowModeSwitcher(window, new NativeStateAdapter());
 
         switcher.Start(isAppStart: true);
         Dispatcher.UIThread.RunJobs();
@@ -1391,7 +1392,7 @@ public class WindowFitterTests
         Dispatcher.UIThread.RunJobs();
         window.Position = new PixelPoint(100, 50);
         otherWindow.Position = new PixelPoint(300, 200);
-        var switcher = new WindowModeSwitcher(window, new NativeStateAdapter(), () => ValueTask.FromResult(true));
+        var switcher = new WindowModeSwitcher(window, new NativeStateAdapter());
 
         await switcher.ToggleFullscreen();
         Dispatcher.UIThread.RunJobs();
@@ -1416,7 +1417,7 @@ public class WindowFitterTests
         vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 400, 300));
         Dispatcher.UIThread.RunJobs();
         window.Position = new PixelPoint(100, 50);
-        var switcher = new WindowModeSwitcher(window, new RestoringNativeStateAdapter(), () => ValueTask.FromResult(true));
+        var switcher = new WindowModeSwitcher(window, new RestoringNativeStateAdapter());
         await switcher.ToggleFullscreen();
         Dispatcher.UIThread.RunJobs();
 
@@ -1442,7 +1443,7 @@ public class WindowFitterTests
         vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 400, 300));
         Dispatcher.UIThread.RunJobs();
         window.Position = new PixelPoint(100, 50);
-        var switcher = new WindowModeSwitcher(window, new NativeStateAdapter(), () => ValueTask.FromResult(true));
+        var switcher = new WindowModeSwitcher(window, new NativeStateAdapter());
 
         await switcher.ToggleMaximized();
         Dispatcher.UIThread.RunJobs();
@@ -1465,7 +1466,7 @@ public class WindowFitterTests
         vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 400, 300));
         Dispatcher.UIThread.RunJobs();
         window.Position = new PixelPoint(100, 50);
-        var switcher = new WindowModeSwitcher(window, new NativeStateAdapter(), () => ValueTask.FromResult(true));
+        var switcher = new WindowModeSwitcher(window, new NativeStateAdapter());
 
         await switcher.ToggleFullscreen();
         Dispatcher.UIThread.RunJobs();
@@ -1488,7 +1489,7 @@ public class WindowFitterTests
         using var following = fitter.Follow();
         vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 400, 300));
         Dispatcher.UIThread.RunJobs();
-        var switcher = new WindowModeSwitcher(window, new NativeStateAdapter(), () => ValueTask.FromResult(true));
+        var switcher = new WindowModeSwitcher(window, new NativeStateAdapter());
         await switcher.ToggleMaximized();
         Dispatcher.UIThread.RunJobs();
         window.Position = new PixelPoint(100, 50);
@@ -1549,7 +1550,7 @@ public class WindowFitterTests
         vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 400, 300));
         Dispatcher.UIThread.RunJobs();
         window.Position = new PixelPoint(100, 50);
-        var switcher = new WindowModeSwitcher(window, new NativeStateAdapter(), () => ValueTask.FromResult(true));
+        var switcher = new WindowModeSwitcher(window, new NativeStateAdapter());
 
         await switcher.SetAutoFit(false);
         Dispatcher.UIThread.RunJobs();
@@ -1569,7 +1570,7 @@ public class WindowFitterTests
         var following = fitter.Follow();
         vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 400, 300));
         Dispatcher.UIThread.RunJobs();
-        var switcher = new WindowModeSwitcher(window, new NativeStateAdapter(), () => ValueTask.FromResult(true));
+        var switcher = new WindowModeSwitcher(window, new NativeStateAdapter());
         await switcher.SetAutoFit(false);
         Dispatcher.UIThread.RunJobs();
         window.Width = 600;

@@ -4,6 +4,7 @@ using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Interfaces;
 using PicView.Avalonia.WindowBehavior;
+using PicView.Core.Config;
 using PicView.Core.Localization;
 using PicView.Core.Models;
 using PicView.Core.Sizing;
@@ -15,7 +16,6 @@ namespace PicView.Tests.WindowBehavior;
 public class WindowModeSwitcherTests
 {
     private readonly CoreViewModel _core;
-    private int _saves;
 
     public WindowModeSwitcherTests()
     {
@@ -25,7 +25,7 @@ public class WindowModeSwitcherTests
     }
 
     [AvaloniaFact]
-    public async Task ToggleFullscreen_EntersNativeFullscreenHidesInterfaceAndSaves()
+    public async Task ToggleFullscreen_EntersNativeFullscreenHidesInterface()
     {
         var (switcher, adapter, vm, _) = CreateWindow();
 
@@ -34,8 +34,7 @@ public class WindowModeSwitcherTests
         Assert.Equal([WindowMode.Fullscreen], adapter.Entered);
         Assert.True(vm.IsFullscreen.Value);
         Assert.False(vm.IsUIShown.Value);
-        Assert.True(Settings.WindowProperties.Fullscreen);
-        Assert.Equal(1, _saves);
+        Assert.False(Settings.WindowProperties.Fullscreen);
     }
 
     [AvaloniaFact]
@@ -51,8 +50,8 @@ public class WindowModeSwitcherTests
         Assert.Equal([WindowMode.Maximized, WindowMode.Fullscreen, WindowMode.Maximized], adapter.Entered);
         Assert.True(vm.IsMaximized.Value);
         Assert.True(vm.IsUIShown.Value);
-        Assert.True(Settings.WindowProperties.Maximized);
-        Assert.False(Settings.WindowProperties.Fullscreen);
+        Assert.True(vm.WindowModeState.CurrentValue.Remembered.Maximized);
+        Assert.False(vm.WindowModeState.CurrentValue.Remembered.Fullscreen);
     }
 
     [AvaloniaFact]
@@ -75,7 +74,6 @@ public class WindowModeSwitcherTests
         switcher.Start(isAppStart: true);
 
         Assert.Equal([WindowMode.Fullscreen], adapter.Entered);
-        Assert.Equal(0, _saves);
     }
 
     [AvaloniaFact]
@@ -95,6 +93,23 @@ public class WindowModeSwitcherTests
         // again once idle, at the origin of its screen, which the headless screen has at 0, 0
         Assert.Equal(new PixelPoint(300, 200), beforeShowing);
         Assert.Equal(new PixelPoint(0, 0), window.Position);
+    }
+
+    [AvaloniaFact]
+    public void Start_Maximized_LeavesTheNormalBoundsInItsWindowSettings()
+    {
+        Settings.WindowProperties.Maximized = true;
+        Settings.WindowProperties.Left = 123;
+        Settings.WindowProperties.Top = 45;
+        Settings.WindowProperties.Width = 900;
+        Settings.WindowProperties.Height = 700;
+        var (switcher, _, vm, _) = CreateWindow();
+
+        switcher.Start(isAppStart: true);
+
+        // The window was never given its Normal size, so it has none to remember
+        Assert.Equal(WindowMode.Maximized, vm.WindowModeState.Value.Mode);
+        Assert.Equal(new NormalBounds(123, 45, 900, 700), vm.WindowSettings.Bounds);
     }
 
     [AvaloniaFact]
@@ -123,7 +138,6 @@ public class WindowModeSwitcherTests
 
         Assert.Equal([WindowMode.Maximized, WindowMode.Maximized], adapter.Entered);
         Assert.Equal(WindowMode.Maximized, vm.WindowModeState.Value.Mode);
-        Assert.Equal(0, _saves);
     }
 
     [AvaloniaFact]
@@ -138,7 +152,6 @@ public class WindowModeSwitcherTests
 
         Assert.Equal([WindowMode.Maximized, WindowMode.Maximized], adapter.Entered);
         Assert.Equal(WindowMode.Maximized, vm.WindowModeState.Value.Mode);
-        Assert.Equal(0, _saves);
     }
 
     [AvaloniaFact]
@@ -152,19 +165,17 @@ public class WindowModeSwitcherTests
 
         Assert.Equal([WindowMode.Maximized], adapter.Entered);
         Assert.Equal(WindowMode.Maximized, vm.WindowModeState.Value.Mode);
-        Assert.Equal(0, _saves);
     }
 
     [AvaloniaFact]
-    public async Task OnNativeState_FullscreenFromTheOperatingSystem_IsSaved()
+    public async Task OnNativeState_FullscreenFromTheOperatingSystem_IsRemembered()
     {
         var (switcher, _, vm, _) = CreateWindow();
 
         await switcher.OnNativeStateAsync(WindowState.FullScreen);
 
         Assert.True(vm.IsFullscreen.Value);
-        Assert.True(Settings.WindowProperties.Fullscreen);
-        Assert.Equal(1, _saves);
+        Assert.True(vm.WindowModeState.CurrentValue.Remembered.Fullscreen);
     }
 
     [AvaloniaFact]
@@ -179,12 +190,12 @@ public class WindowModeSwitcherTests
         await switcher.LeaveSlideshow();
 
         Assert.True(vm.IsMaximized.Value);
-        Assert.False(Settings.WindowProperties.Fullscreen);
-        Assert.Equal(0, _saves);
+        Assert.True(vm.WindowModeState.CurrentValue.Remembered.Maximized);
+        Assert.False(vm.WindowModeState.CurrentValue.Remembered.Fullscreen);
     }
 
     [AvaloniaFact]
-    public async Task SetAutoFit_NormalWindow_FollowsItsContentAndIsSaved()
+    public async Task SetAutoFit_NormalWindow_FollowsItsContentAndWritesNothing()
     {
         var (switcher, _, vm, window) = CreateWindow();
 
@@ -192,8 +203,7 @@ public class WindowModeSwitcherTests
 
         Assert.True(vm.IsAutoFit.Value);
         Assert.Equal(SizeToContent.WidthAndHeight, window.SizeToContent);
-        Assert.True(Settings.WindowProperties.AutoFit);
-        Assert.Equal(1, _saves);
+        Assert.False(Settings.WindowProperties.AutoFit);
     }
 
     [AvaloniaFact]
@@ -223,20 +233,21 @@ public class WindowModeSwitcherTests
         Assert.False(resizedVm.IsAutoFit.Value);
         Assert.Equal(SizeToContent.Manual, resizedWindow.SizeToContent);
         Assert.True(otherVm.IsAutoFit.Value);
-        Assert.False(Settings.WindowProperties.AutoFit);
+        Assert.True(Settings.WindowProperties.AutoFit);
     }
 
     [AvaloniaFact]
-    public async Task Remembered_IsTheLastChangeInAnyWindow()
+    public async Task Remembered_StaysInItsWindow()
     {
         var (first, _, _, _) = CreateWindow();
-        var (second, _, _, _) = CreateWindow();
+        var (_, _, secondVm, _) = CreateWindow();
+        var secondBefore = secondVm.WindowModeState.CurrentValue;
 
-        await first.ToggleFullscreen();
-        await second.ToggleMaximized();
+        await first.ToggleMaximized();
 
+        Assert.Equal(secondBefore, secondVm.WindowModeState.CurrentValue);
+        Assert.False(Settings.WindowProperties.Maximized);
         Assert.False(Settings.WindowProperties.Fullscreen);
-        Assert.True(Settings.WindowProperties.Maximized);
     }
 
     private (WindowModeSwitcher Switcher, RecordingAdapter Adapter, MainWindowViewModel Vm, MainWindow Window)
@@ -247,11 +258,7 @@ public class WindowModeSwitcherTests
         var vm = new MainWindowViewModel(_core, _core.Translation, _core.GlobalSettings!,
             _core.GallerySettings);
         window.DataContext = vm;
-        var switcher = new WindowModeSwitcher(window, adapter, () =>
-        {
-            _saves++;
-            return ValueTask.FromResult(true);
-        });
+        var switcher = new WindowModeSwitcher(window, adapter);
         return (switcher, adapter, vm, window);
     }
 

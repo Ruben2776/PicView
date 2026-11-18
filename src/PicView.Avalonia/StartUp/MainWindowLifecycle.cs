@@ -88,7 +88,7 @@ public sealed class MainWindowLifecycle
         // A first Main Window that App Start has not shown yet has no size or place to pass on
         if (senderWindow is { IsVisible: true })
         {
-            WindowFunctions.SaveSize(senderWindow);
+            WindowFunctions.RememberBounds(senderWindow);
         }
 
         WindowFunctions.HandleWindowScalingMode(window, isAppStart: false);
@@ -154,7 +154,8 @@ public sealed class MainWindowLifecycle
         var opensSource = source is not null || (launchFileArrived is null && Settings.StartUp.OpenLastFile &&
                                                  !string.IsNullOrWhiteSpace(Settings.StartUp.LastFile));
         var window = Create(null, false, opensSource);
-        WindowFunctions.HandleWindowScalingMode(window, isAppStart: true, adjustPos: !Settings.WindowProperties.AutoFit);
+        WindowFunctions.HandleWindowScalingMode(window, isAppStart: true,
+            adjustPos: !ViewModelOf(window).WindowSettings.StartingMode.AutoFit);
         if (source is not null)
         {
             OpenStartSource(window, source, continueFromLeftOff: false);
@@ -214,8 +215,8 @@ public sealed class MainWindowLifecycle
     }
 
     /// <summary>
-    /// Closes a Main Window and its Tool Windows: remembers its file and size, cleans up its tabs and saves what every
-    /// Main Window shares. Closing the last one runs App Shutdown.
+    /// Closes a Main Window and its Tool Windows: remembers its file, stores its Window Settings in the settings record,
+    /// cleans up its tabs and saves what every Main Window shares. Closing the last one runs App Shutdown.
     /// </summary>
     public Task CloseAsync(MainWindow window) => CloseAsync(window, closeNatively: true);
 
@@ -233,7 +234,7 @@ public sealed class MainWindowLifecycle
         var remembers = !_app.IsShuttingDown;
         if (remembers)
         {
-            WindowFunctions.SaveSize(window);
+            StoreWindowSettings(window);
         }
 
         await Dispatcher.UIThread.InvokeAsync(window.Hide);
@@ -244,6 +245,7 @@ public sealed class MainWindowLifecycle
         // On macOS most Tool Windows have no owner, so they would outlive their Main Window
         window.MainWindowInitializer.CloseToolWindows();
         vm.WindowTabs.TearDown();
+        vm.WindowSettings.Dispose();
 
         _core.MainWindows.MainWindows.Remove(vm);
         _open.Remove(window);
@@ -266,6 +268,20 @@ public sealed class MainWindowLifecycle
             // Only App Shutdown deletes the temp files, since a tab in another window may still show one
             await _app.SaveSharedFilesAsync().ConfigureAwait(true);
         }
+    }
+
+    /// <summary>
+    /// Remembers the window's bounds and stores its Window Settings in the record.
+    /// </summary>
+    internal static void StoreWindowSettings(MainWindow window)
+    {
+        if (window.DataContext is not MainWindowViewModel vm)
+        {
+            return;
+        }
+
+        WindowFunctions.RememberBounds(window);
+        vm.StoreWindowSettings(Settings);
     }
 
     /// <summary>
@@ -306,7 +322,14 @@ public sealed class MainWindowLifecycle
         _open.Add(window);
         MostRecentlyActive = window;
         window.Lifecycle = this;
-        window.Activated += (_, _) => MostRecentlyActive = window;
+        window.Activated += (_, _) =>
+        {
+            // An activation that arrives once the window is closing would make App Shutdown store a closed window
+            if (_open.Contains(window) && !_closing.Contains(window))
+            {
+                MostRecentlyActive = window;
+            }
+        };
         window.Closed += (_, _) =>
         {
             _open.Remove(window);

@@ -100,7 +100,7 @@ public class SlideshowTests
         window.ViewModel = vm;
         // Stops following as the window closes
         window.Disposables.Add(window.WindowFitter.Follow());
-        var switcher = new WindowModeSwitcher(window, adapter, () => ValueTask.FromResult(true));
+        var switcher = new WindowModeSwitcher(window, adapter);
         vm.WindowModeSwitcher = switcher;
         switcher.Start(isAppStart: true);
 

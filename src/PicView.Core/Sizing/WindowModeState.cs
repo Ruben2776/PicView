@@ -11,7 +11,8 @@ public readonly record struct RememberedWindowMode(bool Fullscreen, bool Maximiz
 
 /// <summary>
 /// One window's Window Mode, and the modes that leaving Fullscreen or Minimized give back.
-/// Each rule returns the next state; the settings are saved when <see cref="Remembered"/> changes.
+/// Each rule returns the next state; the window stores <see cref="Remembered"/> in the settings record when it
+/// closes.
 /// </summary>
 [StructLayout(LayoutKind.Auto)]
 public readonly record struct WindowModeState

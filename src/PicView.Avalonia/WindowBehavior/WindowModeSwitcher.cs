@@ -11,16 +11,11 @@ namespace PicView.Avalonia.WindowBehavior;
 
 /// <summary>
 /// Changes one window's Window Mode. Every request, operating-system report, slideshow and start goes through it;
-/// its platform's <see cref="IWindowModeAdapter"/> only enters native states.
+/// its platform's <see cref="IWindowModeAdapter"/> only enters native states. It writes nothing to the settings record;
+/// the window stores its mode there when it closes.
 /// </summary>
-/// <param name="saveSettings">Saves the settings once the remembered mode changed; the settings file by default.</param>
-public sealed class WindowModeSwitcher(
-    MainWindow window,
-    IWindowModeAdapter adapter,
-    Func<ValueTask<bool>>? saveSettings = null) : IWindowModeSwitcher
+public sealed class WindowModeSwitcher(MainWindow window, IWindowModeAdapter adapter) : IWindowModeSwitcher
 {
-    private readonly Func<ValueTask<bool>> _saveSettings = saveSettings ?? SaveSettingsAsync;
-
     /// <inheritdoc cref="IWindowModeAdapter.SkipsInitialNativeState"/>
     public bool SkipsInitialNativeState => adapter.SkipsInitialNativeState;
 
@@ -51,7 +46,7 @@ public sealed class WindowModeSwitcher(
         ChangeAsync(current => current.OnNativeState(ToWindowMode(state)));
 
     /// <summary>
-    /// Starts the window in the mode the settings remember, without saving. Call on the UI thread.
+    /// Starts the window in the mode its Window Settings start it in. Call on the UI thread.
     /// </summary>
     /// <param name="isAppStart">Whether this is the first window at app start, the only one that may start fullscreen.</param>
     public void Start(bool isAppStart)
@@ -61,7 +56,7 @@ public sealed class WindowModeSwitcher(
             return;
         }
 
-        var starting = Starting(isAppStart);
+        var starting = Starting(vm, isAppStart);
         Apply(vm, vm.WindowModeState.CurrentValue, starting);
         if (starting.Mode is WindowMode.Fullscreen)
         {
@@ -100,12 +95,12 @@ public sealed class WindowModeSwitcher(
     }
 
     /// <summary>
-    /// The state <see cref="Start"/> gives the window, from the mode the settings remember.
+    /// The state <see cref="Start"/> gives the window of <paramref name="vm"/>, from the mode its Window Settings start
+    /// it in.
     /// </summary>
     /// <inheritdoc cref="Start" path="/param"/>
-    public static WindowModeState Starting(bool isAppStart) =>
-        WindowModeState.Start(new RememberedWindowMode(Settings.WindowProperties.Fullscreen,
-            Settings.WindowProperties.Maximized, Settings.WindowProperties.AutoFit), isAppStart);
+    public static WindowModeState Starting(MainWindowViewModel vm, bool isAppStart) =>
+        WindowModeState.Start(vm.WindowSettings.StartingMode, isAppStart);
 
     /// <summary>
     /// Puts the window in the native state of <paramref name="mode"/>, unless it is already in it.
@@ -121,38 +116,36 @@ public sealed class WindowModeSwitcher(
 
     private async ValueTask ChangeAsync(Func<WindowModeState, WindowModeState> rule)
     {
-        var rememberedChanged = Dispatcher.UIThread.CheckAccess()
-            ? Change(rule)
-            : await Dispatcher.UIThread.InvokeAsync(() => Change(rule));
-        if (rememberedChanged)
+        if (Dispatcher.UIThread.CheckAccess())
         {
-            await _saveSettings().ConfigureAwait(false);
+            Change(rule);
+        }
+        else
+        {
+            await Dispatcher.UIThread.InvokeAsync(() => Change(rule));
         }
     }
 
     /// <summary>
-    /// Applies the rule to the window, and returns whether the mode the settings remember changed.
+    /// Applies the rule to the window. Its remembered mode stays with it until it closes and stores it.
     /// </summary>
-    private bool Change(Func<WindowModeState, WindowModeState> rule)
+    private void Change(Func<WindowModeState, WindowModeState> rule)
     {
         if (window.DataContext is not MainWindowViewModel vm)
         {
-            return false;
+            return;
         }
 
         var previous = vm.WindowModeState.CurrentValue;
         var next = rule(previous);
-        Apply(vm, previous, next);
-        if (next.Remembered == previous.Remembered)
+        if (previous.Mode is WindowMode.Normal && next.Mode is not WindowMode.Normal)
         {
-            return false;
+            // While the window is still Normal, so its Window Settings keep its last Normal size and position. Not at
+            // Start, where a window that starts maximized or fullscreen was never given its Normal size
+            WindowFunctions.RememberBounds(window);
         }
 
-        // The last change the user made in any window is the one remembered
-        Settings.WindowProperties.Fullscreen = next.Remembered.Fullscreen;
-        Settings.WindowProperties.Maximized = next.Remembered.Maximized;
-        Settings.WindowProperties.AutoFit = next.Remembered.AutoFit;
-        return true;
+        Apply(vm, previous, next);
     }
 
     private void Apply(MainWindowViewModel vm, WindowModeState previous, WindowModeState next)
