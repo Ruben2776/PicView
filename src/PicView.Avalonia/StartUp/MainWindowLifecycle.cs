@@ -68,11 +68,12 @@ public sealed class MainWindowLifecycle
     public MainWindow? MostRecentlyActive { get; private set; }
 
     /// <summary>
-    /// Opens a new Main Window, on top of the window it is opened from and at its size, and brings it to the front. Its
-    /// tab derives the start-up menu, or shows <paramref name="source"/> when one is given.
+    /// Opens a new Main Window, on top of the window it is opened from and at its size, with a copy of that window's
+    /// Window Settings, and brings it to the front. Its tab derives the start-up menu, or shows
+    /// <paramref name="source"/> when one is given.
     /// </summary>
     /// <param name="senderWindow">The window it is opened from, or null when no Main Window is open, as while only
-    /// Batch Resize is; it then opens where the last Main Window was.</param>
+    /// Batch Resize is; it then starts from the settings record, where the last Main Window was.</param>
     /// <param name="source">What the new window shows; it says Loading from the start, so no menu is made for it. The
     /// window is already visible and sized, so the Source loads through Core, not in the startup order (ADR-0005).</param>
     /// <returns>Completes once the window is set up, after it is shown, and its Source has loaded or failed.</returns>
@@ -84,12 +85,20 @@ public sealed class MainWindowLifecycle
             return await _dispatcher.InvokeAsync(() => OpenNewAsync(senderWindow, source)).ConfigureAwait(false);
         }
 
-        var window = Create(opensSource: source is not null);
-        // A first Main Window that App Start has not shown yet has no size or place to pass on
-        if (senderWindow is { IsVisible: true })
+        // The new window starts with a copy of its opener's Window Settings, in the mode the opener is in
+        WindowSettings? windowSettings = null;
+        if (senderWindow?.DataContext is MainWindowViewModel opener)
         {
-            WindowFunctions.RememberBounds(senderWindow);
+            // A first Main Window that App Start has not shown yet has no size or place to pass on
+            if (senderWindow.IsVisible)
+            {
+                WindowFunctions.RememberBounds(senderWindow);
+            }
+
+            windowSettings = opener.WindowSettings.CopyFor(opener.WindowModeState.CurrentValue.Remembered);
         }
+
+        var window = Create(opensSource: source is not null, windowSettings: windowSettings);
 
         WindowFunctions.HandleWindowScalingMode(window, isAppStart: false);
         window.Show();
@@ -124,13 +133,18 @@ public sealed class MainWindowLifecycle
     }
 
     /// <summary>
-    /// Opens a Main Window with a tab moved out of another one, placed where the tab was dropped.
+    /// Opens a Main Window with a tab moved out of another one, placed where the tab was dropped, with a copy of that
+    /// window's Window Settings.
     /// </summary>
     /// <param name="tab">The tab, already taken out of its window, that the new window opens with.</param>
     /// <returns>Completes once the window is set up, after it is shown.</returns>
     public async Task<MainWindow> OpenForMovedTabAsync(TabViewModel tab, PixelPoint position, double width, double height)
     {
-        var window = Create(tab);
+        // The tab still names the window it was moved out of, whose Window Settings the new window starts with
+        var windowSettings = tab.ParentWindowContext is { } source
+            ? source.WindowSettings.CopyFor(source.WindowModeState.CurrentValue.Remembered)
+            : null;
+        var window = Create(tab, windowSettings: windowSettings);
         window.Position = position;
         window.Width = width;
         window.Height = height;

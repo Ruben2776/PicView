@@ -470,6 +470,105 @@ public class AppLifecycleTests : IAsyncDisposable
     }
 
     [AvaloniaFact]
+    public async Task OpenNewAsync_FromAWindow_StartsWithThatWindowsSettingsNotTheRecords()
+    {
+        Settings.WindowProperties.AutoFit = false;
+        Settings.WindowProperties.TopMost = false;
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var first = app.MainWindows.Open[0];
+        await first.WindowModeSwitcher.SetAutoFit(true);
+        ViewModelOf(first).WindowSettings.IsTopMost.Value = true;
+        var record = (Settings.WindowProperties.AutoFit, Settings.WindowProperties.TopMost);
+
+        var opened = ViewModelOf(await app.MainWindows.OpenNewAsync(first));
+
+        Assert.Equal((false, false), record);
+        Assert.True(opened.WindowModeState.CurrentValue.AutoFit);
+        Assert.True(opened.WindowSettings.IsTopMost.Value);
+    }
+
+    [AvaloniaFact]
+    public async Task OpenNewAsync_ChangingTheNewWindow_LeavesItsOpenerAlone()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var first = app.MainWindows.Open[0];
+        var firstVm = ViewModelOf(first);
+        await first.WindowModeSwitcher.SetAutoFit(true);
+        firstVm.WindowSettings.IsTopMost.Value = true;
+        var opened = await app.MainWindows.OpenNewAsync(first);
+        var openedVm = ViewModelOf(opened);
+
+        await opened.WindowModeSwitcher.SetAutoFit(false);
+        openedVm.WindowSettings.IsTopMost.Value = false;
+
+        Assert.False(openedVm.WindowModeState.CurrentValue.AutoFit);
+        Assert.False(openedVm.WindowSettings.IsTopMost.Value);
+        Assert.True(firstVm.WindowModeState.CurrentValue.AutoFit);
+        Assert.True(firstVm.WindowSettings.IsTopMost.Value);
+    }
+
+    [AvaloniaFact]
+    public async Task OpenForMovedTabAsync_StartsWithTheSettingsOfTheWindowTheTabCameFrom()
+    {
+        Settings.WindowProperties.AutoFit = false;
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var source = app.MainWindows.Open[0];
+        await source.WindowModeSwitcher.SetAutoFit(true);
+        var sourceVm = ViewModelOf(source);
+        var tab = sourceVm.WindowTabs.CreateTab();
+        sourceVm.WindowTabs.MoveOut(tab);
+
+        var moved = ViewModelOf(await app.MainWindows.OpenForMovedTabAsync(tab, new PixelPoint(40, 40), 800, 600));
+
+        Assert.True(moved.WindowModeState.CurrentValue.AutoFit);
+    }
+
+    [AvaloniaFact]
+    public async Task OpenNewAsync_NoOpener_StartsFromTheRecord()
+    {
+        Settings.WindowProperties.AutoFit = false;
+        Settings.WindowProperties.TopMost = false;
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var first = app.MainWindows.Open[0];
+        await first.WindowModeSwitcher.SetAutoFit(true);
+        ViewModelOf(first).WindowSettings.IsTopMost.Value = true;
+        using var fromRecord = WindowSettings.FromRecord(Settings);
+
+        var opened = ViewModelOf(await app.MainWindows.OpenNewAsync(null)).WindowSettings;
+
+        Assert.Equal(fromRecord.StartingMode, opened.StartingMode);
+        Assert.Equal(fromRecord.Bounds, opened.Bounds);
+        Assert.Equal(fromRecord.IsTopMost.Value, opened.IsTopMost.Value);
+        Assert.Equal(fromRecord.IsStayingCentered.Value, opened.IsStayingCentered.Value);
+    }
+
+    [AvaloniaFact]
+    public async Task OpenNewAsync_FromAMaximizedOpener_OpensAtItsLastNormalBounds()
+    {
+        Settings.WindowProperties.AutoFit = false;
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var opener = app.MainWindows.Open[0];
+        opener.Width = 800;
+        opener.Height = 600;
+        Dispatcher.UIThread.RunJobs();
+        opener.Position = new PixelPoint(123, 45);
+        await opener.WindowModeSwitcher.ToggleMaximized();
+        // Where a maximized window sits, at the origin of its work area
+        opener.Position = new PixelPoint(0, 0);
+
+        var opened = await app.MainWindows.OpenNewAsync(opener);
+
+        Assert.Equal(new PixelPoint(123, 45), opened.Position);
+        Assert.NotEqual(-32000, opened.Position.X);
+        Assert.Equal(new NormalBounds(123, 45, 800, 600), ViewModelOf(opened).WindowSettings.Bounds);
+    }
+
+    [AvaloniaFact]
     public async Task Open_WithAutoFitAndStayCenteredOff_KeepsTheWindowsPosition()
     {
         Settings.WindowProperties.AutoFit = true;
