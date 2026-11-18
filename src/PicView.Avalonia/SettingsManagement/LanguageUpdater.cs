@@ -5,8 +5,7 @@ namespace PicView.Avalonia.SettingsManagement;
 
 public static class LanguageUpdater
 {
-    public static void UpdateLanguage(TranslationViewModel translationViewModel,
-        GlobalSettingsViewModel globalSettings, bool settingsExists)
+    public static void UpdateLanguage(TranslationViewModel translationViewModel, bool settingsExists)
     {
         if (settingsExists)
         {
@@ -19,8 +18,6 @@ public static class LanguageUpdater
         
         translationViewModel.UpdateLanguage();
 
-        globalSettings.Rephrase();
-
         translationViewModel.IsShowingFadingUIButtons.Value = Settings.UIProperties.ShowAltInterfaceButtons
             ? TranslationManager.Translation.DisableFadeInButtonsOnHover
             : TranslationManager.Translation.ShowFadeInButtonsOnHover;
@@ -30,13 +27,12 @@ public static class LanguageUpdater
             : TranslationManager.Translation.UsingMouse;
     }
 
-    public static async Task UpdateLanguageAsync(TranslationViewModel translationViewModel,
-        GlobalSettingsViewModel globalSettings, bool settingsExists)
+    public static async Task UpdateLanguageAsync(TranslationViewModel translationViewModel, bool settingsExists)
     {
         await Task.Run(() =>
         {
 #pragma warning disable MA0042
-            UpdateLanguage(translationViewModel, globalSettings, settingsExists);
+            UpdateLanguage(translationViewModel, settingsExists);
 #pragma warning restore MA0042
         }).ConfigureAwait(false);
     }

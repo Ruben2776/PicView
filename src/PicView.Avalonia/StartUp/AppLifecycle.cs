@@ -301,11 +301,12 @@ public sealed class AppLifecycle
     private void ApplySharedSettings(bool settingsExists)
     {
         ComposeServices();
+        _core.GlobalSettings.FollowLanguage(_core.Translation.LanguageChanged);
         _ = Task.Run(() =>
         {
             _core.GlobalSettings.BackgroundChoice.Value = Settings.UIProperties.BgColorChoice;
 #pragma warning disable MA0042
-            LanguageUpdater.UpdateLanguage(_core.Translation, _core.GlobalSettings, settingsExists);
+            LanguageUpdater.UpdateLanguage(_core.Translation, settingsExists);
 #pragma warning restore MA0042
         });
         ThemeManager.DetermineTheme(Application.Current, settingsExists);

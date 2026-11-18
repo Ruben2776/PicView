@@ -176,6 +176,15 @@ public class GlobalSettingsViewModel
     }
 
     /// <summary>
+    /// Rewrites the six menu texts whenever the language changes.
+    /// </summary>
+    public void FollowLanguage(Observable<Unit> languageChanged)
+    {
+        languageChanged.Subscribe(_ => Rephrase(),
+            DebugHelper.LogError(nameof(GlobalSettingsViewModel), nameof(FollowLanguage)));
+    }
+
+    /// <summary>
     /// Writes the six menu texts from the current language and the settings they follow.
     /// </summary>
     public void Rephrase()

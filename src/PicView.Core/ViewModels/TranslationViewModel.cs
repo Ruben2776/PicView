@@ -6,6 +6,14 @@ namespace PicView.Core.ViewModels;
 
 public class TranslationViewModel
 {
+    private readonly Subject<Unit> _languageChanged = new();
+
+    /// <summary>
+    /// Fires once after every translation here holds the new language, on the thread that loaded it. Whatever keeps
+    /// translated text of its own subscribes and re-reads it.
+    /// </summary>
+    public Observable<Unit> LanguageChanged => _languageChanged;
+
     public void UpdateLanguage()
     {
         var t = TranslationManager.Translation;
@@ -414,6 +422,8 @@ public class TranslationViewModel
         ZoomIn.Value = t.ZoomIn;
         ZoomOut.Value = t.ZoomOut;
         ZoomToFit.Value = t.ZoomToFit;
+
+        _languageChanged.OnNext(Unit.Default);
     }
 
     #region Static Translation Strings
