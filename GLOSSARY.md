@@ -76,7 +76,7 @@ What runs once when the PicView process starts, around its first Main Window: lo
 _Avoid_: Initialization, boot, instance (for a PicView process)
 
 **App Shutdown**:
-What runs once when the PicView process ends, whether the last Main Window closes (or Batch Resize, when it outlives them), the user quits, an update is installed, or PicView restarts. It closes every Main Window, saves what they share and deletes the temp files. The most recently active Main Window is the one whose file and size are remembered.
+What runs once when the PicView process ends, whether the last Main Window closes (or Batch Resize, when it outlives them), the user quits, an update is installed, or PicView restarts. It closes every Main Window, saves what they share and deletes the temp files. The most recently active Main Window is the one whose file is remembered and whose Window Settings are stored.
 _Avoid_: Exit, quit, close
 
 ## Tabs
@@ -208,17 +208,25 @@ _Avoid_: Source file, input path
 ## Settings
 
 **Setting**:
-A value the user chooses that PicView remembers between runs, stored in one record saved whole. The fourteen a menu toggles publish their changes: one bindable each, which writes the stored value and saves, and what reacts to it subscribes. The rest are read from the record.
+A value the user chooses that PicView remembers between runs, stored in one record saved whole. The thirteen a menu toggles that are App Settings publish their changes: one bindable each, which writes the stored value and saves, and what reacts to it subscribes. The rest are read from the record. A Window Setting is stored only when its window closes. Every Setting is one or the other.
 _Avoid_: Option, preference, flag, mirror (for the bindable), flip (for toggling)
+
+**Window Setting**:
+A Setting that belongs to one Main Window: the Window Mode, AutoFit, top most, Stay Centered, and the window's last Normal size and position. Each Main Window has its own values, in its `WindowSettings`, and changing one in a window changes nothing in another. A window is seeded from the settings record at App Start, and from its opener's values when it opens while PicView runs. Nothing is written to the record when a Window Setting changes: the window stores them when it closes, so the last window to close decides what is stored, and at App Shutdown with several windows open, the most recently active one. A crash loses the session's changes to them. The Settings window shows and edits those of the Active Main Window. More Settings become Window Settings in later slices; until then they are App Settings.
+_Avoid_: Per-window option, window preference, local setting
+
+**App Setting**:
+A Setting that belongs to PicView as a whole: every Setting that is not a Window Setting. One value serves every Main Window, and a change is written to the record and saved at once.
+_Avoid_: Global setting, shared setting
 
 ## Sizing
 
 **AutoFit**:
-The setting of a Normal window where the window takes its size from the image its active tab shows, worked out before the window resizes so it never visibly resizes twice, and again whenever another tab becomes active. A tab that shows no image, such as a Fresh Tab's start-up menu, never changes the window's size: it fills what the window leaves it after the Reserved Space instead. With it off, the window keeps the size the user gave it and the image fits inside it. Turning AutoFit on or off applies to every window, while resizing a window by hand turns it off for only that window.
+The setting of a Normal window where the window takes its size from the image its active tab shows, worked out before the window resizes so it never visibly resizes twice, and again whenever another tab becomes active. A tab that shows no image, such as a Fresh Tab's start-up menu, never changes the window's size: it fills what the window leaves it after the Reserved Space instead. With it off, the window keeps the size the user gave it and the image fits inside it. It is a Window Setting: turning it on or off, or resizing the window by hand, which turns it off, affects only that window.
 _Avoid_: Auto-size, auto resize, Manual
 
 **Window Mode**:
-The state a window is in, exactly one at a time: Normal, Minimized, Maximized or Fullscreen. Fullscreen covers the screen, Maximized fills the work area, and a Normal window follows the shown image with AutoFit, else keeps the size the user gave it. A maximized window fits the image to itself, as a Normal window without AutoFit does. Leaving Fullscreen or Minimized gives back the mode the window had before it, so a maximized window that went fullscreen is maximized again; leaving Maximized gives back Normal. Nothing is resized while a window is minimized. Each window has its own Window Mode, whether the user changes it in PicView or through the operating system's window controls. The settings only remember the mode a new window starts in, which is the last one the user chose in any window; they never remember Minimized, nor Fullscreen and Maximized together. A window opened while PicView is running never starts fullscreen. A slideshow shows its window fullscreen without changing the remembered mode, and stopping it gives back the mode the window had.
+The state a window is in, exactly one at a time: Normal, Minimized, Maximized or Fullscreen. Fullscreen covers the screen, Maximized fills the work area, and a Normal window follows the shown image with AutoFit, else keeps the size the user gave it. A maximized window fits the image to itself, as a Normal window without AutoFit does. Leaving Fullscreen or Minimized gives back the mode the window had before it, so a maximized window that went fullscreen is maximized again; leaving Maximized gives back Normal. Nothing is resized while a window is minimized. Each window has its own Window Mode, whether the user changes it in PicView or through the operating system's window controls. The Window Mode is a Window Setting: a window opened while PicView runs starts in the mode of the window it was opened from, and the settings remember the mode of the last Main Window closed, which only App Start reads; they never remember Minimized, nor Fullscreen and Maximized together. A window opened while PicView is running never starts fullscreen. A slideshow shows its window fullscreen without changing the remembered mode, and stopping it gives back the mode the window had.
 _Avoid_: Scaling mode, sizing mode, Manual
 
 **Zoom to Fit**:
@@ -238,11 +246,11 @@ The part of a window's own screen that the taskbar, dock and menu bar leave free
 _Avoid_: Monitor size, screen size, working area
 
 **Stay Centered**:
-The setting that keeps an AutoFit window centered in its Work Area as it changes size. With it off, the window keeps its own center as it resizes.
+The setting that keeps an AutoFit window centered in its Work Area as it changes size. With it off, the window keeps its own center as it resizes. It is a Window Setting, so each Main Window has its own; the Settings window edits that of the Active Main Window.
 _Avoid_: Keep centered, center window
 
 **Placement**:
-Where a Main Window sits. At App Start, an AutoFit window opens centered in the Work Area of the screen it opens on; a window that keeps its size opens at its last position; and a window that starts fullscreen or maximized opens in that state on the last screen it was closed from. A window opened while PicView runs opens on top of the window it was opened from, at its size, and a window opened for a dragged-out tab opens where the cursor is, with AutoFit or without. From then on, an AutoFit window is placed after each change of its size, a Fit included: centered in its Work Area with Stay Centered, else on its own center. Turning AutoFit on places it the same way; turning it off leaves it where it is. Returning to Normal from fullscreen or maximized centers an AutoFit window in the Work Area of the screen it is on, and gives a window that keeps its size its previous size and position back. A fullscreen or maximized window, or one that keeps its size, is otherwise not moved. The window places itself; nothing centers it, except App Start once and the user's Center action.
+Where a Main Window sits. At App Start, an AutoFit window opens centered in the Work Area of the screen it opens on; a window that keeps its size opens at its last position; and a window that starts fullscreen or maximized opens in that state on the last screen it was closed from. A window opened while PicView runs opens on top of the window it was opened from, and takes its size from that window, not from the settings record, and a window opened for a dragged-out tab opens where the cursor is, with AutoFit or without. From then on, an AutoFit window is placed after each change of its size, a Fit included: centered in its Work Area with Stay Centered, else on its own center. Turning AutoFit on places it the same way; turning it off leaves it where it is. Returning to Normal from fullscreen or maximized centers an AutoFit window in the Work Area of the screen it is on, and gives a window that keeps its size its previous size and position back. A fullscreen or maximized window, or one that keeps its size, is otherwise not moved. The window places itself; nothing centers it, except App Start once and the user's Center action.
 _Avoid_: Center the window (as something a path does), window position (for the rule)
 
 **Screen Margin**:

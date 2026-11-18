@@ -16,3 +16,4 @@
 - Restarting (including resetting the settings) is App Shutdown followed by a new PicView started with no file, whose App Start follows the settings as usual, rather than reopening the active tab's file. Resetting deletes the settings file after App Shutdown has saved it, so the new App Start finds none.
 - The platform `App` files keep no reference to a first window. The print preview opens on the Main Window that asked for it, while taskbar progress and later launches go to the most recently active one, since Core reports download progress without knowing its window.
 - The startup order inside `QuickLoad` (ADR-0005) is unchanged.
+- Superseded in part by ADR-0038: a closing window stores its Window Settings (Window Mode, AutoFit, top most, Stay Centered, size and position) in the record, and the most recently active window's are the ones stored at a multi-window App Shutdown.
