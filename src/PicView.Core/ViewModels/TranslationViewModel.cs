@@ -400,7 +400,7 @@ public class TranslationViewModel
         Vibrance.Value = t.Vibrance;
         View.Value = t.View;
         ViewLicenseFile.Value = t.ViewLicenseFile;
-        Vignette.Value = t.Vibrance;
+        Vignette.Value = t.Vignette;
         WhenDeletingAFile.Value = t.WhenDeletingAFile;
         WhiteBalance.Value = t.WhiteBalance;
         Whites.Value = t.Whites;

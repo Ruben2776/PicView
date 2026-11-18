@@ -34,6 +34,16 @@ public static class TranslationManager
     }
 
     /// <summary>
+    /// Puts a language model in place and returns the one it replaced, so a test can restore it.
+    /// </summary>
+    internal static LanguageModel Swap(LanguageModel model)
+    {
+        var previous = Translation;
+        Translation = model;
+        return previous;
+    }
+
+    /// <summary>
     /// Loads the language file based on the provided ISO language code.
     /// </summary>
     /// <param name="isoLanguageCode">The ISO language code (e.g., 'en', 'da').</param>

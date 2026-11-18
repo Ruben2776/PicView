@@ -458,7 +458,7 @@
                             </StackPanel>
 
                             <!--  Vibrance  -->
-                            <TextBlock Classes="txt " Text="{Binding Translation.Tint.Value}" />
+                            <TextBlock Classes="txt " Text="{Binding Translation.Vibrance.Value}" />
                             <StackPanel Orientation="Horizontal">
                                 <customControls:CustomSlider
                                     x:Name="VibranceSlider"
