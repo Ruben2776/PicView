@@ -48,9 +48,20 @@ internal sealed class ManualTimeProvider : TimeProvider
 
         public bool Change(TimeSpan dueTime, TimeSpan period)
         {
+            // As the real timer does, so a test fails where production would throw, instead of looping
+            ThrowIfNegative(dueTime);
+            ThrowIfNegative(period);
             _period = period;
             Due = dueTime == Timeout.InfiniteTimeSpan ? null : clock._now + dueTime;
             return true;
+        }
+
+        private static void ThrowIfNegative(TimeSpan time)
+        {
+            if (time < TimeSpan.Zero && time != Timeout.InfiniteTimeSpan)
+            {
+                throw new ArgumentOutOfRangeException(nameof(time), time, "A timer cannot wait a negative time.");
+            }
         }
 
         public void Fire()

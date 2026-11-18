@@ -8,6 +8,7 @@ namespace PicView.Tests.Navigation;
 /// <summary>
 /// The rules of one Main Window's slideshow, on a clock the test moves.
 /// </summary>
+[Collection("Sequential")]
 public class SlideshowRulesTests
 {
     private readonly ManualTimeProvider _clock = new();
@@ -83,16 +84,21 @@ public class SlideshowRulesTests
         Assert.Equal(1, _next);
     }
 
-    [Fact]
-    public async Task Toggle_SettingZero_UsesOneSecond()
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-3)]
+    public async Task Toggle_SettingZeroOrLess_TicksEverySecond(double seconds)
     {
-        Settings.UIProperties.SlideShowTimer = 0;
+        Settings.UIProperties.SlideShowTimer = seconds;
         var slideshow = Create();
-        await slideshow.Toggle(0, isKeyHeldDown: false);
+        await slideshow.Toggle(-1, isKeyHeldDown: false);
 
-        _clock.Advance(TimeSpan.FromSeconds(1));
-
+        _clock.Advance(TimeSpan.FromSeconds(0.9));
+        Assert.Equal(0, _next);
+        _clock.Advance(TimeSpan.FromSeconds(0.1));
         Assert.Equal(1, _next);
+        _clock.Advance(TimeSpan.FromSeconds(1));
+        Assert.Equal(2, _next);
     }
 
     [Fact]
