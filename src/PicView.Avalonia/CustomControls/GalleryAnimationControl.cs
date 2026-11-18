@@ -264,6 +264,11 @@ public class GalleryAnimationControl : UserControl
         }
 
         Classes.Set("tiles", showsTiles);
+        // The edge a Docked Gallery is at, for the Gallery Items' tooltips. Bottom, like Columns, needs no class
+        var docked = appearance.Mode is GalleryMode.Docked;
+        Classes.Set("dockTop", docked && appearance.Dock is GalleryDockPosition.Top);
+        Classes.Set("dockLeft", docked && appearance.Dock is GalleryDockPosition.Left);
+        Classes.Set("dockRight", docked && appearance.Dock is GalleryDockPosition.Right);
         BorderThickness = ToThickness(appearance.Border);
         DockPanel.SetDock(this, appearance.Dock switch
         {

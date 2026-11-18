@@ -322,12 +322,12 @@
             </customControls:StyledMenuItem>
         </ContextMenu>
     </customControls:NavigateAbleItem.Resources>
+    <!--  GalleryView.axaml places the tooltip for each layout: above the item unless a style there says otherwise  -->
     <Panel
+        x:Name="TipHost"
         MinWidth="25"
         MinHeight="25"
-        ToolTip.HorizontalOffset="0"
-        ToolTip.Placement="TopEdgeAlignedLeft"
-        ToolTip.VerticalOffset="0">
+        ToolTip.HorizontalOffset="0">
         <customControls:ThumbImage
             x:Name="GalleryImage"
             Source="{Binding Image.Value}"

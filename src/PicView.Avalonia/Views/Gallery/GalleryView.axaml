@@ -39,6 +39,28 @@
         <Style Selector=":is(customControls|GalleryAnimationControl).tiles customControls|NavigateAbleItemsViewer /template/ customControls|AutoScrollViewer#PART_ScrollViewer /template/ ScrollBar#PART_VerticalScrollBar">
             <Setter Property="Margin" Value="0,60,0,0" />
         </Style>
+        <!--  The item's tooltip: above it when docked at the bottom and in Columns  -->
+        <Style Selector="customControls|NavigateAbleItem.galleryItem Panel#TipHost">
+            <Setter Property="ToolTip.Placement" Value="TopEdgeAlignedLeft" />
+            <Setter Property="ToolTip.VerticalOffset" Value="0" />
+        </Style>
+        <!--  Masonry and Rows: centered above the tile, reaching into it  -->
+        <Style Selector=":is(customControls|GalleryAnimationControl).tiles customControls|NavigateAbleItem.galleryItem Panel#TipHost">
+            <Setter Property="ToolTip.Placement" Value="Top" />
+            <Setter Property="ToolTip.VerticalOffset" Value="50" />
+        </Style>
+        <Style Selector=":is(customControls|GalleryAnimationControl).dockTop customControls|NavigateAbleItem.galleryItem Panel#TipHost">
+            <Setter Property="ToolTip.Placement" Value="Bottom" />
+            <Setter Property="ToolTip.VerticalOffset" Value="0" />
+        </Style>
+        <Style Selector=":is(customControls|GalleryAnimationControl).dockLeft customControls|NavigateAbleItem.galleryItem Panel#TipHost">
+            <Setter Property="ToolTip.Placement" Value="RightEdgeAlignedTop" />
+            <Setter Property="ToolTip.VerticalOffset" Value="-20" />
+        </Style>
+        <Style Selector=":is(customControls|GalleryAnimationControl).dockRight customControls|NavigateAbleItem.galleryItem Panel#TipHost">
+            <Setter Property="ToolTip.Placement" Value="LeftEdgeAlignedTop" />
+            <Setter Property="ToolTip.VerticalOffset" Value="-20" />
+        </Style>
     </customControls:GalleryAnimationControl.Styles>
     <Panel>
 
