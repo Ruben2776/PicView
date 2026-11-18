@@ -1,3 +1,4 @@
+using PicView.Tests.Config;
 using Avalonia.Controls;
 using Avalonia.Threading;
 using PicView.Avalonia.Views.UC;
@@ -54,7 +55,7 @@ public class HoverBarTests
     public void IsHitTestVisible_FollowsTheFadeButtonsSetting()
     {
         var core = new CoreViewModel(null, _ => ValueTask.FromResult(new ImageModel()),
-            new GlobalSettingsViewModel(static () => ValueTask.FromResult(true)));
+            StartedSettings.New());
         var vm = new MainWindowViewModel(core, core.Translation, core.GlobalSettings, core.GallerySettings);
         var bar = new HoverBar { DataContext = vm.WindowTabs.ActiveTab.Value };
         var window = new Window { Width = 900, Height = 600, Content = bar };

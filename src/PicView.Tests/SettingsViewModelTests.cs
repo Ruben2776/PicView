@@ -1,3 +1,4 @@
+using PicView.Tests.Config;
 using PicView.Core.ViewModels;
 using PicView.Core.Config;
 using PicView.Core.Localization;
@@ -65,7 +66,24 @@ public class SettingsViewModelTests
         Assert.Equal(SettingsCategory.General, vm.SelectedCategory.Value);
     }
     
-    private static GlobalSettingsViewModel NewSettings() => new(static () => ValueTask.FromResult(true));
+    [Fact]
+    public void Constructor_UnstartedSettings_StartsTheExtraSettingsOnly()
+    {
+        var saves = 0;
+        var settings = new GlobalSettingsViewModel(() => { saves++; return ValueTask.FromResult(true); });
+        using var vm = new SettingsViewModel(new TranslationViewModel(), settings);
+        using var again = new SettingsViewModel(new TranslationViewModel(), settings);
+        var looping = Settings.UIProperties.Looping;
+
+        vm.WindowMargin.Value = 42;
+        settings.IsLooping.Value = !looping;
+
+        Assert.Equal(42, Settings.WindowProperties.Margin);
+        Assert.Equal(1, saves);
+        Assert.Equal(looping, Settings.UIProperties.Looping);
+    }
+
+    private static GlobalSettingsViewModel NewSettings() => StartedSettings.New();
 
     [Fact]
     public void ToggleFadeButtons_WritesThePublishedSetting()

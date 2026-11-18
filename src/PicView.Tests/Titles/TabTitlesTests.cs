@@ -264,6 +264,30 @@ public class TabTitlesTests
         Assert.Equal(Expected(files[0], 0, 1).FilePathTitle, _tab.Titles.Title);
     }
 
+    [Fact]
+    public void FullPath_ToggledWhenTitlesSubscribedBeforeTheWriteThrough_TitleUsesTheFullPath()
+    {
+        var settings = new GlobalSettingsViewModel(static () => ValueTask.FromResult(true));
+        var tab = new TabViewModel(null!, TestTabServices.For(
+            new SharedImageCache(f => ValueTask.FromResult(Model(f.Name))!), globalSettings: settings));
+        // The titles subscribe as they are made, before the write-through starts
+        _ = tab.Titles.Title;
+        var files = new[] { Model("a.jpg").FileInfo! };
+        tab.Initialize();
+        tab.ImageIterator!.Initialize(files, 0);
+        tab.Display(Model("a.jpg"));
+        settings.InitializeActionSettings();
+        // A binding reads the title as the titles mark, inside the setting's notification
+        string? titleWhenMarked = null;
+        tab.Titles.PropertyChanged += (_, _) => titleWhenMarked = tab.Titles.Title;
+
+        settings.IsShowingFullPathInTitleBar.Value = true;
+
+        var expected = ImageTitleFormatter.GenerateTitleStrings(new ImageTitleInfo(files[0], 1, 1, 0, 1),
+            tab.Zoom.Level.CurrentValue);
+        Assert.Equal(expected.FilePathTitle, titleWhenMarked);
+    }
+
 #if DEBUG
     [Fact]
     public void SideBySideSetting_Changed_MarksTheTitles()

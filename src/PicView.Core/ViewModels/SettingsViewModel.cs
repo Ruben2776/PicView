@@ -29,6 +29,7 @@ public class SettingsViewModel : IDisposable
     public SettingsViewModel(TranslationViewModel translation, GlobalSettingsViewModel globalSettings)
     {
         _globalSettings = globalSettings;
+        globalSettings.InitializeExtraSettings();
         Categories.Value =
         [
             new SettingsCategoryItem(translation.GeneralSettings, "GeneralSettingsImage", SettingsCategory.General),

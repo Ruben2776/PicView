@@ -480,7 +480,7 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
         _tabsOwingNewImageFit.Add(tab);
         if (!ReferenceEquals(tab, vm.WindowTabs.ActiveTab.CurrentValue) ||
             vm.WindowModeState.CurrentValue.Mode is WindowMode.Minimized ||
-            PixelSizes.Of(tab, vm.WindowTabs.SharedCache, ShowsPairBeside(tab)) is not { } sizes)
+            PixelSizes.Of(tab, vm.WindowTabs.SharedCache, ShowsPairBeside(tab, vm.GlobalSettings)) is not { } sizes)
         {
             return;
         }
@@ -491,9 +491,12 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
     /// <summary>
     /// Whether the window fits <paramref name="tab"/>'s pair beside each other, passing the second size: side-by-side
     /// does, and a comparison only in its synced mode, as the others stack the pair, so the window fits one image.
+    /// Side-by-side is read from <paramref name="settings"/> as they publish it, or the stored setting without them.
     /// </summary>
-    internal static bool ShowsPairBeside(TabViewModel tab) =>
-        tab.Comparison is { } c ? c.IsSynced.Value : Settings.ImageScaling.ShowImageSideBySide;
+    internal static bool ShowsPairBeside(TabViewModel tab, GlobalSettingsViewModel? settings) =>
+        tab.Comparison is { } c
+            ? c.IsSynced.Value
+            : settings?.IsSideBySide.CurrentValue ?? Settings.ImageScaling.ShowImageSideBySide;
 
     private void FitSoon()
     {
@@ -530,7 +533,7 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
             return;
         }
 
-        if (PixelSizes.Of(tab, vm.WindowTabs.SharedCache, ShowsPairBeside(tab)) is { } sizes)
+        if (PixelSizes.Of(tab, vm.WindowTabs.SharedCache, ShowsPairBeside(tab, vm.GlobalSettings)) is { } sizes)
         {
             Fit(vm, sizes);
         }
@@ -625,8 +628,9 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
             SecondImageHeight = sizes.SecondHeight,
             QuarterTurns = sizes.QuarterTurns,
             Mode = state.FitMode,
-            ZoomToFit = Settings.ImageScaling.ZoomToFit,
-            ScrollEnabled = Settings.Zoom.ScrollEnabled,
+            // Read as published, as the fitter follows before the write-through starts (ADR-0034)
+            ZoomToFit = vm.GlobalSettings.IsZoomedToFit.CurrentValue,
+            ScrollEnabled = vm.GlobalSettings.IsScrollingEnabled.CurrentValue,
             Screen = screen,
             ScreenMargin = vm.GlobalSettings.WindowMargin.CurrentValue,
             WindowContentWidth = contentSize.Width,

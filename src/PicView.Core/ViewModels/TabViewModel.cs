@@ -732,6 +732,8 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
             return;
         }
 
+        // The relist reads the stored value, so the write-throughs are notified before the tab
+        settings.InitializeActionSettings();
         _settingsSubscription = Disposable.Combine(
             settings.IsLooping.Skip(1).Subscribe(_ => DeriveCanNavigate()),
             // The pair is derived from the files, so the shown file is iterated to again, as a pair or alone

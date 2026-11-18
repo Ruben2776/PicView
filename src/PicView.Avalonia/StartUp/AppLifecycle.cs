@@ -224,6 +224,7 @@ public sealed class AppLifecycle
         ApplySharedSettings(settingsExists);
         var (window, settingUp) = MainWindows.OpenAtAppStart(source, launchFileMayFollow ? () => _launchFileArrived : null);
         _firstWindow = window;
+        FollowOnceOpened(window);
         if (_launchFileBeforeStart is { } early)
         {
             _launchFileBeforeStart = null;
@@ -300,7 +301,6 @@ public sealed class AppLifecycle
     private void ApplySharedSettings(bool settingsExists)
     {
         ComposeServices();
-        FollowSharedSettings();
         _ = Task.Run(() =>
         {
             _core.GlobalSettings.BackgroundChoice.Value = Settings.UIProperties.BgColorChoice;
@@ -313,10 +313,31 @@ public sealed class AppLifecycle
         BackgroundManager.SetBackground();
     }
 
+    // No setting is followed before the first Main Window is open, so it shows without the cost
+    // A first window closed before it opens never follows, which is fine as nothing can then be toggled
+    private void FollowOnceOpened(MainWindow window)
+    {
+        if (window.IsVisible)
+        {
+            FollowSharedSettings();
+            return;
+        }
+
+        void OnOpened(object? sender, EventArgs e)
+        {
+            window.Opened -= OnOpened;
+            FollowSharedSettings();
+        }
+
+        window.Opened += OnOpened;
+    }
+
     private void FollowSharedSettings()
     {
         var settings = _core.GlobalSettings;
-        // Both live for the process, as IPC does
+        // The write-throughs first, so each follower below is notified after the stored value is written
+        settings.InitializeActionSettings();
+        // All live for the process, as IPC does
         _ = BackgroundManager.Follow(settings);
         _ = settings.IsOpeningInSameWindow.Skip(1).Subscribe(sameWindow =>
         {
@@ -329,6 +350,11 @@ public sealed class AppLifecycle
                 IPC.StopListening();
             }
         });
+        if (_core.SharedFileWatcher is { } fileWatcher)
+        {
+            // Every tab's watch follows the setting
+            _ = settings.IsIncludingSubdirectories.Skip(1).Subscribe(_ => fileWatcher.RestartWatches());
+        }
     }
 
     /// <summary>
@@ -351,8 +377,6 @@ public sealed class AppLifecycle
         var fileWatcher = new FileWatcherService(platform.CompareStrings, _core.SharedCache, thumbnails,
             fileRenamed: (oldPath, newPath) => FileRenames.Follow(_core, oldPath, newPath),
             folderRenamed: (oldFolder, newFolder) => FileRenames.FollowFolder(_core, oldFolder, newFolder));
-        // Every tab's watch follows the setting
-        _ = _core.GlobalSettings.IsIncludingSubdirectories.Skip(1).Subscribe(_ => fileWatcher.RestartWatches());
         var navigation = new NavigationService(platform.CompareStrings);
         _core.InitializeNavigation(
             new TabServices(_core.SharedCache, thumbnails, fileWatcher, imageLoader,

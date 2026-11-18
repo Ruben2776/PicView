@@ -1,3 +1,4 @@
+using PicView.Tests.Config;
 using System.Globalization;
 using System.Text.Json;
 using PicView.Avalonia.SettingsManagement;
@@ -366,7 +367,7 @@ public class LanguageAndSettingsUnitTest
             CultureInfo.CurrentUICulture = new CultureInfo("da-DK");
 
             var vm = new TranslationViewModel();
-            await LanguageUpdater.UpdateLanguageAsync(vm, new GlobalSettingsViewModel(static () => ValueTask.FromResult(true)), settingsExists: false);
+            await LanguageUpdater.UpdateLanguageAsync(vm, StartedSettings.New(), settingsExists: false);
 
             Assert.Equal("da", Settings.UIProperties.UserLanguage);
             Assert.Equal("Billede", vm.Image.Value);

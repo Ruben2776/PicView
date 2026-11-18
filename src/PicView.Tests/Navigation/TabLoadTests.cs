@@ -1,3 +1,4 @@
+using PicView.Tests.Config;
 using System.Collections.Concurrent;
 using System.Net;
 using System.Net.Sockets;
@@ -951,6 +952,26 @@ public class TabLoadTests : IDisposable
     }
 
     [Fact]
+    public async Task Subdirectories_ToggledOnUnstartedSettings_RelistsWithTheNewStoredValue()
+    {
+        var a = await WriteImageAsync("a.jpg");
+        Directory.CreateDirectory(Path.Combine(_testDirectory, "sub"));
+        await WriteImageAsync(Path.Combine("sub", "c.jpg"));
+        // Nothing else starts the write-throughs, so only the tab can
+        var settings = new GlobalSettingsViewModel(static () => ValueTask.FromResult(true));
+        var tab = CreateTab(_testDirectory, globalSettings: settings);
+        await tab.Load.LoadAsync(a);
+        var storedWhenRelisted = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        _mockFileWatcherService.OnWatch = _ => storedWhenRelisted.TrySetResult(Settings.Sorting.IncludeSubDirectories);
+
+        settings.IsIncludingSubdirectories.Value = true;
+
+        Assert.True(await storedWhenRelisted.Task.WaitAsync(WaitLimit, TestContext.Current.CancellationToken));
+        // The relist runs on, so let it finish before the directory goes
+        await WaitUntil(() => tab.ImageIterator!.Files.Count == 2, () => "the relist");
+    }
+
+    [Fact]
     public async Task SideBySide_TurnedOnThenOff_PairsTheShownFileThenShowsItAlone()
     {
         var a = await WriteImageAsync("a.jpg");
@@ -1308,7 +1329,7 @@ public class TabLoadTests : IDisposable
         var a = await WriteImageAsync("a.jpg");
         var platform = new MockPlatformSpecificService();
         var core = new CoreViewModel(platform, file => ValueTask.FromResult(new ImageModel { FileInfo = file }),
-            new GlobalSettingsViewModel(static () => ValueTask.FromResult(true)));
+            StartedSettings.New());
         core.InitializeNavigation(
             new TabServices(core.SharedCache, TestTabServices.NoThumbnails(core.SharedCache), _mockFileWatcherService,
                 _mockImageModelLoader, platform, core.GlobalSettings),
@@ -1425,12 +1446,12 @@ public class TabLoadTests : IDisposable
     // A tab with the fakes as its services, so its Load works. Without an iterator it is a tab that never opened a source
     private TabViewModel CreateTab(string directory, MainWindowViewModel? parentVm = null, SharedImageCache? cache = null,
         IArchiveEntryWriter? writer = null, IPlatformSpecificService? platform = null, IFileWatcherService? watcher = null,
-        bool withIterator = true)
+        bool withIterator = true, GlobalSettingsViewModel? globalSettings = null)
     {
         var dummyParent = parentVm ?? new MainWindowViewModel(null!, null!, null!, null!);
         var services = new TabServices(cache ?? _cache, TestTabServices.NoThumbnails(cache ?? _cache),
             watcher ?? _mockFileWatcherService, _mockImageModelLoader, platform ?? new MockPlatformSpecificService(),
-            new GlobalSettingsViewModel(static () => ValueTask.FromResult(true)));
+            globalSettings ?? StartedSettings.New());
         var tab = new TabViewModel(dummyParent, services, writer);
         if (withIterator)
         {
