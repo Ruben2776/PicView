@@ -988,6 +988,38 @@ public class AppLifecycleTests : IAsyncDisposable
     }
 
     [AvaloniaFact]
+    public async Task CloseAsync_TheActiveMainWindow_MakesAnOpenOneActive()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var first = app.MainWindows.Open[0];
+        var second = await app.MainWindows.OpenNewAsync(first);
+        await ActivateAsync(first);
+        await ActivateAsync(second);
+        Assert.Same(ViewModelOf(second), _core.MainWindows.ActiveWindow.Value);
+
+        await app.MainWindows.CloseAsync(second);
+
+        Assert.Same(ViewModelOf(first), _core.MainWindows.ActiveWindow.Value);
+    }
+
+    [AvaloniaFact]
+    public async Task CloseAsync_TheLastMainWindowWithBatchResizeOpen_LeavesNoActiveWindow()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var main = app.MainWindows.Open[0];
+        await main.MainWindowInitializer.ShowBatchResizeWindow();
+        await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Background);
+        Assert.Same(ViewModelOf(main), _core.MainWindows.ActiveWindow.Value);
+
+        await app.MainWindows.CloseAsync(main);
+
+        Assert.Null(_core.MainWindows.ActiveWindow.Value);
+        Assert.Single(_provider.BatchResizeWindows).Close();
+    }
+
+    [AvaloniaFact]
     public async Task ShutdownAsync_WithBatchResizeOpen_ClosesIt()
     {
         var app = CreateApp();

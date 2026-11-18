@@ -268,6 +268,11 @@ public sealed class MainWindowLifecycle
             MostRecentlyActive = _open.Count > 0 ? _open[^1] : null;
         }
 
+        if (_core.MainWindows.ActiveWindow.Value == vm)
+        {
+            _core.MainWindows.ActiveWindow.Value = MostRecentlyActive?.DataContext as MainWindowViewModel;
+        }
+
         if (closeNatively)
         {
             window.Close();

@@ -90,7 +90,7 @@
             <customControls:TextToggleButton
                 x:Name="StayCenteredToggleButton"
                 Classes="MenuItemHover settingsToggleButton"
-                IsChecked="{CompiledBinding SettingsViewModel.IsStayingCentered.Value}"
+                IsChecked="{CompiledBinding MainWindows.ActiveWindow.Value.WindowSettings.IsStayingCentered.Value, Mode=TwoWay}"
                 IsEnabled="{CompiledBinding MainWindows.ActiveWindow.Value.IsAutoFit.Value}"
                 Text="{CompiledBinding Translation.StayCentered.Value,
                                        Mode=OneWay}" />

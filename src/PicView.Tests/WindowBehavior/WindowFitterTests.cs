@@ -1254,9 +1254,9 @@ public class WindowFitterTests
     [AvaloniaFact]
     public void Follow_FitGrowsTheWindowWithStayCentered_StaysCentered()
     {
-        Settings.WindowProperties.KeepCentered = true;
         var screen = Screen(1920, 1040);
         var (fitter, vm, window) = CreateShownAutoFitWindow(() => screen);
+        vm.WindowSettings.IsStayingCentered.Value = true;
         using var following = fitter.Follow();
         vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 400, 300));
         Dispatcher.UIThread.RunJobs();
@@ -1290,10 +1290,38 @@ public class WindowFitterTests
     }
 
     [AvaloniaFact]
+    public void Placement_StayCenteredInOneMainWindow_OnlyThatWindowIsCentered()
+    {
+        var screen = Screen(1920, 1040);
+        var (firstFitter, firstVm, first) = CreateShownAutoFitWindow(() => screen);
+        var (secondFitter, secondVm, second) = CreateShownAutoFitWindow(() => screen);
+        using var followingFirst = firstFitter.Follow();
+        using var followingSecond = secondFitter.Follow();
+        firstVm.WindowSettings.IsStayingCentered.Value = true;
+        firstVm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 400, 300));
+        secondVm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 400, 300));
+        Dispatcher.UIThread.RunJobs();
+        first.Position = new PixelPoint(100, 50);
+        second.Position = new PixelPoint(500, 300);
+        var secondCenterBefore = CenterOf(second);
+
+        firstVm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 800, 600));
+        secondVm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 800, 600));
+        Dispatcher.UIThread.RunJobs();
+
+        var centered = WindowPlacement.Centered(screen, 800, 600);
+        Assert.Equal(new PixelPoint(centered.X, centered.Y), first.Position);
+        Assert.Equal(new Size(800, 600), second.ClientSize);
+        Assert.Equal(secondCenterBefore, CenterOf(second));
+        first.Close();
+        second.Close();
+    }
+
+    [AvaloniaFact]
     public void Follow_FixedWindowResizes_IsNotMoved()
     {
-        Settings.WindowProperties.KeepCentered = true;
-        var (fitter, _, window) = CreateShownWindow(400, 300, readScreen: () => Screen(1920, 1040));
+        var (fitter, vm, window) = CreateShownWindow(400, 300, readScreen: () => Screen(1920, 1040));
+        vm.WindowSettings.IsStayingCentered.Value = true;
         using var following = fitter.Follow();
         window.Position = new PixelPoint(100, 50);
 
@@ -1309,8 +1337,8 @@ public class WindowFitterTests
     [AvaloniaFact]
     public void Follow_FullscreenFit_IsNotMoved()
     {
-        Settings.WindowProperties.KeepCentered = true;
         var (fitter, vm, window) = CreateShownAutoFitWindow(() => Screen(1920, 1040));
+        vm.WindowSettings.IsStayingCentered.Value = true;
         using var following = fitter.Follow();
         vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 400, 300));
         Dispatcher.UIThread.RunJobs();
@@ -1460,8 +1488,8 @@ public class WindowFitterTests
     [AvaloniaFact]
     public async Task Follow_ReturnsToNormalWithoutAutoFit_KeepsItsPreviousSizeAndPosition()
     {
-        Settings.WindowProperties.KeepCentered = true;
         var (fitter, vm, window) = CreateShownWindow(800, 600, readScreen: () => Screen(1920, 1040));
+        vm.WindowSettings.IsStayingCentered.Value = true;
         using var following = fitter.Follow();
         vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 400, 300));
         Dispatcher.UIThread.RunJobs();
@@ -1484,8 +1512,8 @@ public class WindowFitterTests
     [AvaloniaFact]
     public async Task Follow_LeavesFullscreenToMaximized_IsNotMoved()
     {
-        Settings.WindowProperties.KeepCentered = true;
         var (fitter, vm, window) = CreateShownAutoFitWindow(() => Screen(1920, 1040));
+        vm.WindowSettings.IsStayingCentered.Value = true;
         using var following = fitter.Follow();
         vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 400, 300));
         Dispatcher.UIThread.RunJobs();
@@ -1507,9 +1535,9 @@ public class WindowFitterTests
     [AvaloniaFact]
     public async Task Follow_AutoFitTurnsOnWithStayCentered_IsCenteredInTheWorkArea()
     {
-        Settings.WindowProperties.KeepCentered = true;
         var screen = Screen(1920, 1040);
         var (following, vm, window, switcher) = await CreateResizedByHandWindow(() => screen);
+        vm.WindowSettings.IsStayingCentered.Value = true;
         using var stopsFollowing = following;
         window.Position = new PixelPoint(100, 50);
 
@@ -1544,8 +1572,8 @@ public class WindowFitterTests
     [AvaloniaFact]
     public async Task Follow_AutoFitTurnsOff_IsNotMoved()
     {
-        Settings.WindowProperties.KeepCentered = true;
         var (fitter, vm, window) = CreateShownAutoFitWindow(() => Screen(1920, 1040));
+        vm.WindowSettings.IsStayingCentered.Value = true;
         using var following = fitter.Follow();
         vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 400, 300));
         Dispatcher.UIThread.RunJobs();

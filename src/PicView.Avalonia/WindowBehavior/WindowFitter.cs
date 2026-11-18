@@ -155,7 +155,7 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
             }
 
             var newSize = window.ClientSize;
-            if (PlaceAfterResize(sizeBefore, newSize))
+            if (PlaceAfterResize(vm, sizeBefore, newSize))
             {
                 _placed.OnNext(newSize);
             }
@@ -164,7 +164,7 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
 
     // Centered in its work area with Stay Centered, else on its own center. Whether the window moved; not when either
     // size is empty
-    private bool PlaceAfterResize(Size oldSize, Size newSize)
+    private bool PlaceAfterResize(MainWindowViewModel vm, Size oldSize, Size newSize)
     {
         if (oldSize.Width is 0 || oldSize.Height is 0 || newSize.Width is 0 || newSize.Height is 0)
         {
@@ -172,7 +172,7 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
         }
 
         var position = WindowPlacement.AfterResize(_readScreen(), new PixelPosition(window.Position.X, window.Position.Y),
-            oldSize.Width, oldSize.Height, newSize.Width, newSize.Height, Settings.WindowProperties.KeepCentered);
+            oldSize.Width, oldSize.Height, newSize.Width, newSize.Height, vm.WindowSettings.IsStayingCentered.Value);
         var prevPos = window.Position;
         window.Position = new PixelPoint(position.X, position.Y);
         return window.Position != prevPos;
