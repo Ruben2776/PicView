@@ -122,6 +122,30 @@ public class GalleryDisplayModeSwitchingTests
         });
     }
 
+    // Defaults: the Docked Gallery is UniformToFill and the Expanded Gallery is Uniform
+    [AvaloniaTheory]
+    [InlineData("DockedStretchMenuItem", GalleryStretchMode.UniformToFill)]
+    [InlineData("ExpandedStretchMenuItem", GalleryStretchMode.Uniform)]
+    public void GalleryMenu_StretchCommand_ChecksOnlyTheChosenStretchItem(string menuName, GalleryStretchMode previous)
+    {
+        WithGalleryView((core, tab, view) =>
+        {
+            var stretches = Item(MenuOf(view, tab), menuName);
+            var square = StretchItem(stretches, GalleryStretchMode.Square);
+            var before = StretchItem(stretches, previous);
+            Assert.True(before.IsChecked);
+            Assert.False(square.IsChecked);
+
+            (menuName == "DockedStretchMenuItem"
+                ? core.GallerySettings.SetDockedStretchModeCommand
+                : core.GallerySettings.SetExpandedStretchModeCommand).Execute(GalleryStretchMode.Square);
+
+            Assert.True(square.IsChecked);
+            Assert.False(before.IsChecked);
+            Assert.Equal(1, stretches.Items.OfType<MenuItem>().Count(x => x.IsChecked));
+        });
+    }
+
     [AvaloniaFact]
     public void ItemMenu_HasTheThreeDisplayModesAsRadioItems()
     {
@@ -297,6 +321,9 @@ public class GalleryDisplayModeSwitchingTests
 
     private static MenuItem Item(ItemsControl parent, string name) =>
         parent.Items.OfType<MenuItem>().Single(x => x.Name == name);
+
+    private static MenuItem StretchItem(ItemsControl parent, GalleryStretchMode mode) =>
+        parent.Items.OfType<MenuItem>().Single(x => Equals(x.CommandParameter, mode));
 
     // The gallery view loads its XAML only when the application's DataContext is a CoreViewModel
     private static void WithGalleryView(Action<CoreViewModel, TabViewModel, GalleryView> test)

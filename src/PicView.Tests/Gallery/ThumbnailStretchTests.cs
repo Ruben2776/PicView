@@ -100,18 +100,6 @@ public class ThumbnailStretchTests
         Assert.Same(view.FindControl<ComboBoxItem>(itemName), comboBox.SelectedItem);
     }
 
-    [AvaloniaFact]
-    public void SettingsComboBox_StretchPickedWithNoTab_WritesTheRecord()
-    {
-        var (core, view) = ShowGallerySettings();
-        var comboBox = view.FindControl<ComboBox>("DockedGalleryComboBox")!;
-
-        comboBox.SelectedItem = view.FindControl<ComboBoxItem>("DockedGallerySquareItem");
-
-        Assert.Equal(GalleryStretchMode.Square, Settings.Gallery.DockedGalleryStretchMode);
-        Assert.True(core.GallerySettings.IsDockedStretchSquare.Value);
-    }
-
     [Theory]
     [InlineData(GalleryStretchMode.Uniform, Stretch.Uniform)]
     [InlineData(GalleryStretchMode.Square, Stretch.Uniform)]

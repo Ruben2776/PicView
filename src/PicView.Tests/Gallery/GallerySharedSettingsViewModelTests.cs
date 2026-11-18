@@ -171,18 +171,28 @@ public class GallerySharedSettingsViewModelTests
         Assert.Equal(1, _saves);
     }
 
-    [Fact]
-    public void SetStretchModeCommand_SameOrUnknownMode_WritesAndSavesNothing()
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void SetStretchModeCommand_SameOrUnknownMode_WritesAndSavesNothing(bool docked)
     {
         var shared = Create();
-        var docked = Settings.Gallery.DockedGalleryStretchMode;
+        var stored = docked ? Settings.Gallery.DockedGalleryStretchMode : Settings.Gallery.ExpandedGalleryStretchMode;
+        var command = docked ? shared.SetDockedStretchModeCommand : shared.SetExpandedStretchModeCommand;
 
-        shared.SetDockedStretchModeCommand.Execute(docked);
-        shared.SetDockedStretchModeCommand.Execute((GalleryStretchMode)2);
+        command.Execute(stored);
+        command.Execute((GalleryStretchMode)2);
 
-        Assert.Equal(docked, shared.DockedGalleryStretchMode.Value);
-        Assert.Equal(docked, Settings.Gallery.DockedGalleryStretchMode);
-        Assert.True(shared.IsDockedStretchUniformToFill.Value);
+        Assert.Equal(stored, (docked ? shared.DockedGalleryStretchMode : shared.ExpandedGalleryStretchMode).Value);
+        Assert.Equal(stored, docked ? Settings.Gallery.DockedGalleryStretchMode : Settings.Gallery.ExpandedGalleryStretchMode);
+        Assert.Equal(stored == GalleryStretchMode.Uniform,
+            (docked ? shared.IsDockedStretchUniform : shared.IsExpandedStretchUniform).Value);
+        Assert.Equal(stored == GalleryStretchMode.UniformToFill,
+            (docked ? shared.IsDockedStretchUniformToFill : shared.IsExpandedStretchUniformToFill).Value);
+        Assert.Equal(stored == GalleryStretchMode.Square,
+            (docked ? shared.IsDockedStretchSquare : shared.IsExpandedStretchSquare).Value);
+        Assert.Equal(stored == GalleryStretchMode.FillSquare,
+            (docked ? shared.IsDockedStretchSquareFill : shared.IsExpandedStretchSquareFill).Value);
         Assert.Equal(0, _saves);
     }
 
@@ -209,16 +219,22 @@ public class GallerySharedSettingsViewModelTests
     public void AnySetting_ChangedBeforeStart_WritesAndSavesNothing()
     {
         var shared = Unstarted();
-        var before = (Settings.Gallery.DockedGalleryStretchMode, Settings.Gallery.DockedGalleryItemSize,
-            Settings.Gallery.ItemSpacing, Settings.Gallery.ExpandedGalleryDisplayMode);
+        object Stored() => (Settings.Gallery.DockedGalleryStretchMode, Settings.Gallery.ExpandedGalleryStretchMode,
+            Settings.Gallery.DockedGalleryItemSize, Settings.Gallery.ExpandedGalleryItemSize,
+            Settings.Gallery.ItemSpacing, Settings.Gallery.LineSpacing, Settings.Gallery.ShowMotionPhotoBadges,
+            Settings.Gallery.ExpandedGalleryDisplayMode);
+        var before = Stored();
 
         shared.SetDockedStretchModeCommand.Execute(GalleryStretchMode.Square);
+        shared.SetExpandedStretchModeCommand.Execute(GalleryStretchMode.Square);
         shared.SetExpandedDisplayModeCommand.Execute(GalleryDisplayMode.Rows);
         shared.DockedGalleryItemSize.Value = 77;
+        shared.ExpandedGalleryItemSize.Value = 222;
         shared.GalleryItemSpacing.Value = 12;
+        shared.GalleryLineSpacing.Value = 9;
+        shared.ShowMotionPhotoBadges.Value = !Settings.Gallery.ShowMotionPhotoBadges;
 
-        Assert.Equal(before, (Settings.Gallery.DockedGalleryStretchMode, Settings.Gallery.DockedGalleryItemSize,
-            Settings.Gallery.ItemSpacing, Settings.Gallery.ExpandedGalleryDisplayMode));
+        Assert.Equal(before, Stored());
         Assert.Equal(0, _saves);
     }
 
