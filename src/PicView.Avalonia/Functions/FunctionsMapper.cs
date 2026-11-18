@@ -518,15 +518,18 @@ public class FunctionsMapper : IActionRunner
     
     private ValueTask ZoomToFit() => ToggleHelper.Toggle(_vm.GlobalSettings.IsZoomedToFit);
     
-    /// <inheritdoc cref="WindowFunctions.ToggleAutoFit" />
+    /// <summary>
+    /// Turns AutoFit on or off in this Main Window.
+    /// </summary>
     private async ValueTask AutoFitWindow() =>
-        await WindowFunctions.ToggleAutoFit(_vm).ConfigureAwait(false);
+        await _mainWindow.WindowModeSwitcher.SetAutoFit(!_vm.WindowModeState.CurrentValue.AutoFit)
+            .ConfigureAwait(false);
 
     /// <summary>
-    /// Turns AutoFit off in every window.
+    /// Turns AutoFit off in this Main Window.
     /// </summary>
     private async ValueTask NormalWindow() =>
-        await WindowFunctions.SetAutoFitInEveryWindow(false).ConfigureAwait(false);
+        await _mainWindow.WindowModeSwitcher.SetAutoFit(false).ConfigureAwait(false);
 
     /// <inheritdoc cref="WindowModeSwitcher.ToggleFullscreen" />
     private ValueTask ToggleFullscreen() =>

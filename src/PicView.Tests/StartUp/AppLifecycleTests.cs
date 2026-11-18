@@ -510,6 +510,53 @@ public class AppLifecycleTests : IAsyncDisposable
     }
 
     [AvaloniaFact]
+    public async Task AutoFitWindowAction_InOneMainWindow_LeavesTheOtherAlone()
+    {
+        Settings.WindowProperties.AutoFit = false;
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var first = app.MainWindows.Open[0];
+        var second = await app.MainWindows.OpenNewAsync(first);
+        var firstVm = ViewModelOf(first);
+        var secondVm = ViewModelOf(second);
+        Assert.False(firstVm.WindowModeState.CurrentValue.AutoFit);
+        Assert.False(secondVm.WindowModeState.CurrentValue.AutoFit);
+
+        await firstVm.ActionRunner!.Run(Actions.AutoFitWindow);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.True(firstVm.WindowModeState.CurrentValue.AutoFit);
+        Assert.False(secondVm.WindowModeState.CurrentValue.AutoFit);
+
+        await firstVm.ActionRunner.Run(Actions.AutoFitWindow);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.False(firstVm.WindowModeState.CurrentValue.AutoFit);
+        Assert.False(secondVm.WindowModeState.CurrentValue.AutoFit);
+    }
+
+    [AvaloniaFact]
+    public async Task NormalWindowAction_TurnsAutoFitOffInItsOwnWindowOnly()
+    {
+        Settings.WindowProperties.AutoFit = false;
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var first = app.MainWindows.Open[0];
+        await first.WindowModeSwitcher.SetAutoFit(true);
+        var second = await app.MainWindows.OpenNewAsync(first);
+        var firstVm = ViewModelOf(first);
+        var secondVm = ViewModelOf(second);
+        Assert.True(firstVm.WindowModeState.CurrentValue.AutoFit);
+        Assert.True(secondVm.WindowModeState.CurrentValue.AutoFit);
+
+        await firstVm.ActionRunner!.Run(Actions.NormalWindow);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.False(firstVm.WindowModeState.CurrentValue.AutoFit);
+        Assert.True(secondVm.WindowModeState.CurrentValue.AutoFit);
+    }
+
+    [AvaloniaFact]
     public async Task OpenForMovedTabAsync_StartsWithTheSettingsOfTheWindowTheTabCameFrom()
     {
         Settings.WindowProperties.AutoFit = false;

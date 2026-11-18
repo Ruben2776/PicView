@@ -70,33 +70,6 @@ public static class WindowFunctions
         window.Focus();
     }
 
-    /// <summary>
-    /// Turns AutoFit on or off in every main window, the opposite of what it is in <paramref name="vm"/>'s window.
-    /// </summary>
-    public static Task ToggleAutoFit(MainWindowViewModel vm) =>
-        SetAutoFitInEveryWindow(!vm.WindowModeState.CurrentValue.AutoFit);
-
-    /// <summary>
-    /// Turns AutoFit on or off in every main window. Each window's fitter places those that turn it on.
-    /// </summary>
-    public static async Task SetAutoFitInEveryWindow(bool autoFit)
-    {
-        if (Application.Current.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
-        {
-            return;
-        }
-
-        foreach (var window in desktop.Windows.OfType<MainWindow>().ToArray())
-        {
-            if (window.DataContext is not MainWindowViewModel)
-            {
-                continue;
-            }
-
-            await window.WindowModeSwitcher.SetAutoFit(autoFit).ConfigureAwait(true);
-        }
-    }
-
     #endregion
 
     #region Window Size and Position
