@@ -133,6 +133,7 @@
   "Effects": "Efekty",
   "EffectsTooltip": "Pokaż okno z efektami zdjęć",
   "Enter": "Enter",
+  "ErrorLoadingImage": "Błąd ładowania obrazu",
   "Esc": "Esc",
   "EscCloseTooltip": "Zamyka obecnie otwarte okno/menu",
   "EscLeavesFullscreen": "Leave fullscreen instead of closing when pressing 'Esc'",

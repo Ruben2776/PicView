@@ -133,6 +133,7 @@
   "Effects": "Effets",
   "EffectsTooltip": "Afficher la fenêtre des effets d'image",
   "Enter": "Entrer",
+  "ErrorLoadingImage": "Erreur lors du chargement de l'image",
   "Esc": "Echap",
   "EscCloseTooltip": "Ferme la fenêtre actuellement ouverte /menu",
   "EscLeavesFullscreen": "Leave fullscreen instead of closing when pressing 'Esc'",

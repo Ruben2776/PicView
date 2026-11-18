@@ -133,6 +133,7 @@
   "Effects": "効果",
   "EffectsTooltip": "画像効果ウィンドウを表示",
   "Enter": "Enter",
+  "ErrorLoadingImage": "画像の読み込みエラー",
   "Esc": "Esc",
   "EscCloseTooltip": "現在開いているウィンドウ/メニューを閉じます",
   "EscLeavesFullscreen": "Leave fullscreen instead of closing when pressing 'Esc'",

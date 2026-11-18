@@ -133,6 +133,7 @@
   "Effects": "特效",
   "EffectsTooltip": "顯示影像特效視窗",
   "Enter": "Enter",
+  "ErrorLoadingImage": "載入影像時發生錯誤",
   "Esc": "Esc",
   "EscCloseTooltip": "關閉當前開啟的視窗和選單",
   "EscLeavesFullscreen": "Leave fullscreen instead of closing when pressing 'Esc'",

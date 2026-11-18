@@ -133,6 +133,7 @@
   "Effects": "Hatások",
   "EffectsTooltip": "Képeffektus ablak megjelenítése",
   "Enter": "Enter",
+  "ErrorLoadingImage": "Hiba a kép betöltésekor",
   "Esc": "Esc",
   "EscCloseTooltip": "Bezárja az aktuálisan megnyitott ablakot / menüt",
   "EscLeavesFullscreen": "Leave fullscreen instead of closing when pressing 'Esc'",

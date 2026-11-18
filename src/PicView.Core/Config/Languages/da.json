@@ -133,6 +133,7 @@
   "Effects": "Billedeffekter",
   "EffectsTooltip": "Vis billedeffektsvinduet",
   "Enter": "Enter",
+  "ErrorLoadingImage": "Fejl ved indlæsning af billede",
   "Esc": "Esc",
   "EscCloseTooltip": "Lukker nuværende åbne vindue el. menu",
   "EscLeavesFullscreen": "Leave fullscreen instead of closing when pressing 'Esc'",

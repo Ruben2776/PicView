@@ -133,6 +133,7 @@
   "Effects": "효과",
   "EffectsTooltip": "이미지 효과 창 표시",
   "Enter": "Enter",
+  "ErrorLoadingImage": "이미지 로드 오류",
   "Esc": "Esc",
   "EscCloseTooltip": "현재 열려 있는 창/메뉴 닫기",
   "EscLeavesFullscreen": "'Esc' 키를 누를 때 창을 닫는 대신 전체 화면 모드에서 빠져나오기",

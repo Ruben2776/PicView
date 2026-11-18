@@ -133,6 +133,7 @@
   "Effects": "Effetti Shader",
   "EffectsTooltip": "Mostra finestra effetti immagine",
   "Enter": "Enter",
+  "ErrorLoadingImage": "Errore durante il caricamento dell'immagine",
   "Esc": "Esc",
   "EscCloseTooltip": "Chiudi la finestra/menu attualmente aperti",
   "EscLeavesFullscreen": "Leave fullscreen instead of closing when pressing 'Esc'",

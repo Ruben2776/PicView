@@ -133,6 +133,7 @@
   "Effects": "Učinki",
   "EffectsTooltip": "Prikaži okno z učinki slike",
   "Enter": "Enter",
+  "ErrorLoadingImage": "Napaka pri nalaganju slike",
   "Esc": "Esc",
   "EscCloseTooltip": "Zapre trenutno odprto okno/meni",
   "EscLeavesFullscreen": "Ob pritisku na tipko 'Esc' zapusti celozaslonski način, namesto da bi program zaprl",

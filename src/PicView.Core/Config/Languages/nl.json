@@ -133,6 +133,7 @@
   "Effects": "Effecten",
   "EffectsTooltip": "Effectenvenster weergeven",
   "Enter": "Enter",
+  "ErrorLoadingImage": "Fout bij het laden van de afbeelding",
   "Esc": "Esc",
   "EscCloseTooltip": "Sluit momenteel geopend venster/menu",
   "EscLeavesFullscreen": "Leave fullscreen instead of closing when pressing 'Esc'",

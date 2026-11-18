@@ -133,6 +133,7 @@
   "Effects": "Ефекти",
   "EffectsTooltip": "Прикажи прозор ефеката слике",
   "Enter": "Enter",
+  "ErrorLoadingImage": "Грешка при учитавању слике",
   "Esc": "Esc",
   "EscCloseTooltip": "Затвара тренутно отворени прозор/мени",
   "EscLeavesFullscreen": "Leave fullscreen instead of closing when pressing 'Esc'",

@@ -133,6 +133,7 @@
   "Effects": "Efectes",
   "EffectsTooltip": "Mostrar finestra d'efectes de imatge",
   "Enter": "Retorn",
+  "ErrorLoadingImage": "Error en carregar la imatge",
   "Esc": "Esc",
   "EscCloseTooltip": "Tanca la finestra/menú oberta actualment",
   "EscLeavesFullscreen": "Leave fullscreen instead of closing when pressing 'Esc'",

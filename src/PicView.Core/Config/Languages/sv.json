@@ -133,6 +133,7 @@
   "Effects": "Effekter",
   "EffectsTooltip": "Visa bildeffekts-fönstret",
   "Enter": "Enter",
+  "ErrorLoadingImage": "Fel vid inläsning av bild",
   "Esc": "Esc",
   "EscCloseTooltip": "Stänger nuvarande fönster/meny",
   "EscLeavesFullscreen": "Leave fullscreen instead of closing when pressing 'Esc'",

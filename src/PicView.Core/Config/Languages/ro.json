@@ -133,6 +133,7 @@
   "Effects": "Efecte",
   "EffectsTooltip": "Arată fereastra cu efectele imaginii",
   "Enter": "Enter",
+  "ErrorLoadingImage": "Eroare la încărcarea imaginii",
   "Esc": "Esc",
   "EscCloseTooltip": "Închide fereastra/meniul deschis în prezent",
   "EscLeavesFullscreen": "Leave fullscreen instead of closing when pressing 'Esc'",

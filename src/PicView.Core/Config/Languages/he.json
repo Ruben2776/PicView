@@ -133,6 +133,7 @@
   "Effects": "אפקטים",
   "EffectsTooltip": "הצג חלון אפקטים לתמונה",
   "Enter": "Enter",
+  "ErrorLoadingImage": "שגיאה בטעינת התמונה",
   "Esc": "Esc",
   "EscCloseTooltip": "סוגר חלון/תפריט פתוח כעת",
   "EscLeavesFullscreen": "Leave fullscreen instead of closing when pressing 'Esc'",

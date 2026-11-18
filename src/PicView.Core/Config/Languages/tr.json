@@ -133,6 +133,7 @@
   "Effects": "Efektler",
   "EffectsTooltip": "Görüntü efektleri penceresini göster",
   "Enter": "Enter",
+  "ErrorLoadingImage": "Görsel yüklenirken hata oluştu",
   "Esc": "Esc",
   "EscCloseTooltip": "Açık olan pencereyi/menüyü kapatır",
   "EscLeavesFullscreen": "Leave fullscreen instead of closing when pressing 'Esc'",

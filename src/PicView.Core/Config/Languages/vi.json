@@ -133,6 +133,7 @@
   "Effects": "Hiệu ứng",
   "EffectsTooltip": "Hiện Cửa sổ Hiệu ứng Hình ảnh",
   "Enter": "Enter",
+  "ErrorLoadingImage": "Lỗi khi tải hình ảnh",
   "Esc": "Esc",
   "EscCloseTooltip": "Đóng Cửa sổ/menu Đang Mở",
   "EscLeavesFullscreen": "Leave fullscreen instead of closing when pressing 'Esc'",
