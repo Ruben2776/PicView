@@ -506,19 +506,29 @@ public class TabLoadTests : IDisposable
 
     private static readonly string[] FivePagesInOrder = ["b.jpg", "d.jpg", "a.jpg", "e.jpg", "c.jpg"];
 
-    // Loads the five pages' archive into a tab whose window orders by the field given, once every page is listed
+    // Loads the five pages' archive into a tab whose window orders by the field given, once every page is listed. The
+    // entries named in withoutTime have their modified time cleared
     private async Task<(TabViewModel Tab, RecordingEntryWriter Writer, LoadResult Result)> LoadFivePagesAsync(
-        SortFilesBy by)
+        SortFilesBy by, bool ascending = true, string? startEntry = null, string[]? withoutTime = null)
     {
-        var zip = OrderedZip.Create(Path.Combine(_testDirectory, $"by_{by}.zip"), FivePages);
+        var zip = OrderedZip.Create(Path.Combine(_testDirectory, $"by_{by}_{Guid.NewGuid():N}.zip"), FivePages);
+        if (withoutTime is not null)
+        {
+            OrderedZip.ClearModifiedTimes(zip, withoutTime);
+        }
+
         var writer = new RecordingEntryWriter();
         var tab = CreateTab(_testDirectory, writer: writer);
-        tab.CurrentWindowSettings.CurrentValue!.FileOrder.Value = new FileOrder(by, true);
-        var result = await tab.Load.LoadAsync(zip);
+        tab.CurrentWindowSettings.CurrentValue!.FileOrder.Value = new FileOrder(by, ascending);
+        var result = await tab.Load.LoadAsync(zip, new LoadOptions(ArchiveEntry: startEntry));
         await WaitUntil(() => tab.Archives.State.Value is not ExtractionState.Extracting && writer.Written.Length >= 5,
             () => string.Join(", ", writer.Written));
         return (tab, writer, result);
     }
+
+    // The tab's files as a fresh sort in the ordering puts them, from what the disk says of each now
+    private static string[] SortedFromDisk(TabViewModel tab, FileOrdering ordering) =>
+        ordering.Sort(tab.ImageIterator!.Files.Select(f => new FileInfo(f.FullName))).Select(f => f.Name).ToArray();
 
     [Fact]
     public async Task LoadAsync_ArchiveSortedBySize_ListsPagesInExtractionOrder_AndAResortBySizeChangesNothing()
@@ -536,10 +546,13 @@ public class TabLoadTests : IDisposable
             Assert.Equal(writer.Written, listed);
             Assert.Equal(new FileOrder(SortFilesBy.FileSize, true), iterator.Ordering.Order);
 
+            // A re-sort to the order the list is in does nothing, so the list is compared with a fresh sort of the disk,
+            // and is sorted by name and back, which sorts it from the disk
+            Assert.Equal(listed, SortedFromDisk(tab, tab.CurrentOrdering()));
+            iterator.Resort(new FileOrdering(new FileOrder(SortFilesBy.Name, true), string.CompareOrdinal));
             iterator.Resort(tab.CurrentOrdering());
 
             Assert.Equal(listed, iterator.Files.Select(f => f.Name));
-            Assert.Equal(0, iterator.CurrentIndex);
         }
         finally
         {
@@ -562,10 +575,73 @@ public class TabLoadTests : IDisposable
             Assert.Equal(FivePagesInOrder, writer.Written);
             Assert.Equal(writer.Written, listed);
 
-            iterator.Resort(tab.CurrentOrdering());
-            Assert.Equal(listed, iterator.Files.Select(f => f.Name));
+            Assert.Equal(listed, SortedFromDisk(tab, tab.CurrentOrdering()));
             iterator.Resort(new FileOrdering(new FileOrder(SortFilesBy.CreationTime, true), string.CompareOrdinal));
             Assert.Equal(listed, iterator.Files.Select(f => f.Name));
+            iterator.Resort(new FileOrdering(new FileOrder(SortFilesBy.Name, true), string.CompareOrdinal));
+            iterator.Resort(tab.CurrentOrdering());
+            Assert.Equal(listed, iterator.Files.Select(f => f.Name));
+        }
+        finally
+        {
+            tab.Archives.Cleanup();
+        }
+    }
+
+    [Fact]
+    public async Task LoadAsync_ArchiveWithoutTimesSortedByLastWriteDescending_ListsPagesInTheEntriesOrder()
+    {
+        // Without times the entries tie on the date and go by name, descending
+        var (tab, _, result) = await LoadFivePagesAsync(SortFilesBy.LastWriteTime, ascending: false, withoutTime: []);
+        try
+        {
+            string[] entryOrder = ["e.jpg", "d.jpg", "c.jpg", "b.jpg", "a.jpg"];
+
+            Assert.True(result.IsLoaded);
+            Assert.Equal("e.jpg", tab.Model.FileInfo!.Name);
+            Assert.Equal(entryOrder, tab.ImageIterator!.Files.Select(f => f.Name));
+            Assert.Equal(entryOrder, SortedFromDisk(tab, tab.CurrentOrdering()));
+        }
+        finally
+        {
+            tab.Archives.Cleanup();
+        }
+    }
+
+    [Fact]
+    public async Task LoadAsync_ArchiveWithoutTimesOpenedAtAMiddleEntry_ListsPagesInTheEntriesOrder()
+    {
+        // The pages either side of the start are extracted in turns, which must not interleave them in the list
+        var (tab, _, result) = await LoadFivePagesAsync(SortFilesBy.LastWriteTime, startEntry: "c.jpg", withoutTime: []);
+        try
+        {
+            string[] entryOrder = ["a.jpg", "b.jpg", "c.jpg", "d.jpg", "e.jpg"];
+
+            Assert.True(result.IsLoaded);
+            Assert.Equal("c.jpg", tab.Model.FileInfo!.Name);
+            Assert.Equal(entryOrder, tab.ImageIterator!.Files.Select(f => f.Name));
+            Assert.Equal(entryOrder, SortedFromDisk(tab, tab.CurrentOrdering()));
+        }
+        finally
+        {
+            tab.Archives.Cleanup();
+        }
+    }
+
+    [Fact]
+    public async Task LoadAsync_ArchiveWithSomeEntriesWithoutATime_KeepsTheStartPageFirst()
+    {
+        // The entries without a time come first, by name, then those with one, by their time: a, c, then b, d, e
+        var (tab, _, result) = await LoadFivePagesAsync(SortFilesBy.LastWriteTime, withoutTime: ["a.jpg", "c.jpg"]);
+        try
+        {
+            string[] entryOrder = ["a.jpg", "c.jpg", "b.jpg", "d.jpg", "e.jpg"];
+
+            Assert.True(result.IsLoaded);
+            Assert.Equal("a.jpg", tab.Model.FileInfo!.Name);
+            Assert.Equal(entryOrder, tab.ImageIterator!.Files.Select(f => f.Name));
+            Assert.Equal(0, tab.ImageIterator.CurrentIndex);
+            Assert.Equal(entryOrder, SortedFromDisk(tab, tab.CurrentOrdering()));
         }
         finally
         {

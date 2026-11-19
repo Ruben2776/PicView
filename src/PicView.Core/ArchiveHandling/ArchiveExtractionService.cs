@@ -631,6 +631,14 @@ internal class ArchiveExtractionService(IArchiveEntryWriter? entryWriter = null)
     private static readonly DateTime NoModifiedTime = new(1980, 1, 1);
 
     /// <summary>
+    ///     The time a page whose entry has none is stamped with, on all three of its times. An entry without a time sorts
+    ///     as the earliest of all and ties with the others without one, which then go by name; this time does the same for
+    ///     their files, so the tab's list of the files keeps the entries' order. It is below the earliest time an entry
+    ///     can have, the start of 1980, in any time zone, and is not the file time zero, which leaves a time unchanged.
+    /// </summary>
+    internal static readonly DateTime NoModifiedTimeStamp = new(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
+    /// <summary>
     ///     When the entry was last modified, as the archive says, or null when it does not say.
     /// </summary>
     private static DateTime? ModifiedTimeOf(IArchiveEntry entry) =>
@@ -802,9 +810,10 @@ internal class ArchiveExtractionService(IArchiveEntryWriter? entryWriter = null)
         using (var fileStream = File.Create(destinationPath))
         {
             _entryWriter.Write(entryStream, fileStream);
+            // Written out first, so closing the file writes nothing that would change its times again
+            fileStream.Flush();
+            StampModifiedTime(fileStream, ModifiedTimeOf(entry));
         }
-
-        StampModifiedTime(destinationPath, ModifiedTimeOf(entry));
 
 #if DEBUG
         Console.WriteLine($"Extracted: {entry.Key} -> {destinationPath}");
@@ -816,23 +825,25 @@ internal class ArchiveExtractionService(IArchiveEntryWriter? entryWriter = null)
 
     /// <summary>
     ///     Gives the file its entry's modified time as its last write, creation and last access time, so the tab's list,
-    ///     sorted again by any date, keeps the order the pages were put in from the entries. An entry with no time leaves
-    ///     the file's own, and a time the file system refuses is left out, as the page is written all the same.
+    ///     sorted again by any date, keeps the order the pages were put in from the entries. An entry with no time gets
+    ///     <see cref="NoModifiedTimeStamp" />, so its file ties with the others without one and goes by name, as the entry
+    ///     does. A time the file system refuses is left out, as the page is written all the same. Set on the open file, so
+    ///     it is not opened again for each time.
     /// </summary>
-    private static void StampModifiedTime(string path, DateTime? modified)
+    private static void StampModifiedTime(FileStream file, DateTime? modified)
     {
-        if (modified is not { } time)
-        {
-            return;
-        }
-
         try
         {
             // Unspecified counts as local, as the archives that give one keep local time
-            var utc = time.Kind is DateTimeKind.Utc ? time : DateTime.SpecifyKind(time, DateTimeKind.Local).ToUniversalTime();
-            File.SetCreationTimeUtc(path, utc);
-            File.SetLastWriteTimeUtc(path, utc);
-            File.SetLastAccessTimeUtc(path, utc);
+            var utc = modified is not { } time
+                ? NoModifiedTimeStamp
+                : time.Kind is DateTimeKind.Utc
+                    ? time
+                    : DateTime.SpecifyKind(time, DateTimeKind.Local).ToUniversalTime();
+            var handle = file.SafeFileHandle;
+            File.SetCreationTimeUtc(handle, utc);
+            File.SetLastWriteTimeUtc(handle, utc);
+            File.SetLastAccessTimeUtc(handle, utc);
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException)
         {

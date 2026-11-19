@@ -1108,7 +1108,6 @@ public class ArchiveExtractionServiceTests
         var service = new ArchiveExtractionService();
         try
         {
-            var before = DateTime.Now.AddMinutes(-1);
             var prep = await service.PrepareArchiveAsync(zipPath, (_, _) => Task.FromResult(false),
                 TestOrderings.By(SortFilesBy.LastWriteTime));
             Assert.NotNull(prep);
@@ -1116,8 +1115,13 @@ public class ArchiveExtractionServiceTests
                 TestContext.Current.CancellationToken);
 
             Assert.Equal(["a.jpg", "b.jpg", "c.jpg"], Normalize(prep.Value.EntryKeys));
-            // Nothing to stamp, so each file keeps the time it was written
-            Assert.All(extracted, path => Assert.True(File.GetLastWriteTime(path) > before, path));
+            // Each file gets the one time that stands for none, so the files tie on every date as their entries do
+            Assert.All(extracted, path =>
+            {
+                Assert.Equal(ArchiveExtractionService.NoModifiedTimeStamp, File.GetLastWriteTimeUtc(path));
+                Assert.Equal(ArchiveExtractionService.NoModifiedTimeStamp, File.GetCreationTimeUtc(path));
+                Assert.Equal(ArchiveExtractionService.NoModifiedTimeStamp, File.GetLastAccessTimeUtc(path));
+            });
         }
         finally
         {
