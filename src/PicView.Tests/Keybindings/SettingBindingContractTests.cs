@@ -7,7 +7,8 @@ public partial class SettingBindingContractTests
     /// <summary>
     /// ADR-0020: a binding on a published setting is never TwoWay. A ToggleButton binds
     /// IsChecked TwoWay by default, so a TwoWay checkbox beside an Action that also writes
-    /// the setting toggles twice. Every such binding must say <c>Mode=OneWay</c>.
+    /// the setting toggles twice. Every such binding, to a shared setting or to a Main Window's own (ADR-0009), must
+    /// say <c>Mode=OneWay</c>.
     /// </summary>
     [Fact]
     public void IsChecked_BoundToAPublishedSetting_IsOneWay()
@@ -29,11 +30,14 @@ public partial class SettingBindingContractTests
             foreach (Match match in IsCheckedBindingRegex().Matches(text))
             {
                 var binding = match.Value;
-                // A Main Window's own settings beside the Action that toggles them; one with no Action, as Stay
-                // Centered in the Settings window, is written by its control
                 if (!binding.Contains("GlobalSettings.", StringComparison.Ordinal) &&
-                    !(binding.Contains("WindowSettings.", StringComparison.Ordinal) &&
-                      ElementAt(text, match.Index).Contains("Command=", StringComparison.Ordinal)))
+                    !binding.Contains("WindowSettings.", StringComparison.Ordinal))
+                {
+                    continue;
+                }
+
+                // Stay Centered has no Action: its control is its one writer, so its binding is TwoWay on purpose
+                if (binding.Contains(StayCenteredBinding, StringComparison.Ordinal))
                 {
                     continue;
                 }
@@ -102,13 +106,7 @@ public partial class SettingBindingContractTests
                                           string.Join("\n", offenders));
     }
 
-    // The start tag around index; an attribute holds no '<' or '>'
-    private static string ElementAt(string text, int index)
-    {
-        var start = text.LastIndexOf('<', index);
-        var end = text.IndexOf('>', index);
-        return text[start..(end + 1)];
-    }
+    private const string StayCenteredBinding = "WindowSettings.IsStayingCentered.";
 
     private static bool IsInsideComment(string text, int index)
     {

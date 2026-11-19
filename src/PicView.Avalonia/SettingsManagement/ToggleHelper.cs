@@ -34,17 +34,17 @@ public static class ToggleHelper
     public static async ValueTask ToggleInterface(MainWindowViewModel vm)
     {
         vm.TopTitlebarViewModel.CloseDropDownMenu();
-        await Toggle(vm.GlobalSettings.ShowInterface).ConfigureAwait(false);
+        await Toggle(vm.WindowSettings.ShowInterface).ConfigureAwait(false);
     }
 
     public static ValueTask ToggleHoverBar(MainWindowViewModel vm) =>
-        Toggle(vm.GlobalSettings.ShowHoverBar);
+        Toggle(vm.WindowSettings.ShowHoverBar);
 
     public static ValueTask ToggleSubdirectories(MainWindowViewModel vm) =>
         Toggle(vm.GlobalSettings.IsIncludingSubdirectories);
 
     public static ValueTask ToggleBottomToolbar(MainWindowViewModel vm) =>
-        Toggle(vm.GlobalSettings.ShowBottomBar);
+        Toggle(vm.WindowSettings.ShowBottomBar);
 
     public static ValueTask ToggleTaskbarProgress(MainWindowViewModel vm) =>
         Toggle(vm.GlobalSettings.IsShowingTaskbarProgress);

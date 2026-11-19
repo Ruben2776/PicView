@@ -27,7 +27,7 @@ public class LoadingIndicatorTests
     private MainWindowViewModel NewWindow(TabViewModel? firstTab = null) =>
         new(_core, _core.Translation, _core.GlobalSettings!, _core.GallerySettings, firstTab);
 
-    private void ShowTitlebar(bool shown) => _core.GlobalSettings!.ShowInterface.Value = shown;
+    private static void ShowTitlebar(MainWindowViewModel vm, bool shown) => vm.WindowSettings.ShowInterface.Value = shown;
 
     [Fact]
     public void IdleTab_ShowsNoIndicator()
@@ -40,7 +40,7 @@ public class LoadingIndicatorTests
     public void BusyTab_TitlebarShown_ShowsTheIndicator()
     {
         var vm = NewWindow();
-        ShowTitlebar(true);
+        ShowTitlebar(vm, true);
         using var busy = vm.WindowTabs.ActiveTab.Value.ClaimBusy();
         Assert.True(vm.IsLoadingIndicatorShown.Value);
     }
@@ -49,7 +49,7 @@ public class LoadingIndicatorTests
     public void BusyTab_TitlebarHidden_ShowsTheIndicator()
     {
         var vm = NewWindow();
-        ShowTitlebar(false);
+        ShowTitlebar(vm, false);
         using var busy = vm.WindowTabs.ActiveTab.Value.ClaimBusy();
         Assert.True(vm.IsLoadingIndicatorShown.Value);
     }
@@ -58,7 +58,7 @@ public class LoadingIndicatorTests
     public void LoadingTab_TitlebarShown_DoesNotShowTheIndicator()
     {
         var vm = NewWindow();
-        ShowTitlebar(true);
+        ShowTitlebar(vm, true);
         vm.WindowTabs.ActiveTab.Value.SetLoading();
         Assert.False(vm.IsLoadingIndicatorShown.Value);
     }
@@ -67,7 +67,7 @@ public class LoadingIndicatorTests
     public void LoadingTab_TitlebarHidden_ShowsTheIndicator()
     {
         var vm = NewWindow();
-        ShowTitlebar(false);
+        ShowTitlebar(vm, false);
         vm.WindowTabs.ActiveTab.Value.SetLoading();
         Assert.True(vm.IsLoadingIndicatorShown.Value);
     }
@@ -77,7 +77,7 @@ public class LoadingIndicatorTests
     {
         var vm = NewWindow();
         var tab = vm.WindowTabs.ActiveTab.Value;
-        ShowTitlebar(false);
+        ShowTitlebar(vm, false);
         tab.SetLoading();
 
         tab.ClaimBusy().Dispose();
@@ -90,7 +90,7 @@ public class LoadingIndicatorTests
     {
         var vm = NewWindow();
         var tab = vm.WindowTabs.ActiveTab.Value;
-        ShowTitlebar(false);
+        ShowTitlebar(vm, false);
         var busy = tab.ClaimBusy();
         var ticket = tab.SetLoading();
 
@@ -106,12 +106,12 @@ public class LoadingIndicatorTests
     public void BusyTab_TogglingTheTitlebar_KeepsTheIndicator()
     {
         var vm = NewWindow();
-        ShowTitlebar(true);
+        ShowTitlebar(vm, true);
         using var busy = vm.WindowTabs.ActiveTab.Value.ClaimBusy();
 
-        ShowTitlebar(false);
+        ShowTitlebar(vm, false);
         var shownWhileHidden = vm.IsLoadingIndicatorShown.Value;
-        ShowTitlebar(true);
+        ShowTitlebar(vm, true);
 
         Assert.True(shownWhileHidden);
         Assert.True(vm.IsLoadingIndicatorShown.Value);

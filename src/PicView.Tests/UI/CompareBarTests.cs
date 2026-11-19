@@ -363,8 +363,8 @@ public class CompareBarTests
     [AvaloniaFact]
     public void HoverBar_BarAtBottom_IsAboveTheBar() => WithWindow((window, vm, tab) =>
     {
-        vm.GlobalSettings.ShowBottomBar.Value = false;
-        vm.GlobalSettings.ShowHoverBar.Value = true;
+        vm.WindowSettings.ShowBottomBar.Value = false;
+        vm.WindowSettings.ShowHoverBar.Value = true;
         vm.GlobalSettings.ShowFadeButtons.Value = true;
         Settings.Comparison!.BarPosition = ComparisonBarPosition.Bottom;
         Compare(window, tab);
@@ -412,7 +412,7 @@ public class CompareBarTests
     {
         var bar = Compare(window, tab);
 
-        vm.GlobalSettings.ShowInterface.Value = false;
+        vm.WindowSettings.ShowInterface.Value = false;
         Settle(window);
 
         Assert.True(bar.IsEffectivelyVisible);

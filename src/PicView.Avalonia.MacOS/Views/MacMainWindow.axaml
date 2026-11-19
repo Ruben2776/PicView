@@ -245,7 +245,7 @@
                     <NativeMenuItem
                         Command="{Binding RunActionCommand}"
                         CommandParameter="{x:Static keybindings:Actions.ToggleInterface}"
-                        Header="{CompiledBinding GlobalSettings.InterfaceText.Value,
+                        Header="{CompiledBinding WindowSettings.InterfaceText.Value,
                                                  Mode=OneWay}"
                         ToggleType="CheckBox" />
 
@@ -253,7 +253,7 @@
                     <NativeMenuItem
                         Command="{Binding RunActionCommand}"
                         CommandParameter="{x:Static keybindings:Actions.ToggleBottomToolbar}"
-                        Header="{CompiledBinding GlobalSettings.BottomBarText.Value,
+                        Header="{CompiledBinding WindowSettings.BottomBarText.Value,
                                                  Mode=OneWay}" />
 
                     <!--  Toggle gallery  -->

@@ -475,11 +475,11 @@ public class WindowFitterTests
         var (fitter, vm, window) = CreateShownWindow(800, 600, readScreen: () => Screen(1920, 1040));
         using var following = fitter.Follow();
         vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 3000, 4000));
-        vm.GlobalSettings.ShowBottomBar.Value = true;
+        vm.WindowSettings.ShowBottomBar.Value = true;
         Dispatcher.UIThread.RunJobs();
         var withBar = vm.ImageHeight.Value;
 
-        vm.GlobalSettings.ShowBottomBar.Value = false;
+        vm.WindowSettings.ShowBottomBar.Value = false;
         Dispatcher.UIThread.RunJobs();
 
         Assert.Equal(withBar + SizeDefaults.BottombarHeight, vm.ImageHeight.Value, 6);
@@ -496,7 +496,7 @@ public class WindowFitterTests
         Dispatcher.UIThread.RunJobs();
         var withBars = vm.ImageHeight.Value;
 
-        vm.GlobalSettings.ShowInterface.Value = false;
+        vm.WindowSettings.ShowInterface.Value = false;
         Dispatcher.UIThread.RunJobs();
 
         Assert.Equal(withBars + SizeDefaults.MainTitlebarHeight + 2 + SizeDefaults.BottombarHeight, vm.ImageHeight.Value, 6);

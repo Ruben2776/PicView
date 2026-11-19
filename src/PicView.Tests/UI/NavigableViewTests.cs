@@ -169,8 +169,8 @@ public class NavigableViewTests
     {
         // The hover bar shows, which it does while the bottom bar is hidden, and takes the pointer, as with its fade
         // buttons on
-        tab.ParentWindowContext.GlobalSettings.ShowBottomBar.Value = false;
-        tab.ParentWindowContext.GlobalSettings.ShowHoverBar.Value = true;
+        tab.ParentWindowContext.WindowSettings.ShowBottomBar.Value = false;
+        tab.ParentWindowContext.WindowSettings.ShowHoverBar.Value = true;
         tab.ParentWindowContext.GlobalSettings.ShowFadeButtons.Value = true;
         tab.Display(BitmapModel("a.jpg"));
         var nav = Assert.IsType<NavigableView>(ViewOf(tab));

@@ -90,27 +90,85 @@ public class MainWindowViewModelTests
     public void Interface_SettingChanged_FollowsIt()
     {
         var vm = NewWindow();
-        _core.GlobalSettings!.ShowBottomBar.Value = false;
+        vm.WindowSettings.ShowBottomBar.Value = false;
         Assert.False(vm.Interface.Value.IsBottomBarShown);
         Assert.True(vm.IsHoverBarShown.Value);
-        _core.GlobalSettings.ShowInterface.Value = false;
+        vm.WindowSettings.ShowInterface.Value = false;
         Assert.False(vm.Interface.Value.IsInterfaceShown);
     }
 
+    public static TheoryData<string> InterfaceSettings => new() { "Interface", "BottomBar", "HoverBar" };
+
+    private static BindableReactiveProperty<bool> InterfaceSetting(MainWindowViewModel vm, string name) => name switch
+    {
+        "Interface" => vm.WindowSettings.ShowInterface,
+        "BottomBar" => vm.WindowSettings.ShowBottomBar,
+        _ => vm.WindowSettings.ShowHoverBar
+    };
+
+    [Theory]
+    [MemberData(nameof(InterfaceSettings))]
+    public void Interface_ToggledInOneWindow_LeavesTheOtherAlone(string setting)
+    {
+        // The hover bar shows only without the bottom bar, so its toggle shows with the bottom bar off
+        Settings.UIProperties.ShowBottomNavBar = setting != "HoverBar";
+        using var a = NewWindow();
+        using var b = NewWindow();
+        var aBefore = a.Interface.Value;
+        var bBefore = b.Interface.Value;
+
+        InterfaceSetting(a, setting).Value = !InterfaceSetting(a, setting).Value;
+
+        Assert.NotEqual(aBefore, a.Interface.Value);
+        Assert.Equal(bBefore, b.Interface.Value);
+        Assert.Equal(!InterfaceSetting(a, setting).Value, InterfaceSetting(b, setting).Value);
+    }
+
+    // Review Focus 5
     [Fact]
-    public void Interface_BottomBarToggledWhileFullscreen_NotifiesNothingAndShowsOnLeaving()
+    public void Interface_FullscreenWindow_HidesItsBars_WhateverItsSettings_AndShowsThemPerItsOwnSettingsOnLeaving()
+    {
+        using var settings = WindowSettings.FromRecord(Settings, _core.Translation)
+            .CopyFor(new RememberedWindowMode(true, false, false));
+        settings.ShowBottomBar.Value = false;
+        using var fullscreen = new MainWindowViewModel(_core, _core.Translation, _core.GlobalSettings!,
+            _core.GallerySettings, windowSettings: settings);
+        using var other = NewWindow();
+        fullscreen.WindowModeState.Value = Fullscreen;
+
+        Assert.False(fullscreen.Interface.Value.IsInterfaceShown);
+        Assert.False(fullscreen.Interface.Value.IsBottomBarShown);
+        Assert.Equal(0, fullscreen.TitlebarHeight.Value);
+        Assert.Equal(0, fullscreen.BottombarHeight.Value);
+        Assert.Equal(InterfaceVisibility.For(true, true, true, WindowMode.Normal), other.Interface.Value);
+
+        fullscreen.WindowModeState.Value = fullscreen.WindowModeState.Value.ToggleFullscreen();
+
+        // Its own settings: the interface without the bottom bar, so the hover bar may show
+        Assert.Equal(InterfaceVisibility.For(true, false, true, WindowMode.Normal), fullscreen.Interface.Value);
+        Assert.True(fullscreen.IsUIShown.Value);
+        Assert.False(fullscreen.IsBottomToolbarShown.Value);
+        Assert.True(fullscreen.IsHoverBarShown.Value);
+        Assert.Equal(InterfaceVisibility.For(true, true, true, WindowMode.Normal), other.Interface.Value);
+    }
+
+    [Fact]
+    public void Interface_ToggledWhileFullscreen_NotifiesNothing_AndAppliesOnLeaving()
     {
         var vm = NewWindow();
         vm.WindowModeState.Value = Fullscreen;
         var notified = 0;
         using var watching = vm.Interface.AsObservable().Skip(1).Subscribe(_ => notified++);
 
-        _core.GlobalSettings!.ShowBottomBar.Value = false;
-        _core.GlobalSettings.ShowBottomBar.Value = true;
+        vm.WindowSettings.ShowBottomBar.Value = false;
+        vm.WindowSettings.ShowInterface.Value = false;
+        vm.WindowSettings.ShowInterface.Value = true;
         Assert.Equal(0, notified);
 
         vm.WindowModeState.Value = vm.WindowModeState.Value.ToggleFullscreen();
-        Assert.True(vm.Interface.Value.IsBottomBarShown);
+        Assert.True(vm.Interface.Value.IsInterfaceShown);
+        Assert.False(vm.Interface.Value.IsBottomBarShown);
+        Assert.True(vm.IsHoverBarShown.Value);
     }
 
     [Fact]
@@ -140,16 +198,25 @@ public class MainWindowViewModelTests
     }
 
     [Fact]
+    public void Interface_NoSettingsGiven_FollowsTheWindowsOwnSettings()
+    {
+        var vm = new MainWindowViewModel(null!, null!, null!, null!);
+        vm.WindowSettings.ShowInterface.Value = false;
+        Assert.False(vm.Interface.Value.IsInterfaceShown);
+        Assert.True(Settings.UIProperties.ShowInterface);
+    }
+
+    [Fact]
     public void Bars_AreProjectionsOfInterface()
     {
         var vm = NewWindow();
-        _core.GlobalSettings!.ShowInterface.Value = false;
+        vm.WindowSettings.ShowInterface.Value = false;
         Assert.False(vm.IsUIShown.Value);
         Assert.False(vm.IsTopToolbarShown.Value);
         Assert.False(vm.IsBottomToolbarShown.Value);
         Assert.Equal(0, vm.TitlebarHeight.Value);
         Assert.Equal(0, vm.BottombarHeight.Value);
-        _core.GlobalSettings.ShowInterface.Value = true;
+        vm.WindowSettings.ShowInterface.Value = true;
         Assert.Equal(SizeDefaults.MainTitlebarHeight, vm.TitlebarHeight.Value);
         Assert.Equal(SizeDefaults.BottombarHeight, vm.BottombarHeight.Value);
     }

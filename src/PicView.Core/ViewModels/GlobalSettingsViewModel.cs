@@ -7,7 +7,7 @@ using R3;
 namespace PicView.Core.ViewModels;
 
 /// <summary>
-/// The nine toggled settings publish their changes (ADR-0020): each is a bindable over its stored value, and the
+/// The six toggled settings publish their changes (ADR-0020): each is a bindable over its stored value, and the
 /// write-through here is the one writer of that stored value, followed by one coalesced save. The constructor
 /// subscribes nothing: the write-throughs start in two groups, <see cref="InitializeActionSettings"/> and
 /// <see cref="InitializeExtraSettings"/>, so a change before them writes and saves nothing.
@@ -31,12 +31,6 @@ public class GlobalSettingsViewModel
 
     public BindableReactiveProperty<bool> IsConstrainingBackgroundColor { get; }
 
-    public BindableReactiveProperty<bool> ShowInterface { get; }
-
-    public BindableReactiveProperty<bool> ShowBottomBar { get; }
-
-    public BindableReactiveProperty<bool> ShowHoverBar { get; }
-
     /// <summary>
     /// Whether the alt buttons and the hover bar fade in on hover; a hover bar that cannot fade in takes no clicks (ADR-0021).
     /// </summary>
@@ -53,17 +47,8 @@ public class GlobalSettingsViewModel
     public const double NegativeMarginReplacement = 45;
 
     private readonly BindableReactiveProperty<string?> _fileHistoryText = new();
-    private readonly BindableReactiveProperty<string?> _interfaceText = new();
-    private readonly BindableReactiveProperty<string?> _bottomBarText = new();
-    private readonly BindableReactiveProperty<string?> _hoverBarText = new();
 
     public IReadOnlyBindableReactiveProperty<string?> FileHistoryText => _fileHistoryText;
-
-    public IReadOnlyBindableReactiveProperty<string?> InterfaceText => _interfaceText;
-
-    public IReadOnlyBindableReactiveProperty<string?> BottomBarText => _bottomBarText;
-
-    public IReadOnlyBindableReactiveProperty<string?> HoverBarText => _hoverBarText;
 
     public BindableReactiveProperty<bool> ShowSetAsWallpaper { get; } = new(Settings.UIProperties.ShowSetAsWallpaper);
 
@@ -113,9 +98,6 @@ public class GlobalSettingsViewModel
         IsShowingTaskbarProgress = new BindableReactiveProperty<bool>(Settings.UIProperties.IsTaskbarProgressEnabled);
         IsOpeningInSameWindow = new BindableReactiveProperty<bool>(Settings.UIProperties.OpenInSameWindow);
         IsConstrainingBackgroundColor = new BindableReactiveProperty<bool>(Settings.UIProperties.IsConstrainBackgroundColorEnabled);
-        ShowInterface = new BindableReactiveProperty<bool>(Settings.UIProperties.ShowInterface);
-        ShowBottomBar = new BindableReactiveProperty<bool>(Settings.UIProperties.ShowBottomNavBar);
-        ShowHoverBar = new BindableReactiveProperty<bool>(Settings.UIProperties.ShowHoverNavigationBar);
         ShowFadeButtons = new BindableReactiveProperty<bool>(Settings.UIProperties.ShowAltInterfaceButtons);
         // Built before the first window rewrites a negative stored margin, so it gives the same margin that window does
         WindowMargin = new BindableReactiveProperty<double>(Settings.WindowProperties.Margin < 0 ? NegativeMarginReplacement : Settings.WindowProperties.Margin);
@@ -124,7 +106,7 @@ public class GlobalSettingsViewModel
     }
 
     /// <summary>
-    /// Starts the write-throughs of the nine settings the Actions toggle. Idempotent and safe from any thread;
+    /// Starts the write-throughs of the six settings the Actions toggle. Idempotent and safe from any thread;
     /// a concurrent caller returns only after the subscriptions exist.
     /// </summary>
     public void InitializeActionSettings()
@@ -142,15 +124,12 @@ public class GlobalSettingsViewModel
             Follow(IsShowingTaskbarProgress, value => Settings.UIProperties.IsTaskbarProgressEnabled = value);
             Follow(IsOpeningInSameWindow, value => Settings.UIProperties.OpenInSameWindow = value);
             Follow(IsConstrainingBackgroundColor, value => Settings.UIProperties.IsConstrainBackgroundColorEnabled = value);
-            Follow(ShowInterface, value => Settings.UIProperties.ShowInterface = value, rephrases: true);
-            Follow(ShowBottomBar, value => Settings.UIProperties.ShowBottomNavBar = value, rephrases: true);
-            Follow(ShowHoverBar, value => Settings.UIProperties.ShowHoverNavigationBar = value, rephrases: true);
             _isActionSettingsInitialized = true;
         }
     }
 
     /// <summary>
-    /// Rewrites the four menu texts whenever the language changes.
+    /// Rewrites the File History menu text whenever the language changes.
     /// </summary>
     public void FollowLanguage(Observable<Unit> languageChanged)
     {
@@ -159,15 +138,12 @@ public class GlobalSettingsViewModel
     }
 
     /// <summary>
-    /// Writes the four menu texts from the current language and the settings they follow.
+    /// Writes the File History menu text from the current language and the setting it follows.
     /// </summary>
     public void Rephrase()
     {
         var t = TranslationManager.Translation;
         _fileHistoryText.Value = IsFileHistoryEnabled.Value ? t.FileHistoryEnabled : t.FileHistoryDisabled;
-        _interfaceText.Value = ShowInterface.Value ? t.HideUI : t.ShowUI;
-        _bottomBarText.Value = ShowBottomBar.Value ? t.HideBottomToolbar : t.ShowBottomToolbar;
-        _hoverBarText.Value = ShowHoverBar.Value ? t.HideHoverNavigationBar : t.ShowHoverNavigationBar;
     }
 
     /// <summary>

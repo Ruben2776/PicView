@@ -290,7 +290,7 @@
                 <customControls:StyledMenuItem
                     Command="{CompiledBinding RunActionCommand}"
                     CommandParameter="{x:Static keybindings:Actions.ToggleInterface}"
-                    Header="{CompiledBinding GlobalSettings.InterfaceText.Value,
+                    Header="{CompiledBinding WindowSettings.InterfaceText.Value,
                                              Mode=OneWay}"
                     IsVisible="{CompiledBinding IsUIShown.Value,
                                                 Mode=OneWay}">
@@ -305,7 +305,7 @@
                 <customControls:StyledMenuItem
                     Command="{CompiledBinding RunActionCommand}"
                     CommandParameter="{x:Static keybindings:Actions.ToggleInterface}"
-                    Header="{CompiledBinding GlobalSettings.InterfaceText.Value,
+                    Header="{CompiledBinding WindowSettings.InterfaceText.Value,
                                              Mode=OneWay}"
                     IsVisible="{CompiledBinding !IsUIShown.Value,
                                                 Mode=OneWay}">

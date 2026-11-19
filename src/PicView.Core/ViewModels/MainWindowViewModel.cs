@@ -101,7 +101,7 @@ public class MainWindowViewModel : IDisposable
     public IReadOnlyBindableReactiveProperty<bool> IsTopToolbarShown => IsUIShown;
 
     /// <summary>
-    /// Which bars this window shows, their heights and whether the hover bar may show, derived from the three
+    /// Which bars this window shows, their heights and whether the hover bar may show, derived from its own three
     /// interface settings and its Window Mode (ADR-0021).
     /// </summary>
     public IReadOnlyBindableReactiveProperty<InterfaceVisibility> Interface { get; }
@@ -147,15 +147,12 @@ public class MainWindowViewModel : IDisposable
         ShouldMaximizeBeShown = mode.Select(static m => m is not WindowMode.Maximized)
             .ToReadOnlyBindableReactiveProperty();
 
-        // Interface Visibility: the settings publish their value (ADR-0020); without them, the stored record is read once
-        Observable<InterfaceVisibility> visibility = globalSettings is null
-            ? WindowModeState.Select(static state => InterfaceVisibility.For(Settings.UIProperties.ShowInterface,
-                Settings.UIProperties.ShowBottomNavBar, Settings.UIProperties.ShowHoverNavigationBar, state.Shown))
-            : Observable.CombineLatest(globalSettings.ShowInterface, globalSettings.ShowBottomBar,
-                globalSettings.ShowHoverBar, WindowModeState,
+        // Interface Visibility: from this window's own three interface settings and its Window Mode (ADR-0021)
+        Interface = Observable.CombineLatest(WindowSettings.ShowInterface, WindowSettings.ShowBottomBar,
+                WindowSettings.ShowHoverBar, WindowModeState,
                 static (showInterface, showBottomBar, showHoverBar, state) =>
-                    InterfaceVisibility.For(showInterface, showBottomBar, showHoverBar, state.Shown));
-        Interface = visibility.ToReadOnlyBindableReactiveProperty();
+                    InterfaceVisibility.For(showInterface, showBottomBar, showHoverBar, state.Shown))
+            .ToReadOnlyBindableReactiveProperty();
         IsHoverBarShown = Interface.AsObservable().Select(static v => v.ShowsHoverBar).ToReadOnlyBindableReactiveProperty();
         IsUIShown = Interface.AsObservable().Select(static v => v.IsInterfaceShown).ToReadOnlyBindableReactiveProperty();
         IsLoadingIndicatorShown = WindowTabs.ActiveTab

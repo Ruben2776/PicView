@@ -173,7 +173,7 @@ public class AppLifecycleTests : IAsyncDisposable
         }
 
         Assert.False(string.IsNullOrEmpty(windowSettings.LoopingText.Value));
-        Assert.False(string.IsNullOrEmpty(_core.GlobalSettings.InterfaceText.Value));
+        Assert.False(string.IsNullOrEmpty(windowSettings.InterfaceText.Value));
     }
 
     [AvaloniaFact]
@@ -899,6 +899,93 @@ public class AppLifecycleTests : IAsyncDisposable
         Assert.Equal(savesBeforeClose + 1, _sharedFiles.Saves);
         Assert.False(ViewModelOf(first).WindowSettings.IsZoomedToFit.Value);
         Assert.False(ViewModelOf(first).WindowSettings.IsScrollingEnabled.Value);
+    }
+
+    private static void ShowEveryBarInTheRecord()
+    {
+        Settings.UIProperties.ShowInterface = true;
+        Settings.UIProperties.ShowBottomNavBar = true;
+        Settings.UIProperties.ShowHoverNavigationBar = true;
+    }
+
+    [AvaloniaFact]
+    public async Task InterfaceActions_InOneMainWindow_LeaveTheOtherAlone()
+    {
+        ShowEveryBarInTheRecord();
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var first = app.MainWindows.Open[0];
+        var second = await app.MainWindows.OpenNewAsync(first);
+        var firstVm = ViewModelOf(first);
+        var secondVm = ViewModelOf(second);
+        firstVm.Translation.HideBottomToolbar.Value = "hide bottom";
+        firstVm.Translation.ShowBottomToolbar.Value = "show bottom";
+        var savesBefore = _sharedFiles.Saves;
+
+        await firstVm.ActionRunner!.Run(Actions.ToggleBottomToolbar);
+        await firstVm.ActionRunner.Run(Actions.ToggleHoverBar);
+        await firstVm.ActionRunner.Run(Actions.ToggleInterface);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.False(firstVm.WindowSettings.ShowBottomBar.Value);
+        Assert.False(firstVm.WindowSettings.ShowHoverBar.Value);
+        Assert.False(firstVm.WindowSettings.ShowInterface.Value);
+        Assert.False(firstVm.IsUIShown.Value);
+        Assert.Equal("show bottom", firstVm.WindowSettings.BottomBarText.Value);
+        Assert.True(secondVm.WindowSettings.ShowBottomBar.Value);
+        Assert.True(secondVm.WindowSettings.ShowHoverBar.Value);
+        Assert.True(secondVm.WindowSettings.ShowInterface.Value);
+        Assert.True(secondVm.IsUIShown.Value);
+        Assert.True(secondVm.IsBottomToolbarShown.Value);
+        Assert.Equal("hide bottom", secondVm.WindowSettings.BottomBarText.Value);
+        Assert.True(Settings.UIProperties.ShowInterface);
+        Assert.True(Settings.UIProperties.ShowBottomNavBar);
+        Assert.True(Settings.UIProperties.ShowHoverNavigationBar);
+        Assert.Equal(savesBefore, _sharedFiles.Saves);
+    }
+
+    [AvaloniaFact]
+    public async Task NewWindowFromOneWithTheInterfaceHidden_StartsHidden()
+    {
+        ShowEveryBarInTheRecord();
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var first = app.MainWindows.Open[0];
+        var firstVm = ViewModelOf(first);
+        await firstVm.ActionRunner!.Run(Actions.ToggleInterface);
+
+        var opened = await app.MainWindows.OpenNewAsync(first);
+        var openedVm = ViewModelOf(opened);
+
+        Assert.False(openedVm.WindowSettings.ShowInterface.Value);
+        Assert.False(openedVm.IsUIShown.Value);
+        Assert.True(Settings.UIProperties.ShowInterface);
+    }
+
+    [AvaloniaFact]
+    public async Task CloseAsync_StoresTheInterfaceSettings()
+    {
+        ShowEveryBarInTheRecord();
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var first = app.MainWindows.Open[0];
+        var second = await app.MainWindows.OpenNewAsync(first);
+        await ViewModelOf(second).ActionRunner!.Run(Actions.ToggleInterface);
+        await ViewModelOf(second).ActionRunner!.Run(Actions.ToggleBottomToolbar);
+        await ViewModelOf(second).ActionRunner!.Run(Actions.ToggleHoverBar);
+        Assert.True(Settings.UIProperties.ShowInterface);
+        Assert.True(Settings.UIProperties.ShowBottomNavBar);
+        Assert.True(Settings.UIProperties.ShowHoverNavigationBar);
+        var savesBeforeClose = _sharedFiles.Saves;
+
+        await app.MainWindows.CloseAsync(second);
+
+        Assert.False(Settings.UIProperties.ShowInterface);
+        Assert.False(Settings.UIProperties.ShowBottomNavBar);
+        Assert.False(Settings.UIProperties.ShowHoverNavigationBar);
+        Assert.Equal(savesBeforeClose + 1, _sharedFiles.Saves);
+        Assert.True(ViewModelOf(first).WindowSettings.ShowInterface.Value);
+        Assert.True(ViewModelOf(first).IsUIShown.Value);
     }
 
     [AvaloniaFact]
@@ -2522,7 +2609,7 @@ public class AppLifecycleTests : IAsyncDisposable
     [AvaloniaFact]
     public async Task OpenAsync_WhileTheTitlebarIsHidden_ShowsTheIndicatorOnlyWhileLoading()
     {
-        _core.GlobalSettings.ShowInterface.Value = false;
+        Settings.UIProperties.ShowInterface = false;
         var app = CreateApp();
         await app.StartAsync(settingsExists: true, []);
         var window = app.MainWindows.Open[0];
@@ -2568,7 +2655,7 @@ public class AppLifecycleTests : IAsyncDisposable
     [AvaloniaFact]
     public async Task TwoOverlappingLoads_KeepTheIndicatorUntilTheNewerEnds()
     {
-        _core.GlobalSettings.ShowInterface.Value = false;
+        Settings.UIProperties.ShowInterface = false;
         var app = CreateApp();
         await app.StartAsync(settingsExists: true, []);
         var window = app.MainWindows.Open[0];
@@ -2608,7 +2695,7 @@ public class AppLifecycleTests : IAsyncDisposable
         var opening = SourceOpener.OpenAsync(window, _core, a).AsTask();
         await held.Requested.Task.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
         var shownWithTitlebar = vm.IsLoadingIndicatorShown.Value;
-        vm.GlobalSettings.ShowInterface.Value = false;
+        vm.WindowSettings.ShowInterface.Value = false;
         var shownWithoutTitlebar = vm.IsLoadingIndicatorShown.Value;
         held.Model.SetResult(new ImageModel { FileInfo = new FileInfo(a) });
         await opening.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
@@ -2621,7 +2708,7 @@ public class AppLifecycleTests : IAsyncDisposable
     [AvaloniaFact]
     public async Task SwitchingTabsWhileTheTitlebarIsHidden_ShowsTheIndicatorOfTheActiveTab()
     {
-        _core.GlobalSettings.ShowInterface.Value = false;
+        Settings.UIProperties.ShowInterface = false;
         var app = CreateApp();
         await app.StartAsync(settingsExists: true, []);
         var window = app.MainWindows.Open[0];
@@ -2762,7 +2849,7 @@ public class AppLifecycleTests : IAsyncDisposable
     [AvaloniaFact]
     public async Task StartUp_WhileTheInterfaceIsHiddenAndTheOpenIsHeld_ShowsTheIndicator()
     {
-        _core.GlobalSettings.ShowInterface.Value = false;
+        Settings.UIProperties.ShowInterface = false;
         var app = CreateApp();
         await app.StartAsync(settingsExists: true, []);
         var window = app.MainWindows.Open[0];

@@ -6,7 +6,7 @@ using R3;
 namespace PicView.Tests.Config;
 
 /// <summary>
-/// The nine toggled settings publish their changes (ADR-0020): each writes its stored value before any
+/// The six toggled settings publish their changes (ADR-0020): each writes its stored value before any
 /// subscriber hears of it, and a change saves the settings once, however many land during a save.
 /// </summary>
 [Collection("Sequential")]
@@ -38,9 +38,6 @@ public class GlobalSettingsViewModelTests
         { "TaskbarProgress", s => s.IsShowingTaskbarProgress, () => Settings.UIProperties.IsTaskbarProgressEnabled },
         { "OpenInSameWindow", s => s.IsOpeningInSameWindow, () => Settings.UIProperties.OpenInSameWindow },
         { "ConstrainBackground", s => s.IsConstrainingBackgroundColor, () => Settings.UIProperties.IsConstrainBackgroundColorEnabled },
-        { "Interface", s => s.ShowInterface, () => Settings.UIProperties.ShowInterface },
-        { "BottomBar", s => s.ShowBottomBar, () => Settings.UIProperties.ShowBottomNavBar },
-        { "HoverBar", s => s.ShowHoverBar, () => Settings.UIProperties.ShowHoverNavigationBar },
     };
 
     public static TheoryData<string, Func<GlobalSettingsViewModel, BindableReactiveProperty<bool>>, Func<bool>> Published
@@ -235,9 +232,6 @@ public class GlobalSettingsViewModelTests
         Func<LanguageModel, string?>> Texts => new()
     {
         { "FileHistory", s => s.IsFileHistoryEnabled, s => s.FileHistoryText, t => t.FileHistoryEnabled, t => t.FileHistoryDisabled },
-        { "Interface", s => s.ShowInterface, s => s.InterfaceText, t => t.HideUI, t => t.ShowUI },
-        { "BottomBar", s => s.ShowBottomBar, s => s.BottomBarText, t => t.HideBottomToolbar, t => t.ShowBottomToolbar },
-        { "HoverBar", s => s.ShowHoverBar, s => s.HoverBarText, t => t.HideHoverNavigationBar, t => t.ShowHoverNavigationBar },
     };
 
     [Theory, MemberData(nameof(Texts))]

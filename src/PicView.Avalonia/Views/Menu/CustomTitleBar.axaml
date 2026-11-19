@@ -288,7 +288,7 @@
                     <customControls:StyledMenuItem
                         Command="{Binding RunActionCommand}"
                         CommandParameter="{x:Static keybindings:Actions.ToggleInterface}"
-                        Header="{Binding GlobalSettings.InterfaceText.Value, Mode=OneWay}"
+                        Header="{Binding WindowSettings.InterfaceText.Value, Mode=OneWay}"
                         IsVisible="{Binding IsUIShown.Value, Mode=OneWay}"
                         Theme="{StaticResource MainBg}">
                         <MenuItem.Icon>
