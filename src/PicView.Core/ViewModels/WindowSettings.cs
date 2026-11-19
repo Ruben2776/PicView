@@ -204,13 +204,13 @@ public sealed class WindowSettings : IDisposable
     }
 
     /// <summary>
-    /// One value of these settings, published at once on subscribe and again on each change; nothing, and no
-    /// exception, once the window has closed and disposed them.
+    /// Forwards the values of the observable <paramref name="pick"/> gives for these settings, as it publishes them.
+    /// It never errors, and it completes only for a window that has closed and disposed them: then it yields nothing,
+    /// also when the window closes between the check and the subscribe.
     /// </summary>
     /// <remarks>
     /// A follower of the window a tab or page is following puts this inside a <c>Switch</c>: the Switch stays open
-    /// when a closed window's settings give nothing, so the follower goes silent until it follows another window. The
-    /// catch is for a window that closes between the check and the subscribe.
+    /// when a closed window's settings give nothing, so the follower goes silent until it follows another window.
     /// </remarks>
     public Observable<T> Follow<T>(Func<WindowSettings, Observable<T>> pick)
     {

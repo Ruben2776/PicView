@@ -1002,17 +1002,29 @@ public class TabOwnershipTests : IDisposable
         Assert.Equal((true, true), tab.PairSettings());
     }
 
+    // The recording of the test whose flow runs, which work that test starts carries with it
+    private static readonly AsyncLocal<ConcurrentQueue<Exception>?> Recording = new();
+
     // Records what R3 hands its unhandled-exception handler meanwhile, as an exception in a subscription goes there
-    // instead of to the caller
+    // instead of to the caller. The handler is the whole process's, so only what reaches it in this test's flow is
+    // recorded: work another test left running carries that test's flow, and its exceptions are not this test's
     private static IDisposable RecordUnhandled(ConcurrentQueue<Exception> errors)
     {
         var previous = ObservableSystem.GetUnhandledExceptionHandler();
+        Recording.Value = errors;
         ObservableSystem.RegisterUnhandledExceptionHandler(e =>
         {
-            errors.Enqueue(e);
+            if (ReferenceEquals(Recording.Value, errors))
+            {
+                errors.Enqueue(e);
+            }
             previous(e);
         });
-        return Disposable.Create(previous, static p => ObservableSystem.RegisterUnhandledExceptionHandler(p));
+        return Disposable.Create(() =>
+        {
+            ObservableSystem.RegisterUnhandledExceptionHandler(previous);
+            Recording.Value = null;
+        });
     }
 
     [Fact]
@@ -1362,6 +1374,7 @@ public class TabOwnershipTests : IDisposable
             item => Assert.Equal((uint)GalleryDefaults.MaxExpandedGalleryItemHeight, item.ThumbnailHeight));
         // One clear of the old items and one add of the new ones
         Assert.Equal([NotifyCollectionChangedAction.Reset, NotifyCollectionChangedAction.Add], changes);
+        await CloseAsync(source, target);
     }
 
     [Theory]
@@ -1387,6 +1400,7 @@ public class TabOwnershipTests : IDisposable
         Assert.Equal(before, tab.Gallery.GalleryItems);
         Assert.Empty(changes);
         Assert.Equal(GalleryLoadingState.Loaded, tab.Gallery.LoadingState);
+        await CloseAsync(source, target);
     }
 
     [Fact]
@@ -1649,6 +1663,25 @@ public class TabOwnershipTests : IDisposable
         var window = CreateWindow();
         window.WindowSettings.Gallery.Start();
         return window;
+    }
+
+    // Closes the windows as a Main Window closes, its tabs first and then its settings, and waits until the gallery of
+    // each tab has run what it queued, its cancel included, so the test leaves no work running on its folder
+    private static async Task CloseAsync(params MainWindowViewModel[] windows)
+    {
+        var tabs = windows.SelectMany(static window => window.WindowTabs.Tabs.Value).ToArray();
+        foreach (var window in windows)
+        {
+            window.WindowTabs.TearDown();
+            window.WindowSettings.Dispose();
+        }
+        foreach (var tab in tabs)
+        {
+            if (tab.GalleryCoordinator is { } coordinator)
+            {
+                await coordinator.Idle;
+            }
+        }
     }
 
     private void ShowGallery(TabViewModel tab, GalleryMode mode)

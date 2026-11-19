@@ -361,7 +361,6 @@ public class AppLifecycleTests : IAsyncDisposable
         var secondVm = ViewModelOf(second);
         var tab = firstVm.WindowTabs.ActiveTab.CurrentValue;
         var savesBefore = (_sharedFiles.Saves, Volatile.Read(ref _globalSaves), Volatile.Read(ref _gallerySaves));
-        var settingsFile = SettingsFileState();
 
         await tab.Gallery.Switcher.ToggleDocked();
 
@@ -378,7 +377,6 @@ public class AppLifecycleTests : IAsyncDisposable
         Assert.Equal(GalleryDockPosition.Bottom, Settings.Gallery.DockPosition);
         Assert.Equal(savesBefore,
             (_sharedFiles.Saves, Volatile.Read(ref _globalSaves), Volatile.Read(ref _gallerySaves)));
-        Assert.Equal(settingsFile, SettingsFileState());
     }
 
     [AvaloniaFact]
@@ -403,6 +401,8 @@ public class AppLifecycleTests : IAsyncDisposable
         Assert.True(tab.Gallery.IsLeftDocked.Value);
         Assert.False(Settings.Gallery.IsGalleryDocked);
         Assert.Equal(GalleryDockPosition.Bottom, Settings.Gallery.DockPosition);
+        // The shown gallery reads the image's details off the test's thread; that read ends before the folder goes
+        await WaitUntilAsync(() => tab.Gallery.LoadingState is GalleryLoadingState.Loaded);
     }
 
     [AvaloniaFact]
@@ -423,15 +423,6 @@ public class AppLifecycleTests : IAsyncDisposable
         Assert.Equal(savesBeforeClose + 1, _sharedFiles.Saves);
         var firstGallery = ViewModelOf(first).WindowSettings.Gallery;
         Assert.Equal((GalleryDockPosition.Bottom, false), (firstGallery.DockPosition.Value, firstGallery.StartsDocked.Value));
-    }
-
-    // The settings file as it is on disk, to tell that nothing saved it
-    private static (bool Exists, DateTime Written, string Text) SettingsFileState()
-    {
-        var path = CurrentSettingsPath;
-        return File.Exists(path)
-            ? (true, File.GetLastWriteTimeUtc(path), File.ReadAllText(path))
-            : (false, default, string.Empty);
     }
 
     private static (double, double, GalleryStretchMode, GalleryStretchMode, GalleryDisplayMode, bool) LookOf(

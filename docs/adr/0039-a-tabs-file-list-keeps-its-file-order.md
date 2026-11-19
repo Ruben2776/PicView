@@ -33,6 +33,6 @@ Before this, four defects, which the architecture review traced to the order bei
 - A tab, or a tab overview with no window, reads the record's order and follows nothing.
 - `FileSortOrder` is gone; `FileOrder` and `FileOrdering` replace it.
 - The settings file keeps its shape and its version; no migration.
-- Slices 3 and 4 of the Window Settings design (Side-by-Side, looping, Zoom to Fit, scrolling, the interface settings, the background and the gallery's look) are not part of this and are still App Settings.
+- Slices 3 and 4 of the Window Settings design (Side-by-Side, looping, Zoom to Fit, scrolling, the interface settings, the background and the gallery's look) were not part of this decision and became Window Settings in ADR-0040 and ADR-0041.
 - Supersedes ADR-0020's "only the active tab relists" as it applies to the sort.
 - On Linux a file's creation time cannot be set; the stamp sets its last write time there, and whether a sort by creation time keeps the entries' order depends on whether the runtime reports a birth time. Unverified: Linux is unreleased and was not run.

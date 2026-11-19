@@ -188,7 +188,7 @@ The gallery filling the Main Window in place of the image. While it is shown, th
 _Avoid_: Full gallery, fullscreen gallery
 
 **Gallery Items**:
-The thumbnails a tab's gallery shows: one for each file the tab browses, always in the order of its file list. They change only when that list changes, which a re-sort does too. A tab keeps them while it shows a Single Image, and a gallery that is closed when its tab moves to another folder drops them and loads the new folder when it opens.
+The thumbnails a tab's gallery shows: one for each file the tab browses, always in the order of its file list. They change only when that list changes, which a re-sort does too, or when the tab enters a Main Window whose gallery look needs taller thumbnails than they were loaded at, which loads them again at the new height, once. A tab keeps them while it shows a Single Image, and a gallery that is closed when its tab moves to another folder drops them and loads the new folder when it opens.
 _Avoid_: Thumbnails list, gallery list
 
 **Thumbnail Stretch**:

@@ -62,7 +62,10 @@ public sealed class GalleryModeSwitcher : IDisposable
     /// <summary>
     /// True while <see cref="DockAt"/> moves the window's edge for a Closed gallery it is about to dock: the tab's
     /// gallery publishes no appearance for the edge alone then, as the dock that follows publishes the one appearance
-    /// at the new edge (no Closed one at the new edge before it).
+    /// at the new edge (no Closed one at the new edge before it). It relies on the window's look reaching the tab's
+    /// gallery synchronously, inside the set of the edge (<see cref="WindowSettings.Follow{T}"/> and the
+    /// <c>Switch</c> over it, with no <c>ObserveOn</c>);
+    /// TabOwnershipTests.DockAt_PublishesOneAppearance_ForTheTabThatAsked fails if that stops holding.
     /// </summary>
     internal bool IsMovingTheEdgeToDock { get; private set; }
 

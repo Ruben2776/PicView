@@ -168,6 +168,28 @@ public class GallerySettingsViewTests
     }
 
     [AvaloniaFact]
+    public void Page_ActiveMainWindowsStretchHasNoItem_SelectsNothing_AndIssuesNoCommand()
+    {
+        var page = Show();
+        try
+        {
+            // A number of a removed stretch mode, as an old settings file can hold
+            var removed = (GalleryStretchMode)2;
+            page.B.WindowSettings.Gallery.DockedGalleryStretchMode.Value = removed;
+
+            page.Activate(page.B);
+
+            Assert.Null(page.DockedStretch.SelectedItem);
+            Assert.Equal(0, page.Commands());
+            Assert.Equal(removed, page.B.WindowSettings.Gallery.DockedGalleryStretchMode.Value);
+        }
+        finally
+        {
+            page.Window.Close();
+        }
+    }
+
+    [AvaloniaFact]
     public void Page_SwitchingTheActiveMainWindow_IssuesNoCommand_AndWritesNothing()
     {
         var page = Show();

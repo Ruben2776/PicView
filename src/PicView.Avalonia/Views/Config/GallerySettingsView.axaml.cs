@@ -105,7 +105,8 @@ public partial class GallerySettingsView : UserControl
         }
     }
 
-    // Each item carries its value in its Tag, because the numbers of the stretch modes skip removed ones
+    // Each item carries its value in its Tag, because the numbers of the stretch modes skip removed ones. A value
+    // without an item selects nothing, so the previous window's choice does not stay on screen
     private static void Select<T>(ComboBox comboBox, T value) where T : struct, Enum
     {
         foreach (var item in comboBox.Items)
@@ -116,6 +117,8 @@ public partial class GallerySettingsView : UserControl
                 return;
             }
         }
+
+        comboBox.SelectedItem = null;
     }
 
     private void DisplayModeComboBox_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
