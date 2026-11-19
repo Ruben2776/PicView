@@ -882,7 +882,7 @@ internal class ArchiveExtractionService(IArchiveEntryWriter? entryWriter = null)
         return segments;
     }
 
-    private static readonly IReadOnlyDictionary<string, string> EmptyNames = new Dictionary<string, string>();
+    private static readonly IReadOnlyDictionary<string, string> EmptyNames = new Dictionary<string, string>(StringComparer.Ordinal);
 
     private static string SuffixedName(string fileName, int counter) =>
         $"{Path.GetFileNameWithoutExtension(fileName)}_{counter}{Path.GetExtension(fileName)}";
@@ -906,7 +906,7 @@ internal class ArchiveExtractionService(IArchiveEntryWriter? entryWriter = null)
         // Each name goes to the first entry that has it, before any suffix is given, so no suffix takes another's name
         foreach (var key in ordered)
         {
-            if (names.ContainsKey(key) || (sharing.Count > 0 && sharing[^1] == key))
+            if (names.ContainsKey(key) || (sharing.Count > 0 && string.Equals(sharing[^1], key, StringComparison.Ordinal)))
             {
                 continue;
             }
