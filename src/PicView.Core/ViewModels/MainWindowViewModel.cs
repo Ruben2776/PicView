@@ -128,7 +128,7 @@ public class MainWindowViewModel : IDisposable
     /// <param name="windowSettings">The Window Settings the window starts with; the record's when none is given.</param>
     public MainWindowViewModel(CoreViewModel core, TranslationViewModel translations, GlobalSettingsViewModel globalSettings, GallerySharedSettingsViewModel gallerySettings, TabViewModel? firstTab = null, WindowSettings? windowSettings = null)
     {
-        WindowSettings = windowSettings ?? WindowSettings.FromRecord(Settings);
+        WindowSettings = windowSettings ?? WindowSettings.FromRecord(Settings, translations);
         WindowModeState = new(Sizing.WindowModeState.Opening(WindowSettings.StartingMode.AutoFit));
         Core = core;
         Translation = translations;

@@ -2,6 +2,7 @@ using PicView.Core.Config;
 using PicView.Core.FileSorting;
 using PicView.Core.Sizing;
 using PicView.Core.ViewModels;
+using R3;
 
 namespace PicView.Tests.Config;
 
@@ -153,7 +154,237 @@ public class WindowSettingsTests
         using var settings = WindowSettings.FromRecord(Settings);
         settings.IsTopMost.Value = !settings.IsTopMost.Value;
         settings.IsStayingCentered.Value = !settings.IsStayingCentered.Value;
+        var ui = Settings.UIProperties!;
+        var uiBefore = (ui.Looping, ui.ShowInterface, ui.ShowBottomNavBar, ui.ShowHoverNavigationBar, ui.BgColorChoice,
+            ui.IsConstrainBackgroundColorEnabled);
+        var otherBefore = (Settings.ImageScaling!.ShowImageSideBySide, Settings.ImageScaling.ZoomToFit, Settings.Zoom!.ScrollEnabled);
+
+        settings.IsSideBySide.Value = !settings.IsSideBySide.Value;
+        settings.IsLooping.Value = !settings.IsLooping.Value;
+        settings.IsZoomedToFit.Value = !settings.IsZoomedToFit.Value;
+        settings.IsScrollingEnabled.Value = !settings.IsScrollingEnabled.Value;
+        settings.ShowInterface.Value = !settings.ShowInterface.Value;
+        settings.ShowBottomBar.Value = !settings.ShowBottomBar.Value;
+        settings.ShowHoverBar.Value = !settings.ShowHoverBar.Value;
+        settings.BackgroundChoice.Value = ui.BgColorChoice + 1;
+        settings.IsConstrainingBackgroundColor.Value = !settings.IsConstrainingBackgroundColor.Value;
+
         Assert.Equal(new WindowProperties().TopMost, Settings.WindowProperties!.TopMost);
         Assert.Equal(new WindowProperties().KeepCentered, Settings.WindowProperties.KeepCentered);
+        Assert.Equal(uiBefore, (ui.Looping, ui.ShowInterface, ui.ShowBottomNavBar, ui.ShowHoverNavigationBar, ui.BgColorChoice,
+            ui.IsConstrainBackgroundColorEnabled));
+        Assert.Equal(otherBefore, (Settings.ImageScaling.ShowImageSideBySide, Settings.ImageScaling.ZoomToFit, Settings.Zoom.ScrollEnabled));
+    }
+
+    private static AppSettings RecordWithTheNineSet()
+    {
+        var record = GetDefaults();
+        record.ImageScaling!.ShowImageSideBySide = true;
+        record.ImageScaling.ZoomToFit = true;
+        record.UIProperties!.Looping = true;
+        record.UIProperties.ShowInterface = false;
+        record.UIProperties.ShowBottomNavBar = false;
+        record.UIProperties.ShowHoverNavigationBar = false;
+        record.UIProperties.BgColorChoice = 4;
+        record.UIProperties.IsConstrainBackgroundColorEnabled = true;
+        record.Zoom!.ScrollEnabled = true;
+        return record;
+    }
+
+    private static void AssertTheNine(WindowSettings settings)
+    {
+        Assert.True(settings.IsSideBySide.Value);
+        Assert.True(settings.IsLooping.Value);
+        Assert.True(settings.IsZoomedToFit.Value);
+        Assert.True(settings.IsScrollingEnabled.Value);
+        Assert.False(settings.ShowInterface.Value);
+        Assert.False(settings.ShowBottomBar.Value);
+        Assert.False(settings.ShowHoverBar.Value);
+        Assert.Equal(4, settings.BackgroundChoice.Value);
+        Assert.True(settings.IsConstrainingBackgroundColor.Value);
+    }
+
+    [Fact]
+    public void FromRecord_ReadsTheNineSettings()
+    {
+        using var settings = WindowSettings.FromRecord(RecordWithTheNineSet());
+        AssertTheNine(settings);
+    }
+
+    [Fact]
+    public void FromRecord_MissingGroups_GivesTheDefaults()
+    {
+        var ui = new UIProperties();
+        var scaling = new ImageScaling();
+        var zoom = new Zoom();
+        using var fromNull = WindowSettings.FromRecord(null);
+        using var fromEmpty = WindowSettings.FromRecord(new AppSettings
+        {
+            UIProperties = null, ImageScaling = null, Zoom = null
+        });
+        foreach (var settings in new[] { fromNull, fromEmpty })
+        {
+            Assert.Equal(scaling.ShowImageSideBySide, settings.IsSideBySide.Value);
+            Assert.Equal(ui.Looping, settings.IsLooping.Value);
+            Assert.Equal(scaling.ZoomToFit, settings.IsZoomedToFit.Value);
+            Assert.Equal(zoom.ScrollEnabled, settings.IsScrollingEnabled.Value);
+            Assert.Equal(ui.ShowInterface, settings.ShowInterface.Value);
+            Assert.Equal(ui.ShowBottomNavBar, settings.ShowBottomBar.Value);
+            Assert.Equal(ui.ShowHoverNavigationBar, settings.ShowHoverBar.Value);
+            Assert.Equal(ui.BgColorChoice, settings.BackgroundChoice.Value);
+            Assert.Equal(ui.IsConstrainBackgroundColorEnabled, settings.IsConstrainingBackgroundColor.Value);
+            Assert.Null(settings.ImageBackground.Value);
+            Assert.Null(settings.ConstrainedImageBackground.Value);
+        }
+    }
+
+    [Fact]
+    public void Store_WritesTheNineSettings_AndLeavesTheAppSettingsOfThoseGroupsAlone()
+    {
+        var record = GetDefaults();
+        record.UIProperties!.OpenInSameWindow = !record.UIProperties.OpenInSameWindow;
+        record.Zoom!.ZoomSpeed = 7.5;
+        record.ImageScaling!.IsScalingSetToNearestNeighbor = !record.ImageScaling.IsScalingSetToNearestNeighbor;
+        var openInSameWindow = record.UIProperties.OpenInSameWindow;
+        var zoomSpeed = record.Zoom.ZoomSpeed;
+        var nearestNeighbor = record.ImageScaling.IsScalingSetToNearestNeighbor;
+
+        using var settings = WindowSettings.FromRecord(RecordWithTheNineSet());
+        settings.Store(record, default);
+
+        Assert.True(record.ImageScaling.ShowImageSideBySide);
+        Assert.True(record.ImageScaling.ZoomToFit);
+        Assert.True(record.UIProperties.Looping);
+        Assert.False(record.UIProperties.ShowInterface);
+        Assert.False(record.UIProperties.ShowBottomNavBar);
+        Assert.False(record.UIProperties.ShowHoverNavigationBar);
+        Assert.Equal(4, record.UIProperties.BgColorChoice);
+        Assert.True(record.UIProperties.IsConstrainBackgroundColorEnabled);
+        Assert.True(record.Zoom.ScrollEnabled);
+        Assert.Equal(openInSameWindow, record.UIProperties.OpenInSameWindow);
+        Assert.Equal(zoomSpeed, record.Zoom.ZoomSpeed);
+        Assert.Equal(nearestNeighbor, record.ImageScaling.IsScalingSetToNearestNeighbor);
+    }
+
+    [Fact]
+    public void Store_RecordWithoutTheGroups_CreatesThem()
+    {
+        var record = new AppSettings { UIProperties = null, ImageScaling = null, Zoom = null };
+        using var settings = WindowSettings.FromRecord(RecordWithTheNineSet());
+        settings.Store(record, default);
+        Assert.True(record.UIProperties!.Looping);
+        Assert.True(record.ImageScaling!.ZoomToFit);
+        Assert.True(record.Zoom!.ScrollEnabled);
+    }
+
+    [Fact]
+    public void CopyFor_TakesTheNineValues_AndIsIndependentAfterwards()
+    {
+        using var opener = WindowSettings.FromRecord(RecordWithTheNineSet());
+        using var copy = opener.CopyFor(default);
+        AssertTheNine(copy);
+
+        copy.IsSideBySide.Value = false;
+        copy.IsLooping.Value = false;
+        copy.IsZoomedToFit.Value = false;
+        copy.IsScrollingEnabled.Value = false;
+        copy.ShowInterface.Value = true;
+        copy.ShowBottomBar.Value = true;
+        copy.ShowHoverBar.Value = true;
+        copy.BackgroundChoice.Value = 1;
+        copy.IsConstrainingBackgroundColor.Value = false;
+        AssertTheNine(opener);
+    }
+
+    [Fact]
+    public void CopyFor_KeepsTheTranslations_SoTheCopysTextsFollowTheLanguage()
+    {
+        var translations = new TranslationViewModel();
+        translations.LoopingEnabled.Value = "on";
+        translations.LoopingDisabled.Value = "off";
+        using var opener = WindowSettings.FromRecord(GetDefaults(), translations);
+        using var copy = opener.CopyFor(default);
+        opener.IsLooping.Value = false;
+        copy.IsLooping.Value = true;
+        Assert.Equal("on", copy.LoopingText.Value);
+        translations.LoopingEnabled.Value = "on-2";
+        Assert.Equal("on-2", copy.LoopingText.Value);
+    }
+
+    private sealed record TextCase(
+        WindowSettings Settings,
+        Func<WindowSettings, BindableReactiveProperty<bool>> Setting,
+        Func<WindowSettings, IReadOnlyBindableReactiveProperty<string?>> Text,
+        BindableReactiveProperty<string?> WhenOn,
+        BindableReactiveProperty<string?> WhenOff);
+
+    private static TextCase TextCaseOf(string name, TranslationViewModel t)
+    {
+        var settings = WindowSettings.FromRecord(GetDefaults(), t);
+        return name switch
+        {
+            "Looping" => new TextCase(settings, static s => s.IsLooping, static s => s.LoopingText, t.LoopingEnabled, t.LoopingDisabled),
+            "Scrolling" => new TextCase(settings, static s => s.IsScrollingEnabled, static s => s.ScrollingText, t.ScrollEnabled, t.ScrollDisabled),
+            "Interface" => new TextCase(settings, static s => s.ShowInterface, static s => s.InterfaceText, t.HideUI, t.ShowUI),
+            "BottomBar" => new TextCase(settings, static s => s.ShowBottomBar, static s => s.BottomBarText, t.HideBottomToolbar, t.ShowBottomToolbar),
+            "HoverBar" => new TextCase(settings, static s => s.ShowHoverBar, static s => s.HoverBarText, t.HideHoverNavigationBar, t.ShowHoverNavigationBar),
+            _ => throw new ArgumentOutOfRangeException(nameof(name))
+        };
+    }
+
+    [Theory]
+    [InlineData("Looping")]
+    [InlineData("Scrolling")]
+    [InlineData("Interface")]
+    [InlineData("BottomBar")]
+    [InlineData("HoverBar")]
+    public void Texts_FollowTheSettingAndTheLanguage(string name)
+    {
+        var translations = new TranslationViewModel();
+        var c = TextCaseOf(name, translations);
+        using var settings = c.Settings;
+        c.WhenOn.Value = "on";
+        c.WhenOff.Value = "off";
+
+        c.Setting(settings).Value = true;
+        Assert.Equal("on", c.Text(settings).Value);
+        c.Setting(settings).Value = false;
+        Assert.Equal("off", c.Text(settings).Value);
+
+        // A language change: the translation bindable changes under an unchanged setting
+        c.WhenOff.Value = "off-2";
+        Assert.Equal("off-2", c.Text(settings).Value);
+        c.Setting(settings).Value = true;
+        c.WhenOn.Value = "on-2";
+        Assert.Equal("on-2", c.Text(settings).Value);
+    }
+
+    [Fact]
+    public void Texts_WithoutTranslations_AreNull()
+    {
+        using var settings = WindowSettings.FromRecord(GetDefaults());
+        settings.IsLooping.Value = !settings.IsLooping.Value;
+        Assert.Null(settings.LoopingText.Value);
+        Assert.Null(settings.ScrollingText.Value);
+        Assert.Null(settings.InterfaceText.Value);
+        Assert.Null(settings.BottomBarText.Value);
+        Assert.Null(settings.HoverBarText.Value);
+    }
+
+    [Fact]
+    public void Dispose_ATextNoLongerFollows()
+    {
+        var translations = new TranslationViewModel();
+        translations.HideUI.Value = "hide";
+        translations.ShowUI.Value = "show";
+        var settings = WindowSettings.FromRecord(GetDefaults(), translations);
+        var text = settings.InterfaceText;
+        settings.ShowInterface.Value = true;
+        Assert.Equal("hide", text.Value);
+
+        settings.Dispose();
+        translations.HideUI.Value = "hide-2";
+
+        Assert.Equal("hide", text.Value);
     }
 }

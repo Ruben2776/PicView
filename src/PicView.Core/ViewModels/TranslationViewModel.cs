@@ -199,6 +199,8 @@ public class TranslationViewModel
         LightSource.Value = t.LightSource;
         LightTheme.Value = t.LightTheme;
         LineSpacing.Value = t.LineSpacing;
+        LoopingDisabled.Value = t.LoopingDisabled;
+        LoopingEnabled.Value = t.LoopingEnabled;
         Longitude.Value = t.Longitude;
         Lossless.Value = t.Lossless;
         Lossy.Value = t.Lossy;
@@ -609,6 +611,8 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> LightSource { get; } = new();
     public BindableReactiveProperty<string?> LightTheme { get; } = new();
     public BindableReactiveProperty<string?> LineSpacing { get; } = new();
+    public BindableReactiveProperty<string?> LoopingDisabled { get; } = new();
+    public BindableReactiveProperty<string?> LoopingEnabled { get; } = new();
     public BindableReactiveProperty<string?> Longitude { get; } = new();
     public BindableReactiveProperty<string?> Lossless { get; } = new();
     public BindableReactiveProperty<string?> Lossy { get; } = new();
