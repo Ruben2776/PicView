@@ -65,7 +65,8 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
     /// </summary>
     internal FileOrdering CurrentOrdering()
     {
-        var order = _currentWindowSettings.CurrentValue?.FileOrder.Value ?? FileOrder.FromRecord(Settings.Sorting);
+        // The record may not be loaded yet for a tab without a window
+        var order = _currentWindowSettings.CurrentValue?.FileOrder.Value ?? FileOrder.FromRecord(Settings?.Sorting);
         // A tab's services may lack a platform in tests, as its Load allows
         Func<string, string, int> compareNames = Services?.Platform is { } platform
             ? platform.CompareStrings
@@ -381,11 +382,18 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
     /// </summary>
     public void Display(ImageModel primary, ImageModel? secondary = null)
     {
+        var wasSingleImage = _singleImageType is not SingleImageType.None;
         SingleImageType = SingleImageType.None;
         ApplyRequestedPage(primary);
         ShowModels(primary, secondary);
         RecordShown();
         Publish(ShownChange.Image);
+        if (wasSingleImage)
+        {
+            // A Single Image leaves the files unsorted, and showing one of them again may step to it in that list
+            // without listing, so they take the window's File Order now
+            FollowFileOrder(CurrentOrdering().Order);
+        }
     }
 
     /// <summary>
@@ -742,6 +750,160 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
 
     private IDisposable? _settingsSubscription;
 
+    // The re-sort: one run at a time, which runs again while it was asked for again meanwhile
+    private readonly Lock _resortGate = new();
+    private Task _resorting = Task.CompletedTask;
+    private bool _isResortRunning;
+    private bool _isResortRequested;
+    private bool _isReshuffleRequested;
+
+    /// <summary>
+    /// The re-sort that runs now, or the last one, which ends once the tab's files are in its window's File Order.
+    /// </summary>
+    internal Task Resorting
+    {
+        get
+        {
+            lock (_resortGate)
+            {
+                return _resorting;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Sorts the files this tab browses into its window's File Order in memory, off the caller's thread, keeping the
+    /// Shown File; with a pair shown, the pair at its new place is shown, without a Load. A tab without files changes
+    /// nothing, as its next load lists in that order; nor does one showing a Single Image, whose files take the order
+    /// once it shows one of them again (<see cref="Display"/>). Asked again while a re-sort runs, that run sorts once
+    /// more when it ends, so any number of changes meanwhile end in the latest order.
+    /// </summary>
+    /// <param name="reshuffle">Whether files already in a Random order are shuffled again.</param>
+    /// <returns>The run, which ends once the files are in the order.</returns>
+    internal Task ResortAsync(bool reshuffle = false)
+    {
+        lock (_resortGate)
+        {
+            _isResortRequested = true;
+            _isReshuffleRequested |= reshuffle;
+            if (!_isResortRunning)
+            {
+                _isResortRunning = true;
+                _resorting = Task.Run(RunResortsAsync);
+            }
+
+            return _resorting;
+        }
+    }
+
+    private async Task RunResortsAsync()
+    {
+        while (true)
+        {
+            bool reshuffle;
+            lock (_resortGate)
+            {
+                if (!_isResortRequested || IsDisposed)
+                {
+                    _isResortRunning = false;
+                    _isResortRequested = false;
+                    _isReshuffleRequested = false;
+                    return;
+                }
+
+                _isResortRequested = false;
+                reshuffle = _isReshuffleRequested;
+                _isReshuffleRequested = false;
+            }
+
+            try
+            {
+                await ResortOnceAsync(reshuffle).ConfigureAwait(false);
+            }
+            catch (Exception e)
+            {
+                DebugHelper.LogDebug(nameof(TabViewModel), nameof(ResortAsync), e);
+            }
+        }
+    }
+
+    private async ValueTask ResortOnceAsync(bool reshuffle)
+    {
+        if (IsDisposed || ImageIterator is not { Files.Count: > 0 } iterator ||
+            SingleImageType is not SingleImageType.None)
+        {
+            return;
+        }
+
+        var ordering = CurrentOrdering();
+        var isShuffledAgain = reshuffle && ordering.Order.By is SortFilesBy.Random;
+        if (ordering.Order == iterator.Ordering.Order && !isShuffledAgain)
+        {
+            return;
+        }
+
+        iterator.Resort(ordering);
+        if (PairSettings().ShowsPair && !IsShowingPairAt(iterator))
+        {
+            // As turning Side-by-Side on: the shown file is iterated to again, which shows the pair that holds it
+            await iterator.ReloadAsync(clearCache: false).ConfigureAwait(false);
+            return;
+        }
+
+        // Its neighbours in the new order, as a relist preloads them
+        var files = iterator.Files;
+        var index = iterator.CurrentIndex;
+        if (Services is { } services && index >= 0 && index < files.Count)
+        {
+            services.Cache.Preload(Id, files[index], false, GetTabCancellation().Token);
+        }
+    }
+
+    // Whether the tab shows the two files the iterator's pair is at
+    private bool IsShowingPairAt(IImageIterator iterator)
+    {
+        var files = iterator.Files;
+        return IsFileAt(files, iterator.CurrentIndex, Model?.FileInfo) &&
+               IsFileAt(files, iterator.SecondaryCurrentIndex, SecondaryModel?.FileInfo);
+
+        static bool IsFileAt(IReadOnlyList<FileInfo> files, int index, FileInfo? shown) =>
+            index >= 0 && index < files.Count && shown is not null &&
+            string.Equals(files[index].FullName, shown.FullName, StringComparison.OrdinalIgnoreCase);
+    }
+
+    // Follows the File Order of the window the tab is in, re-sorting when it is not the order the files are in
+    private void FollowFileOrder(FileOrder order)
+    {
+        if (ImageIterator is { Files.Count: > 0 } iterator && iterator.Ordering.Order != order)
+        {
+            _ = ResortAsync();
+        }
+    }
+
+    // The File Order of a window's settings. A closed window's settings are disposed and refuse a subscriber, so a tab
+    // that still has them, as one moved out of a window that closed before the new window opened, follows nothing
+    private static Observable<FileOrder> FileOrderOf(WindowSettings? settings)
+    {
+        if (settings is null || settings.FileOrder.IsDisposed)
+        {
+            return Observable.Empty<FileOrder>();
+        }
+
+        return Observable.Create<FileOrder, BindableReactiveProperty<FileOrder>>(settings.FileOrder,
+            static (observer, order) =>
+            {
+                try
+                {
+                    return order.Subscribe(observer.OnNext);
+                }
+                catch (ObjectDisposedException)
+                {
+                    observer.OnCompleted();
+                    return Disposable.Empty;
+                }
+            });
+    }
+
     /// <summary>
     /// Whether a pair is shown (side-by-side or this tab's comparing) and looping, as the tab's settings publish them,
     /// or the stored settings for a tab without them.
@@ -752,12 +914,14 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
 
     /// <summary>
     /// Follows the settings the tab reads, once: Looping derives Next and Prev again, showing a pair (side-by-side or
-    /// this tab's comparing) derives them and has the shown file iterated to again, and including subdirectories lists
-    /// the folder again.
+    /// this tab's comparing) derives them and has the shown file iterated to again, including subdirectories lists
+    /// the folder again, and the File Order of the window the tab is in sorts its files again, switching to the next
+    /// window's when the tab moves there.
     /// </summary>
     private void FollowSettings()
     {
-        if (_settingsSubscription is not null || Services?.GlobalSettings is not { } settings)
+        // A tab closed while its first load ran has disposed what it would subscribe to
+        if (_settingsSubscription is not null || IsDisposed || Services?.GlobalSettings is not { } settings)
         {
             return;
         }
@@ -781,7 +945,8 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
                 {
                     await Task.Run(() => Load.LoadAsync(file.FullName, new LoadOptions(Relist: true)).AsTask(), x).ConfigureAwait(false);
                 }
-            }));
+            }),
+            CurrentWindowSettings.Select(FileOrderOf).Switch().Subscribe(FollowFileOrder));
     }
 
     /// <summary>
@@ -982,16 +1147,25 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
     /// production code calls it, since the tab's <see cref="Load"/> makes the iterator on its first load.
     /// </summary>
     /// <exception cref="InvalidOperationException">The tab has no services.</exception>
-    internal void Initialize()
+    /// <param name="alsoFilesChanged">Hears every change to the file list after the gallery does, for a test that
+    /// records them.</param>
+    internal void Initialize(Action<FileListChange>? alsoFilesChanged = null)
     {
         if (Services is null)
         {
             throw new InvalidOperationException("The tab has no services");
         }
         GalleryCoordinator?.Dispose();
-        GalleryCoordinator = new GalleryCoordinator(this, Services.Thumbnails);
+        var coordinator = new GalleryCoordinator(this, Services.Thumbnails);
+        GalleryCoordinator = coordinator;
         ImageIterator = new ImageIterator(Services.Cache, Services.Thumbnails, this,
-            GalleryCoordinator.FilesChanged);
+            alsoFilesChanged is null
+                ? coordinator.FilesChanged
+                : change =>
+                {
+                    coordinator.FilesChanged(change);
+                    alsoFilesChanged(change);
+                });
         FollowSettings();
         DeriveCanNavigate();
     }

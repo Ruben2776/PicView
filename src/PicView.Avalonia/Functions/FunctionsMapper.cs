@@ -824,39 +824,39 @@ public class FunctionsMapper : IActionRunner
 
     #region Sorting
 
-    /// <inheritdoc cref="Core.Navigation.Interfaces.INavigationService.SortAsync(TabViewModel, bool, CancellationTokenSource)" />
+    /// <inheritdoc cref="TabOverviewViewModel.SortAsync(SortFilesBy)" />
     private async ValueTask SortFilesByName() =>
         await _vm.WindowTabs.SortAsync(SortFilesBy.Name).ConfigureAwait(false);
 
-    /// <inheritdoc cref="Core.Navigation.Interfaces.INavigationService.SortAsync(TabViewModel, bool, CancellationTokenSource)" />
+    /// <inheritdoc cref="TabOverviewViewModel.SortAsync(SortFilesBy)" />
     private async ValueTask SortFilesByCreationTime() =>
         await _vm.WindowTabs.SortAsync(SortFilesBy.CreationTime).ConfigureAwait(false);
 
-    /// <inheritdoc cref="Core.Navigation.Interfaces.INavigationService.SortAsync(TabViewModel, bool, CancellationTokenSource)" />
+    /// <inheritdoc cref="TabOverviewViewModel.SortAsync(SortFilesBy)" />
     private async ValueTask SortFilesByLastAccessTime() =>
         await _vm.WindowTabs.SortAsync(SortFilesBy.LastAccessTime).ConfigureAwait(false);
 
-    /// <inheritdoc cref="Core.Navigation.Interfaces.INavigationService.SortAsync(TabViewModel, bool, CancellationTokenSource)" />
+    /// <inheritdoc cref="TabOverviewViewModel.SortAsync(SortFilesBy)" />
     private async ValueTask SortFilesByLastWriteTime() =>
         await _vm.WindowTabs.SortAsync(SortFilesBy.LastWriteTime).ConfigureAwait(false);
 
-    /// <inheritdoc cref="Core.Navigation.Interfaces.INavigationService.SortAsync(TabViewModel, bool, CancellationTokenSource)" />
+    /// <inheritdoc cref="TabOverviewViewModel.SortAsync(SortFilesBy)" />
     private async ValueTask SortFilesBySize() =>
         await _vm.WindowTabs.SortAsync(SortFilesBy.FileSize).ConfigureAwait(false);
 
-    /// <inheritdoc cref="Core.Navigation.Interfaces.INavigationService.SortAsync(TabViewModel, bool, CancellationTokenSource)" />
+    /// <inheritdoc cref="TabOverviewViewModel.SortAsync(SortFilesBy)" />
     private async ValueTask SortFilesByExtension() =>
         await _vm.WindowTabs.SortAsync(SortFilesBy.Extension).ConfigureAwait(false);
 
-    /// <inheritdoc cref="Core.Navigation.Interfaces.INavigationService.SortAsync(TabViewModel, bool, CancellationTokenSource)" />
+    /// <inheritdoc cref="TabOverviewViewModel.SortAsync(SortFilesBy)" />
     private async ValueTask SortFilesRandomly() =>
         await _vm.WindowTabs.SortAsync(SortFilesBy.Random).ConfigureAwait(false);
 
-    /// <inheritdoc cref="Core.Navigation.Interfaces.INavigationService.SortAsync(TabViewModel, bool, CancellationTokenSource)" />
+    /// <inheritdoc cref="TabOverviewViewModel.SortAsync(bool)" />
     private async ValueTask SortFilesAscending() =>
         await _vm.WindowTabs.SortAsync(ascending: true).ConfigureAwait(false);
     
-    /// <inheritdoc cref="Core.Navigation.Interfaces.INavigationService.SortAsync(TabViewModel, bool, CancellationTokenSource)" />
+    /// <inheritdoc cref="TabOverviewViewModel.SortAsync(bool)" />
     private async ValueTask SortFilesDescending() =>
         await _vm.WindowTabs.SortAsync(ascending: false).ConfigureAwait(false);
 

@@ -292,10 +292,10 @@ public class ImageIteratorFileListTests : IDisposable
         {
             var tab = new TabViewModel(new MainWindowViewModel(null!, null!, null!, null!),
                 TestTabServices.For(_cache, null));
-            tab.Initialize();
             var window = tab.CurrentWindowSettings.CurrentValue!;
             window.FileOrder.Value = new FileOrder(SortFilesBy.FileSize, true);
-            var iterator = tab.ImageIterator!;
+            // Not the tab's own iterator, which follows its window's order and sorts again when it changes
+            var iterator = new ImageIterator(_cache, TestTabServices.NoThumbnails(_cache), tab);
             // Listed in the window's order, which the list keeps without being told it
             iterator.Initialize(tab.CurrentOrdering().Sort(files.Take(3)), 0);
 
@@ -414,6 +414,74 @@ public class ImageIteratorFileListTests : IDisposable
             Assert.Equal(["a.jpg", "c.jpg", "b.jpg"], change.Files.Select(f => f.Name));
             Assert.Equal(iterator.CurrentIndex, change.Index);
             Assert.Equal("b.jpg", change.Files[change.Index].Name);
+        }
+        finally
+        {
+            Directory.Delete(folder, true);
+        }
+    }
+
+    [Fact]
+    public void Resort_RandomAgain_ShufflesAgainAndReportsOneListedChange()
+    {
+        var changes = new List<FileListChange>();
+        var iterator = new ImageIterator(_cache, TestTabServices.NoThumbnails(_cache), _tab, changes.Add);
+        // Ten files, so a shuffle that gives the same order again is one in millions
+        var files = Enumerable.Range(0, 10).Select(i => File($"{i}.jpg")).ToArray();
+        iterator.Initialize(files, 4, OrderingBy(SortFilesBy.Random));
+        var listed = iterator.Files.Select(f => f.Name).ToArray();
+        changes.Clear();
+
+        iterator.Resort(OrderingBy(SortFilesBy.Random));
+
+        var change = Assert.Single(changes);
+        Assert.Equal(FileListChangeKind.Listed, change.Kind);
+        var shuffled = iterator.Files.Select(f => f.Name).ToArray();
+        Assert.NotEqual(listed, shuffled);
+        Assert.Equal(listed.Order(), shuffled.Order());
+        Assert.Equal("4.jpg", iterator.Files[iterator.CurrentIndex].Name);
+    }
+
+    [Fact]
+    public void Resort_SideBySideLooping_ShownFileLandsLast_PairsItWithTheFirst()
+    {
+        _tab.Services!.GlobalSettings.IsSideBySide.Value = true;
+        _tab.Services.GlobalSettings.IsLooping.Value = true;
+        var (folder, files) = CreateFiles(("a.jpg", 30, Written), ("b.jpg", 10, Written), ("c.jpg", 20, Written),
+            ("d.jpg", 15, Written));
+        try
+        {
+            _iterator.Initialize(files, 0, OrderingBy(SortFilesBy.Name));
+
+            // a goes last, and with looping the last file shows beside the first (ADR-0024)
+            _iterator.Resort(OrderingBy(SortFilesBy.FileSize));
+
+            Assert.Equal(["b.jpg", "d.jpg", "c.jpg", "a.jpg"], Names());
+            Assert.Equal((3, 0), (_iterator.CurrentIndex, _iterator.SecondaryCurrentIndex));
+        }
+        finally
+        {
+            Directory.Delete(folder, true);
+        }
+    }
+
+    [Fact]
+    public void Resort_SideBySide_ShownFileNotLast_TakesItsNewPartner()
+    {
+        _tab.Services!.GlobalSettings.IsSideBySide.Value = true;
+        var (folder, files) = CreateFiles(("a.jpg", 30, Written), ("b.jpg", 10, Written), ("c.jpg", 20, Written),
+            ("d.jpg", 15, Written));
+        try
+        {
+            // b is shown beside c by name
+            _iterator.Initialize(files, 1, OrderingBy(SortFilesBy.Name));
+
+            _iterator.Resort(OrderingBy(SortFilesBy.FileSize));
+
+            // By size b is first, beside d
+            Assert.Equal(["b.jpg", "d.jpg", "c.jpg", "a.jpg"], Names());
+            Assert.Equal((0, 1), (_iterator.CurrentIndex, _iterator.SecondaryCurrentIndex));
+            Assert.Equal("d.jpg", _iterator.Files[_iterator.SecondaryCurrentIndex].Name);
         }
         finally
         {

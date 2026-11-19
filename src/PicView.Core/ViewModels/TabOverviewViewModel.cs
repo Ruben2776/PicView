@@ -48,6 +48,18 @@ public class TabOverviewViewModel
     public TabOverviewViewModel(MainWindowViewModel parentVm, TabViewModel? firstTab = null)
     {
         _parentVm = parentVm;
+        // Made before the window's tabs, which are made with it
+        _fileOrder = parentVm?.WindowSettings.FileOrder ??
+                     new BindableReactiveProperty<FileOrder>(FileOrder.FromRecord(Settings?.Sorting));
+        IsSortedByName = IsSortedBy(SortFilesBy.Name);
+        IsSortedByFileSize = IsSortedBy(SortFilesBy.FileSize);
+        IsSortedByCreationTime = IsSortedBy(SortFilesBy.CreationTime);
+        IsSortedByExtension = IsSortedBy(SortFilesBy.Extension);
+        IsSortedByLastAccessTime = IsSortedBy(SortFilesBy.LastAccessTime);
+        IsSortedByLastWriteTime = IsSortedBy(SortFilesBy.LastWriteTime);
+        IsSortedByRandomization = IsSortedBy(SortFilesBy.Random);
+        IsAscending = _fileOrder.Select(static order => order.Ascending).ToReadOnlyBindableReactiveProperty();
+
         if (firstTab is null)
         {
             ActiveTab = new BindableReactiveProperty<TabViewModel>(CreateInitialTab());
@@ -55,8 +67,10 @@ public class TabOverviewViewModel
         else
         {
             firstTab.ParentWindowContext = parentVm;
-            firstTab.FollowWindow();
             Tabs.Value.Add(firstTab);
+            // Published once the tab is in this window's tabs, so what follows its window finds it there. Its views and
+            // hookups attach later, when the window gives them
+            firstTab.FollowWindow();
             ActiveTab = new BindableReactiveProperty<TabViewModel>(firstTab);
         }
         ActiveTab.Value.IsSelected = true;
@@ -439,111 +453,51 @@ public class TabOverviewViewModel
     #endregion
 
     #region Sort
-    
-    public BindableReactiveProperty<bool> IsSortedByName { get; } = new();
-    public BindableReactiveProperty<bool> IsSortedByFileSize { get; } = new();
-    public BindableReactiveProperty<bool> IsSortedByCreationTime { get; } = new();
-    public BindableReactiveProperty<bool> IsSortedByExtension { get; } = new();
-    public BindableReactiveProperty<bool> IsSortedByLastAccessTime { get; } = new();
-    public BindableReactiveProperty<bool> IsSortedByLastWriteTime { get; } = new();
-    public BindableReactiveProperty<bool> IsSortedByRandomization{ get; } = new();
-    public BindableReactiveProperty<bool> IsAscending { get; } = new(Settings.Sorting.Ascending);
 
-    public async ValueTask SortAsync(SortFilesBy sortOrder)
+    // The window's File Order, or this overview's own, seeded from the record, for an overview without a window
+    private readonly BindableReactiveProperty<FileOrder> _fileOrder;
+
+    // Using converters fails on macOS NativeMenu, so each check mark is a bool of its own, derived from the order
+    public IReadOnlyBindableReactiveProperty<bool> IsSortedByName { get; }
+    public IReadOnlyBindableReactiveProperty<bool> IsSortedByFileSize { get; }
+    public IReadOnlyBindableReactiveProperty<bool> IsSortedByCreationTime { get; }
+    public IReadOnlyBindableReactiveProperty<bool> IsSortedByExtension { get; }
+    public IReadOnlyBindableReactiveProperty<bool> IsSortedByLastAccessTime { get; }
+    public IReadOnlyBindableReactiveProperty<bool> IsSortedByLastWriteTime { get; }
+    public IReadOnlyBindableReactiveProperty<bool> IsSortedByRandomization { get; }
+    public IReadOnlyBindableReactiveProperty<bool> IsAscending { get; }
+
+    private IReadOnlyBindableReactiveProperty<bool> IsSortedBy(SortFilesBy by) =>
+        _fileOrder.Select(order => order.By == by).ToReadOnlyBindableReactiveProperty();
+
+    /// <summary>
+    /// Sorts this window's files by <paramref name="sortOrder"/>: sets the window's File Order, which every tab of this
+    /// window follows, and no tab of another. Asked for Random again, the files are shuffled again.
+    /// </summary>
+    /// <returns>A task that ends once this window's tabs have sorted their files again.</returns>
+    public ValueTask SortAsync(SortFilesBy sortOrder)
     {
-        if (SharedNavigation is null)
-        {
-            return;
-        }
-        var tab = ActiveTab.Value;
-        var ct = tab.GetTabCancellation();
-        await SharedNavigation.SortAsync(tab, sortOrder, ct).ConfigureAwait(false);
-        SetSortOrder(sortOrder);
+        var order = _fileOrder.Value with { By = sortOrder };
+        return SortAsync(order, reshuffle: order == _fileOrder.Value && sortOrder is SortFilesBy.Random);
     }
-    
-    public void SetSortOrder(SortFilesBy sortOrder)
+
+    /// <summary>
+    /// Sorts this window's files ascending or descending: sets the window's File Order, as
+    /// <see cref="SortAsync(SortFilesBy)"/> does.
+    /// </summary>
+    /// <returns>A task that ends once this window's tabs have sorted their files again.</returns>
+    public ValueTask SortAsync(bool ascending) =>
+        SortAsync(_fileOrder.Value with { Ascending = ascending }, reshuffle: false);
+
+    private async ValueTask SortAsync(FileOrder order, bool reshuffle)
     {
-        // Using converters fails on macOS NativeMenu, so we have to do it manually
-        switch (sortOrder)
+        // Each tab that follows the order starts sorting as it is set, so asking it again joins that run
+        _fileOrder.Value = order;
+        foreach (var tab in Tabs.Value.ToArray())
         {
-            case SortFilesBy.Name:
-                IsSortedByName.Value = true;
-                IsSortedByFileSize.Value = false;
-                IsSortedByCreationTime.Value = false;
-                IsSortedByExtension.Value = false;
-                IsSortedByLastAccessTime.Value = false;
-                IsSortedByLastWriteTime.Value = false;
-                IsSortedByRandomization.Value = false;
-                break;
-            case SortFilesBy.FileSize:
-                IsSortedByName.Value = false;
-                IsSortedByFileSize.Value = true;
-                IsSortedByCreationTime.Value = false;
-                IsSortedByExtension.Value = false;
-                IsSortedByLastAccessTime.Value = false;
-                IsSortedByLastWriteTime.Value = false;
-                IsSortedByRandomization.Value = false;
-                break;
-            case SortFilesBy.CreationTime:
-                IsSortedByName.Value = false;
-                IsSortedByFileSize.Value = false;
-                IsSortedByCreationTime.Value = true;
-                IsSortedByExtension.Value = false;
-                IsSortedByLastAccessTime.Value = false;
-                IsSortedByLastWriteTime.Value = false;
-                IsSortedByRandomization.Value = false;
-                break;
-            case SortFilesBy.Extension:
-                IsSortedByName.Value = false;
-                IsSortedByFileSize.Value = false;
-                IsSortedByCreationTime.Value = false;
-                IsSortedByExtension.Value = true;
-                IsSortedByLastAccessTime.Value = false;
-                IsSortedByLastWriteTime.Value = false;
-                IsSortedByRandomization.Value = false;
-                break;
-            case SortFilesBy.LastAccessTime:
-                IsSortedByName.Value = false;
-                IsSortedByFileSize.Value = false;
-                IsSortedByCreationTime.Value = false;
-                IsSortedByExtension.Value = false;
-                IsSortedByLastAccessTime.Value = true;
-                IsSortedByLastWriteTime.Value = false;
-                IsSortedByRandomization.Value = false;
-                break;
-            case SortFilesBy.LastWriteTime:
-                IsSortedByName.Value = false;
-                IsSortedByFileSize.Value = false;
-                IsSortedByCreationTime.Value = false;
-                IsSortedByExtension.Value = false;
-                IsSortedByLastAccessTime.Value = false;
-                IsSortedByLastWriteTime.Value = true;
-                IsSortedByRandomization.Value = false;
-                break;
-            case SortFilesBy.Random:
-                IsSortedByName.Value = false;
-                IsSortedByFileSize.Value = false;
-                IsSortedByCreationTime.Value = false;
-                IsSortedByExtension.Value = false;
-                IsSortedByLastAccessTime.Value = false;
-                IsSortedByLastWriteTime.Value = false;
-                IsSortedByRandomization.Value = true;
-                break;
+            await tab.ResortAsync(reshuffle).ConfigureAwait(false);
         }
     }
-    
-    public async ValueTask SortAsync(bool ascending)
-    {
-        if (SharedNavigation is null)
-        {
-            return;
-        }
-        var tab = ActiveTab.Value;
-        var ct = tab.GetTabCancellation();
-        await SharedNavigation.SortAsync(tab, ascending, ct).ConfigureAwait(false);
-        IsAscending.Value = ascending;
-    }
-    
 
     #endregion
 

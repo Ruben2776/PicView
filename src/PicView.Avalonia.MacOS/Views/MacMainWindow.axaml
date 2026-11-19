@@ -432,7 +432,7 @@
                                 CommandParameter="{x:Static keybindings:Actions.SortFilesByName}"
                                 Header="{CompiledBinding Translation.FileName.Value,
                                                          Mode=OneWay}"
-                                IsChecked="{Binding WindowTabs.IsSortedByName.Value}"
+                                IsChecked="{Binding WindowTabs.IsSortedByName.Value, Mode=OneWay}"
                                 ToggleType="Radio" />
 
                             <!--  Sort files by size  -->
@@ -441,7 +441,7 @@
                                 CommandParameter="{x:Static keybindings:Actions.SortFilesBySize}"
                                 Header="{CompiledBinding Translation.FileSize.Value,
                                                          Mode=OneWay}"
-                                IsChecked="{Binding WindowTabs.IsSortedByFileSize.Value}"
+                                IsChecked="{Binding WindowTabs.IsSortedByFileSize.Value, Mode=OneWay}"
                                 ToggleType="Radio" />
 
                             <!--  Sort files by extension  -->
@@ -450,7 +450,7 @@
                                 CommandParameter="{x:Static keybindings:Actions.SortFilesByExtension}"
                                 Header="{CompiledBinding Translation.FileExtension.Value,
                                                          Mode=OneWay}"
-                                IsChecked="{Binding WindowTabs.IsSortedByExtension.Value}"
+                                IsChecked="{Binding WindowTabs.IsSortedByExtension.Value, Mode=OneWay}"
                                 ToggleType="Radio" />
 
                             <!--  Sort files by creation time  -->
@@ -459,7 +459,7 @@
                                 CommandParameter="{x:Static keybindings:Actions.SortFilesByCreationTime}"
                                 Header="{CompiledBinding Translation.Created.Value,
                                                          Mode=OneWay}"
-                                IsChecked="{Binding WindowTabs.IsSortedByCreationTime.Value}"
+                                IsChecked="{Binding WindowTabs.IsSortedByCreationTime.Value, Mode=OneWay}"
                                 ToggleType="Radio" />
 
                             <!--  Sort files by last access time  -->
@@ -468,7 +468,7 @@
                                 CommandParameter="{x:Static keybindings:Actions.SortFilesByLastAccessTime}"
                                 Header="{CompiledBinding Translation.LastAccessTime.Value,
                                                          Mode=OneWay}"
-                                IsChecked="{Binding WindowTabs.IsSortedByLastAccessTime.Value}"
+                                IsChecked="{Binding WindowTabs.IsSortedByLastAccessTime.Value, Mode=OneWay}"
                                 ToggleType="Radio" />
 
                             <!--  Sort files by last write time  -->
@@ -477,7 +477,7 @@
                                 CommandParameter="{x:Static keybindings:Actions.SortFilesByLastAccessTime}"
                                 Header="{CompiledBinding Translation.Modified.Value,
                                                          Mode=OneWay}"
-                                IsChecked="{Binding WindowTabs.IsSortedByLastWriteTime.Value}"
+                                IsChecked="{Binding WindowTabs.IsSortedByLastWriteTime.Value, Mode=OneWay}"
                                 ToggleType="Radio" />
 
                             <!--  Sort files randomly  -->
@@ -486,7 +486,7 @@
                                 CommandParameter="{x:Static keybindings:Actions.SortFilesRandomly}"
                                 Header="{CompiledBinding Translation.Random.Value,
                                                          Mode=OneWay}"
-                                IsChecked="{Binding WindowTabs.IsSortedByRandomization.Value}"
+                                IsChecked="{Binding WindowTabs.IsSortedByRandomization.Value, Mode=OneWay}"
                                 ToggleType="Radio" />
 
                             <NativeMenuItemSeparator />
@@ -497,7 +497,7 @@
                                 CommandParameter="{x:Static keybindings:Actions.SortFilesAscending}"
                                 Header="{CompiledBinding Translation.Ascending.Value,
                                                          Mode=OneWay}"
-                                IsChecked="{CompiledBinding WindowTabs.IsAscending.Value}"
+                                IsChecked="{CompiledBinding WindowTabs.IsAscending.Value, Mode=OneWay}"
                                 ToggleType="Radio" />
 
                             <!--  Sort files descending  -->
@@ -506,7 +506,7 @@
                                 CommandParameter="{x:Static keybindings:Actions.SortFilesDescending}"
                                 Header="{CompiledBinding Translation.Descending.Value,
                                                          Mode=OneWay}"
-                                IsChecked="{CompiledBinding !WindowTabs.IsAscending.Value}"
+                                IsChecked="{CompiledBinding !WindowTabs.IsAscending.Value, Mode=OneWay}"
                                 ToggleType="Radio" />
                         </NativeMenu>
                     </NativeMenuItem>

@@ -1,6 +1,4 @@
-using PicView.Core.DebugTools;
 using PicView.Core.FileSorting;
-using PicView.Core.Models;
 using PicView.Core.Navigation.Interfaces;
 using PicView.Core.ViewModels;
 
@@ -86,62 +84,6 @@ public class NavigationService(Func<string, string, int> stringComparer) : INavi
         if (nextArchive != null)
         {
             await tab.Load.LoadAsync(nextArchive).ConfigureAwait(false);
-        }
-    }
-
-    public async ValueTask SortAsync(TabViewModel tab, SortFilesBy sortOrder, CancellationTokenSource ct)
-    {
-        if (tab.CurrentWindowSettings.CurrentValue is { } settings)
-        {
-            settings.FileOrder.Value = settings.FileOrder.Value with { By = sortOrder };
-        }
-        await ApplySortAsync(tab, ct).ConfigureAwait(false);
-    }
-
-    public async ValueTask SortAsync(TabViewModel tab, bool ascending, CancellationTokenSource ct)
-    {
-        if (tab.CurrentWindowSettings.CurrentValue is { } settings)
-        {
-            settings.FileOrder.Value = settings.FileOrder.Value with { Ascending = ascending };
-        }
-        await ApplySortAsync(tab, ct).ConfigureAwait(false);
-    }
-
-    // The File Order is the tab's window's and set before this, so a tab without files to sort, such as a New Tab,
-    // changes nothing here
-    private async ValueTask ApplySortAsync(TabViewModel tab, CancellationTokenSource ct)
-    {
-        var iterator = tab.ImageIterator;
-        if (iterator is null || iterator.Files.Count <= 0)
-        {
-            return;
-        }
-
-        try
-        {
-            // Get current file to maintain position
-            var currentFile = tab.Model?.FileInfo;
-            if (currentFile is null)
-            {
-                return;
-            }
-
-            // Listed again in the tab's ordering, which has the new File Order
-            var ordering = tab.CurrentOrdering();
-            var newFiles = await Task.Run(() => FileListRetriever.RetrieveFiles(currentFile, ordering), ct.Token).ConfigureAwait(false);
-
-            if (newFiles.Count is 0)
-            {
-                return;
-            }
-
-            // Update files in iterator, keeping the position on the current file
-            // The titles and the gallery follow the sorted list by themselves
-            iterator.Initialize(newFiles, SideBySidePair.IndexOf(newFiles, currentFile) ?? -1, ordering);
-        }
-        catch (Exception e)
-        {
-            DebugHelper.LogDebug(nameof(NavigationService), nameof(ApplySortAsync), e);
         }
     }
 }

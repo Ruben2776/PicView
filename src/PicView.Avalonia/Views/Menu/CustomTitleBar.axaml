@@ -732,7 +732,7 @@
                             CommandParameter="{x:Static keybindings:Actions.SortFilesByName}"
                             GroupName="Sort"
                             Header="{Binding Translation.FileName.Value, Mode=OneWay}"
-                            IsChecked="{Binding WindowTabs.IsSortedByName.Value}"
+                            IsChecked="{Binding WindowTabs.IsSortedByName.Value, Mode=OneWay}"
                             Theme="{StaticResource MainBg}"
                             ToggleType="Radio" />
 
@@ -742,7 +742,7 @@
                             CommandParameter="{x:Static keybindings:Actions.SortFilesBySize}"
                             GroupName="Sort"
                             Header="{Binding Translation.FileSize.Value, Mode=OneWay}"
-                            IsChecked="{Binding WindowTabs.IsSortedByFileSize.Value}"
+                            IsChecked="{Binding WindowTabs.IsSortedByFileSize.Value, Mode=OneWay}"
                             Theme="{StaticResource MainBg}"
                             ToggleType="Radio" />
 
@@ -752,7 +752,7 @@
                             CommandParameter="{x:Static keybindings:Actions.SortFilesByExtension}"
                             GroupName="Sort"
                             Header="{Binding Translation.FileExtension.Value, Mode=OneWay}"
-                            IsChecked="{Binding WindowTabs.IsSortedByExtension.Value}"
+                            IsChecked="{Binding WindowTabs.IsSortedByExtension.Value, Mode=OneWay}"
                             Theme="{StaticResource MainBg}"
                             ToggleType="Radio" />
 
@@ -762,7 +762,7 @@
                             CommandParameter="{x:Static keybindings:Actions.SortFilesByCreationTime}"
                             GroupName="Sort"
                             Header="{Binding Translation.Created.Value, Mode=OneWay}"
-                            IsChecked="{Binding WindowTabs.IsSortedByCreationTime.Value}"
+                            IsChecked="{Binding WindowTabs.IsSortedByCreationTime.Value, Mode=OneWay}"
                             Theme="{StaticResource MainBg}"
                             ToggleType="Radio" />
 
@@ -772,7 +772,7 @@
                             CommandParameter="{x:Static keybindings:Actions.SortFilesByLastAccessTime}"
                             GroupName="Sort"
                             Header="{Binding Translation.LastAccessTime.Value, Mode=OneWay}"
-                            IsChecked="{Binding WindowTabs.IsSortedByLastAccessTime.Value}"
+                            IsChecked="{Binding WindowTabs.IsSortedByLastAccessTime.Value, Mode=OneWay}"
                             Theme="{StaticResource MainBg}"
                             ToggleType="Radio" />
 
@@ -782,7 +782,7 @@
                             CommandParameter="{x:Static keybindings:Actions.SortFilesByLastAccessTime}"
                             GroupName="Sort"
                             Header="{Binding Translation.Modified.Value, Mode=OneWay}"
-                            IsChecked="{Binding WindowTabs.IsSortedByLastWriteTime.Value}"
+                            IsChecked="{Binding WindowTabs.IsSortedByLastWriteTime.Value, Mode=OneWay}"
                             Theme="{StaticResource MainBg}"
                             ToggleType="Radio" />
 
@@ -792,7 +792,7 @@
                             CommandParameter="{x:Static keybindings:Actions.SortFilesRandomly}"
                             GroupName="Sort"
                             Header="{Binding Translation.Random.Value, Mode=OneWay}"
-                            IsChecked="{Binding WindowTabs.IsSortedByRandomization.Value}"
+                            IsChecked="{Binding WindowTabs.IsSortedByRandomization.Value, Mode=OneWay}"
                             Theme="{StaticResource MainBg}"
                             ToggleType="Radio" />
 
@@ -802,7 +802,7 @@
                             CommandParameter="{x:Static keybindings:Actions.SortFilesAscending}"
                             GroupName="Order"
                             Header="{Binding Translation.Ascending.Value, Mode=OneWay}"
-                            IsChecked="{Binding WindowTabs.IsAscending.Value}"
+                            IsChecked="{Binding WindowTabs.IsAscending.Value, Mode=OneWay}"
                             Theme="{StaticResource MainBg}"
                             ToggleType="Radio" />
 
@@ -812,7 +812,7 @@
                             CommandParameter="{x:Static keybindings:Actions.SortFilesDescending}"
                             GroupName="Order"
                             Header="{Binding Translation.Descending.Value, Mode=OneWay}"
-                            IsChecked="{Binding !WindowTabs.IsAscending.Value}"
+                            IsChecked="{Binding !WindowTabs.IsAscending.Value, Mode=OneWay}"
                             Theme="{StaticResource MainBg}"
                             ToggleType="Radio" />
 

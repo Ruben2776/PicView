@@ -116,7 +116,7 @@
                     GroupName="SortType"
                     Header="{CompiledBinding Translation.FileName.Value,
                                              Mode=OneWay}"
-                    IsChecked="{Binding WindowTabs.IsSortedByName.Value}"
+                    IsChecked="{Binding WindowTabs.IsSortedByName.Value, Mode=OneWay}"
                     ToggleType="Radio" />
 
                 <!--  Sort files by size  -->
@@ -126,7 +126,7 @@
                     GroupName="SortType"
                     Header="{CompiledBinding Translation.FileSize.Value,
                                              Mode=OneWay}"
-                    IsChecked="{Binding WindowTabs.IsSortedByFileSize.Value}"
+                    IsChecked="{Binding WindowTabs.IsSortedByFileSize.Value, Mode=OneWay}"
                     ToggleType="Radio" />
 
                 <!--  Sort files by extension  -->
@@ -136,7 +136,7 @@
                     GroupName="SortType"
                     Header="{CompiledBinding Translation.FileExtension.Value,
                                              Mode=OneWay}"
-                    IsChecked="{Binding WindowTabs.IsSortedByExtension.Value}"
+                    IsChecked="{Binding WindowTabs.IsSortedByExtension.Value, Mode=OneWay}"
                     ToggleType="Radio" />
 
                 <!--  Sort files by creation time  -->
@@ -146,7 +146,7 @@
                     GroupName="SortType"
                     Header="{CompiledBinding Translation.Created.Value,
                                              Mode=OneWay}"
-                    IsChecked="{Binding WindowTabs.IsSortedByCreationTime.Value}"
+                    IsChecked="{Binding WindowTabs.IsSortedByCreationTime.Value, Mode=OneWay}"
                     ToggleType="Radio" />
 
                 <!--  Sort files by last access time  -->
@@ -156,7 +156,7 @@
                     GroupName="SortType"
                     Header="{CompiledBinding Translation.LastAccessTime.Value,
                                              Mode=OneWay}"
-                    IsChecked="{Binding WindowTabs.IsSortedByLastAccessTime.Value}"
+                    IsChecked="{Binding WindowTabs.IsSortedByLastAccessTime.Value, Mode=OneWay}"
                     ToggleType="Radio" />
 
                 <!--  Sort files by last write time  -->
@@ -166,7 +166,7 @@
                     GroupName="SortType"
                     Header="{CompiledBinding Translation.Modified.Value,
                                              Mode=OneWay}"
-                    IsChecked="{Binding WindowTabs.IsSortedByLastWriteTime.Value}"
+                    IsChecked="{Binding WindowTabs.IsSortedByLastWriteTime.Value, Mode=OneWay}"
                     ToggleType="Radio" />
 
                 <!--  Sort files randomly  -->
@@ -176,7 +176,7 @@
                     GroupName="SortType"
                     Header="{CompiledBinding Translation.Random.Value,
                                              Mode=OneWay}"
-                    IsChecked="{Binding WindowTabs.IsSortedByRandomization.Value}"
+                    IsChecked="{Binding WindowTabs.IsSortedByRandomization.Value, Mode=OneWay}"
                     ToggleType="Radio" />
 
                 <Separator />
@@ -188,7 +188,7 @@
                     GroupName="SortDirection"
                     Header="{CompiledBinding Translation.Ascending.Value,
                                              Mode=OneWay}"
-                    IsChecked="{CompiledBinding WindowTabs.IsAscending.Value}"
+                    IsChecked="{CompiledBinding WindowTabs.IsAscending.Value, Mode=OneWay}"
                     ToggleType="Radio" />
 
                 <!--  Sort files descending  -->
@@ -198,7 +198,7 @@
                     GroupName="SortDirection"
                     Header="{CompiledBinding Translation.Descending.Value,
                                              Mode=OneWay}"
-                    IsChecked="{CompiledBinding !WindowTabs.IsAscending.Value}"
+                    IsChecked="{CompiledBinding !WindowTabs.IsAscending.Value, Mode=OneWay}"
                     ToggleType="Radio" />
             </customControls:StyledMenuItem>
 

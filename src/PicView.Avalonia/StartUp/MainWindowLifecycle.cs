@@ -13,7 +13,6 @@ using PicView.Avalonia.Navigation;
 using PicView.Avalonia.Services;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.WindowBehavior;
-using PicView.Core.FileSorting;
 using PicView.Core.Navigation;
 using PicView.Core.ViewModels;
 using R3;
@@ -399,11 +398,7 @@ public sealed class MainWindowLifecycle
         window.WindowModeSwitcher.Start(isAppStart);
         window.Disposables.Add(FollowSettings(window));
 
-        var settingUp = Task.Run(() =>
-        {
-            vm.ActionRunner = new FunctionsMapper(vm, window);
-            vm.WindowTabs.SetSortOrder((SortFilesBy)Settings.Sorting.SortPreference);
-        });
+        var settingUp = Task.Run(() => vm.ActionRunner = new FunctionsMapper(vm, window));
 
         AddInputHandlers(window);
         Dispatcher.UIThread.Post(() =>

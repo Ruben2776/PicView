@@ -1,9 +1,12 @@
+using System.Collections.Concurrent;
 using ImageMagick;
+using PicView.Core.FileSorting;
 using PicView.Core.IPlatform;
 using PicView.Core.Localization;
 using PicView.Core.Models;
 using PicView.Core.Navigation;
 using PicView.Core.Navigation.Interfaces;
+using PicView.Core.Titles;
 using PicView.Core.ViewModels;
 using R3;
 
@@ -13,15 +16,37 @@ namespace PicView.Tests.Navigation;
 /// Pins which Main Window a tab belongs to, observed through each window's <see cref="TabOverviewViewModel"/>.
 /// </summary>
 [Collection("Sequential")]
-public class TabOwnershipTests
+public class TabOwnershipTests : IDisposable
 {
     private readonly CoreViewModel _core;
+
+    // The files the shared cache decoded, shown or ahead of the shown one
+    private readonly ConcurrentQueue<string> _decoded = new();
+
+    // A folder of the test's own, for the tests whose tabs browse files
+    private readonly string _folder = Path.Combine(Path.GetTempPath(), "PicViewTabOwnershipTests_" + Guid.NewGuid());
+
+    // The files CreateFiles writes, by name and by size
+    private static readonly string[] ByName = ["a.jpg", "b.jpg", "c.jpg", "d.jpg"];
+    private static readonly string[] BySize = ["b.jpg", "d.jpg", "c.jpg", "a.jpg"];
 
     public TabOwnershipTests()
     {
         SetDefaults();
         TranslationManager.Init();
-        _core = new CoreViewModel(null, _ => ValueTask.FromResult(new ImageModel()));
+        _core = new CoreViewModel(null, file =>
+        {
+            _decoded.Enqueue(file.Name);
+            return ValueTask.FromResult(new ImageModel { FileInfo = file });
+        });
+    }
+
+    public void Dispose()
+    {
+        if (Directory.Exists(_folder))
+        {
+            Directory.Delete(_folder, true);
+        }
     }
 
     [Fact]
@@ -438,11 +463,353 @@ public class TabOwnershipTests
         Assert.Equal([tab], factory.Attached);
     }
 
+    [Fact]
+    public async Task Sort_InOneWindow_ResortsEveryTabOfThatWindow_AndNoTabOfTheOther()
+    {
+        ComposeServices();
+        CreateFiles();
+        var sorted = CreateWindow();
+        var other = CreateWindow();
+        var first = sorted.WindowTabs.ActiveTab.Value;
+        var second = sorted.WindowTabs.CreateTab();
+        var otherTab = other.WindowTabs.ActiveTab.Value;
+        await OpenAsync(first, "a.jpg");
+        await OpenAsync(second, "c.jpg");
+        await OpenAsync(otherTab, "a.jpg");
+
+        await sorted.WindowTabs.SortAsync(SortFilesBy.FileSize);
+
+        Assert.Equal(BySize, NamesOf(first));
+        Assert.Equal(BySize, NamesOf(second));
+        Assert.Equal(ByName, NamesOf(otherTab));
+        Assert.Equal(new FileOrder(SortFilesBy.Name, true), other.WindowSettings.FileOrder.Value);
+    }
+
+    [Fact]
+    public async Task Sort_KeepsEachTabsShownFile()
+    {
+        ComposeServices();
+        CreateFiles();
+        var window = CreateWindow();
+        var first = window.WindowTabs.ActiveTab.Value;
+        var second = window.WindowTabs.CreateTab();
+        await OpenAsync(first, "a.jpg");
+        await OpenAsync(second, "c.jpg");
+
+        await window.WindowTabs.SortAsync(SortFilesBy.FileSize);
+
+        Assert.Equal(BySize, NamesOf(first));
+        Assert.Equal("a.jpg", first.FileInfo.CurrentValue?.Name);
+        Assert.Equal("a.jpg", ListedAtShownIndex(first));
+        Assert.Equal(3, first.NavigationIndex.CurrentValue);
+        Assert.Equal(BySize, NamesOf(second));
+        Assert.Equal("c.jpg", second.FileInfo.CurrentValue?.Name);
+        Assert.Equal("c.jpg", ListedAtShownIndex(second));
+        Assert.Equal(2, second.NavigationIndex.CurrentValue);
+    }
+
+    [Fact]
+    public async Task Sort_TabWithoutFiles_FreshTab_AndSingleImage_DoNothing_AndTheNextLoadUsesTheWindowsOrder()
+    {
+        ComposeServices();
+        CreateFiles();
+        var window = CreateWindow();
+        var fresh = window.WindowTabs.ActiveTab.Value;
+        var withoutFiles = window.WindowTabs.CreateTab();
+        withoutFiles.Initialize();
+        var single = window.WindowTabs.CreateTab();
+        await OpenAsync(single, "a.jpg");
+        var listed = single.ImageIterator!.Files;
+        // The active tab, so a sort that lists the active tab's folder again would list its files
+        single.DisplaySingleImage(new ImageModel { FileInfo = new FileInfo(PathOf("c.jpg")) },
+            SingleImageType.Clipboard);
+
+        await window.WindowTabs.SortAsync(SortFilesBy.FileSize);
+
+        Assert.Null(fresh.ImageIterator);
+        Assert.Empty(withoutFiles.ImageIterator!.Files);
+        Assert.Same(listed, single.ImageIterator!.Files);
+
+        await OpenAsync(fresh, "a.jpg");
+        await OpenAsync(withoutFiles, "a.jpg");
+        // Showing a file of its list again steps to it there, and the list takes the window's order then
+        await OpenAsync(single, "a.jpg");
+        await single.Resorting;
+
+        Assert.Equal(BySize, NamesOf(fresh));
+        Assert.Equal(BySize, NamesOf(withoutFiles));
+        Assert.Equal(BySize, NamesOf(single));
+    }
+
+    [Fact]
+    public async Task Sort_ChangedAgainWhileTheTabsResort_EndsInTheLatestOrder()
+    {
+        ComposeServices();
+        CreateFiles();
+        var window = CreateWindow();
+        var first = window.WindowTabs.ActiveTab.Value;
+        var second = window.WindowTabs.CreateTab();
+        await OpenAsync(first, "a.jpg");
+        await OpenAsync(second, "c.jpg");
+
+        var bySize = window.WindowTabs.SortAsync(SortFilesBy.FileSize).AsTask();
+        var descending = window.WindowTabs.SortAsync(ascending: false).AsTask();
+        await Task.WhenAll(bySize, descending);
+
+        Assert.Equal(BySize.Reverse(), NamesOf(first));
+        Assert.Equal(BySize.Reverse(), NamesOf(second));
+        Assert.Equal("a.jpg", ListedAtShownIndex(first));
+        Assert.Equal("c.jpg", ListedAtShownIndex(second));
+    }
+
+    [Fact]
+    public async Task Sort_SideBySide_ShowsThePairAtTheShownFilesNewPlace()
+    {
+        ComposeServices();
+        _core.Services!.GlobalSettings.IsSideBySide.Value = true;
+        CreateFiles();
+        var window = CreateWindow();
+        var tab = window.WindowTabs.ActiveTab.Value;
+        await OpenAsync(tab, "b.jpg");
+        Assert.Equal("c.jpg", tab.SecondaryFileInfo.CurrentValue?.Name);
+
+        await window.WindowTabs.SortAsync(SortFilesBy.FileSize);
+
+        // b is first by size, beside d
+        Assert.Equal("b.jpg", tab.FileInfo.CurrentValue?.Name);
+        Assert.Equal("d.jpg", tab.SecondaryFileInfo.CurrentValue?.Name);
+        Assert.Equal("d.jpg", tab.SecondaryModel?.FileInfo?.Name);
+        Assert.Equal(TitlePhase.None, tab.Titles.Phase);
+    }
+
+    [Fact]
+    public async Task Sort_WithoutSideBySide_ShowsNothingAgain()
+    {
+        ComposeServices();
+        CreateFiles();
+        var window = CreateWindow();
+        var tab = window.WindowTabs.ActiveTab.Value;
+        await OpenAsync(tab, "b.jpg");
+        var shown = tab.Model;
+        var shownChanges = new List<ShownChange>();
+        using var _ = tab.Shown.Subscribe(shownChanges.Add);
+
+        await window.WindowTabs.SortAsync(SortFilesBy.FileSize);
+
+        Assert.Same(shown, tab.Model);
+        Assert.Empty(shownChanges);
+        Assert.Equal(TitlePhase.None, tab.Titles.Phase);
+    }
+
+    [Fact]
+    public async Task Sort_PreloadsTheShownFilesNewNeighbours()
+    {
+        Settings.Navigation.PositiveIterations = 1;
+        Settings.Navigation.NegativeIterations = 0;
+        ComposeServices();
+        // By name a is first and b after it; by size e comes after a
+        CreateFiles(("a.jpg", 20), ("b.jpg", 10), ("c.jpg", 30), ("d.jpg", 40), ("e.jpg", 25));
+        var window = CreateWindow();
+        var tab = window.WindowTabs.ActiveTab.Value;
+        await OpenAsync(tab, "a.jpg");
+        await WaitUntilAsync(() => _decoded.Contains("b.jpg"));
+        Assert.DoesNotContain("e.jpg", _decoded);
+
+        await window.WindowTabs.SortAsync(SortFilesBy.FileSize);
+
+        Assert.Equal(["b.jpg", "a.jpg", "e.jpg", "c.jpg", "d.jpg"], NamesOf(tab));
+        await WaitUntilAsync(() => _decoded.Contains("e.jpg"));
+    }
+
+    [Fact]
+    public async Task MoveTab_ToAWindowWithAnotherOrder_ResortsItOnce_AndKeepsItsShownFile()
+    {
+        ComposeServices();
+        CreateFiles();
+        var source = CreateWindow();
+        var target = CreateWindow();
+        await target.WindowTabs.SortAsync(SortFilesBy.FileSize);
+        var tab = source.WindowTabs.CreateTab();
+        var changes = new ConcurrentQueue<FileListChange>();
+        tab.Initialize(changes.Enqueue);
+        await OpenAsync(tab, "c.jpg");
+        changes.Clear();
+
+        source.WindowTabs.MoveTab(tab, target.WindowTabs);
+        await tab.Resorting;
+
+        Assert.Equal(BySize, NamesOf(tab));
+        Assert.Equal(FileListChangeKind.Listed, Assert.Single(changes).Kind);
+        Assert.Equal("c.jpg", tab.FileInfo.CurrentValue?.Name);
+        Assert.Equal("c.jpg", ListedAtShownIndex(tab));
+    }
+
+    [Fact]
+    public async Task MoveTab_ToAWindowWithTheSameOrder_ReportsNoListedChange()
+    {
+        ComposeServices();
+        CreateFiles();
+        var source = CreateWindow();
+        var target = CreateWindow();
+        var tab = source.WindowTabs.CreateTab();
+        var changes = new ConcurrentQueue<FileListChange>();
+        tab.Initialize(changes.Enqueue);
+        await OpenAsync(tab, "c.jpg");
+        var listed = tab.ImageIterator!.Files;
+        changes.Clear();
+
+        source.WindowTabs.MoveTab(tab, target.WindowTabs);
+        await tab.Resorting;
+
+        Assert.Empty(changes);
+        Assert.Same(listed, tab.ImageIterator.Files);
+    }
+
+    [Fact]
+    public async Task MoveOut_IntoANewWindow_TheTabFollowsThatWindowsOrder()
+    {
+        ComposeServices();
+        CreateFiles();
+        var source = CreateWindow();
+        var tab = source.WindowTabs.CreateTab();
+        await OpenAsync(tab, "c.jpg");
+        source.WindowTabs.MoveOut(tab);
+        var settings = WindowSettings.FromRecord(Settings);
+        settings.FileOrder.Value = new FileOrder(SortFilesBy.FileSize, true);
+
+        var window = CreateWindow(firstTab: tab, windowSettings: settings);
+        await tab.Resorting;
+
+        Assert.Equal(BySize, NamesOf(tab));
+        Assert.Equal("c.jpg", ListedAtShownIndex(tab));
+
+        // Its old window's order is no longer its own
+        source.WindowSettings.FileOrder.Value = new FileOrder(SortFilesBy.Name, false);
+        await tab.Resorting;
+        Assert.Equal(BySize, NamesOf(tab));
+
+        window.WindowSettings.FileOrder.Value = new FileOrder(SortFilesBy.FileSize, false);
+        await tab.Resorting;
+        Assert.Equal(BySize.Reverse(), NamesOf(tab));
+    }
+
+    [Fact]
+    public async Task MoveTab_ThenTheSourceWindowCloses_ThrowsNothing()
+    {
+        ComposeServices();
+        CreateFiles();
+        var source = CreateWindow();
+        var target = CreateWindow();
+        var moved = source.WindowTabs.CreateTab();
+        await OpenAsync(moved, "c.jpg");
+        // Taken out for a new window that has not opened yet, so it still has its old window's settings
+        var takenOut = source.WindowTabs.CreateTab();
+        source.WindowTabs.MoveOut(takenOut);
+        source.WindowTabs.MoveTab(moved, target.WindowTabs);
+
+        // As the window closes: its tabs first, then its settings
+        source.WindowTabs.TearDown();
+        source.WindowSettings.Dispose();
+        var thrown = await Record.ExceptionAsync(async () =>
+        {
+            await target.WindowTabs.SortAsync(SortFilesBy.FileSize);
+            await OpenAsync(takenOut, "a.jpg");
+            CreateWindow(firstTab: takenOut);
+            await takenOut.Resorting;
+        });
+
+        Assert.Null(thrown);
+        Assert.Equal(BySize, NamesOf(moved));
+        Assert.Equal(ByName, NamesOf(takenOut));
+    }
+
+    [Fact]
+    public async Task CheckMarks_DeriveFromTheWindowsFileOrder()
+    {
+        Settings.Sorting.SortPreference = (int)SortFilesBy.FileSize;
+        Settings.Sorting.Ascending = false;
+        var tabs = CreateWindow().WindowTabs;
+
+        Assert.Equal([false, true, false, false, false, false, false], CheckMarksOf(tabs));
+        Assert.False(tabs.IsAscending.Value);
+
+        await tabs.SortAsync(SortFilesBy.Random);
+        await tabs.SortAsync(ascending: true);
+
+        Assert.Equal([false, false, false, false, false, false, true], CheckMarksOf(tabs));
+        Assert.True(tabs.IsAscending.Value);
+    }
+
+    [Fact]
+    public async Task CheckMarks_AreNotSharedBetweenWindows()
+    {
+        var sorted = CreateWindow();
+        var other = CreateWindow();
+
+        await sorted.WindowTabs.SortAsync(SortFilesBy.LastWriteTime);
+        await sorted.WindowTabs.SortAsync(ascending: false);
+
+        Assert.Equal([false, false, false, false, false, true, false], CheckMarksOf(sorted.WindowTabs));
+        Assert.False(sorted.WindowTabs.IsAscending.Value);
+        Assert.Equal([true, false, false, false, false, false, false], CheckMarksOf(other.WindowTabs));
+        Assert.True(other.WindowTabs.IsAscending.Value);
+    }
+
+    // Name, FileSize, CreationTime, Extension, LastAccessTime, LastWriteTime, Randomization
+    private static bool[] CheckMarksOf(TabOverviewViewModel tabs) =>
+    [
+        tabs.IsSortedByName.Value, tabs.IsSortedByFileSize.Value, tabs.IsSortedByCreationTime.Value,
+        tabs.IsSortedByExtension.Value, tabs.IsSortedByLastAccessTime.Value, tabs.IsSortedByLastWriteTime.Value,
+        tabs.IsSortedByRandomization.Value
+    ];
+
+    // The tabs' services, which their Load lists the folder with in their window's order
+    private void ComposeServices() =>
+        _core.InitializeNavigation(TestTabServices.For(_core.SharedCache), new NavigationService(string.CompareOrdinal));
+
+    // Files whose order by size differs from their order by name: ByName and BySize, unless others are given
+    private void CreateFiles(params (string Name, int Size)[] files)
+    {
+        Directory.CreateDirectory(_folder);
+        if (files.Length is 0)
+        {
+            files = [("a.jpg", 30), ("b.jpg", 10), ("c.jpg", 20), ("d.jpg", 15)];
+        }
+
+        foreach (var (name, size) in files)
+        {
+            File.WriteAllBytes(PathOf(name), new byte[size]);
+        }
+    }
+
+    private string PathOf(string name) => Path.Combine(_folder, name);
+
+    private async Task OpenAsync(TabViewModel tab, string name)
+    {
+        var result = await tab.Load.LoadAsync(PathOf(name));
+        Assert.True(result.IsLoaded);
+    }
+
+    private static string[] NamesOf(TabViewModel tab) => tab.ImageIterator!.Files.Select(f => f.Name).ToArray();
+
+    private static string ListedAtShownIndex(TabViewModel tab) =>
+        tab.ImageIterator!.Files[tab.ImageIterator.CurrentIndex].Name;
+
+    private static async Task WaitUntilAsync(Func<bool> condition)
+    {
+        var deadline = DateTime.UtcNow + TimeSpan.FromSeconds(10);
+        while (!condition())
+        {
+            Assert.True(DateTime.UtcNow < deadline, "Timed out waiting");
+            await Task.Delay(20, TestContext.Current.CancellationToken);
+        }
+    }
+
     private MainWindowViewModel CreateWindow(ITabHookups? hookups = null, TabViewModel? firstTab = null,
-        ITabViewFactory? viewFactory = null)
+        ITabViewFactory? viewFactory = null, WindowSettings? windowSettings = null)
     {
         var vm = new MainWindowViewModel(_core, _core.Translation, _core.GlobalSettings!, _core.GallerySettings,
-            firstTab);
+            firstTab, windowSettings);
         if (hookups is not null)
         {
             vm.WindowTabs.SetHookups(hookups);
