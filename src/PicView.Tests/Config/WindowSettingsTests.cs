@@ -86,6 +86,39 @@ public class WindowSettingsTests
     }
 
     [Fact]
+    public void Store_WritesTheGalleryValues()
+    {
+        var record = GetDefaults();
+        record.Gallery = null;
+        using var settings = WindowSettings.FromRecord(GetDefaults());
+        settings.Gallery.DockPosition.Value = Core.Gallery.GalleryDockPosition.Left;
+        settings.Gallery.StartsDocked.Value = true;
+
+        settings.Store(record, default);
+
+        Assert.Equal(Core.Gallery.GalleryDockPosition.Left, record.Gallery!.DockPosition);
+        Assert.True(record.Gallery.IsGalleryDocked);
+    }
+
+    [Fact]
+    public void CopyFor_CopiesTheGalleryValues()
+    {
+        using var opener = WindowSettings.FromRecord(GetDefaults());
+        opener.Gallery.DockPosition.Value = Core.Gallery.GalleryDockPosition.Top;
+        opener.Gallery.StartsDocked.Value = true;
+
+        using var copy = opener.CopyFor(default);
+        Assert.Equal(Core.Gallery.GalleryDockPosition.Top, copy.Gallery.DockPosition.Value);
+        Assert.True(copy.Gallery.StartsDocked.Value);
+        copy.Gallery.DockPosition.Value = Core.Gallery.GalleryDockPosition.Right;
+        Assert.Equal(Core.Gallery.GalleryDockPosition.Top, opener.Gallery.DockPosition.Value);
+
+        opener.Dispose();
+        Assert.True(opener.Gallery.IsDisposed);
+        Assert.False(copy.Gallery.IsDisposed);
+    }
+
+    [Fact]
     public void FromRecord_ReadsTheFileOrder()
     {
         var record = GetDefaults();

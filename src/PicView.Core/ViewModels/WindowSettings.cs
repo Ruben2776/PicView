@@ -28,9 +28,10 @@ public sealed class WindowSettings : IDisposable
     private readonly TranslationViewModel? _translations;
 
     private WindowSettings(bool isTopMost, bool isStayingCentered, RememberedWindowMode startingMode, NormalBounds bounds, FileOrder fileOrder,
-        Display display, TranslationViewModel? translations)
+        Display display, WindowGallerySettings gallery, TranslationViewModel? translations)
     {
         _translations = translations;
+        Gallery = gallery;
         IsSideBySide = new BindableReactiveProperty<bool>(display.IsSideBySide);
         IsLooping = new BindableReactiveProperty<bool>(display.IsLooping);
         IsZoomedToFit = new BindableReactiveProperty<bool>(display.IsZoomedToFit);
@@ -59,6 +60,11 @@ public sealed class WindowSettings : IDisposable
     }
 
     public BindableReactiveProperty<bool> IsTopMost { get; }
+
+    /// <summary>
+    /// This window's gallery look, dock edge and start-docked choice.
+    /// </summary>
+    public WindowGallerySettings Gallery { get; }
 
     /// <summary>
     /// Whether the window closed and disposed these settings: reading still works, and nothing may subscribe to them.
@@ -144,7 +150,7 @@ public sealed class WindowSettings : IDisposable
             FileSorting.FileOrder.FromRecord(record?.Sorting),
             new Display(scaling.ShowImageSideBySide, ui.Looping, scaling.ZoomToFit, zoom.ScrollEnabled, ui.ShowInterface,
                 ui.ShowBottomNavBar, ui.ShowHoverNavigationBar, ui.BgColorChoice, ui.IsConstrainBackgroundColorEnabled),
-            translations);
+            WindowGallerySettings.FromRecord(record?.Gallery), translations);
     }
 
     /// <summary>
@@ -166,7 +172,7 @@ public sealed class WindowSettings : IDisposable
             new Display(IsSideBySide.Value, IsLooping.Value, IsZoomedToFit.Value, IsScrollingEnabled.Value,
                 ShowInterface.Value, ShowBottomBar.Value, ShowHoverBar.Value, BackgroundChoice.Value,
                 IsConstrainingBackgroundColor.Value),
-            _translations);
+            Gallery.Copy(), _translations);
 
     public void Store(AppSettings record, RememberedWindowMode remembered)
     {
@@ -194,11 +200,13 @@ public sealed class WindowSettings : IDisposable
         scaling.ShowImageSideBySide = IsSideBySide.Value;
         scaling.ZoomToFit = IsZoomedToFit.Value;
         (record.Zoom ??= new Zoom()).ScrollEnabled = IsScrollingEnabled.Value;
+        Gallery.StoreTo(record.Gallery ??= new Config.Gallery());
     }
 
     public void Dispose()
     {
         _isDisposed = true;
+        Gallery.Dispose();
         IsTopMost.Dispose();
         IsStayingCentered.Dispose();
         FileOrder.Dispose();
