@@ -937,7 +937,8 @@ public class TabLoadTests : IDisposable
     }
 
     [Theory]
-    // Descending, the second volume's last page is the start page, extracted first
+    // Descending, the second volume's last page is the start page; ascending, the second volume's first page is opened.
+    // Either way the start page is extracted first and is not the entry first in key order
     [InlineData(false, null)]
     [InlineData(true, "Volume 02/001.jpg")]
     public async Task LoadAsync_SameNamedPagesInDifferentFolders_KeepTheEntriesOrderOnDisk(bool ascending,

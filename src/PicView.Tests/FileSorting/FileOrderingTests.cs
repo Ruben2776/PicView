@@ -267,6 +267,29 @@ public class FileOrderingTests : IDisposable
         Assert.Equal(0, ordering.Compare(first, first));
     }
 
+    [Theory]
+    [InlineData(SortFilesBy.Name, true)]
+    [InlineData(SortFilesBy.Name, false)]
+    [InlineData(SortFilesBy.FileSize, true)]
+    [InlineData(SortFilesBy.FileSize, false)]
+    public void Compare_EntriesAndFilesWithNamesTheComparisonCallsEqual_Agree(SortFilesBy field, bool ascending)
+    {
+        // A natural comparison can call 01.jpg and 1.jpg equal. The keys are in the other order from the names, so an
+        // entry that ended on its key would not be where its flat-extracted file is
+        var ordering = new FileOrdering(new FileOrder(field, ascending), (_, _) => 0);
+        var entries = new List<ArchiveEntryOrderKey>
+        {
+            new("1.jpg", "a/1.jpg", 0, null),
+            new("01.jpg", "b/01.jpg", 0, null)
+        };
+        var files = entries.Select(e => new FileInfo(Path.Combine(_folder, e.Name))).ToArray();
+
+        entries.Sort((x, y) => ordering.Compare(x, y));
+        var sortedFiles = ordering.Sort(files);
+
+        Assert.Equal(Names(sortedFiles), entries.Select(e => e.Name));
+    }
+
     [Fact]
     public void CompareNames_AppliesTheDirection()
     {

@@ -1000,6 +1000,102 @@ public class ArchiveExtractionServiceTests
         }
     }
 
+    [Fact]
+    public async Task PrepareArchiveAsync_LocalExtraction_OnePageThatCannotBeMoved_OpensTheRest()
+    {
+        // Each folder's name fits, but with the folders in the flat name it is longer than one file name can be
+        var tooLong = $"{new string('x', 130)}/{new string('y', 130)}/c.jpg";
+        var archivePath = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}.7z");
+        await File.WriteAllBytesAsync(archivePath, [], TestContext.Current.CancellationToken);
+        var service = new ArchiveExtractionService();
+        try
+        {
+            var prep = await service.PrepareArchiveAsync(archivePath, (_, destination) =>
+            {
+                foreach (var entry in new[] { "a.jpg", "b.jpg", tooLong })
+                {
+                    var path = Path.Combine(destination, entry);
+                    Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+                    File.WriteAllBytes(path, [0xFF, 0xD8, 0xFF]);
+                }
+                return Task.FromResult(true);
+            }, TestOrderings.ByName(NaturalCompare));
+
+            Assert.NotNull(prep);
+            Assert.Equal(["a.jpg", "b.jpg"], prep.Value.EntryKeys.Select(Path.GetFileName));
+            Assert.All(prep.Value.EntryKeys, file => Assert.True(File.Exists(file)));
+        }
+        finally
+        {
+            service.Cleanup();
+            File.Delete(archivePath);
+        }
+    }
+
+    [Fact]
+    public async Task ExtractEntryAsync_EntryThePreparationGaveNoName_IsLeftOut()
+    {
+        // Not a page, so the preparation names it nothing; a name it found free could be one kept for a page
+        var zipPath = CreateZipWithEntries("a.jpg", "notes.txt");
+        var service = new ArchiveExtractionService();
+        try
+        {
+            var prep = await service.PrepareArchiveAsync(zipPath, (_, _) => Task.FromResult(false),
+                TestOrderings.ByName(NaturalCompare));
+            Assert.Equal(["a.jpg"], prep!.Value.EntryKeys);
+
+            var path = await service.ExtractEntryAsync(zipPath, "notes.txt", TestContext.Current.CancellationToken);
+
+            Assert.Null(path);
+            Assert.False(File.Exists(Path.Combine(prep.Value.TempDirectory, "notes.txt")));
+        }
+        finally
+        {
+            service.Cleanup();
+            File.Delete(zipPath);
+        }
+    }
+
+    [Fact]
+    public async Task PrepareArchiveAsync_LocalExtraction_LeftoverTreeCannotBeDeleted_StillOpens()
+    {
+        var archivePath = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}.7z");
+        await File.WriteAllBytesAsync(archivePath, [], TestContext.Current.CancellationToken);
+        var service = new ArchiveExtractionService();
+        string? folder = null;
+        try
+        {
+            var prep = await service.PrepareArchiveAsync(archivePath, (_, destination) =>
+            {
+                folder = destination;
+                File.WriteAllBytes(Path.Combine(destination, "a.jpg"), [0xFF, 0xD8, 0xFF]);
+                File.WriteAllBytes(Path.Combine(destination, "b.jpg"), [0xFF, 0xD8, 0xFF]);
+                // Not a page, so it stays in the tree that is deleted once the pages are moved out
+                var readOnly = Path.Combine(destination, "extras", "readme.txt");
+                Directory.CreateDirectory(Path.GetDirectoryName(readOnly)!);
+                File.WriteAllText(readOnly, "read only");
+                File.SetAttributes(readOnly, FileAttributes.ReadOnly);
+                return Task.FromResult(true);
+            }, TestOrderings.ByName(NaturalCompare));
+
+            Assert.NotNull(prep);
+            Assert.Equal(["a.jpg", "b.jpg"], prep.Value.EntryKeys.Select(Path.GetFileName));
+        }
+        finally
+        {
+            service.Cleanup();
+            File.Delete(archivePath);
+            if (folder is not null && Directory.Exists(folder))
+            {
+                foreach (var file in Directory.EnumerateFiles(folder, "*", SearchOption.AllDirectories))
+                {
+                    File.SetAttributes(file, FileAttributes.Normal);
+                }
+                Directory.Delete(folder, true);
+            }
+        }
+    }
+
     [Theory]
     [InlineData(false)]
     [InlineData(true)]

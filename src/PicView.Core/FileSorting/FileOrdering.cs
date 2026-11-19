@@ -47,6 +47,13 @@ public sealed class FileOrdering(FileOrder order, Func<string, string, int> comp
             result = compareNames(a.Name, b.Name);
         }
 
+        // The name is the flat name the entry is extracted under, so this ends as its file does, on the path in one
+        // folder, where the name comparison calls two names equal, as a natural one can 01.jpg and 1.jpg
+        if (result == 0)
+        {
+            result = string.CompareOrdinal(a.Name, b.Name);
+        }
+
         if (result == 0)
         {
             result = string.CompareOrdinal(a.Key, b.Key);

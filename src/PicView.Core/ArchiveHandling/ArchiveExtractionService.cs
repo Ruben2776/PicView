@@ -795,6 +795,12 @@ internal class ArchiveExtractionService(IArchiveEntryWriter? entryWriter = null)
         {
             destinationPath = Path.Combine(destinationDirectory, flatName);
         }
+        else if (extraction is not null)
+        {
+            // An entry the preparation did not name has no name of its own, and a free one could be the name of an entry
+            // not written yet, which would write over it. The callers log it and leave the entry out
+            throw new InvalidOperationException($"The archive's preparation gave no name to the entry {entry.Key}.");
+        }
         else
         {
             // The folder was cleaned up meanwhile, so nothing lists the file and any free name does
@@ -979,13 +985,45 @@ internal class ArchiveExtractionService(IArchiveEntryWriter? entryWriter = null)
         var fileByEntry = new Dictionary<string, string>(entries.Length, StringComparer.Ordinal);
         foreach (var entry in entries)
         {
-            var file = Path.Combine(folder, flatNames[entry]);
-            File.Move(Path.Combine(aside, entry), file);
-            fileByEntry[entry] = file;
+            // A page that cannot be moved, such as one whose flat name is longer than a file name can be, is left out,
+            // and the rest open, as a page that fails to extract is
+            try
+            {
+                var file = Path.Combine(folder, flatNames[entry]);
+                File.Move(Path.Combine(aside, entry), file);
+                fileByEntry[entry] = file;
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException
+                                           or NotSupportedException)
+            {
+                DebugHelper.LogDebug(nameof(ArchiveExtractionService), nameof(LayOutFlat), ex);
+            }
         }
 
-        Directory.Delete(aside, true);
+        DeleteLeftovers(aside);
         return fileByEntry;
+    }
+
+    // What is left once the pages are moved out goes, read-only files too. A file another process holds, as antivirus
+    // or indexing may, is left for the extraction folder's own cleanup, as the pages are laid out all the same
+    private static void DeleteLeftovers(string folder)
+    {
+        try
+        {
+            foreach (var item in new DirectoryInfo(folder).EnumerateFileSystemInfos("*", SearchOption.AllDirectories))
+            {
+                if (item.Attributes.HasFlag(FileAttributes.ReadOnly))
+                {
+                    item.Attributes &= ~FileAttributes.ReadOnly;
+                }
+            }
+
+            Directory.Delete(folder, true);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            DebugHelper.LogDebug(nameof(ArchiveExtractionService), nameof(LayOutFlat), ex);
+        }
     }
 
     /// <summary>

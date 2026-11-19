@@ -597,8 +597,8 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
     /// <summary>
     /// Where the archive page <paramref name="entry"/> is in the tab's files, so a step Back or Forward moves to it
     /// there: the tab is still in that archive, and the page is extracted and listed. Null when the archive has to open
-    /// again at the page. For an archive that local software extracted whole it checks the disk, so call it off the UI
-    /// thread.
+    /// again at the page. It looks the page's file up in what the open archive extracted, for an archive local software
+    /// extracted whole as for any other, and reads nothing from the disk.
     /// </summary>
     public int? IndexOfArchivePage(in ViewHistoryEntry entry)
     {
