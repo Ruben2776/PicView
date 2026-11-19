@@ -147,7 +147,22 @@ public static class ExifFunctions
                     return false;
                 }
 
-                result = new Rational((uint)num, (uint)den);
+                // Only whole numbers fit the numerator and denominator. "1/0.5" would become 1/0 as a cast,
+                // so any other ratio is stored by its value
+                if (num is >= 0 and <= uint.MaxValue && den is > 0 and <= uint.MaxValue &&
+                    num == Math.Floor(num) && den == Math.Floor(den))
+                {
+                    result = new Rational((uint)num, (uint)den);
+                    return true;
+                }
+
+                var ratio = num / den;
+                if (!double.IsFinite(ratio) || ratio < 0)
+                {
+                    return false;
+                }
+
+                result = new Rational(ratio);
                 return true;
             }
         }
