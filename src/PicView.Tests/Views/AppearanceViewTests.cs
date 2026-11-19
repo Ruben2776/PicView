@@ -91,6 +91,7 @@ public class AppearanceViewTests
         Assert.Equal((int)BackgroundType.Transparent, Settings.UIProperties.BgColorChoice);
         Assert.False(Settings.UIProperties.IsConstrainBackgroundColorEnabled);
         window.Close();
+        core.SettingsViewModel.Dispose();
     }
 
     [AvaloniaFact]
@@ -113,6 +114,7 @@ public class AppearanceViewTests
         Assert.False(gray.Classes.Contains(Active));
         Assert.Equal((int)BackgroundType.Transparent, Settings.UIProperties.BgColorChoice);
         window.Close();
+        core.SettingsViewModel.Dispose();
     }
 
     private sealed class MockFrameProvider : FrameProvider

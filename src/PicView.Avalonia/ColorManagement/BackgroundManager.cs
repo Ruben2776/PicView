@@ -171,18 +171,16 @@ public static class BackgroundManager
     /// <remarks>Call on the UI thread, before the window shows.</remarks>
     public static IDisposable Follow(WindowSettings settings)
     {
-        // Captured here, on the UI thread: a pool thread can have a dispatcher of its own
-        var dispatcher = Dispatcher.UIThread;
         return settings.BackgroundChoice.CombineLatest(settings.IsConstrainingBackgroundColor, static (_, _) => Unit.Default)
             .Subscribe(_ =>
             {
-                if (dispatcher.CheckAccess())
+                if (Dispatcher.UIThread.CheckAccess())
                 {
                     Paint(settings);
                 }
                 else
                 {
-                    dispatcher.Post(() => Paint(settings));
+                    Dispatcher.UIThread.Post(() => Paint(settings));
                 }
             }, DebugHelper.LogError(nameof(BackgroundManager), nameof(Follow)));
     }

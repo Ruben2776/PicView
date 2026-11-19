@@ -5,7 +5,7 @@ using PicView.Core.ViewModels;
 namespace PicView.Avalonia.Services;
 
 /// <param name="mainWindows">The Main Windows, whose active one the background is set for; null sets none.</param>
-public class ThemeService(MainWindowOverviewViewModel? mainWindows = null) : IThemeService
+public class ThemeService(MainWindowOverviewViewModel? mainWindows) : IThemeService
 {
     public void SetTheme(int themeIndex)
     {

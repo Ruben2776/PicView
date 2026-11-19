@@ -66,6 +66,15 @@ public class AppLifecycleTests : IAsyncDisposable
     private readonly List<string> _steps = [];
     private int _exits;
 
+    // Saves the global settings view model made; a Window Setting change must not make one
+    private int _globalSaves;
+
+    private ValueTask<bool> CountingGlobalSave()
+    {
+        Interlocked.Increment(ref _globalSaves);
+        return ValueTask.FromResult(true);
+    }
+
     // Bounds each wait on a held load, so a failing test fails instead of hanging the run
     private static readonly TimeSpan WaitLimit = TimeSpan.FromSeconds(10);
 
@@ -105,7 +114,7 @@ public class AppLifecycleTests : IAsyncDisposable
                 file.Extension.Equals(".tif", StringComparison.OrdinalIgnoreCase)
                     ? ThreePageTiff(file)
                     : new ImageModel { FileInfo = file });
-        }, new GlobalSettingsViewModel(static () => ValueTask.FromResult(true)),
+        }, new GlobalSettingsViewModel(CountingGlobalSave),
             saveGallerySettings: static () => ValueTask.FromResult(true), timeProvider: _clock);
         _provider = new LifecycleWindowProvider(_core);
         _sharedFiles = new FolderSharedFiles(_folder);
@@ -732,6 +741,7 @@ public class AppLifecycleTests : IAsyncDisposable
         var firstVm = ViewModelOf(first);
         var secondVm = ViewModelOf(second);
         var savesBefore = _sharedFiles.Saves;
+        var globalSavesBefore = Volatile.Read(ref _globalSaves);
 
         await firstVm.ActionRunner!.Run(Actions.SideBySide);
         Dispatcher.UIThread.RunJobs();
@@ -748,6 +758,7 @@ public class AppLifecycleTests : IAsyncDisposable
         Assert.False(firstVm.WindowSettings.IsSideBySide.Value);
         Assert.False(secondVm.WindowSettings.IsSideBySide.Value);
         Assert.Equal(savesBefore, _sharedFiles.Saves);
+        Assert.Equal(globalSavesBefore, Volatile.Read(ref _globalSaves));
     }
 
     [AvaloniaFact]
@@ -763,6 +774,7 @@ public class AppLifecycleTests : IAsyncDisposable
         firstVm.Translation.LoopingEnabled.Value = "on";
         firstVm.Translation.LoopingDisabled.Value = "off";
         var savesBefore = _sharedFiles.Saves;
+        var globalSavesBefore = Volatile.Read(ref _globalSaves);
 
         await firstVm.ActionRunner!.Run(Actions.ToggleLooping);
         Dispatcher.UIThread.RunJobs();
@@ -775,6 +787,7 @@ public class AppLifecycleTests : IAsyncDisposable
         Assert.False(secondVm.WindowTabs.ActiveTab.CurrentValue.PairSettings().Looping);
         Assert.False(Settings.UIProperties.Looping);
         Assert.Equal(savesBefore, _sharedFiles.Saves);
+        Assert.Equal(globalSavesBefore, Volatile.Read(ref _globalSaves));
     }
 
     [AvaloniaFact]
@@ -837,6 +850,7 @@ public class AppLifecycleTests : IAsyncDisposable
         var firstVm = ViewModelOf(first);
         var secondVm = ViewModelOf(second);
         var savesBefore = _sharedFiles.Saves;
+        var globalSavesBefore = Volatile.Read(ref _globalSaves);
 
         await firstVm.ActionRunner!.Run(Actions.ZoomToFit);
         Dispatcher.UIThread.RunJobs();
@@ -851,6 +865,7 @@ public class AppLifecycleTests : IAsyncDisposable
         Assert.False(firstVm.WindowSettings.IsZoomedToFit.Value);
         Assert.False(secondVm.WindowSettings.IsZoomedToFit.Value);
         Assert.Equal(savesBefore, _sharedFiles.Saves);
+        Assert.Equal(globalSavesBefore, Volatile.Read(ref _globalSaves));
     }
 
     [AvaloniaFact]
@@ -866,6 +881,7 @@ public class AppLifecycleTests : IAsyncDisposable
         firstVm.Translation.ScrollEnabled.Value = "on";
         firstVm.Translation.ScrollDisabled.Value = "off";
         var savesBefore = _sharedFiles.Saves;
+        var globalSavesBefore = Volatile.Read(ref _globalSaves);
 
         await firstVm.ActionRunner!.Run(Actions.ToggleScroll);
         Dispatcher.UIThread.RunJobs();
@@ -876,6 +892,7 @@ public class AppLifecycleTests : IAsyncDisposable
         Assert.Equal("off", secondVm.WindowSettings.ScrollingText.Value);
         Assert.False(Settings.Zoom.ScrollEnabled);
         Assert.Equal(savesBefore, _sharedFiles.Saves);
+        Assert.Equal(globalSavesBefore, Volatile.Read(ref _globalSaves));
     }
 
     [AvaloniaFact]
@@ -922,6 +939,7 @@ public class AppLifecycleTests : IAsyncDisposable
         firstVm.Translation.HideBottomToolbar.Value = "hide bottom";
         firstVm.Translation.ShowBottomToolbar.Value = "show bottom";
         var savesBefore = _sharedFiles.Saves;
+        var globalSavesBefore = Volatile.Read(ref _globalSaves);
 
         await firstVm.ActionRunner!.Run(Actions.ToggleBottomToolbar);
         await firstVm.ActionRunner.Run(Actions.ToggleHoverBar);
@@ -943,6 +961,7 @@ public class AppLifecycleTests : IAsyncDisposable
         Assert.True(Settings.UIProperties.ShowBottomNavBar);
         Assert.True(Settings.UIProperties.ShowHoverNavigationBar);
         Assert.Equal(savesBefore, _sharedFiles.Saves);
+        Assert.Equal(globalSavesBefore, Volatile.Read(ref _globalSaves));
     }
 
     [AvaloniaFact]
@@ -1088,6 +1107,7 @@ public class AppLifecycleTests : IAsyncDisposable
         await app.StartAsync(settingsExists: true, []);
         var firstVm = ViewModelOf(app.MainWindows.Open[0]);
         var savesBefore = _sharedFiles.Saves;
+        var globalSavesBefore = Volatile.Read(ref _globalSaves);
         var settingsFile = SettingsManager.CurrentSettingsPath;
         if (File.Exists(settingsFile))
         {
@@ -1098,12 +1118,15 @@ public class AppLifecycleTests : IAsyncDisposable
         await firstVm.ActionRunner.Run(Actions.ToggleConstrainBackgroundColor);
         new ThemeService(_core.MainWindows).SetBackground((int)BackgroundType.NearBlack);
         Dispatcher.UIThread.RunJobs();
+        await Task.Yield();
+        Dispatcher.UIThread.RunJobs();
 
         Assert.Equal((int)BackgroundType.NearBlack, firstVm.WindowSettings.BackgroundChoice.Value);
         Assert.True(firstVm.WindowSettings.IsConstrainingBackgroundColor.Value);
         Assert.Equal((int)BackgroundType.White, Settings.UIProperties.BgColorChoice);
         Assert.False(Settings.UIProperties.IsConstrainBackgroundColorEnabled);
         Assert.Equal(savesBefore, _sharedFiles.Saves);
+        Assert.Equal(globalSavesBefore, Volatile.Read(ref _globalSaves));
         Assert.False(File.Exists(settingsFile));
     }
 
