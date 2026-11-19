@@ -172,7 +172,7 @@ _Avoid_: Current archive, last opened archive, temp zip directory
 ## Gallery
 
 **Gallery Mode**:
-The state a tab's gallery is in, exactly one at a time: Closed, Docked or Expanded. Each tab has its own, and closing the Expanded Gallery gives back the mode the tab had before it expanded. Cropping, showing a Single Image or a file list at or over the Gallery File Limit hides the gallery without changing its mode, and the mode cannot change while it is hidden; hiding the interface does not hide it. The settings only remember whether a new tab starts docked, which is the last choice the user made by hand in any tab, and where every Docked Gallery sits.
+The state a tab's gallery is in, exactly one at a time: Closed, Docked or Expanded. Each tab has its own, and closing the Expanded Gallery gives back the mode the tab had before it expanded. Cropping, showing a Single Image or a file list at or over the Gallery File Limit hides the gallery without changing its mode, and the mode cannot change while it is hidden; hiding the interface does not hide it. The tab's Main Window remembers whether a new tab of that window starts docked, which is the last choice the user made by hand in a tab of that window, and where every Docked Gallery of that window sits.
 _Avoid_: Gallery state, `ActiveGalleryMode`, `IsGalleryDocked` (as a tab's current state)
 
 **Gallery File Limit**:
@@ -192,11 +192,11 @@ The thumbnails a tab's gallery shows: one for each file the tab browses, always 
 _Avoid_: Thumbnails list, gallery list
 
 **Thumbnail Stretch**:
-How a gallery's thumbnails are shaped and filled. Uniform shows each whole image in its own proportions, Uniform to Fill fills the thumbnail and crops what spills over, Square shows the whole image inside a square, and Fill Square fills a square and crops what spills over. The Docked Gallery and the Expanded Gallery each have their own, and every Main Window uses the same two.
+How a gallery's thumbnails are shaped and filled. Uniform shows each whole image in its own proportions, Uniform to Fill fills the thumbnail and crops what spills over, Square shows the whole image inside a square, and Fill Square fills a square and crops what spills over. The Docked Gallery and the Expanded Gallery each have their own. It is a Window Setting, so each Main Window has its own two.
 _Avoid_: Gallery stretch, stretch mode
 
 **Gallery Display Mode**:
-How the Expanded Gallery arranges its Gallery Items: Columns, Masonry or Rows. Columns fills columns of equal-height thumbnails and scrolls sideways. Masonry fills equal-width columns, each thumbnail in its own proportions, and scrolls down. Rows fills rows of equal height across the width and scrolls down. Every Main Window uses the same one, and the Docked Gallery has none. Masonry and Rows always fill and crop, so Thumbnail Stretch applies only to Columns. The settings also remember which of Masonry and Rows was used last, which is what the Expanded Gallery's switch button goes to from Columns.
+How the Expanded Gallery arranges its Gallery Items: Columns, Masonry or Rows. Columns fills columns of equal-height thumbnails and scrolls sideways. Masonry fills equal-width columns, each thumbnail in its own proportions, and scrolls down. Rows fills rows of equal height across the width and scrolls down. It is a Window Setting, so each Main Window has its own, and the Docked Gallery has none. Masonry and Rows always fill and crop, so Thumbnail Stretch applies only to Columns. The window also remembers which of Masonry and Rows was used last, which is what the Expanded Gallery's switch button goes to from Columns.
 _Avoid_: Gallery layout, view mode, Gallery Mode (that is Closed, Docked or Expanded)
 
 ## Saving
@@ -212,7 +212,7 @@ A value the user chooses that PicView remembers between runs, stored in one reco
 _Avoid_: Option, preference, flag, mirror (for the bindable), flip (for toggling)
 
 **Window Setting**:
-A Setting that belongs to one Main Window: the Window Mode, AutoFit, top most, Stay Centered, the window's last Normal size and position, the File Order, Side-by-Side, looping, Zoom to Fit, scrolling, the three interface settings, and the image background and whether it is constrained to the image. Each Main Window has its own values, in its `WindowSettings`, and changing one in a window changes nothing in another. A window is seeded from the settings record at App Start, and from its opener's values when it opens while PicView runs (or from the record when no Main Window is open). Nothing is written to the record when a Window Setting changes: the window stores them when it closes, so the last window to close decides what is stored, and at App Shutdown with several windows open, the most recently active one. A crash loses the session's changes to them. The Settings window shows and edits those of the Active Main Window. The gallery's look becomes a Window Setting in a later slice; until then it is an App Setting.
+A Setting that belongs to one Main Window: the Window Mode, AutoFit, top most, Stay Centered, the window's last Normal size and position, the File Order, Side-by-Side, looping, Zoom to Fit, scrolling, the three interface settings, the image background and whether it is constrained to the image, and the gallery's look: the Thumbnail Stretch and item size of the Docked Gallery and of the Expanded Gallery, the Gallery Display Mode and which of Masonry and Rows was used last, the edge a Docked Gallery sits at, and whether a new tab starts docked. Each Main Window has its own values, in its `WindowSettings`, and changing one in a window changes nothing in another. A window is seeded from the settings record at App Start, and from its opener's values when it opens while PicView runs (or from the record when no Main Window is open). Nothing is written to the record when a Window Setting changes: the window stores them when it closes, so the last window to close decides what is stored, and at App Shutdown with several windows open, the most recently active one. A crash loses the session's changes to them. The Settings window shows and edits those of the Active Main Window.
 _Avoid_: Per-window option, window preference, local setting
 
 **File Order**:

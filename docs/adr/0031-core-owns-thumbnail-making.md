@@ -21,6 +21,7 @@ The drag preview of an SVG stays vector, by the user's ruling. It keeps its own 
 - The gallery still detects the motion photo badge itself, after a thumbnail is made, not when a kept one is served.
 - File History thumbnails used to be the full decoded image when it was in memory, and were made again on every read without the shell's thumbnail. They are now 150 px Thumbnails kept for the whole run.
 - A new place that shows a thumbnail asks `Thumbnails` for a quick or a made one and says who keeps it.
+- Updated by ADR-0041: `Thumbnails.GalleryHeight(dockedItemSize, expandedItemSize)` still works the gallery height out in one place, from the item sizes of the Main Window the tab is in (`GalleryLook.ThumbnailHeight`), not from the record.
 
 ## Considered Options
 

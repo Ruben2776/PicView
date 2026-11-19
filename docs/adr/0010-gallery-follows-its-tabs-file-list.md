@@ -14,3 +14,4 @@ A tab's **Gallery Items** change only because its file list changed: the tab's `
 - The gallery's mode (closed, docked, expanded) is unchanged by this decision: the gallery only reads whether it is shown.
 - The startup order of ADR-0005 holds: the gallery loads once navigation starts, after the image.
 - Updated by ADR-0039: a sort is a re-sort of the tab's own list in memory (`ImageIterator.Resort`), which the gallery hears as one Listed change, not a re-listing from disk.
+- Updated by ADR-0041: a tab that enters a Main Window whose gallery look needs taller thumbnails than its Gallery Items were loaded at drops them and loads them again at the new height, once, though its file list did not change; the gallery's own coordinator decides it, so nothing outside the gallery restarts a load.
