@@ -152,7 +152,7 @@ public sealed class ArchiveOpenings
         {
             if (prep.IsFullyExtracted)
             {
-                // Local software wrote every file, so the pages are listed from the paths it wrote
+                // Local software wrote every file, laid out flat since, so the pages are listed from those files
                 var files = Array.ConvertAll(prep.EntryKeys, path => new FileInfo(path));
                 var startFile = startEntry is null
                     ? null

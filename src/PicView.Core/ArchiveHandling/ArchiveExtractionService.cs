@@ -34,11 +34,13 @@ internal class ArchiveExtractionService(IArchiveEntryWriter? entryWriter = null)
     public bool IsArchived => TempZipDirectory != null;
 
     /// <summary>
-    ///     One extraction folder: the archive extracted to it, and which entry each file in it came from.
+    ///     One extraction folder: the archive extracted to it, the name each entry's file has in it, and which entry each
+    ///     file in it came from.
     /// </summary>
-    /// <param name="IsFullyExtracted">
-    ///     Local software extracted the whole archive, keeping its folders, so the files are not in the maps: a file's path
-    ///     in the folder is its entry.
+    /// <param name="FlatNameByEntry">
+    ///     The file name each entry is extracted under, given to every entry when the archive is prepared, in key order, so
+    ///     which of two pages with one name takes the suffix does not depend on which is extracted first. Empty for an
+    ///     archive local software extracted, whose files are in the maps from the start.
     /// </param>
     /// <param name="SharedFolderCount">
     ///     The number of leading folders every entry of the archive shares, which are left out of the extracted file
@@ -49,24 +51,23 @@ internal class ArchiveExtractionService(IArchiveEntryWriter? entryWriter = null)
     private sealed record Extraction(
         string Folder,
         string Archive,
-        bool IsFullyExtracted,
         int SharedFolderCount,
         int Number,
+        IReadOnlyDictionary<string, string> FlatNameByEntry,
         ConcurrentDictionary<string, string> EntryByFile,
         ConcurrentDictionary<string, string> FileByEntry)
     {
-        public Extraction(string folder, string archive, bool isFullyExtracted, int sharedFolderCount, int number)
-            : this(folder, archive, isFullyExtracted, sharedFolderCount, number,
-                new ConcurrentDictionary<string, string>(StringComparer.OrdinalIgnoreCase),
-                new ConcurrentDictionary<string, string>(StringComparer.Ordinal))
-        {
-        }
-
-        public string? EntryOf(string extractedPath) =>
-            EntryByFile.TryGetValue(extractedPath, out var entry)
-                ? entry
-                : IsFullyExtracted ? PathInFolder(extractedPath, Folder) : null;
+        public string? EntryOf(string extractedPath) => EntryByFile.GetValueOrDefault(extractedPath);
     }
+
+    /// <summary>
+    ///     What preparing an archive works out for its folder: how its files are named, and for an archive local software
+    ///     extracted, the file each entry is.
+    /// </summary>
+    private sealed record Naming(
+        int SharedFolderCount,
+        IReadOnlyDictionary<string, string> FlatNameByEntry,
+        IReadOnlyDictionary<string, string> FileByEntry);
 
     // Held for a few in-memory operations only, never across disk access or an await
     private readonly Lock _lock = new();
@@ -154,28 +155,9 @@ internal class ArchiveExtractionService(IArchiveEntryWriter? entryWriter = null)
 
     /// <summary>
     ///     The file that <paramref name="entry" /> of the open archive was extracted to, or <c>null</c> when it is not
-    ///     extracted. For a fully extracted archive it checks the disk.
+    ///     extracted.
     /// </summary>
-    public string? ExtractedPathOf(string entry)
-    {
-        if (Open is not { } open)
-        {
-            return null;
-        }
-
-        if (open.FileByEntry.TryGetValue(entry, out var file))
-        {
-            return file;
-        }
-
-        if (!open.IsFullyExtracted)
-        {
-            return null;
-        }
-
-        var path = Path.Combine(open.Folder, entry);
-        return File.Exists(path) ? path : null;
-    }
+    public string? ExtractedPathOf(string entry) => Open?.FileByEntry.GetValueOrDefault(entry);
 
     /// <summary>
     ///     Represents the result of preparing an archive for staged extraction.
@@ -188,7 +170,9 @@ internal class ArchiveExtractionService(IArchiveEntryWriter? entryWriter = null)
     /// </param>
     /// <param name="IsFullyExtracted">
     ///     When <c>true</c>, the archive has already been fully extracted (for formats handled by
-    ///     local software, e.g. <c>.7z</c>). In that case <see cref="ExtractEntryAsync" /> and
+    ///     local software, e.g. <c>.7z</c>), and its files laid out flat under the names the other archives' pages are
+    ///     extracted under, so the File Ordering alone gives their order. Each file's entry is the path local software
+    ///     wrote it at, relative to the folder. In that case <see cref="ExtractEntryAsync" /> and
     ///     <see cref="ExtractRemainingAsync" /> are no-ops.
     /// </param>
     public readonly record struct ArchivePreparation(
@@ -227,9 +211,9 @@ internal class ArchiveExtractionService(IArchiveEntryWriter? entryWriter = null)
         {
             Directory.CreateDirectory(tempDirectory);
             if (await OpenAsync(archivePath, tempDirectory, extractWithLocalSoftwareAsync, ordering)
-                    .ConfigureAwait(false) is (var preparation, var sharedFolderCount))
+                    .ConfigureAwait(false) is (var preparation, var naming))
             {
-                Publish(tempDirectory, archivePath, preparation.IsFullyExtracted, sharedFolderCount);
+                Publish(tempDirectory, archivePath, naming);
                 return preparation;
             }
         }
@@ -243,8 +227,8 @@ internal class ArchiveExtractionService(IArchiveEntryWriter? entryWriter = null)
     }
 
     // Lists the archive's entries, or has local software extract it to the folder. Null when it does not open. The
-    // shared folder count is how its files are named, as the extraction folder keeps it
-    private static async Task<(ArchivePreparation Preparation, int SharedFolderCount)?> OpenAsync(
+    // naming is how its files are named, as the extraction folder keeps it
+    private static async Task<(ArchivePreparation Preparation, Naming Naming)?> OpenAsync(
         string archivePath,
         string tempDirectory,
         Func<string, string, Task<bool>> extractWithLocalSoftwareAsync,
@@ -260,31 +244,17 @@ internal class ArchiveExtractionService(IArchiveEntryWriter? entryWriter = null)
                 return null;
             }
 
-            // Enumerate the (potentially nested) directory tree for any supported files.
-            var files = await Task.Run(() => new DirectoryInfo(tempDirectory)
-                .EnumerateFiles("*", SearchOption.AllDirectories)
-                .Where(f => f.FullName.IsSupported())
-                .Select(f => f.FullName)
-                .AsValueEnumerable()
-                .ToArray()).ConfigureAwait(false);
-
-            if (files.Length is 0)
+            var fileByEntry = await Task.Run(() => LayOutFlat(tempDirectory, isRespectingStructure)).ConfigureAwait(false);
+            if (fileByEntry.Count is 0)
             {
                 return null;
             }
 
-            // The files are on disk, so any order but the archive's folders is the one the tab sorts files by
-            if (isRespectingStructure)
-            {
-                SortByPath(files, SplitPaths(files, tempDirectory), ordering);
-            }
-            else
-            {
-                files = ordering.Sort(files.Select(path => new FileInfo(path))).Select(file => file.FullName).ToArray();
-            }
-
-            // Local software names the files itself
-            return (new ArchivePreparation(tempDirectory, files, IsFullyExtracted: true), NotRespectingStructure);
+            // Flat under the names a zip's pages take, so this is the order the tab sorts the files in, folders and all
+            var files = ordering.Sort(fileByEntry.Values.Select(path => new FileInfo(path)))
+                .Select(file => file.FullName).ToArray();
+            return (new ArchivePreparation(tempDirectory, files, IsFullyExtracted: true),
+                new Naming(NotRespectingStructure, EmptyNames, fileByEntry));
         }
 
         var archive = await ArchiveFactory.OpenAsyncArchive(archivePath).ConfigureAwait(false);
@@ -311,13 +281,15 @@ internal class ArchiveExtractionService(IArchiveEntryWriter? entryWriter = null)
             }
 
             var sharedFolderCount = isRespectingStructure ? CountSharedFolders(SplitPaths(keys)) : NotRespectingStructure;
-            OrderEntries(entries, sharedFolderCount, ordering);
+            var flatNames = AssignFlatNames(keys, sharedFolderCount);
+            OrderEntries(entries, flatNames, ordering);
             for (var i = 0; i < entries.Length; i++)
             {
                 keys[i] = entries[i].Key;
             }
 
-            return (new ArchivePreparation(tempDirectory, keys, IsFullyExtracted: false), sharedFolderCount);
+            return (new ArchivePreparation(tempDirectory, keys, IsFullyExtracted: false),
+                new Naming(sharedFolderCount, flatNames, EmptyNames));
         }
     }
 
@@ -737,11 +709,20 @@ internal class ArchiveExtractionService(IArchiveEntryWriter? entryWriter = null)
     }
 
     // Makes an archive that opened the open one, last in the folders, numbered in the order the archives opened
-    private void Publish(string folder, string archive, bool isFullyExtracted, int sharedFolderCount)
+    private void Publish(string folder, string archive, Naming naming)
     {
+        var entryByFile = new ConcurrentDictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        var fileByEntry = new ConcurrentDictionary<string, string>(StringComparer.Ordinal);
+        foreach (var (entry, file) in naming.FileByEntry)
+        {
+            entryByFile[file] = entry;
+            fileByEntry[entry] = file;
+        }
+
         lock (_lock)
         {
-            var extraction = new Extraction(folder, archive, isFullyExtracted, sharedFolderCount, ++_openedArchives);
+            var extraction = new Extraction(folder, archive, naming.SharedFolderCount, ++_openedArchives,
+                naming.FlatNameByEntry, entryByFile, fileByEntry);
             Volatile.Write(ref _extractions, [.. _extractions, extraction]);
         }
     }
@@ -794,35 +775,37 @@ internal class ArchiveExtractionService(IArchiveEntryWriter? entryWriter = null)
                && path[trimmed.Length] is '\\' or '/';
     }
 
-    // The path of a file in the folder relative to it, or null for a file outside it
-    private static string? PathInFolder(string path, string folder) =>
-        IsInFolder(path, folder) ? path[(Path.TrimEndingDirectorySeparator(folder.AsSpan()).Length + 1)..] : null;
-
     // Remembers the file's entry before the file is there, as the watcher lists a page once it is, and a tab that waits
     // for the page shows and records it at once. It remembers the entry's file once the file is written, as a step to
     // the entry looks for the file in the tab's list, which already holds a file being written. A cancelled extraction
     // can still write a file after its folder was cleaned up, so only a file in a folder that is still there is remembered
     private string WriteEntryFlat(IArchiveEntry entry, string destinationDirectory, int sharedFolderCount)
     {
-        // Flatten so the temp directory ends up with a flat layout that the rest of the navigation
-        // pipeline can list without enabling recursive enumeration.
-        var fileName = GetFlatFileName(entry.Key!, sharedFolderCount);
-
-        var destinationPath = Path.Combine(destinationDirectory, fileName);
-
-        // Handle name collisions caused by flattening by appending a numeric suffix.
-        if (File.Exists(destinationPath))
+        var extraction = FindExtraction(destinationDirectory);
+        // Written once: an entry asked for again, as the start page can be by the extraction of the rest, is its file
+        if (extraction is not null && extraction.FileByEntry.TryGetValue(entry.Key!, out var written)
+                                   && File.Exists(written))
         {
-            var name = Path.GetFileNameWithoutExtension(fileName);
-            var extension = Path.GetExtension(fileName);
-            var counter = 1;
-            do
-            {
-                destinationPath = Path.Combine(destinationDirectory, $"{name}_{counter++}{extension}");
-            } while (File.Exists(destinationPath));
+            return written;
         }
 
-        var extraction = FindExtraction(destinationDirectory);
+        // Flat, so the folder lists without recursion, under the name the preparation gave the entry
+        string destinationPath;
+        if (extraction is not null && extraction.FlatNameByEntry.TryGetValue(entry.Key!, out var flatName))
+        {
+            destinationPath = Path.Combine(destinationDirectory, flatName);
+        }
+        else
+        {
+            // The folder was cleaned up meanwhile, so nothing lists the file and any free name does
+            var fileName = GetFlatFileName(entry.Key!, sharedFolderCount);
+            destinationPath = Path.Combine(destinationDirectory, fileName);
+            for (var counter = 1; File.Exists(destinationPath); counter++)
+            {
+                destinationPath = Path.Combine(destinationDirectory, SuffixedName(fileName, counter));
+            }
+        }
+
         extraction?.EntryByFile[destinationPath] = entry.Key!;
         using (var entryStream = entry.OpenEntryStream())
         using (var fileStream = File.Create(destinationPath))
@@ -887,38 +870,122 @@ internal class ArchiveExtractionService(IArchiveEntryWriter? entryWriter = null)
         path.Split(['/', '\\'], StringSplitOptions.RemoveEmptyEntries);
 
     /// <summary>
-    ///     Splits each path into its folders and file name, relative to <paramref name="root" /> when given.
+    ///     Splits each path into its folders and file name.
     /// </summary>
-    private static string[][] SplitPaths(string[] paths, string? root = null)
+    private static string[][] SplitPaths(string[] paths)
     {
         var segments = new string[paths.Length][];
         for (var i = 0; i < paths.Length; i++)
         {
-            segments[i] = SplitPath(root is null ? paths[i] : Path.GetRelativePath(root, paths[i]));
+            segments[i] = SplitPath(paths[i]);
         }
         return segments;
     }
 
-    /// <summary>
-    ///     Sorts the paths by folder, then file name, comparing one path segment at a time with the ordering's names, so
-    ///     <c>Volume 01/003.jpg</c> comes before <c>Volume 02/001.jpg</c>. Descending reverses the whole order: no file's
-    ///     path is the start of another's, so the segments decide every pair.
-    /// </summary>
-    private static void SortByPath(string[] paths, string[][] segments, FileOrdering ordering) =>
-        Array.Sort(segments, paths, Comparer<string[]>.Create((a, b) => CompareSegments(a, b, ordering)));
+    private static readonly IReadOnlyDictionary<string, string> EmptyNames = new Dictionary<string, string>(StringComparer.Ordinal);
 
-    private static int CompareSegments(string[] a, string[] b, FileOrdering ordering)
+    private static string SuffixedName(string fileName, int counter) =>
+        $"{Path.GetFileNameWithoutExtension(fileName)}_{counter}{Path.GetExtension(fileName)}";
+
+    /// <summary>
+    ///     Gives each entry the file name it is extracted under, as <see cref="GetFlatFileName" /> names it. Entries that
+    ///     share a name, such as <c>v1/001.jpg</c> and <c>v2/001.jpg</c> with the folders left out, are told apart by a
+    ///     suffix given in the keys' ordinal order: the first keeps the name, the next is <c>001_1.jpg</c>, and so on, past
+    ///     any name another entry has of itself. Decided before any page is extracted, so the names, and the order the
+    ///     File Ordering puts the files in, are the same whichever page is extracted first. Names compare ignoring case,
+    ///     as the file system may.
+    /// </summary>
+    private static Dictionary<string, string> AssignFlatNames(string[] keys, int sharedFolderCount)
     {
-        var count = Math.Min(a.Length, b.Length);
-        for (var i = 0; i < count; i++)
+        var ordered = (string[])keys.Clone();
+        Array.Sort(ordered, StringComparer.Ordinal);
+
+        var names = new Dictionary<string, string>(keys.Length, StringComparer.Ordinal);
+        var taken = new HashSet<string>(keys.Length, StringComparer.OrdinalIgnoreCase);
+        var sharing = new List<string>();
+        // Each name goes to the first entry that has it, before any suffix is given, so no suffix takes another's name
+        foreach (var key in ordered)
         {
-            var result = ordering.CompareNames(a[i], b[i]);
-            if (result != 0)
+            if (names.ContainsKey(key) || (sharing.Count > 0 && string.Equals(sharing[^1], key, StringComparison.Ordinal)))
             {
-                return result;
+                continue;
+            }
+
+            var name = GetFlatFileName(key, sharedFolderCount);
+            if (taken.Add(name))
+            {
+                names[key] = name;
+            }
+            else
+            {
+                sharing.Add(key);
             }
         }
-        return a.Length.CompareTo(b.Length);
+
+        foreach (var key in sharing)
+        {
+            var name = GetFlatFileName(key, sharedFolderCount);
+            var counter = 1;
+            var suffixed = SuffixedName(name, counter);
+            while (!taken.Add(suffixed))
+            {
+                suffixed = SuffixedName(name, ++counter);
+            }
+            names[key] = suffixed;
+        }
+
+        return names;
+    }
+
+    /// <summary>
+    ///     Lays the files local software extracted to <paramref name="folder" /> out flat in it, under the names
+    ///     <see cref="AssignFlatNames" /> gives their paths in it, as a zip's pages are named, so the File Ordering alone
+    ///     orders them and a re-sort cannot interleave the archive's folders. Everything is moved aside first, so no file
+    ///     is moved onto one not moved yet. What is not a supported file goes, with the folders.
+    /// </summary>
+    /// <returns>The flat file of each supported file, by its path in the folder as local software wrote it.</returns>
+    private static Dictionary<string, string> LayOutFlat(string folder, bool isRespectingStructure)
+    {
+        var extracted = new DirectoryInfo(folder).GetFileSystemInfos();
+        var aside = Path.Combine(folder, Path.GetRandomFileName());
+        while (Path.Exists(aside))
+        {
+            aside = Path.Combine(folder, Path.GetRandomFileName());
+        }
+
+        Directory.CreateDirectory(aside);
+        foreach (var item in extracted)
+        {
+            var target = Path.Combine(aside, item.Name);
+            if (item is DirectoryInfo directory)
+            {
+                directory.MoveTo(target);
+            }
+            else
+            {
+                File.Move(item.FullName, target);
+            }
+        }
+
+        var entries = new DirectoryInfo(aside)
+            .EnumerateFiles("*", SearchOption.AllDirectories)
+            .Where(f => f.FullName.IsSupported())
+            .Select(f => Path.GetRelativePath(aside, f.FullName))
+            .AsValueEnumerable()
+            .ToArray();
+
+        var sharedFolderCount = isRespectingStructure ? CountSharedFolders(SplitPaths(entries)) : NotRespectingStructure;
+        var flatNames = AssignFlatNames(entries, sharedFolderCount);
+        var fileByEntry = new Dictionary<string, string>(entries.Length, StringComparer.Ordinal);
+        foreach (var entry in entries)
+        {
+            var file = Path.Combine(folder, flatNames[entry]);
+            File.Move(Path.Combine(aside, entry), file);
+            fileByEntry[entry] = file;
+        }
+
+        Directory.Delete(aside, true);
+        return fileByEntry;
     }
 
     /// <summary>
@@ -929,11 +996,12 @@ internal class ArchiveExtractionService(IArchiveEntryWriter? entryWriter = null)
     ///     <c>Vol 1 -</c>, and then the pages extracted nearest the start would not be the pages nearest it on screen.
     ///     Random shuffles them.
     /// </summary>
-    private static void OrderEntries(ArchiveEntryOrderKey[] entries, int sharedFolderCount, FileOrdering ordering)
+    private static void OrderEntries(ArchiveEntryOrderKey[] entries, IReadOnlyDictionary<string, string> flatNames,
+        FileOrdering ordering)
     {
         for (var i = 0; i < entries.Length; i++)
         {
-            entries[i] = entries[i] with { Name = GetFlatFileName(entries[i].Key, sharedFolderCount) };
+            entries[i] = entries[i] with { Name = flatNames[entries[i].Key] };
         }
 
         if (ordering.Order.By is SortFilesBy.Random)

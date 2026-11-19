@@ -897,9 +897,91 @@ public class TabLoadTests : IDisposable
     }
 
     [Fact]
+    public async Task LoadAsync_ArchiveLocalSoftwareExtractedWithFolders_ResortedAndBack_EndsInItsOpeningOrder()
+    {
+        // Local software extracts a .7z whole, keeping its folders, and the structure rule orders it by folder
+        Settings.Navigation.IsRespectingArchiveStructure = true;
+        var archive = Path.Combine(_testDirectory, "resorted.7z");
+        await File.WriteAllBytesAsync(archive, [0x37, 0x7A], TestContext.Current.CancellationToken);
+        var platform = new MockPlatformSpecificService
+        {
+            LocalSoftware = (_, folder) =>
+            {
+                foreach (var entry in TwoVolumes)
+                {
+                    var path = Path.Combine(folder, entry);
+                    Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+                    File.WriteAllBytes(path, [0xFF, 0xD8, 0xFF]);
+                }
+                return Task.FromResult(true);
+            }
+        };
+        var tab = CreateTab(_testDirectory, platform: platform);
+
+        try
+        {
+            await tab.Load.LoadAsync(archive);
+            var iterator = tab.ImageIterator!;
+            var opened = iterator.Files.Select(f => f.FullName).ToArray();
+
+            iterator.Resort(new FileOrdering(new FileOrder(SortFilesBy.Name, false), string.CompareOrdinal));
+            iterator.Resort(tab.CurrentOrdering());
+
+            Assert.Equal(TwoVolumes, opened.Select(f => tab.Archives.EntryOf(f)!.Replace('\\', '/')));
+            Assert.Equal(opened, iterator.Files.Select(f => f.FullName));
+        }
+        finally
+        {
+            tab.Archives.Cleanup();
+        }
+    }
+
+    [Theory]
+    // Descending, the second volume's last page is the start page, extracted first
+    [InlineData(false, null)]
+    [InlineData(true, "Volume 02/001.jpg")]
+    public async Task LoadAsync_SameNamedPagesInDifferentFolders_KeepTheEntriesOrderOnDisk(bool ascending,
+        string? startEntry)
+    {
+        // With the folders left out of the names, the pages of both volumes share names
+        Settings.Navigation.IsRespectingArchiveStructure = false;
+        var zip = await CreateZipWithEntriesAsync($"same_names_{ascending}.zip", TwoVolumes);
+        var tab = CreateTab(_testDirectory);
+        tab.CurrentWindowSettings.CurrentValue!.FileOrder.Value = new FileOrder(SortFilesBy.Name, ascending);
+        string[] entryOrder =
+        [
+            "Volume 01/001.jpg", "Volume 02/001.jpg", "Volume 01/002.jpg",
+            "Volume 02/002.jpg", "Volume 01/003.jpg", "Volume 02/003.jpg"
+        ];
+        if (!ascending)
+        {
+            Array.Reverse(entryOrder);
+        }
+
+        try
+        {
+            await tab.Load.LoadAsync(zip, new LoadOptions(ArchiveEntry: startEntry));
+            await WaitUntil(() => tab.Archives.State.Value is not ExtractionState.Extracting
+                                  && tab.ImageIterator!.Files.Count == TwoVolumes.Length,
+                () => string.Join(", ", tab.ImageIterator!.Files.Select(f => f.Name)));
+            var listed = tab.ImageIterator!.Files.Select(f => f.FullName).ToArray();
+            var fromDisk = tab.CurrentOrdering().Sort(listed.Select(f => new FileInfo(f))).Select(f => f.FullName);
+
+            Assert.Equal(startEntry ?? entryOrder[0], tab.Archives.EntryOf(tab.Model.FileInfo!.FullName));
+            Assert.Equal(entryOrder, listed.Select(tab.Archives.EntryOf));
+            Assert.Equal(listed, fromDisk);
+        }
+        finally
+        {
+            tab.Archives.Cleanup();
+            Settings.Navigation.IsRespectingArchiveStructure = true;
+        }
+    }
+
+    [Fact]
     public async Task LoadAsync_ArchiveBackToAPageLocalSoftwareExtractedIntoAFolder_OpensTheArchiveAtThatPage()
     {
-        // Local software extracts a .7z whole, keeping its folders, so the page's path in the folder is its entry
+        // Local software extracts a .7z whole, keeping its folders; the page is laid out flat, and its path in them is its entry
         var archive = Path.Combine(_testDirectory, "volumes.7z");
         await File.WriteAllBytesAsync(archive, [0x37, 0x7A], TestContext.Current.CancellationToken);
         var platform = new MockPlatformSpecificService
@@ -927,8 +1009,7 @@ public class TabLoadTests : IDisposable
             await tab.Load.LoadAsync(archive, new LoadOptions(ArchiveEntry: back.Target.ArchiveEntry));
             tab.ViewHistory.EndStep(back);
 
-            Assert.Equal(Path.Combine(tab.Archives.OpenFolder!, "Volume 02", "002.jpg"),
-                tab.Model.FileInfo?.FullName);
+            Assert.Equal(Path.Combine(tab.Archives.OpenFolder!, "Volume 02 - 002.jpg"), tab.Model.FileInfo?.FullName);
             Assert.Equal([page, left], tab.ViewHistory.Entries);
             Assert.Equal(0, tab.ViewHistory.Cursor);
         }
