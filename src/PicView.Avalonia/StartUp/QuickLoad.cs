@@ -46,13 +46,13 @@ public static class QuickLoad
                     break;
                 case FileTypeResolver.LoadAbleFileType.Directory:
                     // Listed once: the tab's Load browses these files instead of listing the folder again
-                    var files = FileListRetriever.RetrieveFiles(new FileInfo(check.Value.Data),
-                        new FileOrdering(mainWindow.ViewModel!.WindowSettings.FileOrder.Value,
-                            core.PlatformService.CompareStrings));
+                    var ordering = new FileOrdering(mainWindow.ViewModel!.WindowSettings.FileOrder.Value,
+                        core.PlatformService.CompareStrings);
+                    var files = FileListRetriever.RetrieveFiles(new FileInfo(check.Value.Data), ordering);
                     result = files.Count is 0
                         ? LoadResult.Failed()
-                        : await LoadFileAsync(mainWindow, core, files[0], continueFromLeftOff, files)
-                            .ConfigureAwait(false);
+                        : await LoadFileAsync(mainWindow, core, files[0], continueFromLeftOff,
+                            new ListedFiles(files, ordering)).ConfigureAwait(false);
                     break;
                 case FileTypeResolver.LoadAbleFileType.Zip:
                 case FileTypeResolver.LoadAbleFileType.Web:
@@ -109,12 +109,12 @@ public static class QuickLoad
     /// <summary>
     /// Files and directories: show the image before the tab's Load lists the files around it.
     /// </summary>
-    /// <param name="files">The files of the folder opened at startup, which <paramref name="fileInfo"/> is the first of,
-    /// for the tab to browse without listing them again.</param>
+    /// <param name="listed">The files of the folder opened at startup, which <paramref name="fileInfo"/> is the first of,
+    /// for the tab to browse without listing them again, with the ordering they were listed in.</param>
     private static async ValueTask<LoadResult> LoadFileAsync(MainWindow mainWindow, CoreViewModel core,
         FileInfo fileInfo,
         bool continueFromLeftOff,
-        List<FileInfo>? files = null)
+        ListedFiles? listed = null)
     {
         var vm = mainWindow.ViewModel!;
         var tab = vm.WindowTabs.ActiveTab.CurrentValue;
@@ -127,13 +127,13 @@ public static class QuickLoad
         {
             // Listed once, to find the image beside the opened one; the tab's Load browses the same files
             var listFrom = rootDirectory is null ? fileInfo : new FileInfo(rootDirectory);
-            result = await LoadSideBySideAsync(mainWindow, core, vm, tab, fileInfo,
-                files ?? core.PlatformService.GetFiles(listFrom, vm.WindowSettings.FileOrder.Value), rootDirectory)
+            listed ??= ListedFiles.Of(core, listFrom, vm.WindowSettings.FileOrder.Value);
+            result = await LoadSideBySideAsync(mainWindow, core, vm, tab, fileInfo, listed.Value, rootDirectory)
                 .ConfigureAwait(false);
         }
         else
         {
-            result = await LoadSingleAsync(mainWindow, core, vm, tab, fileInfo, files, rootDirectory)
+            result = await LoadSingleAsync(mainWindow, core, vm, tab, fileInfo, listed, rootDirectory)
                 .ConfigureAwait(false);
         }
 
@@ -149,10 +149,10 @@ public static class QuickLoad
         return result;
     }
 
-    /// <param name="files">The files around <paramref name="fileInfo"/> when they are listed already; the tab's Load
+    /// <param name="listed">The files around <paramref name="fileInfo"/> when they are listed already; the tab's Load
     /// lists them otherwise, from <paramref name="rootDirectory"/> when given.</param>
     private static async ValueTask<LoadResult> LoadSingleAsync(MainWindow mainWindow, CoreViewModel core,
-        MainWindowViewModel vm, TabViewModel tab, FileInfo fileInfo, IReadOnlyList<FileInfo>? files,
+        MainWindowViewModel vm, TabViewModel tab, FileInfo fileInfo, ListedFiles? listed,
         string? rootDirectory)
     {
         using var magickImage = new MagickImage();
@@ -201,7 +201,8 @@ public static class QuickLoad
         await HookUpAsync(tab).ConfigureAwait(false);
         var model = await decoding.ConfigureAwait(false);
         return await ShowThroughTheLoadAsync(core, tab, fileInfo,
-            new LoadOptions(Model: model, Files: files, RootDirectory: rootDirectory)).ConfigureAwait(false);
+            new LoadOptions(Model: model, Files: listed?.Files, RootDirectory: rootDirectory,
+                ListedWith: listed?.Ordering)).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -209,8 +210,9 @@ public static class QuickLoad
     /// is sized for both images before it is shown; without it, the window shows at once and the images follow.
     /// </summary>
     private static async ValueTask<LoadResult> LoadSideBySideAsync(MainWindow mainWindow, CoreViewModel core,
-        MainWindowViewModel vm, TabViewModel tab, FileInfo fileInfo, List<FileInfo> files, string? rootDirectory)
+        MainWindowViewModel vm, TabViewModel tab, FileInfo fileInfo, ListedFiles listed, string? rootDirectory)
     {
+        var files = listed.Files;
         var index = SideBySidePair.IndexOf(files, fileInfo) ?? 0;
         var (showsPair, looping) = tab.PairSettings();
         var (primary, partner) = SideBySidePair.PairAt(index, files.Count, showsPair, looping);
@@ -218,7 +220,7 @@ public static class QuickLoad
         // Without another image there is no pair to size or show, so the image loads as a single one
         if (partner is not { } partnerIndex)
         {
-            return await LoadSingleAsync(mainWindow, core, vm, tab, fileInfo, files, rootDirectory)
+            return await LoadSingleAsync(mainWindow, core, vm, tab, fileInfo, listed, rootDirectory)
                 .ConfigureAwait(false);
         }
 
@@ -273,7 +275,8 @@ public static class QuickLoad
         var first = await decodingFirst.ConfigureAwait(false);
         var second = await decodingSecond.ConfigureAwait(false);
         var result = await ShowThroughTheLoadAsync(core, tab, fileInfo,
-            new LoadOptions(Model: first, SecondaryModel: second, Files: files, RootDirectory: rootDirectory))
+            new LoadOptions(Model: first, SecondaryModel: second, Files: files, RootDirectory: rootDirectory,
+                ListedWith: listed.Ordering))
             .ConfigureAwait(false);
 
         Dispatcher.UIThread.Post(() =>
@@ -312,6 +315,19 @@ public static class QuickLoad
         mainWindow.Show();
         mainWindow.SetLayoutSizeAndVisibility(mainWindow.Bounds.Width);
         return true;
+    }
+
+    /// <summary>
+    /// Files listed before the tab's Load, with the ordering they were listed in, which the tab's list keeps so it sorts
+    /// them again when the window's order changed since.
+    /// </summary>
+    private readonly record struct ListedFiles(List<FileInfo> Files, FileOrdering Ordering)
+    {
+        public static ListedFiles Of(CoreViewModel core, FileInfo listFrom, FileOrder order)
+        {
+            var ordering = new FileOrdering(order, core.PlatformService.CompareStrings);
+            return new ListedFiles(core.PlatformService.GetFiles(listFrom, order), ordering);
+        }
     }
 
     private static void ShowNow(MainWindow mainWindow) =>

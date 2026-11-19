@@ -23,6 +23,10 @@ public class TabOwnershipTests : IDisposable
     // The files the shared cache decoded, shown or ahead of the shown one
     private readonly ConcurrentQueue<string> _decoded = new();
 
+    // Decodes a test holds, by file name, until it gives their models
+    private readonly ConcurrentDictionary<string, TaskCompletionSource<ImageModel>> _heldDecodes = new();
+    private readonly ConcurrentDictionary<string, TaskCompletionSource> _decodesRequested = new();
+
     // A folder of the test's own, for the tests whose tabs browse files
     private readonly string _folder = Path.Combine(Path.GetTempPath(), "PicViewTabOwnershipTests_" + Guid.NewGuid());
 
@@ -37,6 +41,12 @@ public class TabOwnershipTests : IDisposable
         _core = new CoreViewModel(null, file =>
         {
             _decoded.Enqueue(file.Name);
+            if (_heldDecodes.TryGetValue(file.Name, out var held))
+            {
+                DecodeRequestedOf(file.Name).TrySetResult();
+                return new ValueTask<ImageModel>(held.Task);
+            }
+
             return ValueTask.FromResult(new ImageModel { FileInfo = file });
         });
     }
@@ -509,7 +519,7 @@ public class TabOwnershipTests : IDisposable
     }
 
     [Fact]
-    public async Task Sort_TabWithoutFiles_FreshTab_AndSingleImage_DoNothing_AndTheNextLoadUsesTheWindowsOrder()
+    public async Task Sort_FreshTabsDoNothing_ASingleImageTabsListResortsAndTheImageStays_AndTheNextLoadUsesTheWindowsOrder()
     {
         ComposeServices();
         CreateFiles();
@@ -544,7 +554,7 @@ public class TabOwnershipTests : IDisposable
     [Fact]
     public async Task Sort_ChangedAgainWhileTheTabsResort_EndsInTheLatestOrder()
     {
-        var platform = new GatedPlatform();
+        using var platform = new GatedPlatform();
         ComposeServices(platform);
         CreateFiles();
         var window = CreateWindow();
@@ -731,7 +741,7 @@ public class TabOwnershipTests : IDisposable
     [Fact]
     public async Task Load_FreshTabOpeningAFolder_WhileTheWindowsOrderChanges_EndsInTheNewOrder()
     {
-        var platform = new GatedPlatform();
+        using var platform = new GatedPlatform();
         ComposeServices(platform);
         CreateFiles();
         var window = CreateWindow();
@@ -752,7 +762,7 @@ public class TabOwnershipTests : IDisposable
     [Fact]
     public async Task Load_OpeningAFile_WhileTheWindowsOrderChanges_EndsInTheNewOrder()
     {
-        var platform = new GatedPlatform();
+        using var platform = new GatedPlatform();
         ComposeServices(platform);
         CreateFiles();
         var window = CreateWindow();
@@ -774,7 +784,7 @@ public class TabOwnershipTests : IDisposable
     [Fact]
     public async Task Load_BrowsingTabListingAgain_WhileTheWindowsOrderChanges_EndsInTheNewOrder()
     {
-        var platform = new GatedPlatform();
+        using var platform = new GatedPlatform();
         ComposeServices(platform);
         CreateFiles();
         var window = CreateWindow();
@@ -800,7 +810,7 @@ public class TabOwnershipTests : IDisposable
     [Fact]
     public async Task Load_TabMovedToAWindowWithAnotherOrderWhileItLists_EndsInThatWindowsOrder()
     {
-        var platform = new GatedPlatform();
+        using var platform = new GatedPlatform();
         ComposeServices(platform);
         CreateFiles();
         var source = CreateWindow();
@@ -819,6 +829,58 @@ public class TabOwnershipTests : IDisposable
         Assert.Equal(BySize, NamesOf(tab));
         Assert.Equal("c.jpg", ListedAtShownIndex(tab));
         Assert.Equal(target.WindowSettings.FileOrder.Value, tab.ImageIterator!.Ordering.Order);
+    }
+
+    [Fact]
+    public async Task Load_GivenFilesListedInAnOlderOrder_EndsInTheWindowsOrder()
+    {
+        ComposeServices();
+        CreateFiles();
+        var window = CreateWindow();
+        var tab = window.WindowTabs.ActiveTab.Value;
+        // Listed by name, as App Start lists a folder, before the window's order became by size
+        var byName = new FileOrdering(new FileOrder(SortFilesBy.Name, true), string.CompareOrdinal);
+        var files = FileListRetriever.RetrieveFiles(new FileInfo(PathOf("a.jpg")), byName);
+        await window.WindowTabs.SortAsync(SortFilesBy.FileSize);
+
+        var result = await tab.Load.LoadAsync(PathOf("c.jpg"), new LoadOptions(Files: files, ListedWith: byName));
+        Assert.True(result.IsLoaded);
+        await tab.Resorting;
+
+        Assert.Equal(BySize, NamesOf(tab));
+        Assert.Equal("c.jpg", ListedAtShownIndex(tab));
+        Assert.Equal(window.WindowSettings.FileOrder.Value, tab.ImageIterator!.Ordering.Order);
+    }
+
+    [Fact]
+    public async Task Load_SideBySide_ResortedWhileThePartnerDecodes_CachesEachModelUnderItsFile_AndShowsTheListsPair()
+    {
+        ComposeServices();
+        _core.Services!.GlobalSettings.IsSideBySide.Value = true;
+        CreateFiles();
+        var window = CreateWindow();
+        var tab = window.WindowTabs.ActiveTab.Value;
+        // By name b shows beside c; by size b is first, beside d
+        var partner = HoldDecode("c.jpg");
+
+        var opening = Task.Run(() => tab.Load.LoadAsync(PathOf("b.jpg")).AsTask());
+        await DecodeRequestedOf("c.jpg").Task.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+        await window.WindowTabs.SortAsync(SortFilesBy.FileSize);
+        partner.SetResult(new ImageModel { FileInfo = new FileInfo(PathOf("c.jpg")) });
+        Assert.True((await opening).IsLoaded);
+        await tab.Resorting;
+
+        Assert.Equal(BySize, NamesOf(tab));
+        foreach (var name in BySize)
+        {
+            if (_core.SharedCache.TryGetReady(new FileInfo(PathOf(name)), out var cached))
+            {
+                Assert.Equal(name, cached.FileInfo?.Name);
+            }
+        }
+
+        Assert.Equal("b.jpg", tab.Model?.FileInfo?.Name);
+        Assert.Equal("d.jpg", tab.SecondaryModel?.FileInfo?.Name);
     }
 
     [Fact]
@@ -870,7 +932,7 @@ public class TabOwnershipTests : IDisposable
             new NavigationService(string.CompareOrdinal));
 
     // Holds every name comparison while closed, so a test can change the order while a listing or a sort by name runs
-    private sealed class GatedPlatform : TestTabServices.OrdinalPlatform
+    private sealed class GatedPlatform : TestTabServices.OrdinalPlatform, IDisposable
     {
         private readonly ManualResetEventSlim _open = new(true);
         private TaskCompletionSource _comparing = new(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -891,10 +953,19 @@ public class TabOwnershipTests : IDisposable
             if (!_open.IsSet)
             {
                 Volatile.Read(ref _comparing).TrySetResult();
-                _open.Wait(WaitLimit);
+                if (!_open.Wait(WaitLimit))
+                {
+                    throw new TimeoutException("The gate was never opened");
+                }
             }
 
             return base.CompareStrings(str1, str2);
+        }
+
+        public void Dispose()
+        {
+            _open.Set();
+            _open.Dispose();
         }
     }
 
@@ -914,6 +985,15 @@ public class TabOwnershipTests : IDisposable
     }
 
     private string PathOf(string name) => Path.Combine(_folder, name);
+
+    // Holds the decode of the file named name until the test gives its model
+    private TaskCompletionSource<ImageModel> HoldDecode(string name) =>
+        _heldDecodes.GetOrAdd(name, static _ => new TaskCompletionSource<ImageModel>(
+            TaskCreationOptions.RunContinuationsAsynchronously));
+
+    private TaskCompletionSource DecodeRequestedOf(string name) =>
+        _decodesRequested.GetOrAdd(name, static _ => new TaskCompletionSource(
+            TaskCreationOptions.RunContinuationsAsynchronously));
 
     private async Task OpenAsync(TabViewModel tab, string name)
     {

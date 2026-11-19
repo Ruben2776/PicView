@@ -749,6 +749,7 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
     private bool _isResortRunning;
     private bool _isResortRequested;
     private bool _isReshuffleRequested;
+    private bool _isPairCheckRequested;
 
     /// <summary>
     /// The re-sort that runs now, or the last one, which ends once the tab's files are in its window's File Order.
@@ -772,13 +773,16 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
     /// meanwhile end in the latest order.
     /// </summary>
     /// <param name="reshuffle">Whether files already in a Random order are shuffled again.</param>
+    /// <param name="checksPair">Whether a shown pair that is not the one the list gives its shown file is shown again
+    /// even when the files are in the order already, as after a load showed a pair it chose before a re-sort.</param>
     /// <returns>The run, which ends once the files are in the order.</returns>
-    internal Task ResortAsync(bool reshuffle = false)
+    internal Task ResortAsync(bool reshuffle = false, bool checksPair = false)
     {
         lock (_resortGate)
         {
             _isResortRequested = true;
             _isReshuffleRequested |= reshuffle;
+            _isPairCheckRequested |= checksPair;
             if (!_isResortRunning)
             {
                 _isResortRunning = true;
@@ -794,6 +798,7 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
         while (true)
         {
             bool reshuffle;
+            bool checksPair;
             lock (_resortGate)
             {
                 if (!_isResortRequested || IsDisposed)
@@ -801,17 +806,20 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
                     _isResortRunning = false;
                     _isResortRequested = false;
                     _isReshuffleRequested = false;
+                    _isPairCheckRequested = false;
                     return;
                 }
 
                 _isResortRequested = false;
                 reshuffle = _isReshuffleRequested;
                 _isReshuffleRequested = false;
+                checksPair = _isPairCheckRequested;
+                _isPairCheckRequested = false;
             }
 
             try
             {
-                await ResortOnceAsync(reshuffle).ConfigureAwait(false);
+                await ResortOnceAsync(reshuffle, checksPair).ConfigureAwait(false);
             }
             catch (Exception e)
             {
@@ -820,7 +828,7 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
         }
     }
 
-    private async ValueTask ResortOnceAsync(bool reshuffle)
+    private async ValueTask ResortOnceAsync(bool reshuffle, bool checksPair)
     {
         if (IsDisposed || ImageIterator is not { Files.Count: > 0 } iterator)
         {
@@ -831,6 +839,13 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
         var isShuffledAgain = reshuffle && ordering.Order.By is SortFilesBy.Random;
         if (ordering.Order == iterator.Ordering.Order && !isShuffledAgain)
         {
+            // In the order already, though a load may have shown a pair it chose before a re-sort it did not see
+            if (checksPair && SingleImageType is SingleImageType.None && PairSettings().ShowsPair &&
+                !IsShowingPairAt(iterator))
+            {
+                await iterator.ReloadAsync(clearCache: false).ConfigureAwait(false);
+            }
+
             return;
         }
 
@@ -858,16 +873,26 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
         }
     }
 
-    // Whether the tab shows the two files the iterator's pair is at
+    // Whether the tab shows the pair the iterator's list gives the image it shows first (ADR-0024)
     private bool IsShowingPairAt(IImageIterator iterator)
     {
         var files = iterator.Files;
-        return IsFileAt(files, iterator.CurrentIndex, Model?.FileInfo) &&
-               IsFileAt(files, iterator.SecondaryCurrentIndex, SecondaryModel?.FileInfo);
+        if (Model?.FileInfo is not { } shown || SideBySidePair.IndexOf(files, shown) is not { } primary)
+        {
+            return false;
+        }
 
-        static bool IsFileAt(IReadOnlyList<FileInfo> files, int index, FileInfo? shown) =>
-            index >= 0 && index < files.Count && shown is not null &&
-            string.Equals(files[index].FullName, shown.FullName, StringComparison.OrdinalIgnoreCase);
+        var (expected, partner) = SideBySidePair.PairAt(primary, files.Count, true, PairSettings().Looping);
+        if (expected != primary)
+        {
+            return false;
+        }
+
+        var beside = SecondaryModel?.FileInfo;
+        return partner is { } index
+            ? beside is not null &&
+              string.Equals(files[index].FullName, beside.FullName, StringComparison.OrdinalIgnoreCase)
+            : beside is null;
     }
 
     /// <summary>
@@ -875,7 +900,20 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
     /// order changed, or the tab moved to another window, while the load listed. Called by the tab's Load after it
     /// gives the iterator a list.
     /// </summary>
-    internal void FollowListedOrder() => FollowFileOrder(CurrentOrdering().Order);
+    /// <param name="showedPair">Whether the load showed what it listed, so a pair it showed is checked against the
+    /// list, which a re-sort may have changed after the load chose the pair.</param>
+    internal void FollowListedOrder(bool showedPair = false)
+    {
+        if (ImageIterator is not { Files.Count: > 0 } iterator)
+        {
+            return;
+        }
+
+        if (iterator.Ordering.Order != CurrentOrdering().Order || (showedPair && PairSettings().ShowsPair))
+        {
+            _ = ResortAsync(checksPair: showedPair);
+        }
+    }
 
     // Follows the File Order of the window the tab is in, re-sorting when it is not the order the files are in
     private void FollowFileOrder(FileOrder order)

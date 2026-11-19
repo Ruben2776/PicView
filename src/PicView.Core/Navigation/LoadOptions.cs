@@ -29,6 +29,10 @@ namespace PicView.Core.Navigation;
 /// Side by side, with <paramref name="Model"/>, the already decoded model of the file beside it, which shows with it
 /// instead of being fetched.
 /// </param>
+/// <param name="ListedWith">
+/// The ordering <paramref name="Files"/> were listed with, which the tab's file list keeps, so the tab sorts them again
+/// when its window's order changed since. Null for files listed in the tab's ordering when the Load gives them to it.
+/// </param>
 [StructLayout(LayoutKind.Auto)]
 public readonly record struct LoadOptions(
     string? RootDirectory = null,
@@ -36,7 +40,8 @@ public readonly record struct LoadOptions(
     bool Relist = false,
     ImageModel? Model = null,
     IReadOnlyList<FileInfo>? Files = null,
-    ImageModel? SecondaryModel = null);
+    ImageModel? SecondaryModel = null,
+    FileSorting.FileOrdering? ListedWith = null);
 
 /// <summary>
 /// How a <see cref="TabLoad"/> ended.
