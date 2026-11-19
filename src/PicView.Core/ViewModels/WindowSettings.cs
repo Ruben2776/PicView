@@ -1,4 +1,5 @@
 using PicView.Core.Config;
+using PicView.Core.FileSorting;
 using PicView.Core.Sizing;
 using R3;
 
@@ -10,8 +11,9 @@ namespace PicView.Core.ViewModels;
 /// </summary>
 public sealed class WindowSettings : IDisposable
 {
-    private WindowSettings(bool isTopMost, bool isStayingCentered, RememberedWindowMode startingMode, NormalBounds bounds)
+    private WindowSettings(bool isTopMost, bool isStayingCentered, RememberedWindowMode startingMode, NormalBounds bounds, FileOrder fileOrder)
     {
+        FileOrder = new BindableReactiveProperty<FileOrder>(fileOrder);
         IsTopMost = new BindableReactiveProperty<bool>(isTopMost);
         IsStayingCentered = new BindableReactiveProperty<bool>(isStayingCentered);
         StartingMode = startingMode;
@@ -21,6 +23,11 @@ public sealed class WindowSettings : IDisposable
     public BindableReactiveProperty<bool> IsTopMost { get; }
 
     public BindableReactiveProperty<bool> IsStayingCentered { get; }
+
+    /// <summary>
+    /// The order this window's tabs list their files in.
+    /// </summary>
+    public BindableReactiveProperty<FileOrder> FileOrder { get; }
 
     /// <summary>
     /// The mode the window starts in. Never changes; the live mode is the window's WindowModeState.
@@ -39,14 +46,15 @@ public sealed class WindowSettings : IDisposable
             properties.TopMost,
             properties.KeepCentered,
             new RememberedWindowMode(properties.Fullscreen, properties.Maximized, properties.AutoFit),
-            new NormalBounds(properties.Left, properties.Top, properties.Width, properties.Height));
+            new NormalBounds(properties.Left, properties.Top, properties.Width, properties.Height),
+            FileSorting.FileOrder.FromRecord(record?.Sorting));
     }
 
     /// <summary>
     /// The settings of a window opened from this one's window, whose remembered mode is <paramref name="openerMode"/>.
     /// </summary>
     public WindowSettings CopyFor(RememberedWindowMode openerMode) =>
-        new(IsTopMost.Value, IsStayingCentered.Value, openerMode, Bounds);
+        new(IsTopMost.Value, IsStayingCentered.Value, openerMode, Bounds, FileOrder.Value);
 
     public void Store(AppSettings record, RememberedWindowMode remembered)
     {
@@ -60,11 +68,13 @@ public sealed class WindowSettings : IDisposable
         properties.Top = Bounds.Top;
         properties.Width = Bounds.Width;
         properties.Height = Bounds.Height;
+        FileOrder.Value.StoreTo(record.Sorting ??= new Sorting());
     }
 
     public void Dispose()
     {
         IsTopMost.Dispose();
         IsStayingCentered.Dispose();
+        FileOrder.Dispose();
     }
 }
