@@ -847,6 +847,8 @@
 
                     <!--  Toggle scrolling  -->
                     <customControls:StyledMenuItem
+                        Command="{CompiledBinding RunActionCommand}"
+                        CommandParameter="{x:Static keybindings:Actions.ToggleScroll}"
                         Header="{CompiledBinding WindowSettings.ScrollingText.Value,
                                                  Mode=OneWay}"
                         IsChecked="{CompiledBinding WindowSettings.IsScrollingEnabled.Value,

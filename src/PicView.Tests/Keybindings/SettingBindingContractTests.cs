@@ -57,6 +57,51 @@ public partial class SettingBindingContractTests
                                           string.Join("\n", offenders));
     }
 
+    /// <summary>
+    /// ADR-0009: a menu item that shows a toggled setting's state toggles it through its Action, so clicking it is
+    /// never a check mark that changes nothing.
+    /// </summary>
+    [Fact]
+    public void MenuItem_ShowingAToggledSetting_RunsAnAction()
+    {
+        var root = FindSourceRoot();
+        var total = 0;
+        var offenders = new List<string>();
+
+        foreach (var file in Directory.EnumerateFiles(root, "*.axaml", SearchOption.AllDirectories))
+        {
+            var relative = Path.GetRelativePath(root, file);
+            var parts = relative.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+            if (parts.Contains("bin") || parts.Contains("obj"))
+            {
+                continue;
+            }
+
+            var text = File.ReadAllText(file);
+            foreach (Match match in StyledMenuItemRegex().Matches(text))
+            {
+                var isChecked = IsCheckedBindingRegex().Match(match.Value);
+                if (!isChecked.Success || IsInsideComment(text, match.Index) ||
+                    (!isChecked.Value.Contains("GlobalSettings.", StringComparison.Ordinal) &&
+                     !isChecked.Value.Contains("WindowSettings.", StringComparison.Ordinal)))
+                {
+                    continue;
+                }
+
+                total++;
+                if (!match.Value.Contains("Command=", StringComparison.Ordinal))
+                {
+                    var line = text.AsSpan(0, match.Index).Count('\n') + 1;
+                    offenders.Add($"{relative}:{line}");
+                }
+            }
+        }
+
+        Assert.True(total > 0, "No menu item showing a published setting was found; the scan is broken.");
+        Assert.True(offenders.Count == 0, "Menu items that show a toggled setting but run no Action:\n" +
+                                          string.Join("\n", offenders));
+    }
+
     // The start tag around index; an attribute holds no '<' or '>'
     private static string ElementAt(string text, int index)
     {
@@ -92,6 +137,9 @@ public partial class SettingBindingContractTests
 
         throw new InvalidOperationException("PicView.slnx not found above " + AppContext.BaseDirectory);
     }
+
+    [GeneratedRegex(@"<customControls:StyledMenuItem\b[^>]*>")]
+    private static partial Regex StyledMenuItemRegex();
 
     [GeneratedRegex("IsChecked=\"\\{[^\"]*\\}\"")]
     private static partial Regex IsCheckedBindingRegex();
