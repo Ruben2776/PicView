@@ -13,4 +13,4 @@ A tab's **Gallery Items** change only because its file list changed: the tab's `
 - Showing a Single Image disposes the tab's iterator, but the gallery keeps its items. When the next iterator reports its first list, the gallery keeps them if it is the same files in the same order and reloads otherwise.
 - The gallery's mode (closed, docked, expanded) is unchanged by this decision: the gallery only reads whether it is shown.
 - The startup order of ADR-0005 holds: the gallery loads once navigation starts, after the image.
-- Superseded in part by ADR-0039: a sort is a re-sort of the tab's own list in memory (`ImageIterator.Resort`), which the gallery hears as one Listed change, not a re-listing from disk.
+- Updated by ADR-0039: a sort is a re-sort of the tab's own list in memory (`ImageIterator.Resort`), which the gallery hears as one Listed change, not a re-listing from disk.
