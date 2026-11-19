@@ -481,7 +481,7 @@ public sealed class AppLifecycle
         var imageLoader = new AvaloniaImageModelLoader(_core);
         var thumbnails = new Thumbnails(new AvaloniaThumbnailDecoder(platform), _core.SharedCache);
         // A rename the watcher reports reaches the history of every tab of every window before any tab follows it
-        var fileWatcher = new FileWatcherService(platform.CompareStrings, _core.SharedCache, thumbnails,
+        var fileWatcher = new FileWatcherService(_core.SharedCache, thumbnails,
             fileRenamed: (oldPath, newPath) => FileRenames.Follow(_core, oldPath, newPath),
             folderRenamed: (oldFolder, newFolder) => FileRenames.FollowFolder(_core, oldFolder, newFolder));
         var navigation = new NavigationService(platform.CompareStrings);

@@ -22,7 +22,6 @@ namespace PicView.Core.Navigation;
 /// a path that is not an image to another one goes here too, since that may be a folder.
 /// </param>
 public class FileWatcherService(
-    Func<string, string, int> stringComparer,
     SharedImageCache cache,
     Thumbnails? thumbnails = null,
     IFolderEvents? folderEvents = null,
@@ -33,7 +32,6 @@ public class FileWatcherService(
     private readonly IFolderEvents _folderEvents = folderEvents ?? new FileSystemFolderEvents();
     private readonly SharedImageCache _cache = cache ?? throw new ArgumentNullException(nameof(cache));
     private readonly Lock _lock = new();
-    private readonly Func<string, string, int> _stringComparer = stringComparer ?? throw new ArgumentNullException(nameof(stringComparer));
 
     // Maps Directory Path -> (Watch, Subscribers)
     private readonly
@@ -171,7 +169,7 @@ public class FileWatcherService(
         folderRenamed?.Invoke(directory, newDirectory);
 
         var change = new FolderChange(FolderChangeKind.FolderRenamed, new FileInfo(newDirectory), directory,
-            new FileDetailsSource(new FileInfo(newDirectory), waitUntilReady: false), _stringComparer);
+            new FileDetailsSource(new FileInfo(newDirectory), waitUntilReady: false));
         foreach (var tab in SubscribersOf(newDirectory))
         {
             try
@@ -273,7 +271,7 @@ public class FileWatcherService(
 
         var file = new FileInfo(fullPath);
         var change = new FolderChange(kind, file, oldFullPath,
-            new FileDetailsSource(file, waitUntilReady: kind is not FolderChangeKind.Deleted), _stringComparer);
+            new FileDetailsSource(file, waitUntilReady: kind is not FolderChangeKind.Deleted));
 
         foreach (var tab in SubscribersOf(directory))
         {

@@ -22,18 +22,29 @@ public class ImageIterator(SharedImageCache cache, Thumbnails thumbnails, TabVie
     private readonly Lock _filesLock = new();
     private FileInfo[] _files = [];
 
+    // Written under _filesLock together with _files, so the list and the ordering it is in never disagree
+    private FileOrdering _ordering = tab.CurrentOrdering();
+
     /// <inheritdoc />
     public IReadOnlyList<FileInfo> Files => Volatile.Read(ref _files);
+
+    /// <inheritdoc />
+    public FileOrdering Ordering => Volatile.Read(ref _ordering);
+
     public int CurrentIndex { get; private set; } = -1;
     public int SecondaryCurrentIndex { get; private set; } = -1;
     public bool IsReversed { get; private set; }
 
-    public void Initialize(IReadOnlyList<FileInfo> files, int initialIndex = 0)
+    /// <inheritdoc />
+    public void Initialize(IReadOnlyList<FileInfo> files, int initialIndex = 0, FileOrdering? ordering = null)
     {
+        // Read before the lock, as the tab's ordering reads its window's settings
+        ordering ??= _tab.CurrentOrdering();
         lock (_filesLock)
         {
             CurrentIndex = initialIndex;
             var list = files?.ToArray() ?? [];
+            Volatile.Write(ref _ordering, ordering);
             Publish(list, new FileListChange(FileListChangeKind.Listed, list, CurrentIndex));
         }
         PublishPosition();
@@ -45,7 +56,7 @@ public class ImageIterator(SharedImageCache cache, Thumbnails thumbnails, TabVie
     #region File list changes
 
     /// <inheritdoc />
-    public int Insert(FileInfo file, Func<string, string, int> compareNames, FileDetailsSource? details = null)
+    public int Insert(FileInfo file, FileDetailsSource? details = null)
     {
         int index;
         lock (_filesLock)
@@ -58,14 +69,14 @@ public class ImageIterator(SharedImageCache cache, Thumbnails thumbnails, TabVie
                 return index;
             }
 
-            index = InsertInOrder(file, compareNames, details);
+            index = InsertInOrder(file, details);
         }
         PublishPosition();
         return index;
     }
 
     /// <inheritdoc />
-    public int InsertMissing(IReadOnlyCollection<string> paths, string folder, Func<string, string, int> compareNames)
+    public int InsertMissing(IReadOnlyCollection<string> paths, string folder)
     {
         // Looked up before the lock, as it reads the disk: whether each file is there, which also reads its size and
         // dates, so a sort by those compares them under the lock without reading the disk. One set of the listed paths,
@@ -103,7 +114,7 @@ public class ImageIterator(SharedImageCache cache, Thumbnails thumbnails, TabVie
             {
                 if (IndexOf(_files, file.FullName) < 0)
                 {
-                    InsertInOrder(file, compareNames, details: null);
+                    InsertInOrder(file, details: null);
                     inserted++;
                 }
             }
@@ -120,11 +131,14 @@ public class ImageIterator(SharedImageCache cache, Thumbnails thumbnails, TabVie
         return inserted;
     }
 
-    // Inserts a file the list does not have at its sorted position. Callers hold _filesLock
-    private int InsertInOrder(FileInfo file, Func<string, string, int> compareNames, FileDetailsSource? details)
+    // Inserts a file the list does not have at its place in the list's ordering. Callers hold _filesLock
+    private int InsertInOrder(FileInfo file, FileDetailsSource? details)
     {
-        var list = new List<FileInfo>(_files);
-        var index = FileSortOrder.InsertSorted(list, file, compareNames);
+        var index = _ordering.InsertPosition(_files, file);
+        var files = new FileInfo[_files.Length + 1];
+        Array.Copy(_files, 0, files, 0, index);
+        files[index] = file;
+        Array.Copy(_files, index, files, index + 1, _files.Length - index);
         if (CurrentIndex >= 0 && index <= CurrentIndex)
         {
             CurrentIndex++;
@@ -134,7 +148,6 @@ public class ImageIterator(SharedImageCache cache, Thumbnails thumbnails, TabVie
         {
             SecondaryCurrentIndex++;
         }
-        var files = list.ToArray();
         Publish(files, new FileListChange(FileListChangeKind.Inserted, files, index, file, details));
         return index;
     }
@@ -206,8 +219,7 @@ public class ImageIterator(SharedImageCache cache, Thumbnails thumbnails, TabVie
     }
 
     /// <inheritdoc />
-    public (int Removed, int Inserted) Move(string oldPath, FileInfo newFile, Func<string, string, int> compareNames,
-        FileDetailsSource? details = null)
+    public (int Removed, int Inserted) Move(string oldPath, FileInfo newFile, FileDetailsSource? details = null)
     {
         int removed, inserted;
         lock (_filesLock)
@@ -220,7 +232,11 @@ public class ImageIterator(SharedImageCache cache, Thumbnails thumbnails, TabVie
             {
                 list.RemoveAt(removed);
             }
-            inserted = FileSortOrder.InsertSorted(list, newFile, compareNames);
+            // In a random order a renamed file keeps its place, where an insert would put it at the end
+            inserted = removed >= 0 && _ordering.Order.By is SortFilesBy.Random
+                ? removed
+                : _ordering.InsertPosition(list, newFile);
+            list.Insert(inserted, newFile);
 
             // Follow the current file, and the one beside it, under the new name if it was the one moved
             CurrentIndex = IndexFollowing(currentPath, CurrentIndex);
@@ -251,6 +267,65 @@ public class ImageIterator(SharedImageCache cache, Thumbnails thumbnails, TabVie
         PublishPosition();
         return (removed, inserted);
     }
+
+    /// <inheritdoc />
+    public void Resort(FileOrdering ordering)
+    {
+        ArgumentNullException.ThrowIfNull(ordering);
+        var (showsPair, looping) = PairSettings();
+        while (true)
+        {
+            // Sorted outside the lock, as a sort by size or date reads the disk for a file it has not read yet. A change
+            // to the list meanwhile sorts it again, so no insert or remove is lost
+            var listed = Volatile.Read(ref _files);
+            if (IsSameOrder(ordering))
+            {
+                return;
+            }
+
+            var sorted = ordering.Sort(listed).ToArray();
+            lock (_filesLock)
+            {
+                if (!ReferenceEquals(listed, _files))
+                {
+                    continue;
+                }
+
+                if (IsSameOrder(ordering))
+                {
+                    return;
+                }
+
+                var shown = FileAt(_files, CurrentIndex);
+                var beside = FileAt(_files, SecondaryCurrentIndex);
+                var index = shown is null ? CurrentIndex : IndexOf(sorted, shown.FullName);
+                if (showsPair && shown is not null)
+                {
+                    // The shown file keeps its pair rule, so the last file shows beside the one before it (ADR-0024)
+                    var (primary, partner) = SideBySidePair.PairAt(index, sorted.Length, showsPair, looping);
+                    CurrentIndex = primary;
+                    SecondaryCurrentIndex = partner ?? -1;
+                }
+                else
+                {
+                    CurrentIndex = index;
+                    SecondaryCurrentIndex = beside is null ? SecondaryCurrentIndex : IndexOf(sorted, beside.FullName);
+                }
+
+                Volatile.Write(ref _ordering, ordering);
+                Publish(sorted, new FileListChange(FileListChangeKind.Listed, sorted, CurrentIndex));
+                break;
+            }
+        }
+
+        PublishPosition();
+        // As for a new listing: the shown file's place is new, whether or not its index changed (ADR-0015)
+        _tab.Titles.Mark();
+    }
+
+    // Random shuffles again however often it is asked for
+    private bool IsSameOrder(FileOrdering ordering) =>
+        ordering.Order == Volatile.Read(ref _ordering).Order && ordering.Order.By is not SortFilesBy.Random;
 
     /// <inheritdoc />
     public int[] RenameFolder(string oldFolder, string newFolder)

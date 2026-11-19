@@ -12,8 +12,7 @@ public sealed class ArchiveOpening
     private int _state = (int)ExtractionState.Finished;
 
     internal ArchiveOpening(ArchiveOpenings owner, string archive, string folder, IReadOnlyList<FileInfo> files,
-        FileInfo startFile, string[] afterKeys, string[] beforeKeys, int totalCount,
-        Func<string, string, int> compareNames)
+        FileInfo startFile, string[] afterKeys, string[] beforeKeys, int totalCount)
     {
         _owner = owner;
         Archive = archive;
@@ -23,7 +22,6 @@ public sealed class ArchiveOpening
         AfterKeys = afterKeys;
         BeforeKeys = beforeKeys;
         TotalCount = totalCount;
-        CompareNames = compareNames;
         if (afterKeys.Length + beforeKeys.Length is 0)
         {
             _ended.TrySetResult();
@@ -58,7 +56,6 @@ public sealed class ArchiveOpening
     internal string[] AfterKeys { get; }
     internal string[] BeforeKeys { get; }
     internal int TotalCount { get; }
-    internal Func<string, string, int> CompareNames { get; }
     internal CancellationToken ExtractionToken => _extracting.Token;
     internal bool IsStopped => _extracting.IsCancellationRequested;
 

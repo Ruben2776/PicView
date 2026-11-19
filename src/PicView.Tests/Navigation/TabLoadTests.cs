@@ -251,7 +251,7 @@ public class TabLoadTests : IDisposable
         // A duplicate is loaded as soon as it is written, before the folder watcher reports it
         var load = tab.Load.LoadAsync(copy.FullName).AsTask();
         await tab.OnFolderChangedAsync(new FolderChange(FolderChangeKind.Created, copy, null,
-            new FileDetailsSource(copy, waitUntilReady: false), string.CompareOrdinal), TestContext.Current.CancellationToken);
+            new FileDetailsSource(copy, waitUntilReady: false)), TestContext.Current.CancellationToken);
         await load;
 
         Assert.False(_mockFileWatcherService.UnwatchCalled, "The file list should not be rebuilt");
@@ -788,7 +788,7 @@ public class TabLoadTests : IDisposable
         // With the app's watcher, which adds each page to the tab's files as it is extracted, flat in the extraction
         // folder with its folder in its name
         var zip = await CreateZipWithEntriesAsync("next_folder.zip", TwoVolumes);
-        var folderWatcher = new FileWatcherService(string.CompareOrdinal, _cache);
+        var folderWatcher = new FileWatcherService(_cache);
         var tab = CreateTab(_testDirectory, watcher: folderWatcher);
 
         try
@@ -812,7 +812,7 @@ public class TabLoadTests : IDisposable
     {
         var zip = await CreateZipAsync("next.zip", 5);
         // The app's watcher, which adds each page to the tab's files as it is extracted
-        var folderWatcher = new FileWatcherService(string.CompareOrdinal, _cache);
+        var folderWatcher = new FileWatcherService(_cache);
         var tab = CreateTab(_testDirectory, watcher: folderWatcher);
 
         try

@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using ImageMagick;
+using PicView.Core.FileSorting;
 using PicView.Core.Models;
 using PicView.Tests.ArchiveHandling;
 using PicView.Core.Navigation;
@@ -63,7 +64,7 @@ public class ImageIteratorFileListTests : IDisposable
     {
         _iterator.Initialize([File("b.jpg"), File("d.jpg")], 1);
 
-        var index = _iterator.Insert(File("a.jpg"), string.CompareOrdinal);
+        var index = _iterator.Insert(File("a.jpg"));
 
         Assert.Equal(0, index);
         Assert.Equal("d.jpg", CurrentName());
@@ -74,7 +75,7 @@ public class ImageIteratorFileListTests : IDisposable
     {
         _iterator.Initialize([File("b.jpg"), File("d.jpg")]);
 
-        var index = _iterator.Insert(File("c.jpg"), string.CompareOrdinal);
+        var index = _iterator.Insert(File("c.jpg"));
 
         Assert.Equal(1, index);
         Assert.Equal("b.jpg", CurrentName());
@@ -129,7 +130,7 @@ public class ImageIteratorFileListTests : IDisposable
     {
         _iterator.Initialize([File("a.jpg"), File("b.jpg"), File("c.jpg")]);
 
-        var (removed, inserted) = _iterator.Move(File("a.jpg").FullName, File("z.jpg"), string.CompareOrdinal);
+        var (removed, inserted) = _iterator.Move(File("a.jpg").FullName, File("z.jpg"));
 
         Assert.Equal(0, removed);
         Assert.Equal(2, inserted);
@@ -141,7 +142,7 @@ public class ImageIteratorFileListTests : IDisposable
     {
         _iterator.Initialize([File("a.jpg"), File("b.jpg"), File("c.jpg")], 1);
 
-        _iterator.Move(File("a.jpg").FullName, File("d.jpg"), string.CompareOrdinal);
+        _iterator.Move(File("a.jpg").FullName, File("d.jpg"));
 
         Assert.Equal("b.jpg", CurrentName());
         Assert.Equal(["b.jpg", "c.jpg", "d.jpg"], Names());
@@ -153,7 +154,7 @@ public class ImageIteratorFileListTests : IDisposable
         _iterator.Initialize([File("a.jpg")]);
         var snapshot = _iterator.Files;
 
-        _iterator.Insert(File("b.jpg"), string.CompareOrdinal);
+        _iterator.Insert(File("b.jpg"));
 
         Assert.Single(snapshot);
         Assert.Equal(2, _iterator.Files.Count);
@@ -166,7 +167,7 @@ public class ImageIteratorFileListTests : IDisposable
         _iterator.Initialize([File("a.jpg"), File("b.jpg"), File("c.jpg")], 2);
         var again = File("b.jpg");
 
-        var index = _iterator.Insert(again, string.CompareOrdinal);
+        var index = _iterator.Insert(again);
 
         Assert.Equal(1, index);
         Assert.Equal(["a.jpg", "b.jpg", "c.jpg"], Names());
@@ -183,8 +184,7 @@ public class ImageIteratorFileListTests : IDisposable
             var listed = new FileInfo(Path.Combine(folder, "b.jpg"));
             _iterator.Initialize([listed], 0);
 
-            var inserted = _iterator.InsertMissing(PathsIn(folder, "d.jpg", "b.jpg", "a.jpg", "c.jpg"), folder,
-                string.CompareOrdinal);
+            var inserted = _iterator.InsertMissing(PathsIn(folder, "d.jpg", "b.jpg", "a.jpg", "c.jpg"), folder);
 
             Assert.Equal(3, inserted);
             Assert.Equal(["a.jpg", "b.jpg", "c.jpg", "d.jpg"], Names());
@@ -208,7 +208,7 @@ public class ImageIteratorFileListTests : IDisposable
         {
             _iterator.Initialize([new FileInfo(Path.Combine(other, "x.jpg"))], 0);
 
-            var inserted = _iterator.InsertMissing(PathsIn(folder, "a.jpg"), folder, string.CompareOrdinal);
+            var inserted = _iterator.InsertMissing(PathsIn(folder, "a.jpg"), folder);
 
             Assert.Equal(0, inserted);
             Assert.Equal(["x.jpg"], Names());
@@ -228,7 +228,7 @@ public class ImageIteratorFileListTests : IDisposable
         {
             _iterator.Initialize([new FileInfo(Path.Combine(folder, "a.jpg"))], 0);
 
-            var inserted = _iterator.InsertMissing(PathsIn(folder, "b.jpg", "gone.jpg"), folder, string.CompareOrdinal);
+            var inserted = _iterator.InsertMissing(PathsIn(folder, "b.jpg", "gone.jpg"), folder);
 
             Assert.Equal(1, inserted);
             Assert.Equal(["a.jpg", "b.jpg"], Names());
@@ -237,6 +237,212 @@ public class ImageIteratorFileListTests : IDisposable
         {
             Directory.Delete(folder, true);
         }
+    }
+
+    [Theory]
+    [InlineData(SortFilesBy.FileSize)]
+    [InlineData(SortFilesBy.Extension)]
+    [InlineData(SortFilesBy.LastWriteTime)]
+    public void Insert_SortedBySize_FileEqualInSize_LandsWhereAFullSortPutsIt(SortFilesBy by)
+    {
+        // Equal in the field, but for f.bmp, which is smaller, has an extension before .jpg and was written earlier, so
+        // only the names tell the others apart
+        var (folder, files) = CreateFiles(("a.jpg", 10, Written), ("b.jpg", 10, Written), ("c.jpg", 10, Written),
+            ("d.jpg", 10, Written), ("f.bmp", 5, Written.AddHours(-1)), ("0.jpg", 10, Written), ("e.jpg", 10, Written));
+        try
+        {
+            var ordering = OrderingBy(by);
+            _iterator.Initialize(ordering.Sort(files.Where(f => f.Name is not ("0.jpg" or "e.jpg"))), 0, ordering);
+
+            _iterator.Insert(Named(files, "0.jpg"));
+            _iterator.Insert(Named(files, "e.jpg"));
+
+            Assert.Equal(["f.bmp", "0.jpg", "a.jpg", "b.jpg", "c.jpg", "d.jpg", "e.jpg"], Names());
+            Assert.Equal(ordering.Sort(files).Select(f => f.Name), Names());
+            Assert.Equal("f.bmp", CurrentName());
+        }
+        finally
+        {
+            Directory.Delete(folder, true);
+        }
+    }
+
+    [Fact]
+    public void Move_SortedByExtension_RenamedFile_LandsWhereAFullSortPutsIt()
+    {
+        // .JPG and .jpg are the same extension, so the names order them, and b.png comes after them all
+        var ordering = OrderingBy(SortFilesBy.Extension);
+        _iterator.Initialize(ordering.Sort([File("a.jpg"), File("c.JPG"), File("d.jpg"), File("b.png")]), 0, ordering);
+        var renamed = File("e.JPG");
+
+        var (removed, inserted) = _iterator.Move(File("a.jpg").FullName, renamed);
+
+        Assert.Equal((0, 2), (removed, inserted));
+        Assert.Equal(["c.JPG", "d.jpg", "e.JPG", "b.png"], Names());
+        Assert.Equal(ordering.Sort([File("c.JPG"), File("d.jpg"), renamed, File("b.png")]).Select(f => f.Name), Names());
+        Assert.Equal("e.JPG", CurrentName());
+    }
+
+    [Fact]
+    public void Insert_ListMadeWithOneOrder_UsesThatOrder_WhateverTheWindowSaysNow()
+    {
+        var (folder, files) = CreateFiles(("a.jpg", 30, Written), ("b.jpg", 10, Written), ("c.jpg", 20, Written),
+            ("d.jpg", 15, Written));
+        try
+        {
+            var tab = new TabViewModel(new MainWindowViewModel(null!, null!, null!, null!),
+                TestTabServices.For(_cache, null));
+            tab.Initialize();
+            var window = tab.CurrentWindowSettings.CurrentValue!;
+            window.FileOrder.Value = new FileOrder(SortFilesBy.FileSize, true);
+            var iterator = tab.ImageIterator!;
+            // Listed in the window's order, which the list keeps without being told it
+            iterator.Initialize(tab.CurrentOrdering().Sort(files.Take(3)), 0);
+
+            window.FileOrder.Value = new FileOrder(SortFilesBy.Name, false);
+            var index = iterator.Insert(Named(files, "d.jpg"));
+
+            Assert.Equal(1, index);
+            Assert.Equal(["b.jpg", "d.jpg", "c.jpg", "a.jpg"], iterator.Files.Select(f => f.Name));
+            Assert.Equal(new FileOrder(SortFilesBy.FileSize, true), iterator.Ordering.Order);
+        }
+        finally
+        {
+            Directory.Delete(folder, true);
+        }
+    }
+
+    [Fact]
+    public void InsertMissing_SortedByLastWrite_ListsPagesByLastWrite()
+    {
+        // Written in the reverse of their names, as an archive's pages can be
+        var (folder, files) = CreateFiles(("a.jpg", 3, Written.AddHours(3)), ("b.jpg", 3, Written.AddHours(2)),
+            ("c.jpg", 3, Written.AddHours(1)), ("d.jpg", 3, Written));
+        try
+        {
+            _iterator.Initialize([Named(files, "b.jpg")], 0, OrderingBy(SortFilesBy.LastWriteTime));
+
+            var inserted = _iterator.InsertMissing(PathsIn(folder, "a.jpg", "b.jpg", "c.jpg", "d.jpg"), folder);
+
+            Assert.Equal(3, inserted);
+            Assert.Equal(["d.jpg", "c.jpg", "b.jpg", "a.jpg"], Names());
+            Assert.Equal("b.jpg", CurrentName());
+        }
+        finally
+        {
+            Directory.Delete(folder, true);
+        }
+    }
+
+    [Fact]
+    public void Resort_NewOrder_SortsAndKeepsTheShownFile()
+    {
+        var (folder, files) = CreateFiles(("a.jpg", 30, Written), ("b.jpg", 10, Written), ("c.jpg", 20, Written),
+            ("d.jpg", 15, Written));
+        try
+        {
+            _iterator.Initialize(files, 0, OrderingBy(SortFilesBy.Name));
+            var bySize = OrderingBy(SortFilesBy.FileSize);
+
+            _iterator.Resort(bySize);
+
+            Assert.Equal(["b.jpg", "d.jpg", "c.jpg", "a.jpg"], Names());
+            Assert.Equal("a.jpg", CurrentName());
+            Assert.Equal(3, _tab.NavigationIndex.CurrentValue);
+            Assert.Same(bySize, _iterator.Ordering);
+        }
+        finally
+        {
+            Directory.Delete(folder, true);
+        }
+    }
+
+    [Fact]
+    public void Resort_SideBySide_KeepsAFullPair()
+    {
+        _tab.Services!.GlobalSettings.IsSideBySide.Value = true;
+        var (folder, files) = CreateFiles(("a.jpg", 30, Written), ("b.jpg", 10, Written), ("c.jpg", 20, Written),
+            ("d.jpg", 15, Written));
+        try
+        {
+            _iterator.Initialize(files, 0, OrderingBy(SortFilesBy.Name));
+
+            // a goes last, which shows in the pair that ends with it (ADR-0024)
+            _iterator.Resort(OrderingBy(SortFilesBy.FileSize));
+
+            Assert.Equal(["b.jpg", "d.jpg", "c.jpg", "a.jpg"], Names());
+            Assert.Equal((2, 3), (_iterator.CurrentIndex, _iterator.SecondaryCurrentIndex));
+        }
+        finally
+        {
+            Directory.Delete(folder, true);
+        }
+    }
+
+    [Fact]
+    public void Resort_SameOrder_ReportsNothing()
+    {
+        var changes = new List<FileListChange>();
+        var iterator = new ImageIterator(_cache, TestTabServices.NoThumbnails(_cache), _tab, changes.Add);
+        iterator.Initialize([File("a.jpg"), File("b.jpg")], 1, OrderingBy(SortFilesBy.Name));
+        var listed = iterator.Files;
+        changes.Clear();
+
+        iterator.Resort(OrderingBy(SortFilesBy.Name));
+
+        Assert.Empty(changes);
+        Assert.Same(listed, iterator.Files);
+        Assert.Equal(1, iterator.CurrentIndex);
+    }
+
+    [Fact]
+    public void Resort_ReportsOneListedChange()
+    {
+        var (folder, files) = CreateFiles(("a.jpg", 30, Written), ("b.jpg", 10, Written), ("c.jpg", 20, Written));
+        try
+        {
+            var changes = new List<FileListChange>();
+            var iterator = new ImageIterator(_cache, TestTabServices.NoThumbnails(_cache), _tab, changes.Add);
+            iterator.Initialize(files, 1, OrderingBy(SortFilesBy.Name));
+            changes.Clear();
+
+            iterator.Resort(OrderingBy(SortFilesBy.FileSize, ascending: false));
+
+            var change = Assert.Single(changes);
+            Assert.Equal(FileListChangeKind.Listed, change.Kind);
+            Assert.Same(iterator.Files, change.Files);
+            Assert.Equal(["a.jpg", "c.jpg", "b.jpg"], change.Files.Select(f => f.Name));
+            Assert.Equal(iterator.CurrentIndex, change.Index);
+            Assert.Equal("b.jpg", change.Files[change.Index].Name);
+        }
+        finally
+        {
+            Directory.Delete(folder, true);
+        }
+    }
+
+    [Fact]
+    public void Insert_Random_AppendsAtTheEnd()
+    {
+        _iterator.Initialize([File("c.jpg"), File("a.jpg"), File("b.jpg")], 1, OrderingBy(SortFilesBy.Random));
+
+        var index = _iterator.Insert(File("0.jpg"));
+
+        Assert.Equal(3, index);
+        Assert.Equal(["c.jpg", "a.jpg", "b.jpg", "0.jpg"], Names());
+        Assert.Equal("a.jpg", CurrentName());
+    }
+
+    [Fact]
+    public void Move_Random_RenamedFile_KeepsItsIndex()
+    {
+        _iterator.Initialize([File("c.jpg"), File("a.jpg"), File("b.jpg")], 0, OrderingBy(SortFilesBy.Random));
+
+        var (removed, inserted) = _iterator.Move(File("a.jpg").FullName, File("0.jpg"));
+
+        Assert.Equal((1, 1), (removed, inserted));
+        Assert.Equal(["c.jpg", "0.jpg", "b.jpg"], Names());
+        Assert.Equal("c.jpg", CurrentName());
     }
 
     [Fact]
@@ -287,7 +493,7 @@ public class ImageIteratorFileListTests : IDisposable
 
         // An archive's extraction inserts a page before the pair while the pair still loads
         var next = iterator.IterateToIndexAsync(2, new CancellationTokenSource()).AsTask();
-        iterator.Insert(File("b.jpg"), string.CompareOrdinal);
+        iterator.Insert(File("b.jpg"));
         held.SetResult(new ImageModel { FileInfo = e, Image = new ProbeImage() });
         await next.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
 
@@ -311,7 +517,7 @@ public class ImageIteratorFileListTests : IDisposable
 
         // A slow Next to c, then an archive's extraction inserts a page before it, so a Previous lands on c's old index
         var next = iterator.IterateToIndexAsync(1, new CancellationTokenSource()).AsTask();
-        iterator.Insert(File("a.jpg"), string.CompareOrdinal);
+        iterator.Insert(File("a.jpg"));
         await iterator.NavigateAsync(NavigateTo.Previous, SkipAmount.One, new CancellationTokenSource())
             .AsTask().WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
         held.SetResult(new ImageModel { FileInfo = c, Image = new ProbeImage() });
@@ -445,7 +651,7 @@ public class ImageIteratorFileListTests : IDisposable
         _iterator.Initialize([a], 0);
         await _iterator.IterateToIndexAsync(0, new CancellationTokenSource());
 
-        _iterator.InsertMissing([Path.Combine(folder, "b.jpg")], folder, string.CompareOrdinal);
+        _iterator.InsertMissing([Path.Combine(folder, "b.jpg")], folder);
 
         await WaitUntil(() => _loaded.Contains("b.jpg"));
     }
@@ -463,11 +669,11 @@ public class ImageIteratorFileListTests : IDisposable
 
         var next = Next(keyHeldDown);
         // An archive reopened at a page extracts pages before it too
-        _iterator.Insert(File("b.jpg"), string.CompareOrdinal);
+        _iterator.Insert(File("b.jpg"));
         await Task.WhenAny(next, Task.Delay(EarlyEndWait, TestContext.Current.CancellationToken));
         var endedEarly = next.IsCompleted;
         var stillShown = ReferenceEquals(shown, _tab.Model);
-        _iterator.Insert(File("d.jpg"), string.CompareOrdinal);
+        _iterator.Insert(File("d.jpg"));
         await next.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
 
         Assert.False(endedEarly, "A page before the shown one ended the wait");
@@ -491,13 +697,13 @@ public class ImageIteratorFileListTests : IDisposable
         await _extraction.BeginAsync(_tab, TestDirectory);
 
         var next = Next(keyHeldDown);
-        _iterator.Insert(File("b.jpg"), string.CompareOrdinal);
+        _iterator.Insert(File("b.jpg"));
         // Half of the next pair
-        _iterator.Insert(File("e.jpg"), string.CompareOrdinal);
+        _iterator.Insert(File("e.jpg"));
         await Task.WhenAny(next, Task.Delay(EarlyEndWait, TestContext.Current.CancellationToken));
         var endedEarly = next.IsCompleted;
         var stillShown = ReferenceEquals(shown, _tab.Model);
-        _iterator.Insert(File("f.jpg"), string.CompareOrdinal);
+        _iterator.Insert(File("f.jpg"));
         await next.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
 
         Assert.False(endedEarly, "The pair after the shown one was not there yet");
@@ -521,7 +727,7 @@ public class ImageIteratorFileListTests : IDisposable
         var next = Next(keyHeldDown);
         await Task.Delay(TimeSpan.FromSeconds(3.5), TestContext.Current.CancellationToken);
         var gaveUp = next.IsCompleted;
-        _iterator.Insert(File("d.jpg"), string.CompareOrdinal);
+        _iterator.Insert(File("d.jpg"));
         await next.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
 
         Assert.False(gaveUp, "Next gave up before the page came");
@@ -536,11 +742,11 @@ public class ImageIteratorFileListTests : IDisposable
         _tab.Display(new ImageModel { FileInfo = c, Image = new ProbeImage() });
         await _extraction.BeginAsync(_tab, TestDirectory);
         var next = Next(keyHeldDown: false);
-        _iterator.Insert(File("b.jpg"), string.CompareOrdinal);
+        _iterator.Insert(File("b.jpg"));
 
         // As a gallery click would, while Next still waits
         await _iterator.IterateToIndexAsync(0, new CancellationTokenSource());
-        _iterator.Insert(File("d.jpg"), string.CompareOrdinal);
+        _iterator.Insert(File("d.jpg"));
         await next.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
 
         Assert.Equal("b.jpg", _tab.Model.FileInfo?.Name);
@@ -677,7 +883,7 @@ public class ImageIteratorFileListTests : IDisposable
             var first = Next(keyHeldDown: false);
             var second = Next(keyHeldDown: false);
 
-            _iterator.Insert(File("c.jpg"), string.CompareOrdinal);
+            _iterator.Insert(File("c.jpg"));
             await Task.WhenAll(first, second).WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
         }
 
@@ -725,6 +931,30 @@ public class ImageIteratorFileListTests : IDisposable
         System.IO.Compression.ZipFile.CreateFromDirectory(source, zip);
         return zip;
     }
+
+    // When the files of a sort by date were last written, so their order does not hang on how fast the test runs
+    private static readonly DateTime Written = new(2024, 1, 1, 12, 0, 0, DateTimeKind.Utc);
+
+    private static FileOrdering OrderingBy(SortFilesBy by, bool ascending = true) =>
+        new(new FileOrder(by, ascending), string.CompareOrdinal);
+
+    // A folder of its own with these files in it, each of its size and last written at its time
+    private static (string Folder, List<FileInfo> Files) CreateFiles(
+        params (string Name, int Size, DateTime LastWrite)[] files)
+    {
+        var folder = Directory.CreateDirectory(Path.Combine(TestDirectory, Guid.NewGuid().ToString("N"))).FullName;
+        var created = new List<FileInfo>();
+        foreach (var (name, size, lastWrite) in files)
+        {
+            var path = Path.Combine(folder, name);
+            System.IO.File.WriteAllBytes(path, new byte[size]);
+            System.IO.File.SetLastWriteTimeUtc(path, lastWrite);
+            created.Add(new FileInfo(path));
+        }
+        return (folder, created);
+    }
+
+    private static FileInfo Named(List<FileInfo> files, string name) => files.Single(f => f.Name == name);
 
     private static string[] PathsIn(string folder, params string[] names) =>
         names.Select(name => Path.Combine(folder, name)).ToArray();

@@ -19,37 +19,6 @@ public static class FileSortOrder
             _ => SortFilesBy.Name,
         };
 
-    public static int InsertSorted(List<FileInfo> list, FileInfo newFile, Func<string, string, int> platformService)
-    {
-        var ascending = Settings.Sorting.Ascending;
-
-        var comparer = Comparer<FileInfo>.Create(Compare);
-        var index = list.BinarySearch(newFile, comparer);
-
-        if (index < 0)
-        {
-            index = ~index;
-        }
-
-        list.Insert(index, newFile);
-        return index;
-
-        int Compare(FileInfo x, FileInfo y)
-        {
-            var result = GetSortOrder switch
-            {
-                SortFilesBy.Name => platformService(x.Name, y.Name),
-                SortFilesBy.FileSize => x.Length.CompareTo(y.Length),
-                SortFilesBy.Extension => string.Compare(x.Extension, y.Extension, StringComparison.OrdinalIgnoreCase),
-                SortFilesBy.CreationTime => x.CreationTime.CompareTo(y.CreationTime),
-                SortFilesBy.LastAccessTime => x.LastAccessTime.CompareTo(y.LastAccessTime),
-                SortFilesBy.LastWriteTime => x.LastWriteTime.CompareTo(y.LastWriteTime),
-                _ => platformService(x.Name, y.Name)
-            };
-            return ascending ? result : -result;
-        }
-    }
-
     public static FileInfo[] GetSortedArchivesInDirectory(string path, Func<string, string, int> stringComparer)
     {
         try

@@ -154,7 +154,7 @@ public class TabCanNavigateTests
         Assert.False(Backwards);
 
         // The list changes during the crop, so the flags it gets back are the list's now, not the saved ones
-        _tab.ImageIterator.Insert(Model("0.jpg").FileInfo!, string.CompareOrdinal);
+        _tab.ImageIterator.Insert(Model("0.jpg").FileInfo!);
         _tab.Crop = null;
         Assert.Equal(2, _tab.NavigationIndex.CurrentValue);
         Assert.Equal(4, _tab.MaxIndex.CurrentValue);
@@ -195,7 +195,7 @@ public class TabCanNavigateTests
     {
         Browse("b.jpg", "c.jpg");
 
-        _tab.ImageIterator!.Insert(Model("a.jpg").FileInfo!, string.CompareOrdinal);
+        _tab.ImageIterator!.Insert(Model("a.jpg").FileInfo!);
 
         Assert.Equal(1, _tab.NavigationIndex.CurrentValue);
         Assert.Equal(3, _tab.MaxIndex.CurrentValue);

@@ -44,7 +44,7 @@ public class FileWatcherServiceTests : IDisposable
         _cache = new SharedImageCache(static f => ValueTask.FromResult(new ImageModel { FileInfo = f }));
         _thumbnails = TestTabServices.NoThumbnails(_cache);
         // Use default ordinal comparison for tests
-        _service = new FileWatcherService((s1, s2) => string.CompareOrdinal(s1, s2), _cache, _thumbnails,
+        _service = new FileWatcherService(_cache, _thumbnails,
             _folderEvents,
             fileRenamed: (oldPath, newPath) => _fileRenamed?.Invoke(oldPath, newPath),
             folderRenamed: (oldFolder, newFolder) => _folderRenamed?.Invoke(oldFolder, newFolder));
@@ -550,7 +550,7 @@ public class FileWatcherServiceTests : IDisposable
     public async Task OnFileCreated_OnDisk_ReachesTheTab()
     {
         // Arrange: the watcher PicView uses, on a real folder
-        using var service = new FileWatcherService((s1, s2) => string.CompareOrdinal(s1, s2), _cache,
+        using var service = new FileWatcherService(_cache,
             _thumbnails);
         var existingFile = new FileInfo(Path.Combine(_testDirectory, "existing.jpg"));
         var tab = new TabViewModel(null!, ServicesWith(_cache, service));
@@ -639,7 +639,7 @@ public class FileWatcherServiceTests : IDisposable
         var subfolder = Path.Combine(_testDirectory, "sub");
         Directory.CreateDirectory(subfolder);
         var files = await FilesOnDiskAsync("a.jpg", Path.Combine("sub", "b.jpg"));
-        using var service = new FileWatcherService((s1, s2) => string.CompareOrdinal(s1, s2), _cache,
+        using var service = new FileWatcherService(_cache,
             _thumbnails);
         var tab = new TabViewModel(null!, ServicesWith(_cache, service));
         tab.Model = new ImageModel { FileInfo = files[0] };
@@ -799,7 +799,7 @@ public class FileWatcherServiceTests : IDisposable
         Directory.CreateDirectory(folder);
         var file = new FileInfo(Path.Combine(folder, "a.jpg"));
         await File.WriteAllTextAsync(file.FullName, "dummy content", TestContext.Current.CancellationToken);
-        using var service = new FileWatcherService((s1, s2) => string.CompareOrdinal(s1, s2), _cache,
+        using var service = new FileWatcherService(_cache,
             _thumbnails);
         var tab = new TabViewModel(null!, ServicesWith(_cache, service));
         tab.Model = new ImageModel { FileInfo = file };
@@ -848,7 +848,7 @@ public class FileWatcherServiceTests : IDisposable
         Directory.CreateDirectory(folder);
         var file = new FileInfo(Path.Combine(folder, "a.jpg"));
         await File.WriteAllTextAsync(file.FullName, "dummy content", TestContext.Current.CancellationToken);
-        using var service = new FileWatcherService((s1, s2) => string.CompareOrdinal(s1, s2), _cache,
+        using var service = new FileWatcherService(_cache,
             _thumbnails);
         var actionRunner = new Input.RecordingActionRunner();
         var tab = new TabViewModel(WindowWith(actionRunner), ServicesWith(_cache, service));
@@ -874,7 +874,7 @@ public class FileWatcherServiceTests : IDisposable
             ValueTask.FromResult(File.Exists(f.FullName)
                 ? new ImageModel { FileInfo = f, Image = new object() }
                 : new ImageModel { FileInfo = f, ImageType = ImageType.Invalid }));
-        using var service = new FileWatcherService((s1, s2) => string.CompareOrdinal(s1, s2), cache,
+        using var service = new FileWatcherService(cache,
             _thumbnails);
         var actionRunner = new Input.RecordingActionRunner();
         var files = await FilesOnDiskAsync(Enumerable.Range(1, 30).Select(i => $"{i:D2}.jpg").ToArray());

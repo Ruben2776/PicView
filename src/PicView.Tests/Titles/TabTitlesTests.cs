@@ -235,7 +235,7 @@ public class TabTitlesTests
         var files = Browse("a.jpg", "c.jpg");
         _tab.Display(Model("a.jpg"));
 
-        _tab.ImageIterator!.Insert(Model("b.jpg").FileInfo!, string.CompareOrdinal);
+        _tab.ImageIterator!.Insert(Model("b.jpg").FileInfo!);
 
         Assert.Equal(Expected(files[0], 0, 3).BaseTitle, _tab.Titles.Title);
     }

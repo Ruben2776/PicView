@@ -137,7 +137,7 @@ public class NavigationService(Func<string, string, int> stringComparer) : INavi
 
             // Update files in iterator, keeping the position on the current file
             // The titles and the gallery follow the sorted list by themselves
-            iterator.Initialize(newFiles, SideBySidePair.IndexOf(newFiles, currentFile) ?? -1);
+            iterator.Initialize(newFiles, SideBySidePair.IndexOf(newFiles, currentFile) ?? -1, ordering);
         }
         catch (Exception e)
         {

@@ -31,14 +31,13 @@ public enum FolderChangeKind
 /// <param name="File">The file, under its new name when renamed.</param>
 /// <param name="OldFullPath">The file's path before it was renamed, else null.</param>
 /// <param name="Details">The file's details, read once for every tab that needs them.</param>
-/// <param name="CompareNames">How the file lists are sorted, to insert the file in its place.</param>
-[StructLayout(LayoutKind.Auto)] 
+/// <remarks>It says nothing of order: each tab's file list places the file by the ordering it keeps.</remarks>
+[StructLayout(LayoutKind.Auto)]
 public sealed record FolderChange(
     FolderChangeKind Kind,
     FileInfo File,
     string? OldFullPath,
-    FileDetailsSource Details,
-    Func<string, string, int> CompareNames)
+    FileDetailsSource Details)
 {
     /// <summary>
     /// Where <paramref name="path"/> is once the folder <paramref name="oldFolder"/> is renamed to

@@ -137,7 +137,7 @@ public class ImageIteratorPairTests
 
     private ValueTask DeleteAsync(FileInfo file) =>
         _tab.OnFolderChangedAsync(new FolderChange(FolderChangeKind.Deleted, file, null,
-            new FileDetailsSource(file, waitUntilReady: false), string.CompareOrdinal), TestContext.Current.CancellationToken);
+            new FileDetailsSource(file, waitUntilReady: false)), TestContext.Current.CancellationToken);
 
     private static async Task WaitUntil(Func<bool> condition)
     {

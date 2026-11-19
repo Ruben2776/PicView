@@ -1,3 +1,4 @@
+using PicView.Core.FileSorting;
 using PicView.Core.Navigation;
 
 namespace PicView.Core.Navigation.Interfaces;
@@ -12,8 +13,8 @@ public interface IImageIterator : IDisposable
 
     /// <summary>
     /// The files being iterated. The iterator is the only writer: change the list through <see cref="Initialize"/>,
-    /// <see cref="Insert"/>, <see cref="InsertMissing"/>, <see cref="Remove"/>, <see cref="Replace"/> and
-    /// <see cref="Move"/>, which keep <see cref="CurrentIndex"/> on the same file and tell the cache and the gallery.
+    /// <see cref="Insert"/>, <see cref="InsertMissing"/>, <see cref="Remove"/>, <see cref="Replace"/>,
+    /// <see cref="Move"/> and <see cref="Resort"/>, which keep <see cref="CurrentIndex"/> on the same file and tell the cache and the gallery.
     /// Each change publishes a new snapshot.
     /// </summary>
     IReadOnlyList<FileInfo> Files { get; }
@@ -32,28 +33,36 @@ public interface IImageIterator : IDisposable
     bool IsReversed { get; }
 
     /// <summary>
-    /// Initializes the iterator with a new list of files and a starting position.
+    /// The ordering <see cref="Files"/> is in: the one it was listed with, or last re-sorted by. Inserts and renames
+    /// place a file by it, whatever the tab's window says by then, until <see cref="Resort"/> changes it.
     /// </summary>
-    void Initialize(IReadOnlyList<FileInfo> files, int initialIndex = 0);
+    FileOrdering Ordering { get; }
 
     /// <summary>
-    /// Inserts <paramref name="file"/> at its sorted position, keeping <see cref="CurrentIndex"/> on the same file. A
-    /// file the list has already is listed once: its entry is replaced instead, as when a file is created over one in
-    /// the list.
+    /// Initializes the iterator with a new list of files and a starting position.
+    /// </summary>
+    /// <param name="ordering">The ordering <paramref name="files"/> are in, which the caller listed them with; null for
+    /// the tab's ordering now.</param>
+    void Initialize(IReadOnlyList<FileInfo> files, int initialIndex = 0, FileOrdering? ordering = null);
+
+    /// <summary>
+    /// Inserts <paramref name="file"/> at its place in <see cref="Ordering"/>, keeping <see cref="CurrentIndex"/> on the
+    /// same file; in a random order, at the end. A file the list has already is listed once: its entry is replaced
+    /// instead, as when a file is created over one in the list.
     /// </summary>
     /// <param name="details">The file's details, for the gallery, when the caller has them.</param>
     /// <returns>The position of the file.</returns>
-    int Insert(FileInfo file, Func<string, string, int> compareNames, FileDetailsSource? details = null);
+    int Insert(FileInfo file, FileDetailsSource? details = null);
 
     /// <summary>
-    /// Inserts the files at <paramref name="paths"/> that the list does not have yet, each at its sorted position as
-    /// <see cref="Insert"/> does. It inserts them all under one lock, so a Next waiting for the list to change finds
+    /// Inserts the files at <paramref name="paths"/> that the list does not have yet, each at its place in
+    /// <see cref="Ordering"/> as <see cref="Insert"/> does. It inserts them all under one lock, so a Next waiting for the list to change finds
     /// them together, and steps to the file right after the shown one. Only while the list is the files of
     /// <paramref name="folder"/>: a tab that browses another folder by then keeps its list. A file that is gone is left
     /// out. A tab's Archive Openings list each page through it as it is written (ADR-0013).
     /// </summary>
     /// <returns>How many files it inserted.</returns>
-    int InsertMissing(IReadOnlyCollection<string> paths, string folder, Func<string, string, int> compareNames);
+    int InsertMissing(IReadOnlyCollection<string> paths, string folder);
 
     /// <summary>
     /// Removes the file at <paramref name="path"/>, keeping <see cref="CurrentIndex"/> on the same file. When the
@@ -71,14 +80,21 @@ public interface IImageIterator : IDisposable
     int Replace(FileInfo file, FileDetailsSource? details = null);
 
     /// <summary>
-    /// Moves the file at <paramref name="oldPath"/> to <paramref name="newFile"/>'s sorted position, e.g., after a
-    /// rename. Inserts <paramref name="newFile"/> even if <paramref name="oldPath"/> was not in the list.
-    /// <see cref="CurrentIndex"/> follows the current file, under its new name if it was the one moved.
+    /// Moves the file at <paramref name="oldPath"/> to <paramref name="newFile"/>'s place in <see cref="Ordering"/>,
+    /// e.g., after a rename; in a random order it keeps its position. Inserts <paramref name="newFile"/> even if
+    /// <paramref name="oldPath"/> was not in the list. <see cref="CurrentIndex"/> follows the current file, under its
+    /// new name if it was the one moved.
     /// </summary>
     /// <param name="details">The file's details, for the gallery, when the caller has them.</param>
     /// <returns>The position removed from (-1 if none) and the position inserted at.</returns>
-    (int Removed, int Inserted) Move(string oldPath, FileInfo newFile, Func<string, string, int> compareNames,
-        FileDetailsSource? details = null);
+    (int Removed, int Inserted) Move(string oldPath, FileInfo newFile, FileDetailsSource? details = null);
+
+    /// <summary>
+    /// Sorts the list by a new ordering, keeping the position on the same file (and its Side-by-Side partner rule), and
+    /// reports it as a Listed change. Does nothing when the order is the one the list already has, unless it is Random.
+    /// It reads nothing from the disk but what the ordering compares, and loads nothing.
+    /// </summary>
+    void Resort(FileOrdering ordering);
 
     /// <summary>
     /// Gives the files in the folder <paramref name="oldFolder"/> their paths under <paramref name="newFolder"/>, after

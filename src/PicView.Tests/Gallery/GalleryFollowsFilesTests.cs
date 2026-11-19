@@ -164,7 +164,7 @@ public class GalleryFollowsFilesTests : IDisposable
         var tab = await LoadedTabAsync("a.jpg", "c.jpg");
         var inserted = (await FilesAsync("b.jpg"))[0];
 
-        tab.ImageIterator.Insert(inserted, string.CompareOrdinal);
+        tab.ImageIterator.Insert(inserted);
         await IdleAsync(tab);
 
         AssertItems(tab, "a.jpg", "b.jpg", "c.jpg");
@@ -176,7 +176,7 @@ public class GalleryFollowsFilesTests : IDisposable
         var tab = CreateTab();
         tab.ImageIterator.Initialize(await FilesAsync("a.jpg"));
 
-        tab.ImageIterator.Insert((await FilesAsync("b.jpg"))[0], string.CompareOrdinal);
+        tab.ImageIterator.Insert((await FilesAsync("b.jpg"))[0]);
         await IdleAsync(tab);
 
         Assert.Empty(tab.Gallery.GalleryItems);
@@ -195,7 +195,7 @@ public class GalleryFollowsFilesTests : IDisposable
         await WaitUntilAsync(() => tab.Gallery.GalleryItems.Count == 300);
         var items = tab.Gallery.GalleryItems.ToArray();
 
-        tab.ImageIterator.Insert(inserted, string.CompareOrdinal);
+        tab.ImageIterator.Insert(inserted);
         await IdleAsync(tab);
         reader.Release();
 
@@ -219,7 +219,7 @@ public class GalleryFollowsFilesTests : IDisposable
         tab.ImageIterator.Initialize(files);
         await WaitUntilAsync(() => tab.Gallery.LoadingState is GalleryLoadingState.Starting);
 
-        tab.ImageIterator.Insert(inserted, string.CompareOrdinal);
+        tab.ImageIterator.Insert(inserted);
         await IdleAsync(tab);
         reader.Release();
 
@@ -272,7 +272,7 @@ public class GalleryFollowsFilesTests : IDisposable
         var tab = await LoadedTabAsync("a.jpg", "b.jpg");
         var renamed = (await FilesAsync("c.jpg"))[0];
 
-        tab.ImageIterator.Move(Path.Combine(_directory, "a.jpg"), renamed, string.CompareOrdinal);
+        tab.ImageIterator.Move(Path.Combine(_directory, "a.jpg"), renamed);
         await IdleAsync(tab);
 
         AssertItems(tab, "b.jpg", "c.jpg");
@@ -289,7 +289,7 @@ public class GalleryFollowsFilesTests : IDisposable
         }
         var file = new FileInfo(path);
 
-        tab.ImageIterator.Insert(file, string.CompareOrdinal, new FileDetailsSource(file, waitUntilReady: false));
+        tab.ImageIterator.Insert(file, new FileDetailsSource(file, waitUntilReady: false));
         await IdleAsync(tab);
         var item = tab.Gallery.GalleryItems[1];
 
@@ -710,7 +710,7 @@ public class GalleryFollowsFilesTests : IDisposable
         _thumbnails.Keep(tab.Id, new FileInfo("kept.jpg").FullName, new object(), 100);
         Assert.True(await IsKeptAsync("kept.jpg"));
 
-        tab.ImageIterator.Insert((await FilesAsync("b.jpg"))[0], string.CompareOrdinal);
+        tab.ImageIterator.Insert((await FilesAsync("b.jpg"))[0]);
         await IdleAsync(tab);
 
         Assert.Equal(GalleryMode.Closed, tab.Gallery.ShownMode.Value);

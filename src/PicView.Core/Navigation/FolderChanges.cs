@@ -89,7 +89,7 @@ internal sealed class FolderChanges(TabViewModel tab)
             return ValueTask.CompletedTask;
         }
 
-        iterator.Insert(file, change.CompareNames, change.Details);
+        iterator.Insert(file, change.Details);
         iterator.NotifyFileAdded();
         return ValueTask.CompletedTask;
     }
@@ -127,7 +127,7 @@ internal sealed class FolderChanges(TabViewModel tab)
             return;
         }
 
-        iterator.Move(change.OldFullPath, file, change.CompareNames, change.Details);
+        iterator.Move(change.OldFullPath, file, change.Details);
 
         // The same image under a new name is not shown anew: its model keeps its image, size and TIFF page, so zoom and
         // orientation survive, and its View History entries were renamed before this (ADR-0012), so nothing is recorded

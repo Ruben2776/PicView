@@ -208,7 +208,7 @@ public sealed class TabLoad
             return LoadResult.Failed();
         }
 
-        return await ShowThenListAsync(files[0], files, null, null, null, run).ConfigureAwait(false);
+        return await ShowThenListAsync(files[0], files, null, null, null, run, ordering).ConfigureAwait(false);
     }
 
     private async ValueTask<LoadResult> LoadArchiveAsync(string archive, string? startEntry, Run run)
@@ -340,8 +340,10 @@ public sealed class TabLoad
     /// primes the cache. Once a newer load begins, it stops before changing the tab's image, files or gallery, so a slow
     /// load that finishes last cannot overwrite a newer one.
     /// </summary>
+    /// <param name="listedWith">The ordering <paramref name="files"/> were listed with, which the tab's file list keeps;
+    /// null for the tab's ordering now. Files listed here are listed with the tab's ordering, and keep that.</param>
     private async ValueTask<LoadResult> ShowThenListAsync(FileInfo file, IReadOnlyList<FileInfo>? files,
-        ImageModel? given, ImageModel? givenSecondary, string? rootDirectory, Run run)
+        ImageModel? given, ImageModel? givenSecondary, string? rootDirectory, Run run, FileOrdering? listedWith = null)
     {
         // A newer load that began meanwhile watches its own folder, which this one must not stop
         if (!IsCurrent(run))
@@ -375,7 +377,13 @@ public sealed class TabLoad
         }
 
         await Task.Yield();
-        var retrieved = files ?? ListAround(file, rootDirectory);
+        var ordering = listedWith;
+        var retrieved = files;
+        if (retrieved is null)
+        {
+            ordering = _tab.CurrentOrdering();
+            retrieved = ListAround(file, rootDirectory, ordering);
+        }
         if (!IsCurrent(run))
         {
             return LoadResult.Superseded;
@@ -385,7 +393,7 @@ public sealed class TabLoad
         // The opened file shows in the pair that holds it, so the last file shows beside the one before it (ADR-0024)
         var (primary, partner) = SideBySidePair.PairAt(index, retrieved.Count, showsPair, looping);
         var iterator = EnsureIterator();
-        iterator.Initialize(retrieved, primary);
+        iterator.Initialize(retrieved, primary, ordering);
 
         // The image of the pair that is not the opened file, and where it is
         ImageModel? otherModel = null;
@@ -458,7 +466,8 @@ public sealed class TabLoad
     /// </summary>
     private async ValueTask<LoadResult> RelistAsync(FileInfo file, string? rootDirectory, Run run)
     {
-        var files = await Task.Run(() => ListAround(file, rootDirectory), run.Token).ConfigureAwait(false);
+        var ordering = _tab.CurrentOrdering();
+        var files = await Task.Run(() => ListAround(file, rootDirectory, ordering), run.Token).ConfigureAwait(false);
         if (!IsCurrent(run))
         {
             return LoadResult.Superseded;
@@ -476,7 +485,7 @@ public sealed class TabLoad
         var watcher = _services.Watcher;
         var iterator = EnsureIterator();
         watcher.Unwatch(_tab);
-        iterator.Initialize(files, index);
+        iterator.Initialize(files, index, ordering);
         watcher.Watch(_tab, shown.DirectoryName);
         cache.ReleaseImages(_tab.Id);
         PutShown(files, _tab.Model);
@@ -496,11 +505,10 @@ public sealed class TabLoad
 
     /// <summary>
     /// The files around <paramref name="file"/>: those of <paramref name="rootDirectory"/> when the file is inside it
-    /// and the listing has it, else those of the file's own folder.
+    /// and the listing has it, else those of the file's own folder, in <paramref name="ordering"/>.
     /// </summary>
-    private List<FileInfo> ListAround(FileInfo file, string? rootDirectory)
+    private static List<FileInfo> ListAround(FileInfo file, string? rootDirectory, FileOrdering ordering)
     {
-        var ordering = _tab.CurrentOrdering();
         if (rootDirectory is null || !IsInside(file, rootDirectory))
         {
             return FileListRetriever.RetrieveFiles(file, ordering);

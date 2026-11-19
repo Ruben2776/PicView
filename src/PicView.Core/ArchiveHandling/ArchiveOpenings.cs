@@ -120,7 +120,10 @@ public sealed class ArchiveOpenings
     /// <param name="extractWithLocalSoftwareAsync">
     ///     Extracts an archive that needs local software, such as a .7z, whole into the folder given.
     /// </param>
-    /// <param name="compareNames">How the tab sorts file names, which the pages are listed by.</param>
+    /// <param name="compareNames">
+    ///     How the tab sorts file names, which the pages are listed by. The pages extracted later are placed by the
+    ///     ordering the tab's file list keeps.
+    /// </param>
     public async ValueTask<ArchiveOpening?> OpenAsync(string archive, string? startEntry,
         Func<string, string, Task<bool>> extractWithLocalSoftwareAsync, Func<string, string, int> compareNames,
         CancellationToken ct)
@@ -152,8 +155,7 @@ public sealed class ArchiveOpenings
                 var startFile = startEntry is null
                     ? null
                     : Array.Find(files, f => string.Equals(_extraction.EntryOf(f.FullName), startEntry, StringComparison.Ordinal));
-                return new ArchiveOpening(this, archive, folder, files, startFile ?? files[0], [], [], files.Length,
-                    compareNames);
+                return new ArchiveOpening(this, archive, folder, files, startFile ?? files[0], [], [], files.Length);
             }
 
             var keys = prep.EntryKeys;
@@ -185,7 +187,7 @@ public sealed class ArchiveOpenings
             var startPath = _extraction.ExtractedPathOf(keys[start]);
             var shown = startPath is null ? seed[0] : Array.Find(seed, f => string.Equals(f.FullName, startPath, StringComparison.Ordinal)) ?? seed[0];
             var (afterKeys, beforeKeys) = RemainingKeys(keys, start, end, partner);
-            return new ArchiveOpening(this, archive, folder, seed, shown, afterKeys, beforeKeys, keys.Length, compareNames);
+            return new ArchiveOpening(this, archive, folder, seed, shown, afterKeys, beforeKeys, keys.Length);
         }
         catch (OperationCanceledException)
         {
@@ -276,7 +278,7 @@ public sealed class ArchiveOpenings
         {
             if (!opening.IsStopped && _tab.ImageIterator is { } iterator)
             {
-                iterator.InsertMissing([path], opening.Folder, opening.CompareNames);
+                iterator.InsertMissing([path], opening.Folder);
             }
         }
         catch (Exception ex)
