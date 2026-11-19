@@ -178,6 +178,7 @@ public class DraggableTabControl : TabControl
             tabItem.RemoveHandler(PointerPressedEvent, OnItemPointerPressed);
             tabItem.RemoveHandler(PointerMovedEvent, OnItemPointerMoved);
             tabItem.RemoveHandler(PointerReleasedEvent, OnItemPointerReleased);
+            tabItem.RemoveHandler(PointerWheelChangedEvent, OnPointerWheelChanged);
             tabItem.PointerCaptureLost -= OnPointerCaptureLost;
 
             if (tabItem.DataContext is TabViewModel { IsClosing: true } && _pressedTab == tabItem)
@@ -197,6 +198,13 @@ public class DraggableTabControl : TabControl
 
     private void OnPointerWheelChanged(object? sender, PointerWheelEventArgs e)
     {
+        // A sideways step (a touchpad swipe or a tilted wheel) is scrolled by the scroll viewer itself.
+        // Only a vertical wheel step is turned into a sideways scroll of the strip here
+        if (_scrollViewer is null || Math.Abs(e.Delta.X) >= Math.Abs(e.Delta.Y))
+        {
+            return;
+        }
+
         if (e.Delta.Y > 0)
         {
             _scrollViewer.LineLeft();
