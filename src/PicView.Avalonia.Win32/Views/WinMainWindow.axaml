@@ -1,25 +1,22 @@
 <customControls:MainWindow
+    MaxHeight="{CompiledBinding WindowMaxHeight.Value}"
+    MaxWidth="{CompiledBinding WindowMaxWidth.Value}"
+    MinHeight="{CompiledBinding WindowMinHeight}"
+    MinWidth="{CompiledBinding WindowMinWidth}"
+    Title="{CompiledBinding WindowTabs.ActiveTab.Value.Titles.WindowTitle,
+                            FallbackValue=''}"
     x:Class="PicView.Avalonia.Win32.Views.WinMainWindow"
+    x:DataType="viewModels:MainWindowViewModel"
     xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls;assembly=PicView.Avalonia"
     xmlns:main="clr-namespace:PicView.Avalonia.Views.Main;assembly=PicView.Avalonia"
     xmlns:menu="clr-namespace:PicView.Avalonia.Views.Menu;assembly=PicView.Avalonia"
     xmlns:uc="clr-namespace:PicView.Avalonia.Views.UC;assembly=PicView.Avalonia"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
-    xmlns:views="clr-namespace:PicView.Avalonia.Win32.Views"
-    Title="{CompiledBinding WindowTabs.ActiveTab.Value.Titles.WindowTitle,
-                            FallbackValue=''}"
-    MinWidth="{CompiledBinding WindowMinWidth}"
-    MinHeight="{CompiledBinding WindowMinHeight}"
-    MaxWidth="{CompiledBinding WindowMaxWidth.Value}"
-    MaxHeight="{CompiledBinding WindowMaxHeight.Value}"
-    x:DataType="viewModels:MainWindowViewModel">
-    <Border BorderBrush="{DynamicResource WindowBorderColor}" BorderThickness="1">
-        <DockPanel LastChildFill="True">
-            <menu:CustomTitleBar x:Name="Titlebar" DockPanel.Dock="Top" />
-            <uc:BottomBar x:Name="BottomBar" DockPanel.Dock="Bottom" />
-            <main:MainView x:Name="MainView" />
-        </DockPanel>
-    </Border>
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <DockPanel LastChildFill="True">
+        <menu:CustomTitleBar DockPanel.Dock="Top" x:Name="Titlebar" />
+        <uc:BottomBar DockPanel.Dock="Bottom" x:Name="BottomBar" />
+        <main:MainView x:Name="MainView" />
+    </DockPanel>
 </customControls:MainWindow>
