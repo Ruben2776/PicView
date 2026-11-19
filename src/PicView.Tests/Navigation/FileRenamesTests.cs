@@ -294,7 +294,7 @@ public class FileRenamesTests : IDisposable
     // Opens the archive in the tab and extracts its two pages, as a tab reading it has once the start page shows
     private static async Task<(string First, string Second)> ExtractTwoPagesAsync(TabViewModel tab, string zip)
     {
-        var opening = (await tab.Archives.OpenAsync(zip, null, (_, _) => Task.FromResult(false), string.CompareOrdinal,
+        var opening = (await tab.Archives.OpenAsync(zip, null, (_, _) => Task.FromResult(false), TestOrderings.ByName(),
             TestContext.Current.CancellationToken))!;
         opening.ExtractRest();
         await opening.Ended.WaitAsync(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken);

@@ -182,7 +182,7 @@ internal class ArchiveExtractionService(IArchiveEntryWriter? entryWriter = null)
     /// </summary>
     /// <param name="TempDirectory">The temporary directory the archive will be extracted into.</param>
     /// <param name="EntryKeys">
-    ///     Sorted list of supported entry keys (as reported by the archive). For
+    ///     The supported entry keys (as reported by the archive), in the File Ordering's order. For
     ///     <see cref="IsFullyExtracted" /> = <c>true</c> this list contains the absolute paths of
     ///     already-extracted files instead.
     /// </param>
@@ -199,14 +199,19 @@ internal class ArchiveExtractionService(IArchiveEntryWriter? entryWriter = null)
     /// <summary>
     /// Prepares an archive for staged extraction: creates a temporary directory, lists all
     /// supported entries (or fully extracts the archive when local software is required) and
-    /// returns a sorted entry list. Only an archive that opens becomes the open one, with its folder as
-    /// <see cref="TempZipDirectory" />. One that fails to open, such as a corrupt archive or one with no images, deletes
-    /// its folder and leaves the open archive as it was, extracting as it did, since the tab still shows it.
+    /// returns them in <paramref name="ordering" />'s order. Only an archive that opens becomes the open one, with its
+    /// folder as <see cref="TempZipDirectory" />. One that fails to open, such as a corrupt archive or one with no images,
+    /// deletes its folder and leaves the open archive as it was, extracting as it did, since the tab still shows it.
     /// </summary>
+    /// <param name="ordering">
+    ///     The tab's File Ordering, which the entries are put in from what the archive says of each before anything is
+    ///     extracted: its name, size and modified time. By name, the archive's folders count first when the app respects
+    ///     the archive structure. Random shuffles them once here, so the start page and the extraction follow the shuffle.
+    /// </param>
     public async Task<ArchivePreparation?> PrepareArchiveAsync(
         string archivePath,
         Func<string, string, Task<bool>> extractWithLocalSoftwareAsync,
-        Func<string, string, int> stringComparer)
+        FileOrdering ordering)
     {
         if (string.IsNullOrEmpty(archivePath) || !File.Exists(archivePath))
         {
@@ -221,7 +226,7 @@ internal class ArchiveExtractionService(IArchiveEntryWriter? entryWriter = null)
         try
         {
             Directory.CreateDirectory(tempDirectory);
-            if (await OpenAsync(archivePath, tempDirectory, extractWithLocalSoftwareAsync, stringComparer)
+            if (await OpenAsync(archivePath, tempDirectory, extractWithLocalSoftwareAsync, ordering)
                     .ConfigureAwait(false) is (var preparation, var sharedFolderCount))
             {
                 Publish(tempDirectory, archivePath, preparation.IsFullyExtracted, sharedFolderCount);
@@ -243,8 +248,9 @@ internal class ArchiveExtractionService(IArchiveEntryWriter? entryWriter = null)
         string archivePath,
         string tempDirectory,
         Func<string, string, Task<bool>> extractWithLocalSoftwareAsync,
-        Func<string, string, int> stringComparer)
+        FileOrdering ordering)
     {
+        var isRespectingStructure = IsRespectingStructure(ordering);
         var ext = Path.GetExtension(archivePath);
         if (ext.Equals(".7z", StringComparison.OrdinalIgnoreCase) ||
             ext.Equals(".cb7", StringComparison.OrdinalIgnoreCase))
@@ -267,13 +273,14 @@ internal class ArchiveExtractionService(IArchiveEntryWriter? entryWriter = null)
                 return null;
             }
 
-            if (IsRespectingStructure)
+            // The files are on disk, so any order but the archive's folders is the one the tab sorts files by
+            if (isRespectingStructure)
             {
-                SortByPath(files, SplitPaths(files, tempDirectory), stringComparer);
+                SortByPath(files, SplitPaths(files, tempDirectory), ordering);
             }
             else
             {
-                SortByFileName(files, stringComparer);
+                files = ordering.Sort(files.Select(path => new FileInfo(path))).Select(file => file.FullName).ToArray();
             }
 
             // Local software names the files itself
@@ -283,29 +290,34 @@ internal class ArchiveExtractionService(IArchiveEntryWriter? entryWriter = null)
         var archive = await ArchiveFactory.OpenAsyncArchive(archivePath).ConfigureAwait(false);
         await using (archive.ConfigureAwait(false))
         {
+            // What each entry says of itself in the archive's directory, read before anything is extracted. The name is
+            // filled in once the shared folders are known
             var entries = await archive.EntriesAsync
                 .Where(e => !e.IsDirectory
                             && !string.IsNullOrEmpty(e.Key)
                             && e.Key!.IsSupported())
-                .Select(e => e.Key!).ToArrayAsync().ConfigureAwait(false);
+                .Select(e => new ArchiveEntryOrderKey(string.Empty, e.Key!, e.Size, ModifiedTimeOf(e)))
+                .ToArrayAsync().ConfigureAwait(false);
 
             if (entries.Length is 0)
             {
                 return null;
             }
 
-            var sharedFolderCount = NotRespectingStructure;
-            if (IsRespectingStructure)
+            var keys = new string[entries.Length];
+            for (var i = 0; i < entries.Length; i++)
             {
-                sharedFolderCount = CountSharedFolders(SplitPaths(entries));
-                SortByFlatFileName(entries, sharedFolderCount, stringComparer);
-            }
-            else
-            {
-                SortByFileName(entries, stringComparer);
+                keys[i] = entries[i].Key;
             }
 
-            return (new ArchivePreparation(tempDirectory, entries, IsFullyExtracted: false), sharedFolderCount);
+            var sharedFolderCount = isRespectingStructure ? CountSharedFolders(SplitPaths(keys)) : NotRespectingStructure;
+            OrderEntries(entries, sharedFolderCount, ordering);
+            for (var i = 0; i < entries.Length; i++)
+            {
+                keys[i] = entries[i].Key;
+            }
+
+            return (new ArchivePreparation(tempDirectory, keys, IsFullyExtracted: false), sharedFolderCount);
         }
     }
 
@@ -611,8 +623,18 @@ internal class ArchiveExtractionService(IArchiveEntryWriter? entryWriter = null)
     ///     Whether images are ordered by their folder inside the archive before their file name.
     ///     Only applies when sorting by name, as the folder has no say in the other sort orders.
     /// </summary>
-    private static bool IsRespectingStructure =>
-        Settings.Navigation.IsRespectingArchiveStructure && FileSortOrder.GetSortOrder == SortFilesBy.Name;
+    private static bool IsRespectingStructure(FileOrdering ordering) =>
+        Settings.Navigation.IsRespectingArchiveStructure && ordering.Order.By == SortFilesBy.Name;
+
+    // A zip with no time holds a zero date, which reads as the first day of 1980, and a gzip a zero time, which reads as
+    // 1970: neither is a time the entry was modified
+    private static readonly DateTime NoModifiedTime = new(1980, 1, 1);
+
+    /// <summary>
+    ///     When the entry was last modified, as the archive says, or null when it does not say.
+    /// </summary>
+    private static DateTime? ModifiedTimeOf(IArchiveEntry entry) =>
+        entry.LastModifiedTime is { } modified && modified > NoModifiedTime ? modified : null;
 
     /// <summary>
     ///     Deletes every extraction folder and forgets it. An extraction to any of them stops by itself.
@@ -782,12 +804,40 @@ internal class ArchiveExtractionService(IArchiveEntryWriter? entryWriter = null)
             _entryWriter.Write(entryStream, fileStream);
         }
 
+        StampModifiedTime(destinationPath, ModifiedTimeOf(entry));
+
 #if DEBUG
         Console.WriteLine($"Extracted: {entry.Key} -> {destinationPath}");
 #endif
 
         extraction?.FileByEntry[entry.Key!] = destinationPath;
         return destinationPath;
+    }
+
+    /// <summary>
+    ///     Gives the file its entry's modified time as its last write, creation and last access time, so the tab's list,
+    ///     sorted again by any date, keeps the order the pages were put in from the entries. An entry with no time leaves
+    ///     the file's own, and a time the file system refuses is left out, as the page is written all the same.
+    /// </summary>
+    private static void StampModifiedTime(string path, DateTime? modified)
+    {
+        if (modified is not { } time)
+        {
+            return;
+        }
+
+        try
+        {
+            // Unspecified counts as local, as the archives that give one keep local time
+            var utc = time.Kind is DateTimeKind.Utc ? time : DateTime.SpecifyKind(time, DateTimeKind.Local).ToUniversalTime();
+            File.SetCreationTimeUtc(path, utc);
+            File.SetLastWriteTimeUtc(path, utc);
+            File.SetLastAccessTimeUtc(path, utc);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException)
+        {
+            DebugHelper.LogDebug(nameof(ArchiveExtractionService), nameof(StampModifiedTime), ex);
+        }
     }
 
     /// <summary>
@@ -824,47 +874,50 @@ internal class ArchiveExtractionService(IArchiveEntryWriter? entryWriter = null)
     }
 
     /// <summary>
-    ///     Sorts the paths by folder, then file name, comparing one path segment at a time, so
-    ///     <c>Volume 01/003.jpg</c> comes before <c>Volume 02/001.jpg</c>. Descending reverses the whole order.
+    ///     Sorts the paths by folder, then file name, comparing one path segment at a time with the ordering's names, so
+    ///     <c>Volume 01/003.jpg</c> comes before <c>Volume 02/001.jpg</c>. Descending reverses the whole order: no file's
+    ///     path is the start of another's, so the segments decide every pair.
     /// </summary>
-    private static void SortByPath(string[] paths, string[][] segments, Func<string, string, int> stringComparer)
-    {
-        var ascending = Settings.Sorting.Ascending;
-        Array.Sort(segments, paths, Comparer<string[]>.Create((a, b) =>
-            ascending ? CompareSegments(a, b, stringComparer) : CompareSegments(b, a, stringComparer)));
-    }
+    private static void SortByPath(string[] paths, string[][] segments, FileOrdering ordering) =>
+        Array.Sort(segments, paths, Comparer<string[]>.Create((a, b) => CompareSegments(a, b, ordering)));
 
-    /// <summary>
-    ///     Sorts the keys by the names their files are extracted under, as the tab sorts the extracted files by name, so
-    ///     the keys are in the order the tab lists the pages in. Since the names keep the folders, that is the folder order,
-    ///     but sorting by path instead would differ wherever a folder sorts unlike its name in the file name, as
-    ///     <c>Vol 1 (color)</c> does before <c>Vol 1 -</c>. Then the pages extracted nearest the start would not be the
-    ///     pages nearest it on screen.
-    /// </summary>
-    private static void SortByFlatFileName(string[] keys, int sharedFolderCount, Func<string, string, int> stringComparer)
-    {
-        var names = new string[keys.Length];
-        for (var i = 0; i < keys.Length; i++)
-        {
-            names[i] = GetFlatFileName(keys[i], sharedFolderCount);
-        }
-
-        var ascending = Settings.Sorting.Ascending;
-        Array.Sort(names, keys, Comparer<string>.Create((a, b) => ascending ? stringComparer(a, b) : stringComparer(b, a)));
-    }
-
-    private static int CompareSegments(string[] a, string[] b, Func<string, string, int> stringComparer)
+    private static int CompareSegments(string[] a, string[] b, FileOrdering ordering)
     {
         var count = Math.Min(a.Length, b.Length);
         for (var i = 0; i < count; i++)
         {
-            var result = stringComparer(a[i], b[i]);
+            var result = ordering.CompareNames(a[i], b[i]);
             if (result != 0)
             {
                 return result;
             }
         }
         return a.Length.CompareTo(b.Length);
+    }
+
+    /// <summary>
+    ///     Puts the entries in the ordering's order, each compared by the name its file is extracted under, as the tab
+    ///     compares the extracted files, so the entries are in the order the tab lists the pages in. When respecting the
+    ///     archive structure the names keep the folders, so by name that is the folder order. Sorting by path instead
+    ///     would differ wherever a folder sorts unlike its name in the file name, as <c>Vol 1 (color)</c> does before
+    ///     <c>Vol 1 -</c>, and then the pages extracted nearest the start would not be the pages nearest it on screen.
+    ///     Random shuffles them.
+    /// </summary>
+    private static void OrderEntries(ArchiveEntryOrderKey[] entries, int sharedFolderCount, FileOrdering ordering)
+    {
+        for (var i = 0; i < entries.Length; i++)
+        {
+            entries[i] = entries[i] with { Name = GetFlatFileName(entries[i].Key, sharedFolderCount) };
+        }
+
+        if (ordering.Order.By is SortFilesBy.Random)
+        {
+            Random.Shared.Shuffle(entries);
+            return;
+        }
+
+        // The comparison ends in the key, so no two entries tie and an unstable sort cannot reorder any
+        Array.Sort(entries, (a, b) => ordering.Compare(in a, in b));
     }
 
     /// <summary>
@@ -892,21 +945,5 @@ internal class ArchiveExtractionService(IArchiveEntryWriter? entryWriter = null)
             }
         }
         return Math.Max(shared, 0);
-    }
-
-    private static void SortByFileName(string[] paths, Func<string, string, int> stringComparer)
-    {
-        if (!Settings.Sorting.Name)
-        {
-            return;
-        }
-        if (Settings.Sorting.Ascending)
-        {
-            paths.Sort((a, b) => stringComparer(Path.GetFileName(a), Path.GetFileName(b)));
-        }
-        else
-        {
-            paths.Sort((a, b) => stringComparer(Path.GetFileName(b), Path.GetFileName(a)));
-        }
     }
 }

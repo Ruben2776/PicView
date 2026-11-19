@@ -5,6 +5,7 @@ using System.Net.Sockets;
 using ImageMagick;
 using PicView.Core.ArchiveHandling;
 using PicView.Core.FileHistory;
+using PicView.Core.FileSorting;
 using PicView.Core.Localization;
 using PicView.Core.IPlatform;
 using PicView.Core.Models;
@@ -486,6 +487,85 @@ public class TabLoadTests : IDisposable
             // The pages extracted together with the start entry come in the archive's order, so they are compared sorted
             Assert.Equal(withTheStart, writer.Written.Take(withTheStart.Length).Order(StringComparer.Ordinal));
             Assert.Equal(rest, writer.Written.Skip(withTheStart.Length));
+        }
+        finally
+        {
+            tab.Archives.Cleanup();
+        }
+    }
+
+    // Zipped out of name order. By size and by modified time alike: b, d, a, e, c
+    private static readonly DateTime PageModified = new(2021, 3, 1, 10, 0, 0, DateTimeKind.Local);
+
+    private static readonly (string Name, int Size, DateTime Modified)[] FivePages =
+    [
+        ("a.jpg", 30, PageModified.AddDays(3)), ("b.jpg", 10, PageModified.AddDays(1)),
+        ("c.jpg", 50, PageModified.AddDays(5)), ("d.jpg", 20, PageModified.AddDays(2)),
+        ("e.jpg", 40, PageModified.AddDays(4))
+    ];
+
+    private static readonly string[] FivePagesInOrder = ["b.jpg", "d.jpg", "a.jpg", "e.jpg", "c.jpg"];
+
+    // Loads the five pages' archive into a tab whose window orders by the field given, once every page is listed
+    private async Task<(TabViewModel Tab, RecordingEntryWriter Writer, LoadResult Result)> LoadFivePagesAsync(
+        SortFilesBy by)
+    {
+        var zip = OrderedZip.Create(Path.Combine(_testDirectory, $"by_{by}.zip"), FivePages);
+        var writer = new RecordingEntryWriter();
+        var tab = CreateTab(_testDirectory, writer: writer);
+        tab.CurrentWindowSettings.CurrentValue!.FileOrder.Value = new FileOrder(by, true);
+        var result = await tab.Load.LoadAsync(zip);
+        await WaitUntil(() => tab.Archives.State.Value is not ExtractionState.Extracting && writer.Written.Length >= 5,
+            () => string.Join(", ", writer.Written));
+        return (tab, writer, result);
+    }
+
+    [Fact]
+    public async Task LoadAsync_ArchiveSortedBySize_ListsPagesInExtractionOrder_AndAResortBySizeChangesNothing()
+    {
+        var (tab, writer, result) = await LoadFivePagesAsync(SortFilesBy.FileSize);
+        try
+        {
+            var iterator = tab.ImageIterator!;
+            var listed = iterator.Files.Select(f => f.Name).ToArray();
+
+            Assert.True(result.IsLoaded);
+            // The start page is the smallest, and the rest are extracted by size after it
+            Assert.Equal("b.jpg", tab.Model.FileInfo!.Name);
+            Assert.Equal(FivePagesInOrder, writer.Written);
+            Assert.Equal(writer.Written, listed);
+            Assert.Equal(new FileOrder(SortFilesBy.FileSize, true), iterator.Ordering.Order);
+
+            iterator.Resort(tab.CurrentOrdering());
+
+            Assert.Equal(listed, iterator.Files.Select(f => f.Name));
+            Assert.Equal(0, iterator.CurrentIndex);
+        }
+        finally
+        {
+            tab.Archives.Cleanup();
+        }
+    }
+
+    [Fact]
+    public async Task LoadAsync_ArchiveSortedByLastWrite_ListsPagesInExtractionOrder_AndAResortByAnyDateChangesNothing()
+    {
+        // Each page is stamped with its entry's modified time, so a sort of the files by a date agrees with the entries'
+        var (tab, writer, result) = await LoadFivePagesAsync(SortFilesBy.LastWriteTime);
+        try
+        {
+            var iterator = tab.ImageIterator!;
+            var listed = iterator.Files.Select(f => f.Name).ToArray();
+
+            Assert.True(result.IsLoaded);
+            Assert.Equal("b.jpg", tab.Model.FileInfo!.Name);
+            Assert.Equal(FivePagesInOrder, writer.Written);
+            Assert.Equal(writer.Written, listed);
+
+            iterator.Resort(tab.CurrentOrdering());
+            Assert.Equal(listed, iterator.Files.Select(f => f.Name));
+            iterator.Resort(new FileOrdering(new FileOrder(SortFilesBy.CreationTime, true), string.CompareOrdinal));
+            Assert.Equal(listed, iterator.Files.Select(f => f.Name));
         }
         finally
         {
@@ -1525,7 +1605,7 @@ public class TabLoadTests : IDisposable
     private async Task<string> PrepareExtractionAsync(TabViewModel tab, string name)
     {
         var zip = await CreateZipAsync(name, 1);
-        await tab.Archives.OpenAsync(zip, null, (_, _) => Task.FromResult(false), string.CompareOrdinal,
+        await tab.Archives.OpenAsync(zip, null, (_, _) => Task.FromResult(false), TestOrderings.ByName(),
             TestContext.Current.CancellationToken);
         return tab.Archives.OpenFolder!;
     }

@@ -432,7 +432,7 @@ public class ArchiveOpeningsTests : IDisposable
     }
 
     private static ValueTask<ArchiveOpening?> OpenAsync(TabViewModel tab, string zip, string? startEntry) =>
-        tab.Archives.OpenAsync(zip, startEntry, (_, _) => Task.FromResult(false), string.CompareOrdinal,
+        tab.Archives.OpenAsync(zip, startEntry, (_, _) => Task.FromResult(false), TestOrderings.ByName(),
             TestContext.Current.CancellationToken);
 
     private static IEnumerable<string> Names(int from, int to, string prefix = "img") =>

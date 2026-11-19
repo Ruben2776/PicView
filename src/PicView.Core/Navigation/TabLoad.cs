@@ -26,7 +26,6 @@ public sealed class TabLoad
 
     private readonly TabViewModel _tab;
     private readonly TabServices _services;
-    private readonly Func<string, string, int> _compareNames;
     private readonly BindableReactiveProperty<bool> _isLoading = new();
 
     // What IsLoading should say, and a stamp of each change to it, so a change published late cannot overwrite a newer
@@ -39,8 +38,6 @@ public sealed class TabLoad
     {
         _tab = tab;
         _services = services;
-        // The platform is read when files are sorted, not here, so a tab whose services lack one still has a Load
-        _compareNames = CompareNames;
     }
 
     /// <summary>
@@ -214,10 +211,13 @@ public sealed class TabLoad
     private async ValueTask<LoadResult> LoadArchiveAsync(string archive, string? startEntry, Run run)
     {
         ArchiveOpening? opening = null;
+        // The pages are put in this order from the archive's entries, and the tab's list keeps it, so a change of the
+        // window's order meanwhile is seen and followed once the list is made
+        var ordering = _tab.CurrentOrdering();
         try
         {
             opening = await _tab.Archives.OpenAsync(archive, startEntry, _services.Platform.ExtractWithLocalSoftwareAsync,
-                _compareNames, run.Token).ConfigureAwait(false);
+                ordering, run.Token).ConfigureAwait(false);
             // A newer load of a file overtakes this one too, which the opening cannot see
             if (!IsCurrent(run))
             {
@@ -229,7 +229,7 @@ public sealed class TabLoad
                 return LoadResult.Failed();
             }
 
-            var result = await ShowThenListAsync(opening.StartFile, opening.Files, null, null, null, run)
+            var result = await ShowThenListAsync(opening.StartFile, opening.Files, null, null, null, run, ordering)
                 .ConfigureAwait(false);
             if (run.IsShown)
             {
@@ -559,8 +559,6 @@ public sealed class TabLoad
         _tab.InitializeImageIterator([]);
         return _tab.ImageIterator!;
     }
-
-    private int CompareNames(string x, string y) => _services.Platform.CompareStrings(x, y);
 
     // Whether no newer load began and the tab is still open, so this load may still change the tab
     private bool IsCurrent(Run run) => !_tab.IsDisposed && _tab.IsLatestLoad(run.Version);

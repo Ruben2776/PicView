@@ -1,5 +1,6 @@
 using System.IO.Compression;
 using PicView.Core.ArchiveHandling;
+using PicView.Core.FileSorting;
 using PicView.Core.Localization;
 using PicView.Core.ViewModels;
 
@@ -51,7 +52,7 @@ public class ArchiveExtractionServiceTests
         var result = await service.PrepareArchiveAsync(
             null!,
             (_, _) => Task.FromResult(false),
-            string.Compare);
+            TestOrderings.ByName(string.Compare));
 
         Assert.Null(result);
     }
@@ -64,7 +65,7 @@ public class ArchiveExtractionServiceTests
         var result = await service.PrepareArchiveAsync(
             string.Empty,
             (_, _) => Task.FromResult(false),
-            string.Compare);
+            TestOrderings.ByName(string.Compare));
 
         Assert.Null(result);
     }
@@ -77,7 +78,7 @@ public class ArchiveExtractionServiceTests
         var result = await service.PrepareArchiveAsync(
             @"C:\nonexistent\file.zip",
             (_, _) => Task.FromResult(false),
-            string.Compare);
+            TestOrderings.ByName(string.Compare));
 
         Assert.Null(result);
     }
@@ -103,7 +104,7 @@ public class ArchiveExtractionServiceTests
             var result = await service.PrepareArchiveAsync(
                 tempZipPath,
                 (_, _) => Task.FromResult(false),
-                string.Compare);
+                TestOrderings.ByName(string.Compare));
 
             Assert.NotNull(result);
             Assert.False(result.Value.IsFullyExtracted);
@@ -145,12 +146,12 @@ public class ArchiveExtractionServiceTests
             var service = new ArchiveExtractionService();
 
             // First archive
-            var res1 = await service.PrepareArchiveAsync(tempZipPath1, (_, _) => Task.FromResult(false), string.Compare);
+            var res1 = await service.PrepareArchiveAsync(tempZipPath1, (_, _) => Task.FromResult(false), TestOrderings.ByName(string.Compare));
             Assert.NotNull(res1);
             var firstTempDir = service.TempZipDirectory;
 
             // Second archive
-            var res2 = await service.PrepareArchiveAsync(tempZipPath2, (_, _) => Task.FromResult(false), string.Compare);
+            var res2 = await service.PrepareArchiveAsync(tempZipPath2, (_, _) => Task.FromResult(false), TestOrderings.ByName(string.Compare));
             Assert.NotNull(res2);
 
             // Cleanup previous temp dir
@@ -180,7 +181,7 @@ public class ArchiveExtractionServiceTests
 
         try
         {
-            await service.PrepareArchiveAsync(zip, (_, _) => Task.FromResult(false), string.CompareOrdinal);
+            await service.PrepareArchiveAsync(zip, (_, _) => Task.FromResult(false), TestOrderings.ByName(string.CompareOrdinal));
             var openFolder = service.TempZipDirectory;
             var page = await service.ExtractEntryAsync(zip, "1.jpg", TestContext.Current.CancellationToken);
             string? brokenFolder = null;
@@ -189,7 +190,7 @@ public class ArchiveExtractionServiceTests
             {
                 brokenFolder = created;
                 return Task.FromResult(false);
-            }, string.CompareOrdinal);
+            }, TestOrderings.ByName(string.CompareOrdinal));
 
             Assert.Null(preparation);
             Assert.Equal(openFolder, service.TempZipDirectory);
@@ -214,11 +215,11 @@ public class ArchiveExtractionServiceTests
 
         try
         {
-            await service.PrepareArchiveAsync(first, (_, _) => Task.FromResult(false), string.CompareOrdinal);
+            await service.PrepareArchiveAsync(first, (_, _) => Task.FromResult(false), TestOrderings.ByName(string.CompareOrdinal));
             var firstFolder = service.TempZipDirectory;
             var page = await service.ExtractEntryAsync(first, "1.jpg", TestContext.Current.CancellationToken);
             // The second opens before the first one's page shows
-            await service.PrepareArchiveAsync(second, (_, _) => Task.FromResult(false), string.CompareOrdinal);
+            await service.PrepareArchiveAsync(second, (_, _) => Task.FromResult(false), TestOrderings.ByName(string.CompareOrdinal));
             var entryWhileBothAreOpen = service.EntryOf(page!);
 
             service.Cleanup(firstFolder);
@@ -249,7 +250,7 @@ public class ArchiveExtractionServiceTests
                 var sub = Directory.CreateDirectory(Path.Combine(folder, "sub")).FullName;
                 File.WriteAllBytes(Path.Combine(sub, "1.jpg"), [0xFF, 0xD8, 0xFF]);
                 return Task.FromResult(true);
-            }, string.CompareOrdinal))!.Value.EntryKeys;
+            }, TestOrderings.ByName(string.CompareOrdinal)))!.Value.EntryKeys;
 
             var entry = service.EntryOf(files[0]);
 
@@ -305,7 +306,7 @@ public class ArchiveExtractionServiceTests
             System.IO.Compression.ZipFile.CreateFromDirectory(tempDir, tempZipPath);
 
             var service = new ArchiveExtractionService();
-            var prep = await service.PrepareArchiveAsync(tempZipPath, (_, _) => Task.FromResult(false), string.Compare);
+            var prep = await service.PrepareArchiveAsync(tempZipPath, (_, _) => Task.FromResult(false), TestOrderings.ByName(string.Compare));
 
             Assert.NotNull(prep);
             Assert.Equal(14, prep.Value.EntryKeys.Length);
@@ -361,7 +362,7 @@ public class ArchiveExtractionServiceTests
             System.IO.Compression.ZipFile.CreateFromDirectory(tempDir, tempZipPath);
 
             var service = new ArchiveExtractionService();
-            var prep = await service.PrepareArchiveAsync(tempZipPath, (_, _) => Task.FromResult(false), string.Compare);
+            var prep = await service.PrepareArchiveAsync(tempZipPath, (_, _) => Task.FromResult(false), TestOrderings.ByName(string.Compare));
             Assert.NotNull(prep);
 
             var initialKeys = prep.Value.EntryKeys.Take(10).ToArray();
@@ -403,7 +404,7 @@ public class ArchiveExtractionServiceTests
             System.IO.Compression.ZipFile.CreateFromDirectory(tempDir, tempZipPath);
 
             var service = new ArchiveExtractionService();
-            var prep = await service.PrepareArchiveAsync(tempZipPath, (_, _) => Task.FromResult(false), string.Compare);
+            var prep = await service.PrepareArchiveAsync(tempZipPath, (_, _) => Task.FromResult(false), TestOrderings.ByName(string.Compare));
 
             Assert.NotNull(prep);
             Assert.Equal(5, prep.Value.EntryKeys.Length);
@@ -446,7 +447,7 @@ public class ArchiveExtractionServiceTests
 
         try
         {
-            var keys = (await service.PrepareArchiveAsync(zip, (_, _) => Task.FromResult(false), string.CompareOrdinal))!
+            var keys = (await service.PrepareArchiveAsync(zip, (_, _) => Task.FromResult(false), TestOrderings.ByName(string.CompareOrdinal)))!
                 .Value.EntryKeys;
             var files = await service.ExtractEntriesAsync(zip, keys, TestContext.Current.CancellationToken);
 
@@ -533,7 +534,7 @@ public class ArchiveExtractionServiceTests
         var zip = Path.Combine(folder, "pages.zip");
         ZipFile.CreateFromDirectory(source, zip);
         var service = new ArchiveExtractionService();
-        await service.PrepareArchiveAsync(zip, (_, _) => Task.FromResult(false), string.CompareOrdinal);
+        await service.PrepareArchiveAsync(zip, (_, _) => Task.FromResult(false), TestOrderings.ByName(string.CompareOrdinal));
         var order = new ExtractionOrder(service);
 
         try
@@ -567,7 +568,7 @@ public class ArchiveExtractionServiceTests
         var zip = await CreateZipAsync(folder, "pages.zip",
             "img_01.jpg", "img_02.jpg", "img_03.jpg", "img_04.jpg", "img_05.jpg");
         var service = new ArchiveExtractionService();
-        await service.PrepareArchiveAsync(zip, (_, _) => Task.FromResult(false), string.CompareOrdinal);
+        await service.PrepareArchiveAsync(zip, (_, _) => Task.FromResult(false), TestOrderings.ByName(string.CompareOrdinal));
         var order = new ExtractionOrder(service);
 
         try
@@ -592,7 +593,7 @@ public class ArchiveExtractionServiceTests
         var archive = Path.Combine(Path.GetTempPath(), "PicViewEntries_" + Guid.NewGuid().ToString("N") + ".cbz");
         await File.WriteAllBytesAsync(archive, Convert.FromBase64String(SolidSevenZip), TestContext.Current.CancellationToken);
         var service = new ArchiveExtractionService();
-        await service.PrepareArchiveAsync(archive, (_, _) => Task.FromResult(false), string.CompareOrdinal);
+        await service.PrepareArchiveAsync(archive, (_, _) => Task.FromResult(false), TestOrderings.ByName(string.CompareOrdinal));
         var order = new ExtractionOrder(service);
 
         try
@@ -623,7 +624,7 @@ public class ArchiveExtractionServiceTests
         ZipFile.CreateFromDirectory(source, zip);
         var writer = new HeldEntryWriter("page.jpg");
         var service = new ArchiveExtractionService(writer);
-        var preparation = await service.PrepareArchiveAsync(zip, (_, _) => Task.FromResult(false), string.CompareOrdinal);
+        var preparation = await service.PrepareArchiveAsync(zip, (_, _) => Task.FromResult(false), TestOrderings.ByName(string.CompareOrdinal));
         var page = Path.Combine(preparation!.Value.TempDirectory, "page.jpg");
 
         try
@@ -737,9 +738,9 @@ public class ArchiveExtractionServiceTests
     private static string[] Normalize(IEnumerable<string> keys) => keys.Select(k => k.Replace('\\', '/')).ToArray();
 
     private static async Task<(string[] Keys, string[] FileNames)> PrepareAndExtractAllAsync(
-        ArchiveExtractionService service, string zipPath, Func<string, string, int> comparer)
+        ArchiveExtractionService service, string zipPath, FileOrdering ordering)
     {
-        var prep = await service.PrepareArchiveAsync(zipPath, (_, _) => Task.FromResult(false), comparer);
+        var prep = await service.PrepareArchiveAsync(zipPath, (_, _) => Task.FromResult(false), ordering);
         Assert.NotNull(prep);
         var extracted = await service.ExtractEntriesAsync(zipPath, prep.Value.EntryKeys, TestContext.Current.CancellationToken);
         return (Normalize(prep.Value.EntryKeys), extracted.Select(Path.GetFileName).ToArray()!);
@@ -752,7 +753,7 @@ public class ArchiveExtractionServiceTests
         var service = new ArchiveExtractionService();
         try
         {
-            var (keys, _) = await PrepareAndExtractAllAsync(service, zipPath, NaturalCompare);
+            var (keys, _) = await PrepareAndExtractAllAsync(service, zipPath, TestOrderings.ByName(NaturalCompare));
 
             Assert.Equal(TwoVolumeEntries, keys);
         }
@@ -770,7 +771,7 @@ public class ArchiveExtractionServiceTests
         var service = new ArchiveExtractionService();
         try
         {
-            var (_, fileNames) = await PrepareAndExtractAllAsync(service, zipPath, NaturalCompare);
+            var (_, fileNames) = await PrepareAndExtractAllAsync(service, zipPath, TestOrderings.ByName(NaturalCompare));
 
             Assert.Equal(TwoVolumeFileNames, fileNames);
         }
@@ -788,7 +789,7 @@ public class ArchiveExtractionServiceTests
         var service = new ArchiveExtractionService();
         try
         {
-            var (_, fileNames) = await PrepareAndExtractAllAsync(service, zipPath, NaturalCompare);
+            var (_, fileNames) = await PrepareAndExtractAllAsync(service, zipPath, TestOrderings.ByName(NaturalCompare));
 
             // The iterator and file watcher order the temp folder by file name, so the names alone must give the archive order.
             var sorted = fileNames.ToList();
@@ -809,7 +810,7 @@ public class ArchiveExtractionServiceTests
         var service = new ArchiveExtractionService();
         try
         {
-            var prep = await service.PrepareArchiveAsync(zipPath, (_, _) => Task.FromResult(false), NaturalCompare);
+            var prep = await service.PrepareArchiveAsync(zipPath, (_, _) => Task.FromResult(false), TestOrderings.ByName(NaturalCompare));
             Assert.NotNull(prep);
 
             await service.ExtractEntriesAsync(zipPath, prep.Value.EntryKeys.Take(2).ToArray(), TestContext.Current.CancellationToken);
@@ -832,7 +833,7 @@ public class ArchiveExtractionServiceTests
         var service = new ArchiveExtractionService();
         try
         {
-            var (keys, fileNames) = await PrepareAndExtractAllAsync(service, zipPath, NaturalCompare);
+            var (keys, fileNames) = await PrepareAndExtractAllAsync(service, zipPath, TestOrderings.ByName(NaturalCompare));
 
             Assert.Equal(["Volume 2/001.jpg", "Volume 10/001.jpg"], keys);
             Assert.Equal(["Volume 2 - 001.jpg", "Volume 10 - 001.jpg"], fileNames);
@@ -851,7 +852,7 @@ public class ArchiveExtractionServiceTests
         var service = new ArchiveExtractionService();
         try
         {
-            var (_, fileNames) = await PrepareAndExtractAllAsync(service, zipPath, NaturalCompare);
+            var (_, fileNames) = await PrepareAndExtractAllAsync(service, zipPath, TestOrderings.ByName(NaturalCompare));
 
             Assert.Equal(TwoVolumeFileNames, fileNames);
         }
@@ -869,7 +870,7 @@ public class ArchiveExtractionServiceTests
         var service = new ArchiveExtractionService();
         try
         {
-            var (_, fileNames) = await PrepareAndExtractAllAsync(service, zipPath, NaturalCompare);
+            var (_, fileNames) = await PrepareAndExtractAllAsync(service, zipPath, TestOrderings.ByName(NaturalCompare));
 
             Assert.Equal(["001.jpg", "002.jpg"], fileNames);
         }
@@ -887,7 +888,7 @@ public class ArchiveExtractionServiceTests
         var service = new ArchiveExtractionService();
         try
         {
-            var (keys, fileNames) = await PrepareAndExtractAllAsync(service, zipPath, NaturalCompare);
+            var (keys, fileNames) = await PrepareAndExtractAllAsync(service, zipPath, TestOrderings.ByName(NaturalCompare));
 
             Assert.Equal(["cover.jpg", "Volume 01/001.jpg"], keys);
             Assert.Equal(["cover.jpg", "Volume 01 - 001.jpg"], fileNames);
@@ -902,19 +903,18 @@ public class ArchiveExtractionServiceTests
     [Fact]
     public async Task PrepareArchiveAsync_RespectingStructureDescending_ReversesTheWholeOrder()
     {
-        Settings.Sorting.Ascending = false;
         var zipPath = CreateZipWithEntries(TwoVolumeEntries);
         var service = new ArchiveExtractionService();
         try
         {
-            var (keys, fileNames) = await PrepareAndExtractAllAsync(service, zipPath, NaturalCompare);
+            var (keys, fileNames) = await PrepareAndExtractAllAsync(service, zipPath,
+                TestOrderings.ByName(NaturalCompare, ascending: false));
 
             Assert.Equal(Enumerable.Reverse(TwoVolumeEntries), keys);
             Assert.Equal(Enumerable.Reverse(TwoVolumeFileNames), fileNames);
         }
         finally
         {
-            Settings.Sorting.Ascending = true;
             service.Cleanup();
             File.Delete(zipPath);
         }
@@ -928,7 +928,7 @@ public class ArchiveExtractionServiceTests
         var service = new ArchiveExtractionService();
         try
         {
-            var (keys, fileNames) = await PrepareAndExtractAllAsync(service, zipPath, NaturalCompare);
+            var (keys, fileNames) = await PrepareAndExtractAllAsync(service, zipPath, TestOrderings.ByName(NaturalCompare));
 
             Assert.Equal(["001.jpg", "001.jpg", "002.jpg", "002.jpg", "003.jpg", "003.jpg"], keys.Select(Path.GetFileName));
             Assert.Equal(["001.jpg", "001_1.jpg", "002.jpg", "002_1.jpg", "003.jpg", "003_1.jpg"], fileNames);
@@ -944,18 +944,17 @@ public class ArchiveExtractionServiceTests
     [Fact]
     public async Task PrepareArchiveAsync_RespectingStructureNotSortedByName_KeepsFlatNames()
     {
-        Settings.Sorting.SortPreference = 1;
         var zipPath = CreateZipWithEntries(TwoVolumeEntries);
         var service = new ArchiveExtractionService();
         try
         {
-            var (_, fileNames) = await PrepareAndExtractAllAsync(service, zipPath, NaturalCompare);
+            var (_, fileNames) = await PrepareAndExtractAllAsync(service, zipPath,
+                TestOrderings.By(SortFilesBy.FileSize, compareNames: NaturalCompare));
 
             Assert.Equal(["001.jpg", "001_1.jpg", "002.jpg", "002_1.jpg", "003.jpg", "003_1.jpg"], fileNames.Order(StringComparer.Ordinal));
         }
         finally
         {
-            Settings.Sorting.SortPreference = 0;
             service.Cleanup();
             File.Delete(zipPath);
         }
@@ -979,7 +978,7 @@ public class ArchiveExtractionServiceTests
                     File.WriteAllBytes(path, [0xFF, 0xD8, 0xFF]);
                 }
                 return Task.FromResult(true);
-            }, NaturalCompare);
+            }, TestOrderings.ByName(NaturalCompare));
 
             Assert.NotNull(prep);
             Assert.True(prep.Value.IsFullyExtracted);
@@ -1003,9 +1002,9 @@ public class ArchiveExtractionServiceTests
         var service = new ArchiveExtractionService();
         try
         {
-            var prep = await service.PrepareArchiveAsync(first, (_, _) => Task.FromResult(false), NaturalCompare);
+            var prep = await service.PrepareArchiveAsync(first, (_, _) => Task.FromResult(false), TestOrderings.ByName(NaturalCompare));
             var firstFolder = service.TempZipDirectory;
-            await service.PrepareArchiveAsync(second, (_, _) => Task.FromResult(false), NaturalCompare);
+            await service.PrepareArchiveAsync(second, (_, _) => Task.FromResult(false), TestOrderings.ByName(NaturalCompare));
 
             var extracted = await service.ExtractEntriesAsync(first, prep!.Value.EntryKeys,
                 TestContext.Current.CancellationToken, firstFolder);
@@ -1017,6 +1016,213 @@ public class ArchiveExtractionServiceTests
             service.Cleanup();
             File.Delete(first);
             File.Delete(second);
+        }
+    }
+
+    #endregion
+
+    #region File Order
+
+    // Whole even seconds, days apart, as a zip keeps local time to two seconds
+    private static readonly DateTime Day1 = new(2021, 3, 1, 10, 0, 0, DateTimeKind.Local);
+    private static readonly DateTime Day2 = Day1.AddDays(1);
+    private static readonly DateTime Day3 = Day1.AddDays(2);
+
+    // Listed out of name order. By size: b, c, a. By modified time: c, a, b
+    private static readonly (string Name, int Size, DateTime Modified)[] ThreePages =
+    [
+        ("c.jpg", 20, Day1), ("a.jpg", 30, Day2), ("b.jpg", 10, Day3)
+    ];
+
+    private static string CreateOrderedZip(params (string Name, int Size, DateTime Modified)[] entries) =>
+        OrderedZip.Create(Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}.zip"), entries);
+
+    [Fact]
+    public async Task PrepareArchiveAsync_SortedBySize_OrdersPagesBySize_AndTheStartPageIsTheSmallest()
+    {
+        var zipPath = CreateOrderedZip(ThreePages);
+        var service = new ArchiveExtractionService();
+        try
+        {
+            var (keys, _) = await PrepareAndExtractAllAsync(service, zipPath, TestOrderings.By(SortFilesBy.FileSize));
+
+            // The start page is the first of the keys, when no entry is asked for
+            Assert.Equal(["b.jpg", "c.jpg", "a.jpg"], keys);
+        }
+        finally
+        {
+            service.Cleanup();
+            File.Delete(zipPath);
+        }
+    }
+
+    [Fact]
+    public async Task PrepareArchiveAsync_SortedByLastWrite_OrdersPagesByTheEntriesModifiedTime()
+    {
+        var zipPath = CreateOrderedZip(ThreePages);
+        var service = new ArchiveExtractionService();
+        try
+        {
+            var (ascending, _) = await PrepareAndExtractAllAsync(service, zipPath,
+                TestOrderings.By(SortFilesBy.LastWriteTime));
+            service.Cleanup();
+            var (descending, _) = await PrepareAndExtractAllAsync(service, zipPath,
+                TestOrderings.By(SortFilesBy.LastWriteTime, ascending: false));
+
+            Assert.Equal(["c.jpg", "a.jpg", "b.jpg"], ascending);
+            Assert.Equal(["b.jpg", "a.jpg", "c.jpg"], descending);
+        }
+        finally
+        {
+            service.Cleanup();
+            File.Delete(zipPath);
+        }
+    }
+
+    [Theory]
+    [InlineData(SortFilesBy.CreationTime)]
+    [InlineData(SortFilesBy.LastAccessTime)]
+    public async Task PrepareArchiveAsync_SortedByCreationTime_FallsBackToModifiedTime(SortFilesBy by)
+    {
+        // An entry keeps no creation or access time, so those orders go by when it was modified
+        var zipPath = CreateOrderedZip(ThreePages);
+        var service = new ArchiveExtractionService();
+        try
+        {
+            var (keys, _) = await PrepareAndExtractAllAsync(service, zipPath, TestOrderings.By(by));
+
+            Assert.Equal(["c.jpg", "a.jpg", "b.jpg"], keys);
+        }
+        finally
+        {
+            service.Cleanup();
+            File.Delete(zipPath);
+        }
+    }
+
+    [Fact]
+    public async Task PrepareArchiveAsync_EntriesWithoutAModifiedTime_FallBackToName_AndDoNotThrow()
+    {
+        var zipPath = CreateOrderedZip(ThreePages);
+        OrderedZip.ClearModifiedTimes(zipPath);
+        var service = new ArchiveExtractionService();
+        try
+        {
+            var before = DateTime.Now.AddMinutes(-1);
+            var prep = await service.PrepareArchiveAsync(zipPath, (_, _) => Task.FromResult(false),
+                TestOrderings.By(SortFilesBy.LastWriteTime));
+            Assert.NotNull(prep);
+            var extracted = await service.ExtractEntriesAsync(zipPath, prep.Value.EntryKeys,
+                TestContext.Current.CancellationToken);
+
+            Assert.Equal(["a.jpg", "b.jpg", "c.jpg"], Normalize(prep.Value.EntryKeys));
+            // Nothing to stamp, so each file keeps the time it was written
+            Assert.All(extracted, path => Assert.True(File.GetLastWriteTime(path) > before, path));
+        }
+        finally
+        {
+            service.Cleanup();
+            File.Delete(zipPath);
+        }
+    }
+
+    [Fact]
+    public async Task PrepareArchiveAsync_SortedByName_KeepsTheStructureRule()
+    {
+        // The ordering given decides, not the legacy sort settings, which say otherwise here
+        Settings.Sorting.SortPreference = (int)SortFilesBy.FileSize;
+        Settings.Sorting.Name = false;
+        var zipPath = CreateZipWithEntries(TwoVolumeEntries);
+        var service = new ArchiveExtractionService();
+        try
+        {
+            var (keys, fileNames) = await PrepareAndExtractAllAsync(service, zipPath, TestOrderings.ByName(NaturalCompare));
+
+            Assert.Equal(TwoVolumeEntries, keys);
+            Assert.Equal(TwoVolumeFileNames, fileNames);
+        }
+        finally
+        {
+            SetDefaults();
+            service.Cleanup();
+            File.Delete(zipPath);
+        }
+    }
+
+    [Fact]
+    public async Task PrepareArchiveAsync_FullyExtracted_SortedBySize_OrdersTheExtractedFiles()
+    {
+        var archivePath = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}.7z");
+        await File.WriteAllBytesAsync(archivePath, [], TestContext.Current.CancellationToken);
+        var service = new ArchiveExtractionService();
+        try
+        {
+            // Stands in for the local software, which writes each page with its own size
+            var prep = await service.PrepareArchiveAsync(archivePath, (_, destination) =>
+            {
+                foreach (var (name, size, _) in ThreePages)
+                {
+                    File.WriteAllBytes(Path.Combine(destination, name), new byte[size]);
+                }
+                return Task.FromResult(true);
+            }, TestOrderings.By(SortFilesBy.FileSize));
+
+            Assert.NotNull(prep);
+            Assert.True(prep.Value.IsFullyExtracted);
+            Assert.Equal(["b.jpg", "c.jpg", "a.jpg"], prep.Value.EntryKeys.Select(Path.GetFileName));
+        }
+        finally
+        {
+            service.Cleanup();
+            File.Delete(archivePath);
+        }
+    }
+
+    [Fact]
+    public async Task PrepareArchiveAsync_Random_ListsEveryPageOnce()
+    {
+        var zipPath = CreateOrderedZip(ThreePages);
+        var service = new ArchiveExtractionService();
+        try
+        {
+            var (keys, _) = await PrepareAndExtractAllAsync(service, zipPath, TestOrderings.By(SortFilesBy.Random));
+
+            Assert.Equal(["a.jpg", "b.jpg", "c.jpg"], keys.Order(StringComparer.Ordinal));
+        }
+        finally
+        {
+            service.Cleanup();
+            File.Delete(zipPath);
+        }
+    }
+
+    [Fact]
+    public async Task Extraction_StampsTheEntrysModifiedTimeOnTheFile()
+    {
+        var zipPath = CreateOrderedZip(ThreePages);
+        var service = new ArchiveExtractionService();
+        try
+        {
+            var prep = await service.PrepareArchiveAsync(zipPath, (_, _) => Task.FromResult(false),
+                TestOrderings.ByName());
+            Assert.NotNull(prep);
+            // The first page at once, the others in the background, as an opening extracts them
+            var first = await service.ExtractEntryAsync(zipPath, "a.jpg", TestContext.Current.CancellationToken);
+            await service.ExtractRemainingAsync(zipPath, ["b.jpg", "c.jpg"], ct: TestContext.Current.CancellationToken);
+
+            Assert.NotNull(first);
+            foreach (var (name, _, modified) in ThreePages)
+            {
+                var path = Path.Combine(service.TempZipDirectory!, name);
+                Assert.Equal(modified, File.GetLastWriteTime(path));
+                Assert.Equal(modified, File.GetCreationTime(path));
+                Assert.Equal(modified, File.GetLastAccessTime(path));
+            }
+        }
+        finally
+        {
+            service.Cleanup();
+            File.Delete(zipPath);
         }
     }
 
@@ -1092,7 +1298,7 @@ public class ArchiveExtractionServiceTests
         var zip = Path.Combine(folder, "flat.zip");
         ZipFile.CreateFromDirectory(source, zip);
         var service = new ArchiveExtractionService();
-        await service.PrepareArchiveAsync(zip, (_, _) => Task.FromResult(false), string.CompareOrdinal);
+        await service.PrepareArchiveAsync(zip, (_, _) => Task.FromResult(false), TestOrderings.ByName(string.CompareOrdinal));
         var file = await service.ExtractEntryAsync(zip, "1.jpg", TestContext.Current.CancellationToken);
 
         service.Cleanup();
@@ -1132,7 +1338,7 @@ public class ArchiveExtractionServiceTests
         await serviceA.PrepareArchiveAsync(
             @"C:\nonexistent.zip",
             (_, _) => Task.FromResult(false),
-            string.Compare);
+            TestOrderings.ByName(string.Compare));
 
         // serviceB should still be in initial state
         Assert.Null(serviceB.TempZipDirectory);

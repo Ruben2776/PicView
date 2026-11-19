@@ -32,7 +32,7 @@ internal sealed class HeldExtraction : IDisposable
     public async Task BeginAsync(TabViewModel tab, string folder)
     {
         var zip = CreateZip(folder);
-        _opening = await tab.Archives.OpenAsync(zip, null, (_, _) => Task.FromResult(false), string.CompareOrdinal,
+        _opening = await tab.Archives.OpenAsync(zip, null, (_, _) => Task.FromResult(false), TestOrderings.ByName(),
             CancellationToken.None) ?? throw new InvalidOperationException("The archive did not open");
         _opening.ExtractRest();
         await _writer.Holding(HeldPage).WaitAsync(WaitLimit);

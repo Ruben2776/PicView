@@ -904,7 +904,7 @@ public class ImageIteratorFileListTests : IDisposable
 
         try
         {
-            var opening = (await tab.Archives.OpenAsync(zip, null, (_, _) => Task.FromResult(false), string.CompareOrdinal,
+            var opening = (await tab.Archives.OpenAsync(zip, null, (_, _) => Task.FromResult(false), TestOrderings.ByName(),
                 TestContext.Current.CancellationToken))!;
             var last = opening.Files[^1];
             iterator.Initialize(opening.Files, opening.Files.Count - 1);
@@ -918,7 +918,7 @@ public class ImageIteratorFileListTests : IDisposable
                 ? iterator.RepeatNavigateAsync(NavigateTo.Next, TimeSpan.Zero, new CancellationTokenSource()).AsTask()
                 : iterator.NavigateAsync(NavigateTo.Next, SkipAmount.One, new CancellationTokenSource()).AsTask();
             // Another archive opens, which stops this one's extraction before its own page shows
-            await tab.Archives.OpenAsync(another, null, (_, _) => Task.FromResult(false), string.CompareOrdinal,
+            await tab.Archives.OpenAsync(another, null, (_, _) => Task.FromResult(false), TestOrderings.ByName(),
                 TestContext.Current.CancellationToken);
             writer.Release("img_02.jpg");
             await next.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);

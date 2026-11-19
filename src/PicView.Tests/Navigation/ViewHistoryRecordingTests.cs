@@ -195,7 +195,7 @@ public class ViewHistoryRecordingTests : IDisposable
                 WriteImage(Path.Combine(folder, "Volume 01", "001.jpg"));
                 WriteImage(Path.Combine(folder, entry));
                 return Task.FromResult(true);
-            }, string.CompareOrdinal, TestContext.Current.CancellationToken);
+            }, TestOrderings.ByName(), TestContext.Current.CancellationToken);
 
             tab.Display(Model(Path.Combine(opening!.Folder, entry)));
 
@@ -503,7 +503,7 @@ public class ViewHistoryRecordingTests : IDisposable
     // Opens the archive in the tab and extracts every page, as once the start page shows
     private static async ValueTask<ArchiveOpening?> OpenAsync(TabViewModel tab, string zip)
     {
-        var opening = await tab.Archives.OpenAsync(zip, null, NoLocalSoftware, string.CompareOrdinal,
+        var opening = await tab.Archives.OpenAsync(zip, null, NoLocalSoftware, TestOrderings.ByName(),
             TestContext.Current.CancellationToken);
         if (opening is not null)
         {

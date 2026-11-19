@@ -1,4 +1,5 @@
 using PicView.Core.DebugTools;
+using PicView.Core.FileSorting;
 using PicView.Core.Navigation;
 using PicView.Core.ViewModels;
 using R3;
@@ -120,16 +121,17 @@ public sealed class ArchiveOpenings
     /// <param name="extractWithLocalSoftwareAsync">
     ///     Extracts an archive that needs local software, such as a .7z, whole into the folder given.
     /// </param>
-    /// <param name="compareNames">
-    ///     How the tab sorts file names, which the pages are listed by. The pages extracted later are placed by the
-    ///     ordering the tab's file list keeps.
+    /// <param name="ordering">
+    ///     The tab's File Ordering, which the pages are put in from the archive's entries: the start page, when none is
+    ///     asked for, is the first in it, and the rest are extracted nearest it first. The pages extracted later are placed
+    ///     by the ordering the tab's file list keeps, which should be this one.
     /// </param>
     public async ValueTask<ArchiveOpening?> OpenAsync(string archive, string? startEntry,
-        Func<string, string, Task<bool>> extractWithLocalSoftwareAsync, Func<string, string, int> compareNames,
+        Func<string, string, Task<bool>> extractWithLocalSoftwareAsync, FileOrdering ordering,
         CancellationToken ct)
     {
         var number = Interlocked.Increment(ref _openings);
-        var preparation = await _extraction.PrepareArchiveAsync(archive, extractWithLocalSoftwareAsync, compareNames)
+        var preparation = await _extraction.PrepareArchiveAsync(archive, extractWithLocalSoftwareAsync, ordering)
             .ConfigureAwait(false);
         if (preparation is not { } prep)
         {

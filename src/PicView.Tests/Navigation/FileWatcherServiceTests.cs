@@ -74,7 +74,7 @@ public class FileWatcherServiceTests : IDisposable
         await File.WriteAllBytesAsync(Path.Combine(source, "page.jpg"), [0xFF, 0xD8, 0xFF], TestContext.Current.CancellationToken);
         var zip = Path.Combine(_testDirectory, "pages.zip");
         System.IO.Compression.ZipFile.CreateFromDirectory(source, zip);
-        var opening = await tab.Archives.OpenAsync(zip, null, (_, _) => Task.FromResult(false), string.CompareOrdinal,
+        var opening = await tab.Archives.OpenAsync(zip, null, (_, _) => Task.FromResult(false), TestOrderings.ByName(),
             TestContext.Current.CancellationToken);
 
         try
