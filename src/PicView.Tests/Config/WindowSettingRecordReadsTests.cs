@@ -22,6 +22,7 @@ public partial class WindowSettingRecordReadsTests
     // hold App Settings that stay on the record (OpenInSameWindow, ZoomSpeed, ...), so the group must precede the
     // property; that keeps Translation.Looping and another type's ZoomToFit out. An alias of a whole group
     // (var ui = Settings.UIProperties;) is not caught, because those groups also hold App Settings.
+    // Nor is a group and its property split across lines, or a property pattern (is { Looping: true }).
     [GeneratedRegex(@"\b(ImageScaling|Zoom|UIProperties)[!?]?\.(ShowImageSideBySide|ZoomToFit|ScrollEnabled|Looping|ShowInterface|ShowBottomNavBar|ShowHoverNavigationBar|BgColorChoice|IsConstrainBackgroundColorEnabled)\b")]
     private static partial Regex MovedImageInterfaceBackgroundRead();
 

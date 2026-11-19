@@ -39,6 +39,9 @@ public partial class ComparisonViewer : UserControl, INavigableContent, IDisposa
     private static readonly IBrush SecondaryMarkerFill = new SolidColorBrush(Color.Parse("#FFEC4899"), 0.88);
 
     private readonly TabViewModel _tab;
+    // The settings of the window this viewer is shown in: a viewer stays in one window, as its views are made again
+    // when its tab moves to another
+    private readonly WindowSettings? _windowSettings;
     private DisposableBag _disposables;
     private bool _isLoadedOnce;
     private bool _isAttached;
@@ -56,6 +59,7 @@ public partial class ComparisonViewer : UserControl, INavigableContent, IDisposa
     public ComparisonViewer(TabViewModel tab, ComparisonViewModel comparison)
     {
         _tab = tab;
+        _windowSettings = tab.ParentWindowContext?.WindowSettings;
         Comparison = comparison;
         DataContext = tab;
         InitializeComponent();
@@ -113,7 +117,7 @@ public partial class ComparisonViewer : UserControl, INavigableContent, IDisposa
             .AddTo(ref _disposables);
 
         // The scroll bar follows its window's scrolling, as the image viewer's does
-        _tab.ParentWindowContext?.WindowSettings.IsScrollingEnabled.SubscribeOnUIThread(ShowScrolling,
+        _windowSettings?.IsScrollingEnabled.SubscribeOnUIThread(ShowScrolling,
             LogError(nameof(ShowScrolling))).AddTo(ref _disposables);
 
         // Set with the alignment, and cleared with it
@@ -325,8 +329,9 @@ public partial class ComparisonViewer : UserControl, INavigableContent, IDisposa
             ? SyncedRightZoom.IsPointerOver ? SyncedRightZoom : SyncedLeftZoom
             : ZoomPanControl;
 
+    // Runs only from the subscription to the window's scrolling, so only with a window
     private void ShowScrolling() =>
-        StackScrollViewer.VerticalScrollBarVisibility = _tab.ParentWindowContext.WindowSettings.IsScrollingEnabled.Value
+        StackScrollViewer.VerticalScrollBarVisibility = _windowSettings!.IsScrollingEnabled.Value
             ? ScrollBarVisibility.Visible
             : ScrollBarVisibility.Disabled;
 

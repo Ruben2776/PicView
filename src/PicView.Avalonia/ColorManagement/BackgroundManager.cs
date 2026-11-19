@@ -3,6 +3,7 @@ using Avalonia.Media;
 using Avalonia.Threading;
 using PicView.Core.ColorHandling;
 using PicView.Core.DebugTools;
+using PicView.Avalonia.SettingsManagement;
 using PicView.Core.ViewModels;
 using R3;
 
@@ -53,16 +54,9 @@ public static class BackgroundManager
     /// Moves the window's background choice on to the next one in the cycle, which the B key does. Its follower paints
     /// the new brushes; nothing is written to the settings record, which the window stores when it closes.
     /// </summary>
-    public static void ChangeBackground(WindowSettings settings)
-    {
-        // A closed window's settings take no change (ADR-0038)
-        if (settings.IsDisposed)
-        {
-            return;
-        }
-
-        settings.BackgroundChoice.Value = (settings.BackgroundChoice.Value + 1) % ((int)BackgroundType.MaxValue + 1);
-    }
+    public static void ChangeBackground(WindowSettings settings) =>
+        ToggleHelper.ChangeWindowSetting(settings, static s => s.BackgroundChoice,
+            static choice => (choice + 1) % ((int)BackgroundType.MaxValue + 1));
 
     /// <summary>
     /// Sets the Active Main Window's background choice, as the Settings window's palette does; does nothing when no
@@ -70,12 +64,12 @@ public static class BackgroundManager
     /// </summary>
     public static void SetBackground(MainWindowOverviewViewModel? mainWindows, int choice)
     {
-        if (mainWindows?.ActiveWindow.Value?.WindowSettings is not { IsDisposed: false } settings)
+        if (mainWindows?.ActiveWindow.Value?.WindowSettings is not { } settings)
         {
             return;
         }
 
-        settings.BackgroundChoice.Value = choice;
+        ToggleHelper.ChangeWindowSetting(settings, static s => s.BackgroundChoice, _ => choice);
     }
 
     /// <summary>

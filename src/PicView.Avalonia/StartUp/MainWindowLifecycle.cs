@@ -348,7 +348,7 @@ public sealed class MainWindowLifecycle
         window.Activated += (_, _) =>
         {
             // An activation that arrives once the window is closing would make App Shutdown store a closed window
-            if (_open.Contains(window) && !_closing.Contains(window))
+            if (MayBecomeActive(window))
             {
                 MostRecentlyActive = window;
             }
@@ -366,6 +366,12 @@ public sealed class MainWindowLifecycle
 
         return window;
     }
+
+    /// <summary>
+    /// Whether an activation of <paramref name="window"/> may make it the active one: only while it is open and not
+    /// closing, as a closing window's settings are about to be disposed.
+    /// </summary>
+    internal bool MayBecomeActive(MainWindow window) => _open.Contains(window) && !_closing.Contains(window);
 
     private static MainWindowViewModel ViewModelOf(MainWindow window) =>
         window.DataContext as MainWindowViewModel

@@ -516,7 +516,7 @@ public class FunctionsMapper : IActionRunner
 
     #region Image Scaling and Window Behavior
     
-    private ValueTask ZoomToFit() => ToggleHelper.Toggle(_vm.WindowSettings.IsZoomedToFit);
+    private ValueTask ZoomToFit() => ToggleHelper.Toggle(_vm.WindowSettings, static s => s.IsZoomedToFit);
     
     /// <summary>
     /// Turns AutoFit on or off in this Main Window.
@@ -539,7 +539,7 @@ public class FunctionsMapper : IActionRunner
     /// Turns top most on or off for this Main Window.
     /// </summary>
     private ValueTask SetTopMost() =>
-        ToggleHelper.Toggle(_vm.WindowSettings.IsTopMost);
+        ToggleHelper.Toggle(_vm.WindowSettings, static s => s.IsTopMost);
 
     #endregion
     
@@ -744,7 +744,7 @@ public class FunctionsMapper : IActionRunner
         return ValueTask.CompletedTask;
     }
 
-    private ValueTask SideBySide() => ToggleHelper.Toggle(_vm.WindowSettings.IsSideBySide);
+    private ValueTask SideBySide() => ToggleHelper.Toggle(_vm.WindowSettings, static s => s.IsSideBySide);
 
     // Comparing is the active tab's own
     private ValueTask Comparison()

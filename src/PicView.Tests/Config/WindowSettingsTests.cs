@@ -398,4 +398,15 @@ public class WindowSettingsTests
 
         Assert.True(settings.IsDisposed);
     }
+
+    // What the guarded change in ToggleHelper exists for: R3 throws on a set once the bindable is disposed
+    [Fact]
+    public void WindowSettings_SetAfterDispose_Throws()
+    {
+        var settings = WindowSettings.FromRecord(GetDefaults());
+
+        settings.Dispose();
+
+        Assert.Throws<ObjectDisposedException>(() => settings.IsLooping.Value = !settings.IsLooping.Value);
+    }
 }

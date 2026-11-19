@@ -269,8 +269,29 @@ public abstract class MainWindow : Window, IMainWindow
         {
             return;
         }
-        core.MainWindows.ActiveWindow.Value = DataContext as MainWindowViewModel;
+        if (!BecomeActive(core.MainWindows))
+        {
+            return;
+        }
+
         desktop.MainWindow = this;
+    }
+
+    /// <summary>
+    /// Makes this window the Active Main Window, as its activation does, unless its lifecycle says it is closing or
+    /// closed: the Settings window edits the Active Main Window, and a closed one's settings are disposed (ADR-0038).
+    /// A window with no lifecycle becomes active as it is.
+    /// </summary>
+    /// <returns>Whether this window is now the Active Main Window.</returns>
+    internal bool BecomeActive(MainWindowOverviewViewModel mainWindows)
+    {
+        if (Lifecycle is not null && !Lifecycle.MayBecomeActive(this))
+        {
+            return false;
+        }
+
+        mainWindows.ActiveWindow.Value = DataContext as MainWindowViewModel;
+        return true;
     }
     
     protected override async void OnClosing(WindowClosingEventArgs e)

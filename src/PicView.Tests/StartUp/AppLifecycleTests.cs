@@ -1505,6 +1505,37 @@ public class AppLifecycleTests : IAsyncDisposable
         Assert.Same(ViewModelOf(first), _core.MainWindows.ActiveWindow.Value);
     }
 
+    // In a headless test OnActivated returns before BecomeActive, as the app has no desktop lifetime, so the test calls
+    // what the activation runs
+    [AvaloniaFact]
+    public async Task Activated_AWindowThatIsClosingOrClosed_DoesNotBecomeTheActiveMainWindow()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var first = app.MainWindows.Open[0];
+        var second = await app.MainWindows.OpenNewAsync(first);
+        await ActivateAsync(second);
+        await ActivateAsync(first);
+        bool? becameActiveWhileClosing = null;
+        MainWindowViewModel? activeWhileClosing = null;
+        second.PropertyChanged += (_, e) =>
+        {
+            if (e.Property == Visual.IsVisibleProperty && !second.IsVisible && becameActiveWhileClosing is null)
+            {
+                becameActiveWhileClosing = second.BecomeActive(_core.MainWindows);
+                activeWhileClosing = _core.MainWindows.ActiveWindow.Value;
+            }
+        };
+
+        await app.MainWindows.CloseAsync(second);
+        var becameActiveOnceClosed = second.BecomeActive(_core.MainWindows);
+
+        Assert.False(becameActiveWhileClosing);
+        Assert.Same(ViewModelOf(first), activeWhileClosing);
+        Assert.False(becameActiveOnceClosed);
+        Assert.Same(ViewModelOf(first), _core.MainWindows.ActiveWindow.Value);
+    }
+
     [AvaloniaFact]
     public async Task CloseAsync_TheLastMainWindowWithBatchResizeOpen_LeavesNoActiveWindow()
     {
@@ -1608,6 +1639,46 @@ public class AppLifecycleTests : IAsyncDisposable
         await app.ShutdownAsync();
 
         Assert.True(Settings.WindowProperties.AutoFit);
+    }
+
+    [AvaloniaFact]
+    public async Task ShutdownAsync_SeveralMainWindows_StoresTheMostRecentlyActiveOnesNineSettings()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var first = app.MainWindows.Open[0];
+        var second = await app.MainWindows.OpenNewAsync(first);
+        // Every one of the nine differs between the two windows
+        SetTheNine(ViewModelOf(first).WindowSettings, on: true, (int)BackgroundType.DarkGray);
+        SetTheNine(ViewModelOf(second).WindowSettings, on: false, (int)BackgroundType.White);
+        await ActivateAsync(second);
+        await ActivateAsync(first);
+
+        await app.ShutdownAsync();
+
+        Assert.True(Settings.ImageScaling.ShowImageSideBySide);
+        Assert.True(Settings.UIProperties.Looping);
+        Assert.True(Settings.ImageScaling.ZoomToFit);
+        Assert.True(Settings.Zoom.ScrollEnabled);
+        Assert.True(Settings.UIProperties.ShowInterface);
+        Assert.True(Settings.UIProperties.ShowBottomNavBar);
+        Assert.True(Settings.UIProperties.ShowHoverNavigationBar);
+        Assert.Equal((int)BackgroundType.DarkGray, Settings.UIProperties.BgColorChoice);
+        Assert.True(Settings.UIProperties.IsConstrainBackgroundColorEnabled);
+        return;
+
+        static void SetTheNine(WindowSettings settings, bool on, int background)
+        {
+            settings.IsSideBySide.Value = on;
+            settings.IsLooping.Value = on;
+            settings.IsZoomedToFit.Value = on;
+            settings.IsScrollingEnabled.Value = on;
+            settings.ShowInterface.Value = on;
+            settings.ShowBottomBar.Value = on;
+            settings.ShowHoverBar.Value = on;
+            settings.BackgroundChoice.Value = background;
+            settings.IsConstrainingBackgroundColor.Value = on;
+        }
     }
 
     [AvaloniaFact]
