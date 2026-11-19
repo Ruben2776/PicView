@@ -183,7 +183,7 @@ public class ViewHistoryRecordingTests : IDisposable
     [Fact]
     public async Task Display_PageThatLocalSoftwareExtractedIntoAFolder_RecordsTheArchiveAndThePagesPath()
     {
-        // Local software extracts a .7z whole, keeping its folders, so the page's path in the folder is its entry
+        // Local software extracts a .7z whole, keeping its folders; the page is laid out flat, and its path in them is its entry
         var tab = ActiveTabOfTheActiveMainWindow();
         var archive = PathOf("volumes.7z");
         await File.WriteAllBytesAsync(archive, [0x37, 0x7A], TestContext.Current.CancellationToken);
@@ -197,7 +197,8 @@ public class ViewHistoryRecordingTests : IDisposable
                 return Task.FromResult(true);
             }, TestOrderings.ByName(), TestContext.Current.CancellationToken);
 
-            tab.Display(Model(Path.Combine(opening!.Folder, entry)));
+            // Laid out flat, with its folder in its name
+            tab.Display(Model(Path.Combine(opening!.Folder, "Volume 02 - 001.jpg")));
 
             Assert.Equal(ViewHistoryEntry.ForArchivePage(archive, entry), Assert.Single(tab.ViewHistory.Entries));
             Assert.Equal([archive], FileHistoryManager.AllEntries.Select(e => e.Path));

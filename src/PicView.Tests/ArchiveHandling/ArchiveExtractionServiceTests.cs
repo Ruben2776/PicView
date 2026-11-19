@@ -961,7 +961,7 @@ public class ArchiveExtractionServiceTests
     }
 
     [Fact]
-    public async Task PrepareArchiveAsync_RespectingStructureFullyExtracted_SortsByRelativePath()
+    public async Task PrepareArchiveAsync_RespectingStructureFullyExtracted_LaysThePagesOutFlatInTheirFileOrder()
     {
         var archivePath = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}.7z");
         await File.WriteAllBytesAsync(archivePath, [], TestContext.Current.CancellationToken);
@@ -982,13 +982,51 @@ public class ArchiveExtractionServiceTests
 
             Assert.NotNull(prep);
             Assert.True(prep.Value.IsFullyExtracted);
-            var relative = prep.Value.EntryKeys.Select(k => Path.GetRelativePath(prep.Value.TempDirectory, k));
-            Assert.Equal(TwoVolumeEntries, Normalize(relative));
+            var files = prep.Value.EntryKeys;
+            // Flat in the folder under the names the zip path gives, so the File Ordering alone puts them in this order
+            Assert.Equal(TwoVolumeFileNames, files.Select(Path.GetFileName));
+            Assert.All(files, file => Assert.Equal(prep.Value.TempDirectory, Path.GetDirectoryName(file)));
+            Assert.Empty(Directory.GetDirectories(prep.Value.TempDirectory));
+            Assert.Equal(files, TestOrderings.ByName(NaturalCompare).Sort(files.Select(f => new FileInfo(f)))
+                .Select(f => f.FullName));
+            // Each file still counts as its entry, the path local software wrote it at
+            Assert.Equal(TwoVolumeEntries, Normalize(files.Select(f => service.EntryOf(f)!)));
+            Assert.Equal(files, files.Select(f => service.ExtractedPathOf(service.EntryOf(f)!)));
         }
         finally
         {
             service.Cleanup();
             File.Delete(archivePath);
+        }
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ExtractEntriesAsync_SameNamedPagesInDifferentFolders_TakeTheirNamesInKeyOrder(bool ascending)
+    {
+        // With the folders left out of the names, both volumes have a 003.jpg. Descending, the second volume's is the
+        // start page and is extracted first, which must not give it the plain name
+        Settings.Navigation.IsRespectingArchiveStructure = false;
+        var zipPath = CreateZipWithEntries(TwoVolumeEntries);
+        var service = new ArchiveExtractionService();
+        var ordering = TestOrderings.ByName(NaturalCompare, ascending);
+        try
+        {
+            var prep = await service.PrepareArchiveAsync(zipPath, (_, _) => Task.FromResult(false), ordering);
+            var keys = prep!.Value.EntryKeys;
+            var start = await service.ExtractEntryAsync(zipPath, "Volume 02/003.jpg", TestContext.Current.CancellationToken);
+            var rest = await service.ExtractEntriesAsync(zipPath, keys, TestContext.Current.CancellationToken);
+
+            Assert.Equal("003_1.jpg", Path.GetFileName(start));
+            Assert.Equal("003.jpg", Path.GetFileName(service.ExtractedPathOf("Volume 01/003.jpg")));
+            Assert.Equal(keys, ordering.Sort(rest.Select(f => new FileInfo(f))).Select(f => service.EntryOf(f.FullName)));
+        }
+        finally
+        {
+            SetDefaults();
+            service.Cleanup();
+            File.Delete(zipPath);
         }
     }
 
