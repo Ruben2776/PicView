@@ -1,3 +1,5 @@
+using PicView.Core.FileSorting;
+
 namespace PicView.Core.IPlatform;
 
 public interface IPlatformSpecificService
@@ -9,7 +11,10 @@ public interface IPlatformSpecificService
     void DisableScreensaver();
     void EnableScreensaver();
 
-    List<FileInfo> GetFiles(FileInfo fileInfo);
+    /// <summary>
+    /// The files around <paramref name="fileInfo"/>, in <paramref name="order"/> with this platform's name comparison.
+    /// </summary>
+    List<FileInfo> GetFiles(FileInfo fileInfo, FileOrder order);
 
     int CompareStrings(string str1, string str2);
 

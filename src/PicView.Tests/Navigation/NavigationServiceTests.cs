@@ -63,7 +63,6 @@ public class NavigationServiceTests : IDisposable
         var cts = new CancellationTokenSource();
 
         // Act - sort descending
-        Settings.Sorting.SortPreference = (int)SortFilesBy.Name;
         await _navigationService.SortAsync(tab, ascending: false, cts);
 
         // Assert
@@ -73,6 +72,32 @@ public class NavigationServiceTests : IDisposable
         Assert.Equal(file1.FullName, tab.ImageIterator.Files[2].FullName);
 
         Assert.Equal(2, tab.ImageIterator.CurrentIndex);
+        // The direction is the window's, and the settings record keeps its own until the window closes
+        Assert.Equal(new FileOrder(SortFilesBy.Name, false), tab.CurrentWindowSettings.CurrentValue!.FileOrder.Value);
+        Assert.True(Settings.Sorting.Ascending);
+    }
+
+    [Fact]
+    public async Task SortAsync_BySize_ListsBySize()
+    {
+        var tab = CreateTab();
+        var file1 = new FileInfo(Path.Combine(_testDirectory, "1.jpg"));
+        var file2 = new FileInfo(Path.Combine(_testDirectory, "2.jpg"));
+        var file3 = new FileInfo(Path.Combine(_testDirectory, "3.jpg"));
+        await File.WriteAllBytesAsync(file1.FullName, new byte[30]);
+        await File.WriteAllBytesAsync(file2.FullName, new byte[10]);
+        await File.WriteAllBytesAsync(file3.FullName, new byte[20]);
+
+        tab.Model = new ImageModel { FileInfo = file1 };
+        tab.ImageIterator.Initialize([file1, file2, file3]);
+
+        await _navigationService.SortAsync(tab, SortFilesBy.FileSize, new CancellationTokenSource());
+
+        Assert.Equal([file2.FullName, file3.FullName, file1.FullName],
+            tab.ImageIterator.Files.Select(f => f.FullName));
+        Assert.Equal(2, tab.ImageIterator.CurrentIndex);
+        Assert.Equal(new FileOrder(SortFilesBy.FileSize, true), tab.CurrentWindowSettings.CurrentValue!.FileOrder.Value);
+        Assert.Equal((int)SortFilesBy.Name, Settings.Sorting.SortPreference);
     }
 
     private TabViewModel CreateTab()

@@ -6,7 +6,11 @@ namespace PicView.Core.FileSorting;
 
 public static class FileListRetriever
 {
-    public static List<FileInfo> RetrieveFiles(FileInfo fileInfo, Func<string, string, int> platformService)
+    /// <summary>
+    /// The supported files of the folder of <paramref name="fileInfo"/> (or of that folder when it is one), and of its
+    /// subfolders when the app includes them, in <paramref name="ordering"/>.
+    /// </summary>
+    public static List<FileInfo> RetrieveFiles(FileInfo fileInfo, FileOrdering ordering)
     {
         var directoryPath = fileInfo switch
         {
@@ -22,19 +26,11 @@ public static class FileListRetriever
 
         try
         {
-            if (Settings.Sorting.IncludeSubDirectories)
-            {
-                var recurseList = new DirectoryInfo(directoryPath)
-                    .DescendantsAndSelf()
-                    .OfType<FileInfo>()
-                    .Where(x => x.IsSupported());
-                return FileSortOrder.SortIEnumerable(recurseList, platformService);
-            }
-            var list = new DirectoryInfo(directoryPath)
-                .ChildrenAndSelf()
-                .OfType<FileInfo>()
-                .Where(x => x.IsSupported());
-            return FileSortOrder.SortIEnumerable(list, platformService);
+            var directory = new DirectoryInfo(directoryPath);
+            var files = Settings.Sorting.IncludeSubDirectories
+                ? directory.DescendantsAndSelf().OfType<FileInfo>().Where(x => x.IsSupported()).ToList()
+                : directory.ChildrenAndSelf().OfType<FileInfo>().Where(x => x.IsSupported()).ToList();
+            return ordering.Sort(files);
         }
         catch (Exception exception)
         {

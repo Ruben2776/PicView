@@ -47,7 +47,8 @@ public static class QuickLoad
                 case FileTypeResolver.LoadAbleFileType.Directory:
                     // Listed once: the tab's Load browses these files instead of listing the folder again
                     var files = FileListRetriever.RetrieveFiles(new FileInfo(check.Value.Data),
-                        core.PlatformService.CompareStrings);
+                        new FileOrdering(mainWindow.ViewModel!.WindowSettings.FileOrder.Value,
+                            core.PlatformService.CompareStrings));
                     result = files.Count is 0
                         ? LoadResult.Failed()
                         : await LoadFileAsync(mainWindow, core, files[0], continueFromLeftOff, files)
@@ -127,7 +128,8 @@ public static class QuickLoad
             // Listed once, to find the image beside the opened one; the tab's Load browses the same files
             var listFrom = rootDirectory is null ? fileInfo : new FileInfo(rootDirectory);
             result = await LoadSideBySideAsync(mainWindow, core, vm, tab, fileInfo,
-                files ?? core.PlatformService.GetFiles(listFrom), rootDirectory).ConfigureAwait(false);
+                files ?? core.PlatformService.GetFiles(listFrom, vm.WindowSettings.FileOrder.Value), rootDirectory)
+                .ConfigureAwait(false);
         }
         else
         {

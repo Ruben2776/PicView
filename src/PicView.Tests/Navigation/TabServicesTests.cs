@@ -64,19 +64,22 @@ public class TabServicesTests
         var core = CreateCore();
         var services = ServicesFor(core);
         core.InitializeNavigation(services, NavigationFor(core, services));
+        // The window starts from the record's order
+        Settings.Sorting.SortPreference = (int)SortFilesBy.FileSize;
         var vm = new MainWindowViewModel(core, null!, null!, null!);
         var tabs = vm.WindowTabs;
         var tab = tabs.CreateTab();
         Assert.Null(tab.ImageIterator);
-        Settings.Sorting.SortPreference = (int)SortFilesBy.FileSize;
 
         await tabs.FirstFile();
         await tabs.LastFile();
         await tabs.SortAsync(SortFilesBy.Name);
         await tabs.ReloadAsync();
 
-        // The sort setting is app-wide, so a tab with nothing to sort still records it and marks the menu
-        Assert.Equal((int)SortFilesBy.Name, Settings.Sorting.SortPreference);
+        // The order is the window's, so a tab with nothing to sort still sets it there and marks the menu, and the
+        // record keeps its own until the window closes
+        Assert.Equal(SortFilesBy.Name, vm.WindowSettings.FileOrder.Value.By);
+        Assert.Equal((int)SortFilesBy.FileSize, Settings.Sorting.SortPreference);
         Assert.True(tabs.IsSortedByName.Value);
         Assert.Null(tab.ImageIterator);
     }
@@ -153,7 +156,7 @@ public class TabServicesTests
         public void SetCursorPos(int x, int y) { }
         public void DisableScreensaver() { }
         public void EnableScreensaver() { }
-        public List<FileInfo> GetFiles(FileInfo fileInfo) => new();
+        public List<FileInfo> GetFiles(FileInfo fileInfo, FileOrder order) => new();
         public int CompareStrings(string str1, string str2) => string.CompareOrdinal(str1, str2);
         public void OpenWith(string path) { }
         public void LocateOnDisk(string path) { }

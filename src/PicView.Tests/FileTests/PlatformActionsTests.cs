@@ -61,7 +61,7 @@ public class PlatformActionsTests
         public void SetCursorPos(int x, int y) { }
         public void DisableScreensaver() { }
         public void EnableScreensaver() { }
-        public List<FileInfo> GetFiles(FileInfo fileInfo) => [];
+        public List<FileInfo> GetFiles(FileInfo fileInfo, PicView.Core.FileSorting.FileOrder order) => [];
         public int CompareStrings(string str1, string str2) => string.CompareOrdinal(str1, str2);
         public void ShowFileProperties(string path) { }
         public Task SetAsWallpaper(string path, int wallpaperStyle) => Task.CompletedTask;

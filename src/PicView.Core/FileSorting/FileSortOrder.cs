@@ -1,8 +1,6 @@
 using PicView.Core.DebugTools;
 using PicView.Core.FileHandling;
 using ZLinq;
-using ZLinq.Linq;
-using ZLinq.Traversables;
 
 namespace PicView.Core.FileSorting;
 
@@ -20,58 +18,6 @@ public static class FileSortOrder
             6 => SortFilesBy.Random,
             _ => SortFilesBy.Name,
         };
-
-    public static List<FileInfo> SortIEnumerable(ValueEnumerable<Where<OfType<Descendants<FileSystemInfoTraverser, FileSystemInfo>, FileSystemInfo, FileInfo>, FileInfo>, FileInfo> files, Func<string, string, int> platformService)
-    {
-        switch (GetSortOrder)
-        {
-            default:
-            case SortFilesBy.Name: // Alphanumeric sort
-                var list = files.ToList();
-                if (Settings.Sorting.Ascending)
-                {
-                    list.Sort((x, y) => platformService(x.Name, y.Name));
-                }
-                else
-                {
-                    list.Sort((x, y) => platformService(y.Name, x.Name));
-                }
-                return list;
-
-            case SortFilesBy.FileSize: // Sort by file size
-                var sortedBySize = Settings.Sorting.Ascending
-                    ? files.OrderBy(x => x.Length)
-                    : files.OrderByDescending(x => x.Length);
-                return sortedBySize.ToList();
-
-            case SortFilesBy.Extension: // Sort by file extension
-                var sortedByExtension = Settings.Sorting.Ascending
-                    ? files.OrderBy(x => x.Extension)
-                    : files.OrderByDescending(x => x.Extension);
-                return sortedByExtension.ToList();
-
-            case SortFilesBy.CreationTime: // Sort by file creation time
-                var sortedByCreationTime = Settings.Sorting.Ascending
-                    ? files.OrderBy(x => x.CreationTime)
-                    : files.OrderByDescending(x => x.CreationTime);
-                return sortedByCreationTime.ToList();
-
-            case SortFilesBy.LastAccessTime: // Sort by file last access time
-                var sortedByLastAccessTime = Settings.Sorting.Ascending
-                    ? files.OrderBy(x => x.LastAccessTime)
-                    : files.OrderByDescending(x => x.LastAccessTime);
-                return sortedByLastAccessTime.ToList();
-
-            case SortFilesBy.LastWriteTime: // Sort by file last write time
-                var sortedByLastWriteTime = Settings.Sorting.Ascending
-                    ? files.OrderBy(x => x.LastWriteTime)
-                    : files.OrderByDescending(x => x.LastWriteTime);
-                return sortedByLastWriteTime.ToList();
-
-            case SortFilesBy.Random: // Sort files randomly
-                return files.OrderBy(f => Guid.NewGuid()).ToList();
-        }
-    }
 
     public static int InsertSorted(List<FileInfo> list, FileInfo newFile, Func<string, string, int> platformService)
     {
@@ -104,58 +50,6 @@ public static class FileSortOrder
         }
     }
 
-    public static List<FileInfo> SortIEnumerable(ValueEnumerable<Where<OfType<Children<FileSystemInfoTraverser, FileSystemInfo>, FileSystemInfo, FileInfo>, FileInfo>, FileInfo> files, Func<string, string, int> platformService)
-    {
-        switch (GetSortOrder)
-        {
-            default:
-            case SortFilesBy.Name: // Alphanumeric sort
-                var list = files.ToList();
-                if (Settings.Sorting.Ascending)
-                {
-                    list.Sort((x, y) => platformService(x.Name, y.Name));
-                }
-                else
-                {
-                    list.Sort((x, y) => platformService(y.Name, x.Name));
-                }
-                return list;
-
-            case SortFilesBy.FileSize: // Sort by file size
-                var sortedBySize = Settings.Sorting.Ascending
-                    ? files.OrderBy(x => x.Length)
-                    : files.OrderByDescending(x => x.Length);
-                return sortedBySize.ToList();
-
-            case SortFilesBy.Extension: // Sort by file extension
-                var sortedByExtension = Settings.Sorting.Ascending
-                    ? files.OrderBy(x => x.Extension)
-                    : files.OrderByDescending(x => x.Extension);
-                return sortedByExtension.ToList();
-
-            case SortFilesBy.CreationTime: // Sort by file creation time
-                var sortedByCreationTime = Settings.Sorting.Ascending
-                    ? files.OrderBy(x => x.CreationTime)
-                    : files.OrderByDescending(x => x.CreationTime);
-                return sortedByCreationTime.ToList();
-
-            case SortFilesBy.LastAccessTime: // Sort by file last access time
-                var sortedByLastAccessTime = Settings.Sorting.Ascending
-                    ? files.OrderBy(x => x.LastAccessTime)
-                    : files.OrderByDescending(x => x.LastAccessTime);
-                return sortedByLastAccessTime.ToList();
-
-            case SortFilesBy.LastWriteTime: // Sort by file last write time
-                var sortedByLastWriteTime = Settings.Sorting.Ascending
-                    ? files.OrderBy(x => x.LastWriteTime)
-                    : files.OrderByDescending(x => x.LastWriteTime);
-                return sortedByLastWriteTime.ToList();
-
-            case SortFilesBy.Random: // Sort files randomly
-                return files.OrderBy(f => Guid.NewGuid()).ToList();
-        }
-    }
-    
     public static FileInfo[] GetSortedArchivesInDirectory(string path, Func<string, string, int> stringComparer)
     {
         try

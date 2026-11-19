@@ -99,9 +99,9 @@ public class App : Application, IPlatformSpecificService
         NativeMethods.SetCursorPos(x, y);
     }
 
-    public List<FileInfo> GetFiles(FileInfo fileInfo)
+    public List<FileInfo> GetFiles(FileInfo fileInfo, FileOrder order)
     {
-        return FileListRetriever.RetrieveFiles(fileInfo, CompareStrings);
+        return FileListRetriever.RetrieveFiles(fileInfo, new FileOrdering(order, CompareStrings));
     }
 
     public int CompareStrings(string str1, string str2)

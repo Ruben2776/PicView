@@ -195,7 +195,8 @@ public sealed class TabLoad
 
     private async ValueTask<LoadResult> LoadFolderAsync(string folder, Run run)
     {
-        var files = await Task.Run(() => FileListRetriever.RetrieveFiles(new FileInfo(folder), _compareNames), run.Token)
+        var ordering = _tab.CurrentOrdering();
+        var files = await Task.Run(() => FileListRetriever.RetrieveFiles(new FileInfo(folder), ordering), run.Token)
             .ConfigureAwait(false);
         if (!IsCurrent(run))
         {
@@ -499,15 +500,16 @@ public sealed class TabLoad
     /// </summary>
     private List<FileInfo> ListAround(FileInfo file, string? rootDirectory)
     {
+        var ordering = _tab.CurrentOrdering();
         if (rootDirectory is null || !IsInside(file, rootDirectory))
         {
-            return FileListRetriever.RetrieveFiles(file, _compareNames);
+            return FileListRetriever.RetrieveFiles(file, ordering);
         }
 
-        var fromRoot = FileListRetriever.RetrieveFiles(new FileInfo(rootDirectory), _compareNames);
+        var fromRoot = FileListRetriever.RetrieveFiles(new FileInfo(rootDirectory), ordering);
         // Without subdirectories, a file deeper in the root is not listed from it
-        return SideBySidePair.IndexOf(fromRoot, file) is not null ? fromRoot 
-            : FileListRetriever.RetrieveFiles(file, _compareNames);
+        return SideBySidePair.IndexOf(fromRoot, file) is not null ? fromRoot
+            : FileListRetriever.RetrieveFiles(file, ordering);
     }
 
     private static bool IsModelOf(ImageModel? model, FileInfo file) =>

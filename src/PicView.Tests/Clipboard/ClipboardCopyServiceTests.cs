@@ -38,7 +38,7 @@ public class ClipboardCopyServiceTests
         public void SetCursorPos(int x, int y) { }
         public void DisableScreensaver() { }
         public void EnableScreensaver() { }
-        public List<FileInfo> GetFiles(FileInfo fileInfo) => new();
+        public List<FileInfo> GetFiles(FileInfo fileInfo, PicView.Core.FileSorting.FileOrder order) => new();
         public int CompareStrings(string str1, string str2) => string.CompareOrdinal(str1, str2);
         public void OpenWith(string path) { }
         public void LocateOnDisk(string path) { }

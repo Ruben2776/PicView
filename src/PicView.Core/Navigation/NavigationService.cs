@@ -91,18 +91,24 @@ public class NavigationService(Func<string, string, int> stringComparer) : INavi
 
     public async ValueTask SortAsync(TabViewModel tab, SortFilesBy sortOrder, CancellationTokenSource ct)
     {
-        Settings.Sorting.SortPreference = (int)sortOrder;
+        if (tab.CurrentWindowSettings.CurrentValue is { } settings)
+        {
+            settings.FileOrder.Value = settings.FileOrder.Value with { By = sortOrder };
+        }
         await ApplySortAsync(tab, ct).ConfigureAwait(false);
     }
 
     public async ValueTask SortAsync(TabViewModel tab, bool ascending, CancellationTokenSource ct)
     {
-        Settings.Sorting.Ascending = ascending;
+        if (tab.CurrentWindowSettings.CurrentValue is { } settings)
+        {
+            settings.FileOrder.Value = settings.FileOrder.Value with { Ascending = ascending };
+        }
         await ApplySortAsync(tab, ct).ConfigureAwait(false);
     }
 
-    // The sort setting is app-wide and saved before this, so a tab without files to sort, such as a New Tab, changes
-    // nothing here
+    // The File Order is the tab's window's and set before this, so a tab without files to sort, such as a New Tab,
+    // changes nothing here
     private async ValueTask ApplySortAsync(TabViewModel tab, CancellationTokenSource ct)
     {
         var iterator = tab.ImageIterator;
@@ -120,8 +126,9 @@ public class NavigationService(Func<string, string, int> stringComparer) : INavi
                 return;
             }
 
-            // Retrieve and sort files based on new settings
-            var newFiles = await Task.Run(() => FileListRetriever.RetrieveFiles(currentFile, stringComparer), ct.Token).ConfigureAwait(false);
+            // Listed again in the tab's ordering, which has the new File Order
+            var ordering = tab.CurrentOrdering();
+            var newFiles = await Task.Run(() => FileListRetriever.RetrieveFiles(currentFile, ordering), ct.Token).ConfigureAwait(false);
 
             if (newFiles.Count is 0)
             {

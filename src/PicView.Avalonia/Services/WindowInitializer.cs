@@ -251,11 +251,15 @@ public class WindowInitializer(IWindowProvider provider, MainWindow mainWindow) 
 
         var config = new BatchResizeWindowConfig();
         config.Load();
+        // CurrentCore found this Main Window's view model above
+        var opener = (MainWindowViewModel)mainWindow.DataContext!;
+        // Listed in the File Order this Main Window has as it opens the batch resize
+        var order = opener.WindowSettings.FileOrder.Value;
         var batch = new BatchResizeViewModel(FilePicker.SelectDirectory, FilePicker.SelectFile,
-            core.PlatformService.GetFiles, core.PlatformService.LocateOnDisk,
+            file => core.PlatformService.GetFiles(file, order), core.PlatformService.LocateOnDisk,
             config.WindowProperties ?? new BatchResizeWindowConfig.BatchResizeWindowProperties());
         // The files around what this Main Window shows
-        if ((mainWindow.DataContext as MainWindowViewModel)?.WindowTabs.ActiveTab.CurrentValue is { } tab)
+        if (opener.WindowTabs.ActiveTab.CurrentValue is { } tab)
         {
             batch.Prefill(tab.FileInfo?.CurrentValue, tab.Model.PixelWidth, tab.Model.PixelHeight);
         }

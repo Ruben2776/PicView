@@ -2,6 +2,7 @@ using PicView.Core.Animation;
 using PicView.Core.ArchiveHandling;
 using PicView.Core.DebugTools;
 using PicView.Core.FileHistory;
+using PicView.Core.FileSorting;
 using PicView.Core.Gallery;
 using PicView.Core.Generators;
 using PicView.Core.ImageDecoding;
@@ -57,6 +58,20 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
     /// one writer of a tab's window.
     /// </summary>
     internal void FollowWindow() => _currentWindowSettings.Value = ParentWindowContext?.WindowSettings;
+
+    /// <summary>
+    /// The ordering this tab lists with now: its window's File Order (the record's for a tab without a window) with its
+    /// platform's name comparison (ordinal for a tab without services).
+    /// </summary>
+    internal FileOrdering CurrentOrdering()
+    {
+        var order = _currentWindowSettings.CurrentValue?.FileOrder.Value ?? FileOrder.FromRecord(Settings.Sorting);
+        // A tab's services may lack a platform in tests, as its Load allows
+        Func<string, string, int> compareNames = Services?.Platform is { } platform
+            ? platform.CompareStrings
+            : string.CompareOrdinal;
+        return new FileOrdering(order, compareNames);
+    }
 
     /// Unique identifier for this tab.
     public uint Id { get; } = TabIDGenerator.GetNextId();

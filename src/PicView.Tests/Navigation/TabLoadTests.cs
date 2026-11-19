@@ -1612,7 +1612,7 @@ public class TabLoadTests : IDisposable
         public void SetCursorPos(int x, int y) { }
         public void DisableScreensaver() { }
         public void EnableScreensaver() { }
-        public List<FileInfo> GetFiles(FileInfo fileInfo) => new();
+        public List<FileInfo> GetFiles(FileInfo fileInfo, PicView.Core.FileSorting.FileOrder order) => new();
         // While closed, every name comparison waits for it, so a test can hold a listing while it sorts; Comparing says
         // when one waits
         public ManualResetEventSlim CompareGate { get; } = new(initialState: true);
