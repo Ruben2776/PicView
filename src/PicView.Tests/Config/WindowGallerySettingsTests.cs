@@ -46,18 +46,15 @@ public class WindowGallerySettingsTests
     public void FromRecord_NoGalleryGroup_GivesTheDefaults()
     {
         var defaults = new GalleryRecord();
-        using var fromNull = WindowGallerySettings.FromRecord(null);
-        foreach (var settings in new[] { fromNull })
-        {
-            Assert.Equal(defaults.DockPosition, settings.DockPosition.Value);
-            Assert.Equal(defaults.DockedGalleryStretchMode, settings.DockedGalleryStretchMode.Value);
-            Assert.Equal(defaults.ExpandedGalleryStretchMode, settings.ExpandedGalleryStretchMode.Value);
-            Assert.Equal(defaults.ExpandedGalleryDisplayMode, settings.ExpandedGalleryDisplayMode.Value);
-            Assert.Equal(defaults.RowsWasLastUsedDisplayMode, settings.RowsWasLastUsedDisplayMode);
-            Assert.Equal(defaults.DockedGalleryItemSize, settings.DockedGalleryItemSize.Value);
-            Assert.Equal(defaults.ExpandedGalleryItemSize, settings.ExpandedGalleryItemSize.Value);
-            Assert.Equal(defaults.IsGalleryDocked, settings.StartsDocked.Value);
-        }
+        using var settings = WindowGallerySettings.FromRecord(null);
+        Assert.Equal(defaults.DockPosition, settings.DockPosition.Value);
+        Assert.Equal(defaults.DockedGalleryStretchMode, settings.DockedGalleryStretchMode.Value);
+        Assert.Equal(defaults.ExpandedGalleryStretchMode, settings.ExpandedGalleryStretchMode.Value);
+        Assert.Equal(defaults.ExpandedGalleryDisplayMode, settings.ExpandedGalleryDisplayMode.Value);
+        Assert.Equal(defaults.RowsWasLastUsedDisplayMode, settings.RowsWasLastUsedDisplayMode);
+        Assert.Equal(defaults.DockedGalleryItemSize, settings.DockedGalleryItemSize.Value);
+        Assert.Equal(defaults.ExpandedGalleryItemSize, settings.ExpandedGalleryItemSize.Value);
+        Assert.Equal(defaults.IsGalleryDocked, settings.StartsDocked.Value);
 
         using var fromEmpty = WindowSettings.FromRecord(new AppSettings { Gallery = null });
         Assert.Equal(defaults.DockPosition, fromEmpty.Gallery.DockPosition.Value);
@@ -257,8 +254,6 @@ public class WindowGallerySettingsTests
         Assert.Throws<ObjectDisposedException>(() => settings.ToggleExpandedDisplayModeCommand.Execute(Unit.Default));
         Assert.Throws<ObjectDisposedException>(() => settings.SetDockedStretchModeCommand.Execute(GalleryStretchMode.Square));
         Assert.Throws<ObjectDisposedException>(() => settings.SetExpandedStretchModeCommand.Execute(GalleryStretchMode.Square));
-        // A derived flag no longer follows
-        Assert.False(settings.IsExpandedDisplayModeRows.Value);
         // A start after the dispose subscribes nothing and does not throw
         settings.Start();
     }

@@ -452,7 +452,8 @@ public class ImageIterator(SharedImageCache cache, Thumbnails thumbnails, TabVie
             {
                 await Task.Run(async () =>
                 {
-                    var thumb = await _thumbnails.GetQuickAsync(targetFile, Thumbnails.GalleryHeight)
+                    var thumb = await _thumbnails.GetQuickAsync(targetFile,
+                            _tab.Gallery.Look.CurrentValue.ThumbnailHeight)
                         .ConfigureAwait(false);
                     if (IsTargetActive(targetFile))
                     {

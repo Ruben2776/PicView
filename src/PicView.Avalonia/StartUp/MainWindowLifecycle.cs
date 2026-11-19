@@ -408,6 +408,9 @@ public sealed class MainWindowLifecycle
     {
         var vm = ViewModelOf(window);
         window.WindowModeSwitcher.Start(isAppStart);
+        // Its own gallery commands, for each window however it opened, as the shared gallery settings start once the
+        // first window is shown (ADR-0034); a copy from another window needs its own start
+        vm.WindowSettings.Gallery.Start();
         window.Disposables.Add(FollowSettings(window));
 
         var settingUp = Task.Run(() => vm.ActionRunner = new FunctionsMapper(vm, window));

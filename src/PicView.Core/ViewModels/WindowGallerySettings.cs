@@ -135,6 +135,33 @@ public sealed class WindowGallerySettings : IDisposable
     /// <summary>The values of the record, or the defaults without one.</summary>
     public static WindowGallerySettings FromRecord(GalleryRecord? record) => new(record ?? new GalleryRecord());
 
+    /// <summary>
+    /// The look a gallery with no window shows (tests): the record's, as a window seeded from it would have it, or the
+    /// defaults without one.
+    /// </summary>
+    public static GalleryLook LookWithoutWindow(GalleryRecord? record)
+    {
+        var values = record ?? new GalleryRecord();
+        return new GalleryLook(AcceptedDockedSize(values.DockedGalleryItemSize),
+            AcceptedExpandedSize(values.ExpandedGalleryItemSize), values.DockedGalleryStretchMode,
+            values.ExpandedGalleryStretchMode, values.ExpandedGalleryDisplayMode);
+    }
+
+    /// <summary>
+    /// This window's gallery look, published at once on subscribe and again on each change. The sizes are the
+    /// accepted ones: a size outside its limits is set back from inside its own change, so a subscriber after
+    /// <see cref="Start"/> hears the refused size last.
+    /// </summary>
+    public Observable<GalleryLook> Look =>
+        Observable.CombineLatest(
+            DockedGalleryItemSize.Select(AcceptedDockedSize),
+            ExpandedGalleryItemSize.Select(AcceptedExpandedSize),
+            DockedGalleryStretchMode,
+            ExpandedGalleryStretchMode,
+            ExpandedGalleryDisplayMode,
+            static (dockedSize, expandedSize, dockedStretch, expandedStretch, displayMode) =>
+                new GalleryLook(dockedSize, expandedSize, dockedStretch, expandedStretch, displayMode));
+
     /// <summary>The settings of a window opened from this one's window: the same values, started by its own window.</summary>
     public WindowGallerySettings Copy()
     {

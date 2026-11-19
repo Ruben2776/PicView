@@ -135,14 +135,14 @@
                     Minimum="{CompiledBinding GallerySettings.DockedGalleryMinItemSize.Value}"
                     TickFrequency="1"
                     TickPlacement="BottomRight"
-                    Value="{CompiledBinding GallerySettings.DockedGalleryItemSize.Value}"
+                    Value="{CompiledBinding MainWindows.ActiveWindow.Value.WindowSettings.Gallery.DockedGalleryItemSize.Value}"
                     Width="300"
                     x:Name="DockedGallerySlider" />
 
                 <TextBlock
                     Classes="txt"
                     Margin="0,0,0,15"
-                    Text="{CompiledBinding GallerySettings.DockedGalleryItemSize.Value,
+                    Text="{CompiledBinding MainWindows.ActiveWindow.Value.WindowSettings.Gallery.DockedGalleryItemSize.Value,
                                            Mode=OneWay}" />
 
                 <TextBlock
@@ -161,14 +161,14 @@
                     Minimum="{CompiledBinding GallerySettings.ExpandedGalleryMinItemSize.Value}"
                     TickFrequency="1"
                     TickPlacement="BottomRight"
-                    Value="{CompiledBinding GallerySettings.ExpandedGalleryItemSize.Value}"
+                    Value="{CompiledBinding MainWindows.ActiveWindow.Value.WindowSettings.Gallery.ExpandedGalleryItemSize.Value}"
                     Width="300"
                     x:Name="ExpandedGallerySlider" />
 
                 <TextBlock
                     Classes="txt"
                     Margin="0,0,0,15"
-                    Text="{CompiledBinding GallerySettings.ExpandedGalleryItemSize.Value,
+                    Text="{CompiledBinding MainWindows.ActiveWindow.Value.WindowSettings.Gallery.ExpandedGalleryItemSize.Value,
                                            Mode=OneWay}" />
 
                 <TextBlock

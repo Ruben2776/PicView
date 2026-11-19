@@ -185,7 +185,7 @@ public class GalleryViewTests
     {
         WithShownDockedGallery((core, window, view, panel) =>
         {
-            core.GallerySettings.DockedGalleryItemSize.Value = 120;
+            WindowGalleryOf(view).DockedGalleryItemSize.Value = 120;
             RenderFrame(window);
 
             Assert.Equal(GalleryDefaults.GetDockedGalleryHeight(120), view.Height);
@@ -257,8 +257,9 @@ public class GalleryViewTests
     {
         WithShownDockedGallery((core, _, view, _) =>
         {
-            core.GallerySettings.Start();
-            var toggle = core.GallerySettings.ToggleExpandedDisplayModeCommand;
+            var gallery = WindowGalleryOf(view);
+            gallery.Start();
+            var toggle = gallery.ToggleExpandedDisplayModeCommand;
             var toTiles = view.FindControl<IconButton>("ToTilesButton")!;
             var toColumns = view.FindControl<IconButton>("ToColumnsButton")!;
             Assert.Same(toggle, toTiles.Command);
@@ -269,7 +270,7 @@ public class GalleryViewTests
             toggle.Execute(Unit.Default);
             Dispatcher.UIThread.RunJobs();
 
-            Assert.Equal(GalleryDisplayMode.Masonry, core.GallerySettings.ExpandedGalleryDisplayMode.Value);
+            Assert.Equal(GalleryDisplayMode.Masonry, gallery.ExpandedGalleryDisplayMode.Value);
             Assert.False(toTiles.IsVisible);
             Assert.True(toColumns.IsVisible);
 
@@ -341,7 +342,7 @@ public class GalleryViewTests
         WithShownDockedGallery((core, window, view, panel) =>
         {
             Assert.DoesNotContain("tiles", view.Classes);
-            core.GallerySettings.ExpandedGalleryDisplayMode.Value = GalleryDisplayMode.Rows;
+            WindowGalleryOf(view).ExpandedGalleryDisplayMode.Value = GalleryDisplayMode.Rows;
             RenderFrame(window);
             Assert.DoesNotContain("tiles", view.Classes);
             Assert.Equal(GalleryDisplayMode.Columns, panel.DisplayMode);
@@ -368,7 +369,7 @@ public class GalleryViewTests
         WithShownExpandedGallery(GalleryDisplayMode.Columns, (core, window, view, panel) =>
         {
             var tab = (TabViewModel)view.DataContext!;
-            core.GallerySettings.ExpandedGalleryDisplayMode.Value = GalleryDisplayMode.Masonry;
+            WindowGalleryOf(view).ExpandedGalleryDisplayMode.Value = GalleryDisplayMode.Masonry;
             RenderFrame(window);
 
             Assert.False(view.IsInAnimation);
@@ -377,7 +378,7 @@ public class GalleryViewTests
             Assert.True(double.IsNaN(panel.WrapWidthOverride));
             Assert.Equal(view.GetExpandedWrapWidth(tab.Gallery.Appearance.Value), panel.Bounds.Width, 1e-6);
 
-            core.GallerySettings.ExpandedGalleryDisplayMode.Value = GalleryDisplayMode.Columns;
+            WindowGalleryOf(view).ExpandedGalleryDisplayMode.Value = GalleryDisplayMode.Columns;
             RenderFrame(window);
 
             Assert.False(view.IsInAnimation);
@@ -501,7 +502,7 @@ public class GalleryViewTests
             RenderFrame(window);
             Assert.False(view.IsVisible);
 
-            core.GallerySettings.ExpandedGalleryDisplayMode.Value = GalleryDisplayMode.Masonry;
+            WindowGalleryOf(view).ExpandedGalleryDisplayMode.Value = GalleryDisplayMode.Masonry;
             RenderFrame(window);
 
             Assert.False(view.IsVisible);
@@ -738,4 +739,8 @@ public class GalleryViewTests
         public override long GetFrameCount() => 0;
         public override void Register(IFrameRunnerWorkItem callback) => callback.MoveNext(0);
     }
+
+    // The gallery settings of the Main Window the view's tab is in
+    private static WindowGallerySettings WindowGalleryOf(GalleryView view) =>
+        ((TabViewModel)view.DataContext!).ParentWindowContext.WindowSettings.Gallery;
 }

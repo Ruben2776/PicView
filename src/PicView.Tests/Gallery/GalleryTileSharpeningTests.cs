@@ -80,7 +80,7 @@ public sealed class GalleryTileSharpeningTests : IDisposable
         Show();
 
         // after the first layout and its jobs, before any rest
-        Assert.Equal((int)Thumbnails.GalleryHeight, Shown(0).PixelSize.Height);
+        Assert.Equal((int)GalleryHeight, Shown(0).PixelSize.Height);
         Assert.DoesNotContain(_decoder.Calls, c => c.StartsWith("decode-full:", StringComparison.Ordinal));
         Assert.Equal(0u, Item(0).TileHeightShown);
     }
@@ -89,7 +89,7 @@ public sealed class GalleryTileSharpeningTests : IDisposable
     public void Tile_WhenTheViewRests_ShowsABitmapThatCoversIt()
     {
         Show();
-        Assert.True(Needed(0) > Thumbnails.GalleryHeight);
+        Assert.True(Needed(0) > GalleryHeight);
 
         Rest();
 
@@ -258,7 +258,7 @@ public sealed class GalleryTileSharpeningTests : IDisposable
         Assert.True(_decoder.Calls.Count(c => c.StartsWith("decode-full:", StringComparison.Ordinal)) <= 1); // at most the one already in its slot
         // and the one made in its slot lands on no Columns item
         Assert.All(RealizedItems(), item => Assert.Equal(0u, ((GalleryItemViewModel)item.DataContext!).TileHeightShown));
-        Assert.DoesNotContain(_items, x => x.Image.Value is Bitmap bitmap && bitmap.PixelSize.Height > Thumbnails.GalleryHeight);
+        Assert.DoesNotContain(_items, x => x.Image.Value is Bitmap bitmap && bitmap.PixelSize.Height > GalleryHeight);
         ScrollToEnd(); // new Columns containers
         Rest();
         Assert.True(_decoder.Calls.Count(c => c.StartsWith("decode-full:", StringComparison.Ordinal)) <= 1);
@@ -279,13 +279,13 @@ public sealed class GalleryTileSharpeningTests : IDisposable
         SettleSharpening();
 
         // Item 0 still holds the small thumbnail it showed, as an unloaded item always has
-        Assert.Equal((int)Thumbnails.GalleryHeight, Shown(0).PixelSize.Height);
+        Assert.Equal((int)GalleryHeight, Shown(0).PixelSize.Height);
         Assert.Equal(0u, Item(0).TileHeightShown);
         Assert.All(RealizedItems(), item =>
         {
             var vm = (GalleryItemViewModel)item.DataContext!;
             Assert.Equal(0u, vm.TileHeightShown);
-            Assert.Equal((int)Thumbnails.GalleryHeight, Assert.IsAssignableFrom<Bitmap>(vm.Image.Value).PixelSize.Height);
+            Assert.Equal((int)GalleryHeight, Assert.IsAssignableFrom<Bitmap>(vm.Image.Value).PixelSize.Height);
         });
     }
 
@@ -329,7 +329,7 @@ public sealed class GalleryTileSharpeningTests : IDisposable
         {
             var vm = (GalleryItemViewModel)item.DataContext!;
             Assert.Equal(0u, vm.TileHeightShown);
-            Assert.True(Assert.IsAssignableFrom<Bitmap>(vm.Image.Value).PixelSize.Height <= Thumbnails.GalleryHeight);
+            Assert.True(Assert.IsAssignableFrom<Bitmap>(vm.Image.Value).PixelSize.Height <= GalleryHeight);
         });
     }
 
@@ -351,7 +351,7 @@ public sealed class GalleryTileSharpeningTests : IDisposable
         // 6:1 images in tiles clamped to 4:1: a Masonry tile is a quarter as tall as its column is wide
         Show(pixelWidth: 6000, pixelHeight: 1000);
         var small = Shown(0);
-        Assert.InRange(Needed(0), 1u, Thumbnails.GalleryHeight - 1);
+        Assert.InRange(Needed(0), 1u, GalleryHeight - 1);
 
         Rest();
 
@@ -371,7 +371,7 @@ public sealed class GalleryTileSharpeningTests : IDisposable
         Rest();
 
         Assert.Same(small, Shown(0));
-        Assert.Equal((int)Thumbnails.GalleryHeight, Shown(0).PixelSize.Height);
+        Assert.Equal((int)GalleryHeight, Shown(0).PixelSize.Height);
         Assert.DoesNotContain(_decoder.Calls, c => c.StartsWith("decode-full:", StringComparison.Ordinal));
     }
 
@@ -379,7 +379,7 @@ public sealed class GalleryTileSharpeningTests : IDisposable
     public void Tile_WhoseTileThumbnailComesBackShorterThanWhatItShows_KeepsWhatItShowsAndIsNotAskedAgain()
     {
         // A source that gives less than it is asked for
-        _decoder.FullHeightCap = Thumbnails.GalleryHeight - 50;
+        _decoder.FullHeightCap = GalleryHeight - 50;
         Show();
         var small = Shown(0);
 
@@ -457,7 +457,7 @@ public sealed class GalleryTileSharpeningTests : IDisposable
         Settle(() => !_panel!.IsExpanded && !_view!.IsInAnimation);
         SettleSmallThumbnails();
         Assert.Contains(_panel!.RealizedItems, x => x.Index == 0);
-        Assert.Equal((int)Thumbnails.GalleryHeight, Shown(0).PixelSize.Height); // docked, it shows its small one
+        Assert.Equal((int)GalleryHeight, Shown(0).PixelSize.Height); // docked, it shows its small one
 
         _tab.Gallery.Switcher.ToggleExpanded();
         Settle(() => _panel!.IsExpanded && !_view!.IsInAnimation);
@@ -568,7 +568,7 @@ public sealed class GalleryTileSharpeningTests : IDisposable
 
         Assert.NotEqual(offsetBefore, ScrollViewer.Offset.Y); // the panel held its item, so it moved the view
         var subject = NearestTheMiddle();
-        Assert.True(Needed(subject) > Thumbnails.GalleryHeight);
+        Assert.True(Needed(subject) > GalleryHeight);
         Assert.Equal(Needed(subject), Item(subject).TileHeightShown); // sharp one delay after the scroll
     }
 
@@ -660,7 +660,7 @@ public sealed class GalleryTileSharpeningTests : IDisposable
         {
             FileInfo = new FileInfo($"{i:D4}.jpg"),
             Coordinator = _tab.GalleryCoordinator,
-            ThumbnailHeight = Thumbnails.GalleryHeight
+            ThumbnailHeight = GalleryHeight
         }).ToArray();
         for (var i = 0; i < itemCount; i++)
         {
@@ -671,7 +671,7 @@ public sealed class GalleryTileSharpeningTests : IDisposable
 
             if (keepSmallThumbnails)
             {
-                thumbnails.GetAsync(_items[i].FileInfo!, Thumbnails.GalleryHeight, _tab.Id,
+                thumbnails.GetAsync(_items[i].FileInfo!, GalleryHeight, _tab.Id,
                     TestContext.Current.CancellationToken).AsTask().GetAwaiter().GetResult();
             }
 
@@ -727,7 +727,7 @@ public sealed class GalleryTileSharpeningTests : IDisposable
             {
                 FileInfo = old.FileInfo,
                 Coordinator = _tab.GalleryCoordinator,
-                ThumbnailHeight = Thumbnails.GalleryHeight
+                ThumbnailHeight = GalleryHeight
             };
             item.SetDetails(old.Details!);
             return item;
@@ -743,10 +743,10 @@ public sealed class GalleryTileSharpeningTests : IDisposable
     /// </summary>
     private bool KeepsSmallThumbnailOf(int index)
     {
-        var request = _thumbnails!.GetQuickAsync(Item(index).FileInfo!, Thumbnails.GalleryHeight,
+        var request = _thumbnails!.GetQuickAsync(Item(index).FileInfo!, GalleryHeight,
             TestContext.Current.CancellationToken);
         return request.IsCompleted && request.Result is Bitmap bitmap &&
-               bitmap.PixelSize.Height == Thumbnails.GalleryHeight;
+               bitmap.PixelSize.Height == GalleryHeight;
     }
 
     private int CallsFor(string kind, int index) =>
@@ -883,9 +883,15 @@ public sealed class GalleryTileSharpeningTests : IDisposable
         RenderFrame();
     }
 
+    // The height the tab's gallery asks its small thumbnails for: its window's look, or the record's before the tab
+    // exists
+    private uint GalleryHeight => _tab?.Gallery.Look.CurrentValue.ThumbnailHeight ??
+                                  Thumbnails.GalleryHeight(Settings.Gallery.DockedGalleryItemSize,
+                                      Settings.Gallery.ExpandedGalleryItemSize);
+
     private void RaiseExpandedItemSizeTo(double size)
     {
-        _core!.GallerySettings.ExpandedGalleryItemSize.Value = size;
+        _tab!.ParentWindowContext.WindowSettings.Gallery.ExpandedGalleryItemSize.Value = size;
         Dispatcher.UIThread.RunJobs();
         RenderFrame();
         SettleSmallThumbnails();
@@ -895,8 +901,9 @@ public sealed class GalleryTileSharpeningTests : IDisposable
     // Runs only the jobs: the small thumbnails of new containers may wait behind the held slot
     private void SwitchDisplayModeTo(GalleryDisplayMode mode)
     {
-        _core!.GallerySettings.Start();
-        _core.GallerySettings.SetExpandedDisplayModeCommand.Execute(mode);
+        var gallery = _tab!.ParentWindowContext.WindowSettings.Gallery;
+        gallery.Start();
+        gallery.SetExpandedDisplayModeCommand.Execute(mode);
         Dispatcher.UIThread.RunJobs();
         RenderFrame();
         Assert.Equal(mode, _panel!.DisplayMode);

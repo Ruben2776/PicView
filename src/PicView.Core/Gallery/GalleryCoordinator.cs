@@ -48,6 +48,13 @@ public class GalleryCoordinator : IDisposable
     private bool _isShown;
 
     /// <summary>
+    /// The thumbnail height the items were made for, at their load. Changed only on the queue.
+    /// </summary>
+    private uint _heldHeight;
+
+    private readonly IDisposable _windowSubscription;
+
+    /// <summary>
     /// Whether the file list is at or over <see cref="Config.Gallery.HideGalleryAtFileCount"/>. The gallery is hidden
     /// then and, unlike for crop and a Single Image, has no items: there is nothing to show (ADR-0011).
     /// </summary>
@@ -61,6 +68,12 @@ public class GalleryCoordinator : IDisposable
             .Select(mode => mode is not GalleryMode.Closed)
             .DistinctUntilChanged()
             .Subscribe(OnShownChanged, DebugHelper.LogError(nameof(GalleryCoordinator), nameof(OnShownChanged)));
+        // Only entering another window asks again: a size changed in the same window keeps the items, as before.
+        // Queued, so it runs after the gallery took the new window's look, which it does as the window is published
+        _windowSubscription = tab.CurrentWindowSettings
+            .Skip(1)
+            .Subscribe(OnWindowEntered,
+                DebugHelper.LogError(nameof(GalleryCoordinator), nameof(AskAgainIfTaller)));
     }
 
     /// <summary>
@@ -351,6 +364,25 @@ public class GalleryCoordinator : IDisposable
 
     #region Loading
 
+    /// <summary>
+    /// For a tab that entered another window: when that window's look needs taller thumbnails than the items were
+    /// made for, the items are made again at the new height, once, so the thumbnails are asked for again rather than
+    /// shown stretched. Items that need no taller thumbnail are kept (ADR-0010).
+    /// </summary>
+    private void AskAgainIfTaller()
+    {
+        if (Gallery.LoadingState is GalleryLoadingState.NotLoaded || ThumbnailHeight() <= _heldHeight)
+        {
+            // Without items, the next load asks at the new height anyway
+            return;
+        }
+
+        Drop();
+        LoadIfShown(_tab.NavigationIndex.CurrentValue);
+    }
+
+    private void OnWindowEntered(WindowSettings? settings) => _ = Enqueue(AskAgainIfTaller);
+
     private void OnShownChanged(bool isShown) => _ = Enqueue(() =>
     {
         _isShown = isShown;
@@ -402,7 +434,9 @@ public class GalleryCoordinator : IDisposable
         var files = _files;
         // Taken now, as a restart can dispose the source before the thread pool runs the load
         var ct = cts.Token;
-        _ = Task.Run(() => LoadAsync(files, currentIndex, ct), ct);
+        var height = ThumbnailHeight();
+        _heldHeight = height;
+        _ = Task.Run(() => LoadAsync(files, currentIndex, height, ct), ct);
     }
 
     /// <summary>
@@ -410,11 +444,10 @@ public class GalleryCoordinator : IDisposable
     /// around the current image, before the items are shared, then the rest in batches, nearest the current image
     /// first.
     /// </summary>
-    private async Task LoadAsync(IReadOnlyList<FileInfo> files, int currentIndex, CancellationToken ct)
+    private async Task LoadAsync(IReadOnlyList<FileInfo> files, int currentIndex, uint maxHeight, CancellationToken ct)
     {
         try
         {
-            var maxHeight = ThumbnailHeight();
             var parallelOptions = new ParallelOptions
             {
                 CancellationToken = ct,
@@ -633,7 +666,8 @@ public class GalleryCoordinator : IDisposable
         CancellationToken cancellationToken) =>
         _thumbnails.GetTileAsync(item.FileInfo!, height, cancellationToken);
 
-    private static double ThumbnailHeight() => Thumbnails.GalleryHeight;
+    // The height of the look of the window the tab is in
+    private uint ThumbnailHeight() => Gallery.Look.CurrentValue.ThumbnailHeight;
 
     #endregion
 
@@ -653,6 +687,7 @@ public class GalleryCoordinator : IDisposable
     public void Dispose()
     {
         _shownSubscription.Dispose();
+        _windowSubscription.Dispose();
         _ = Enqueue(Cancel);
         GC.SuppressFinalize(this);
     }

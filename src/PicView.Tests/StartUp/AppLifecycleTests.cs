@@ -18,6 +18,7 @@ using PicView.Avalonia.Printing;
 using PicView.Avalonia.Services;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.StartUp;
+using PicView.Avalonia.Views.Gallery;
 using PicView.Avalonia.Views.Menu;
 using PicView.Avalonia.Views.UC;
 using PicView.Avalonia.Views.UC.PopUps;
@@ -75,6 +76,15 @@ public class AppLifecycleTests : IAsyncDisposable
         return ValueTask.FromResult(true);
     }
 
+    // Saves the shared gallery settings made; a Window Setting change must not make one
+    private int _gallerySaves;
+
+    private ValueTask<bool> CountingGallerySave()
+    {
+        Interlocked.Increment(ref _gallerySaves);
+        return ValueTask.FromResult(true);
+    }
+
     // Bounds each wait on a held load, so a failing test fails instead of hanging the run
     private static readonly TimeSpan WaitLimit = TimeSpan.FromSeconds(10);
 
@@ -115,7 +125,7 @@ public class AppLifecycleTests : IAsyncDisposable
                     ? ThreePageTiff(file)
                     : new ImageModel { FileInfo = file });
         }, new GlobalSettingsViewModel(CountingGlobalSave),
-            saveGallerySettings: static () => ValueTask.FromResult(true), timeProvider: _clock);
+            saveGallerySettings: CountingGallerySave, timeProvider: _clock);
         _provider = new LifecycleWindowProvider(_core);
         _sharedFiles = new FolderSharedFiles(_folder);
     }
@@ -208,11 +218,148 @@ public class AppLifecycleTests : IAsyncDisposable
         await WaitUntilOpenedAsync(app.MainWindows.Open[0]);
 
         var gallerySettings = _core.GallerySettings;
-        gallerySettings.SetDockedStretchModeCommand.Execute(GalleryStretchMode.Square);
-        gallerySettings.DockedGalleryItemSize.Value = 99;
-        Assert.Equal(GalleryStretchMode.Square, Settings.Gallery.DockedGalleryStretchMode);
-        Assert.Equal(99, Settings.Gallery.DockedGalleryItemSize);
+        var badges = !gallerySettings.ShowMotionPhotoBadges.Value;
+        gallerySettings.GalleryItemSpacing.Value = 12;
+        gallerySettings.GalleryLineSpacing.Value = 14;
+        gallerySettings.ShowMotionPhotoBadges.Value = badges;
+        Assert.Equal(12, Settings.Gallery.ItemSpacing);
+        Assert.Equal(14, Settings.Gallery.LineSpacing);
+        Assert.Equal(badges, Settings.Gallery.ShowMotionPhotoBadges);
     }
+
+    [AvaloniaFact]
+    public async Task ItemSizeSlider_DraggedInOneMainWindow_LeavesTheOther_AndSavesNothing()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var first = app.MainWindows.Open[0];
+        var second = await app.MainWindows.OpenNewAsync(first);
+        var firstVm = ViewModelOf(first);
+        var secondVm = ViewModelOf(second);
+        var firstTab = firstVm.WindowTabs.ActiveTab.CurrentValue;
+        firstTab.Gallery.Switcher.Start(true);
+        var otherTab = secondVm.WindowTabs.ActiveTab.CurrentValue;
+        otherTab.Gallery.Switcher.Start(true);
+        var otherLook = otherTab.Gallery.Appearance.Value;
+        var savesBefore = (_sharedFiles.Saves, Volatile.Read(ref _globalSaves), Volatile.Read(ref _gallerySaves));
+
+        var slider = new GalleryItemSizeSlider(firstTab.Gallery, firstVm.WindowSettings.Gallery);
+        var mainSlider = slider.FindControl<Slider>("MainSlider")!;
+        Assert.Equal(GalleryDefaults.DefaultDockedGalleryHeight, mainSlider.Value);
+        // A drag, tick by tick
+        foreach (var size in new[] { 90.0, 100, 110 })
+        {
+            mainSlider.Value = size;
+        }
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Equal(110, firstVm.WindowSettings.Gallery.DockedGalleryItemSize.Value);
+        Assert.Equal(110, firstTab.Gallery.Appearance.Value.ItemHeight);
+        Assert.Equal(GalleryDefaults.DefaultDockedGalleryHeight,
+            secondVm.WindowSettings.Gallery.DockedGalleryItemSize.Value);
+        Assert.Equal(otherLook, otherTab.Gallery.Appearance.Value);
+        Assert.Equal(GalleryDefaults.DefaultDockedGalleryHeight, Settings.Gallery.DockedGalleryItemSize);
+        Assert.Equal(savesBefore,
+            (_sharedFiles.Saves, Volatile.Read(ref _globalSaves), Volatile.Read(ref _gallerySaves)));
+    }
+
+    [AvaloniaFact]
+    public async Task GalleryLookActions_InOneMainWindow_LeaveTheOtherAlone()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var first = app.MainWindows.Open[0];
+        var second = await app.MainWindows.OpenNewAsync(first);
+        var firstGallery = ViewModelOf(first).WindowSettings.Gallery;
+        var secondGallery = ViewModelOf(second).WindowSettings.Gallery;
+        var recordLook = LookOf(Settings.Gallery);
+        var savesBefore = (_sharedFiles.Saves, Volatile.Read(ref _globalSaves), Volatile.Read(ref _gallerySaves));
+
+        // What the gallery's Stretch and display mode menus run
+        firstGallery.SetDockedStretchModeCommand.Execute(GalleryStretchMode.FillSquare);
+        firstGallery.SetExpandedStretchModeCommand.Execute(GalleryStretchMode.Square);
+        firstGallery.SetExpandedDisplayModeCommand.Execute(GalleryDisplayMode.Rows);
+        firstGallery.ToggleExpandedDisplayModeCommand.Execute(Unit.Default);
+        firstGallery.ToggleExpandedDisplayModeCommand.Execute(Unit.Default);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Equal(GalleryStretchMode.FillSquare, firstGallery.DockedGalleryStretchMode.Value);
+        Assert.Equal(GalleryStretchMode.Square, firstGallery.ExpandedGalleryStretchMode.Value);
+        Assert.Equal(GalleryDisplayMode.Rows, firstGallery.ExpandedGalleryDisplayMode.Value);
+        Assert.Equal(recordLook, LookOf(secondGallery));
+        Assert.Equal(recordLook, LookOf(Settings.Gallery));
+        Assert.Equal(savesBefore,
+            (_sharedFiles.Saves, Volatile.Read(ref _globalSaves), Volatile.Read(ref _gallerySaves)));
+    }
+
+    [AvaloniaFact]
+    public async Task NewWindowFromOneWithAnotherLook_StartsWithIt()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var first = app.MainWindows.Open[0];
+        var firstGallery = ViewModelOf(first).WindowSettings.Gallery;
+        var recordLook = LookOf(Settings.Gallery);
+        firstGallery.SetDockedStretchModeCommand.Execute(GalleryStretchMode.FillSquare);
+        firstGallery.SetExpandedDisplayModeCommand.Execute(GalleryDisplayMode.Masonry);
+        firstGallery.ExpandedGalleryItemSize.Value = 200;
+
+        var opened = await app.MainWindows.OpenNewAsync(first);
+        var openedVm = ViewModelOf(opened);
+        var openedGallery = openedVm.WindowSettings.Gallery;
+
+        Assert.Equal(LookOf(firstGallery), LookOf(openedGallery));
+        Assert.Equal((GalleryStretchMode.FillSquare, GalleryDisplayMode.Masonry, 200.0),
+            (openedGallery.DockedGalleryStretchMode.Value, openedGallery.ExpandedGalleryDisplayMode.Value,
+                openedGallery.ExpandedGalleryItemSize.Value));
+        var tab = openedVm.WindowTabs.ActiveTab.CurrentValue;
+        tab.Gallery.Switcher.ToggleExpanded();
+        Assert.Equal(GalleryDisplayMode.Masonry, tab.Gallery.Appearance.Value.DisplayMode);
+        Assert.Equal(200, tab.Gallery.Appearance.Value.ItemHeight);
+        Assert.Equal(recordLook, LookOf(Settings.Gallery));
+
+        // Its commands are its own, started as it opened
+        openedGallery.ToggleExpandedDisplayModeCommand.Execute(Unit.Default);
+        Assert.Equal(GalleryDisplayMode.Columns, openedGallery.ExpandedGalleryDisplayMode.Value);
+        Assert.Equal(GalleryDisplayMode.Masonry, firstGallery.ExpandedGalleryDisplayMode.Value);
+    }
+
+    [AvaloniaFact]
+    public async Task CloseAsync_StoresTheGalleryLook()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var first = app.MainWindows.Open[0];
+        var second = await app.MainWindows.OpenNewAsync(first);
+        var secondGallery = ViewModelOf(second).WindowSettings.Gallery;
+        var recordLook = LookOf(Settings.Gallery);
+        secondGallery.SetDockedStretchModeCommand.Execute(GalleryStretchMode.Square);
+        secondGallery.SetExpandedStretchModeCommand.Execute(GalleryStretchMode.FillSquare);
+        secondGallery.SetExpandedDisplayModeCommand.Execute(GalleryDisplayMode.Rows);
+        secondGallery.ToggleExpandedDisplayModeCommand.Execute(Unit.Default);
+        secondGallery.DockedGalleryItemSize.Value = 100;
+        secondGallery.ExpandedGalleryItemSize.Value = 220;
+        Assert.Equal(recordLook, LookOf(Settings.Gallery));
+        var savesBeforeClose = _sharedFiles.Saves;
+
+        await app.MainWindows.CloseAsync(second);
+
+        Assert.Equal((100.0, 220.0, GalleryStretchMode.Square, GalleryStretchMode.FillSquare,
+            GalleryDisplayMode.Columns, true), LookOf(Settings.Gallery));
+        Assert.Equal(savesBeforeClose + 1, _sharedFiles.Saves);
+        Assert.Equal(recordLook, LookOf(ViewModelOf(first).WindowSettings.Gallery));
+    }
+
+    private static (double, double, GalleryStretchMode, GalleryStretchMode, GalleryDisplayMode, bool) LookOf(
+        PicView.Core.Config.Gallery record) =>
+        (record.DockedGalleryItemSize, record.ExpandedGalleryItemSize, record.DockedGalleryStretchMode,
+            record.ExpandedGalleryStretchMode, record.ExpandedGalleryDisplayMode, record.RowsWasLastUsedDisplayMode);
+
+    private static (double, double, GalleryStretchMode, GalleryStretchMode, GalleryDisplayMode, bool) LookOf(
+        WindowGallerySettings settings) =>
+        (settings.DockedGalleryItemSize.Value, settings.ExpandedGalleryItemSize.Value,
+            settings.DockedGalleryStretchMode.Value, settings.ExpandedGalleryStretchMode.Value,
+            settings.ExpandedGalleryDisplayMode.Value, settings.RowsWasLastUsedDisplayMode);
 
     [AvaloniaFact]
     public async Task StartAsync_SubdirectoriesToggledOnTheStartUpMenu_WritesAndRestartsTheWatches()

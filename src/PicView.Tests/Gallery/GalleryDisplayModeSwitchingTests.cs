@@ -36,7 +36,7 @@ public class GalleryDisplayModeSwitchingTests
     [AvaloniaFact]
     public void SwitchButtons_InColumns_ShowTheToTilesButtonWithTheToggleCommandAndATooltip()
     {
-        WithGalleryView((core, _, view) =>
+        WithGalleryView((core, gallery, _, view) =>
         {
             Assert.True(TranslationManager.LoadLanguage("en"));
             core.Translation.UpdateLanguage();
@@ -45,8 +45,8 @@ public class GalleryDisplayModeSwitchingTests
 
             Assert.True(toTiles.IsVisible);
             Assert.False(toColumns.IsVisible);
-            Assert.Same(core.GallerySettings.ToggleExpandedDisplayModeCommand, toTiles.Command);
-            Assert.Same(core.GallerySettings.ToggleExpandedDisplayModeCommand, toColumns.Command);
+            Assert.Same(gallery.ToggleExpandedDisplayModeCommand, toTiles.Command);
+            Assert.Same(gallery.ToggleExpandedDisplayModeCommand, toColumns.Command);
             Assert.Equal("Switch gallery display mode", ToolTip.GetTip(toTiles));
             Assert.Equal("Switch gallery display mode", ToolTip.GetTip(toColumns));
         });
@@ -57,9 +57,9 @@ public class GalleryDisplayModeSwitchingTests
     [InlineData(GalleryDisplayMode.Rows)]
     public void SwitchButtons_InMasonryOrRows_ShowTheToColumnsButton(GalleryDisplayMode mode)
     {
-        WithGalleryView((core, _, view) =>
+        WithGalleryView((_, gallery, _, view) =>
         {
-            core.GallerySettings.SetExpandedDisplayModeCommand.Execute(mode);
+            gallery.SetExpandedDisplayModeCommand.Execute(mode);
 
             Assert.False(view.FindControl<IconButton>("ToTilesButton")!.IsVisible);
             Assert.True(view.FindControl<IconButton>("ToColumnsButton")!.IsVisible);
@@ -72,12 +72,12 @@ public class GalleryDisplayModeSwitchingTests
     [InlineData(GalleryDisplayMode.Rows, false)]
     public void GalleryMenu_Expanded_ShowsTheExpandedStretchOnlyInColumns(GalleryDisplayMode mode, bool stretchIsShown)
     {
-        WithGalleryView((core, tab, view) =>
+        WithGalleryView((_, gallery, tab, view) =>
         {
             var menu = MenuOf(view, tab);
             tab.Gallery.Switcher.ToggleExpanded();
 
-            core.GallerySettings.SetExpandedDisplayModeCommand.Execute(mode);
+            gallery.SetExpandedDisplayModeCommand.Execute(mode);
 
             Assert.True(Item(menu, "DisplayModeMenuItem").IsVisible);
             Assert.Equal(stretchIsShown, Item(menu, "ExpandedStretchMenuItem").IsVisible);
@@ -88,11 +88,11 @@ public class GalleryDisplayModeSwitchingTests
     [AvaloniaFact]
     public void GalleryMenu_NotExpanded_ShowsTheDockedStretchAndNoDisplayMode()
     {
-        WithGalleryView((core, tab, view) =>
+        WithGalleryView((_, gallery, tab, view) =>
         {
             var menu = MenuOf(view, tab);
 
-            core.GallerySettings.SetExpandedDisplayModeCommand.Execute(GalleryDisplayMode.Masonry);
+            gallery.SetExpandedDisplayModeCommand.Execute(GalleryDisplayMode.Masonry);
 
             Assert.False(Item(menu, "DisplayModeMenuItem").IsVisible);
             Assert.False(Item(menu, "ExpandedStretchMenuItem").IsVisible);
@@ -106,17 +106,19 @@ public class GalleryDisplayModeSwitchingTests
     [InlineData("DisplayModeRowsMenuItem", GalleryDisplayMode.Rows)]
     public void GalleryMenu_DisplayModeItem_SetsItsModeAndIsTheOnlyOneChecked(string itemName, GalleryDisplayMode mode)
     {
-        WithGalleryView((core, tab, view) =>
+        WithGalleryView((_, gallery, tab, view) =>
         {
             var displayModes = Item(MenuOf(view, tab), "DisplayModeMenuItem");
             // Start from another mode, so Columns is a change too
-            core.GallerySettings.SetExpandedDisplayModeCommand.Execute(
+            gallery.SetExpandedDisplayModeCommand.Execute(
                 mode is GalleryDisplayMode.Columns ? GalleryDisplayMode.Rows : GalleryDisplayMode.Columns);
             var item = Item(displayModes, itemName);
 
             item.Command!.Execute(item.CommandParameter);
 
-            Assert.Equal(mode, Settings.Gallery.ExpandedGalleryDisplayMode);
+            // The window's, which it stores only when it closes
+            Assert.Equal(mode, gallery.ExpandedGalleryDisplayMode.Value);
+            Assert.Equal(GalleryDisplayMode.Columns, Settings.Gallery.ExpandedGalleryDisplayMode);
             Assert.Equal(MenuItemToggleType.Radio, item.ToggleType);
             Assert.Equal([itemName], displayModes.Items.OfType<MenuItem>().Where(x => x.IsChecked).Select(x => x.Name));
         });
@@ -128,7 +130,7 @@ public class GalleryDisplayModeSwitchingTests
     [InlineData("ExpandedStretchMenuItem", GalleryStretchMode.Uniform)]
     public void GalleryMenu_StretchCommand_ChecksOnlyTheChosenStretchItem(string menuName, GalleryStretchMode previous)
     {
-        WithGalleryView((core, tab, view) =>
+        WithGalleryView((_, gallery, tab, view) =>
         {
             var stretches = Item(MenuOf(view, tab), menuName);
             var square = StretchItem(stretches, GalleryStretchMode.Square);
@@ -137,8 +139,8 @@ public class GalleryDisplayModeSwitchingTests
             Assert.False(square.IsChecked);
 
             (menuName == "DockedStretchMenuItem"
-                ? core.GallerySettings.SetDockedStretchModeCommand
-                : core.GallerySettings.SetExpandedStretchModeCommand).Execute(GalleryStretchMode.Square);
+                ? gallery.SetDockedStretchModeCommand
+                : gallery.SetExpandedStretchModeCommand).Execute(GalleryStretchMode.Square);
 
             Assert.True(square.IsChecked);
             Assert.False(before.IsChecked);
@@ -165,29 +167,29 @@ public class GalleryDisplayModeSwitchingTests
     [InlineData("DisplayModeRowsItem", GalleryDisplayMode.Rows)]
     public void SettingsComboBox_PickingAnItem_SetsThatDisplayMode(string itemName, GalleryDisplayMode expected)
     {
-        WithGallerySettings((core, view) =>
+        WithGallerySettings((gallery, view) =>
         {
             view.FindControl<ComboBox>("DisplayModeComboBox")!.SelectedItem = view.FindControl<ComboBoxItem>(itemName);
 
-            Assert.Equal(expected, core.GallerySettings.ExpandedGalleryDisplayMode.Value);
-            Assert.Equal(expected, Settings.Gallery.ExpandedGalleryDisplayMode);
-            Assert.Equal(expected is GalleryDisplayMode.Rows, Settings.Gallery.RowsWasLastUsedDisplayMode);
+            Assert.Equal(expected, gallery.ExpandedGalleryDisplayMode.Value);
+            Assert.Equal(expected is GalleryDisplayMode.Rows, gallery.RowsWasLastUsedDisplayMode);
+            Assert.Equal(GalleryDisplayMode.Columns, Settings.Gallery.ExpandedGalleryDisplayMode);
         });
     }
 
     [AvaloniaFact]
     public void SettingsComboBox_PickingColumnsAfterRows_SetsColumnsAndStillRemembersRows()
     {
-        WithGallerySettings((core, view) =>
+        WithGallerySettings((gallery, view) =>
         {
             var comboBox = view.FindControl<ComboBox>("DisplayModeComboBox")!;
             comboBox.SelectedItem = view.FindControl<ComboBoxItem>("DisplayModeRowsItem");
 
             comboBox.SelectedItem = view.FindControl<ComboBoxItem>("DisplayModeColumnsItem");
 
-            Assert.Equal(GalleryDisplayMode.Columns, core.GallerySettings.ExpandedGalleryDisplayMode.Value);
-            Assert.Equal(GalleryDisplayMode.Columns, Settings.Gallery.ExpandedGalleryDisplayMode);
-            Assert.True(Settings.Gallery.RowsWasLastUsedDisplayMode);
+            Assert.Equal(GalleryDisplayMode.Columns, gallery.ExpandedGalleryDisplayMode.Value);
+            Assert.True(gallery.RowsWasLastUsedDisplayMode);
+            Assert.False(Settings.Gallery.RowsWasLastUsedDisplayMode);
         });
     }
 
@@ -197,13 +199,13 @@ public class GalleryDisplayModeSwitchingTests
     [InlineData("DisplayModeRowsItem", GalleryDisplayMode.Rows)]
     public void SettingsComboBox_CommandSetsDisplayMode_ShowsIt(string itemName, GalleryDisplayMode mode)
     {
-        WithGallerySettings((core, view) =>
+        WithGallerySettings((gallery, view) =>
         {
             var comboBox = view.FindControl<ComboBox>("DisplayModeComboBox")!;
 
             // Pick something else in the combo box first, so it has to follow the command rather than keep its selection
             comboBox.SelectedIndex = mode is GalleryDisplayMode.Columns ? 1 : 0;
-            core.GallerySettings.SetExpandedDisplayModeCommand.Execute(mode);
+            gallery.SetExpandedDisplayModeCommand.Execute(mode);
 
             Assert.Same(view.FindControl<ComboBoxItem>(itemName), comboBox.SelectedItem);
         });
@@ -212,9 +214,9 @@ public class GalleryDisplayModeSwitchingTests
     [AvaloniaFact]
     public void SettingsComboBox_ToggleCommandFromColumns_ShowsMasonry()
     {
-        WithGallerySettings((core, view) =>
+        WithGallerySettings((gallery, view) =>
         {
-            core.GallerySettings.ToggleExpandedDisplayModeCommand.Execute(Unit.Default);
+            gallery.ToggleExpandedDisplayModeCommand.Execute(Unit.Default);
 
             Assert.Same(view.FindControl<ComboBoxItem>("DisplayModeMasonryItem"),
                 view.FindControl<ComboBox>("DisplayModeComboBox")!.SelectedItem);
@@ -245,9 +247,10 @@ public class GalleryDisplayModeSwitchingTests
             return ValueTask.FromResult(true);
         });
         core.GallerySettings.Start();
+        var gallery = ActiveWindowGallery(core);
         var idle = core.GallerySettings.Saving;
         var published = 0;
-        using var subscription = core.GallerySettings.ExpandedGalleryDisplayMode.Skip(1).Subscribe(_ => published++);
+        using var subscription = gallery.ExpandedGalleryDisplayMode.Skip(1).Subscribe(_ => published++);
         var view = new GallerySettingsView();
         var window = new Window { DataContext = core, Content = view };
 
@@ -258,13 +261,14 @@ public class GalleryDisplayModeSwitchingTests
 
             Assert.Same(view.FindControl<ComboBoxItem>(itemName),
                 view.FindControl<ComboBox>("DisplayModeComboBox")!.SelectedItem);
-            // Only the write-through writes the record and saves, and it runs once for each value the setting publishes
+            // The setting publishes no new value, and nothing writes the record or saves
             Assert.Equal(0, published);
             // The save was not called. It ends at once here, which can leave the idle task in place even after a
             // save, so the count is what tells
             Assert.Equal(0, saves);
             Assert.Same(idle, core.GallerySettings.Saving);
-            Assert.Equal(saved, core.GallerySettings.ExpandedGalleryDisplayMode.Value);
+            Assert.Equal(saved, gallery.ExpandedGalleryDisplayMode.Value);
+            Assert.Equal(rowsWasLastUsed, gallery.RowsWasLastUsedDisplayMode);
             Assert.Equal(saved, Settings.Gallery.ExpandedGalleryDisplayMode);
             Assert.Equal(rowsWasLastUsed, Settings.Gallery.RowsWasLastUsedDisplayMode);
         }
@@ -290,26 +294,38 @@ public class GalleryDisplayModeSwitchingTests
         Assert.Contains("Rows", item.Tags);
     }
 
-    // The display mode saves through the delegate, so no test here writes the settings file
+    // The shared gallery settings save through the delegate, so no test here writes the settings file
     private static CoreViewModel NewCore(Func<ValueTask<bool>>? save = null) =>
         new(null, _ => ValueTask.FromResult(new ImageModel()),
             saveGallerySettings: save ?? (static () => ValueTask.FromResult(true)));
 
-    private static void WithGallerySettings(Action<CoreViewModel, GallerySettingsView> test)
+    // The Settings window edits the Active Main Window, here the only one, whose gallery settings are given
+    private static void WithGallerySettings(Action<WindowGallerySettings, GallerySettingsView> test)
     {
         var core = NewCore();
         core.GallerySettings.Start();
+        var gallery = ActiveWindowGallery(core);
         var view = new GallerySettingsView();
         var window = new Window { DataContext = core, Content = view };
         window.Show();
         try
         {
-            test(core, view);
+            test(gallery, view);
         }
         finally
         {
             window.Close();
         }
+    }
+
+    // A Main Window made active, with its gallery settings started as an opened window's are
+    private static WindowGallerySettings ActiveWindowGallery(CoreViewModel core)
+    {
+        var vm = new MainWindowViewModel(core, core.Translation, core.GlobalSettings!, core.GallerySettings);
+        vm.WindowSettings.Gallery.Start();
+        core.MainWindows.MainWindows.Add(vm);
+        core.MainWindows.ActiveWindow.Value = vm;
+        return vm.WindowSettings.Gallery;
     }
 
     private static ContextMenu MenuOf(GalleryView view, TabViewModel tab)
@@ -326,18 +342,19 @@ public class GalleryDisplayModeSwitchingTests
         parent.Items.OfType<MenuItem>().Single(x => Equals(x.CommandParameter, mode));
 
     // The gallery view loads its XAML only when the application's DataContext is a CoreViewModel
-    private static void WithGalleryView(Action<CoreViewModel, TabViewModel, GalleryView> test)
+    private static void WithGalleryView(Action<CoreViewModel, WindowGallerySettings, TabViewModel, GalleryView> test)
     {
         var core = NewCore();
         core.GallerySettings.Start();
         var vm = new MainWindowViewModel(core, core.Translation, core.GlobalSettings!, core.GallerySettings);
+        vm.WindowSettings.Gallery.Start();
         var tab = vm.WindowTabs.ActiveTab.Value;
         var application = Application.Current!;
         var previous = application.DataContext;
         application.DataContext = core;
         try
         {
-            test(core, tab, new GalleryView { DataContext = tab });
+            test(core, vm.WindowSettings.Gallery, tab, new GalleryView { DataContext = tab });
         }
         finally
         {

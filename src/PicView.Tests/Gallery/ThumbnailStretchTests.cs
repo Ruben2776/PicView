@@ -55,23 +55,23 @@ public class ThumbnailStretchTests
     public void SettingsComboBox_PickingAnItem_SetsThatThumbnailStretch(string comboBoxName, string itemName,
         GalleryStretchMode expected)
     {
-        var (core, view) = ShowGallerySettings();
+        var (gallerySettings, view) = ShowGallerySettings();
         var isDocked = comboBoxName == "DockedGalleryComboBox";
+        var stored = (Settings.Gallery.DockedGalleryStretchMode, Settings.Gallery.ExpandedGalleryStretchMode);
 
         view.FindControl<ComboBox>(comboBoxName)!.SelectedItem = view.FindControl<ComboBoxItem>(itemName);
 
-        var gallerySettings = core.GallerySettings;
+        // The Active Main Window's, which it stores only when it closes
+        Assert.Equal(stored, (Settings.Gallery.DockedGalleryStretchMode, Settings.Gallery.ExpandedGalleryStretchMode));
         if (isDocked)
         {
             Assert.Equal(expected, gallerySettings.DockedGalleryStretchMode.Value);
-            Assert.Equal(expected, Settings.Gallery.DockedGalleryStretchMode);
             Assert.Equal(expected == GalleryStretchMode.Square, gallerySettings.IsDockedStretchSquare.Value);
             Assert.Equal(expected == GalleryStretchMode.FillSquare, gallerySettings.IsDockedStretchSquareFill.Value);
         }
         else
         {
             Assert.Equal(expected, gallerySettings.ExpandedGalleryStretchMode.Value);
-            Assert.Equal(expected, Settings.Gallery.ExpandedGalleryStretchMode);
             Assert.Equal(expected == GalleryStretchMode.Square, gallerySettings.IsExpandedStretchSquare.Value);
             Assert.Equal(expected == GalleryStretchMode.FillSquare, gallerySettings.IsExpandedStretchSquareFill.Value);
         }
@@ -87,14 +87,14 @@ public class ThumbnailStretchTests
     public void SettingsComboBox_GalleryMenuSetsStretch_ShowsIt(string comboBoxName, string itemName,
         GalleryStretchMode mode)
     {
-        var (core, view) = ShowGallerySettings();
+        var (gallerySettings, view) = ShowGallerySettings();
         var comboBox = view.FindControl<ComboBox>(comboBoxName)!;
 
         // Pick something else in the combo box first, so it has to follow the menu rather than keep its selection
         comboBox.SelectedIndex = mode is GalleryStretchMode.Uniform ? 1 : 0;
         var command = comboBoxName == "DockedGalleryComboBox"
-            ? core.GallerySettings.SetDockedStretchModeCommand
-            : core.GallerySettings.SetExpandedStretchModeCommand;
+            ? gallerySettings.SetDockedStretchModeCommand
+            : gallerySettings.SetExpandedStretchModeCommand;
         command.Execute(mode);
 
         Assert.Same(view.FindControl<ComboBoxItem>(itemName), comboBox.SelectedItem);
@@ -122,15 +122,20 @@ public class ThumbnailStretchTests
             ? settings.Gallery!.DockedGalleryStretchMode
             : settings.Gallery!.ExpandedGalleryStretchMode;
 
-    private static (CoreViewModel Core, GallerySettingsView View) ShowGallerySettings()
+    // The Settings window edits the Active Main Window, here the only one, whose gallery settings are given
+    private static (WindowGallerySettings Gallery, GallerySettingsView View) ShowGallerySettings()
     {
-        // The stretch saves through the delegate, so no test here writes the settings file
+        // The shared settings save through the delegate, so no test here writes the settings file
         var core = new CoreViewModel(null, _ => ValueTask.FromResult(new ImageModel()),
             saveGallerySettings: static () => ValueTask.FromResult(true));
         core.GallerySettings.Start();
+        var vm = new MainWindowViewModel(core, core.Translation, core.GlobalSettings!, core.GallerySettings);
+        vm.WindowSettings.Gallery.Start();
+        core.MainWindows.MainWindows.Add(vm);
+        core.MainWindows.ActiveWindow.Value = vm;
         var view = new GallerySettingsView();
         var window = new Window { DataContext = core, Content = view };
         window.Show();
-        return (core, view);
+        return (vm.WindowSettings.Gallery, view);
     }
 }

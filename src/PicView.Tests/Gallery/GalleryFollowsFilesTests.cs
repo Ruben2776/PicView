@@ -323,7 +323,7 @@ public class GalleryFollowsFilesTests : IDisposable
         Directory.CreateDirectory(Path.Combine(_directory, "sub"));
         var tab = await LoadedTabAsync(thumbnails, "a.jpg", Path.Combine("sub", "b.jpg"));
         var item = tab.Gallery.GalleryItems[1];
-        var small = await thumbnails.GetAsync(item.FileInfo!, Thumbnails.GalleryHeight, tab.Id,
+        var small = await thumbnails.GetAsync(item.FileInfo!, tab.Gallery.Look.CurrentValue.ThumbnailHeight, tab.Id,
             TestContext.Current.CancellationToken);
         var tile = await item.LoadTileThumbnailAsync(600, TestContext.Current.CancellationToken);
         item.Image.Value = tile;
@@ -339,7 +339,7 @@ public class GalleryFollowsFilesTests : IDisposable
         Assert.Same(tile, moved.Image.Value);
         Assert.Equal(600u, moved.TileHeightShown);
         // The tab's store holds the small one under the new path, not the tile
-        Assert.Same(small, await thumbnails.GetAsync(moved.FileInfo!, Thumbnails.GalleryHeight, tab.Id,
+        Assert.Same(small, await thumbnails.GetAsync(moved.FileInfo!, tab.Gallery.Look.CurrentValue.ThumbnailHeight, tab.Id,
             TestContext.Current.CancellationToken));
         Assert.True(moved.TryGetKeptThumbnail(out var kept, out var tileHeight));
         Assert.Same(tile, kept);

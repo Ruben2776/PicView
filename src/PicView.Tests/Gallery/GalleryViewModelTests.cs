@@ -154,12 +154,12 @@ public class GalleryViewModelTests
     [Fact]
     public void Appearance_DockedItemSizeChanged_FollowsIt()
     {
-        var shared = new GallerySharedSettingsViewModel();
         using var gallery = new GalleryViewModel(NoSave);
-        gallery.Initialize(shared);
+        gallery.Initialize(new GallerySharedSettingsViewModel());
+        var window = FollowedWindow(gallery);
         gallery.Switcher.Start(true);
 
-        shared.DockedGalleryItemSize.Value = 120;
+        window.DockedGalleryItemSize.Value = 120;
 
         Assert.Equal(120, gallery.Appearance.Value.ItemHeight);
     }
@@ -167,13 +167,13 @@ public class GalleryViewModelTests
     [Fact]
     public void Appearance_ExpandedStretchChanged_WhileDocked_KeepsDockedStretch()
     {
-        var shared = new GallerySharedSettingsViewModel();
-        shared.DockedGalleryStretchMode.Value = GalleryStretchMode.Uniform;
         using var gallery = new GalleryViewModel(NoSave);
-        gallery.Initialize(shared);
+        gallery.Initialize(new GallerySharedSettingsViewModel());
+        var window = FollowedWindow(gallery);
+        window.DockedGalleryStretchMode.Value = GalleryStretchMode.Uniform;
         gallery.Switcher.Start(true);
 
-        shared.ExpandedGalleryStretchMode.Value = GalleryStretchMode.FillSquare;
+        window.ExpandedGalleryStretchMode.Value = GalleryStretchMode.FillSquare;
 
         Assert.Equal(GalleryStretchMode.Uniform, gallery.Appearance.Value.Stretch);
     }
@@ -240,17 +240,18 @@ public class GalleryViewModelTests
         var shared = StartedGallerySettings.New(NoSave);
         using var gallery = new GalleryViewModel(NoSave);
         gallery.Initialize(shared);
+        var window = FollowedWindow(gallery);
         gallery.Switcher.ToggleExpanded();
         Assert.Equal(GalleryDisplayMode.Columns, gallery.Appearance.Value.DisplayMode);
 
-        shared.SetExpandedDisplayModeCommand.Execute(GalleryDisplayMode.Masonry);
+        window.SetExpandedDisplayModeCommand.Execute(GalleryDisplayMode.Masonry);
         Assert.Equal(GalleryDisplayMode.Masonry, gallery.Appearance.Value.DisplayMode);
         Assert.False(gallery.Appearance.Value.ScrollsHorizontally);
 
-        shared.SetExpandedDisplayModeCommand.Execute(GalleryDisplayMode.Rows);
+        window.SetExpandedDisplayModeCommand.Execute(GalleryDisplayMode.Rows);
         Assert.Equal(GalleryDisplayMode.Rows, gallery.Appearance.Value.DisplayMode);
 
-        shared.ToggleExpandedDisplayModeCommand.Execute(Unit.Default);
+        window.ToggleExpandedDisplayModeCommand.Execute(Unit.Default);
         Assert.Equal(GalleryDisplayMode.Columns, gallery.Appearance.Value.DisplayMode);
         Assert.True(gallery.Appearance.Value.ScrollsHorizontally);
     }
@@ -261,12 +262,13 @@ public class GalleryViewModelTests
         var shared = StartedGallerySettings.New(NoSave);
         using var gallery = new GalleryViewModel(NoSave);
         gallery.Initialize(shared);
+        var window = FollowedWindow(gallery);
         gallery.Switcher.Start(true);
         var docked = gallery.Appearance.Value;
         var published = 0;
         using var subscription = gallery.Appearance.AsObservable().Skip(1).Subscribe(_ => published++);
 
-        shared.SetExpandedDisplayModeCommand.Execute(GalleryDisplayMode.Masonry);
+        window.SetExpandedDisplayModeCommand.Execute(GalleryDisplayMode.Masonry);
 
         Assert.Equal(0, published);
         Assert.Equal(docked, gallery.Appearance.Value);
@@ -281,20 +283,21 @@ public class GalleryViewModelTests
     [Fact]
     public void Appearance_DisplayModeChanged_ReachesEveryExpandedTab()
     {
-        // One shared view model serves every tab and every Main Window (Review Focus 1)
+        // One window's settings serve every tab of that window
         var shared = StartedGallerySettings.New(NoSave);
         using var first = new GalleryViewModel(NoSave);
         using var second = new GalleryViewModel(NoSave);
         first.Initialize(shared);
         second.Initialize(shared);
+        var window = FollowedWindow(first, second);
         first.Switcher.ToggleExpanded();
         second.Switcher.ToggleExpanded();
 
-        shared.SetExpandedDisplayModeCommand.Execute(GalleryDisplayMode.Rows);
+        window.SetExpandedDisplayModeCommand.Execute(GalleryDisplayMode.Rows);
 
         Assert.Equal(GalleryDisplayMode.Rows, first.Appearance.Value.DisplayMode);
         Assert.Equal(GalleryDisplayMode.Rows, second.Appearance.Value.DisplayMode);
-        Assert.True(shared.IsExpandedDisplayModeRows.Value);
+        Assert.True(window.IsExpandedDisplayModeRows.Value);
     }
 
     [Fact]
@@ -303,6 +306,7 @@ public class GalleryViewModelTests
         var shared = StartedGallerySettings.New(NoSave);
         using var gallery = new GalleryViewModel(NoSave);
         gallery.Initialize(shared);
+        var window = FollowedWindow(gallery);
         gallery.Switcher.ToggleExpanded();
         // As crop, a Single Image or the Gallery File Limit hides it (Review Focus 5)
         gallery.Switcher.SetHidden(true);
@@ -310,7 +314,7 @@ public class GalleryViewModelTests
         var published = 0;
         using var subscription = gallery.Appearance.AsObservable().Skip(1).Subscribe(_ => published++);
 
-        shared.SetExpandedDisplayModeCommand.Execute(GalleryDisplayMode.Rows);
+        window.SetExpandedDisplayModeCommand.Execute(GalleryDisplayMode.Rows);
 
         Assert.Equal(0, published);
         Assert.Equal(hidden, gallery.Appearance.Value);
@@ -320,8 +324,7 @@ public class GalleryViewModelTests
         Assert.False(gallery.Appearance.Value.ScrollsHorizontally);
     }
 
-    // Review Focus 1. Two tabs, or two Main Windows: each has its own GalleryViewModel, and all share the one settings
-    // view model
+    // Two tabs of one Main Window: each has its own GalleryViewModel, and both follow the window's settings
     [Fact]
     public void Appearance_DisplayModeChanged_TwoExpandedTabsSharingTheSettings_BothFollowIt()
     {
@@ -330,24 +333,25 @@ public class GalleryViewModelTests
         using var second = new GalleryViewModel(NoSave);
         first.Initialize(shared);
         second.Initialize(shared);
+        var window = FollowedWindow(first, second);
         first.Switcher.ToggleExpanded();
         second.Switcher.ToggleExpanded();
 
-        shared.SetExpandedDisplayModeCommand.Execute(GalleryDisplayMode.Masonry);
+        window.SetExpandedDisplayModeCommand.Execute(GalleryDisplayMode.Masonry);
 
         Assert.Equal(GalleryDisplayMode.Masonry, first.Appearance.Value.DisplayMode);
         Assert.False(first.Appearance.Value.ScrollsHorizontally);
         Assert.Equal(first.Appearance.Value, second.Appearance.Value);
         // What both tabs' switch buttons and checked menu items read
-        Assert.True(shared.IsExpandedDisplayModeMasonry.Value);
-        Assert.False(shared.IsExpandedDisplayModeColumns.Value);
+        Assert.True(window.IsExpandedDisplayModeMasonry.Value);
+        Assert.False(window.IsExpandedDisplayModeColumns.Value);
 
-        shared.ToggleExpandedDisplayModeCommand.Execute(Unit.Default);
+        window.ToggleExpandedDisplayModeCommand.Execute(Unit.Default);
 
         Assert.Equal(GalleryDisplayMode.Columns, first.Appearance.Value.DisplayMode);
         Assert.True(first.Appearance.Value.ScrollsHorizontally);
         Assert.Equal(first.Appearance.Value, second.Appearance.Value);
-        Assert.True(shared.IsExpandedDisplayModeColumns.Value);
+        Assert.True(window.IsExpandedDisplayModeColumns.Value);
     }
 
     // Review Focus 5. Crop and a Single Image hide the gallery with SetHidden, the Gallery File Limit with SetOverLimit.
@@ -361,6 +365,7 @@ public class GalleryViewModelTests
         var shared = StartedGallerySettings.New(NoSave);
         using var gallery = new GalleryViewModel(NoSave);
         gallery.Initialize(shared);
+        var window = FollowedWindow(gallery);
         gallery.Switcher.ToggleExpanded();
         Action<bool> hide = byFileLimit ? gallery.Switcher.SetOverLimit : gallery.Switcher.SetHidden;
         hide(true);
@@ -372,8 +377,8 @@ public class GalleryViewModelTests
         var published = 0;
         using var subscription = gallery.Appearance.AsObservable().Skip(1).Subscribe(_ => published++);
 
-        shared.SetExpandedDisplayModeCommand.Execute(GalleryDisplayMode.Masonry);
-        shared.SetExpandedDisplayModeCommand.Execute(GalleryDisplayMode.Rows);
+        window.SetExpandedDisplayModeCommand.Execute(GalleryDisplayMode.Masonry);
+        window.SetExpandedDisplayModeCommand.Execute(GalleryDisplayMode.Rows);
 
         Assert.Equal(0, published);
         Assert.Equal(whileHidden, gallery.Appearance.Value);
@@ -398,6 +403,47 @@ public class GalleryViewModelTests
 
         gallery.Initialize(new GallerySharedSettingsViewModel(NoSave));
         Assert.Equal(GalleryDisplayMode.Rows, gallery.Appearance.Value.DisplayMode);
+    }
+
+    [Fact]
+    public void Gallery_WithoutAWindow_UsesTheRecordsLook()
+    {
+        Settings.Gallery.DockedGalleryStretchMode = GalleryStretchMode.FillSquare;
+        Settings.Gallery.DockedGalleryItemSize = 120;
+        Settings.Gallery.ExpandedGalleryStretchMode = GalleryStretchMode.Square;
+        Settings.Gallery.ExpandedGalleryItemSize = 200;
+        using var tab = new TabViewModel(null!);
+        using var standalone = new GalleryViewModel(NoSave);
+
+        foreach (var gallery in new[] { tab.Gallery, standalone })
+        {
+            // Before Initialize, as a tab can start docked
+            gallery.Switcher.Start(true);
+            Assert.Equal(GalleryStretchMode.FillSquare, gallery.Appearance.Value.Stretch);
+            Assert.Equal(120, gallery.Appearance.Value.ItemHeight);
+
+            gallery.Initialize(StartedGallerySettings.New(NoSave));
+            Assert.Equal(GalleryStretchMode.FillSquare, gallery.Appearance.Value.Stretch);
+            Assert.Equal(120, gallery.Appearance.Value.ItemHeight);
+
+            gallery.Switcher.ToggleExpanded();
+            Assert.Equal(GalleryStretchMode.Square, gallery.Appearance.Value.Stretch);
+            Assert.Equal(200, gallery.Appearance.Value.ItemHeight);
+        }
+    }
+
+    // A window's gallery settings, started as an opened window's are, which each gallery follows as a tab in that
+    // window does
+    private static WindowGallerySettings FollowedWindow(params GalleryViewModel[] galleries)
+    {
+        var settings = WindowGallerySettings.FromRecord(Settings.Gallery);
+        settings.Start();
+        foreach (var gallery in galleries)
+        {
+            gallery.FollowLook(settings.Look);
+        }
+
+        return settings;
     }
 
     private class ManualFrameProvider : FrameProvider

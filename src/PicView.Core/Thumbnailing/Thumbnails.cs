@@ -47,15 +47,12 @@ public sealed class Thumbnails
 
     /// <summary>
     /// The height a gallery thumbnail is made for: the taller of the docked and expanded gallery item sizes, so one
-    /// thumbnail serves both.
+    /// thumbnail serves both. The sizes are those of the Main Window the gallery's tab is in.
     /// </summary>
-    public static uint GalleryHeight
+    public static uint GalleryHeight(double dockedItemSize, double expandedItemSize)
     {
-        get
-        {
-            var height = Math.Max(Settings.Gallery.DockedGalleryItemSize, Settings.Gallery.ExpandedGalleryItemSize);
-            return (uint)(height <= 0 ? GalleryDefaults.DefaultDockedGalleryHeight : height);
-        }
+        var height = Math.Max(dockedItemSize, expandedItemSize);
+        return (uint)(height <= 0 || double.IsNaN(height) ? GalleryDefaults.DefaultDockedGalleryHeight : height);
     }
 
     /// <summary>

@@ -1,6 +1,9 @@
 using System.Collections.Concurrent;
+using System.Collections.Specialized;
 using ImageMagick;
+using ObservableCollections;
 using PicView.Core.FileSorting;
+using PicView.Core.Gallery;
 using PicView.Core.IPlatform;
 using PicView.Core.Localization;
 using PicView.Core.Models;
@@ -1221,6 +1224,291 @@ public class TabOwnershipTests : IDisposable
     }
 
     // Name, FileSize, CreationTime, Extension, LastAccessTime, LastWriteTime, Randomization
+    #region The gallery's look follows its window
+
+    [Fact]
+    public void Stretch_ChangedInOneWindow_ChangesTheAppearanceOfEveryTabThere_AndNoTabOfTheOther()
+    {
+        var changed = CreateStartedWindow();
+        var other = CreateStartedWindow();
+        var docked = changed.WindowTabs.ActiveTab.Value;
+        var expanded = changed.WindowTabs.CreateTab();
+        var otherDocked = other.WindowTabs.ActiveTab.Value;
+        var otherExpanded = other.WindowTabs.CreateTab();
+        ShowGallery(docked, GalleryMode.Docked);
+        ShowGallery(expanded, GalleryMode.Expanded);
+        ShowGallery(otherDocked, GalleryMode.Docked);
+        ShowGallery(otherExpanded, GalleryMode.Expanded);
+        var otherLooks = (Docked: otherDocked.Gallery.Appearance.Value, Expanded: otherExpanded.Gallery.Appearance.Value);
+        var recordStretches = (Settings.Gallery.DockedGalleryStretchMode, Settings.Gallery.ExpandedGalleryStretchMode);
+
+        changed.WindowSettings.Gallery.SetDockedStretchModeCommand.Execute(GalleryStretchMode.FillSquare);
+        changed.WindowSettings.Gallery.SetExpandedStretchModeCommand.Execute(GalleryStretchMode.Square);
+
+        Assert.Equal(GalleryStretchMode.FillSquare, docked.Gallery.Appearance.Value.Stretch);
+        Assert.Equal(docked.Gallery.Appearance.Value.ItemHeight, docked.Gallery.Appearance.Value.ItemWidth);
+        Assert.Equal(GalleryStretchMode.Square, expanded.Gallery.Appearance.Value.Stretch);
+        Assert.Equal(otherLooks, (otherDocked.Gallery.Appearance.Value, otherExpanded.Gallery.Appearance.Value));
+        Assert.Equal(recordStretches,
+            (Settings.Gallery.DockedGalleryStretchMode, Settings.Gallery.ExpandedGalleryStretchMode));
+    }
+
+    [Fact]
+    public void DisplayMode_ChangedInOneWindow_ChangesTheAppearanceOfEveryTabThere_AndNoTabOfTheOther()
+    {
+        var changed = CreateStartedWindow();
+        var other = CreateStartedWindow();
+        var first = changed.WindowTabs.ActiveTab.Value;
+        var second = changed.WindowTabs.CreateTab();
+        var otherTab = other.WindowTabs.ActiveTab.Value;
+        foreach (var tab in new[] { first, second, otherTab })
+        {
+            ShowGallery(tab, GalleryMode.Expanded);
+        }
+        var otherLook = otherTab.Gallery.Appearance.Value;
+
+        changed.WindowSettings.Gallery.SetExpandedDisplayModeCommand.Execute(GalleryDisplayMode.Masonry);
+
+        Assert.Equal(GalleryDisplayMode.Masonry, first.Gallery.Appearance.Value.DisplayMode);
+        Assert.Equal(GalleryDisplayMode.Masonry, second.Gallery.Appearance.Value.DisplayMode);
+        Assert.Equal(otherLook, otherTab.Gallery.Appearance.Value);
+
+        changed.WindowSettings.Gallery.ToggleExpandedDisplayModeCommand.Execute(Unit.Default);
+        other.WindowSettings.Gallery.ToggleExpandedDisplayModeCommand.Execute(Unit.Default);
+
+        // Each window toggles from its own mode, and to its own last tile mode
+        Assert.Equal(GalleryDisplayMode.Columns, first.Gallery.Appearance.Value.DisplayMode);
+        Assert.Equal(GalleryDisplayMode.Columns, second.Gallery.Appearance.Value.DisplayMode);
+        Assert.Equal(other.WindowSettings.Gallery.ExpandedGalleryDisplayMode.Value,
+            otherTab.Gallery.Appearance.Value.DisplayMode);
+        Assert.True(GalleryDisplayModes.ShowsTiles(otherTab.Gallery.Appearance.Value.DisplayMode));
+        Assert.Equal(GalleryDisplayMode.Columns, Settings.Gallery.ExpandedGalleryDisplayMode);
+    }
+
+    [Fact]
+    public void ItemSize_ChangedInOneWindow_ChangesTheAppearanceOfEveryTabThere_AndNoTabOfTheOther()
+    {
+        var changed = CreateStartedWindow();
+        var other = CreateStartedWindow();
+        var docked = changed.WindowTabs.ActiveTab.Value;
+        var expanded = changed.WindowTabs.CreateTab();
+        var otherDocked = other.WindowTabs.ActiveTab.Value;
+        var otherExpanded = other.WindowTabs.CreateTab();
+        ShowGallery(docked, GalleryMode.Docked);
+        ShowGallery(expanded, GalleryMode.Expanded);
+        ShowGallery(otherDocked, GalleryMode.Docked);
+        ShowGallery(otherExpanded, GalleryMode.Expanded);
+        var otherLooks = (Docked: otherDocked.Gallery.Appearance.Value, Expanded: otherExpanded.Gallery.Appearance.Value);
+
+        changed.WindowSettings.Gallery.DockedGalleryItemSize.Value = 120;
+        changed.WindowSettings.Gallery.ExpandedGalleryItemSize.Value = 200;
+
+        Assert.Equal(120, docked.Gallery.Appearance.Value.ItemHeight);
+        Assert.Equal(200, expanded.Gallery.Appearance.Value.ItemHeight);
+        Assert.Equal(otherLooks, (otherDocked.Gallery.Appearance.Value, otherExpanded.Gallery.Appearance.Value));
+        Assert.Equal(GalleryDefaults.DefaultDockedGalleryHeight, Settings.Gallery.DockedGalleryItemSize);
+        Assert.Equal(GalleryDefaults.DefaultExpandedGalleryHeight, Settings.Gallery.ExpandedGalleryItemSize);
+    }
+
+    [Fact]
+    public void MoveTab_ToAWindowWithAnotherLook_TakesItsAppearanceOnce()
+    {
+        var source = CreateStartedWindow();
+        var target = CreateStartedWindow();
+        target.WindowSettings.Gallery.SetDockedStretchModeCommand.Execute(GalleryStretchMode.FillSquare);
+        target.WindowSettings.Gallery.DockedGalleryItemSize.Value = 120;
+        target.WindowSettings.Gallery.SetExpandedDisplayModeCommand.Execute(GalleryDisplayMode.Rows);
+        var tab = source.WindowTabs.CreateTab();
+        ShowGallery(tab, GalleryMode.Docked);
+        var published = new List<GalleryAppearance>();
+        using var appearances = tab.Gallery.Appearance.AsObservable().Skip(1).Subscribe(published.Add);
+
+        source.WindowTabs.MoveTab(tab, target.WindowTabs);
+
+        var appearance = Assert.Single(published);
+        Assert.Equal(GalleryMode.Docked, appearance.Mode);
+        Assert.Equal(GalleryStretchMode.FillSquare, appearance.Stretch);
+        Assert.Equal(120, appearance.ItemHeight);
+
+        // Its old window's look is no longer its own
+        source.WindowSettings.Gallery.DockedGalleryItemSize.Value = 50;
+        Assert.Equal(120, tab.Gallery.Appearance.Value.ItemHeight);
+        tab.Gallery.Switcher.ToggleExpanded();
+        Assert.Equal(GalleryDisplayMode.Rows, tab.Gallery.Appearance.Value.DisplayMode);
+    }
+
+    [Fact]
+    public async Task MoveTab_ToAWindowWithLargerItems_AsksForItsThumbnailsAgainOnce()
+    {
+        ComposeServices();
+        CreateFiles();
+        var source = CreateStartedWindow();
+        var target = CreateStartedWindow();
+        target.WindowSettings.Gallery.ExpandedGalleryItemSize.Value = GalleryDefaults.MaxExpandedGalleryItemHeight;
+        var tab = source.WindowTabs.CreateTab();
+        ShowGallery(tab, GalleryMode.Docked);
+        await OpenAsync(tab, "b.jpg");
+        await WaitUntilAsync(() => IsLoaded(tab));
+        var before = tab.Gallery.GalleryItems.ToArray();
+        Assert.All(before, item => Assert.Equal((uint)GalleryDefaults.DefaultExpandedGalleryHeight, item.ThumbnailHeight));
+        var changes = RecordItemChanges(tab);
+
+        source.WindowTabs.MoveTab(tab, target.WindowTabs);
+
+        await WaitUntilAsync(() => IsLoaded(tab) && !tab.Gallery.GalleryItems.Contains(before[0]));
+        await tab.GalleryCoordinator!.Idle;
+        Assert.Equal(ByName, tab.Gallery.GalleryItems.Select(item => item.FileInfo!.Name));
+        Assert.All(tab.Gallery.GalleryItems,
+            item => Assert.Equal((uint)GalleryDefaults.MaxExpandedGalleryItemHeight, item.ThumbnailHeight));
+        // One clear of the old items and one add of the new ones
+        Assert.Equal([NotifyCollectionChangedAction.Reset, NotifyCollectionChangedAction.Add], changes);
+    }
+
+    [Theory]
+    [InlineData(GalleryDefaults.DefaultExpandedGalleryHeight)]
+    [InlineData(120)]
+    public async Task MoveTab_ToAWindowWithSmallerOrEqualItems_KeepsItsGalleryItems(double expandedSize)
+    {
+        ComposeServices();
+        CreateFiles();
+        var source = CreateStartedWindow();
+        var target = CreateStartedWindow();
+        target.WindowSettings.Gallery.ExpandedGalleryItemSize.Value = expandedSize;
+        var tab = source.WindowTabs.CreateTab();
+        ShowGallery(tab, GalleryMode.Docked);
+        await OpenAsync(tab, "b.jpg");
+        await WaitUntilAsync(() => IsLoaded(tab));
+        var before = tab.Gallery.GalleryItems.ToArray();
+        var changes = RecordItemChanges(tab);
+
+        source.WindowTabs.MoveTab(tab, target.WindowTabs);
+        await tab.GalleryCoordinator!.Idle;
+
+        Assert.Equal(before, tab.Gallery.GalleryItems);
+        Assert.Empty(changes);
+        Assert.Equal(GalleryLoadingState.Loaded, tab.Gallery.LoadingState);
+    }
+
+    [Fact]
+    public void MoveTab_BetweenWindows_SubscribesNoGalleryCommandTwice()
+    {
+        var source = CreateStartedWindow();
+        var target = CreateStartedWindow();
+        var tab = source.WindowTabs.CreateTab();
+        tab.Gallery.Initialize(_core.GallerySettings);
+
+        source.WindowTabs.MoveTab(tab, target.WindowTabs);
+        target.WindowTabs.MoveTab(tab, source.WindowTabs);
+        source.WindowTabs.MoveTab(tab, target.WindowTabs);
+        tab.Gallery.ToggleExpandedCommand.Execute(Unit.Default);
+        target.WindowSettings.Gallery.ToggleExpandedDisplayModeCommand.Execute(Unit.Default);
+
+        // Run twice, each would have gone back
+        Assert.Equal(GalleryMode.Expanded, tab.Gallery.Mode.Value);
+        Assert.True(GalleryDisplayModes.ShowsTiles(tab.Gallery.Appearance.Value.DisplayMode));
+    }
+
+    // How crop, a Single Image and the Gallery File Limit hide an Expanded Gallery, or a Closed one
+    public enum GalleryHiding
+    {
+        Crop,
+        SingleImage,
+        FileLimit,
+        Closed
+    }
+
+    [Theory]
+    [InlineData(GalleryHiding.Crop)]
+    [InlineData(GalleryHiding.SingleImage)]
+    [InlineData(GalleryHiding.FileLimit)]
+    [InlineData(GalleryHiding.Closed)]
+    public async Task Look_ChangedWhileTheGalleryIsHiddenOrClosed_ThrowsNothing_AndShowsWhenItShows(
+        GalleryHiding hiding)
+    {
+        var unhandled = new ConcurrentQueue<Exception>();
+        using var recording = RecordUnhandled(unhandled);
+        var window = CreateStartedWindow();
+        var tab = window.WindowTabs.ActiveTab.Value;
+        ShowGallery(tab, GalleryMode.Expanded);
+        var switcher = tab.Gallery.Switcher;
+        switch (hiding)
+        {
+            case GalleryHiding.Crop:
+            case GalleryHiding.SingleImage:
+                switcher.SetHidden(true);
+                break;
+            case GalleryHiding.FileLimit:
+                switcher.SetOverLimit(true);
+                break;
+            case GalleryHiding.Closed:
+                await switcher.Close();
+                break;
+        }
+        Assert.Equal(GalleryMode.Closed, tab.Gallery.Appearance.Value.Mode);
+
+        var thrown = Record.Exception(() =>
+        {
+            window.WindowSettings.Gallery.SetExpandedDisplayModeCommand.Execute(GalleryDisplayMode.Columns);
+            window.WindowSettings.Gallery.SetExpandedStretchModeCommand.Execute(GalleryStretchMode.Square);
+            window.WindowSettings.Gallery.SetDockedStretchModeCommand.Execute(GalleryStretchMode.FillSquare);
+            window.WindowSettings.Gallery.ExpandedGalleryItemSize.Value = 200;
+        });
+        Assert.Null(thrown);
+        Assert.Equal(GalleryMode.Closed, tab.Gallery.Appearance.Value.Mode);
+
+        switch (hiding)
+        {
+            case GalleryHiding.Crop:
+            case GalleryHiding.SingleImage:
+                switcher.SetHidden(false);
+                break;
+            case GalleryHiding.FileLimit:
+                switcher.SetOverLimit(false);
+                break;
+            case GalleryHiding.Closed:
+                switcher.ToggleExpanded();
+                break;
+        }
+
+        var shown = tab.Gallery.Appearance.Value;
+        Assert.Equal(GalleryMode.Expanded, shown.Mode);
+        Assert.Equal(GalleryStretchMode.Square, shown.Stretch);
+        Assert.Equal(200, shown.ItemHeight);
+        Assert.Equal(200, shown.ItemWidth);
+        Assert.Empty(unhandled);
+    }
+
+    // A window whose gallery settings are started, as one that has opened
+    private MainWindowViewModel CreateStartedWindow()
+    {
+        var window = CreateWindow();
+        window.WindowSettings.Gallery.Start();
+        return window;
+    }
+
+    private void ShowGallery(TabViewModel tab, GalleryMode mode)
+    {
+        tab.Gallery.Initialize(_core.GallerySettings);
+        tab.Gallery.Switcher.Start(docked: mode is GalleryMode.Docked);
+        if (mode is GalleryMode.Expanded)
+        {
+            tab.Gallery.Switcher.ToggleExpanded();
+        }
+    }
+
+    private static bool IsLoaded(TabViewModel tab) =>
+        tab.Gallery.LoadingState is GalleryLoadingState.Loaded && tab.Gallery.GalleryItems.Count == ByName.Length;
+
+    private static ConcurrentQueue<NotifyCollectionChangedAction> RecordItemChanges(TabViewModel tab)
+    {
+        var changes = new ConcurrentQueue<NotifyCollectionChangedAction>();
+        tab.Gallery.GalleryItems.CollectionChanged +=
+            (in NotifyCollectionChangedEventArgs<GalleryItemViewModel> e) => changes.Enqueue(e.Action);
+        return changes;
+    }
+
+    #endregion
+
     private static bool[] CheckMarksOf(TabOverviewViewModel tabs) =>
     [
         tabs.IsSortedByName.Value, tabs.IsSortedByFileSize.Value, tabs.IsSortedByCreationTime.Value,

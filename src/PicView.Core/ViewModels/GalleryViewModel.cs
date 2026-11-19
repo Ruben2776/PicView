@@ -13,7 +13,19 @@ public class GalleryViewModel : IDisposable
     private readonly BindableReactiveProperty<GalleryAppearance> _appearance;
 
     /// <summary>
-    /// Follows the shown mode with the settings' values until <see cref="Initialize"/> brings the shared ones.
+    /// The look of the window the gallery's tab is in: the record's until <see cref="FollowLook"/> brings the window's.
+    /// </summary>
+    private readonly ReactiveProperty<GalleryLook> _look;
+
+    // The one follower of the window's look, set once by FollowLook
+    private IDisposable? _lookFollower;
+
+    // Whether Initialize ran, so a second call subscribes nothing twice
+    private bool _isInitialized;
+
+    /// <summary>
+    /// Follows the shown mode and the look with the record's item spacing until <see cref="Initialize"/> brings the
+    /// shared one.
     /// </summary>
     private IDisposable? _appearanceBeforeInitialize;
 
@@ -24,23 +36,50 @@ public class GalleryViewModel : IDisposable
         Mode = Switcher.Mode.ToReadOnlyBindableReactiveProperty();
         ShownMode = Switcher.ShownMode.ToReadOnlyBindableReactiveProperty();
         IsDocked = Switcher.IsDocked.ToReadOnlyBindableReactiveProperty();
+        // A gallery with no window, as a test makes, keeps this look
+        _look = new ReactiveProperty<GalleryLook>(WindowGallerySettings.LookWithoutWindow(Settings?.Gallery));
         _appearance = new BindableReactiveProperty<GalleryAppearance>(ComputeAppearance(
-            ShownMode.Value, Settings.Gallery.DockedGalleryItemSize,
-            Settings.Gallery.ExpandedGalleryItemSize, Settings.Gallery.DockedGalleryStretchMode,
-            Settings.Gallery.ExpandedGalleryStretchMode, Settings.Gallery.ItemSpacing,
-            Settings.Gallery.ExpandedGalleryDisplayMode));
+            ShownMode.Value, _look.Value, Settings.Gallery.ItemSpacing));
         Appearance = _appearance;
 
         // Derived from the switcher before Initialize, so a tab started docked shows it from the start
         Switcher.ShownMode.Subscribe(OnShownModeChanged).AddTo(ref _disposables);
 
-        // A tab can start docked, and its view can load, before Initialize: the appearance follows the mode anyway
-        _appearanceBeforeInitialize = Switcher.ShownMode.Subscribe(mode => _appearance.Value = ComputeAppearance(mode,
-            Settings.Gallery.DockedGalleryItemSize,
-            Settings.Gallery.ExpandedGalleryItemSize, Settings.Gallery.DockedGalleryStretchMode,
-            Settings.Gallery.ExpandedGalleryStretchMode, Settings.Gallery.ItemSpacing,
-            Settings.Gallery.ExpandedGalleryDisplayMode),
-            DebugHelper.LogError(nameof(GalleryViewModel), nameof(ShownMode)));
+        // A tab can start docked, and its view can load, before Initialize: the appearance follows the mode and the
+        // window's look anyway
+        _appearanceBeforeInitialize = Switcher.ShownMode.CombineLatest(_look,
+                static (mode, look) => ComputeAppearance(mode, look, Settings.Gallery.ItemSpacing))
+            .Subscribe(x => _appearance.Value = x, DebugHelper.LogError(nameof(GalleryViewModel), nameof(ShownMode)));
+    }
+
+    /// <summary>
+    /// The look of the Main Window this gallery's tab is in, which its <see cref="Appearance"/> and the height of its
+    /// thumbnails derive from.
+    /// </summary>
+    public ReadOnlyReactiveProperty<GalleryLook> Look => _look;
+
+    /// <summary>
+    /// Follows <paramref name="look"/>, the look of the window the tab is in, from now on. The tab calls it once, with
+    /// a follower that switches when the tab enters another window; a second call does nothing.
+    /// </summary>
+    internal void FollowLook(Observable<GalleryLook> look)
+    {
+        if (_lookFollower is not null)
+        {
+            return;
+        }
+
+        _lookFollower = look.Subscribe(x =>
+        {
+            try
+            {
+                _look.Value = x;
+            }
+            catch (ObjectDisposedException)
+            {
+                // A window's change on another thread that arrived as the tab closed
+            }
+        }, DebugHelper.LogError(nameof(GalleryViewModel), nameof(FollowLook)));
     }
 
     /// <summary>
@@ -98,14 +137,20 @@ public class GalleryViewModel : IDisposable
 
     internal void RaiseSizesChanged() => _sizesChanged.OnNext(Unit.Default);
 
+    /// <summary>
+    /// Takes the shared item and line spacing and subscribes the gallery's commands, once: a tab that changes window
+    /// keeps them, as the look follows the window through <see cref="FollowLook"/>.
+    /// </summary>
     public void Initialize(GallerySharedSettingsViewModel shared)
     {
-        if (Settings.Gallery is not { } gallery)
+        if (_isInitialized || Settings.Gallery is not { } gallery)
         {
             return;
         }
 
-        // The combine below takes over, with the shared inputs
+        _isInitialized = true;
+
+        // The combine below takes over, with the shared spacing
         _appearanceBeforeInitialize?.Dispose();
         _appearanceBeforeInitialize = null;
 
@@ -123,16 +168,10 @@ public class GalleryViewModel : IDisposable
         // value last, and the accepted value is what it must keep
         Observable.CombineLatest(
                 Switcher.ShownMode,
-                shared.DockedGalleryItemSize,
-                shared.ExpandedGalleryItemSize,
-                shared.DockedGalleryStretchMode,
-                shared.ExpandedGalleryStretchMode,
-                shared.ExpandedGalleryDisplayMode,
+                _look,
                 dockPositions.Prepend(gallery.DockPosition),
                 shared.GalleryItemSpacing.Select(GalleryDefaults.AcceptedItemSpacing),
-                static (mode, dockedSize, expandedSize, dockedStretch, expandedStretch, displayMode, _, spacing) =>
-                    ComputeAppearance(mode, dockedSize, expandedSize, dockedStretch, expandedStretch, spacing,
-                        displayMode))
+                static (mode, look, _, spacing) => ComputeAppearance(mode, look, spacing))
             .Subscribe(x => _appearance.Value = x, DebugHelper.LogError(nameof(GalleryViewModel), nameof(Initialize)))
             .AddTo(ref _disposables);
 
@@ -164,12 +203,11 @@ public class GalleryViewModel : IDisposable
     }
 
     // The dock position is read here, so every caller builds the inputs the same way
-    private static GalleryAppearance ComputeAppearance(GalleryMode mode, double dockedSize, double expandedSize,
-        GalleryStretchMode dockedStretch, GalleryStretchMode expandedStretch, double spacing,
-        GalleryDisplayMode displayMode)
+    private static GalleryAppearance ComputeAppearance(GalleryMode mode, GalleryLook look, double spacing)
     {
-        return GalleryAppearance.For(mode, Settings.Gallery.DockPosition, new GalleryAppearanceInputs(dockedSize,
-            expandedSize, dockedStretch, expandedStretch, spacing, displayMode));
+        return GalleryAppearance.For(mode, Settings.Gallery.DockPosition, new GalleryAppearanceInputs(
+            look.DockedItemSize, look.ExpandedItemSize, look.DockedStretch, look.ExpandedStretch, spacing,
+            look.ExpandedDisplayMode));
     }
 
     public void Navigate(NavigateTo direction)
@@ -201,8 +239,10 @@ public class GalleryViewModel : IDisposable
 
     public void Dispose()
     {
+        _lookFollower?.Dispose();
         _disposables.Dispose();
         _appearanceBeforeInitialize?.Dispose();
+        _look.Dispose();
         Disposable.Dispose(
             ToggleExpandedCommand,
             ToggleDockedCommand,

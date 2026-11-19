@@ -968,7 +968,7 @@ public class WindowFitterTests
         var fits = new List<Fitted>();
         using var listening = fitter.Fits.Subscribe(fits.Add);
 
-        _core.GallerySettings.DockedGalleryItemSize.Value += 40;
+        vm.WindowSettings.Gallery.DockedGalleryItemSize.Value += 40;
         Dispatcher.UIThread.RunJobs();
 
         Assert.NotEmpty(fits);

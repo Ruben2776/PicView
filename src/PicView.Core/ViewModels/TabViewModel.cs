@@ -44,6 +44,10 @@ public class TabViewModel : IDisposable
             .CombineLatest(_comparing, static (beside, compares) => beside || compares)
             .DistinctUntilChanged()
             .ToReadOnlyReactiveProperty();
+        // The gallery is made before the tab knows its window, so it takes the window's look from here; a tab with no
+        // window keeps the record's
+        Gallery.FollowLook(FollowWindowSetting(static w => w.Gallery.Look,
+            WindowGallerySettings.LookWithoutWindow(Settings?.Gallery)));
     }
 
     #region Tab logic

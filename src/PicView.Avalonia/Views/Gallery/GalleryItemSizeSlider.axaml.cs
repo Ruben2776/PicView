@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using Avalonia;
+using Avalonia.Controls.Primitives;
 using Avalonia.Interactivity;
 using PicView.Avalonia.CustomControls;
 using PicView.Core.DebugTools;
@@ -12,48 +13,55 @@ namespace PicView.Avalonia.Views.Gallery;
 
 public partial class GalleryItemSizeSlider : AnimatedPopUp
 {
-    private IDisposable? _disposable;
+    private readonly IDisposable? _disposable;
+
     /// <param name="gallery">The gallery of the tab shown in the Main Window the slider is shown in.</param>
-    public GalleryItemSizeSlider(GalleryViewModel gallery)
+    /// <param name="settings">That window's gallery settings, which the slider shows and changes. It has no Action,
+    /// so it is the one writer of the size while it is dragged; nothing is saved, as the window stores its settings
+    /// when it closes.</param>
+    public GalleryItemSizeSlider(GalleryViewModel gallery, WindowGallerySettings settings)
     {
         InitializeComponent();
-        if (Application.Current.DataContext is not CoreViewModel core)
+        var isExpanded = gallery.IsGalleryExpanded.CurrentValue;
+        var size = isExpanded ? settings.ExpandedGalleryItemSize : settings.DockedGalleryItemSize;
+        HeaderTextBlock.Text = isExpanded
+            ? TranslationManager.Translation.ExpandedGalleryItemSize
+            : TranslationManager.Translation.DockedGalleryItemSize;
+        MainSlider.Minimum = isExpanded
+            ? GalleryDefaults.MinExpandedGalleryItemHeight
+            : GalleryDefaults.MinDockedGalleryItemHeight;
+        MainSlider.Maximum = isExpanded
+            ? GalleryDefaults.MaxExpandedGalleryItemHeight
+            : GalleryDefaults.MaxDockedGalleryItemHeight;
+        MainSlider.Value = size.Value;
+        // Each step of a drag, as it happens; the first is the seed, which sets nothing new
+        _disposable = MainSlider.GetObservable(RangeBase.ValueProperty).ToObservable()
+            .Subscribe(x =>
+                {
+                    SetSize(settings, size, x);
+                    ValueTextBlock.Text = x.ToString(CultureInfo.InvariantCulture);
+                },
+                DebugHelper.LogError(nameof(GalleryItemSizeSlider), nameof(MainSlider)));
+    }
+
+    // A window that closed while its slider was open takes no change (ADR-0038)
+    private static void SetSize(WindowGallerySettings settings, BindableReactiveProperty<double> size, double value)
+    {
+        if (settings.IsDisposed)
         {
             return;
         }
 
-        var gallerySettings = core.GallerySettings;
-        var isExpanded = gallery.IsGalleryExpanded.CurrentValue;
-        if (isExpanded)
+        try
         {
-            HeaderTextBlock.Text = TranslationManager.Translation.ExpandedGalleryItemSize;
-            MainSlider.Minimum = GalleryDefaults.MinExpandedGalleryItemHeight;
-            MainSlider.Maximum = GalleryDefaults.MaxExpandedGalleryItemHeight;
-            MainSlider.Value = Settings.Gallery.ExpandedGalleryItemSize;
-            _disposable = Observable.EveryValueChanged(MainSlider, size => size.Value)
-                .Subscribe(x =>
-                {
-                    gallerySettings.ExpandedGalleryItemSize.Value = x;
-                    ValueTextBlock.Text = x.ToString(CultureInfo.InvariantCulture);
-                },
-                DebugHelper.LogError(nameof(GalleryItemSizeSlider), nameof(MainSlider)));
+            size.Value = value;
         }
-        else
+        catch (ObjectDisposedException)
         {
-            HeaderTextBlock.Text = TranslationManager.Translation.DockedGalleryItemSize;
-            MainSlider.Minimum = GalleryDefaults.MinDockedGalleryItemHeight;
-            MainSlider.Maximum = GalleryDefaults.MaxDockedGalleryItemHeight;
-            MainSlider.Value = Settings.Gallery.DockedGalleryItemSize;
-            _disposable = Observable.EveryValueChanged(MainSlider, size => size.Value)
-            .Subscribe(x =>
-                {
-                    gallerySettings.DockedGalleryItemSize.Value = x;
-                    ValueTextBlock.Text = x.ToString(CultureInfo.InvariantCulture);
-                },
-                DebugHelper.LogError(nameof(GalleryItemSizeSlider), nameof(MainSlider)));
+            // The window closed between the check and the set
         }
     }
-    
+
     private void CloseMenu(object? sender, RoutedEventArgs e)
     {
         _ = AnimatedClosing();
