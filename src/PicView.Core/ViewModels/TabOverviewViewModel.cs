@@ -50,7 +50,7 @@ public class TabOverviewViewModel
         _parentVm = parentVm;
         // Made before the window's tabs, which are made with it
         _fileOrder = parentVm?.WindowSettings.FileOrder ??
-                     new BindableReactiveProperty<FileOrder>(FileOrder.FromRecord(Settings?.Sorting));
+                     new BindableReactiveProperty<FileOrder>(FileOrder.FromAppSettings(Settings));
         IsSortedByName = IsSortedBy(SortFilesBy.Name);
         IsSortedByFileSize = IsSortedBy(SortFilesBy.FileSize);
         IsSortedByCreationTime = IsSortedBy(SortFilesBy.CreationTime);

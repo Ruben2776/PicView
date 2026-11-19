@@ -24,6 +24,12 @@ public readonly record struct FileOrder(SortFilesBy By, bool Ascending)
     }
 
     /// <summary>
+    /// The order the settings record describes, for code that seeds a window's File Order without reading the record's
+    /// Sorting group itself. A missing record is Name ascending.
+    /// </summary>
+    public static FileOrder FromAppSettings(AppSettings? record) => FromRecord(record?.Sorting);
+
+    /// <summary>
     /// Writes the field and the direction to the record, and nothing else.
     /// </summary>
     public void StoreTo(Sorting sorting)

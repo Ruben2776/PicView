@@ -66,7 +66,7 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
     internal FileOrdering CurrentOrdering()
     {
         // The record may not be loaded yet for a tab without a window
-        var order = _currentWindowSettings.CurrentValue?.FileOrder.Value ?? FileOrder.FromRecord(Settings?.Sorting);
+        var order = _currentWindowSettings.CurrentValue?.FileOrder.Value ?? FileOrder.FromAppSettings(Settings);
         // A tab's services may lack a platform in tests, as its Load allows
         Func<string, string, int> compareNames = Services?.Platform is { } platform
             ? platform.CompareStrings
