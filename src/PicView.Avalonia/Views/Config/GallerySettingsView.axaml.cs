@@ -7,9 +7,18 @@ using R3;
 
 namespace PicView.Avalonia.Views.Config;
 
+/// <summary>
+/// The Settings window's gallery page. Its Thumbnail Stretch, Gallery Display Mode and item sizes show and change the
+/// Active Main Window's, and follow when another Main Window becomes active; its spacing, line spacing and motion photo
+/// badges are shared by every window.
+/// </summary>
 public partial class GallerySettingsView : UserControl
 {
     private DisposableBag _disposables;
+    private bool _isAttached;
+
+    // Set while the page shows a window's values in its combo boxes, so that selection issues no command
+    private bool _isShowingLook;
 
     public GallerySettingsView()
     {
@@ -19,47 +28,58 @@ public partial class GallerySettingsView : UserControl
     protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
     {
         base.OnAttachedToVisualTree(e);
-        FollowGallerySettings();
+        _isAttached = true;
+        FollowActiveWindow();
     }
 
     protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
     {
         base.OnDetachedFromVisualTree(e);
+        _isAttached = false;
         _disposables.Dispose();
+        _disposables = default;
     }
 
-    private void FollowGallerySettings()
+    protected override void OnDataContextChanged(EventArgs e)
+    {
+        base.OnDataContextChanged(e);
+        if (_isAttached)
+        {
+            FollowActiveWindow();
+        }
+    }
+
+    private void FollowActiveWindow()
     {
         _disposables.Dispose();
         _disposables = default;
-        // The Active Main Window's, as the page is shown; none, or a closed one, shows nothing
-        if (ActiveGallerySettings() is not { } settings)
+        if (DataContext is not CoreViewModel core)
         {
             return;
         }
 
+        // The look of whichever Main Window is active: none, or a closed one, gives nothing
+        core.MainWindows.ActiveWindow
+            .Select(static window => window is null
+                ? Observable.Empty<GalleryLook>()
+                : window.WindowSettings.Follow(static settings => settings.Gallery.Look))
+            .Switch()
+            .Subscribe(ShowLook, DebugHelper.LogError(nameof(GallerySettingsView), nameof(FollowActiveWindow)))
+            .AddTo(ref _disposables);
+    }
+
+    private void ShowLook(GalleryLook look)
+    {
+        _isShowingLook = true;
         try
         {
-            settings.ExpandedGalleryStretchMode
-                .Subscribe(mode => SelectStretchMode(FullGalleryComboBox, mode),
-                    DebugHelper.LogError(nameof(GallerySettingsView), nameof(FullGalleryComboBox)))
-                .AddTo(ref _disposables);
-
-            settings.DockedGalleryStretchMode
-                .Subscribe(mode => SelectStretchMode(DockedGalleryComboBox, mode),
-                    DebugHelper.LogError(nameof(GallerySettingsView), nameof(DockedGalleryComboBox)))
-                .AddTo(ref _disposables);
-
-            settings.ExpandedGalleryDisplayMode
-                .Subscribe(SelectDisplayMode,
-                    DebugHelper.LogError(nameof(GallerySettingsView), nameof(DisplayModeComboBox)))
-                .AddTo(ref _disposables);
+            Select(DockedGalleryComboBox, look.DockedStretch);
+            Select(FullGalleryComboBox, look.ExpandedStretch);
+            Select(DisplayModeComboBox, look.ExpandedDisplayMode);
         }
-        catch (ObjectDisposedException)
+        finally
         {
-            // The window closed between the check and the subscribe
-            _disposables.Dispose();
-            _disposables = default;
+            _isShowingLook = false;
         }
     }
 
@@ -85,12 +105,12 @@ public partial class GallerySettingsView : UserControl
         }
     }
 
-    // Each item carries its stretch mode in its Tag, because the numbers of the stretch modes skip removed ones
-    private static void SelectStretchMode(ComboBox comboBox, GalleryStretchMode mode)
+    // Each item carries its value in its Tag, because the numbers of the stretch modes skip removed ones
+    private static void Select<T>(ComboBox comboBox, T value) where T : struct, Enum
     {
         foreach (var item in comboBox.Items)
         {
-            if (item is ComboBoxItem { Tag: GalleryStretchMode itemMode } && itemMode == mode)
+            if (item is ComboBoxItem { Tag: T itemValue } && EqualityComparer<T>.Default.Equals(itemValue, value))
             {
                 comboBox.SelectedItem = item;
                 return;
@@ -98,21 +118,10 @@ public partial class GallerySettingsView : UserControl
         }
     }
 
-    private void SelectDisplayMode(GalleryDisplayMode mode)
-    {
-        foreach (var item in DisplayModeComboBox.Items)
-        {
-            if (item is ComboBoxItem { Tag: GalleryDisplayMode itemMode } && itemMode == mode)
-            {
-                DisplayModeComboBox.SelectedItem = item;
-                return;
-            }
-        }
-    }
-
     private void DisplayModeComboBox_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
-        if (DisplayModeComboBox.SelectedItem is not ComboBoxItem { Tag: GalleryDisplayMode mode } ||
+        if (_isShowingLook ||
+            DisplayModeComboBox.SelectedItem is not ComboBoxItem { Tag: GalleryDisplayMode mode } ||
             ActiveGallerySettings() is not { } settings)
         {
             return;
@@ -124,7 +133,8 @@ public partial class GallerySettingsView : UserControl
 
     private void StretchComboBox_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
-        if (sender is not ComboBox { SelectedItem: ComboBoxItem { Tag: GalleryStretchMode mode } } comboBox ||
+        if (_isShowingLook ||
+            sender is not ComboBox { SelectedItem: ComboBoxItem { Tag: GalleryStretchMode mode } } comboBox ||
             ActiveGallerySettings() is not { } settings)
         {
             return;

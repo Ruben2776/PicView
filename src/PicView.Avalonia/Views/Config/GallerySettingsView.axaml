@@ -187,7 +187,8 @@
                     TickFrequency="1"
                     TickPlacement="BottomRight"
                     Value="{CompiledBinding GallerySettings.GalleryItemSpacing.Value}"
-                    Width="300" />
+                    Width="300"
+                    x:Name="ItemSpacingSlider" />
 
                 <TextBlock
                     Classes="txt"
@@ -211,7 +212,8 @@
                     TickFrequency="1"
                     TickPlacement="BottomRight"
                     Value="{CompiledBinding GallerySettings.GalleryLineSpacing.Value}"
-                    Width="300" />
+                    Width="300"
+                    x:Name="LineSpacingSlider" />
 
                 <TextBlock
                     Classes="txt"

@@ -203,6 +203,38 @@ public sealed class WindowSettings : IDisposable
         Gallery.StoreTo(record.Gallery ??= new Config.Gallery());
     }
 
+    /// <summary>
+    /// One value of these settings, published at once on subscribe and again on each change; nothing, and no
+    /// exception, once the window has closed and disposed them.
+    /// </summary>
+    /// <remarks>
+    /// A follower of the window a tab or page is following puts this inside a <c>Switch</c>: the Switch stays open
+    /// when a closed window's settings give nothing, so the follower goes silent until it follows another window. The
+    /// catch is for a window that closes between the check and the subscribe.
+    /// </remarks>
+    public Observable<T> Follow<T>(Func<WindowSettings, Observable<T>> pick)
+    {
+        if (IsDisposed)
+        {
+            return Observable.Empty<T>();
+        }
+
+        return Observable.Create<T, (WindowSettings Settings, Func<WindowSettings, Observable<T>> Pick)>(
+            (this, pick),
+            static (observer, state) =>
+            {
+                try
+                {
+                    return state.Pick(state.Settings).Subscribe(observer.OnNext);
+                }
+                catch (ObjectDisposedException)
+                {
+                    observer.OnCompleted();
+                    return Disposable.Empty;
+                }
+            });
+    }
+
     public void Dispose()
     {
         _isDisposed = true;
