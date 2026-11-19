@@ -44,8 +44,11 @@ public static class TestTabServices
             ValueTask.FromResult(new ImageModel { FileInfo = file });
     }
 
-    // Sorts names ordinally and lists a file's folder; does nothing natively
-    private sealed class OrdinalPlatform : IPlatformSpecificService
+    /// <summary>
+    /// Sorts names ordinally and lists a file's folder; does nothing natively. A test overrides the name comparison to
+    /// hold a listing or a sort.
+    /// </summary>
+    public class OrdinalPlatform : IPlatformSpecificService
     {
         public void SetTaskbarProgress(ulong progress, ulong maximum) { }
         public void StopTaskbarProgress() { }
@@ -53,7 +56,7 @@ public static class TestTabServices
         public void DisableScreensaver() { }
         public void EnableScreensaver() { }
         public List<FileInfo> GetFiles(FileInfo fileInfo, FileOrder order) => FileListRetriever.RetrieveFiles(fileInfo, new FileOrdering(order, CompareStrings));
-        public int CompareStrings(string str1, string str2) => string.CompareOrdinal(str1, str2);
+        public virtual int CompareStrings(string str1, string str2) => string.CompareOrdinal(str1, str2);
         public void OpenWith(string path) { }
         public void LocateOnDisk(string path) { }
         public void ShowFileProperties(string path) { }

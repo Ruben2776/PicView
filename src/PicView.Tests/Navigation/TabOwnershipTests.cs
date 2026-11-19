@@ -519,22 +519,22 @@ public class TabOwnershipTests : IDisposable
         withoutFiles.Initialize();
         var single = window.WindowTabs.CreateTab();
         await OpenAsync(single, "a.jpg");
-        var listed = single.ImageIterator!.Files;
-        // The active tab, so a sort that lists the active tab's folder again would list its files
-        single.DisplaySingleImage(new ImageModel { FileInfo = new FileInfo(PathOf("c.jpg")) },
-            SingleImageType.Clipboard);
+        // The active tab, so a sort that listed the active tab's shown folder again would list around the image
+        var image = new ImageModel { FileInfo = new FileInfo(PathOf("c.jpg")) };
+        single.DisplaySingleImage(image, SingleImageType.Clipboard);
 
         await window.WindowTabs.SortAsync(SortFilesBy.FileSize);
 
         Assert.Null(fresh.ImageIterator);
         Assert.Empty(withoutFiles.ImageIterator!.Files);
-        Assert.Same(listed, single.ImageIterator!.Files);
+        // A Single Image tab's files are sorted in memory, and the Single Image stays shown
+        Assert.Equal(BySize, NamesOf(single));
+        Assert.Equal(SingleImageType.Clipboard, single.SingleImageType);
+        Assert.Same(image, single.Model);
 
         await OpenAsync(fresh, "a.jpg");
         await OpenAsync(withoutFiles, "a.jpg");
-        // Showing a file of its list again steps to it there, and the list takes the window's order then
         await OpenAsync(single, "a.jpg");
-        await single.Resorting;
 
         Assert.Equal(BySize, NamesOf(fresh));
         Assert.Equal(BySize, NamesOf(withoutFiles));
@@ -544,7 +544,8 @@ public class TabOwnershipTests : IDisposable
     [Fact]
     public async Task Sort_ChangedAgainWhileTheTabsResort_EndsInTheLatestOrder()
     {
-        ComposeServices();
+        var platform = new GatedPlatform();
+        ComposeServices(platform);
         CreateFiles();
         var window = CreateWindow();
         var first = window.WindowTabs.ActiveTab.Value;
@@ -552,9 +553,13 @@ public class TabOwnershipTests : IDisposable
         await OpenAsync(first, "a.jpg");
         await OpenAsync(second, "c.jpg");
 
+        // A sort by name compares names, so the first re-sort holds at the gate while the order changes again
+        platform.Close();
+        var descending = Task.Run(() => window.WindowTabs.SortAsync(ascending: false).AsTask());
+        await platform.Comparing.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
         var bySize = window.WindowTabs.SortAsync(SortFilesBy.FileSize).AsTask();
-        var descending = window.WindowTabs.SortAsync(ascending: false).AsTask();
-        await Task.WhenAll(bySize, descending);
+        platform.Open();
+        await Task.WhenAll(descending, bySize);
 
         Assert.Equal(BySize.Reverse(), NamesOf(first));
         Assert.Equal(BySize.Reverse(), NamesOf(second));
@@ -724,6 +729,99 @@ public class TabOwnershipTests : IDisposable
     }
 
     [Fact]
+    public async Task Load_FreshTabOpeningAFolder_WhileTheWindowsOrderChanges_EndsInTheNewOrder()
+    {
+        var platform = new GatedPlatform();
+        ComposeServices(platform);
+        CreateFiles();
+        var window = CreateWindow();
+        var tab = window.WindowTabs.ActiveTab.Value;
+
+        platform.Close();
+        var opening = Task.Run(() => tab.Load.LoadAsync(_folder).AsTask());
+        await platform.Comparing.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+        await window.WindowTabs.SortAsync(SortFilesBy.FileSize);
+        platform.Open();
+        Assert.True((await opening).IsLoaded);
+        await tab.Resorting;
+
+        Assert.Equal(BySize, NamesOf(tab));
+        Assert.Equal(window.WindowSettings.FileOrder.Value, tab.ImageIterator!.Ordering.Order);
+    }
+
+    [Fact]
+    public async Task Load_OpeningAFile_WhileTheWindowsOrderChanges_EndsInTheNewOrder()
+    {
+        var platform = new GatedPlatform();
+        ComposeServices(platform);
+        CreateFiles();
+        var window = CreateWindow();
+        var tab = window.WindowTabs.ActiveTab.Value;
+
+        platform.Close();
+        var opening = Task.Run(() => tab.Load.LoadAsync(PathOf("c.jpg")).AsTask());
+        await platform.Comparing.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+        await window.WindowTabs.SortAsync(SortFilesBy.FileSize);
+        platform.Open();
+        Assert.True((await opening).IsLoaded);
+        await tab.Resorting;
+
+        Assert.Equal(BySize, NamesOf(tab));
+        Assert.Equal("c.jpg", ListedAtShownIndex(tab));
+        Assert.Equal(window.WindowSettings.FileOrder.Value, tab.ImageIterator!.Ordering.Order);
+    }
+
+    [Fact]
+    public async Task Load_BrowsingTabListingAgain_WhileTheWindowsOrderChanges_EndsInTheNewOrder()
+    {
+        var platform = new GatedPlatform();
+        ComposeServices(platform);
+        CreateFiles();
+        var window = CreateWindow();
+        var tab = window.WindowTabs.ActiveTab.Value;
+        await OpenAsync(tab, "c.jpg");
+
+        platform.Close();
+        var relisting = Task.Run(() =>
+            tab.Load.LoadAsync(PathOf("c.jpg"), new LoadOptions(Relist: true)).AsTask());
+        await platform.Comparing.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+        // The tab sorts the list it has while the relist lists in the order it began with
+        var sorting = window.WindowTabs.SortAsync(SortFilesBy.FileSize).AsTask();
+        platform.Open();
+        Assert.True((await relisting).IsLoaded);
+        await sorting;
+        await tab.Resorting;
+
+        Assert.Equal(BySize, NamesOf(tab));
+        Assert.Equal("c.jpg", ListedAtShownIndex(tab));
+        Assert.Equal(window.WindowSettings.FileOrder.Value, tab.ImageIterator!.Ordering.Order);
+    }
+
+    [Fact]
+    public async Task Load_TabMovedToAWindowWithAnotherOrderWhileItLists_EndsInThatWindowsOrder()
+    {
+        var platform = new GatedPlatform();
+        ComposeServices(platform);
+        CreateFiles();
+        var source = CreateWindow();
+        var target = CreateWindow();
+        await target.WindowTabs.SortAsync(SortFilesBy.FileSize);
+        var tab = source.WindowTabs.CreateTab();
+
+        platform.Close();
+        var opening = Task.Run(() => tab.Load.LoadAsync(PathOf("c.jpg")).AsTask());
+        await platform.Comparing.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+        source.WindowTabs.MoveTab(tab, target.WindowTabs);
+        platform.Open();
+        Assert.True((await opening).IsLoaded);
+        await tab.Resorting;
+
+        Assert.Equal(BySize, NamesOf(tab));
+        Assert.Equal("c.jpg", ListedAtShownIndex(tab));
+        Assert.Equal(target.WindowSettings.FileOrder.Value, tab.ImageIterator!.Ordering.Order);
+    }
+
+    [Fact]
     public async Task CheckMarks_DeriveFromTheWindowsFileOrder()
     {
         Settings.Sorting.SortPreference = (int)SortFilesBy.FileSize;
@@ -763,9 +861,42 @@ public class TabOwnershipTests : IDisposable
         tabs.IsSortedByRandomization.Value
     ];
 
+    // Bounds each wait on a gate, so a failing test fails instead of hanging the run
+    private static readonly TimeSpan WaitLimit = TimeSpan.FromSeconds(10);
+
     // The tabs' services, which their Load lists the folder with in their window's order
-    private void ComposeServices() =>
-        _core.InitializeNavigation(TestTabServices.For(_core.SharedCache), new NavigationService(string.CompareOrdinal));
+    private void ComposeServices(IPlatformSpecificService? platform = null) =>
+        _core.InitializeNavigation(TestTabServices.For(_core.SharedCache, platform: platform),
+            new NavigationService(string.CompareOrdinal));
+
+    // Holds every name comparison while closed, so a test can change the order while a listing or a sort by name runs
+    private sealed class GatedPlatform : TestTabServices.OrdinalPlatform
+    {
+        private readonly ManualResetEventSlim _open = new(true);
+        private TaskCompletionSource _comparing = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        // Set once a comparison waits at the closed gate
+        public Task Comparing => Volatile.Read(ref _comparing).Task;
+
+        public void Close()
+        {
+            Volatile.Write(ref _comparing, new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously));
+            _open.Reset();
+        }
+
+        public void Open() => _open.Set();
+
+        public override int CompareStrings(string str1, string str2)
+        {
+            if (!_open.IsSet)
+            {
+                Volatile.Read(ref _comparing).TrySetResult();
+                _open.Wait(WaitLimit);
+            }
+
+            return base.CompareStrings(str1, str2);
+        }
+    }
 
     // Files whose order by size differs from their order by name: ByName and BySize, unless others are given
     private void CreateFiles(params (string Name, int Size)[] files)

@@ -394,69 +394,76 @@ public sealed class TabLoad
         var (primary, partner) = SideBySidePair.PairAt(index, retrieved.Count, showsPair, looping);
         var iterator = EnsureIterator();
         iterator.Initialize(retrieved, primary, ordering);
-
-        // The image of the pair that is not the opened file, and where it is
-        ImageModel? otherModel = null;
-        var otherIndex = -1;
-        if (showsPair)
+        try
         {
-            if (partner is { } partnerIndex)
+            // The image of the pair that is not the opened file, and where it is
+            ImageModel? otherModel = null;
+            var otherIndex = -1;
+            if (showsPair)
             {
-                otherIndex = primary == index ? partnerIndex : primary;
-                var otherFile = iterator.Files[otherIndex];
-                // The startup path decodes the other image of the pair beside the opened file, so it is not decoded again
-                otherModel = IsModelOf(givenSecondary, otherFile)
-                    ? givenSecondary
-                    : await cache.GetAsync(_tab.Id, otherFile, run.Token).ConfigureAwait(false);
-                if (!IsCurrent(run))
+                if (partner is { } partnerIndex)
                 {
-                    return LoadResult.Superseded;
+                    otherIndex = primary == index ? partnerIndex : primary;
+                    var otherFile = iterator.Files[otherIndex];
+                    // The startup path decodes the other image of the pair beside the opened file, so it is not decoded again
+                    otherModel = IsModelOf(givenSecondary, otherFile)
+                        ? givenSecondary
+                        : await cache.GetAsync(_tab.Id, otherFile, run.Token).ConfigureAwait(false);
+                    if (!IsCurrent(run))
+                    {
+                        return LoadResult.Superseded;
+                    }
+
+                    if (otherModel is null)
+                    {
+                        return LoadResult.Failed();
+                    }
                 }
 
                 if (otherModel is null)
                 {
-                    return LoadResult.Failed();
+                    _tab.Display(model);
                 }
+                else if (primary == index)
+                {
+                    _tab.Display(model, otherModel);
+                }
+                else
+                {
+                    _tab.Display(otherModel, model);
+                }
+
+                run.IsShown = true;
             }
 
-            if (otherModel is null)
+            // A newer load that begins after this sets its own files after these
+            if (!IsCurrent(run))
             {
-                _tab.Display(model);
-            }
-            else if (primary == index)
-            {
-                _tab.Display(model, otherModel);
-            }
-            else
-            {
-                _tab.Display(otherModel, model);
+                return LoadResult.Superseded;
             }
 
-            run.IsShown = true;
+            watcher.Watch(_tab, file.DirectoryName);
+            cache.ReleaseImages(_tab.Id);
+            if (iterator.Files.Count > 0)
+            {
+                cache.Put(_tab.Id, iterator.Files[index], model);
+                if (otherModel is not null)
+                {
+                    cache.Put(_tab.Id, iterator.Files[otherIndex], otherModel);
+                }
+
+                var currentFile = iterator.Files[primary];
+
+                cache.Preload(_tab.Id, currentFile, false, _tab.GetTabCancellation().Token);
+            }
+
+            return LoadResult.Loaded;
         }
-
-        // A newer load that begins after this sets its own files after these
-        if (!IsCurrent(run))
+        finally
         {
-            return LoadResult.Superseded;
+            // Listed in the order the load began with, which the window may have changed since
+            _tab.FollowListedOrder();
         }
-
-        watcher.Watch(_tab, file.DirectoryName);
-        cache.ReleaseImages(_tab.Id);
-        if (iterator.Files.Count > 0)
-        {
-            cache.Put(_tab.Id, iterator.Files[index], model);
-            if (otherModel is not null)
-            {
-                cache.Put(_tab.Id, iterator.Files[otherIndex], otherModel);
-            }
-
-            var currentFile = iterator.Files[primary];
-
-            cache.Preload(_tab.Id, currentFile, false, _tab.GetTabCancellation().Token);
-        }
-
-        return LoadResult.Loaded;
     }
 
     /// <summary>
@@ -491,6 +498,8 @@ public sealed class TabLoad
         PutShown(files, _tab.Model);
         PutShown(files, _tab.SecondaryModel);
         cache.Preload(_tab.Id, files[index], false, _tab.GetTabCancellation().Token);
+        // Listed in the order the relist began with, which the window may have changed since
+        _tab.FollowListedOrder();
         return LoadResult.Loaded;
     }
 

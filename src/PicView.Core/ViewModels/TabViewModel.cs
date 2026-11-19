@@ -382,18 +382,11 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
     /// </summary>
     public void Display(ImageModel primary, ImageModel? secondary = null)
     {
-        var wasSingleImage = _singleImageType is not SingleImageType.None;
         SingleImageType = SingleImageType.None;
         ApplyRequestedPage(primary);
         ShowModels(primary, secondary);
         RecordShown();
         Publish(ShownChange.Image);
-        if (wasSingleImage)
-        {
-            // A Single Image leaves the files unsorted, and showing one of them again may step to it in that list
-            // without listing, so they take the window's File Order now
-            FollowFileOrder(CurrentOrdering().Order);
-        }
     }
 
     /// <summary>
@@ -774,9 +767,9 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
     /// <summary>
     /// Sorts the files this tab browses into its window's File Order in memory, off the caller's thread, keeping the
     /// Shown File; with a pair shown, the pair at its new place is shown, without a Load. A tab without files changes
-    /// nothing, as its next load lists in that order; nor does one showing a Single Image, whose files take the order
-    /// once it shows one of them again (<see cref="Display"/>). Asked again while a re-sort runs, that run sorts once
-    /// more when it ends, so any number of changes meanwhile end in the latest order.
+    /// nothing, as its next load lists in that order. A tab showing a Single Image sorts its files and shows nothing
+    /// again. Asked again while a re-sort runs, that run sorts once more when it ends, so any number of changes
+    /// meanwhile end in the latest order.
     /// </summary>
     /// <param name="reshuffle">Whether files already in a Random order are shuffled again.</param>
     /// <returns>The run, which ends once the files are in the order.</returns>
@@ -829,8 +822,7 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
 
     private async ValueTask ResortOnceAsync(bool reshuffle)
     {
-        if (IsDisposed || ImageIterator is not { Files.Count: > 0 } iterator ||
-            SingleImageType is not SingleImageType.None)
+        if (IsDisposed || ImageIterator is not { Files.Count: > 0 } iterator)
         {
             return;
         }
@@ -843,6 +835,13 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
         }
 
         iterator.Resort(ordering);
+        // A tab closed meanwhile has released its images, and a Single Image is shown instead of the files, with the
+        // gallery hidden, so neither shows the files again nor preloads them
+        if (IsDisposed || SingleImageType is not SingleImageType.None)
+        {
+            return;
+        }
+
         if (PairSettings().ShowsPair && !IsShowingPairAt(iterator))
         {
             // As turning Side-by-Side on: the shown file is iterated to again, which shows the pair that holds it
@@ -870,6 +869,13 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
             index >= 0 && index < files.Count && shown is not null &&
             string.Equals(files[index].FullName, shown.FullName, StringComparison.OrdinalIgnoreCase);
     }
+
+    /// <summary>
+    /// Sorts the files again when a load listed them in an order the tab's window no longer has, as when the window's
+    /// order changed, or the tab moved to another window, while the load listed. Called by the tab's Load after it
+    /// gives the iterator a list.
+    /// </summary>
+    internal void FollowListedOrder() => FollowFileOrder(CurrentOrdering().Order);
 
     // Follows the File Order of the window the tab is in, re-sorting when it is not the order the files are in
     private void FollowFileOrder(FileOrder order)
