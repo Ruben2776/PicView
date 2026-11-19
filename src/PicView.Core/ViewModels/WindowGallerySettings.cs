@@ -75,10 +75,16 @@ public sealed class WindowGallerySettings : IDisposable
             .ToReadOnlyBindableReactiveProperty();
     }
 
-    /// <summary>The edge this window's Docked Gallery sits at.</summary>
+    /// <summary>
+    /// The edge every Docked Gallery of this window sits at; set by a tab's Gallery Mode Switcher when the user docks
+    /// at an edge.
+    /// </summary>
     public BindableReactiveProperty<GalleryDockPosition> DockPosition { get; }
 
-    /// <summary>Whether a new tab of this window starts with its gallery docked: the last choice made by hand here.</summary>
+    /// <summary>
+    /// Whether a new tab of this window starts with its gallery docked: the last choice made by hand here, set by a
+    /// tab's Gallery Mode Switcher. Hiding the gallery for crop, a Single Image or the file limit does not change it.
+    /// </summary>
     public BindableReactiveProperty<bool> StartsDocked { get; }
 
     /// <summary>The Expanded Gallery's display mode; changed by the two display mode commands.</summary>
@@ -136,21 +142,27 @@ public sealed class WindowGallerySettings : IDisposable
     public static WindowGallerySettings FromRecord(GalleryRecord? record) => new(record ?? new GalleryRecord());
 
     /// <summary>
-    /// The look a gallery with no window shows (tests): the record's, as a window seeded from it would have it, or the
-    /// defaults without one.
+    /// The look a gallery with no window shows (tests): the record's, dock edge included, as a window seeded from it
+    /// would have it, or the defaults without one.
     /// </summary>
     public static GalleryLook LookWithoutWindow(GalleryRecord? record)
     {
         var values = record ?? new GalleryRecord();
         return new GalleryLook(AcceptedDockedSize(values.DockedGalleryItemSize),
             AcceptedExpandedSize(values.ExpandedGalleryItemSize), values.DockedGalleryStretchMode,
-            values.ExpandedGalleryStretchMode, values.ExpandedGalleryDisplayMode);
+            values.ExpandedGalleryStretchMode, values.ExpandedGalleryDisplayMode, values.DockPosition);
     }
 
     /// <summary>
-    /// This window's gallery look, published at once on subscribe and again on each change. The sizes are the
-    /// accepted ones: a size outside its limits is set back from inside its own change, so a subscriber after
-    /// <see cref="Start"/> hears the refused size last.
+    /// Whether a tab with no window (tests) starts with its gallery docked: the record's choice, as a window seeded
+    /// from it would have it, or the default without one.
+    /// </summary>
+    public static bool StartsDockedWithoutWindow(GalleryRecord? record) => (record ?? new GalleryRecord()).IsGalleryDocked;
+
+    /// <summary>
+    /// This window's gallery look, dock edge included, published at once on subscribe and again on each change. The
+    /// sizes are the accepted ones: a size outside its limits is set back from inside its own change, so a subscriber
+    /// after <see cref="Start"/> hears the refused size last.
     /// </summary>
     public Observable<GalleryLook> Look =>
         Observable.CombineLatest(
@@ -159,8 +171,9 @@ public sealed class WindowGallerySettings : IDisposable
             DockedGalleryStretchMode,
             ExpandedGalleryStretchMode,
             ExpandedGalleryDisplayMode,
-            static (dockedSize, expandedSize, dockedStretch, expandedStretch, displayMode) =>
-                new GalleryLook(dockedSize, expandedSize, dockedStretch, expandedStretch, displayMode));
+            DockPosition,
+            static (dockedSize, expandedSize, dockedStretch, expandedStretch, displayMode, dock) =>
+                new GalleryLook(dockedSize, expandedSize, dockedStretch, expandedStretch, displayMode, dock));
 
     /// <summary>The settings of a window opened from this one's window: the same values, started by its own window.</summary>
     public WindowGallerySettings Copy()

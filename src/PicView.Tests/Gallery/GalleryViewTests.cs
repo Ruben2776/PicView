@@ -483,9 +483,8 @@ public class GalleryViewTests
             window.Width = 1000;
             window.Height = 600;
             window.SetRenderScaling(renderScaling);
-            // The helper docks at the bottom. The appearance reads the dock position when the shown mode changes, so the
-            // tab starts again, docked at the side
-            Settings.Gallery.DockPosition = dock;
+            // The helper docks at the bottom. The tab starts again, docked at its window's other edge
+            tab.ParentWindowContext.WindowSettings.Gallery.DockPosition.Value = dock;
             tab.Gallery.Switcher.Start(docked: false);
             tab.Gallery.Switcher.Start(docked: true);
         });

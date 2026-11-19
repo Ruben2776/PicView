@@ -8,20 +8,17 @@ namespace PicView.Tests.Gallery;
 [Collection("Sequential")]
 public class GalleryViewModelTests
 {
-    private readonly ManualFrameProvider _frameProvider;
     private static readonly Func<ValueTask<bool>> NoSave = static () => ValueTask.FromResult(true);
 
     public GalleryViewModelTests()
     {
-        _frameProvider = new ManualFrameProvider();
-        ObservableSystem.DefaultFrameProvider = _frameProvider;
         SetDefaults();
     }
 
     [Fact]
     public void ShownMode_WhenChangedFromExpandedToDocked_ResetsSelectedGalleryItemIndex()
     {
-        using var gallery = new GalleryViewModel(NoSave);
+        using var gallery = new GalleryViewModel();
         gallery.Initialize(new GallerySharedSettingsViewModel());
         gallery.Switcher.Start(true);
 
@@ -36,7 +33,7 @@ public class GalleryViewModelTests
     [Fact]
     public async Task ShownMode_WhenChangedFromExpandedToClosed_ResetsSelectedGalleryItemIndex()
     {
-        using var gallery = new GalleryViewModel(NoSave);
+        using var gallery = new GalleryViewModel();
         gallery.Initialize(new GallerySharedSettingsViewModel());
 
         gallery.Switcher.ToggleExpanded();
@@ -50,7 +47,7 @@ public class GalleryViewModelTests
     [Fact]
     public void ContractCommand_WhenExpanded_ResetsSelectedGalleryItemIndex()
     {
-        using var gallery = new GalleryViewModel(NoSave);
+        using var gallery = new GalleryViewModel();
         gallery.Initialize(new GallerySharedSettingsViewModel());
 
         gallery.Switcher.ToggleExpanded();
@@ -64,7 +61,7 @@ public class GalleryViewModelTests
     public void DockFlags_WhenDockedAtLeft_OnlyLeftIsTrue()
     {
         Settings.Gallery.DockPosition = GalleryDockPosition.Left;
-        using var gallery = new GalleryViewModel(NoSave);
+        using var gallery = new GalleryViewModel();
 
         gallery.Switcher.Start(true);
 
@@ -77,7 +74,7 @@ public class GalleryViewModelTests
     [Fact]
     public void DockFlags_WhenHidden_AllFalse()
     {
-        using var gallery = new GalleryViewModel(NoSave);
+        using var gallery = new GalleryViewModel();
         gallery.Switcher.Start(true);
 
         gallery.Switcher.SetHidden(true);
@@ -92,7 +89,7 @@ public class GalleryViewModelTests
     [Fact]
     public async Task Appearance_FollowsTheShownMode()
     {
-        using var gallery = new GalleryViewModel(NoSave);
+        using var gallery = new GalleryViewModel();
         gallery.Initialize(new GallerySharedSettingsViewModel());
 
         gallery.Switcher.Start(true);
@@ -108,7 +105,7 @@ public class GalleryViewModelTests
     [Fact]
     public void Appearance_HiddenGallery_IsClosed()
     {
-        using var gallery = new GalleryViewModel(NoSave);
+        using var gallery = new GalleryViewModel();
         gallery.Initialize(new GallerySharedSettingsViewModel());
         gallery.Switcher.Start(true);
 
@@ -122,29 +119,32 @@ public class GalleryViewModelTests
     [Fact]
     public void Appearance_DockPositionChanged_FollowsIt()
     {
-        using var gallery = new GalleryViewModel(NoSave);
+        using var gallery = new GalleryViewModel();
         gallery.Initialize(new GallerySharedSettingsViewModel());
+        var window = FollowedWindow(gallery);
         gallery.Switcher.Start(true);
 
-        Settings.Gallery.DockPosition = GalleryDockPosition.Left;
-        _frameProvider.Tick();
+        window.DockPosition.Value = GalleryDockPosition.Left;
 
         Assert.Equal(GalleryDockPosition.Left, gallery.Appearance.Value.Dock);
         Assert.Equal(GalleryOrientation.Vertical, gallery.Appearance.Value.Orientation);
+        Assert.True(gallery.IsLeftDocked.Value);
+        Assert.False(gallery.IsBottomDocked.Value);
+        Assert.Equal(GalleryDockPosition.Bottom, Settings.Gallery.DockPosition);
     }
 
     [Fact]
     public async Task Appearance_DockAtNewEdgeWhileClosed_HasTheNewEdgeWhenTheChangeIsPublished()
     {
-        using var gallery = new GalleryViewModel(NoSave);
+        using var gallery = new GalleryViewModel();
         gallery.Initialize(new GallerySharedSettingsViewModel());
+        FollowedWindow(gallery);
         gallery.Switcher.Start(true);
         await gallery.Switcher.Close();
 
         GalleryDockPosition? dockWhenPublished = null;
         using var _ = gallery.Switcher.Changes.Subscribe(_ => dockWhenPublished = gallery.Appearance.Value.Dock);
 
-        // No frame passes, so the dock position poll hasn't seen the new edge yet
         await gallery.Switcher.DockAt(GalleryDockPosition.Left);
 
         Assert.Equal(GalleryDockPosition.Left, dockWhenPublished);
@@ -154,7 +154,7 @@ public class GalleryViewModelTests
     [Fact]
     public void Appearance_DockedItemSizeChanged_FollowsIt()
     {
-        using var gallery = new GalleryViewModel(NoSave);
+        using var gallery = new GalleryViewModel();
         gallery.Initialize(new GallerySharedSettingsViewModel());
         var window = FollowedWindow(gallery);
         gallery.Switcher.Start(true);
@@ -167,7 +167,7 @@ public class GalleryViewModelTests
     [Fact]
     public void Appearance_ExpandedStretchChanged_WhileDocked_KeepsDockedStretch()
     {
-        using var gallery = new GalleryViewModel(NoSave);
+        using var gallery = new GalleryViewModel();
         gallery.Initialize(new GallerySharedSettingsViewModel());
         var window = FollowedWindow(gallery);
         window.DockedGalleryStretchMode.Value = GalleryStretchMode.Uniform;
@@ -182,7 +182,7 @@ public class GalleryViewModelTests
     public void Initialize_SharedItemSpacingChanged_AppearanceTakesItAtOnce()
     {
         var shared = new GallerySharedSettingsViewModel(NoSave);
-        using var gallery = new GalleryViewModel(NoSave);
+        using var gallery = new GalleryViewModel();
         gallery.Initialize(shared);
         gallery.Switcher.ToggleExpanded();
 
@@ -195,7 +195,7 @@ public class GalleryViewModelTests
     public void Initialize_SharedLineSpacingChanged_LineSpacingTakesItAtOnce()
     {
         var shared = new GallerySharedSettingsViewModel(NoSave);
-        using var gallery = new GalleryViewModel(NoSave);
+        using var gallery = new GalleryViewModel();
         gallery.Initialize(shared);
 
         shared.GalleryLineSpacing.Value = 9;
@@ -207,11 +207,11 @@ public class GalleryViewModelTests
     public void Initialize_TwoTabsOneOpenedAfterAChange_BothTakeTheSharedSpacing()
     {
         var shared = StartedGallerySettings.New(NoSave);
-        using var first = new GalleryViewModel(NoSave);
+        using var first = new GalleryViewModel();
         first.Initialize(shared);
         first.Switcher.ToggleExpanded();
         shared.GalleryItemSpacing.Value = 12;
-        using var second = new GalleryViewModel(NoSave);
+        using var second = new GalleryViewModel();
         second.Initialize(shared);
         second.Switcher.ToggleExpanded();
 
@@ -223,7 +223,7 @@ public class GalleryViewModelTests
     public void Initialize_TabOpenedAfterStartAndASpacingIsRefused_TakesTheAcceptedSpacing()
     {
         var shared = StartedGallerySettings.New(NoSave);
-        using var gallery = new GalleryViewModel(NoSave);
+        using var gallery = new GalleryViewModel();
         gallery.Initialize(shared);
         gallery.Switcher.ToggleExpanded();
 
@@ -238,7 +238,7 @@ public class GalleryViewModelTests
     public void Appearance_DisplayModeChanged_WhileExpanded_FollowsIt()
     {
         var shared = StartedGallerySettings.New(NoSave);
-        using var gallery = new GalleryViewModel(NoSave);
+        using var gallery = new GalleryViewModel();
         gallery.Initialize(shared);
         var window = FollowedWindow(gallery);
         gallery.Switcher.ToggleExpanded();
@@ -260,7 +260,7 @@ public class GalleryViewModelTests
     public void Appearance_DisplayModeChanged_WhileDocked_PublishesNothingUntilExpanded()
     {
         var shared = StartedGallerySettings.New(NoSave);
-        using var gallery = new GalleryViewModel(NoSave);
+        using var gallery = new GalleryViewModel();
         gallery.Initialize(shared);
         var window = FollowedWindow(gallery);
         gallery.Switcher.Start(true);
@@ -285,8 +285,8 @@ public class GalleryViewModelTests
     {
         // One window's settings serve every tab of that window
         var shared = StartedGallerySettings.New(NoSave);
-        using var first = new GalleryViewModel(NoSave);
-        using var second = new GalleryViewModel(NoSave);
+        using var first = new GalleryViewModel();
+        using var second = new GalleryViewModel();
         first.Initialize(shared);
         second.Initialize(shared);
         var window = FollowedWindow(first, second);
@@ -304,7 +304,7 @@ public class GalleryViewModelTests
     public void Appearance_DisplayModeChanged_WhileHidden_PublishesNothingAndComesBackInTheNewMode()
     {
         var shared = StartedGallerySettings.New(NoSave);
-        using var gallery = new GalleryViewModel(NoSave);
+        using var gallery = new GalleryViewModel();
         gallery.Initialize(shared);
         var window = FollowedWindow(gallery);
         gallery.Switcher.ToggleExpanded();
@@ -329,8 +329,8 @@ public class GalleryViewModelTests
     public void Appearance_DisplayModeChanged_TwoExpandedTabsSharingTheSettings_BothFollowIt()
     {
         var shared = StartedGallerySettings.New(NoSave);
-        using var first = new GalleryViewModel(NoSave);
-        using var second = new GalleryViewModel(NoSave);
+        using var first = new GalleryViewModel();
+        using var second = new GalleryViewModel();
         first.Initialize(shared);
         second.Initialize(shared);
         var window = FollowedWindow(first, second);
@@ -363,7 +363,7 @@ public class GalleryViewModelTests
         bool byFileLimit)
     {
         var shared = StartedGallerySettings.New(NoSave);
-        using var gallery = new GalleryViewModel(NoSave);
+        using var gallery = new GalleryViewModel();
         gallery.Initialize(shared);
         var window = FollowedWindow(gallery);
         gallery.Switcher.ToggleExpanded();
@@ -396,7 +396,7 @@ public class GalleryViewModelTests
     public void Appearance_StoredDisplayMode_AppliesBeforeAndAfterInitialize()
     {
         Settings.Gallery.ExpandedGalleryDisplayMode = GalleryDisplayMode.Rows;
-        using var gallery = new GalleryViewModel(NoSave);
+        using var gallery = new GalleryViewModel();
 
         gallery.Switcher.ToggleExpanded();
         Assert.Equal(GalleryDisplayMode.Rows, gallery.Appearance.Value.DisplayMode);
@@ -413,7 +413,7 @@ public class GalleryViewModelTests
         Settings.Gallery.ExpandedGalleryStretchMode = GalleryStretchMode.Square;
         Settings.Gallery.ExpandedGalleryItemSize = 200;
         using var tab = new TabViewModel(null!);
-        using var standalone = new GalleryViewModel(NoSave);
+        using var standalone = new GalleryViewModel();
 
         foreach (var gallery in new[] { tab.Gallery, standalone })
         {
@@ -432,8 +432,8 @@ public class GalleryViewModelTests
         }
     }
 
-    // A window's gallery settings, started as an opened window's are, which each gallery follows as a tab in that
-    // window does
+    // A window's gallery settings, started as an opened window's are, which each gallery follows, and its switcher
+    // remembers in, as a tab in that window does
     private static WindowGallerySettings FollowedWindow(params GalleryViewModel[] galleries)
     {
         var settings = WindowGallerySettings.FromRecord(Settings.Gallery);
@@ -441,33 +441,9 @@ public class GalleryViewModelTests
         foreach (var gallery in galleries)
         {
             gallery.FollowLook(settings.Look);
+            gallery.Switcher.RemembersIn(() => settings);
         }
 
         return settings;
     }
-
-    private class ManualFrameProvider : FrameProvider
-    {
-        private readonly List<IFrameRunnerWorkItem> _items = new();
-
-        public override long GetFrameCount() => 0;
-
-        public override void Register(IFrameRunnerWorkItem callback)
-        {
-            _items.Add(callback);
-        }
-
-        public void Tick()
-        {
-            for (int i = _items.Count - 1; i >= 0; i--)
-            {
-                var item = _items[i];
-                if (!item.MoveNext(0))
-                {
-                    _items.RemoveAt(i);
-                }
-            }
-        }
-    }
-
 }

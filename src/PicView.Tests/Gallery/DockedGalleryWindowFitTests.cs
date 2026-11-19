@@ -31,7 +31,7 @@ public class DockedGalleryWindowFitTests
 
     public DockedGalleryWindowFitTests()
     {
-        // The tab's appearance and dock flags follow the setting on the app's frames, which RenderFrame ticks
+        // The app's frames, which RenderFrame ticks
         _frameProvider = new ManualFrameProvider();
         ObservableSystem.DefaultFrameProvider = _frameProvider;
         SetDefaults();
@@ -53,8 +53,8 @@ public class DockedGalleryWindowFitTests
         {
             var before = WindowMaxSize(vm);
 
-            // What docking at another edge does to a tab that is docked, without saving the settings file
-            Settings.Gallery.DockPosition = to;
+            // What docking at another edge in this window does to a tab of it that is docked
+            vm.WindowSettings.Gallery.DockPosition.Value = to;
             RenderFrame(window);
 
             Assert.Equal(ExpectedWindowSize(vm, from), before);

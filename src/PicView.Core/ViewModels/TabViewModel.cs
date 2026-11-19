@@ -48,6 +48,8 @@ public class TabViewModel : IDisposable
         // window keeps the record's
         Gallery.FollowLook(FollowWindowSetting(static w => w.Gallery.Look,
             WindowGallerySettings.LookWithoutWindow(Settings?.Gallery)));
+        // What the switcher remembers goes to the window the tab is in at that moment
+        Gallery.Switcher.RemembersIn(() => _currentWindowSettings.CurrentValue?.Gallery);
     }
 
     #region Tab logic

@@ -1478,6 +1478,148 @@ public class TabOwnershipTests : IDisposable
         Assert.Empty(unhandled);
     }
 
+    #region The dock edge and the start-docked choice follow the window
+
+    [Fact]
+    public async Task DockAt_InOneWindow_MovesEveryDockedTabThere_AndNoTabOfTheOther()
+    {
+        var changed = CreateStartedWindow();
+        var other = CreateStartedWindow();
+        var asking = changed.WindowTabs.ActiveTab.Value;
+        var docked = changed.WindowTabs.CreateTab();
+        var otherDocked = other.WindowTabs.ActiveTab.Value;
+        foreach (var tab in new[] { asking, docked, otherDocked })
+        {
+            ShowGallery(tab, GalleryMode.Docked);
+        }
+        var otherLook = otherDocked.Gallery.Appearance.Value;
+
+        await asking.Gallery.Switcher.DockAt(GalleryDockPosition.Left);
+
+        Assert.Equal(GalleryDockPosition.Left, changed.WindowSettings.Gallery.DockPosition.Value);
+        foreach (var tab in new[] { asking, docked })
+        {
+            Assert.Equal(GalleryDockPosition.Left, tab.Gallery.Appearance.Value.Dock);
+            Assert.True(tab.Gallery.IsLeftDocked.Value);
+            Assert.False(tab.Gallery.IsBottomDocked.Value);
+        }
+
+        Assert.Equal(otherLook, otherDocked.Gallery.Appearance.Value);
+        Assert.True(otherDocked.Gallery.IsBottomDocked.Value);
+        Assert.Equal(GalleryDockPosition.Bottom, other.WindowSettings.Gallery.DockPosition.Value);
+        Assert.Equal(GalleryDockPosition.Bottom, Settings.Gallery.DockPosition);
+    }
+
+    // Review Focus 5: no appearance at the old edge, and none Closed at the new one
+    [Theory]
+    [InlineData(GalleryMode.Closed)]
+    [InlineData(GalleryMode.Docked)]
+    [InlineData(GalleryMode.Expanded)]
+    public async Task DockAt_PublishesOneAppearance_ForTheTabThatAsked(GalleryMode from)
+    {
+        var window = CreateStartedWindow();
+        var tab = window.WindowTabs.ActiveTab.Value;
+        ShowGallery(tab, from);
+        var published = new List<GalleryAppearance>();
+        using var appearances = tab.Gallery.Appearance.AsObservable().Skip(1).Subscribe(published.Add);
+
+        await tab.Gallery.Switcher.DockAt(GalleryDockPosition.Left);
+
+        var appearance = Assert.Single(published);
+        Assert.Equal(from is GalleryMode.Expanded ? GalleryMode.Expanded : GalleryMode.Docked, appearance.Mode);
+        Assert.Equal(GalleryDockPosition.Left, appearance.Dock);
+        Assert.Equal(GalleryDockPosition.Left, window.WindowSettings.Gallery.DockPosition.Value);
+    }
+
+    // ADR-0011: crop, a Single Image and the Gallery File Limit hide the gallery without changing its mode, so they
+    // change nothing a new tab starts with either; a dock or undock by hand does
+    [Theory]
+    [InlineData(GalleryHiding.Crop)]
+    [InlineData(GalleryHiding.SingleImage)]
+    [InlineData(GalleryHiding.FileLimit)]
+    public async Task CropOrSingleImageOrFileLimit_HidingTheGallery_DoesNotChangeStartsDocked(GalleryHiding hiding)
+    {
+        var window = CreateStartedWindow();
+        window.WindowSettings.Gallery.StartsDocked.Value = true;
+        var tab = window.WindowTabs.ActiveTab.Value;
+        ShowGallery(tab, GalleryMode.Docked);
+        var switcher = tab.Gallery.Switcher;
+        Action<bool> hide = hiding is GalleryHiding.FileLimit ? switcher.SetOverLimit : switcher.SetHidden;
+
+        hide(true);
+        // Refused while hidden; docking at an edge only moves the edge
+        await switcher.ToggleDocked();
+        await switcher.Contract();
+        await switcher.Close();
+        await switcher.DockAt(GalleryDockPosition.Top);
+        hide(false);
+
+        Assert.True(window.WindowSettings.Gallery.StartsDocked.Value);
+        Assert.Equal(GalleryMode.Docked, tab.Gallery.ShownMode.Value);
+        Assert.Equal(GalleryDockPosition.Top, tab.Gallery.Appearance.Value.Dock);
+
+        await switcher.Contract();
+
+        Assert.False(window.WindowSettings.Gallery.StartsDocked.Value);
+        Assert.False(Settings.Gallery.IsGalleryDocked);
+    }
+
+    [Fact]
+    public void NewTab_StartsDockedPerItsOwnWindow()
+    {
+        var docked = CreateStartedWindow();
+        var closed = CreateStartedWindow();
+        docked.WindowSettings.Gallery.StartsDocked.Value = true;
+        docked.WindowSettings.Gallery.DockPosition.Value = GalleryDockPosition.Right;
+        var dockedTab = docked.WindowTabs.CreateTab();
+        var closedTab = closed.WindowTabs.CreateTab();
+
+        // As a tab opened for the first time starts
+        PicView.Avalonia.StartUp.TabNavigationInitializer.Initialize(_core, docked, dockedTab);
+        PicView.Avalonia.StartUp.TabNavigationInitializer.Initialize(_core, closed, closedTab);
+
+        Assert.Equal(GalleryMode.Docked, dockedTab.Gallery.Mode.Value);
+        Assert.Equal(GalleryDockPosition.Right, dockedTab.Gallery.Appearance.Value.Dock);
+        Assert.Equal(GalleryMode.Closed, closedTab.Gallery.Mode.Value);
+        Assert.False(Settings.Gallery.IsGalleryDocked);
+    }
+
+    [Fact]
+    public async Task MoveTab_ThenTheSourceWindowCloses_ADockByHandThrowsNothing()
+    {
+        var unhandled = new ConcurrentQueue<Exception>();
+        using var recording = RecordUnhandled(unhandled);
+        var source = CreateStartedWindow();
+        var target = CreateStartedWindow();
+        var moved = source.WindowTabs.CreateTab();
+        ShowGallery(moved, GalleryMode.Closed);
+        // Taken out for a new window that has not opened yet, so it still has its old window's settings
+        var takenOut = source.WindowTabs.CreateTab();
+        ShowGallery(takenOut, GalleryMode.Closed);
+        source.WindowTabs.MoveOut(takenOut);
+        source.WindowTabs.MoveTab(moved, target.WindowTabs);
+
+        // As the window closes: its tabs first, then its settings
+        source.WindowTabs.TearDown();
+        source.WindowSettings.Dispose();
+        var thrown = await Record.ExceptionAsync(async () =>
+        {
+            await takenOut.Gallery.Switcher.ToggleDocked();
+            await takenOut.Gallery.Switcher.DockAt(GalleryDockPosition.Left);
+            await moved.Gallery.Switcher.DockAt(GalleryDockPosition.Top);
+        });
+
+        Assert.Null(thrown);
+        Assert.Empty(unhandled);
+        Assert.Equal(GalleryMode.Docked, takenOut.Gallery.Mode.Value);
+        // The moved tab writes to the window it is in now
+        Assert.Equal(GalleryDockPosition.Top, target.WindowSettings.Gallery.DockPosition.Value);
+        Assert.True(target.WindowSettings.Gallery.StartsDocked.Value);
+        Assert.Equal(GalleryDockPosition.Top, moved.Gallery.Appearance.Value.Dock);
+    }
+
+    #endregion
+
     // A window whose gallery settings are started, as one that has opened
     private MainWindowViewModel CreateStartedWindow()
     {

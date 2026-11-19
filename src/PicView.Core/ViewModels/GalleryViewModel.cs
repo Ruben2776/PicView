@@ -29,10 +29,9 @@ public class GalleryViewModel : IDisposable
     /// </summary>
     private IDisposable? _appearanceBeforeInitialize;
 
-    /// <param name="saveSettings">Saves the settings once the remembered docked choice changed; the settings file by default.</param>
-    public GalleryViewModel(Func<ValueTask<bool>>? saveSettings = null)
+    public GalleryViewModel()
     {
-        Switcher = new GalleryModeSwitcher(saveSettings);
+        Switcher = new GalleryModeSwitcher();
         Mode = Switcher.Mode.ToReadOnlyBindableReactiveProperty();
         ShownMode = Switcher.ShownMode.ToReadOnlyBindableReactiveProperty();
         IsDocked = Switcher.IsDocked.ToReadOnlyBindableReactiveProperty();
@@ -45,11 +44,15 @@ public class GalleryViewModel : IDisposable
         // Derived from the switcher before Initialize, so a tab started docked shows it from the start
         Switcher.ShownMode.Subscribe(OnShownModeChanged).AddTo(ref _disposables);
 
+        // The dock flags follow the window's edge, as the appearance does
+        _look.Subscribe(_ => UpdateDockFlags(), DebugHelper.LogError(nameof(GalleryViewModel), nameof(UpdateDockFlags)))
+            .AddTo(ref _disposables);
+
         // A tab can start docked, and its view can load, before Initialize: the appearance follows the mode and the
         // window's look anyway
         _appearanceBeforeInitialize = Switcher.ShownMode.CombineLatest(_look,
                 static (mode, look) => ComputeAppearance(mode, look, Settings.Gallery.ItemSpacing))
-            .Subscribe(x => _appearance.Value = x, DebugHelper.LogError(nameof(GalleryViewModel), nameof(ShownMode)));
+            .Subscribe(PublishAppearance, DebugHelper.LogError(nameof(GalleryViewModel), nameof(ShownMode)));
     }
 
     /// <summary>
@@ -143,7 +146,7 @@ public class GalleryViewModel : IDisposable
     /// </summary>
     public void Initialize(GallerySharedSettingsViewModel shared)
     {
-        if (_isInitialized || Settings.Gallery is not { } gallery)
+        if (_isInitialized || Settings.Gallery is null)
         {
             return;
         }
@@ -154,25 +157,16 @@ public class GalleryViewModel : IDisposable
         _appearanceBeforeInitialize?.Dispose();
         _appearanceBeforeInitialize = null;
 
-        // One poll of the dock position for the dock flags and the appearance. The flags subscribe first, so they still
-        // take the first value as the poll starts, and the appearance takes it from the Prepend
-        var dockPositions = Observable.EveryValueChanged(gallery, g => g.DockPosition).Share();
-        dockPositions
-            .Subscribe(_ => UpdateDockFlags(), DebugHelper.LogError(nameof(GalleryViewModel), nameof(UpdateDockFlags)))
-            .AddTo(ref _disposables);
-
-        // The dock position and the hover bar inputs are read when the record is computed, so a dock move published
-        // before the poll sees it, as DockAt does, already has its edge; the poll only says when to compute again.
+        // The look carries the window's dock edge, so one change of the window, or a move to another, is one input.
         // The item and line spacing go through Select(Accepted...Spacing) below: a refused spacing is set back from
         // inside the write-through, so a follower subscribed after the settings start is notified of the refused
         // value last, and the accepted value is what it must keep
         Observable.CombineLatest(
                 Switcher.ShownMode,
                 _look,
-                dockPositions.Prepend(gallery.DockPosition),
                 shared.GalleryItemSpacing.Select(GalleryDefaults.AcceptedItemSpacing),
-                static (mode, look, _, spacing) => ComputeAppearance(mode, look, spacing))
-            .Subscribe(x => _appearance.Value = x, DebugHelper.LogError(nameof(GalleryViewModel), nameof(Initialize)))
+                static (mode, look, spacing) => ComputeAppearance(mode, look, spacing))
+            .Subscribe(PublishAppearance, DebugHelper.LogError(nameof(GalleryViewModel), nameof(Initialize)))
             .AddTo(ref _disposables);
 
         // Accepted line spacing, for the reason given at the item spacing above
@@ -202,12 +196,23 @@ public class GalleryViewModel : IDisposable
             .AddTo(ref _disposables);
     }
 
-    // The dock position is read here, so every caller builds the inputs the same way
     private static GalleryAppearance ComputeAppearance(GalleryMode mode, GalleryLook look, double spacing)
     {
-        return GalleryAppearance.For(mode, Settings.Gallery.DockPosition, new GalleryAppearanceInputs(
+        return GalleryAppearance.For(mode, look.Dock, new GalleryAppearanceInputs(
             look.DockedItemSize, look.ExpandedItemSize, look.DockedStretch, look.ExpandedStretch, spacing,
             look.ExpandedDisplayMode));
+    }
+
+    // While the switcher moves the edge for the Closed gallery it docks, the edge alone is not published: the dock
+    // that follows publishes the one appearance, with the edge already taken (Review Focus 5)
+    private void PublishAppearance(GalleryAppearance appearance)
+    {
+        if (Switcher.IsMovingTheEdgeToDock)
+        {
+            return;
+        }
+
+        _appearance.Value = appearance;
     }
 
     public void Navigate(NavigateTo direction)
@@ -230,7 +235,7 @@ public class GalleryViewModel : IDisposable
     private void UpdateDockFlags()
     {
         var shown = IsDockedGalleryVisible.Value;
-        var position = Settings.Gallery.DockPosition;
+        var position = _look.Value.Dock;
         IsTopDocked.Value = shown && position == GalleryDockPosition.Top;
         IsBottomDocked.Value = shown && position == GalleryDockPosition.Bottom;
         IsLeftDocked.Value = shown && position == GalleryDockPosition.Left;

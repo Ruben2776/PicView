@@ -120,7 +120,8 @@ public static class QuickLoad
         var tab = vm.WindowTabs.ActiveTab.CurrentValue;
 
         var rootDirectory = continueFromLeftOff ? SourceOpener.GetStartUpDirectory(fileInfo.FullName) : null;
-        tab.Gallery.Switcher.Start(Settings.Gallery.IsGalleryDocked);
+        // Docked or not as the window says a new tab starts
+        tab.Gallery.Switcher.Start();
 
         LoadResult result;
         if (tab.PairSettings().ShowsPair)

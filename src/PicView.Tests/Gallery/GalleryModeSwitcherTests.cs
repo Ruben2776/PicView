@@ -1,24 +1,30 @@
 using PicView.Core.Gallery;
+using PicView.Core.ViewModels;
 using R3;
 
 namespace PicView.Tests.Gallery;
 
 /// <summary>
 /// Pins the rules of a tab's Gallery Mode (ADR-0011): one switcher per tab, crop and Single Image hide without changing
-/// the mode, and the setting only remembers what the user chose by hand.
+/// the mode, and the tab's window only remembers what the user chose by hand. Nothing is written to the settings
+/// record; the window stores its settings when it closes.
 /// </summary>
 [Collection("Sequential")]
 public class GalleryModeSwitcherTests : IDisposable
 {
-    private readonly CountingSave _save = new();
     private readonly List<GalleryModeChange> _changes = [];
     private readonly GalleryModeSwitcher _sut;
     private readonly IDisposable _subscription;
 
+    // The gallery settings of the Main Window the switcher's tab is in
+    private readonly WindowGallerySettings _window;
+
     public GalleryModeSwitcherTests()
     {
         SetDefaults();
-        _sut = new GalleryModeSwitcher(_save.SaveAsync);
+        _window = WindowGallerySettings.FromRecord(Settings.Gallery);
+        _sut = new GalleryModeSwitcher();
+        _sut.RemembersIn(() => _window);
         _subscription = _sut.Changes.Subscribe(_changes.Add);
     }
 
@@ -29,8 +35,19 @@ public class GalleryModeSwitcherTests : IDisposable
 
         Assert.Equal(GalleryMode.Docked, _sut.Mode.CurrentValue);
         Assert.Equal([new GalleryModeChange(GalleryMode.Closed, GalleryMode.Docked, false)], _changes);
-        Assert.Equal(0, _save.Count);
+        Assert.False(_window.StartsDocked.Value);
         Assert.False(Settings.Gallery.IsGalleryDocked);
+    }
+
+    [Fact]
+    public void Start_TakesWhatItsWindowSaysANewTabStartsWith()
+    {
+        _window.StartsDocked.Value = true;
+
+        _sut.Start();
+
+        Assert.Equal(GalleryMode.Docked, _sut.Mode.CurrentValue);
+        Assert.Equal([new GalleryModeChange(GalleryMode.Closed, GalleryMode.Docked, false)], _changes);
     }
 
     [Fact]
@@ -39,7 +56,7 @@ public class GalleryModeSwitcherTests : IDisposable
         _sut.ToggleExpanded();
 
         Assert.Equal([new GalleryModeChange(GalleryMode.Closed, GalleryMode.Expanded, true)], _changes);
-        Assert.Equal(0, _save.Count);
+        Assert.False(_window.StartsDocked.Value);
     }
 
     [Fact]
@@ -50,7 +67,7 @@ public class GalleryModeSwitcherTests : IDisposable
         _sut.ToggleExpanded();
 
         Assert.Equal(GalleryMode.Docked, _sut.Mode.CurrentValue);
-        Assert.Equal(0, _save.Count);
+        Assert.False(_window.StartsDocked.Value);
     }
 
     [Fact]
@@ -61,34 +78,34 @@ public class GalleryModeSwitcherTests : IDisposable
         await _sut.Contract();
 
         Assert.Equal(GalleryMode.Closed, _sut.Mode.CurrentValue);
-        Assert.Equal(0, _save.Count);
+        Assert.False(_window.StartsDocked.Value);
     }
 
     [Fact]
     public async Task Contract_FromExpandedAfterDocked_GivesBackDocked()
     {
-        Settings.Gallery.IsGalleryDocked = true;
+        _window.StartsDocked.Value = true;
         _sut.Start(true);
         _sut.ToggleExpanded();
 
         await _sut.Contract();
 
         Assert.Equal(GalleryMode.Docked, _sut.Mode.CurrentValue);
-        Assert.Equal(0, _save.Count);
-        Assert.True(Settings.Gallery.IsGalleryDocked);
+        Assert.True(_window.StartsDocked.Value);
     }
 
     [Fact]
     public async Task Contract_FromDocked_ClosesAndRemembersUndocked()
     {
+        _window.StartsDocked.Value = true;
         Settings.Gallery.IsGalleryDocked = true;
         _sut.Start(true);
 
         await _sut.Contract();
 
         Assert.Equal(GalleryMode.Closed, _sut.Mode.CurrentValue);
-        Assert.False(Settings.Gallery.IsGalleryDocked);
-        Assert.Equal(1, _save.Count);
+        Assert.False(_window.StartsDocked.Value);
+        Assert.True(Settings.Gallery.IsGalleryDocked);
     }
 
     [Fact]
@@ -98,8 +115,8 @@ public class GalleryModeSwitcherTests : IDisposable
 
         Assert.Equal(GalleryMode.Docked, _sut.Mode.CurrentValue);
         Assert.Equal(new GalleryModeChange(GalleryMode.Closed, GalleryMode.Docked, true), _changes[^1]);
-        Assert.True(Settings.Gallery.IsGalleryDocked);
-        Assert.Equal(1, _save.Count);
+        Assert.True(_window.StartsDocked.Value);
+        Assert.False(Settings.Gallery.IsGalleryDocked);
     }
 
     [Fact]
@@ -111,7 +128,7 @@ public class GalleryModeSwitcherTests : IDisposable
 
         Assert.Equal(GalleryMode.Expanded, _sut.Mode.CurrentValue);
         Assert.True(_sut.IsDocked.CurrentValue);
-        Assert.True(Settings.Gallery.IsGalleryDocked);
+        Assert.True(_window.StartsDocked.Value);
 
         await _sut.Contract();
 
@@ -121,7 +138,7 @@ public class GalleryModeSwitcherTests : IDisposable
     [Fact]
     public async Task Close_FromExpandedAfterDocked_ClosesAndRemembersUndocked()
     {
-        Settings.Gallery.IsGalleryDocked = true;
+        _window.StartsDocked.Value = true;
         _sut.Start(true);
         _sut.ToggleExpanded();
 
@@ -129,8 +146,7 @@ public class GalleryModeSwitcherTests : IDisposable
 
         Assert.Equal(GalleryMode.Closed, _sut.Mode.CurrentValue);
         Assert.False(_sut.IsDocked.CurrentValue);
-        Assert.False(Settings.Gallery.IsGalleryDocked);
-        Assert.Equal(1, _save.Count);
+        Assert.False(_window.StartsDocked.Value);
     }
 
     [Fact]
@@ -139,8 +155,10 @@ public class GalleryModeSwitcherTests : IDisposable
         await _sut.DockAt(GalleryDockPosition.Left);
 
         Assert.Equal(GalleryMode.Docked, _sut.Mode.CurrentValue);
-        Assert.Equal(GalleryDockPosition.Left, Settings.Gallery.DockPosition);
-        Assert.True(Settings.Gallery.IsGalleryDocked);
+        Assert.Equal(GalleryDockPosition.Left, _window.DockPosition.Value);
+        Assert.True(_window.StartsDocked.Value);
+        Assert.Equal(GalleryDockPosition.Bottom, Settings.Gallery.DockPosition);
+        Assert.False(Settings.Gallery.IsGalleryDocked);
     }
 
     [Fact]
@@ -171,6 +189,7 @@ public class GalleryModeSwitcherTests : IDisposable
     [Fact]
     public async Task Commands_WhileHidden_AreRefused()
     {
+        _window.StartsDocked.Value = true;
         _sut.Start(true);
         _sut.SetHidden(true);
 
@@ -180,7 +199,7 @@ public class GalleryModeSwitcherTests : IDisposable
         await _sut.Close();
 
         Assert.Equal(GalleryMode.Docked, _sut.Mode.CurrentValue);
-        Assert.Equal(0, _save.Count);
+        Assert.True(_window.StartsDocked.Value);
     }
 
     [Fact]
@@ -190,8 +209,9 @@ public class GalleryModeSwitcherTests : IDisposable
 
         await _sut.DockAt(GalleryDockPosition.Top);
 
-        Assert.Equal(GalleryDockPosition.Top, Settings.Gallery.DockPosition);
+        Assert.Equal(GalleryDockPosition.Top, _window.DockPosition.Value);
         Assert.Equal(GalleryMode.Closed, _sut.Mode.CurrentValue);
+        Assert.False(_window.StartsDocked.Value);
     }
 
     [Fact]
@@ -237,8 +257,9 @@ public class GalleryModeSwitcherTests : IDisposable
     }
 
     [Fact]
-    public async Task Commands_WhileOverLimit_AreRefusedWithoutSave()
+    public async Task Commands_WhileOverLimit_AreRefusedWithoutRemembering()
     {
+        _window.StartsDocked.Value = true;
         _sut.Start(true);
         _sut.SetOverLimit(true);
 
@@ -249,13 +270,13 @@ public class GalleryModeSwitcherTests : IDisposable
 
         Assert.Equal(GalleryMode.Docked, _sut.Mode.CurrentValue);
         Assert.Equal(GalleryMode.Closed, _sut.ShownMode.CurrentValue);
-        Assert.Equal(0, _save.Count);
+        Assert.True(_window.StartsDocked.Value);
     }
 
     [Fact]
     public async Task TwoSwitchers_DoNotAffectEachOther()
     {
-        using var other = new GalleryModeSwitcher(_save.SaveAsync);
+        using var other = new GalleryModeSwitcher();
 
         await _sut.ToggleDocked();
         _sut.SetHidden(true);
@@ -264,20 +285,62 @@ public class GalleryModeSwitcherTests : IDisposable
         Assert.False(other.IsHidden.CurrentValue);
     }
 
+    [Fact]
+    public async Task Switcher_WithoutAWindow_RemembersNothing_AndThrowsNothing()
+    {
+        Settings.Gallery.IsGalleryDocked = true;
+        Settings.Gallery.DockPosition = GalleryDockPosition.Right;
+        using var switcher = new GalleryModeSwitcher();
+
+        var thrown = await Record.ExceptionAsync(async () =>
+        {
+            switcher.Start();
+            await switcher.Contract();
+            await switcher.DockAt(GalleryDockPosition.Left);
+            await switcher.ToggleDocked();
+            await switcher.ToggleDocked();
+            switcher.ToggleExpanded();
+            await switcher.Close();
+        });
+
+        Assert.Null(thrown);
+        Assert.Equal(GalleryMode.Closed, switcher.Mode.CurrentValue);
+        Assert.True(Settings.Gallery.IsGalleryDocked);
+        Assert.Equal(GalleryDockPosition.Right, Settings.Gallery.DockPosition);
+    }
+
+    [Fact]
+    public void Start_WithoutAWindow_StartsAsTheRecordSays()
+    {
+        Settings.Gallery.IsGalleryDocked = true;
+        using var switcher = new GalleryModeSwitcher();
+
+        switcher.Start();
+
+        Assert.Equal(GalleryMode.Docked, switcher.Mode.CurrentValue);
+    }
+
+    [Fact]
+    public async Task Switcher_ItsWindowClosed_RemembersNothing_AndThrowsNothing()
+    {
+        _window.Dispose();
+
+        var thrown = await Record.ExceptionAsync(async () =>
+        {
+            _sut.Start();
+            await _sut.ToggleDocked();
+            await _sut.DockAt(GalleryDockPosition.Left);
+            await _sut.Close();
+        });
+
+        Assert.Null(thrown);
+        Assert.Equal(GalleryMode.Closed, _sut.Mode.CurrentValue);
+    }
+
     public void Dispose()
     {
         _subscription.Dispose();
         _sut.Dispose();
-    }
-
-    private sealed class CountingSave
-    {
-        public int Count { get; private set; }
-
-        public ValueTask<bool> SaveAsync()
-        {
-            Count++;
-            return ValueTask.FromResult(true);
-        }
+        _window.Dispose();
     }
 }

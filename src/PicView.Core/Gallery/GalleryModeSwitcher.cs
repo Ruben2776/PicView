@@ -1,3 +1,4 @@
+using PicView.Core.ViewModels;
 using R3;
 
 namespace PicView.Core.Gallery;
@@ -5,18 +6,24 @@ namespace PicView.Core.Gallery;
 /// <summary>
 /// Changes one tab's Gallery Mode; nothing else does (ADR-0011). Crop, a Single Image and a file list at or over
 /// <see cref="Config.Gallery.HideGalleryAtFileCount"/> hide the gallery without changing its mode, and mode changes
-/// are refused while it is hidden. The settings only remember whether a new tab starts docked, written when the user
-/// changes the tab's docked choice by hand.
+/// are refused while it is hidden. What it remembers goes to the Main Window the tab is in at that moment: a dock or
+/// undock by hand sets whether a new tab of that window starts docked, and docking at an edge sets the edge every
+/// Docked Gallery of that window sits at. It writes no settings record and saves nothing; the window stores its
+/// settings when it closes. A switcher with no window, as a test makes, remembers nothing.
 /// </summary>
-/// <param name="saveSettings">Saves the settings once the remembered choice changed; the settings file by default.</param>
-public sealed class GalleryModeSwitcher(Func<ValueTask<bool>>? saveSettings = null) : IDisposable
+public sealed class GalleryModeSwitcher : IDisposable
 {
-    private readonly Func<ValueTask<bool>> _saveSettings = saveSettings ?? SaveSettingsAsync;
     private readonly ReactiveProperty<GalleryMode> _mode = new(GalleryMode.Closed);
     private readonly ReactiveProperty<bool> _isDocked = new(false);
     private readonly ReactiveProperty<bool> _isHidden = new(false);
     private readonly ReactiveProperty<GalleryMode> _shownMode = new(GalleryMode.Closed);
     private readonly Subject<GalleryModeChange> _changes = new();
+
+    /// <summary>
+    /// The gallery settings of the window the tab is in now, asked at each write and at <see cref="Start()"/>; null
+    /// until <see cref="RemembersIn"/>, and its result null for a tab with no window.
+    /// </summary>
+    private Func<WindowGallerySettings?>? _currentWindow;
 
     /// <summary>
     /// The mode Expanded gives back when it closes: Closed or Docked.
@@ -53,13 +60,34 @@ public sealed class GalleryModeSwitcher(Func<ValueTask<bool>>? saveSettings = nu
     public Observable<GalleryModeChange> Changes => _changes;
 
     /// <summary>
-    /// Sets the mode a tab starts in, without animation and without writing the settings.
+    /// True while <see cref="DockAt"/> moves the window's edge for a Closed gallery it is about to dock: the tab's
+    /// gallery publishes no appearance for the edge alone then, as the dock that follows publishes the one appearance
+    /// at the new edge (no Closed one at the new edge before it).
+    /// </summary>
+    internal bool IsMovingTheEdgeToDock { get; private set; }
+
+    /// <summary>
+    /// Gives the switcher the window it remembers in: <paramref name="currentWindow"/> is asked at each write, so a tab
+    /// moved to another window writes there. The tab calls it once.
+    /// </summary>
+    internal void RemembersIn(Func<WindowGallerySettings?> currentWindow) => _currentWindow = currentWindow;
+
+    /// <summary>
+    /// Sets the mode a tab starts in, without animation and without remembering anything.
     /// </summary>
     public void Start(bool docked)
     {
         _giveBack = GalleryMode.Closed;
         SetMode(docked ? GalleryMode.Docked : GalleryMode.Closed, animate: false);
     }
+
+    /// <summary>
+    /// Starts docked or closed as the tab's window says a new tab starts; as the record says for a tab with no window.
+    /// </summary>
+    public void Start() =>
+        Start(OpenWindow() is { } window
+            ? window.StartsDocked.CurrentValue
+            : WindowGallerySettings.StartsDockedWithoutWindow(Settings?.Gallery));
 
     /// <summary>
     /// Hides or shows the gallery for crop or a Single Image, without animation and without changing the mode.
@@ -130,7 +158,8 @@ public sealed class GalleryModeSwitcher(Func<ValueTask<bool>>? saveSettings = nu
                 break;
         }
 
-        return RememberDockedAsync();
+        RememberDocked();
+        return ValueTask.CompletedTask;
     }
 
     /// <summary>
@@ -147,13 +176,14 @@ public sealed class GalleryModeSwitcher(Func<ValueTask<bool>>? saveSettings = nu
         {
             case GalleryMode.Expanded:
                 SetMode(_giveBack, animate: true);
-                return ValueTask.CompletedTask;
+                break;
             case GalleryMode.Docked:
                 SetMode(GalleryMode.Closed, animate: true);
-                return RememberDockedAsync();
-            default:
-                return ValueTask.CompletedTask;
+                RememberDocked();
+                break;
         }
+
+        return ValueTask.CompletedTask;
     }
 
     public ValueTask Close()
@@ -165,32 +195,48 @@ public sealed class GalleryModeSwitcher(Func<ValueTask<bool>>? saveSettings = nu
 
         _giveBack = GalleryMode.Closed;
         SetMode(GalleryMode.Closed, animate: true);
-        return RememberDockedAsync();
+        RememberDocked();
+        return ValueTask.CompletedTask;
     }
 
     /// <summary>
-    /// Sets where every Docked Gallery sits, and docks this tab. While hidden, only the position changes.
+    /// Sets the edge every Docked Gallery of the tab's window sits at, and docks this tab. While hidden, only the edge
+    /// changes. The tab publishes one Gallery Appearance for it, at the new edge.
     /// </summary>
-    public async ValueTask DockAt(GalleryDockPosition position)
+    public ValueTask DockAt(GalleryDockPosition position)
     {
-        Settings.Gallery.DockPosition = position;
-        if (!_isHidden.Value)
+        if (_isHidden.Value || _mode.Value is not GalleryMode.Closed)
         {
-            switch (_mode.Value)
+            // One change: the edge of the shown or hidden gallery
+            Remember(static window => window.DockPosition, position);
+            if (!_isHidden.Value && _mode.Value is GalleryMode.Expanded)
             {
-                case GalleryMode.Expanded:
-                    _giveBack = GalleryMode.Docked;
-                    UpdateIsDocked();
-                    break;
-                case GalleryMode.Closed:
-                    SetMode(GalleryMode.Docked, animate: true);
-                    break;
+                _giveBack = GalleryMode.Docked;
+                UpdateIsDocked();
+            }
+        }
+        else
+        {
+            // The edge moves first, held, so the dock is published once with the new edge
+            IsMovingTheEdgeToDock = true;
+            try
+            {
+                Remember(static window => window.DockPosition, position);
+            }
+            finally
+            {
+                IsMovingTheEdgeToDock = false;
             }
 
-            Settings.Gallery.IsGalleryDocked = _isDocked.Value;
+            SetMode(GalleryMode.Docked, animate: true);
         }
 
-        await _saveSettings().ConfigureAwait(false);
+        if (!_isHidden.Value)
+        {
+            RememberDocked();
+        }
+
+        return ValueTask.CompletedTask;
     }
 
     private void SetMode(GalleryMode mode, bool animate)
@@ -217,15 +263,33 @@ public sealed class GalleryModeSwitcher(Func<ValueTask<bool>>? saveSettings = nu
         _changes.OnNext(new GalleryModeChange(from, shown, animate));
     }
 
-    private async ValueTask RememberDockedAsync()
+    // The docked choice made by hand, for the next tab of the window
+    private void RememberDocked() => Remember(static window => window.StartsDocked, _isDocked.Value);
+
+    // The window the tab is in now, or null without one or once it closed
+    private WindowGallerySettings? OpenWindow() =>
+        _currentWindow?.Invoke() is { IsDisposed: false } window ? window : null;
+
+    /// <summary>
+    /// Sets one of the tab's window's gallery settings. A closed window's settings take no change, as setting a
+    /// disposed bindable throws (ADR-0038), so this does nothing once the window closed, nothing either when the close
+    /// lands between the check and the set, and nothing for a tab with no window.
+    /// </summary>
+    private void Remember<T>(Func<WindowGallerySettings, BindableReactiveProperty<T>> pick, T value)
     {
-        if (Settings.Gallery.IsGalleryDocked == _isDocked.Value)
+        if (OpenWindow() is not { } window)
         {
             return;
         }
 
-        Settings.Gallery.IsGalleryDocked = _isDocked.Value;
-        await _saveSettings().ConfigureAwait(false);
+        try
+        {
+            pick(window).Value = value;
+        }
+        catch (ObjectDisposedException)
+        {
+            // The window closed between the check and the set
+        }
     }
 
     public void Dispose()

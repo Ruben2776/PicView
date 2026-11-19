@@ -350,6 +350,90 @@ public class AppLifecycleTests : IAsyncDisposable
         Assert.Equal(recordLook, LookOf(ViewModelOf(first).WindowSettings.Gallery));
     }
 
+    [AvaloniaFact]
+    public async Task ToggleDocked_ByHand_SetsItsWindowsStartsDocked_AndWritesNoRecord_AndSavesNothing()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var first = app.MainWindows.Open[0];
+        var second = await app.MainWindows.OpenNewAsync(first);
+        var firstVm = ViewModelOf(first);
+        var secondVm = ViewModelOf(second);
+        var tab = firstVm.WindowTabs.ActiveTab.CurrentValue;
+        var savesBefore = (_sharedFiles.Saves, Volatile.Read(ref _globalSaves), Volatile.Read(ref _gallerySaves));
+        var settingsFile = SettingsFileState();
+
+        await tab.Gallery.Switcher.ToggleDocked();
+
+        Assert.Equal(GalleryMode.Docked, tab.Gallery.Mode.Value);
+        Assert.True(firstVm.WindowSettings.Gallery.StartsDocked.Value);
+        Assert.False(secondVm.WindowSettings.Gallery.StartsDocked.Value);
+        Assert.False(Settings.Gallery.IsGalleryDocked);
+
+        await tab.Gallery.Switcher.DockAt(GalleryDockPosition.Left);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Equal(GalleryDockPosition.Left, firstVm.WindowSettings.Gallery.DockPosition.Value);
+        Assert.Equal(GalleryDockPosition.Bottom, secondVm.WindowSettings.Gallery.DockPosition.Value);
+        Assert.Equal(GalleryDockPosition.Bottom, Settings.Gallery.DockPosition);
+        Assert.Equal(savesBefore,
+            (_sharedFiles.Saves, Volatile.Read(ref _globalSaves), Volatile.Read(ref _gallerySaves)));
+        Assert.Equal(settingsFile, SettingsFileState());
+    }
+
+    [AvaloniaFact]
+    public async Task NewWindowFromOneDockedAtTheLeft_StartsItsTabsThere()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var first = app.MainWindows.Open[0];
+        var firstTab = ViewModelOf(first).WindowTabs.ActiveTab.CurrentValue;
+        await firstTab.Gallery.Switcher.DockAt(GalleryDockPosition.Left);
+        var image = await WriteImageAsync("docked.jpg");
+
+        var opened = await app.MainWindows.OpenNewAsync(first, image);
+
+        var openedVm = ViewModelOf(opened);
+        Assert.Equal(image, ShownFileOf(opened));
+        Assert.Equal(GalleryDockPosition.Left, openedVm.WindowSettings.Gallery.DockPosition.Value);
+        Assert.True(openedVm.WindowSettings.Gallery.StartsDocked.Value);
+        var tab = openedVm.WindowTabs.ActiveTab.CurrentValue;
+        Assert.Equal(GalleryMode.Docked, tab.Gallery.Mode.Value);
+        Assert.Equal(GalleryDockPosition.Left, tab.Gallery.Appearance.Value.Dock);
+        Assert.True(tab.Gallery.IsLeftDocked.Value);
+        Assert.False(Settings.Gallery.IsGalleryDocked);
+        Assert.Equal(GalleryDockPosition.Bottom, Settings.Gallery.DockPosition);
+    }
+
+    [AvaloniaFact]
+    public async Task CloseAsync_StoresTheDockEdgeAndStartsDocked()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var first = app.MainWindows.Open[0];
+        var second = await app.MainWindows.OpenNewAsync(first);
+        var secondTab = ViewModelOf(second).WindowTabs.ActiveTab.CurrentValue;
+        await secondTab.Gallery.Switcher.DockAt(GalleryDockPosition.Left);
+        Assert.Equal((GalleryDockPosition.Bottom, false), (Settings.Gallery.DockPosition, Settings.Gallery.IsGalleryDocked));
+        var savesBeforeClose = _sharedFiles.Saves;
+
+        await app.MainWindows.CloseAsync(second);
+
+        Assert.Equal((GalleryDockPosition.Left, true), (Settings.Gallery.DockPosition, Settings.Gallery.IsGalleryDocked));
+        Assert.Equal(savesBeforeClose + 1, _sharedFiles.Saves);
+        var firstGallery = ViewModelOf(first).WindowSettings.Gallery;
+        Assert.Equal((GalleryDockPosition.Bottom, false), (firstGallery.DockPosition.Value, firstGallery.StartsDocked.Value));
+    }
+
+    // The settings file as it is on disk, to tell that nothing saved it
+    private static (bool Exists, DateTime Written, string Text) SettingsFileState()
+    {
+        var path = CurrentSettingsPath;
+        return File.Exists(path)
+            ? (true, File.GetLastWriteTimeUtc(path), File.ReadAllText(path))
+            : (false, default, string.Empty);
+    }
+
     private static (double, double, GalleryStretchMode, GalleryStretchMode, GalleryDisplayMode, bool) LookOf(
         PicView.Core.Config.Gallery record) =>
         (record.DockedGalleryItemSize, record.ExpandedGalleryItemSize, record.DockedGalleryStretchMode,

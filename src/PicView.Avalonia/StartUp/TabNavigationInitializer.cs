@@ -8,13 +8,13 @@ namespace PicView.Avalonia.StartUp;
 public static class TabNavigationInitializer
 {
     /// <summary>
-    /// Opens <paramref name="tab"/>, one of <paramref name="vm"/>'s tabs, for the first time: it starts in the gallery
-    /// mode the settings remember, without animation, is hooked up to its window, and its gallery takes the shared
-    /// gallery settings. May be called from any thread.
+    /// Opens <paramref name="tab"/>, one of <paramref name="vm"/>'s tabs, for the first time: it starts docked or not as
+    /// its window says a new tab starts, without animation, is hooked up to its window, and its gallery takes the
+    /// shared gallery settings. May be called from any thread.
     /// </summary>
     public static void Initialize(CoreViewModel core, MainWindowViewModel vm, TabViewModel tab)
     {
-        tab.Gallery.Switcher.Start(Settings.Gallery.IsGalleryDocked);
+        tab.Gallery.Switcher.Start();
         vm.WindowTabs.HookUp(tab);
         InitializeGallery(core, tab);
     }

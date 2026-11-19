@@ -871,6 +871,41 @@ public class WindowFitterTests
         window.Close();
     }
 
+    // Review Focus 2
+    [AvaloniaFact]
+    public void MoveTab_DockedToAWindowWithAnotherEdge_SitsAtThatEdge_AndTheWindowFitsOnce()
+    {
+        var (_, sourceVm, sourceWindow) = CreateShownWindow(800, 600);
+        var (fitter, vm, window) = CreateShownWindow(800, 600);
+        using var following = fitter.Follow();
+        vm.WindowSettings.Gallery.DockPosition.Value = GalleryDockPosition.Left;
+        var tab = sourceVm.WindowTabs.CreateTab();
+        tab.Gallery.Initialize(_core.GallerySettings);
+        tab.Display(Model("a.jpg", 1600, 1200));
+        tab.Gallery.Switcher.Start(docked: true);
+        Dispatcher.UIThread.RunJobs();
+        Assert.Equal(GalleryDockPosition.Bottom, tab.Gallery.Appearance.Value.Dock);
+        var fits = new List<Fitted>();
+        using var listening = fitter.Fits.Subscribe(fits.Add);
+
+        sourceVm.WindowTabs.MoveTab(tab, vm.WindowTabs);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Equal(GalleryDockPosition.Left, tab.Gallery.Appearance.Value.Dock);
+        Assert.True(tab.Gallery.IsLeftDocked.Value);
+        Assert.False(tab.Gallery.IsBottomDocked.Value);
+        var reserved = WindowFitter.GetReservedSpace(vm);
+        Assert.True(reserved.GalleryWidth > 0);
+        Assert.Equal(0, reserved.GalleryHeight);
+        // One Fit, as a FitSoon gives it before the frame and again after layout: the one size, for the left edge,
+        // and none for the edge it had before
+        Assert.InRange(fits.Count, 1, 2);
+        var fit = Assert.Single(fits.Select(static fitted => fitted.Fit).Distinct());
+        Assert.True(fit.Width <= window.ClientSize.Width - reserved.GalleryWidth + 1e-6);
+        window.Close();
+        sourceWindow.Close();
+    }
+
     [AvaloniaFact]
     public void GetReservedSpace_ComparingWithBarAtBottom_AddsItsThickness()
     {
