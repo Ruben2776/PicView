@@ -29,3 +29,4 @@ Before this, `SettingsUpdater` held ten toggles that each hand-wrote the static,
 - ADR-0015 and ADR-0017 hold; their one outside call each is gone.
 - The gallery's shared settings (Thumbnail Stretch, item sizes, spacings, the motion photo badge, Gallery Display Mode) follow the same rule on `GallerySharedSettingsViewModel`; their sliders and the badge toggle bind two-way because no Action writes them.
 - Superseded in part by ADR-0038: top most is a Window Setting of its Main Window, no longer one of the published settings (thirteen remain), so "every Main Window follows top most; the setting is app-wide" no longer holds.
+- Superseded in part by ADR-0039: the sort is a Window Setting that every tab of its window follows, so "only the active tab relists" no longer applies to it.

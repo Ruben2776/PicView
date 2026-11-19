@@ -19,3 +19,4 @@ Before this, the opening was spread over four files: `NavigationService` ran a f
 - The folder watcher does not watch a folder the tab's `ArchiveOpenings` claims as an extraction folder.
 - Writing an entry's stream to its file goes through an entry-writer adapter the owner takes: the app's copies the stream, and a test's can hold a page's write open. `HeldWriteExtraction` and the internal virtual it overrode are gone.
 - The startup order of ADR-0005 is unchanged: archives at startup still show the window and then load through Core, now through the owner.
+- Superseded in part by ADR-0039: an archive's pages are ordered by the tab's File Order, from the archive's own entry data, not by name.

@@ -24,3 +24,4 @@ Before this, every Setting was app-wide. `WindowModeSwitcher.Change` wrote Fulls
 - Two trackers stay, as before: seeding and the Settings window use `MainWindows.ActiveWindow`; storing at a multi-window App Shutdown uses `MostRecentlyActive`.
 - The settings file keeps its shape and its version; no migration.
 - Supersedes ADR-0006's "the settings only remember the mode a new window starts in", ADR-0007's account of what a closing window stores, ADR-0020's "every Main Window follows top most; the setting is app-wide" and its count of fourteen, ADR-0022's `OpenNewAsync` saving its opener's size and position, and ADR-0034's fourteen in `InitializeActionSettings`.
+- Updated by ADR-0039: the File Order joined the Window Settings, and the first tab's `FollowWindow` now runs after the tab is in the window's tabs, so a follower finds it there.

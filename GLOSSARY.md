@@ -188,7 +188,7 @@ The gallery filling the Main Window in place of the image. While it is shown, th
 _Avoid_: Full gallery, fullscreen gallery
 
 **Gallery Items**:
-The thumbnails a tab's gallery shows: one for each file the tab browses, always in the order of its file list. They change only when that list changes. A tab keeps them while it shows a Single Image, and a gallery that is closed when its tab moves to another folder drops them and loads the new folder when it opens.
+The thumbnails a tab's gallery shows: one for each file the tab browses, always in the order of its file list. They change only when that list changes, and a re-sort changes it. A tab keeps them while it shows a Single Image, and a gallery that is closed when its tab moves to another folder drops them and loads the new folder when it opens.
 _Avoid_: Thumbnails list, gallery list
 
 **Thumbnail Stretch**:
@@ -212,8 +212,12 @@ A value the user chooses that PicView remembers between runs, stored in one reco
 _Avoid_: Option, preference, flag, mirror (for the bindable), flip (for toggling)
 
 **Window Setting**:
-A Setting that belongs to one Main Window: the Window Mode, AutoFit, top most, Stay Centered, and the window's last Normal size and position. Each Main Window has its own values, in its `WindowSettings`, and changing one in a window changes nothing in another. A window is seeded from the settings record at App Start, and from its opener's values when it opens while PicView runs (or from the record when no Main Window is open). Nothing is written to the record when a Window Setting changes: the window stores them when it closes, so the last window to close decides what is stored, and at App Shutdown with several windows open, the most recently active one. A crash loses the session's changes to them. The Settings window shows and edits those of the Active Main Window. More Settings become Window Settings in later slices; until then they are App Settings.
+A Setting that belongs to one Main Window: the Window Mode, AutoFit, top most, Stay Centered, the window's last Normal size and position, and the File Order. Each Main Window has its own values, in its `WindowSettings`, and changing one in a window changes nothing in another. A window is seeded from the settings record at App Start, and from its opener's values when it opens while PicView runs (or from the record when no Main Window is open). Nothing is written to the record when a Window Setting changes: the window stores them when it closes, so the last window to close decides what is stored, and at App Shutdown with several windows open, the most recently active one. A crash loses the session's changes to them. The Settings window shows and edits those of the Active Main Window. More Settings become Window Settings in later slices; until then they are App Settings.
 _Avoid_: Per-window option, window preference, local setting
+
+**File Order**:
+The order a Main Window's tabs list their files in: a field (name, size, extension, creation, last access or last write time, or Random) and a direction. It is a Window Setting, so each Main Window has its own, and a sort from the menu sets that of its window; every tab of the window follows it, re-sorting the files it browses in memory and keeping the Shown File, and a tab that moves to another window takes that window's. Files that tie on the field go by name, then by path, so a file created or renamed lands in one place only; under Random a new file goes last and a renamed one keeps its place. An archive's pages follow it too, from what the archive says of each entry. A tab with no window uses the settings file's order.
+_Avoid_: Sort order, sort preference, sorting
 
 **App Setting**:
 A Setting that belongs to PicView as a whole: every Setting that is not a Window Setting. One value serves every Main Window, and a change is written to the record and saved at once.
