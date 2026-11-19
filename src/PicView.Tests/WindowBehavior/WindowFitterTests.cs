@@ -104,7 +104,7 @@ public class WindowFitterTests
         Dispatcher.UIThread.RunJobs();
         Assert.Equal(100, tab.Zoom.Level.CurrentValue);
 
-        vm.GlobalSettings.IsZoomedToFit.Value = true;
+        vm.WindowSettings.IsZoomedToFit.Value = true;
         Dispatcher.UIThread.RunJobs();
 
         // Upscaled to fill the 800×600 content less the reserved space, so the exact percent follows the fit
@@ -114,26 +114,71 @@ public class WindowFitterTests
     }
 
     [AvaloniaFact]
-    public void ZoomToFit_ToggledWithoutTheWriteThrough_FitsWithThePublishedValue()
+    public void ZoomToFit_ToggledInTheWindow_FitsWithItsValue_NotTheRecords()
     {
-        var settings = new GlobalSettingsViewModel(static () => ValueTask.FromResult(true));
-        var core = new CoreViewModel(null, _ => ValueTask.FromResult(new ImageModel()), settings);
-        var (fitter, vm, _) = CreateWindow(core: core);
+        var (fitter, vm, _) = CreateWindow();
         using var following = fitter.Follow();
-        // The write-through is left unstarted: the Fit is posted, so it would run after a started one anyway, and only
-        // a Fit that reads the published value fits with the new one without it
+        // Nothing writes the window's value to the record, so only a Fit that reads the window's value fits with it
         var tab = vm.WindowTabs.ActiveTab.Value;
         tab.Display(Model("a.jpg", 400, 300));
         Dispatcher.UIThread.RunJobs();
         Assert.Equal(100, tab.Zoom.Level.CurrentValue);
 
-        vm.GlobalSettings.IsZoomedToFit.Value = true;
+        vm.WindowSettings.IsZoomedToFit.Value = true;
         Dispatcher.UIThread.RunJobs();
 
         // Upscaled to fill the 800×600 content less the reserved space, so the exact percent follows the fit
         Assert.True(tab.Zoom.Level.CurrentValue > 100);
         Assert.Equal(Convert.ToInt32(tab.Zoom.FitScale * 100), tab.Zoom.Level.CurrentValue);
         Assert.Equal(400 * tab.Zoom.FitScale, vm.ImageWidth.Value, precision: 6);
+        Assert.False(Settings.ImageScaling.ZoomToFit);
+    }
+
+    [AvaloniaFact]
+    public void Fit_ZoomToFitInOneWindow_FitsOnlyThatWindow()
+    {
+        var (zoomedFitter, zoomed, _) = CreateWindow();
+        var (otherFitter, other, _) = CreateWindow();
+        using var followingZoomed = zoomedFitter.Follow();
+        using var followingOther = otherFitter.Follow();
+        var zoomedTab = zoomed.WindowTabs.ActiveTab.Value;
+        var otherTab = other.WindowTabs.ActiveTab.Value;
+        zoomedTab.Display(Model("a.jpg", 400, 300));
+        otherTab.Display(Model("a.jpg", 400, 300));
+        Dispatcher.UIThread.RunJobs();
+        var otherWidth = other.ImageWidth.Value;
+
+        zoomed.WindowSettings.IsZoomedToFit.Value = true;
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.True(zoomedTab.Zoom.Level.CurrentValue > 100);
+        Assert.Equal(400 * zoomedTab.Zoom.FitScale, zoomed.ImageWidth.Value, precision: 6);
+        Assert.Equal(100, otherTab.Zoom.Level.CurrentValue);
+        Assert.Equal(otherWidth, other.ImageWidth.Value);
+        Assert.False(other.WindowSettings.IsZoomedToFit.Value);
+    }
+
+    [AvaloniaFact]
+    public void Fit_ScrollingInOneWindow_ChangesOnlyThatWindowsScrollArea()
+    {
+        var (scrollingFitter, scrolling, scrollingWindow) = CreateShownWindow(800, 600);
+        var (otherFitter, other, otherWindow) = CreateShownWindow(800, 600);
+        using var followingScrolling = scrollingFitter.Follow();
+        using var followingOther = otherFitter.Follow();
+        scrolling.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 1600, 2400));
+        other.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 1600, 2400));
+        Dispatcher.UIThread.RunJobs();
+        var otherWidth = other.ImageWidth.Value;
+
+        scrolling.WindowSettings.IsScrollingEnabled.Value = true;
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.False(double.IsNaN(scrolling.ScrollViewerHeight.Value));
+        Assert.True(double.IsNaN(other.ScrollViewerHeight.Value));
+        Assert.Equal(otherWidth, other.ImageWidth.Value);
+        Assert.False(Settings.Zoom.ScrollEnabled);
+        scrollingWindow.Close();
+        otherWindow.Close();
     }
 
     [AvaloniaFact]
@@ -146,7 +191,7 @@ public class WindowFitterTests
         Dispatcher.UIThread.RunJobs();
         Assert.Equal(100, tab.Zoom.Level.CurrentValue);
 
-        vm.GlobalSettings.IsZoomedToFit.Value = true;
+        vm.WindowSettings.IsZoomedToFit.Value = true;
         Dispatcher.UIThread.RunJobs();
 
         Assert.True(tab.Zoom.Level.CurrentValue > 100);
@@ -164,7 +209,7 @@ public class WindowFitterTests
         var widthBefore = vm.ImageWidth.Value;
         Assert.True(double.IsNaN(vm.ScrollViewerHeight.Value));
 
-        vm.GlobalSettings.IsScrollingEnabled.Value = true;
+        vm.WindowSettings.IsScrollingEnabled.Value = true;
         Dispatcher.UIThread.RunJobs();
 
         // Scrolling fits the width and scrolls the rest of the height
@@ -541,7 +586,7 @@ public class WindowFitterTests
         Dispatcher.UIThread.RunJobs();
         fits.Clear();
 
-        vm.GlobalSettings.IsZoomedToFit.Value = true;
+        vm.WindowSettings.IsZoomedToFit.Value = true;
         Dispatcher.UIThread.RunJobs();
 
         // A window that is not AutoFit is fitted once more after layout, so one change can publish twice
@@ -1078,7 +1123,7 @@ public class WindowFitterTests
         vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 400, 300));
         Dispatcher.UIThread.RunJobs();
         // An input posts a Fit at Normal and, in a Fixed Window, one at Background after layout
-        vm.GlobalSettings.IsZoomedToFit.Value = !vm.GlobalSettings.IsZoomedToFit.Value;
+        vm.WindowSettings.IsZoomedToFit.Value = !vm.WindowSettings.IsZoomedToFit.Value;
 
         // As closing the window does: the fitter ends, the tabs are released, the posted Fits still run
         fitter.Dispose();

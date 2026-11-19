@@ -324,7 +324,8 @@ public partial class ImageViewer : UserControl, IDisposable, INavigableContent
 
         if (TopLevel.GetTopLevel(this) is MainWindow { ViewModel: { } vm })
         {
-            vm.GlobalSettings.IsScrollingEnabled.Subscribe(isScrolling =>
+            // Its window's scrolling: a tab moved to another window gets viewers made there
+            vm.WindowSettings.IsScrollingEnabled.Subscribe(isScrolling =>
             {
                 ImageScrollViewer.VerticalScrollBarVisibility = isScrolling ?
                     ScrollBarVisibility.Visible : ScrollBarVisibility.Disabled;

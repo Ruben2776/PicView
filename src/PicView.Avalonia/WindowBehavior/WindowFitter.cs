@@ -216,8 +216,9 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
             vm.WindowModeState.Skip(1).Subscribe(_ => FitSoon()),
             vm.WindowModeState.Pairwise().Subscribe(pair => CenterIfBackToNormalWithAutoFit(vm, pair.Previous,
                 pair.Current)),
-            vm.GlobalSettings.IsZoomedToFit.Skip(1).Subscribe(_ => FitSoon()),
-            vm.GlobalSettings.IsScrollingEnabled.Skip(1).Subscribe(_ => FitSoon()),
+            // The window's own Zoom to Fit and scrolling; another window's toggle fits nothing here
+            vm.WindowSettings.IsZoomedToFit.Skip(1).Subscribe(_ => FitSoon()),
+            vm.WindowSettings.IsScrollingEnabled.Skip(1).Subscribe(_ => FitSoon()),
             // Only the shown tab's pair
             vm.WindowTabs.ActiveTab.Select(static t => t.IsShowingPair.Skip(1)).Switch()
                 .Subscribe(_ => FitSoon()),
@@ -629,9 +630,9 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
             SecondImageHeight = sizes.SecondHeight,
             QuarterTurns = sizes.QuarterTurns,
             Mode = state.FitMode,
-            // Read as published, as the fitter follows before the write-through starts (ADR-0034)
-            ZoomToFit = vm.GlobalSettings.IsZoomedToFit.CurrentValue,
-            ScrollEnabled = vm.GlobalSettings.IsScrollingEnabled.CurrentValue,
+            // The window's own values as published; nothing writes them to the record until the window closes
+            ZoomToFit = vm.WindowSettings.IsZoomedToFit.CurrentValue,
+            ScrollEnabled = vm.WindowSettings.IsScrollingEnabled.CurrentValue,
             Screen = screen,
             ScreenMargin = vm.GlobalSettings.WindowMargin.CurrentValue,
             WindowContentWidth = contentSize.Width,

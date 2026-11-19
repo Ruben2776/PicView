@@ -29,7 +29,11 @@ public partial class SettingBindingContractTests
             foreach (Match match in IsCheckedBindingRegex().Matches(text))
             {
                 var binding = match.Value;
-                if (!binding.Contains("GlobalSettings.", StringComparison.Ordinal))
+                // A Main Window's own settings beside the Action that toggles them; one with no Action, as Stay
+                // Centered in the Settings window, is written by its control
+                if (!binding.Contains("GlobalSettings.", StringComparison.Ordinal) &&
+                    !(binding.Contains("WindowSettings.", StringComparison.Ordinal) &&
+                      ElementAt(text, match.Index).Contains("Command=", StringComparison.Ordinal)))
                 {
                     continue;
                 }
@@ -48,9 +52,17 @@ public partial class SettingBindingContractTests
             }
         }
 
-        Assert.True(total > 0, "No IsChecked binding to GlobalSettings was found; the scan is broken.");
+        Assert.True(total > 0, "No IsChecked binding to a published setting was found; the scan is broken.");
         Assert.True(offenders.Count == 0, "IsChecked bindings to a published setting without Mode=OneWay:\n" +
                                           string.Join("\n", offenders));
+    }
+
+    // The start tag around index; an attribute holds no '<' or '>'
+    private static string ElementAt(string text, int index)
+    {
+        var start = text.LastIndexOf('<', index);
+        var end = text.IndexOf('>', index);
+        return text[start..(end + 1)];
     }
 
     private static bool IsInsideComment(string text, int index)

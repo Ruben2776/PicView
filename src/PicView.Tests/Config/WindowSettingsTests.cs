@@ -387,4 +387,15 @@ public class WindowSettingsTests
 
         Assert.Equal("hide", text.Value);
     }
+
+    [Fact]
+    public void Dispose_MarksTheSettingsDisposed()
+    {
+        var settings = WindowSettings.FromRecord(GetDefaults());
+        Assert.False(settings.IsDisposed);
+
+        settings.Dispose();
+
+        Assert.True(settings.IsDisposed);
+    }
 }

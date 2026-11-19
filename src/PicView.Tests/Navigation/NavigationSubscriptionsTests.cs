@@ -215,7 +215,7 @@ public class NavigationSubscriptionsTests
             var causes = new List<FitCause>();
             using var listening = window.WindowFitter.Fits.Subscribe(fitted => causes.Add(fitted.Cause));
 
-            vm.GlobalSettings.IsZoomedToFit.Value = !vm.GlobalSettings.IsZoomedToFit.Value;
+            vm.WindowSettings.IsZoomedToFit.Value = !vm.WindowSettings.IsZoomedToFit.Value;
             Dispatcher.UIThread.RunJobs();
 
             Assert.Contains(FitCause.Input, causes);

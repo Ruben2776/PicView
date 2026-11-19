@@ -6,7 +6,7 @@ using R3;
 namespace PicView.Tests.Config;
 
 /// <summary>
-/// The eleven toggled settings publish their changes (ADR-0020): each writes its stored value before any
+/// The nine toggled settings publish their changes (ADR-0020): each writes its stored value before any
 /// subscriber hears of it, and a change saves the settings once, however many land during a save.
 /// </summary>
 [Collection("Sequential")]
@@ -32,8 +32,6 @@ public class GlobalSettingsViewModelTests
 
     public static TheoryData<string, Func<GlobalSettingsViewModel, BindableReactiveProperty<bool>>, Func<bool>> ActionSettings => new()
     {
-        { "Scrolling", s => s.IsScrollingEnabled, () => Settings.Zoom.ScrollEnabled },
-        { "ZoomToFit", s => s.IsZoomedToFit, () => Settings.ImageScaling.ZoomToFit },
         { "Subdirectories", s => s.IsIncludingSubdirectories, () => Settings.Sorting.IncludeSubDirectories },
         { "FileHistory", s => s.IsFileHistoryEnabled, () => Settings.Navigation.IsFileHistoryEnabled },
         { "FullPath", s => s.IsShowingFullPathInTitleBar, () => Settings.UIProperties.ShowFullPathInTitleBar },
@@ -200,8 +198,8 @@ public class GlobalSettingsViewModelTests
         settings.InitializeExtraSettings();
 
         settings.IsFileHistoryEnabled.Value = !Settings.Navigation.IsFileHistoryEnabled; // save 1 starts and is held
-        settings.IsScrollingEnabled.Value = true; // two changes land while it runs
-        settings.IsZoomedToFit.Value = true;
+        settings.IsShowingTaskbarProgress.Value = !Settings.UIProperties.IsTaskbarProgressEnabled; // two changes land while it runs
+        settings.IsOpeningInSameWindow.Value = !Settings.UIProperties.OpenInSameWindow;
         Assert.Equal(1, saves);
         gate.SetResult(true);
         await settings.Saving;
@@ -226,7 +224,7 @@ public class GlobalSettingsViewModelTests
 
         settings.IsFileHistoryEnabled.Value = !Settings.Navigation.IsFileHistoryEnabled;
         await settings.Saving;
-        settings.IsScrollingEnabled.Value = true;
+        settings.IsShowingTaskbarProgress.Value = !Settings.UIProperties.IsTaskbarProgressEnabled;
         await settings.Saving;
 
         Assert.Equal(2, saves);
@@ -236,7 +234,6 @@ public class GlobalSettingsViewModelTests
         Func<GlobalSettingsViewModel, IReadOnlyBindableReactiveProperty<string?>>, Func<LanguageModel, string?>,
         Func<LanguageModel, string?>> Texts => new()
     {
-        { "Scrolling", s => s.IsScrollingEnabled, s => s.ScrollingText, t => t.ScrollingEnabled, t => t.ScrollingDisabled },
         { "FileHistory", s => s.IsFileHistoryEnabled, s => s.FileHistoryText, t => t.FileHistoryEnabled, t => t.FileHistoryDisabled },
         { "Interface", s => s.ShowInterface, s => s.InterfaceText, t => t.HideUI, t => t.ShowUI },
         { "BottomBar", s => s.ShowBottomBar, s => s.BottomBarText, t => t.HideBottomToolbar, t => t.ShowBottomToolbar },

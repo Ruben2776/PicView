@@ -79,8 +79,8 @@
                     Command="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).RunActionCommand}"
                     CommandParameter="{x:Static keybindings:Actions.ToggleScroll}"
                     Foreground="{DynamicResource MainTextColor}"
-                    IsChecked="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).GlobalSettings.IsScrollingEnabled.Value, Mode=OneWay}"
-                    Text="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).GlobalSettings.ScrollingText.Value,
+                    IsChecked="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).WindowSettings.IsScrollingEnabled.Value, Mode=OneWay}"
+                    Text="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).WindowSettings.ScrollingText.Value,
                                            Mode=OneWay}"
                     TextMaxWidth="155"
                     ToolTip.Tip="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).Translation.ToggleScroll.Value,
@@ -97,7 +97,7 @@
                     Command="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).RunActionCommand}"
                     CommandParameter="{x:Static keybindings:Actions.ZoomToFit}"
                     Foreground="{DynamicResource MainTextColor}"
-                    IsChecked="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).GlobalSettings.IsZoomedToFit.Value,
+                    IsChecked="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).WindowSettings.IsZoomedToFit.Value,
                                                 Mode=OneWay}"
                     Text="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).Translation.ZoomToFit.Value,
                                            Mode=OneWay}"

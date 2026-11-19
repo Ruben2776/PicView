@@ -112,8 +112,8 @@ public partial class ComparisonViewer : UserControl, INavigableContent, IDisposa
         c.FileInfoB.AsObservable().SubscribeOnUIThread(UpdateComparisonBadges, LogError(nameof(UpdateComparisonBadges)))
             .AddTo(ref _disposables);
 
-        // The scroll bar follows the setting, as the image viewer's does
-        _tab.ParentWindowContext?.GlobalSettings.IsScrollingEnabled.SubscribeOnUIThread(ShowScrolling,
+        // The scroll bar follows its window's scrolling, as the image viewer's does
+        _tab.ParentWindowContext?.WindowSettings.IsScrollingEnabled.SubscribeOnUIThread(ShowScrolling,
             LogError(nameof(ShowScrolling))).AddTo(ref _disposables);
 
         // Set with the alignment, and cleared with it
@@ -326,7 +326,7 @@ public partial class ComparisonViewer : UserControl, INavigableContent, IDisposa
             : ZoomPanControl;
 
     private void ShowScrolling() =>
-        StackScrollViewer.VerticalScrollBarVisibility = _tab.ParentWindowContext.GlobalSettings.IsScrollingEnabled.Value
+        StackScrollViewer.VerticalScrollBarVisibility = _tab.ParentWindowContext.WindowSettings.IsScrollingEnabled.Value
             ? ScrollBarVisibility.Visible
             : ScrollBarVisibility.Disabled;
 

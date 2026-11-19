@@ -241,9 +241,9 @@
                 <customControls:StyledMenuItem
                     Command="{CompiledBinding RunActionCommand}"
                     CommandParameter="{x:Static keybindings:Actions.ToggleScroll}"
-                    Header="{CompiledBinding GlobalSettings.ScrollingText.Value,
+                    Header="{CompiledBinding WindowSettings.ScrollingText.Value,
                                              Mode=OneWay}"
-                    IsChecked="{Binding GlobalSettings.IsScrollingEnabled.Value, Mode=OneWay}"
+                    IsChecked="{Binding WindowSettings.IsScrollingEnabled.Value, Mode=OneWay}"
                     ToggleType="CheckBox" />
 
                 <!--  Zoom to fit  -->
@@ -252,7 +252,7 @@
                     CommandParameter="{x:Static keybindings:Actions.ZoomToFit}"
                     Header="{CompiledBinding Translation.ZoomToFit.Value,
                                              Mode=OneWay}"
-                    IsChecked="{Binding GlobalSettings.IsZoomedToFit.Value, Mode=OneWay}"
+                    IsChecked="{Binding WindowSettings.IsZoomedToFit.Value, Mode=OneWay}"
                     ToggleType="CheckBox" />
 
                 <!--  Toggle side-by-side  -->

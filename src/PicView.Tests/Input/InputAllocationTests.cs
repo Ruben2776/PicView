@@ -4,7 +4,9 @@ using Avalonia;
 using Avalonia.Input;
 using PicView.Avalonia.Functions;
 using PicView.Avalonia.Input;
+using PicView.Core.IPlatform;
 using PicView.Core.ViewModels;
+using R3;
 using MouseButton = PicView.Avalonia.Input.MouseButton;
 
 namespace PicView.Tests.Input;
@@ -22,12 +24,15 @@ public class InputAllocationTests
     private static readonly Keybind Right = new(Key.Right);
     private static readonly Keybind Enter = new(Key.Enter);
     private static readonly Keybind F1 = new(Key.F1);
+    private static readonly Keybind Up = new(Key.Up);
 
     private static readonly Keymap Keymap = Keymap.Empty
         .Assign(Right, "Next")
         .Assign(F1, "SettingsWindow")
         .Assign(Enter, "ToggleFullscreen")
         .Assign(Enter, "Confirm")
+        .Assign(Up, "RotateRight")
+        .Assign(Up, ContextualActionHandler.Up)
         .Assign(new Keybind(MouseButton.XButton1), "Prev")
         .Assign(new Keybind(MouseButton.WheelDown), "Next")
         .Assign(new Keybind(MouseButton.WheelUp), "ZoomIn");
@@ -125,6 +130,51 @@ public class InputAllocationTests
     }
 
     [Fact]
+    public void Wheel_ScrollingOnInTheWindow_ScrollsAndAllocatesNothing()
+    {
+        // The window's scrolling is read, never the record's
+        Settings.Zoom.ScrollEnabled = false;
+        _vm.WindowSettings.IsScrollingEnabled.Value = true;
+        var router = Router(Claims.Nothing);
+        var viewer = new CountingViewer { CanScrollVertically = true };
+
+        Assert.Equal(0, AllocatedBytes(() => WheelAsync(router, new Keybind(MouseButton.WheelUp), viewer)));
+        Assert.Equal(Presses + 1, viewer.ScrollLines);
+        Assert.Equal(0, viewer.Zooms);
+    }
+
+    [Fact]
+    public void Wheel_ScrollingOffInTheWindow_ZoomsAndAllocatesNothing()
+    {
+        Settings.Zoom.ScrollEnabled = true;
+        _vm.WindowSettings.IsScrollingEnabled.Value = false;
+        var router = Router(Claims.Nothing);
+        var viewer = new CountingViewer { CanScrollVertically = true };
+
+        Assert.Equal(0, AllocatedBytes(() => WheelAsync(router, new Keybind(MouseButton.WheelUp), viewer)));
+        Assert.Equal(Presses + 1, viewer.Zooms);
+        Assert.Equal(0, viewer.ScrollLines);
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void KeyDown_ArrowThroughTheWindowsContextualActions_AllocatesNothing(bool isScrollingEnabled)
+    {
+        // The real Contextual Actions read the window's scrolling and then the viewer; an image that fits leaves Up to
+        // its ordinary Action either way, so the press never leaves this thread
+        _vm.WindowSettings.IsScrollingEnabled.Value = isScrollingEnabled;
+        var tab = new TabViewModel(_vm);
+        var viewer = new CountingViewer();
+        tab.SetViews(new ViewOf(viewer));
+        _vm.WindowTabs.ActiveTab.Value = tab;
+        var router = Router(new ContextualActionHandler(null!, _vm));
+
+        Assert.Equal(0, AllocatedBytes(() => PressAsync(router, Up)));
+        Assert.Equal(isScrollingEnabled ? Presses + 1 : 0, viewer.TallerChecks);
+    }
+
+    [Fact]
     public void GetFunctionByName_AllocatesNothing()
     {
         // The constructor only builds delegates, so its dependencies are never touched
@@ -198,15 +248,27 @@ public class InputAllocationTests
 
     private sealed class CountingViewer : IZoomScrollTarget
     {
+        private int _tallerChecks;
+
         public int Zooms { get; private set; }
 
-        public bool CanScrollVertically => false;
+        public int ScrollLines { get; private set; }
 
-        public bool IsImageTallerThanViewer => CanScrollVertically;
+        // How often the Contextual Actions asked whether the image is taller, which they ask only with scrolling on
+        public int TallerChecks => _tallerChecks;
 
-        public void ScrollLine(bool down)
+        public bool CanScrollVertically { get; init; }
+
+        public bool IsImageTallerThanViewer
         {
+            get
+            {
+                _tallerChecks++;
+                return CanScrollVertically;
+            }
         }
+
+        public void ScrollLine(bool down) => ScrollLines++;
 
         public void ScrollToHome()
         {
@@ -225,5 +287,14 @@ public class InputAllocationTests
         }
 
         public void ZoomAt(bool zoomIn, Point pointer) => Zooms++;
+    }
+
+    private sealed class ViewOf(object view) : ITabViews
+    {
+        public IReadOnlyBindableReactiveProperty<object?> View { get; } = new BindableReactiveProperty<object?>(view);
+
+        public void Dispose()
+        {
+        }
     }
 }

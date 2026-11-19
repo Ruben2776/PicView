@@ -826,6 +826,82 @@ public class AppLifecycleTests : IAsyncDisposable
     }
 
     [AvaloniaFact]
+    public async Task ZoomToFitAction_InOneMainWindow_LeavesTheOtherAlone()
+    {
+        Settings.ImageScaling.ZoomToFit = false;
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var first = app.MainWindows.Open[0];
+        var second = await app.MainWindows.OpenNewAsync(first);
+        var firstVm = ViewModelOf(first);
+        var secondVm = ViewModelOf(second);
+        var savesBefore = _sharedFiles.Saves;
+
+        await firstVm.ActionRunner!.Run(Actions.ZoomToFit);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.True(firstVm.WindowSettings.IsZoomedToFit.Value);
+        Assert.False(secondVm.WindowSettings.IsZoomedToFit.Value);
+        Assert.False(Settings.ImageScaling.ZoomToFit);
+
+        await firstVm.ActionRunner.Run(Actions.ZoomToFit);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.False(firstVm.WindowSettings.IsZoomedToFit.Value);
+        Assert.False(secondVm.WindowSettings.IsZoomedToFit.Value);
+        Assert.Equal(savesBefore, _sharedFiles.Saves);
+    }
+
+    [AvaloniaFact]
+    public async Task ScrollingAction_InOneMainWindow_LeavesTheOtherAlone()
+    {
+        Settings.Zoom.ScrollEnabled = false;
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var first = app.MainWindows.Open[0];
+        var second = await app.MainWindows.OpenNewAsync(first);
+        var firstVm = ViewModelOf(first);
+        var secondVm = ViewModelOf(second);
+        firstVm.Translation.ScrollEnabled.Value = "on";
+        firstVm.Translation.ScrollDisabled.Value = "off";
+        var savesBefore = _sharedFiles.Saves;
+
+        await firstVm.ActionRunner!.Run(Actions.ToggleScroll);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.True(firstVm.WindowSettings.IsScrollingEnabled.Value);
+        Assert.Equal("on", firstVm.WindowSettings.ScrollingText.Value);
+        Assert.False(secondVm.WindowSettings.IsScrollingEnabled.Value);
+        Assert.Equal("off", secondVm.WindowSettings.ScrollingText.Value);
+        Assert.False(Settings.Zoom.ScrollEnabled);
+        Assert.Equal(savesBefore, _sharedFiles.Saves);
+    }
+
+    [AvaloniaFact]
+    public async Task CloseAsync_StoresZoomToFitAndScrolling()
+    {
+        Settings.ImageScaling.ZoomToFit = false;
+        Settings.Zoom.ScrollEnabled = false;
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var first = app.MainWindows.Open[0];
+        var second = await app.MainWindows.OpenNewAsync(first);
+        await ViewModelOf(second).ActionRunner!.Run(Actions.ZoomToFit);
+        await ViewModelOf(second).ActionRunner!.Run(Actions.ToggleScroll);
+        Assert.False(Settings.ImageScaling.ZoomToFit);
+        Assert.False(Settings.Zoom.ScrollEnabled);
+        var savesBeforeClose = _sharedFiles.Saves;
+
+        await app.MainWindows.CloseAsync(second);
+
+        Assert.True(Settings.ImageScaling.ZoomToFit);
+        Assert.True(Settings.Zoom.ScrollEnabled);
+        Assert.Equal(savesBeforeClose + 1, _sharedFiles.Saves);
+        Assert.False(ViewModelOf(first).WindowSettings.IsZoomedToFit.Value);
+        Assert.False(ViewModelOf(first).WindowSettings.IsScrollingEnabled.Value);
+    }
+
+    [AvaloniaFact]
     public async Task TopMost_ChangedInOneMainWindow_OnlyThatWindowFollows()
     {
         Settings.WindowProperties.TopMost = false;

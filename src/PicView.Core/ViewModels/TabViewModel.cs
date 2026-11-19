@@ -91,8 +91,17 @@ public class TabViewModel : IDisposable
             .Select(settings => settings is null ? Observable.Return(withoutWindow) : SettingOf(settings, pick))
             .Switch();
 
-    private static Observable<T> SettingOf<T>(WindowSettings settings, Func<WindowSettings, Observable<T>> pick) =>
-        Observable.Create<T, (WindowSettings Settings, Func<WindowSettings, Observable<T>> Pick)>((settings, pick),
+    // A closed window's settings give nothing, and the Switch stays open, so the follower goes silent until the tab
+    // enters another window. The catch is for a window that closes between the check and the subscribe
+    private static Observable<T> SettingOf<T>(WindowSettings settings, Func<WindowSettings, Observable<T>> pick)
+    {
+        if (settings.IsDisposed)
+        {
+            return Observable.Empty<T>();
+        }
+
+        return Observable.Create<T, (WindowSettings Settings, Func<WindowSettings, Observable<T>> Pick)>(
+            (settings, pick),
             static (observer, state) =>
             {
                 try
@@ -105,6 +114,7 @@ public class TabViewModel : IDisposable
                     return Disposable.Empty;
                 }
             });
+    }
 
     /// <summary>
     /// The ordering this tab lists with now: its window's File Order (the record's for a tab without a window) with its

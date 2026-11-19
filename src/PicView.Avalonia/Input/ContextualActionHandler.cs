@@ -33,11 +33,12 @@ public sealed class ContextualActionHandler(MainWindow window, MainWindowViewMod
     public const string Right = "Right";
 
     /// <summary>
-    /// Whether Up and Down scroll <paramref name="target"/>: scrolling is on and the image is taller than the viewer.
-    /// Otherwise they fall through to rotating the image.
+    /// Whether Up and Down scroll <paramref name="target"/>: the window's scrolling,
+    /// <paramref name="isScrollingEnabled"/>, is on and the image is taller than the viewer. Otherwise they fall
+    /// through to rotating the image.
     /// </summary>
-    internal static bool ScrollsImage(IZoomScrollTarget? target) =>
-        Settings.Zoom.ScrollEnabled && target is { IsImageTallerThanViewer: true };
+    internal static bool ScrollsImage(bool isScrollingEnabled, IZoomScrollTarget? target) =>
+        isScrollingEnabled && target is { IsImageTallerThanViewer: true };
 
     public async ValueTask<bool> TryRunAsync(InputMode mode, string contextualAction)
     {
@@ -99,10 +100,15 @@ public sealed class ContextualActionHandler(MainWindow window, MainWindowViewMod
                 activeTab.Gallery.Switcher.ToggleExpanded();
                 return true;
 
-            case (InputMode.Normal, Up) when ScrollsImage(activeTab.CurrentView.Value as IZoomScrollTarget):
+            // This window's scrolling, a field read of its view model, so a key press allocates nothing
+            case (InputMode.Normal, Up)
+                when ScrollsImage(vm.WindowSettings.IsScrollingEnabled.CurrentValue,
+                    activeTab.CurrentView.Value as IZoomScrollTarget):
                 await ViewerActions.ScrollLine(vm, down: false).ConfigureAwait(false);
                 return true;
-            case (InputMode.Normal, Down) when ScrollsImage(activeTab.CurrentView.Value as IZoomScrollTarget):
+            case (InputMode.Normal, Down)
+                when ScrollsImage(vm.WindowSettings.IsScrollingEnabled.CurrentValue,
+                    activeTab.CurrentView.Value as IZoomScrollTarget):
                 await ViewerActions.ScrollLine(vm, down: true).ConfigureAwait(false);
                 return true;
             // Cancel in the Normal mode closes what Escape closes, which the KeybindRouter decides

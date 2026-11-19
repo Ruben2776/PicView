@@ -847,9 +847,9 @@
 
                     <!--  Toggle scrolling  -->
                     <customControls:StyledMenuItem
-                        Header="{CompiledBinding GlobalSettings.ScrollingText.Value,
+                        Header="{CompiledBinding WindowSettings.ScrollingText.Value,
                                                  Mode=OneWay}"
-                        IsChecked="{CompiledBinding GlobalSettings.IsScrollingEnabled.Value,
+                        IsChecked="{CompiledBinding WindowSettings.IsScrollingEnabled.Value,
                                                     Mode=OneWay}"
                         Theme="{StaticResource MainBg}"
                         ToggleType="CheckBox" />
@@ -860,7 +860,7 @@
                         CommandParameter="{x:Static keybindings:Actions.ZoomToFit}"
                         Header="{CompiledBinding Translation.ZoomToFit.Value,
                                                  Mode=OneWay}"
-                        IsChecked="{CompiledBinding GlobalSettings.IsZoomedToFit.Value,
+                        IsChecked="{CompiledBinding WindowSettings.IsZoomedToFit.Value,
                                                     Mode=OneWay}"
                         Theme="{StaticResource MainBg}"
                         ToggleType="CheckBox" />

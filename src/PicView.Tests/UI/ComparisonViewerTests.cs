@@ -418,7 +418,7 @@ public class ComparisonViewerTests
     public void ScrollDisabled_TallPair_DoesNotScroll() => WithWindow((window, vm, tab) =>
     {
         ShowTallPairFit(vm);
-        vm.GlobalSettings.IsScrollingEnabled.Value = false;
+        vm.WindowSettings.IsScrollingEnabled.Value = false;
         var viewer = Host(window, tab);
 
         Assert.False(((IZoomScrollTarget)viewer).CanScrollVertically);
@@ -427,7 +427,7 @@ public class ComparisonViewerTests
     // The fit the window gives a tall image with scrolling on: the view's size, and the image taller than it
     private static void ShowTallPairFit(MainWindowViewModel vm)
     {
-        vm.GlobalSettings.IsScrollingEnabled.Value = true;
+        vm.WindowSettings.IsScrollingEnabled.Value = true;
         vm.ScrollViewerWidth.Value = 400;
         vm.ScrollViewerHeight.Value = 300;
         vm.ImageWidth.Value = 400;

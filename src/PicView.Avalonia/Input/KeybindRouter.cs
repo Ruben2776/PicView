@@ -147,7 +147,8 @@ public sealed class KeybindRouter
             return false;
         }
 
-        if (Settings.Zoom.ScrollEnabled && viewer.CanScrollVertically)
+        // The window's own scrolling, read from what the view model already holds, so a wheel step allocates nothing
+        if (vm.WindowSettings.IsScrollingEnabled.CurrentValue && viewer.CanScrollVertically)
         {
             viewer.ScrollLine(down: keybind.MouseButton is MouseButton.WheelDown);
             return true;

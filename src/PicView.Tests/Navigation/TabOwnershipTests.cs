@@ -898,6 +898,9 @@ public class TabOwnershipTests : IDisposable
     {
         var unhandled = new ConcurrentQueue<Exception>();
         using var recording = RecordUnhandled(unhandled);
+        // Nothing decodes ahead, so a re-pair decodes the partner itself
+        Settings.Navigation.PositiveIterations = 0;
+        Settings.Navigation.NegativeIterations = 0;
         ComposeServices();
         CreateFiles();
         var window = CreateWindow();
@@ -905,21 +908,75 @@ public class TabOwnershipTests : IDisposable
         var second = window.WindowTabs.CreateTab();
         await OpenAsync(first, "a.jpg");
         await OpenAsync(second, "c.jpg");
+        // Taken out for a new window that has not opened yet, so it still has this window's settings
+        var takenOut = window.WindowTabs.CreateTab();
+        window.WindowTabs.MoveOut(takenOut);
+        var partners = (First: HoldDecode("b.jpg"), Second: HoldDecode("d.jpg"));
+        window.WindowSettings.IsSideBySide.Value = true;
+        // Both re-pairs wait for their partner as the window closes
+        await DecodeRequestedOf("b.jpg").Task.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+        await DecodeRequestedOf("d.jpg").Task.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
 
         var thrown = Record.Exception(() =>
         {
-            // A re-pair still running as the window closes: its tabs first, then its settings
-            window.WindowSettings.IsSideBySide.Value = true;
+            // As the window closes: its tabs first, then its settings
             window.WindowSettings.IsLooping.Value = true;
             window.WindowTabs.TearDown();
             window.WindowSettings.Dispose();
         });
-        await Task.Delay(100, TestContext.Current.CancellationToken);
+        partners.First.SetResult(new ImageModel { FileInfo = new FileInfo(PathOf("b.jpg")) });
+        partners.Second.SetResult(new ImageModel { FileInfo = new FileInfo(PathOf("d.jpg")) });
+        // The partners the re-pairs waited for have arrived
+        await WaitUntilAsync(() => _core.SharedCache.TryGetReady(new FileInfo(PathOf("b.jpg")), out _) &&
+                                   _core.SharedCache.TryGetReady(new FileInfo(PathOf("d.jpg")), out _));
+        // A follower of the closed window's settings, as the taken-out tab's first load subscribes: it hears nothing
+        var heard = new List<bool>();
+        using var late = takenOut.FollowWindowSetting(static w => w.IsSideBySide, false).Subscribe(heard.Add);
 
         Assert.Null(thrown);
-        Assert.DoesNotContain(unhandled, e => e is ObjectDisposedException);
+        Assert.True(window.WindowSettings.IsDisposed);
+        Assert.Empty(heard);
+        Assert.Empty(unhandled);
         Assert.True(first.IsDisposed);
         Assert.True(second.IsDisposed);
+        Assert.Null(first.SecondaryModel);
+        Assert.Null(second.SecondaryModel);
+    }
+
+    [Fact]
+    public async Task MoveTab_ToAWindowThatAgrees_DoesNothing()
+    {
+        ComposeServices();
+        CreateFiles();
+        var source = CreateWindow();
+        var target = CreateWindow();
+        var tab = source.WindowTabs.CreateTab();
+        await OpenAsync(tab, "b.jpg");
+        // Shown as a pair by a re-pair whose one shown mark is awaited, so no mark of it arrives later
+        var paired = tab.Shown.FirstAsync(TestContext.Current.CancellationToken);
+        foreach (var settings in new[] { source.WindowSettings, target.WindowSettings })
+        {
+            settings.IsSideBySide.Value = true;
+            settings.IsLooping.Value = true;
+        }
+        await paired.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+        Assert.Equal("c.jpg", tab.SecondaryModel?.FileInfo?.Name);
+        var pairStates = new ConcurrentQueue<bool>();
+        var shown = new ConcurrentQueue<ShownChange>();
+        using var pairs = tab.IsShowingPair.Skip(1).Subscribe(pairStates.Enqueue);
+        using var shownChanges = tab.Shown.Subscribe(shown.Enqueue);
+
+        source.WindowTabs.MoveTab(tab, target.WindowTabs);
+
+        Assert.Empty(pairStates);
+        Assert.True(tab.CanNavigateForwards.Value);
+        Assert.True(tab.CanNavigateBackwards.Value);
+        // A re-pair runs after any before it, so the one this change starts shows that the move started none
+        target.WindowSettings.IsSideBySide.Value = false;
+        await WaitUntilAsync(() => tab.SecondaryModel is null && !shown.IsEmpty);
+        Assert.Equal([false], pairStates);
+        Assert.Equal([ShownChange.Image], shown);
+        Assert.Equal("b.jpg", tab.FileInfo.CurrentValue?.Name);
     }
 
     [Fact]

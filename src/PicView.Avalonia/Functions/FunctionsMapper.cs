@@ -516,7 +516,7 @@ public class FunctionsMapper : IActionRunner
 
     #region Image Scaling and Window Behavior
     
-    private ValueTask ZoomToFit() => ToggleHelper.Toggle(_vm.GlobalSettings.IsZoomedToFit);
+    private ValueTask ZoomToFit() => ToggleHelper.Toggle(_vm.WindowSettings.IsZoomedToFit);
     
     /// <summary>
     /// Turns AutoFit on or off in this Main Window.

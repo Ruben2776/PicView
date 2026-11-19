@@ -60,6 +60,14 @@ public sealed class WindowSettings : IDisposable
 
     public BindableReactiveProperty<bool> IsTopMost { get; }
 
+    /// <summary>
+    /// Whether the window closed and disposed these settings: reading still works, and nothing may subscribe to them.
+    /// </summary>
+    public bool IsDisposed => _isDisposed;
+
+    // Read by a tab's follower on any thread
+    private volatile bool _isDisposed;
+
     public BindableReactiveProperty<bool> IsSideBySide { get; }
 
     public BindableReactiveProperty<bool> IsLooping { get; }
@@ -190,6 +198,7 @@ public sealed class WindowSettings : IDisposable
 
     public void Dispose()
     {
+        _isDisposed = true;
         IsTopMost.Dispose();
         IsStayingCentered.Dispose();
         FileOrder.Dispose();

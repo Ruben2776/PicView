@@ -117,8 +117,8 @@
                         Command="{CompiledBinding RunActionCommand}"
                         CommandParameter="{x:Static keybindings:Actions.ToggleScroll}"
                         Foreground="{DynamicResource MainTextColor}"
-                        IsChecked="{CompiledBinding GlobalSettings.IsScrollingEnabled.Value, Mode=OneWay}"
-                        Text="{CompiledBinding GlobalSettings.ScrollingText.Value,
+                        IsChecked="{CompiledBinding WindowSettings.IsScrollingEnabled.Value, Mode=OneWay}"
+                        Text="{CompiledBinding WindowSettings.ScrollingText.Value,
                                                Mode=OneWay}"
                         TextMaxWidth="150"
                         ToolTip.Tip="{CompiledBinding Translation.ToggleScroll.Value,
@@ -156,7 +156,7 @@
                         Command="{CompiledBinding RunActionCommand}"
                         CommandParameter="{x:Static keybindings:Actions.ZoomToFit}"
                         Foreground="{DynamicResource MainTextColor}"
-                        IsChecked="{CompiledBinding GlobalSettings.IsZoomedToFit.Value, Mode=OneWay}"
+                        IsChecked="{CompiledBinding WindowSettings.IsZoomedToFit.Value, Mode=OneWay}"
                         Text="{CompiledBinding Translation.ZoomToFit.Value,
                                                Mode=OneWay}"
                         TextMaxWidth="150"

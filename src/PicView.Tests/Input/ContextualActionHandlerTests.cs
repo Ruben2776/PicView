@@ -39,7 +39,8 @@ public class ContextualActionHandlerTests
     {
         public bool IsImageTallerThanViewer => isImageTallerThanViewer;
         public bool CanScrollVertically => isImageTallerThanViewer;
-        public void ScrollLine(bool down) { }
+        public int ScrollLines { get; private set; }
+        public void ScrollLine(bool down) => ScrollLines++;
         public void ScrollToHome() { }
         public void ScrollToEnd() { }
         public void ZoomIn() { }
@@ -150,36 +151,64 @@ public class ContextualActionHandlerTests
     [Fact]
     public void ScrollsImage_ScrollingOnAndTaller_IsTrue()
     {
+        // The window's value is passed in; the record is never read
         SetDefaults();
-        Settings.Zoom.ScrollEnabled = true;
+        Settings.Zoom.ScrollEnabled = false;
 
-        Assert.True(ContextualActionHandler.ScrollsImage(new FakeScrollTarget(isImageTallerThanViewer: true)));
+        Assert.True(ContextualActionHandler.ScrollsImage(true, new FakeScrollTarget(isImageTallerThanViewer: true)));
     }
 
     [Fact]
     public void ScrollsImage_ScrollingOnAndFits_IsFalse()
     {
         SetDefaults();
-        Settings.Zoom.ScrollEnabled = true;
 
-        Assert.False(ContextualActionHandler.ScrollsImage(new FakeScrollTarget(isImageTallerThanViewer: false)));
+        Assert.False(ContextualActionHandler.ScrollsImage(true, new FakeScrollTarget(isImageTallerThanViewer: false)));
     }
 
     [Fact]
     public void ScrollsImage_ScrollingOff_IsFalse()
     {
         SetDefaults();
-        Settings.Zoom.ScrollEnabled = false;
+        Settings.Zoom.ScrollEnabled = true;
 
-        Assert.False(ContextualActionHandler.ScrollsImage(new FakeScrollTarget(isImageTallerThanViewer: true)));
+        Assert.False(ContextualActionHandler.ScrollsImage(false, new FakeScrollTarget(isImageTallerThanViewer: true)));
     }
 
     [Fact]
     public void ScrollsImage_NoTarget_IsFalse()
     {
         SetDefaults();
-        Settings.Zoom.ScrollEnabled = true;
 
-        Assert.False(ContextualActionHandler.ScrollsImage(null));
+        Assert.False(ContextualActionHandler.ScrollsImage(true, null));
+    }
+
+    [AvaloniaFact]
+    public async Task Normal_UpWithScrollingOnInAnotherWindowOnly_IsLeftToItsActionHere_AndScrollsThere()
+    {
+        // Each window's Up reads its own scrolling, so a toggle in one leaves the other's keys their meaning
+        var (here, _) = CreateHandler(out var hereTab);
+        var (there, _) = CreateHandler(out var thereTab);
+        var hereTarget = new FakeScrollTarget(isImageTallerThanViewer: true);
+        var thereTarget = new FakeScrollTarget(isImageTallerThanViewer: true);
+        hereTab.SetViews(new FakeViews(hereTarget));
+        thereTab.SetViews(new FakeViews(thereTarget));
+        thereTab.ParentWindowContext.WindowSettings.IsScrollingEnabled.Value = true;
+
+        Assert.False(await here.TryRunAsync(InputMode.Normal, ContextualActionHandler.Up));
+        Assert.True(await there.TryRunAsync(InputMode.Normal, ContextualActionHandler.Up));
+
+        Assert.Equal(0, hereTarget.ScrollLines);
+        Assert.Equal(1, thereTarget.ScrollLines);
+        Assert.False(hereTab.ParentWindowContext.WindowSettings.IsScrollingEnabled.Value);
+    }
+
+    private sealed class FakeViews(object view) : ITabViews
+    {
+        public IReadOnlyBindableReactiveProperty<object?> View { get; } = new BindableReactiveProperty<object?>(view);
+
+        public void Dispose()
+        {
+        }
     }
 }

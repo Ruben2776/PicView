@@ -300,7 +300,7 @@ public class KeybindRouterTests
     [Fact]
     public async Task Wheel_ImageTallerThanTheViewer_ScrollsInsteadOfRunningAnAction()
     {
-        Settings.Zoom.ScrollEnabled = true;
+        _vm.WindowSettings.IsScrollingEnabled.Value = true;
         _keymap = Keymap.Empty.Assign(new Keybind(MouseButton.WheelDown), "Next");
         var viewer = new FakeViewer { CanScrollVertically = true };
 
@@ -309,6 +309,28 @@ public class KeybindRouterTests
         Assert.True(used);
         Assert.Equal(["ScrollLine(down)"], viewer.Calls);
         Assert.Empty(_calls);
+    }
+
+    [Fact]
+    public async Task Wheel_ScrollingOnInThisWindowOnly_ScrollsHere_AndZoomsThere()
+    {
+        // Each window reads its own scrolling, never the record's
+        Settings.Zoom.ScrollEnabled = false;
+        _keymap = Keymap.Empty.Assign(new Keybind(MouseButton.WheelDown), "ZoomOut");
+        var other = new MainWindowViewModel(null!, null!, null!, null!);
+        var otherRouter = new KeybindRouter(() => other, () => _state, () => _keymap,
+            _ => NoContextualActions.Instance, () => null);
+        _vm.WindowSettings.IsScrollingEnabled.Value = true;
+        var here = new FakeViewer { CanScrollVertically = true };
+        var there = new FakeViewer { CanScrollVertically = true };
+
+        await Router().WheelAsync(new Keybind(MouseButton.WheelDown), false, new Point(1, 2), here);
+        await otherRouter.WheelAsync(new Keybind(MouseButton.WheelDown), false, new Point(1, 2), there);
+
+        Assert.Equal(["ScrollLine(down)"], here.Calls);
+        Assert.Equal(["ZoomAt(out, 1, 2)"], there.Calls);
+        Assert.False(other.WindowSettings.IsScrollingEnabled.Value);
+        Assert.False(Settings.Zoom.ScrollEnabled);
     }
 
     [Fact]

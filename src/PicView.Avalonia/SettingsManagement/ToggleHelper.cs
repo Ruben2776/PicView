@@ -17,10 +17,10 @@ public static class ToggleHelper
     
     public static async ValueTask ToggleScroll(MainWindowViewModel vm, MainWindow mainWindow)
     {
-        var value = vm.GlobalSettings.IsScrollingEnabled.CurrentValue;
+        var value = vm.WindowSettings.IsScrollingEnabled.CurrentValue;
         var tip = value ? TranslationManager.Translation.ScrollingDisabled : TranslationManager.Translation.ScrollingEnabled;
         _ = TooltipHelper.ShowTooltipMessageAsync(tip, false, mainWindow, TimeSpan.FromSeconds(1.5));
-        await Toggle(vm.GlobalSettings.IsScrollingEnabled).ConfigureAwait(false);
+        await Toggle(vm.WindowSettings.IsScrollingEnabled).ConfigureAwait(false);
     }
 
     public static async ValueTask ToggleLooping(MainWindowViewModel vm, MainWindow mainWindow)
