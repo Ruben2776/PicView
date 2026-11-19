@@ -474,7 +474,7 @@
                             <!--  Sort files by last write time  -->
                             <NativeMenuItem
                                 Command="{CompiledBinding RunActionCommand}"
-                                CommandParameter="{x:Static keybindings:Actions.SortFilesByLastAccessTime}"
+                                CommandParameter="{x:Static keybindings:Actions.SortFilesByLastWriteTime}"
                                 Header="{CompiledBinding Translation.Modified.Value,
                                                          Mode=OneWay}"
                                 IsChecked="{Binding WindowTabs.IsSortedByLastWriteTime.Value, Mode=OneWay}"

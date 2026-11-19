@@ -779,7 +779,7 @@
                         <!--  Sort files by last write time  -->
                         <customControls:StyledMenuItem
                             Command="{Binding RunActionCommand}"
-                            CommandParameter="{x:Static keybindings:Actions.SortFilesByLastAccessTime}"
+                            CommandParameter="{x:Static keybindings:Actions.SortFilesByLastWriteTime}"
                             GroupName="Sort"
                             Header="{Binding Translation.Modified.Value, Mode=OneWay}"
                             IsChecked="{Binding WindowTabs.IsSortedByLastWriteTime.Value, Mode=OneWay}"
