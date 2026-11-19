@@ -73,25 +73,28 @@ public class GalleryModeSwitcherTests : IDisposable
     [Fact]
     public async Task Contract_FromExpandedAfterClosed_Closes()
     {
+        // Preset to what a stray write would not leave: giving the Expanded Gallery back remembers nothing
+        _window.StartsDocked.Value = true;
         _sut.ToggleExpanded();
 
         await _sut.Contract();
 
         Assert.Equal(GalleryMode.Closed, _sut.Mode.CurrentValue);
-        Assert.False(_window.StartsDocked.Value);
+        Assert.True(_window.StartsDocked.Value);
     }
 
     [Fact]
     public async Task Contract_FromExpandedAfterDocked_GivesBackDocked()
     {
-        _window.StartsDocked.Value = true;
+        // Preset to what a stray write would not leave: giving the Expanded Gallery back remembers nothing
+        _window.StartsDocked.Value = false;
         _sut.Start(true);
         _sut.ToggleExpanded();
 
         await _sut.Contract();
 
         Assert.Equal(GalleryMode.Docked, _sut.Mode.CurrentValue);
-        Assert.True(_window.StartsDocked.Value);
+        Assert.False(_window.StartsDocked.Value);
     }
 
     [Fact]

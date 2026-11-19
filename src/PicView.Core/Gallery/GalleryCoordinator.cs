@@ -73,7 +73,7 @@ public class GalleryCoordinator : IDisposable
         _windowSubscription = tab.CurrentWindowSettings
             .Skip(1)
             .Subscribe(OnWindowEntered,
-                DebugHelper.LogError(nameof(GalleryCoordinator), nameof(AskAgainIfTaller)));
+                DebugHelper.LogError(nameof(GalleryCoordinator), nameof(OnWindowEntered)));
     }
 
     /// <summary>

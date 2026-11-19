@@ -26,6 +26,17 @@ public partial class WindowSettingRecordReadsTests
     [GeneratedRegex(@"\b(ImageScaling|Zoom|UIProperties)[!?]?\.(ShowImageSideBySide|ZoomToFit|ScrollEnabled|Looping|ShowInterface|ShowBottomNavBar|ShowHoverNavigationBar|BgColorChoice|IsConstrainBackgroundColorEnabled)\b")]
     private static partial Regex MovedImageInterfaceBackgroundRead();
 
+    // The eight record properties of the Gallery group that moved onto the window, read or written through the
+    // record's group. The receiver must be a name the record goes by in the tree (Settings, settings,
+    // existingSettings, record, loaded, appSettings, ...); \b keeps a window's own `WindowSettings.Gallery.DockPosition`
+    // (an ObservableValue on the view model) and a tab's `Gallery` view model out, since "WindowSettings" has no word
+    // boundary before "Settings". The group also holds App Settings that stay on the record (ItemSpacing,
+    // LineSpacing, ShowMotionPhotoBadges, GalleryMouseWheelBehavior, HideGalleryAtFileCount), which are not listed.
+    // Not seen: the group held in a local first (var g = Settings.Gallery; g.DockPosition), a receiver with a name
+    // not listed here, the group and its property split across lines, or a property pattern (is { DockPosition: ... }).
+    [GeneratedRegex(@"\b(Settings|settings|record|existingSettings|appSettings|AppSettings|loaded|config|appConfig)[!?]?\.Gallery[!?]?\.(DockPosition|DockedGalleryStretchMode|ExpandedGalleryStretchMode|ExpandedGalleryDisplayMode|RowsWasLastUsedDisplayMode|DockedGalleryItemSize|ExpandedGalleryItemSize|IsGalleryDocked)\b")]
+    private static partial Regex MovedGalleryRead();
+
     private static readonly string[] SkippedSegments = ["bin", "obj", "PicView.Tests", "PicView.Benchmarks"];
     // Exempt because they read WindowSettings itself or a tool window's own remembered placement (a different
     // WindowProperties); a new entry needs the same reason. Paths are relative to src.
@@ -82,6 +93,28 @@ public partial class WindowSettingRecordReadsTests
         }
 
         return MovedImageInterfaceBackgroundRead().IsMatch(line);
+    }
+
+    // Exempt because they define the record and the window's gallery settings, seed the window's settings from the
+    // record and store them back, or validate the loaded record; a new entry needs the same reason. Paths are
+    // relative to src.
+    private static readonly string[] GalleryAllowedFiles =
+    [
+        @"PicView.Core/ViewModels/WindowSettings.cs",
+        @"PicView.Core/ViewModels/WindowGallerySettings.cs",
+        @"PicView.Core/Config/AppSettings.cs",
+        @"PicView.Core/Config/SettingsManager.cs"
+    ];
+
+    private static bool OffendsMovedGallery(string line)
+    {
+        var trimmed = line.TrimStart();
+        if (trimmed.StartsWith("//", StringComparison.Ordinal))
+        {
+            return false;
+        }
+
+        return MovedGalleryRead().IsMatch(line);
     }
 
     private static List<string> FindOffenders(Func<string, bool> offends, string[] allowedFiles)
@@ -205,5 +238,40 @@ public partial class WindowSettingRecordReadsTests
         Assert.True(offenders.Count == 0,
             "These settings belong to the window (WindowSettings), not the record:" +
             Environment.NewLine + string.Join(Environment.NewLine, offenders));
+    }
+
+    [Theory]
+    [InlineData("var p = Settings.Gallery.DockPosition;", true)]
+    [InlineData("settings.Gallery!.IsGalleryDocked = true;", true)]
+    [InlineData("var s = record.Gallery?.ExpandedGalleryItemSize;", true)]
+    [InlineData("var s = SettingsManager.Settings.Gallery.DockedGalleryItemSize;", true)]
+    [InlineData("Settings.Gallery.DockedGalleryStretchMode = x;", true)]
+    [InlineData("Settings.Gallery.ExpandedGalleryStretchMode = x;", true)]
+    [InlineData("Settings.Gallery.ExpandedGalleryDisplayMode = x;", true)]
+    [InlineData("Settings.Gallery.RowsWasLastUsedDisplayMode = x;", true)]
+    [InlineData("var i = Settings.Gallery.ItemSpacing;", false)]
+    [InlineData("var i = Settings.Gallery.LineSpacing;", false)]
+    [InlineData("var i = Settings.Gallery.ShowMotionPhotoBadges;", false)]
+    [InlineData("var i = Settings.Gallery.GalleryMouseWheelBehavior;", false)]
+    [InlineData("var i = Settings.Gallery.HideGalleryAtFileCount;", false)]
+    [InlineData("var p = vm.WindowSettings.Gallery.DockPosition.Value;", false)]
+    [InlineData("var p = WindowSettings.Gallery.IsGalleryDocked;", false)]
+    [InlineData("var p = tab.Gallery.DockPosition;", false)]
+    [InlineData("var p = windowSettings.Gallery.DockPosition;", false)]
+    [InlineData("// Settings.Gallery.DockPosition", false)]
+    [InlineData("/// Settings.Gallery.IsGalleryDocked", false)]
+    public void OffendsMovedGallery_Line_MatchesTheRule(string line, bool expected)
+    {
+        Assert.Equal(expected, OffendsMovedGallery(line));
+    }
+
+    [Fact]
+    public void ProductionCode_ReadsTheGalleryWindowSettingsOnlyThroughTheWindow()
+    {
+        var offenders = FindOffenders(OffendsMovedGallery, GalleryAllowedFiles);
+
+        Assert.True(offenders.Count == 0,
+            "The gallery's dock edge, stretch modes, display mode, item sizes and docked choice belong to the window " +
+            "(WindowSettings.Gallery), not the record:" + Environment.NewLine + string.Join(Environment.NewLine, offenders));
     }
 }

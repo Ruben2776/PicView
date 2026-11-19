@@ -1396,6 +1396,8 @@ public class TabOwnershipTests : IDisposable
         var target = CreateStartedWindow();
         var tab = source.WindowTabs.CreateTab();
         tab.Gallery.Initialize(_core.GallerySettings);
+        // A second Initialize, as a tab that moves is initialized again; the guard must keep it from subscribing twice
+        tab.Gallery.Initialize(_core.GallerySettings);
 
         source.WindowTabs.MoveTab(tab, target.WindowTabs);
         target.WindowTabs.MoveTab(tab, source.WindowTabs);
@@ -1529,6 +1531,27 @@ public class TabOwnershipTests : IDisposable
         Assert.Equal(from is GalleryMode.Expanded ? GalleryMode.Expanded : GalleryMode.Docked, appearance.Mode);
         Assert.Equal(GalleryDockPosition.Left, appearance.Dock);
         Assert.Equal(GalleryDockPosition.Left, window.WindowSettings.Gallery.DockPosition.Value);
+    }
+
+    // The edge the window already has: nothing moves, so only a Closed gallery publishes (the dock itself)
+    [Theory]
+    [InlineData(GalleryMode.Closed, 1)]
+    [InlineData(GalleryMode.Docked, 0)]
+    [InlineData(GalleryMode.Expanded, 0)]
+    public async Task DockAt_AtTheEdgeTheWindowAlreadyHas_PublishesNothingForTheEdge(GalleryMode from, int expected)
+    {
+        var window = CreateStartedWindow();
+        var tab = window.WindowTabs.ActiveTab.Value;
+        var edge = window.WindowSettings.Gallery.DockPosition.Value;
+        ShowGallery(tab, from);
+        var published = new List<GalleryAppearance>();
+        using var appearances = tab.Gallery.Appearance.AsObservable().Skip(1).Subscribe(published.Add);
+
+        await tab.Gallery.Switcher.DockAt(edge);
+
+        Assert.Equal(expected, published.Count);
+        Assert.All(published, appearance => Assert.Equal(edge, appearance.Dock));
+        Assert.Equal(edge, window.WindowSettings.Gallery.DockPosition.Value);
     }
 
     // ADR-0011: crop, a Single Image and the Gallery File Limit hide the gallery without changing its mode, so they
