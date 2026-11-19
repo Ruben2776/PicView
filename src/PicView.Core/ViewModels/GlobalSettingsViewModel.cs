@@ -7,7 +7,7 @@ using R3;
 namespace PicView.Core.ViewModels;
 
 /// <summary>
-/// The thirteen toggled settings publish their changes (ADR-0020): each is a bindable over its stored value, and the
+/// The eleven toggled settings publish their changes (ADR-0020): each is a bindable over its stored value, and the
 /// write-through here is the one writer of that stored value, followed by one coalesced save. The constructor
 /// subscribes nothing: the write-throughs start in two groups, <see cref="InitializeActionSettings"/> and
 /// <see cref="InitializeExtraSettings"/>, so a change before them writes and saves nothing.
@@ -18,10 +18,6 @@ public class GlobalSettingsViewModel
     private bool _isActionSettingsInitialized;
     private bool _isExtraSettingsInitialized;
     private readonly CoalescedSave _coalescedSave;
-
-    public BindableReactiveProperty<bool> IsLooping { get; }
-
-    public BindableReactiveProperty<bool> IsSideBySide { get; }
 
     public BindableReactiveProperty<bool> IsScrollingEnabled { get; }
 
@@ -60,14 +56,11 @@ public class GlobalSettingsViewModel
     /// </summary>
     public const double NegativeMarginReplacement = 45;
 
-    private readonly BindableReactiveProperty<string?> _loopingText = new();
     private readonly BindableReactiveProperty<string?> _scrollingText = new();
     private readonly BindableReactiveProperty<string?> _fileHistoryText = new();
     private readonly BindableReactiveProperty<string?> _interfaceText = new();
     private readonly BindableReactiveProperty<string?> _bottomBarText = new();
     private readonly BindableReactiveProperty<string?> _hoverBarText = new();
-
-    public IReadOnlyBindableReactiveProperty<string?> LoopingText => _loopingText;
 
     public IReadOnlyBindableReactiveProperty<string?> ScrollingText => _scrollingText;
 
@@ -121,8 +114,6 @@ public class GlobalSettingsViewModel
     {
         _coalescedSave = new CoalescedSave(save ?? SaveSettingsAsync, nameof(GlobalSettingsViewModel));
 
-        IsLooping = new BindableReactiveProperty<bool>(Settings.UIProperties.Looping);
-        IsSideBySide = new BindableReactiveProperty<bool>(Settings.ImageScaling.ShowImageSideBySide);
         IsScrollingEnabled = new BindableReactiveProperty<bool>(Settings.Zoom.ScrollEnabled);
         IsZoomedToFit = new BindableReactiveProperty<bool>(Settings.ImageScaling.ZoomToFit);
         IsIncludingSubdirectories = new BindableReactiveProperty<bool>(Settings.Sorting.IncludeSubDirectories);
@@ -142,7 +133,7 @@ public class GlobalSettingsViewModel
     }
 
     /// <summary>
-    /// Starts the write-throughs of the thirteen settings the Actions toggle. Idempotent and safe from any thread;
+    /// Starts the write-throughs of the eleven settings the Actions toggle. Idempotent and safe from any thread;
     /// a concurrent caller returns only after the subscriptions exist.
     /// </summary>
     public void InitializeActionSettings()
@@ -154,8 +145,6 @@ public class GlobalSettingsViewModel
                 return;
             }
 
-            Follow(IsLooping, value => Settings.UIProperties.Looping = value, rephrases: true);
-            Follow(IsSideBySide, value => Settings.ImageScaling.ShowImageSideBySide = value);
             Follow(IsScrollingEnabled, value => Settings.Zoom.ScrollEnabled = value, rephrases: true);
             Follow(IsZoomedToFit, value => Settings.ImageScaling.ZoomToFit = value);
             Follow(IsIncludingSubdirectories, value => Settings.Sorting.IncludeSubDirectories = value);
@@ -172,7 +161,7 @@ public class GlobalSettingsViewModel
     }
 
     /// <summary>
-    /// Rewrites the six menu texts whenever the language changes.
+    /// Rewrites the five menu texts whenever the language changes.
     /// </summary>
     public void FollowLanguage(Observable<Unit> languageChanged)
     {
@@ -181,12 +170,11 @@ public class GlobalSettingsViewModel
     }
 
     /// <summary>
-    /// Writes the six menu texts from the current language and the settings they follow.
+    /// Writes the five menu texts from the current language and the settings they follow.
     /// </summary>
     public void Rephrase()
     {
         var t = TranslationManager.Translation;
-        _loopingText.Value = IsLooping.Value ? t.LoopingEnabled : t.LoopingDisabled;
         _scrollingText.Value = IsScrollingEnabled.Value ? t.ScrollingEnabled : t.ScrollingDisabled;
         _fileHistoryText.Value = IsFileHistoryEnabled.Value ? t.FileHistoryEnabled : t.FileHistoryDisabled;
         _interfaceText.Value = ShowInterface.Value ? t.HideUI : t.ShowUI;

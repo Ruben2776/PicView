@@ -653,7 +653,7 @@ public class GalleryViewTests
         {
             // As the image viewer gives it the tab
             viewer.DataContext = tab;
-            tab.Services!.GlobalSettings.IsSideBySide.Value = true;
+            tab.CurrentWindowSettings.CurrentValue!.IsSideBySide.Value = true;
             tab.ImageIterator!.Initialize([new FileInfo("a.jpg"), new FileInfo("b.jpg"), new FileInfo("c.jpg")]);
 
             // The step may wait for the cache off the UI thread, so the UI thread runs its jobs until the step ends

@@ -624,9 +624,9 @@
                     <NativeMenuItem
                         Command="{CompiledBinding RunActionCommand}"
                         CommandParameter="{x:Static keybindings:Actions.ToggleLooping}"
-                        Header="{CompiledBinding GlobalSettings.LoopingText.Value,
+                        Header="{CompiledBinding WindowSettings.LoopingText.Value,
                                                  Mode=OneWay}"
-                        IsChecked="{CompiledBinding GlobalSettings.IsLooping.Value,
+                        IsChecked="{CompiledBinding WindowSettings.IsLooping.Value,
                                                     Mode=OneWay}"
                         ToggleType="CheckBox" />
 

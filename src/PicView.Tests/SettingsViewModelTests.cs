@@ -73,14 +73,14 @@ public class SettingsViewModelTests
         var settings = new GlobalSettingsViewModel(() => { saves++; return ValueTask.FromResult(true); });
         using var vm = new SettingsViewModel(new TranslationViewModel(), settings);
         using var again = new SettingsViewModel(new TranslationViewModel(), settings);
-        var looping = Settings.UIProperties.Looping;
+        var history = Settings.Navigation.IsFileHistoryEnabled;
 
         vm.WindowMargin.Value = 42;
-        settings.IsLooping.Value = !looping;
+        settings.IsFileHistoryEnabled.Value = !history;
 
         Assert.Equal(42, Settings.WindowProperties.Margin);
         Assert.Equal(1, saves);
-        Assert.Equal(looping, Settings.UIProperties.Looping);
+        Assert.Equal(history, Settings.Navigation.IsFileHistoryEnabled);
     }
 
     private static GlobalSettingsViewModel NewSettings() => StartedSettings.New();

@@ -347,9 +347,9 @@
             <customControls:StyledMenuItem
                 Command="{CompiledBinding RunActionCommand}"
                 CommandParameter="{x:Static keybindings:Actions.ToggleLooping}"
-                Header="{CompiledBinding GlobalSettings.LoopingText.Value,
+                Header="{CompiledBinding WindowSettings.LoopingText.Value,
                                          Mode=OneWay}"
-                IsChecked="{Binding GlobalSettings.IsLooping.Value, Mode=OneWay}"
+                IsChecked="{Binding WindowSettings.IsLooping.Value, Mode=OneWay}"
                 ToggleType="CheckBox" />
 
             <Separator />

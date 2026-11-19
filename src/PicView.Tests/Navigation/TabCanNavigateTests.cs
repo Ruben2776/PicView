@@ -22,7 +22,7 @@ public class TabCanNavigateTests
     {
         ObservableSystem.DefaultFrameProvider = new MockFrameProvider();
         SetDefaults();
-        _tab = new TabViewModel(null!,
+        _tab = new TabViewModel(new MainWindowViewModel(null!, null!, null!, null!),
             TestTabServices.For(new SharedImageCache(f => ValueTask.FromResult(Model(f.Name))!)));
     }
 
@@ -85,7 +85,7 @@ public class TabCanNavigateTests
     [Fact]
     public void Looping_OneFile_BothFalse()
     {
-        _tab.Services!.GlobalSettings.IsLooping.Value = true;
+        _tab.CurrentWindowSettings.CurrentValue!.IsLooping.Value = true;
 
         Browse("a.jpg");
 
@@ -99,17 +99,17 @@ public class TabCanNavigateTests
         var files = Browse("a.jpg", "b.jpg", "c.jpg");
         _tab.ImageIterator!.Initialize(files, 2);
 
-        _tab.Services!.GlobalSettings.IsLooping.Value = true;
+        _tab.CurrentWindowSettings.CurrentValue!.IsLooping.Value = true;
         Assert.True(Forwards);
 
-        _tab.Services.GlobalSettings.IsLooping.Value = false;
+        _tab.CurrentWindowSettings.CurrentValue!.IsLooping.Value = false;
         Assert.False(Forwards);
     }
 
     [Fact]
     public void SideBySide_IndexOneOfThree_ForwardsFalse()
     {
-        _tab.Services!.GlobalSettings.IsSideBySide.Value = true;
+        _tab.CurrentWindowSettings.CurrentValue!.IsSideBySide.Value = true;
         var files = Browse("a.jpg", "b.jpg", "c.jpg");
 
         _tab.ImageIterator!.Initialize(files, 1);
@@ -122,7 +122,7 @@ public class TabCanNavigateTests
     [Fact]
     public void SideBySide_TwoFilesAtFirst_BothFalse()
     {
-        _tab.Services!.GlobalSettings.IsSideBySide.Value = true;
+        _tab.CurrentWindowSettings.CurrentValue!.IsSideBySide.Value = true;
 
         Browse("a.jpg", "b.jpg");
 

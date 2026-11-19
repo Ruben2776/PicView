@@ -480,7 +480,7 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
         _tabsOwingNewImageFit.Add(tab);
         if (!ReferenceEquals(tab, vm.WindowTabs.ActiveTab.CurrentValue) ||
             vm.WindowModeState.CurrentValue.Mode is WindowMode.Minimized ||
-            PixelSizes.Of(tab, vm.WindowTabs.SharedCache, ShowsPairBeside(tab, vm.GlobalSettings)) is not { } sizes)
+            PixelSizes.Of(tab, vm.WindowTabs.SharedCache, ShowsPairBeside(tab, vm.WindowSettings)) is not { } sizes)
         {
             return;
         }
@@ -491,12 +491,13 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
     /// <summary>
     /// Whether the window fits <paramref name="tab"/>'s pair beside each other, passing the second size: side-by-side
     /// does, and a comparison only in its synced mode, as the others stack the pair, so the window fits one image.
-    /// Side-by-side is read from <paramref name="settings"/> as they publish it, or the stored setting without them.
+    /// Side-by-side is read from the window's <paramref name="settings"/> as they publish it, or the record's without
+    /// them.
     /// </summary>
-    internal static bool ShowsPairBeside(TabViewModel tab, GlobalSettingsViewModel? settings) =>
+    internal static bool ShowsPairBeside(TabViewModel tab, WindowSettings? settings) =>
         tab.Comparison is { } c
             ? c.IsSynced.Value
-            : settings?.IsSideBySide.CurrentValue ?? Settings.ImageScaling.ShowImageSideBySide;
+            : settings?.IsSideBySide.CurrentValue ?? WindowSettings.IsSideBySideWithoutWindow(Settings);
 
     private void FitSoon()
     {
@@ -533,7 +534,7 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
             return;
         }
 
-        if (PixelSizes.Of(tab, vm.WindowTabs.SharedCache, ShowsPairBeside(tab, vm.GlobalSettings)) is { } sizes)
+        if (PixelSizes.Of(tab, vm.WindowTabs.SharedCache, ShowsPairBeside(tab, vm.WindowSettings)) is { } sizes)
         {
             Fit(vm, sizes);
         }

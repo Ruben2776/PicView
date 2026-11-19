@@ -6,7 +6,7 @@ using R3;
 namespace PicView.Tests.Config;
 
 /// <summary>
-/// The thirteen toggled settings publish their changes (ADR-0020): each writes its stored value before any
+/// The eleven toggled settings publish their changes (ADR-0020): each writes its stored value before any
 /// subscriber hears of it, and a change saves the settings once, however many land during a save.
 /// </summary>
 [Collection("Sequential")]
@@ -32,8 +32,6 @@ public class GlobalSettingsViewModelTests
 
     public static TheoryData<string, Func<GlobalSettingsViewModel, BindableReactiveProperty<bool>>, Func<bool>> ActionSettings => new()
     {
-        { "Looping", s => s.IsLooping, () => Settings.UIProperties.Looping },
-        { "SideBySide", s => s.IsSideBySide, () => Settings.ImageScaling.ShowImageSideBySide },
         { "Scrolling", s => s.IsScrollingEnabled, () => Settings.Zoom.ScrollEnabled },
         { "ZoomToFit", s => s.IsZoomedToFit, () => Settings.ImageScaling.ZoomToFit },
         { "Subdirectories", s => s.IsIncludingSubdirectories, () => Settings.Sorting.IncludeSubDirectories },
@@ -120,7 +118,7 @@ public class GlobalSettingsViewModelTests
         settings.InitializeExtraSettings();
         settings.InitializeExtraSettings();
 
-        settings.IsLooping.Value = !Settings.UIProperties.Looping;
+        settings.IsFileHistoryEnabled.Value = !Settings.Navigation.IsFileHistoryEnabled;
         Assert.Equal(1, _saves);
         settings.WindowMargin.Value = 42;
         Assert.Equal(2, _saves);
@@ -132,7 +130,7 @@ public class GlobalSettingsViewModelTests
         var settings = Unstarted();
 
         Parallel.For(0, 16, _ => settings.InitializeActionSettings());
-        settings.IsLooping.Value = !Settings.UIProperties.Looping;
+        settings.IsFileHistoryEnabled.Value = !Settings.Navigation.IsFileHistoryEnabled;
 
         Assert.Equal(1, _saves);
     }
@@ -176,10 +174,10 @@ public class GlobalSettingsViewModelTests
     [Fact]
     public void Constructor_OverLoadedSettings_WritesAndSavesNothing()
     {
-        Settings.UIProperties.Looping = true;
+        Settings.Navigation.IsFileHistoryEnabled = true;
         var settings = New();
-        Assert.True(settings.IsLooping.Value);
-        Assert.True(Settings.UIProperties.Looping);
+        Assert.True(settings.IsFileHistoryEnabled.Value);
+        Assert.True(Settings.Navigation.IsFileHistoryEnabled);
         Assert.Equal(0, _saves);
     }
 
@@ -187,7 +185,7 @@ public class GlobalSettingsViewModelTests
     public void Setting_SetToTheValueItHas_SavesNothing()
     {
         var settings = New();
-        settings.IsLooping.Value = Settings.UIProperties.Looping;
+        settings.IsFileHistoryEnabled.Value = Settings.Navigation.IsFileHistoryEnabled;
         Assert.Equal(0, _saves);
     }
 
@@ -201,7 +199,7 @@ public class GlobalSettingsViewModelTests
         settings.InitializeActionSettings();
         settings.InitializeExtraSettings();
 
-        settings.IsLooping.Value = true; // save 1 starts and is held
+        settings.IsFileHistoryEnabled.Value = !Settings.Navigation.IsFileHistoryEnabled; // save 1 starts and is held
         settings.IsScrollingEnabled.Value = true; // two changes land while it runs
         settings.IsZoomedToFit.Value = true;
         Assert.Equal(1, saves);
@@ -226,7 +224,7 @@ public class GlobalSettingsViewModelTests
         settings.InitializeActionSettings();
         settings.InitializeExtraSettings();
 
-        settings.IsLooping.Value = true;
+        settings.IsFileHistoryEnabled.Value = !Settings.Navigation.IsFileHistoryEnabled;
         await settings.Saving;
         settings.IsScrollingEnabled.Value = true;
         await settings.Saving;
@@ -238,7 +236,6 @@ public class GlobalSettingsViewModelTests
         Func<GlobalSettingsViewModel, IReadOnlyBindableReactiveProperty<string?>>, Func<LanguageModel, string?>,
         Func<LanguageModel, string?>> Texts => new()
     {
-        { "Looping", s => s.IsLooping, s => s.LoopingText, t => t.LoopingEnabled, t => t.LoopingDisabled },
         { "Scrolling", s => s.IsScrollingEnabled, s => s.ScrollingText, t => t.ScrollingEnabled, t => t.ScrollingDisabled },
         { "FileHistory", s => s.IsFileHistoryEnabled, s => s.FileHistoryText, t => t.FileHistoryEnabled, t => t.FileHistoryDisabled },
         { "Interface", s => s.ShowInterface, s => s.InterfaceText, t => t.HideUI, t => t.ShowUI },
@@ -273,11 +270,11 @@ public class GlobalSettingsViewModelTests
     {
         var settings = New();
         bool? storedWhenNotified = null;
-        using var later = settings.IsLooping.Skip(1).Subscribe(_ => storedWhenNotified = Settings.UIProperties.Looping);
+        using var later = settings.IsFileHistoryEnabled.Skip(1).Subscribe(_ => storedWhenNotified = Settings.Navigation.IsFileHistoryEnabled);
 
-        settings.IsLooping.Value = !Settings.UIProperties.Looping;
+        settings.IsFileHistoryEnabled.Value = !Settings.Navigation.IsFileHistoryEnabled;
 
-        Assert.Equal(settings.IsLooping.Value, storedWhenNotified);
+        Assert.Equal(settings.IsFileHistoryEnabled.Value, storedWhenNotified);
     }
 
     [Fact]

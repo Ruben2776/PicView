@@ -81,7 +81,7 @@
                             x:Name="SecondaryOverlayImage"
                             DockPanel.Dock="Right"
                             ImageType="{Binding SecondaryImageType.Value}"
-                            IsVisible="{CompiledBinding ParentWindowContext.GlobalSettings.IsSideBySide.Value}"
+                            IsVisible="{CompiledBinding ParentWindowContext.WindowSettings.IsSideBySide.Value, Mode=OneWay}"
                             Source="{CompiledBinding SecondaryImage.Value,
                                                      Converter={StaticResource DisplayableConverter}}" />
                     </DockPanel>

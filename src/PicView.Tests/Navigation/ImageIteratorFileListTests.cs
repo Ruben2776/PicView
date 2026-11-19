@@ -47,7 +47,7 @@ public class ImageIteratorFileListTests : IDisposable
             _loaded.Enqueue(f.Name);
             return ValueTask.FromResult(new ImageModel { FileInfo = f, Image = new ProbeImage() });
         });
-        _tab = new TabViewModel(null!, TestTabServices.For(_cache, null),
+        _tab = new TabViewModel(new MainWindowViewModel(null!, null!, null!, null!), TestTabServices.For(_cache, null),
             _extraction.Writer);
         _tab.Initialize();
         _iterator = (ImageIterator)_tab.ImageIterator!;
@@ -360,7 +360,7 @@ public class ImageIteratorFileListTests : IDisposable
     [Fact]
     public void Resort_SideBySide_KeepsAFullPair()
     {
-        _tab.Services!.GlobalSettings.IsSideBySide.Value = true;
+        _tab.CurrentWindowSettings.CurrentValue!.IsSideBySide.Value = true;
         var (folder, files) = CreateFiles(("a.jpg", 30, Written), ("b.jpg", 10, Written), ("c.jpg", 20, Written),
             ("d.jpg", 15, Written));
         try
@@ -524,8 +524,8 @@ public class ImageIteratorFileListTests : IDisposable
     [Fact]
     public void Resort_SideBySideLooping_ShownFileLandsLast_PairsItWithTheFirst()
     {
-        _tab.Services!.GlobalSettings.IsSideBySide.Value = true;
-        _tab.Services.GlobalSettings.IsLooping.Value = true;
+        _tab.CurrentWindowSettings.CurrentValue!.IsSideBySide.Value = true;
+        _tab.CurrentWindowSettings.CurrentValue!.IsLooping.Value = true;
         var (folder, files) = CreateFiles(("a.jpg", 30, Written), ("b.jpg", 10, Written), ("c.jpg", 20, Written),
             ("d.jpg", 15, Written));
         try
@@ -547,7 +547,7 @@ public class ImageIteratorFileListTests : IDisposable
     [Fact]
     public void Resort_SideBySide_ShownFileNotLast_TakesItsNewPartner()
     {
-        _tab.Services!.GlobalSettings.IsSideBySide.Value = true;
+        _tab.CurrentWindowSettings.CurrentValue!.IsSideBySide.Value = true;
         var (folder, files) = CreateFiles(("a.jpg", 30, Written), ("b.jpg", 10, Written), ("c.jpg", 20, Written),
             ("d.jpg", 15, Written));
         try
@@ -608,7 +608,7 @@ public class ImageIteratorFileListTests : IDisposable
     [Fact]
     public async Task IterateToIndex_AfterAPairWithSideBySideOff_ClearsTheSecondary()
     {
-        _tab.Services!.GlobalSettings.IsSideBySide.Value = true;
+        _tab.CurrentWindowSettings.CurrentValue!.IsSideBySide.Value = true;
         var files = new List<FileInfo> { File("a.jpg"), File("b.jpg"), File("c.jpg") };
         _iterator.Initialize(files, 0);
         _tab.Display(new ImageModel { FileInfo = files[0], Image = new ProbeImage() });
@@ -617,7 +617,7 @@ public class ImageIteratorFileListTests : IDisposable
         Assert.Equal(1, _iterator.SecondaryCurrentIndex);
         Assert.NotNull(_tab.SecondaryModel);
 
-        _tab.Services!.GlobalSettings.IsSideBySide.Value = false;
+        _tab.CurrentWindowSettings.CurrentValue!.IsSideBySide.Value = false;
         await _iterator.IterateToIndexAsync(2, ct);
 
         Assert.Equal(-1, _iterator.SecondaryCurrentIndex);
@@ -627,7 +627,7 @@ public class ImageIteratorFileListTests : IDisposable
     [Fact]
     public async Task IterateToIndex_PageInsertedBeforeThePairWhileItLoads_ShowsThePair()
     {
-        _tab.Services!.GlobalSettings.IsSideBySide.Value = true;
+        _tab.CurrentWindowSettings.CurrentValue!.IsSideBySide.Value = true;
         var held = new TaskCompletionSource<ImageModel>(TaskCreationOptions.RunContinuationsAsynchronously);
         var cache = new SharedImageCache(file => file.Name == "e.jpg"
             ? new ValueTask<ImageModel>(held.Task)
@@ -734,7 +734,7 @@ public class ImageIteratorFileListTests : IDisposable
     [Fact]
     public async Task NavigateAsync_SideBySide_ShowsThePair()
     {
-        _tab.Services!.GlobalSettings.IsSideBySide.Value = true;
+        _tab.CurrentWindowSettings.CurrentValue!.IsSideBySide.Value = true;
         var files = new List<FileInfo> { File("a.jpg"), File("b.jpg"), File("c.jpg"), File("d.jpg") };
         _iterator.Initialize(files, 0);
         _tab.Display(new ImageModel { FileInfo = files[0], Image = new ProbeImage() });
@@ -749,7 +749,7 @@ public class ImageIteratorFileListTests : IDisposable
     [Fact]
     public async Task RepeatNavigate_SideBySideNext_StepsByPairs()
     {
-        _tab.Services!.GlobalSettings.IsSideBySide.Value = true;
+        _tab.CurrentWindowSettings.CurrentValue!.IsSideBySide.Value = true;
         var files = new List<FileInfo> { File("a.jpg"), File("b.jpg"), File("c.jpg"), File("d.jpg"), File("e.jpg") };
         _iterator.Initialize(files, 0);
         _tab.Display(new ImageModel { FileInfo = files[0], Image = new ProbeImage() });
@@ -763,7 +763,7 @@ public class ImageIteratorFileListTests : IDisposable
     [Fact]
     public async Task RepeatNavigate_SideBySidePrevious_StepsByPairs()
     {
-        _tab.Services!.GlobalSettings.IsSideBySide.Value = true;
+        _tab.CurrentWindowSettings.CurrentValue!.IsSideBySide.Value = true;
         var files = new List<FileInfo> { File("a.jpg"), File("b.jpg"), File("c.jpg"), File("d.jpg"), File("e.jpg") };
         _iterator.Initialize(files, 2);
         _tab.Display(new ImageModel { FileInfo = files[2], Image = new ProbeImage() });
@@ -777,7 +777,7 @@ public class ImageIteratorFileListTests : IDisposable
     [Fact]
     public async Task NavigateAsync_OneImageSideBySide_ShowsNoSecondary()
     {
-        _tab.Services!.GlobalSettings.IsSideBySide.Value = true;
+        _tab.CurrentWindowSettings.CurrentValue!.IsSideBySide.Value = true;
         var files = new List<FileInfo> { File("only.jpg") };
         _iterator.Initialize(files, 0);
         _tab.Display(new ImageModel { FileInfo = files[0], Image = new ProbeImage() });
@@ -833,9 +833,9 @@ public class ImageIteratorFileListTests : IDisposable
     [InlineData(true)]
     public async Task Next_SideBySideAtTheLastPairWhileExtracting_WaitsForThePairAfterTheShownOne(bool keyHeldDown)
     {
-        _tab.Services!.GlobalSettings.IsSideBySide.Value = true;
+        _tab.CurrentWindowSettings.CurrentValue!.IsSideBySide.Value = true;
         // Looping would otherwise go round to the first pair
-        _tab.Services!.GlobalSettings.IsLooping.Value = true;
+        _tab.CurrentWindowSettings.CurrentValue!.IsLooping.Value = true;
         var c = File("c.jpg");
         var d = File("d.jpg");
         var shown = new ImageModel { FileInfo = c, Image = new ProbeImage() };
@@ -904,7 +904,7 @@ public class ImageIteratorFileListTests : IDisposable
     [InlineData(true)]
     public async Task Next_SideBySideWithOnePageLeftWhenTheExtractionEnds_ShowsTheLastPair(bool keyHeldDown)
     {
-        _tab.Services!.GlobalSettings.IsSideBySide.Value = true;
+        _tab.CurrentWindowSettings.CurrentValue!.IsSideBySide.Value = true;
         var a = File("a.jpg");
         var b = File("b.jpg");
         _iterator.Initialize([a, b, File("c.jpg")], 0);
@@ -927,7 +927,7 @@ public class ImageIteratorFileListTests : IDisposable
     public async Task Next_LoopingAtTheLastPageWhenTheExtractionEnds_GoesRoundToTheFirst(bool keyHeldDown)
     {
         // As after an archive reopened at a page, whose pages before it come last
-        _tab.Services!.GlobalSettings.IsLooping.Value = true;
+        _tab.CurrentWindowSettings.CurrentValue!.IsLooping.Value = true;
         var c = File("c.jpg");
         _iterator.Initialize([File("a.jpg"), File("b.jpg"), c], 2);
         _tab.Display(new ImageModel { FileInfo = c, Image = new ProbeImage() });
@@ -969,13 +969,13 @@ public class ImageIteratorFileListTests : IDisposable
     [InlineData(true)]
     public async Task Next_WaitingWhenTheExtractionIsStoppedNotFinished_GivesUpAndShowsTheTitleAgain(bool keyHeldDown)
     {
-        // Looping, which goes round to the first page when the extraction counts as finished
-        _tab.Services!.GlobalSettings.IsLooping.Value = true;
         // The tab reads an archive of twelve pages, whose second page is written until the test lets it, so the
         // extraction of the pages after the start runs on
         var writer = new HeldEntryWriter("img_02.jpg");
-        var tab = new TabViewModel(null!, TestTabServices.For(_cache, null),
+        var tab = new TabViewModel(new MainWindowViewModel(null!, null!, null!, null!), TestTabServices.For(_cache, null),
             writer);
+        // Looping, which goes round to the first page when the extraction counts as finished
+        tab.CurrentWindowSettings.CurrentValue!.IsLooping.Value = true;
         tab.Initialize();
         var iterator = tab.ImageIterator!;
         var zip = CreateZip("stopped.zip", 12);
@@ -1017,7 +1017,7 @@ public class ImageIteratorFileListTests : IDisposable
     {
         // With looping, a step that counts from where the other one went goes round to the first file. Both wake on the
         // same insert at once, so the rounds give them the chance to
-        _tab.Services!.GlobalSettings.IsLooping.Value = true;
+        _tab.CurrentWindowSettings.CurrentValue!.IsLooping.Value = true;
         var shown = new ConcurrentQueue<string?>();
         using var subscription = _tab.FileInfo.Subscribe(file => shown.Enqueue(file?.Name));
         await _extraction.BeginAsync(_tab, TestDirectory);

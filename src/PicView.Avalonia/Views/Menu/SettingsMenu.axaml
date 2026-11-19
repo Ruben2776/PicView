@@ -137,7 +137,7 @@
                         Command="{CompiledBinding RunActionCommand}"
                         CommandParameter="{x:Static keybindings:Actions.ToggleLooping}"
                         Foreground="{DynamicResource MainTextColor}"
-                        Text="{CompiledBinding GlobalSettings.LoopingText.Value,
+                        Text="{CompiledBinding WindowSettings.LoopingText.Value,
                                                Mode=OneWay}"
                         TextMaxWidth="150"
                         ToolTip.Tip="{CompiledBinding Translation.ToggleLooping.Value,

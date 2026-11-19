@@ -44,8 +44,8 @@ public class LanguageChangedTests
     public void FollowLanguage_LanguageChanges_RephrasesTheMenuTexts()
     {
         var first = Model();
-        first.LoopingEnabled = "on-1";
-        first.LoopingDisabled = "off-1";
+        first.FileHistoryEnabled = "on-1";
+        first.FileHistoryDisabled = "off-1";
         var previous = TranslationManager.Swap(first);
         try
         {
@@ -54,12 +54,12 @@ public class LanguageChangedTests
             settings.FollowLanguage(translation.LanguageChanged);
 
             var second = Model();
-            second.LoopingEnabled = "on-2";
-            second.LoopingDisabled = "off-2";
+            second.FileHistoryEnabled = "on-2";
+            second.FileHistoryDisabled = "off-2";
             TranslationManager.Swap(second);
             translation.UpdateLanguage();
 
-            Assert.Contains(settings.LoopingText.Value, new[] { "on-2", "off-2" });
+            Assert.Contains(settings.FileHistoryText.Value, new[] { "on-2", "off-2" });
         }
         finally
         {

@@ -176,18 +176,18 @@ public class WindowFitterTests
     [AvaloniaFact]
     public void Follow_SideBySideTurnsOff_FitsTheOneImage()
     {
-        // The window follows whether the shown tab shows a pair, which follows side-by-side through the tab's services
+        // The window follows whether the shown tab shows a pair, which follows its window's Side-by-Side
         _core.InitializeNavigation(TestTabServices.For(_core.SharedCache, globalSettings: _core.GlobalSettings),
             new NavigationService());
         var (fitter, vm, window) = CreateShownWindow(800, 600);
         using var following = fitter.Follow();
-        vm.GlobalSettings.IsSideBySide.Value = true;
+        vm.WindowSettings.IsSideBySide.Value = true;
         var tab = vm.WindowTabs.ActiveTab.Value;
         tab.Display(Model("a.jpg", 400, 300), Model("b.jpg", 400, 300));
         Dispatcher.UIThread.RunJobs();
         var pairWidth = vm.ImageWidth.Value;
 
-        vm.GlobalSettings.IsSideBySide.Value = false;
+        vm.WindowSettings.IsSideBySide.Value = false;
         Dispatcher.UIThread.RunJobs();
 
         Assert.Equal(pairWidth / 2, vm.ImageWidth.Value, precision: 6);
@@ -197,8 +197,8 @@ public class WindowFitterTests
     [AvaloniaFact]
     public void Follow_PairWhoseSecondSizeIsNotKnownYet_WaitsInsteadOfFittingOneImage()
     {
-        _core.GlobalSettings.IsSideBySide.Value = true;
         var (fitter, vm, _) = CreateWindow();
+        vm.WindowSettings.IsSideBySide.Value = true;
         using var following = fitter.Follow();
         vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 400, 300), Model("b.jpg", 0, 0));
 

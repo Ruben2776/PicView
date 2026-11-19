@@ -203,7 +203,7 @@ public class ArchiveOpeningsTests : IDisposable
     public async Task OpenAsync_SideBySideAtTheLastPage_ExtractsThePageBeforeItWithIt()
     {
         var tab = CreateTab();
-        tab.Services!.GlobalSettings.IsSideBySide.Value = true;
+        tab.CurrentWindowSettings.CurrentValue!.IsSideBySide.Value = true;
         var zip = await CreateZipAsync("before.zip", 12);
 
         var opening = await OpenAsync(tab, zip, "img_12.jpg");

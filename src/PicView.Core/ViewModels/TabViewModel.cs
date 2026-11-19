@@ -27,25 +27,42 @@ namespace PicView.Core.ViewModels;
 /// lifecycle of resources specific to this tab instance.
 /// </para>
 /// </summary>
-public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? services = null,
-    IArchiveEntryWriter? archiveEntryWriter = null) : IDisposable
+public class TabViewModel : IDisposable
 {
+    public TabViewModel(MainWindowViewModel parentWindowContext, TabServices? services = null,
+        IArchiveEntryWriter? archiveEntryWriter = null)
+    {
+        Services = services;
+        ParentWindowContext = parentWindowContext;
+        _archiveEntryWriter = archiveEntryWriter;
+        _fileWatcherService = services?.Watcher;
+        Orientation = new TabOrientation(parentWindowContext?.Translation);
+        _currentWindowSettings = new ReactiveProperty<WindowSettings?>(parentWindowContext?.WindowSettings);
+        // Follows the window from the start, so it is the window's Side-by-Side before anything reads it
+        _isShowingPair = FollowWindowSetting(static w => w.IsSideBySide,
+                WindowSettings.IsSideBySideWithoutWindow(Settings))
+            .CombineLatest(_comparing, static (beside, compares) => beside || compares)
+            .DistinctUntilChanged()
+            .ToReadOnlyReactiveProperty();
+    }
+
     #region Tab logic
 
     /// <summary>
     /// The services this tab was created with, which are the same for every tab. Null for a tab created before they
     /// were composed.
     /// </summary>
-    internal TabServices? Services { get; } = services;
+    internal TabServices? Services { get; }
+
+    private readonly IArchiveEntryWriter? _archiveEntryWriter;
 
     /// <summary>
     /// The Main Window that owns this tab. Only that window's <see cref="TabOverviewViewModel"/> changes it, when the
     /// tab moves there.
     /// </summary>
-    public MainWindowViewModel ParentWindowContext { get; internal set; } = parentWindowContext;
+    public MainWindowViewModel ParentWindowContext { get; internal set; }
 
-    private readonly ReactiveProperty<WindowSettings?> _currentWindowSettings =
-        new(parentWindowContext?.WindowSettings);
+    private readonly ReactiveProperty<WindowSettings?> _currentWindowSettings;
 
     /// <summary>
     /// The Window Settings of the Main Window this tab is in. Publishes again when the tab enters another window;
@@ -58,6 +75,36 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
     /// one writer of a tab's window.
     /// </summary>
     internal void FollowWindow() => _currentWindowSettings.Value = ParentWindowContext?.WindowSettings;
+
+    /// <summary>
+    /// Follows one value of this tab's current window, switching when the tab enters another window; gives
+    /// <paramref name="withoutWindow"/> for a tab with no window, and never subscribes to a closed window's settings.
+    /// </summary>
+    /// <remarks>
+    /// Each window's value is published at once when the tab enters that window, so a follower catches up with the
+    /// same handler as a change. A closed window's settings are disposed and refuse a subscriber, so a tab that still
+    /// has them, as one moved out of a window that closed before the new window opened, follows nothing from them
+    /// until it enters another window.
+    /// </remarks>
+    internal Observable<T> FollowWindowSetting<T>(Func<WindowSettings, Observable<T>> pick, T withoutWindow) =>
+        _currentWindowSettings
+            .Select(settings => settings is null ? Observable.Return(withoutWindow) : SettingOf(settings, pick))
+            .Switch();
+
+    private static Observable<T> SettingOf<T>(WindowSettings settings, Func<WindowSettings, Observable<T>> pick) =>
+        Observable.Create<T, (WindowSettings Settings, Func<WindowSettings, Observable<T>> Pick)>((settings, pick),
+            static (observer, state) =>
+            {
+                try
+                {
+                    return state.Pick(state.Settings).Subscribe(observer.OnNext);
+                }
+                catch (ObjectDisposedException)
+                {
+                    observer.OnCompleted();
+                    return Disposable.Empty;
+                }
+            });
 
     /// <summary>
     /// The ordering this tab lists with now: its window's File Order (the record's for a tab without a window) with its
@@ -218,35 +265,23 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
     /// Whether this tab compares its pair. It stays on while the tab shows nothing, so the next image it shows
     /// compares. Only <see cref="SetComparing"/> writes it.
     /// </summary>
-    public IReadOnlyBindableReactiveProperty<bool> IsComparing => _pair.Comparing;
+    public IReadOnlyBindableReactiveProperty<bool> IsComparing => _comparing;
 
     /// <summary>
-    /// Whether this tab shows a pair: side-by-side, which is global, or its own comparing.
+    /// Whether this tab shows a pair: the Side-by-Side of the window it is in, or its own comparing.
     /// </summary>
-    public ReadOnlyReactiveProperty<bool> IsShowingPair => _pair.Pair;
+    public ReadOnlyReactiveProperty<bool> IsShowingPair => _isShowingPair;
 
     /// <summary>
     /// The tab's comparison, which it has exactly while it compares and shows something, or null.
     /// </summary>
     public ComparisonViewModel? Comparison => _comparison;
 
-    private readonly (BindableReactiveProperty<bool> Comparing, ReadOnlyReactiveProperty<bool> Pair) _pair =
-        MakePairState(services);
+    private readonly BindableReactiveProperty<bool> _comparing = new(false);
+    private readonly ReadOnlyReactiveProperty<bool> _isShowingPair;
 
     private ComparisonViewModel? _comparison;
     private readonly Lock _comparisonGate = new();
-
-    // Built together, as an initializer cannot read another instance member. Without services side-by-side is the
-    // stored setting
-    private static (BindableReactiveProperty<bool> Comparing, ReadOnlyReactiveProperty<bool> Pair) MakePairState(
-        TabServices? services)
-    {
-        var comparing = new BindableReactiveProperty<bool>(false);
-        var pair = services?.GlobalSettings.IsSideBySide is { } sideBySide
-            ? sideBySide.CombineLatest(comparing, static (beside, compares) => beside || compares)
-            : comparing.Select(static compares => Settings.ImageScaling.ShowImageSideBySide || compares);
-        return (comparing, pair.DistinctUntilChanged().ToReadOnlyReactiveProperty());
-    }
 
     /// <summary>
     /// Turns comparing on or off for this tab only. On while it shows something makes its <see cref="Comparison"/>;
@@ -259,7 +294,7 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
             return;
         }
 
-        _pair.Comparing.Value = on;
+        _comparing.Value = on;
         UpdateComparison(pairChanged: false);
     }
 
@@ -274,7 +309,7 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
                 return;
             }
 
-            var wanted = _pair.Comparing.Value && Shows;
+            var wanted = _comparing.Value && Shows;
             if (wanted && _comparison is null)
             {
                 _comparison = new ComparisonViewModel(Model, SecondaryModel,
@@ -617,7 +652,7 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
     /// <summary>
     /// The tab's Quarter Turn and flip.
     /// </summary>
-    public TabOrientation Orientation { get; } = new(parentWindowContext?.Translation);
+    public TabOrientation Orientation { get; }
     public BindableReactiveProperty<bool> ShouldCropBeEnabled { get; } = new(false);
     public BindableReactiveProperty<bool> ShouldOptimizeImageBeEnabled { get; } = new(false);
     public BindableReactiveProperty<bool> ShouldPrintBeEnabled { get; } = new(true);
@@ -651,7 +686,7 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
             {
                 LazyInitializer.EnsureInitialized(ref _archives, () =>
                 {
-                    var openings = new ArchiveOpenings(this, archiveEntryWriter);
+                    var openings = new ArchiveOpenings(this, _archiveEntryWriter);
                     // Replays the current state at once, while _archives is still null: that first derive reads "not
                     // extracting", which the initial state is anyway
                     _archiveStateSubscription = openings.State.AsObservable().Subscribe(_ => DeriveCanNavigate());
@@ -694,7 +729,7 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
     // Makes and keeps the tab's thumbnails, which it releases when it closes or becomes fresh
     public Thumbnails? Thumbnails => Services?.Thumbnails;
 
-    private readonly IFileWatcherService? _fileWatcherService = services?.Watcher;
+    private readonly IFileWatcherService? _fileWatcherService;
     
     public BindableReactiveProperty<int> NavigationIndex { get; } = new(0);
     public BindableReactiveProperty<int> MaxIndex { get; } = new(0);
@@ -928,43 +963,20 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
         }
     }
 
-    // The File Order of a window's settings. A closed window's settings are disposed and refuse a subscriber, so a tab
-    // that still has them, as one moved out of a window that closed before the new window opened, follows nothing
-    private static Observable<FileOrder> FileOrderOf(WindowSettings? settings)
-    {
-        if (settings is null || settings.FileOrder.IsDisposed)
-        {
-            return Observable.Empty<FileOrder>();
-        }
-
-        return Observable.Create<FileOrder, BindableReactiveProperty<FileOrder>>(settings.FileOrder,
-            static (observer, order) =>
-            {
-                try
-                {
-                    return order.Subscribe(observer.OnNext);
-                }
-                catch (ObjectDisposedException)
-                {
-                    observer.OnCompleted();
-                    return Disposable.Empty;
-                }
-            });
-    }
-
     /// <summary>
-    /// Whether a pair is shown (side-by-side or this tab's comparing) and looping, as the tab's settings publish them,
-    /// or the stored settings for a tab without them.
+    /// Whether a pair is shown (the window's Side-by-Side or this tab's comparing) and whether the window loops, as the
+    /// window the tab is in publishes them, or the record's settings for a tab without a window.
     /// </summary>
-    public (bool ShowsPair, bool Looping) PairSettings() => Services?.GlobalSettings is { } settings
-        ? (IsShowingPair.CurrentValue, settings.IsLooping.CurrentValue)
-        : (Settings.ImageScaling.ShowImageSideBySide || IsComparing.Value, Settings.UIProperties.Looping);
+    public (bool ShowsPair, bool Looping) PairSettings() => _currentWindowSettings.CurrentValue is { } window
+        ? (IsShowingPair.CurrentValue, window.IsLooping.CurrentValue)
+        : (WindowSettings.IsSideBySideWithoutWindow(Settings) || IsComparing.Value,
+            WindowSettings.IsLoopingWithoutWindow(Settings));
 
     /// <summary>
-    /// Follows the settings the tab reads, once: Looping derives Next and Prev again, showing a pair (side-by-side or
-    /// this tab's comparing) derives them and has the shown file iterated to again, including subdirectories lists
-    /// the folder again, and the File Order of the window the tab is in sorts its files again, switching to the next
-    /// window's when the tab moves there.
+    /// Follows the settings the tab reads, once: the looping of the window the tab is in derives Next and Prev again,
+    /// showing a pair (the window's Side-by-Side or this tab's comparing) derives them and has the shown file iterated
+    /// to again, including subdirectories lists the folder again, and the window's File Order sorts its files again.
+    /// The window's settings switch to the next window's when the tab moves there, which catches up in the same way.
     /// </summary>
     private void FollowSettings()
     {
@@ -977,7 +989,11 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
         // The relist reads the stored value, so the write-throughs are notified before the tab
         settings.InitializeActionSettings();
         _settingsSubscription = Disposable.Combine(
-            settings.IsLooping.Skip(1).Subscribe(_ => DeriveCanNavigate()),
+            // The first value is not skipped, as a tab whose window had closed hears only its next window's; deriving
+            // again from an unchanged looping changes nothing
+            FollowWindowSetting(static w => w.IsLooping, WindowSettings.IsLoopingWithoutWindow(Settings))
+                .DistinctUntilChanged()
+                .Subscribe(_ => DeriveCanNavigate()),
             // The pair is derived from the files, so the shown file is iterated to again, as a pair or alone
             IsShowingPair.Skip(1).SubscribeAwait(async (_, _) =>
             {
@@ -994,7 +1010,7 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
                     await Task.Run(() => Load.LoadAsync(file.FullName, new LoadOptions(Relist: true)).AsTask(), x).ConfigureAwait(false);
                 }
             }),
-            CurrentWindowSettings.Select(FileOrderOf).Switch().Subscribe(FollowFileOrder));
+            FollowWindowSetting(static w => w.FileOrder, FileOrder.FromAppSettings(Settings)).Subscribe(FollowFileOrder));
     }
 
     /// <summary>
@@ -1385,8 +1401,8 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
             _comparison?.Dispose();
             _comparison = null;
         }
-        _pair.Pair.Dispose();
-        _pair.Comparing.Dispose();
+        _isShowingPair.Dispose();
+        _comparing.Dispose();
         _viewKind.Dispose();
         _shown.Dispose();
         lock (_busyGate)

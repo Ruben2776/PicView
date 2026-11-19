@@ -166,12 +166,13 @@ public class AppLifecycleTests : IAsyncDisposable
 
         // The language loads on a background thread; the menu texts follow it (ADR-0036)
         var deadline = DateTime.UtcNow.AddSeconds(10);
-        while (string.IsNullOrEmpty(_core.GlobalSettings.LoopingText.Value) && DateTime.UtcNow < deadline)
+        var windowSettings = ViewModelOf(app.MainWindows.Open[0]).WindowSettings;
+        while (string.IsNullOrEmpty(windowSettings.LoopingText.Value) && DateTime.UtcNow < deadline)
         {
             await Task.Delay(20);
         }
 
-        Assert.False(string.IsNullOrEmpty(_core.GlobalSettings.LoopingText.Value));
+        Assert.False(string.IsNullOrEmpty(windowSettings.LoopingText.Value));
         Assert.False(string.IsNullOrEmpty(_core.GlobalSettings.InterfaceText.Value));
     }
 
@@ -183,9 +184,9 @@ public class AppLifecycleTests : IAsyncDisposable
         await app.StartAsync(settingsExists: true, []);
         await WaitUntilOpenedAsync(app.MainWindows.Open[0]);
 
-        var toggled = !_core.GlobalSettings.IsLooping.Value;
-        _core.GlobalSettings.IsLooping.Value = toggled;
-        Assert.Equal(toggled, Settings.UIProperties.Looping);
+        var toggled = !_core.GlobalSettings.IsShowingFullPathInTitleBar.Value;
+        _core.GlobalSettings.IsShowingFullPathInTitleBar.Value = toggled;
+        Assert.Equal(toggled, Settings.UIProperties.ShowFullPathInTitleBar);
     }
 
     [AvaloniaFact]
@@ -717,6 +718,111 @@ public class AppLifecycleTests : IAsyncDisposable
         Assert.False(Settings.Sorting.Ascending);
         Assert.Equal(savesBeforeClose + 1, _sharedFiles.Saves);
         Assert.Equal(new FileOrder(SortFilesBy.Name, true), ViewModelOf(first).WindowSettings.FileOrder.Value);
+    }
+
+    [AvaloniaFact]
+    public async Task SideBySideAction_InOneMainWindow_LeavesTheOtherAlone()
+    {
+        Settings.ImageScaling.ShowImageSideBySide = false;
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var first = app.MainWindows.Open[0];
+        var second = await app.MainWindows.OpenNewAsync(first);
+        var firstVm = ViewModelOf(first);
+        var secondVm = ViewModelOf(second);
+        var savesBefore = _sharedFiles.Saves;
+
+        await firstVm.ActionRunner!.Run(Actions.SideBySide);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.True(firstVm.WindowSettings.IsSideBySide.Value);
+        Assert.True(firstVm.WindowTabs.ActiveTab.CurrentValue.IsShowingPair.CurrentValue);
+        Assert.False(secondVm.WindowSettings.IsSideBySide.Value);
+        Assert.False(secondVm.WindowTabs.ActiveTab.CurrentValue.IsShowingPair.CurrentValue);
+        Assert.False(Settings.ImageScaling.ShowImageSideBySide);
+
+        await firstVm.ActionRunner.Run(Actions.SideBySide);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.False(firstVm.WindowSettings.IsSideBySide.Value);
+        Assert.False(secondVm.WindowSettings.IsSideBySide.Value);
+        Assert.Equal(savesBefore, _sharedFiles.Saves);
+    }
+
+    [AvaloniaFact]
+    public async Task LoopingAction_InOneMainWindow_LeavesTheOtherAlone()
+    {
+        Settings.UIProperties.Looping = false;
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var first = app.MainWindows.Open[0];
+        var second = await app.MainWindows.OpenNewAsync(first);
+        var firstVm = ViewModelOf(first);
+        var secondVm = ViewModelOf(second);
+        firstVm.Translation.LoopingEnabled.Value = "on";
+        firstVm.Translation.LoopingDisabled.Value = "off";
+        var savesBefore = _sharedFiles.Saves;
+
+        await firstVm.ActionRunner!.Run(Actions.ToggleLooping);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.True(firstVm.WindowSettings.IsLooping.Value);
+        Assert.Equal("on", firstVm.WindowSettings.LoopingText.Value);
+        Assert.True(firstVm.WindowTabs.ActiveTab.CurrentValue.PairSettings().Looping);
+        Assert.False(secondVm.WindowSettings.IsLooping.Value);
+        Assert.Equal("off", secondVm.WindowSettings.LoopingText.Value);
+        Assert.False(secondVm.WindowTabs.ActiveTab.CurrentValue.PairSettings().Looping);
+        Assert.False(Settings.UIProperties.Looping);
+        Assert.Equal(savesBefore, _sharedFiles.Saves);
+    }
+
+    [AvaloniaFact]
+    public async Task NewWindowFromOneWithSideBySide_StartsWithIt_AndTheRecordIsUntouchedUntilClose()
+    {
+        Settings.ImageScaling.ShowImageSideBySide = false;
+        Settings.UIProperties.Looping = false;
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var first = app.MainWindows.Open[0];
+        var firstVm = ViewModelOf(first);
+        await firstVm.ActionRunner!.Run(Actions.SideBySide);
+        await firstVm.ActionRunner.Run(Actions.ToggleLooping);
+
+        var opened = await app.MainWindows.OpenNewAsync(first);
+        var openedVm = ViewModelOf(opened);
+
+        Assert.True(openedVm.WindowSettings.IsSideBySide.Value);
+        Assert.True(openedVm.WindowSettings.IsLooping.Value);
+        Assert.True(openedVm.WindowTabs.ActiveTab.CurrentValue.IsShowingPair.CurrentValue);
+        Assert.False(Settings.ImageScaling.ShowImageSideBySide);
+        Assert.False(Settings.UIProperties.Looping);
+
+        await app.MainWindows.CloseAsync(opened);
+
+        Assert.True(Settings.ImageScaling.ShowImageSideBySide);
+        Assert.True(Settings.UIProperties.Looping);
+    }
+
+    [AvaloniaFact]
+    public async Task CloseAsync_StoresSideBySideAndLooping()
+    {
+        Settings.ImageScaling.ShowImageSideBySide = false;
+        Settings.UIProperties.Looping = false;
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var first = app.MainWindows.Open[0];
+        var second = await app.MainWindows.OpenNewAsync(first);
+        await ViewModelOf(second).ActionRunner!.Run(Actions.SideBySide);
+        await ViewModelOf(second).ActionRunner!.Run(Actions.ToggleLooping);
+        var savesBeforeClose = _sharedFiles.Saves;
+
+        await app.MainWindows.CloseAsync(second);
+
+        Assert.True(Settings.ImageScaling.ShowImageSideBySide);
+        Assert.True(Settings.UIProperties.Looping);
+        Assert.Equal(savesBeforeClose + 1, _sharedFiles.Saves);
+        Assert.False(ViewModelOf(first).WindowSettings.IsSideBySide.Value);
+        Assert.False(ViewModelOf(first).WindowSettings.IsLooping.Value);
     }
 
     [AvaloniaFact]

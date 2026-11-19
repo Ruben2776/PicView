@@ -219,7 +219,7 @@ public partial class ZoomPreviewer : UserControl
 
         OverlayImage.Width = model.PixelWidth * defaultHeight /
                              model.PixelHeight;
-        if (!Settings.ImageScaling.ShowImageSideBySide)
+        if (!vm.WindowSettings.IsSideBySide.CurrentValue)
         {
             SecondaryOverlayImage.Width = 0;
             return;

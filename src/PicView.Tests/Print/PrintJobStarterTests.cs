@@ -133,7 +133,7 @@ public class PrintJobStarterTests : IDisposable
     [AvaloniaFact]
     public void PrintAndSaveAsPdf_SideBySide_DoNothing()
     {
-        Settings.ImageScaling.ShowImageSideBySide = true;
+        _vm.WindowSettings.IsSideBySide.Value = true;
         Settings.UIProperties.ShowPrintPreview = true;
         var pathPicker = new StubSavePathPicker(Path.Combine(_tempDir, "saved.pdf"));
         var starter = CreateStarter(new PrintWindowProperties(), pathPicker);

@@ -319,7 +319,7 @@
                         Command="{Binding RunActionCommand}"
                         CommandParameter="{x:Static keybindings:Actions.SideBySide}"
                         Header="{Binding Translation.SideBySide.Value, Mode=OneWay}"
-                        IsChecked="{Binding GlobalSettings.IsSideBySide.Value, Mode=OneWay}"
+                        IsChecked="{Binding WindowSettings.IsSideBySide.Value, Mode=OneWay}"
                         Theme="{StaticResource MainBg}"
                         ToggleType="CheckBox" />
 
@@ -839,9 +839,9 @@
                     <customControls:StyledMenuItem
                         Command="{CompiledBinding RunActionCommand}"
                         CommandParameter="{x:Static keybindings:Actions.ToggleLooping}"
-                        Header="{CompiledBinding GlobalSettings.LoopingText.Value,
+                        Header="{CompiledBinding WindowSettings.LoopingText.Value,
                                                  Mode=OneWay}"
-                        IsChecked="{Binding GlobalSettings.IsLooping.Value, Mode=OneWay}"
+                        IsChecked="{Binding WindowSettings.IsLooping.Value, Mode=OneWay}"
                         Theme="{StaticResource MainBg}"
                         ToggleType="CheckBox" />
 

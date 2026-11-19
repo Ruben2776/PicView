@@ -115,8 +115,8 @@
                     Command="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).RunActionCommand}"
                     CommandParameter="{x:Static keybindings:Actions.ToggleLooping}"
                     Foreground="{DynamicResource MainTextColor}"
-                    IsChecked="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).GlobalSettings.IsLooping.Value, Mode=OneWay}"
-                    Text="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).GlobalSettings.LoopingText.Value,
+                    IsChecked="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).WindowSettings.IsLooping.Value, Mode=OneWay}"
+                    Text="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).WindowSettings.LoopingText.Value,
                                            Mode=OneWay}"
                     TextMaxWidth="155"
                     ToolTip.Tip="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).Translation.ToggleScroll.Value,

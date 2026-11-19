@@ -278,7 +278,7 @@ public class CompareBarTests
     public void CompareBar_SideBySideOnly_IsNotShown() => WithWindow((window, vm, tab) =>
     {
         tab.Display(BitmapModel("a.jpg"), BitmapModel("b.jpg"));
-        vm.GlobalSettings.IsSideBySide.Value = true;
+        vm.WindowSettings.IsSideBySide.Value = true;
         window.Content = ViewOf(tab);
         Settle(window);
 
@@ -502,7 +502,7 @@ public class CompareBarTests
         Dispatcher.UIThread.RunJobs();
 
         Assert.False(tab.IsComparing.Value);
-        Assert.False(vm.GlobalSettings.IsSideBySide.Value);
+        Assert.False(vm.WindowSettings.IsSideBySide.Value);
     });
 
     [AvaloniaTheory]

@@ -398,7 +398,7 @@ public class ImageIterator(SharedImageCache cache, Thumbnails thumbnails, TabVie
         var (showsPair, looping) = PairSettings();
         var (iteration, isReversed) = showsPair
             ? SideBySidePair.Navigate(from.Index, from.Files.Length, navigateTo, skipAmount, looping)
-            : IterationHelper.GetIteration(from.Index, from.Files.Length, navigateTo, skipAmount);
+            : IterationHelper.GetIteration(from.Index, from.Files.Length, navigateTo, skipAmount, looping);
         IsReversed = isReversed;
         if (ShouldNavigateTiffEntry(navigateTo, skipAmount))
         {
@@ -583,7 +583,8 @@ public class ImageIterator(SharedImageCache cache, Thumbnails thumbnails, TabVie
 
     public async ValueTask NavigateByIncrementsAsync(SkipAmount skipAmount, bool forwards, CancellationTokenSource ct)
     {
-        var (iteration, isReversed) = IterationHelper.GetIteration(CurrentIndex, Files.Count, forwards ? NavigateTo.Next : NavigateTo.Previous, skipAmount);
+        var (iteration, isReversed) = IterationHelper.GetIteration(CurrentIndex, Files.Count,
+            forwards ? NavigateTo.Next : NavigateTo.Previous, skipAmount, PairSettings().Looping);
         IsReversed = isReversed;
         await SkipToIndexAsync(iteration, ct).ConfigureAwait(false);
     }
@@ -631,7 +632,7 @@ public class ImageIterator(SharedImageCache cache, Thumbnails thumbnails, TabVie
         var (showsPair, looping) = PairSettings();
         var (iteration, isReversed) = showsPair
             ? SideBySidePair.Navigate(from.Index, from.Files.Length, to, SkipAmount.One, looping)
-            : IterationHelper.GetIteration(from.Index, from.Files.Length, to, SkipAmount.One);
+            : IterationHelper.GetIteration(from.Index, from.Files.Length, to, SkipAmount.One, looping);
         IsReversed = isReversed;
         if (ShouldNavigateTiffEntry(to, SkipAmount.One))
         {

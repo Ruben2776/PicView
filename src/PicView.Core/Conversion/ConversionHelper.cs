@@ -48,6 +48,11 @@ public static class ConversionHelper
         }
     }
     
+    /// <summary>
+    /// Whether the tab can print: it shows an image and the window it is in does not show images side by side.
+    /// </summary>
     public static bool DetermineIfPrintMenuItemShouldBeEnabled(TabViewModel tab) =>
-        tab.Image.CurrentValue is not null && !Settings.ImageScaling.ShowImageSideBySide;
+        tab.Image.CurrentValue is not null &&
+        !(tab.CurrentWindowSettings.CurrentValue?.IsSideBySide.CurrentValue ??
+          WindowSettings.IsSideBySideWithoutWindow(Settings));
 }

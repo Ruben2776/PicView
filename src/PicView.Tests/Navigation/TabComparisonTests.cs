@@ -24,7 +24,7 @@ public class TabComparisonTests
 
     private static SharedImageCache Cache() => new(f => ValueTask.FromResult(Model(f.Name))!);
 
-    private static TabViewModel NewTab(TabServices services) => new(null!, services);
+    private static TabViewModel NewTab(TabServices services) => new(new MainWindowViewModel(null!, null!, null!, null!), services);
 
     private static ImageModel Model(string name) => new()
     {
@@ -173,7 +173,7 @@ public class TabComparisonTests
     [InlineData(true, true, true)]
     public void IsShowingPair_SideBySideOrComparing_IsEither(bool sideBySide, bool comparing, bool expected)
     {
-        _tab.Services!.GlobalSettings.IsSideBySide.Value = sideBySide;
+        _tab.CurrentWindowSettings.CurrentValue!.IsSideBySide.Value = sideBySide;
 
         _tab.SetComparing(comparing);
 
@@ -187,7 +187,7 @@ public class TabComparisonTests
         var emitted = new List<bool>();
         using var _ = _tab.IsShowingPair.Skip(1).Subscribe(emitted.Add);
 
-        _tab.Services!.GlobalSettings.IsSideBySide.Value = true;
+        _tab.CurrentWindowSettings.CurrentValue!.IsSideBySide.Value = true;
         _tab.SetComparing(true);
 
         Assert.DoesNotContain(false, emitted);
@@ -200,7 +200,7 @@ public class TabComparisonTests
         _tab.Display(Model("a.jpg"), Model("b.jpg"));
         _tab.SetComparing(true);
 
-        _tab.Services!.GlobalSettings.IsSideBySide.Value = true;
+        _tab.CurrentWindowSettings.CurrentValue!.IsSideBySide.Value = true;
 
         Assert.True(_tab.IsComparing.Value);
         Assert.NotNull(_tab.Comparison);

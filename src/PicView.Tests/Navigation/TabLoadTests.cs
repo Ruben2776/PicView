@@ -1218,12 +1218,12 @@ public class TabLoadTests : IDisposable
         await tab.Load.LoadAsync(a);
         Assert.Null(tab.SecondaryModel);
 
-        tab.Services!.GlobalSettings.IsSideBySide.Value = true;
+        tab.CurrentWindowSettings.CurrentValue!.IsSideBySide.Value = true;
         await WaitUntil(() => tab.SecondaryModel?.FileInfo?.FullName == b, () => "the pair");
         Assert.Equal(a, tab.Model.FileInfo?.FullName);
         Assert.False(tab.CanNavigateForwards.Value);
 
-        tab.Services.GlobalSettings.IsSideBySide.Value = false;
+        tab.CurrentWindowSettings.CurrentValue!.IsSideBySide.Value = false;
         await WaitUntil(() => tab.SecondaryModel is null, () => "the single image");
         Assert.Equal(a, tab.Model.FileInfo?.FullName);
         Assert.True(tab.CanNavigateForwards.Value);
@@ -1238,12 +1238,12 @@ public class TabLoadTests : IDisposable
         await tab.Load.LoadAsync(b);
 
         // A pair cannot start at the last file, so the pair ending at it shows, as the iterator has always done
-        tab.Services!.GlobalSettings.IsSideBySide.Value = true;
+        tab.CurrentWindowSettings.CurrentValue!.IsSideBySide.Value = true;
         await WaitUntil(() => tab.SecondaryModel?.FileInfo?.FullName == b, () => "the pair");
         Assert.Equal(a, tab.Model.FileInfo?.FullName);
         Assert.False(tab.CanNavigateForwards.Value);
 
-        tab.Services.GlobalSettings.IsSideBySide.Value = false;
+        tab.CurrentWindowSettings.CurrentValue!.IsSideBySide.Value = false;
         await WaitUntil(() => tab.SecondaryModel is null, () => "the single image");
         Assert.Equal(a, tab.Model.FileInfo?.FullName);
         Assert.True(tab.CanNavigateForwards.Value);
@@ -1269,7 +1269,7 @@ public class TabLoadTests : IDisposable
 
         if (sideBySide)
         {
-            tab.Services!.GlobalSettings.IsSideBySide.Value = true;
+            tab.CurrentWindowSettings.CurrentValue!.IsSideBySide.Value = true;
         }
         else
         {
@@ -1422,7 +1422,7 @@ public class TabLoadTests : IDisposable
         var a = await WriteImageAsync("a.jpg");
         var b = await WriteImageAsync("b.jpg");
         var tab = CreateTab(_testDirectory);
-        tab.Services!.GlobalSettings.IsSideBySide.Value = true;
+        tab.CurrentWindowSettings.CurrentValue!.IsSideBySide.Value = true;
 
         var result = await tab.Load.LoadAsync(b);
 
@@ -1441,7 +1441,7 @@ public class TabLoadTests : IDisposable
         var b = await WriteImageAsync("b.jpg");
         var c = await WriteImageAsync("c.jpg");
         var tab = CreateTab(_testDirectory);
-        tab.Services!.GlobalSettings.IsSideBySide.Value = true;
+        tab.CurrentWindowSettings.CurrentValue!.IsSideBySide.Value = true;
         await tab.Load.LoadAsync(a);
 
         var result = await tab.Load.LoadAsync(c);

@@ -71,5 +71,5 @@ public sealed class PrintJobStarter(
     }
 
     private static bool HasPrintJob(MainWindowViewModel vm) =>
-        !Settings.ImageScaling.ShowImageSideBySide && vm.WindowTabs.ActiveTab.CurrentValue.Image.CurrentValue is Bitmap;
+        !vm.WindowSettings.IsSideBySide.CurrentValue && vm.WindowTabs.ActiveTab.CurrentValue.Image.CurrentValue is Bitmap;
 }

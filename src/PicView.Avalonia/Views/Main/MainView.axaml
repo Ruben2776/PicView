@@ -230,9 +230,9 @@
                 <customControls:StyledMenuItem
                     Command="{CompiledBinding RunActionCommand}"
                     CommandParameter="{x:Static keybindings:Actions.ToggleLooping}"
-                    Header="{CompiledBinding GlobalSettings.LoopingText.Value,
+                    Header="{CompiledBinding WindowSettings.LoopingText.Value,
                                              Mode=OneWay}"
-                    IsChecked="{Binding GlobalSettings.IsLooping.Value, Mode=OneWay}"
+                    IsChecked="{Binding WindowSettings.IsLooping.Value, Mode=OneWay}"
                     ToggleType="CheckBox" />
 
                 <Separator />
@@ -261,7 +261,7 @@
                     CommandParameter="{x:Static keybindings:Actions.SideBySide}"
                     Header="{CompiledBinding Translation.SideBySide.Value,
                                              Mode=OneWay}"
-                    IsChecked="{Binding GlobalSettings.IsSideBySide.Value, Mode=OneWay}"
+                    IsChecked="{Binding WindowSettings.IsSideBySide.Value, Mode=OneWay}"
                     ToggleType="CheckBox" />
 
                 <Separator />

@@ -22,7 +22,7 @@ public class ComparisonPairTests
         SetDefaults();
 
         var cache = new SharedImageCache(f => ValueTask.FromResult(new ImageModel { FileInfo = f }));
-        _tab = new TabViewModel(null!, TestTabServices.For(cache, null));
+        _tab = new TabViewModel(new MainWindowViewModel(null!, null!, null!, null!), TestTabServices.For(cache, null));
         _tab.Initialize();
         _iterator = (ImageIterator)_tab.ImageIterator!;
         _tab.SetComparing(true);
@@ -77,7 +77,7 @@ public class ComparisonPairTests
     public async Task SwitchingSideBySideToComparison_KeepsThePair()
     {
         _tab.SetComparing(false);
-        _tab.Services!.GlobalSettings.IsSideBySide.Value = true;
+        _tab.CurrentWindowSettings.CurrentValue!.IsSideBySide.Value = true;
         _iterator.Initialize(Files("a.jpg", "b.jpg", "c.jpg"), 0);
         await _iterator.IterateToIndexAsync(0, new CancellationTokenSource());
 

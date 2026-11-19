@@ -4,7 +4,10 @@ namespace PicView.Core.Navigation;
 
 public static class IterationHelper
 {
-    public static (int, bool) GetIteration(int index, int count, NavigateTo navigation, SkipAmount skipAmount)
+    /// <param name="looping">Whether Next past the last file goes to the first, and Prev before the first to the
+    /// last: the looping of the window the tab is in.</param>
+    public static (int, bool) GetIteration(int index, int count, NavigateTo navigation, SkipAmount skipAmount,
+        bool looping)
     {
         if (count is 0)
         {
@@ -20,7 +23,7 @@ public static class IterationHelper
                 var indexChange = navigation == NavigateTo.Next ? skip : -skip;
                 var isReversed = navigation == NavigateTo.Previous;
 
-                if (Settings.UIProperties.Looping)
+                if (looping)
                 {
                     var loopedIndex = (index + indexChange) % count;
                     if (loopedIndex < 0)

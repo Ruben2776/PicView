@@ -22,11 +22,11 @@ public class ImageIteratorPairTests
         SetDefaults();
 
         var cache = new SharedImageCache(f => ValueTask.FromResult(new ImageModel { FileInfo = f }));
-        _tab = new TabViewModel(null!, TestTabServices.For(cache, null));
+        _tab = new TabViewModel(new MainWindowViewModel(null!, null!, null!, null!), TestTabServices.For(cache, null));
         _tab.Initialize();
         _iterator = (ImageIterator)_tab.ImageIterator!;
-        // Published, as the settings window sets it
-        _tab.Services!.GlobalSettings.IsSideBySide.Value = true;
+        // Published, as the window's Side-by-Side Action sets it
+        _tab.CurrentWindowSettings.CurrentValue!.IsSideBySide.Value = true;
     }
 
     [Fact]
@@ -42,7 +42,7 @@ public class ImageIteratorPairTests
     [Fact]
     public async Task IterateToIndex_LastImageLooping_PairsWithTheFirst()
     {
-        _tab.Services!.GlobalSettings.IsLooping.Value = true;
+        _tab.CurrentWindowSettings.CurrentValue!.IsLooping.Value = true;
         _iterator.Initialize(Files("a.jpg", "b.jpg", "c.jpg"), 0);
 
         await _iterator.IterateToIndexAsync(2, new CancellationTokenSource());
@@ -63,7 +63,7 @@ public class ImageIteratorPairTests
     [Fact]
     public async Task TurningSideBySideOn_AtTheLastImage_ShowsThePairBeforeIt()
     {
-        var settings = _tab.Services!.GlobalSettings;
+        var settings = _tab.CurrentWindowSettings.CurrentValue!;
         settings.IsSideBySide.Value = false;
         _iterator.Initialize(Files("a.jpg", "b.jpg", "c.jpg"), 0);
         await _iterator.IterateToIndexAsync(2, new CancellationTokenSource());
@@ -129,7 +129,7 @@ public class ImageIteratorPairTests
         await _iterator.IterateToIndexAsync(0, new CancellationTokenSource());
         Assert.Equal(1, _tab.PartnerIndex.Value);
 
-        _tab.Services!.GlobalSettings.IsSideBySide.Value = false;
+        _tab.CurrentWindowSettings.CurrentValue!.IsSideBySide.Value = false;
         await _iterator.IterateToIndexAsync(2, new CancellationTokenSource());
 
         Assert.Equal((2, -1), (_tab.NavigationIndex.Value, _tab.PartnerIndex.Value));

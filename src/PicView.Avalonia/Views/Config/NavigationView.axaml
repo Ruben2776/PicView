@@ -37,8 +37,8 @@
             <customControls:TextToggleButton
                 Classes="MenuItemHover settingsToggleButton"
                 Command="{Binding MainWindows.ActiveWindow.Value.RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ToggleLooping}"
-                IsChecked="{Binding GlobalSettings.IsLooping.Value, Mode=OneWay}"
-                Text="{CompiledBinding GlobalSettings.LoopingText.Value,
+                IsChecked="{CompiledBinding MainWindows.ActiveWindow.Value.WindowSettings.IsLooping.Value, Mode=OneWay}"
+                Text="{CompiledBinding MainWindows.ActiveWindow.Value.WindowSettings.LoopingText.Value,
                                        Mode=OneWay}"
                 ToolTip.Tip="{CompiledBinding Translation.ToggleLooping.Value,
                                               Mode=OneWay}"

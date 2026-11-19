@@ -581,9 +581,9 @@ public class TabOwnershipTests : IDisposable
     public async Task Sort_SideBySide_ShowsThePairAtTheShownFilesNewPlace()
     {
         ComposeServices();
-        _core.Services!.GlobalSettings.IsSideBySide.Value = true;
         CreateFiles();
         var window = CreateWindow();
+        window.WindowSettings.IsSideBySide.Value = true;
         var tab = window.WindowTabs.ActiveTab.Value;
         await OpenAsync(tab, "b.jpg");
         Assert.Equal("c.jpg", tab.SecondaryFileInfo.CurrentValue?.Name);
@@ -739,6 +739,223 @@ public class TabOwnershipTests : IDisposable
     }
 
     [Fact]
+    public async Task SideBySide_ToggledInOneWindow_RepairsEveryTabOfThatWindow_AndNoTabOfTheOther()
+    {
+        ComposeServices();
+        CreateFiles();
+        var toggled = CreateWindow();
+        var other = CreateWindow();
+        var first = toggled.WindowTabs.ActiveTab.Value;
+        var second = toggled.WindowTabs.CreateTab();
+        var otherTab = other.WindowTabs.ActiveTab.Value;
+        await OpenAsync(first, "b.jpg");
+        await OpenAsync(second, "c.jpg");
+        await OpenAsync(otherTab, "b.jpg");
+
+        toggled.WindowSettings.IsSideBySide.Value = true;
+
+        // By name b shows beside c, and c beside d
+        await WaitUntilAsync(() => first.SecondaryModel?.FileInfo?.Name is "c.jpg" &&
+                                   second.SecondaryModel?.FileInfo?.Name is "d.jpg");
+        Assert.Equal("b.jpg", first.FileInfo.CurrentValue?.Name);
+        Assert.Equal("c.jpg", second.FileInfo.CurrentValue?.Name);
+        Assert.True(first.IsShowingPair.CurrentValue);
+        Assert.True(second.IsShowingPair.CurrentValue);
+        Assert.False(otherTab.IsShowingPair.CurrentValue);
+        Assert.Null(otherTab.SecondaryModel);
+        Assert.False(other.WindowSettings.IsSideBySide.Value);
+        Assert.False(Settings.ImageScaling.ShowImageSideBySide);
+    }
+
+    [Fact]
+    public async Task Looping_ToggledInOneWindow_ChangesNextAndPrevOnlyThere()
+    {
+        ComposeServices();
+        CreateFiles();
+        var toggled = CreateWindow();
+        var other = CreateWindow();
+        var tab = toggled.WindowTabs.ActiveTab.Value;
+        var otherTab = other.WindowTabs.ActiveTab.Value;
+        // The first file, so only looping lets Prev run
+        await OpenAsync(tab, "a.jpg");
+        await OpenAsync(otherTab, "a.jpg");
+        Assert.False(tab.CanNavigateBackwards.Value);
+
+        toggled.WindowSettings.IsLooping.Value = true;
+
+        Assert.True(tab.CanNavigateBackwards.Value);
+        Assert.True(tab.CanNavigateForwards.Value);
+        Assert.False(otherTab.CanNavigateBackwards.Value);
+        Assert.Equal((false, true), tab.PairSettings());
+        Assert.Equal((false, false), otherTab.PairSettings());
+
+        toggled.WindowSettings.IsLooping.Value = false;
+
+        Assert.False(tab.CanNavigateBackwards.Value);
+        Assert.False(Settings.UIProperties.Looping);
+    }
+
+    [Fact]
+    public async Task MoveTab_ToAWindowWithSideBySideOn_ShowsItsPairOnce_AndKeepsItsShownFile()
+    {
+        ComposeServices();
+        CreateFiles();
+        var source = CreateWindow();
+        var target = CreateWindow();
+        target.WindowSettings.IsSideBySide.Value = true;
+        var tab = source.WindowTabs.CreateTab();
+        await OpenAsync(tab, "b.jpg");
+        Assert.Null(tab.SecondaryModel);
+        var pairStates = new ConcurrentQueue<bool>();
+        var shown = new ConcurrentQueue<ShownChange>();
+        using var pairs = tab.IsShowingPair.Skip(1).Subscribe(pairStates.Enqueue);
+        using var shownChanges = tab.Shown.Subscribe(shown.Enqueue);
+
+        source.WindowTabs.MoveTab(tab, target.WindowTabs);
+
+        await WaitUntilAsync(() => tab.SecondaryModel?.FileInfo?.Name is "c.jpg");
+        Assert.Equal("b.jpg", tab.FileInfo.CurrentValue?.Name);
+        Assert.Equal("b.jpg", ListedAtShownIndex(tab));
+        Assert.Equal([true], pairStates);
+        Assert.Equal([ShownChange.Image], shown);
+        Assert.Equal(ByName, NamesOf(tab));
+        // The window it left keeps its own setting
+        Assert.False(source.WindowSettings.IsSideBySide.Value);
+    }
+
+    [Fact]
+    public async Task MoveTab_ToAWindowWithLoopingOff_AtTheLastFile_NextIsNoLongerAvailable()
+    {
+        ComposeServices();
+        CreateFiles();
+        var source = CreateWindow();
+        var target = CreateWindow();
+        source.WindowSettings.IsLooping.Value = true;
+        var tab = source.WindowTabs.CreateTab();
+        await OpenAsync(tab, "d.jpg");
+        Assert.True(tab.CanNavigateForwards.Value);
+
+        source.WindowTabs.MoveTab(tab, target.WindowTabs);
+
+        Assert.False(tab.CanNavigateForwards.Value);
+        Assert.True(tab.CanNavigateBackwards.Value);
+        Assert.Equal("d.jpg", tab.FileInfo.CurrentValue?.Name);
+
+        // Its old window's looping is no longer its own
+        source.WindowSettings.IsLooping.Value = false;
+        source.WindowSettings.IsLooping.Value = true;
+        Assert.False(tab.CanNavigateForwards.Value);
+
+        target.WindowSettings.IsLooping.Value = true;
+        Assert.True(tab.CanNavigateForwards.Value);
+    }
+
+    [Fact]
+    public async Task MoveTab_ThenTheSourceWindowCloses_ThrowsNothing_ForEveryFollowedSetting()
+    {
+        var unhandled = new ConcurrentQueue<Exception>();
+        using var recording = RecordUnhandled(unhandled);
+        ComposeServices();
+        CreateFiles();
+        var source = CreateWindow();
+        var target = CreateWindow();
+        var moved = source.WindowTabs.CreateTab();
+        await OpenAsync(moved, "b.jpg");
+        // Taken out for a new window that has not opened yet, so it still has its old window's settings
+        var takenOut = source.WindowTabs.CreateTab();
+        source.WindowTabs.MoveOut(takenOut);
+        source.WindowTabs.MoveTab(moved, target.WindowTabs);
+
+        // As the window closes: its tabs first, then its settings
+        source.WindowTabs.TearDown();
+        source.WindowSettings.Dispose();
+        var thrown = await Record.ExceptionAsync(async () =>
+        {
+            target.WindowSettings.IsSideBySide.Value = true;
+            target.WindowSettings.IsLooping.Value = true;
+            await target.WindowTabs.SortAsync(SortFilesBy.FileSize);
+            // Its first load follows the settings, which are still the closed window's
+            await OpenAsync(takenOut, "b.jpg");
+            var settings = WindowSettings.FromRecord(Settings);
+            settings.IsSideBySide.Value = true;
+            settings.IsLooping.Value = true;
+            CreateWindow(firstTab: takenOut, windowSettings: settings);
+            await WaitUntilAsync(() => takenOut.SecondaryModel?.FileInfo?.Name is "c.jpg");
+        });
+
+        Assert.Null(thrown);
+        Assert.DoesNotContain(unhandled, e => e is ObjectDisposedException);
+        await WaitUntilAsync(() => moved.SecondaryModel is not null);
+        Assert.True(moved.IsShowingPair.CurrentValue);
+        Assert.Equal((true, true), moved.PairSettings());
+        Assert.True(takenOut.IsShowingPair.CurrentValue);
+        Assert.Equal((true, true), takenOut.PairSettings());
+        Assert.Equal("b.jpg", takenOut.FileInfo.CurrentValue?.Name);
+    }
+
+    [Fact]
+    public async Task CloseWindow_WithTabsFollowingIt_ThrowsNothing()
+    {
+        var unhandled = new ConcurrentQueue<Exception>();
+        using var recording = RecordUnhandled(unhandled);
+        ComposeServices();
+        CreateFiles();
+        var window = CreateWindow();
+        var first = window.WindowTabs.ActiveTab.Value;
+        var second = window.WindowTabs.CreateTab();
+        await OpenAsync(first, "a.jpg");
+        await OpenAsync(second, "c.jpg");
+
+        var thrown = Record.Exception(() =>
+        {
+            // A re-pair still running as the window closes: its tabs first, then its settings
+            window.WindowSettings.IsSideBySide.Value = true;
+            window.WindowSettings.IsLooping.Value = true;
+            window.WindowTabs.TearDown();
+            window.WindowSettings.Dispose();
+        });
+        await Task.Delay(100, TestContext.Current.CancellationToken);
+
+        Assert.Null(thrown);
+        Assert.DoesNotContain(unhandled, e => e is ObjectDisposedException);
+        Assert.True(first.IsDisposed);
+        Assert.True(second.IsDisposed);
+    }
+
+    [Fact]
+    public void FollowWindowSetting_TabWithoutAWindow_GivesTheFallback()
+    {
+        Settings.ImageScaling.ShowImageSideBySide = true;
+        Settings.UIProperties.Looping = true;
+        using var tab = new TabViewModel(null!);
+        var looping = new List<bool>();
+        var order = new List<FileOrder>();
+        var fallback = new FileOrder(SortFilesBy.Extension, false);
+
+        using var followingLooping = tab.FollowWindowSetting(static w => w.IsLooping, false).Subscribe(looping.Add);
+        using var followingOrder = tab.FollowWindowSetting(static w => w.FileOrder, fallback).Subscribe(order.Add);
+
+        Assert.Equal([false], looping);
+        Assert.Equal([fallback], order);
+        // A tab without a window shows a pair and loops as the record says
+        Assert.True(tab.IsShowingPair.CurrentValue);
+        Assert.Equal((true, true), tab.PairSettings());
+    }
+
+    // Records what R3 hands its unhandled-exception handler meanwhile, as an exception in a subscription goes there
+    // instead of to the caller
+    private static IDisposable RecordUnhandled(ConcurrentQueue<Exception> errors)
+    {
+        var previous = ObservableSystem.GetUnhandledExceptionHandler();
+        ObservableSystem.RegisterUnhandledExceptionHandler(e =>
+        {
+            errors.Enqueue(e);
+            previous(e);
+        });
+        return Disposable.Create(previous, static p => ObservableSystem.RegisterUnhandledExceptionHandler(p));
+    }
+
+    [Fact]
     public async Task Load_FreshTabOpeningAFolder_WhileTheWindowsOrderChanges_EndsInTheNewOrder()
     {
         using var platform = new GatedPlatform();
@@ -856,9 +1073,9 @@ public class TabOwnershipTests : IDisposable
     public async Task Load_SideBySide_ResortedWhileThePartnerDecodes_CachesEachModelUnderItsFile_AndShowsTheListsPair()
     {
         ComposeServices();
-        _core.Services!.GlobalSettings.IsSideBySide.Value = true;
         CreateFiles();
         var window = CreateWindow();
+        window.WindowSettings.IsSideBySide.Value = true;
         var tab = window.WindowTabs.ActiveTab.Value;
         // By name b shows beside c; by size b is first, beside d
         var partner = HoldDecode("c.jpg");
@@ -889,10 +1106,10 @@ public class TabOwnershipTests : IDisposable
         Settings.Navigation.PositiveIterations = 0;
         Settings.Navigation.NegativeIterations = 0;
         ComposeServices();
-        _core.Services!.GlobalSettings.IsSideBySide.Value = true;
         // By name a, b, c, d; by size c, a, b, d, so the shown pair a, b is still a pair, and the step's c is first
         CreateFiles(("a.jpg", 10), ("b.jpg", 20), ("c.jpg", 5), ("d.jpg", 30));
         var window = CreateWindow();
+        window.WindowSettings.IsSideBySide.Value = true;
         var tab = window.WindowTabs.ActiveTab.Value;
         await OpenAsync(tab, "a.jpg");
         Assert.Equal("b.jpg", tab.SecondaryModel?.FileInfo?.Name);

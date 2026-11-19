@@ -26,7 +26,7 @@ public class TabTitlesTests
         ObservableSystem.DefaultFrameProvider = new MockFrameProvider();
         SetDefaults();
         TranslationManager.LoadLanguage("en");
-        _tab = new TabViewModel(null!,
+        _tab = new TabViewModel(new MainWindowViewModel(null!, null!, null!, null!),
             TestTabServices.For(new SharedImageCache(f => ValueTask.FromResult(Model(f.Name))!)));
     }
 
@@ -295,7 +295,7 @@ public class TabTitlesTests
         _ = _tab.Titles.Title;
         Assert.Equal(1, _tab.Titles.BuildCount);
 
-        _tab.Services!.GlobalSettings.IsSideBySide.Value = true;
+        _tab.CurrentWindowSettings.CurrentValue!.IsSideBySide.Value = true;
         _ = _tab.Titles.Title;
 
         Assert.Equal(2, _tab.Titles.BuildCount);

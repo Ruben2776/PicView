@@ -140,6 +140,17 @@ public sealed class WindowSettings : IDisposable
     }
 
     /// <summary>
+    /// The Side-by-Side a tab with no window follows: the record's, or off without one.
+    /// </summary>
+    public static bool IsSideBySideWithoutWindow(AppSettings? record) =>
+        record?.ImageScaling?.ShowImageSideBySide ?? false;
+
+    /// <summary>
+    /// The looping a tab with no window follows: the record's, or off without one.
+    /// </summary>
+    public static bool IsLoopingWithoutWindow(AppSettings? record) => record?.UIProperties?.Looping ?? false;
+
+    /// <summary>
     /// The settings of a window opened from this one's window, whose remembered mode is <paramref name="openerMode"/>.
     /// </summary>
     public WindowSettings CopyFor(RememberedWindowMode openerMode) =>

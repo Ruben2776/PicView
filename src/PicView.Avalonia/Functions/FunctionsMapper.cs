@@ -741,7 +741,7 @@ public class FunctionsMapper : IActionRunner
     private async ValueTask ChangeBackground() =>
         await BackgroundManager.ChangeBackgroundAsync(_vm).ConfigureAwait(false);
 
-    private ValueTask SideBySide() => ToggleHelper.Toggle(_vm.GlobalSettings.IsSideBySide);
+    private ValueTask SideBySide() => ToggleHelper.Toggle(_vm.WindowSettings.IsSideBySide);
 
     // Comparing is the active tab's own
     private ValueTask Comparison()

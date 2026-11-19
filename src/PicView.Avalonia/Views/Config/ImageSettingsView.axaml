@@ -41,7 +41,7 @@
                 Classes="MenuItemHover settingsToggleButton"
                 Command="{CompiledBinding MainWindows.ActiveWindow.Value.RunActionCommand}"
                 CommandParameter="{x:Static keybindings:Actions.SideBySide}"
-                IsChecked="{Binding GlobalSettings.IsSideBySide.Value, Mode=OneWay}"
+                IsChecked="{CompiledBinding MainWindows.ActiveWindow.Value.WindowSettings.IsSideBySide.Value, Mode=OneWay}"
                 Text="{CompiledBinding Translation.SideBySide.Value,
                                        Mode=OneWay}"
                 x:Name="SideBySideToggleButton" />
