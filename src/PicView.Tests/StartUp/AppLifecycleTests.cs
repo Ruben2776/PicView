@@ -207,7 +207,7 @@ public class AppLifecycleTests : IAsyncDisposable
             TestTabServices.For(_core.SharedCache, null,
                 watcher, platform: new NoPlatform(),
                 globalSettings: _core.GlobalSettings),
-            new NavigationService(string.CompareOrdinal));
+            new NavigationService());
         var app = CreateApp();
         await app.StartAsync(settingsExists: true, []);
         await WaitUntilOpenedAsync(app.MainWindows.Open[0]);
@@ -2525,7 +2525,7 @@ public class AppLifecycleTests : IAsyncDisposable
         _core.InitializeNavigation(
             TestTabServices.For(_core.SharedCache, null,
                 watcher, platform: new NoPlatform()),
-            new NavigationService(string.CompareOrdinal));
+            new NavigationService());
         var app = CreateApp();
         await app.StartAsync(settingsExists: true, []);
         var window = app.MainWindows.Open[0];

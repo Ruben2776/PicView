@@ -1333,7 +1333,7 @@ public class TabLoadTests : IDisposable
         core.InitializeNavigation(
             new TabServices(core.SharedCache, TestTabServices.NoThumbnails(core.SharedCache), _mockFileWatcherService,
                 _mockImageModelLoader, platform, core.GlobalSettings),
-            new NavigationService(platform.CompareStrings));
+            new NavigationService());
         var vm = new MainWindowViewModel(core, null!, null!, null!);
         var first = vm.WindowTabs.ActiveTab.Value;
         // A new tab is selected, so the first is no longer the active one

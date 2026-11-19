@@ -929,7 +929,7 @@ public class TabOwnershipTests : IDisposable
     // The tabs' services, which their Load lists the folder with in their window's order
     private void ComposeServices(IPlatformSpecificService? platform = null) =>
         _core.InitializeNavigation(TestTabServices.For(_core.SharedCache, platform: platform),
-            new NavigationService(string.CompareOrdinal));
+            new NavigationService());
 
     // Holds every name comparison while closed, so a test can change the order while a listing or a sort by name runs
     private sealed class GatedPlatform : TestTabServices.OrdinalPlatform, IDisposable

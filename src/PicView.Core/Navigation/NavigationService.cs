@@ -4,8 +4,8 @@ using PicView.Core.ViewModels;
 
 namespace PicView.Core.Navigation;
 
-// Loading is the tab's Load's, with the tab's services, so the navigation needs only how to sort names
-public class NavigationService(Func<string, string, int> stringComparer) : INavigationService
+// Loading is the tab's Load's, with the tab's services; stepping through folders and archives takes the tab's ordering
+public class NavigationService : INavigationService
 {
     private FileAndDirectoryNavigator? _navigator;
 
@@ -39,8 +39,9 @@ public class NavigationService(Func<string, string, int> stringComparer) : INavi
             return;
         }
 
-        _navigator ??= new FileAndDirectoryNavigator(stringComparer);
-        var nextDir = await Task.Run(() => _navigator.FindNextValidDirectory(currentDir), ct.Token).ConfigureAwait(false);
+        _navigator ??= new FileAndDirectoryNavigator();
+        var ordering = tab.CurrentOrdering();
+        var nextDir = await Task.Run(() => _navigator.FindNextValidDirectory(currentDir, ordering), ct.Token).ConfigureAwait(false);
         if (nextDir != null)
         {
             await tab.Load.LoadAsync(nextDir).ConfigureAwait(false);
@@ -54,8 +55,9 @@ public class NavigationService(Func<string, string, int> stringComparer) : INavi
         {
             return;
         }
-        _navigator ??= new FileAndDirectoryNavigator(stringComparer);
-        var prevDir = await Task.Run(() => _navigator.FindPreviousValidDirectory(currentDir), ct.Token).ConfigureAwait(false);
+        _navigator ??= new FileAndDirectoryNavigator();
+        var ordering = tab.CurrentOrdering();
+        var prevDir = await Task.Run(() => _navigator.FindPreviousValidDirectory(currentDir, ordering), ct.Token).ConfigureAwait(false);
         if (prevDir != null)
         {
             await tab.Load.LoadAsync(prevDir).ConfigureAwait(false);
@@ -78,9 +80,10 @@ public class NavigationService(Func<string, string, int> stringComparer) : INavi
         {
             return;
         }
-        _navigator ??= new FileAndDirectoryNavigator(stringComparer);
+        _navigator ??= new FileAndDirectoryNavigator();
+        var ordering = tab.CurrentOrdering();
         var nextArchive = await Task.Run(() =>
-            _navigator.FindNextArchive(currentDir, next, currentFile!.FullName), ct.Token).ConfigureAwait(false);
+            _navigator.FindNextArchive(currentDir, next, currentFile!.FullName, ordering), ct.Token).ConfigureAwait(false);
         if (nextArchive != null)
         {
             await tab.Load.LoadAsync(nextArchive).ConfigureAwait(false);

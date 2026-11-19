@@ -4,12 +4,13 @@ using PicView.Core.FileHandling;
 
 namespace PicView.Core.FileSorting;
 
-public class FileAndDirectoryNavigator(Func<string, string, int> stringComparer)
+// One instance is shared by the app, so it holds no order: every call is given the ordering of the tab it steps for
+public class FileAndDirectoryNavigator
 {
-    public string? FindNextArchive(string currentDir, bool next, string currentFilePath)
+    public string? FindNextArchive(string currentDir, bool next, string currentFilePath, FileOrdering ordering)
     {
         // Look for next archive in the current directory after the current file
-        var archives = FileSortOrder.GetSortedArchivesInDirectory(currentDir, stringComparer);
+        var archives = GetSortedArchivesInDirectory(currentDir, ordering);
         var idx = archives.FindIndex(a => a.FullName.Equals(currentFilePath, StringComparison.OrdinalIgnoreCase));
         if (!next)
         {
@@ -17,7 +18,7 @@ public class FileAndDirectoryNavigator(Func<string, string, int> stringComparer)
             {
                 > 0 => archives[idx - 1].FullName,
                 < 0 when archives.Length > 0 => archives[^1].FullName,
-                _ => GetLastArchiveInPreviousSiblingOrAncestor(currentDir)
+                _ => GetLastArchiveInPreviousSiblingOrAncestor(currentDir, ordering)
             };
         }
         switch (idx)
@@ -30,24 +31,24 @@ public class FileAndDirectoryNavigator(Func<string, string, int> stringComparer)
     
         if (!Settings.Sorting.IncludeSubDirectories)
         {
-            return GetFirstArchiveInNextSiblingOrAncestor(currentDir);
+            return GetFirstArchiveInNextSiblingOrAncestor(currentDir, ordering);
         }
     
-        var firstInChild = GetFirstArchiveInDescendants(currentDir);
-        return firstInChild ?? GetFirstArchiveInNextSiblingOrAncestor(currentDir);
+        var firstInChild = GetFirstArchiveInDescendants(currentDir, ordering);
+        return firstInChild ?? GetFirstArchiveInNextSiblingOrAncestor(currentDir, ordering);
     }
 
-    public string? GetFirstArchiveInDescendants(string path)
+    public string? GetFirstArchiveInDescendants(string path, FileOrdering ordering)
     {
         try
         {
             var dir = new DirectoryInfo(path);
             var subDirs = dir.GetDirectories();
-            SortDirectories(subDirs);
+            SortDirectories(subDirs, ordering);
 
             foreach (var sub in subDirs)
             {
-                var archives = FileSortOrder.GetSortedArchivesInDirectory(sub.FullName, stringComparer);
+                var archives = GetSortedArchivesInDirectory(sub.FullName, ordering);
                 if (archives.Length > 0)
                 {
                     return archives[0].FullName;
@@ -58,7 +59,7 @@ public class FileAndDirectoryNavigator(Func<string, string, int> stringComparer)
                     continue;
                 }
 
-                var child = GetFirstArchiveInDescendants(sub.FullName);
+                var child = GetFirstArchiveInDescendants(sub.FullName, ordering);
                 if (child != null)
                 {
                     return child;
@@ -72,7 +73,7 @@ public class FileAndDirectoryNavigator(Func<string, string, int> stringComparer)
         return null;
     }
 
-    public string? GetFirstArchiveInNextSiblingOrAncestor(string path)
+    public string? GetFirstArchiveInNextSiblingOrAncestor(string path, FileOrdering ordering)
     {
         var dir = new DirectoryInfo(path);
         var parent = dir.Parent;
@@ -84,13 +85,13 @@ public class FileAndDirectoryNavigator(Func<string, string, int> stringComparer)
         try
         {
             var siblings = parent.GetDirectories();
-            SortDirectories(siblings);
-            var index = siblings.FindIndex(d => Equals(path, stringComparer));
+            SortDirectories(siblings, ordering);
+            var index = siblings.FindIndex(d => d.FullName.Equals(path, StringComparison.OrdinalIgnoreCase));
 
             for (var i = index + 1; i < siblings.Length; i++)
             {
                 var sibling = siblings[i];
-                var archives = FileSortOrder.GetSortedArchivesInDirectory(sibling.FullName, stringComparer);
+                var archives = GetSortedArchivesInDirectory(sibling.FullName, ordering);
                 if (archives.Length > 0)
                 {
                     return archives[0].FullName;
@@ -101,7 +102,7 @@ public class FileAndDirectoryNavigator(Func<string, string, int> stringComparer)
                     continue;
                 }
 
-                var child = GetFirstArchiveInDescendants(sibling.FullName);
+                var child = GetFirstArchiveInDescendants(sibling.FullName, ordering);
                 if (child != null)
                 {
                     return child;
@@ -113,10 +114,10 @@ public class FileAndDirectoryNavigator(Func<string, string, int> stringComparer)
             DebugHelper.LogDebug(nameof(FileAndDirectoryNavigator), nameof(GetFirstArchiveInNextSiblingOrAncestor), ex);
         }
 
-        return GetFirstArchiveInNextSiblingOrAncestor(parent.FullName);
+        return GetFirstArchiveInNextSiblingOrAncestor(parent.FullName, ordering);
     }
 
-    public string? GetLastArchiveInPreviousSiblingOrAncestor(string currentPath)
+    public string? GetLastArchiveInPreviousSiblingOrAncestor(string currentPath, FileOrdering ordering)
     {
         var dir = new DirectoryInfo(currentPath);
         var parent = dir.Parent;
@@ -128,32 +129,32 @@ public class FileAndDirectoryNavigator(Func<string, string, int> stringComparer)
         try
         {
             var siblings = parent.GetDirectories();
-            SortDirectories(siblings);
+            SortDirectories(siblings, ordering);
             var index = siblings.FindIndex(d => d.FullName.Equals(currentPath, StringComparison.OrdinalIgnoreCase));
 
             if (index <= 0)
             {
-                var parentArchives = FileSortOrder.GetSortedArchivesInDirectory(parent.FullName, stringComparer);
+                var parentArchives = GetSortedArchivesInDirectory(parent.FullName, ordering);
                 if (parentArchives.Length > 0)
                 {
                     return parentArchives[^1].FullName;
                 }
-                return GetLastArchiveInPreviousSiblingOrAncestor(parent.FullName);
+                return GetLastArchiveInPreviousSiblingOrAncestor(parent.FullName, ordering);
             }
 
             for (var i = index - 1; i >= 0; i--)
             {
                 var sibling = siblings[i];
-                var lastChild = GetLastArchiveInDescendantOrSelf(sibling.FullName);
+                var lastChild = GetLastArchiveInDescendantOrSelf(sibling.FullName, ordering);
                 if (lastChild != null)
                 {
                     return lastChild;
                 }
             }
 
-            var parentArchivesFallback = FileSortOrder.GetSortedArchivesInDirectory(parent.FullName, stringComparer);
+            var parentArchivesFallback = GetSortedArchivesInDirectory(parent.FullName, ordering);
             return parentArchivesFallback.Length > 0 ?
-                parentArchivesFallback[^1].FullName : GetLastArchiveInPreviousSiblingOrAncestor(parent.FullName);
+                parentArchivesFallback[^1].FullName : GetLastArchiveInPreviousSiblingOrAncestor(parent.FullName, ordering);
         }
         catch (Exception ex)
         {
@@ -162,11 +163,11 @@ public class FileAndDirectoryNavigator(Func<string, string, int> stringComparer)
         }
     }
 
-    public string? GetLastArchiveInDescendantOrSelf(string path)
+    public string? GetLastArchiveInDescendantOrSelf(string path, FileOrdering ordering)
     {
         if (!Settings.Sorting.IncludeSubDirectories)
         {
-            var archives = FileSortOrder.GetSortedArchivesInDirectory(path, stringComparer);
+            var archives = GetSortedArchivesInDirectory(path, ordering);
             return archives.Length > 0 ? archives[^1].FullName : null;
         }
 
@@ -174,11 +175,11 @@ public class FileAndDirectoryNavigator(Func<string, string, int> stringComparer)
         {
             var dir = new DirectoryInfo(path);
             var subDirs = dir.GetDirectories();
-            SortDirectories(subDirs);
+            SortDirectories(subDirs, ordering);
 
             for (var i = subDirs.Length - 1; i >= 0; i--)
             {
-                var lastChild = GetLastArchiveInDescendantOrSelf(subDirs[i].FullName);
+                var lastChild = GetLastArchiveInDescendantOrSelf(subDirs[i].FullName, ordering);
                 if (lastChild != null) return lastChild;
             }
         }
@@ -187,28 +188,28 @@ public class FileAndDirectoryNavigator(Func<string, string, int> stringComparer)
             DebugHelper.LogDebug(nameof(FileAndDirectoryNavigator), nameof(GetLastArchiveInDescendantOrSelf), ex);
         }
 
-        var archivesHere = FileSortOrder.GetSortedArchivesInDirectory(path, stringComparer);
+        var archivesHere = GetSortedArchivesInDirectory(path, ordering);
         return archivesHere.Length > 0 ? archivesHere[^1].FullName : null;
     }
 
-    public string? FindNextValidDirectory(string currentPath)
+    public string? FindNextValidDirectory(string currentPath, FileOrdering ordering)
     {
         if (!Settings.Sorting.IncludeSubDirectories)
         {
-            return GetNextSiblingOrAncestorSibling(currentPath);
+            return GetNextSiblingOrAncestorSibling(currentPath, ordering);
         }
 
-        var firstChild = GetFirstValidChild(currentPath);
-        return firstChild ?? GetNextSiblingOrAncestorSibling(currentPath);
+        var firstChild = GetFirstValidChild(currentPath, ordering);
+        return firstChild ?? GetNextSiblingOrAncestorSibling(currentPath, ordering);
     }
 
-    public string? GetFirstValidChild(string path)
+    public string? GetFirstValidChild(string path, FileOrdering ordering)
     {
         try
         {
             var dir = new DirectoryInfo(path);
             var subDirs = dir.GetDirectories();
-            SortDirectories(subDirs);
+            SortDirectories(subDirs, ordering);
 
             foreach (var sub in subDirs)
             {
@@ -218,7 +219,7 @@ public class FileAndDirectoryNavigator(Func<string, string, int> stringComparer)
                     continue;
                 }
 
-                var child = GetFirstValidChild(sub.FullName);
+                var child = GetFirstValidChild(sub.FullName, ordering);
                 if (child != null)
                 {
                     return child;
@@ -232,7 +233,7 @@ public class FileAndDirectoryNavigator(Func<string, string, int> stringComparer)
         return null;
     }
 
-    public string? GetNextSiblingOrAncestorSibling(string path)
+    public string? GetNextSiblingOrAncestorSibling(string path, FileOrdering ordering)
     {
         var dir = new DirectoryInfo(path);
         var parent = dir.Parent;
@@ -244,7 +245,7 @@ public class FileAndDirectoryNavigator(Func<string, string, int> stringComparer)
         try
         {
             var siblings = parent.GetDirectories();
-            SortDirectories(siblings);
+            SortDirectories(siblings, ordering);
             var index = siblings.FindIndex(d => d.FullName.Equals(path, StringComparison.OrdinalIgnoreCase));
 
             for (var i = index + 1; i < siblings.Length; i++)
@@ -256,7 +257,7 @@ public class FileAndDirectoryNavigator(Func<string, string, int> stringComparer)
                     continue;
                 }
 
-                var child = GetFirstValidChild(sibling.FullName);
+                var child = GetFirstValidChild(sibling.FullName, ordering);
                 if (child != null) return child;
             }
         }
@@ -265,10 +266,10 @@ public class FileAndDirectoryNavigator(Func<string, string, int> stringComparer)
             DebugHelper.LogDebug(nameof(FileAndDirectoryNavigator), nameof(GetNextSiblingOrAncestorSibling), ex);
         }
 
-        return GetNextSiblingOrAncestorSibling(parent.FullName);
+        return GetNextSiblingOrAncestorSibling(parent.FullName, ordering);
     }
 
-    public string? FindPreviousValidDirectory(string currentPath)
+    public string? FindPreviousValidDirectory(string currentPath, FileOrdering ordering)
     {
         var dir = new DirectoryInfo(currentPath);
         var parent = dir.Parent;
@@ -280,20 +281,20 @@ public class FileAndDirectoryNavigator(Func<string, string, int> stringComparer)
         try
         {
             var siblings = parent.GetDirectories();
-            SortDirectories(siblings);
+            SortDirectories(siblings, ordering);
             var index = siblings.FindIndex(d => d.FullName.Equals(currentPath, StringComparison.OrdinalIgnoreCase));
 
             if (index <= 0)
             {
                 return IsDirectoryValid(parent.FullName)
                     ? parent.FullName
-                    : FindPreviousValidDirectory(parent.FullName);
+                    : FindPreviousValidDirectory(parent.FullName, ordering);
             }
 
             for (var i = index - 1; i >= 0; i--)
             {
                 var sibling = siblings[i];
-                var lastChild = GetLastValidDescendantOrSelf(sibling.FullName);
+                var lastChild = GetLastValidDescendantOrSelf(sibling.FullName, ordering);
                 if (lastChild != null)
                 {
                     return lastChild;
@@ -301,7 +302,7 @@ public class FileAndDirectoryNavigator(Func<string, string, int> stringComparer)
             }
 
             return IsDirectoryValid(parent.FullName) ?
-                parent.FullName : FindPreviousValidDirectory(parent.FullName);
+                parent.FullName : FindPreviousValidDirectory(parent.FullName, ordering);
         }
         catch (Exception ex)
         {
@@ -310,7 +311,7 @@ public class FileAndDirectoryNavigator(Func<string, string, int> stringComparer)
         }
     }
 
-    public string? GetLastValidDescendantOrSelf(string path)
+    public string? GetLastValidDescendantOrSelf(string path, FileOrdering ordering)
     {
         if (!Settings.Sorting.IncludeSubDirectories)
         {
@@ -321,11 +322,11 @@ public class FileAndDirectoryNavigator(Func<string, string, int> stringComparer)
         {   
             var dir = new DirectoryInfo(path);
             var subDirs = dir.GetDirectories();
-            SortDirectories(subDirs);
+            SortDirectories(subDirs, ordering);
 
             for (var i = subDirs.Length - 1; i >= 0; i--)
             {
-                var lastChild = GetLastValidDescendantOrSelf(subDirs[i].FullName);
+                var lastChild = GetLastValidDescendantOrSelf(subDirs[i].FullName, ordering);
                 if (lastChild != null) return lastChild;
             }
         }
@@ -358,15 +359,29 @@ public class FileAndDirectoryNavigator(Func<string, string, int> stringComparer)
         }
     }
 
-    public void SortDirectories(DirectoryInfo[] dirs)
+    // Directories go by name and direction whatever the field files are sorted by
+    public void SortDirectories(DirectoryInfo[] dirs, FileOrdering ordering)
     {
-        if (!Settings.Sorting.Ascending)
+        dirs.Sort((x, y) => ordering.CompareNames(x.Name, y.Name));
+    }
+
+    private static FileInfo[] GetSortedArchivesInDirectory(string path, FileOrdering ordering)
+    {
+        try
         {
-            dirs.Sort((x, y) => stringComparer(y.Name, x.Name));
+            var dir = new DirectoryInfo(path);
+            if (!dir.Exists)
+            {
+                return [];
+            }
+
+            return ordering.Sort(dir.EnumerateFiles("*", SearchOption.TopDirectoryOnly)
+                .Where(f => f.FullName.IsArchive())).ToArray();
         }
-        else
+        catch (Exception ex)
         {
-            dirs.Sort((x, y) => stringComparer(x.Name, y.Name));
+            DebugHelper.LogDebug(nameof(FileAndDirectoryNavigator), nameof(GetSortedArchivesInDirectory), ex);
+            return [];
         }
     }
 }

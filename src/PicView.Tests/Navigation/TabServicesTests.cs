@@ -121,7 +121,7 @@ public class TabServicesTests
             new MockImageModelLoader(), core.PlatformService!, core.GlobalSettings);
 
     private static NavigationService NavigationFor(CoreViewModel core, TabServices services) =>
-        new(core.PlatformService!.CompareStrings);
+        new();
 
     private sealed class MockFileWatcherService : IFileWatcherService
     {

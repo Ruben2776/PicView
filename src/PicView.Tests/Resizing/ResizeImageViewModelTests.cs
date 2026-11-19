@@ -46,7 +46,7 @@ public class ResizeImageViewModelTests
         var core = new CoreViewModel(null, file => ValueTask.FromResult(new ImageModel { FileInfo = file }));
         core.InitializeNavigation(
             TestTabServices.For(core.SharedCache, null),
-            new NavigationService(string.CompareOrdinal));
+            new NavigationService());
         var mainVm = new MainWindowViewModel(core, translations, globalSettings, gallerySettings);
 
         var resizeVm = new ResizeImageViewModel();

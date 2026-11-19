@@ -178,7 +178,7 @@ public class WindowFitterTests
     {
         // The window follows whether the shown tab shows a pair, which follows side-by-side through the tab's services
         _core.InitializeNavigation(TestTabServices.For(_core.SharedCache, globalSettings: _core.GlobalSettings),
-            new NavigationService(string.CompareOrdinal));
+            new NavigationService());
         var (fitter, vm, window) = CreateShownWindow(800, 600);
         using var following = fitter.Follow();
         vm.GlobalSettings.IsSideBySide.Value = true;

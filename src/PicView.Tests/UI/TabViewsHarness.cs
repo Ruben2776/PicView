@@ -52,7 +52,7 @@ internal static class TabViewsHarness
         var cache = new SharedImageCache(static f => ValueTask.FromResult(new ImageModel { FileInfo = f }));
         core.InitializeNavigation(
             TestTabServices.For(cache, thumbnails?.Invoke(cache)),
-            new NavigationService(string.CompareOrdinal));
+            new NavigationService());
         var window = new TestMainWindow(new NoOpModeAdapter());
         var vm = new MainWindowViewModel(core, core.Translation, core.GlobalSettings!, core.GallerySettings);
         window.DataContext = vm;

@@ -621,7 +621,7 @@ public sealed class GalleryTileSharpeningTests : IDisposable
         _thumbnails = thumbnails;
         _core = new CoreViewModel(null, _ => ValueTask.FromResult(new ImageModel()),
             saveGallerySettings: static () => ValueTask.FromResult(true));
-        _core.InitializeNavigation(TestTabServices.For(cache, thumbnails), new NavigationService(string.CompareOrdinal));
+        _core.InitializeNavigation(TestTabServices.For(cache, thumbnails), new NavigationService());
         _window = new TestMainWindow(new NoOpModeAdapter()) { Width = width, Height = height };
         var vm = new MainWindowViewModel(_core, _core.Translation, _core.GlobalSettings!, _core.GallerySettings);
         _window.DataContext = vm;

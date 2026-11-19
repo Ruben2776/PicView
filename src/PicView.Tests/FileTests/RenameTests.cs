@@ -152,7 +152,7 @@ public class RenameTests : IDisposable
         var core = new CoreViewModel(null, file => ValueTask.FromResult(new ImageModel { FileInfo = file, Image = new object() }));
         core.InitializeNavigation(
             TestTabServices.For(core.SharedCache, null),
-            new NavigationService(string.CompareOrdinal));
+            new NavigationService());
         var vm = new MainWindowViewModel(core, new TranslationViewModel(), StartedSettings.New(),
             new GallerySharedSettingsViewModel()) { ToolTip = new ToolTipViewModel() };
         core.MainWindows.MainWindows.Add(vm);

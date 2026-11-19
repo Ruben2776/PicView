@@ -1,7 +1,3 @@
-using PicView.Core.DebugTools;
-using PicView.Core.FileHandling;
-using ZLinq;
-
 namespace PicView.Core.FileSorting;
 
 public static class FileSortOrder
@@ -18,73 +14,4 @@ public static class FileSortOrder
             6 => SortFilesBy.Random,
             _ => SortFilesBy.Name,
         };
-
-    public static FileInfo[] GetSortedArchivesInDirectory(string path, Func<string, string, int> stringComparer)
-    {
-        try
-        {
-            var dir = new DirectoryInfo(path);
-            if (!dir.Exists)
-            {
-                return [];
-            }
-
-            var archives = dir.EnumerateFiles("*", SearchOption.TopDirectoryOnly)
-                .Where(f => f.FullName.IsArchive()).AsValueEnumerable();
-
-            switch (GetSortOrder)
-            {
-                default:
-                case SortFilesBy.Name: // Alphanumeric sort
-                    var list = archives.ToArray();
-                    if (Settings.Sorting.Ascending)
-                    {
-                        list.Sort((x, y) => stringComparer(x.Name, y.Name));
-                    }
-                    else
-                    {
-                        list.Sort((x, y) => stringComparer(y.Name, x.Name));
-                    }
-                    return list;
-
-                case SortFilesBy.FileSize: // Sort by file size
-                    var sortedBySize = Settings.Sorting.Ascending
-                        ? archives.OrderBy(x => x.Length)
-                        : archives.OrderByDescending(x => x.Length);
-                    return sortedBySize.ToArray();
-
-                case SortFilesBy.Extension: // Sort by file extension
-                    var sortedByExtension = Settings.Sorting.Ascending
-                        ? archives.OrderBy(x => x.Extension)
-                        : archives.OrderByDescending(x => x.Extension);
-                    return sortedByExtension.ToArray();
-
-                case SortFilesBy.CreationTime: // Sort by file creation time
-                    var sortedByCreationTime = Settings.Sorting.Ascending
-                        ? archives.OrderBy(x => x.CreationTime)
-                        : archives.OrderByDescending(x => x.CreationTime);
-                    return sortedByCreationTime.ToArray();
-
-                case SortFilesBy.LastAccessTime: // Sort by file last access time
-                    var sortedByLastAccessTime = Settings.Sorting.Ascending
-                        ? archives.OrderBy(x => x.LastAccessTime)
-                        : archives.OrderByDescending(x => x.LastAccessTime);
-                    return sortedByLastAccessTime.ToArray();
-
-                case SortFilesBy.LastWriteTime: // Sort by file last write time
-                    var sortedByLastWriteTime = Settings.Sorting.Ascending
-                        ? archives.OrderBy(x => x.LastWriteTime)
-                        : archives.OrderByDescending(x => x.LastWriteTime);
-                    return sortedByLastWriteTime.ToArray();
-
-                case SortFilesBy.Random: // Sort files randomly
-                    return archives.OrderBy(_ => Guid.NewGuid()).ToArray();
-            }
-        }
-        catch (Exception ex)
-        {
-            DebugHelper.LogDebug(nameof(FileSortOrder), nameof(GetSortedArchivesInDirectory), ex);
-            return [];
-        }
-    }
 }

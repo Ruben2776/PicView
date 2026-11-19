@@ -699,7 +699,7 @@ public class GalleryViewTests
         var core = new CoreViewModel(null, _ => ValueTask.FromResult(new ImageModel()));
         core.InitializeNavigation(
             TestTabServices.For(new SharedImageCache(static f => ValueTask.FromResult(new ImageModel { FileInfo = f })), null),
-            new NavigationService(string.CompareOrdinal));
+            new NavigationService());
         var window = new TestMainWindow(new NoOpModeAdapter());
         var vm = new MainWindowViewModel(core, core.Translation, core.GlobalSettings!, core.GallerySettings);
         window.DataContext = vm;
