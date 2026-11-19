@@ -295,6 +295,50 @@ public class FileOrderingTests : IDisposable
     public void FromRecord_Null_IsNameAscending() =>
         Assert.Equal(new FileOrder(SortFilesBy.Name, true), FileOrder.FromRecord(null));
 
+    [Fact]
+    public void FromAppSettings_Null_IsNameAscending() =>
+        Assert.Equal(new FileOrder(SortFilesBy.Name, true), FileOrder.FromAppSettings(null));
+
+    [Fact]
+    public void FromAppSettings_NoSortingGroup_IsNameAscending() =>
+        Assert.Equal(new FileOrder(SortFilesBy.Name, true), FileOrder.FromAppSettings(new AppSettings { Sorting = null }));
+
+    [Fact]
+    public void Compare_ByExtension_FileAndArchiveEntryAgree()
+    {
+        // No extension, two dots, and extensions that differ only in case
+        string[] names = ["b", "a.tar.gz", "c.gz", "d.GZ", "e.tar", "g.jpg"];
+        var files = names.Select(name => new FileInfo(Path.Combine(_folder, name))).ToArray();
+        var entries = names.Select(name => new ArchiveEntryOrderKey(name, Path.Combine(_folder, name), 0, null)).ToList();
+        var ordering = Ordering(SortFilesBy.Extension);
+
+        var sortedFiles = ordering.Sort(files);
+        entries.Sort((x, y) => ordering.Compare(x, y));
+
+        Assert.Equal(Names(sortedFiles), entries.Select(e => e.Name));
+        // No extension first, then .gz (a, c, d by name), .jpg and .tar
+        Assert.Equal(["b", "a.tar.gz", "c.gz", "d.GZ", "g.jpg", "e.tar"], Names(sortedFiles));
+    }
+
+    [Fact]
+    public void Sort_Descending_NameComparisonReturningIntMinValue_StillReverses()
+    {
+        // A comparison may return any negative number, the least of which has no positive counterpart
+        static int Extreme(string a, string b)
+        {
+            var result = string.CompareOrdinal(a, b);
+            return result < 0 ? int.MinValue : result > 0 ? int.MaxValue : 0;
+        }
+
+        var files = new[] { "b.jpg", "a.jpg", "c.jpg" }.Select(name => new FileInfo(Path.Combine(_folder, name)));
+        var ordering = new FileOrdering(new FileOrder(SortFilesBy.Name, false), Extreme);
+
+        var sorted = ordering.Sort(files);
+
+        Assert.Equal(["c.jpg", "b.jpg", "a.jpg"], Names(sorted));
+        Assert.True(ordering.CompareNames("a.jpg", "b.jpg") > 0);
+    }
+
     [Theory]
     [InlineData(7)]
     [InlineData(-1)]

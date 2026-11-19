@@ -1230,6 +1230,54 @@ public class ArchiveExtractionServiceTests
         }
     }
 
+    [Theory]
+    [InlineData(DateTimeKind.Local)]
+    [InlineData(DateTimeKind.Unspecified)]
+    public void EntryTimesOfMixedKinds_OrderTheSameByKeyAndOnDisk(DateTimeKind localKind)
+    {
+        // One entry keeps local time, the other UTC. Half the local offset apart, so their raw times order one way and
+        // the instants they stand for the other
+        var raw = new DateTime(2021, 3, 1, 12, 0, 0, localKind);
+        var offset = TimeZoneInfo.Local.GetUtcOffset(DateTime.SpecifyKind(raw, DateTimeKind.Local));
+        Assert.SkipWhen(offset == TimeSpan.Zero, "The local time zone is UTC, so local and UTC times cannot disagree");
+        var local = ("local.jpg", raw);
+        var utc = ("utc.jpg", DateTime.SpecifyKind(raw - offset / 2, DateTimeKind.Utc));
+        var ordering = TestOrderings.By(SortFilesBy.LastWriteTime);
+
+        var keys = new List<ArchiveEntryOrderKey>();
+        var folder = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(),
+            "PicViewEntryTimes_" + Guid.NewGuid().ToString("N"))).FullName;
+        try
+        {
+            var files = new List<FileInfo>();
+            foreach (var (name, time) in new[] { utc, local })
+            {
+                var modified = ArchiveExtractionService.ModifiedTimeOf(time);
+                keys.Add(new ArchiveEntryOrderKey(name, name, 1, modified));
+                var path = Path.Combine(folder, name);
+                using (var stream = File.Create(path))
+                {
+                    stream.WriteByte(1);
+                    stream.Flush();
+                    ArchiveExtractionService.StampModifiedTime(stream, modified);
+                }
+                files.Add(new FileInfo(path));
+            }
+
+            keys.Sort((x, y) => ordering.Compare(x, y));
+            var onDisk = ordering.Sort(files);
+
+            Assert.Equal(keys.Select(k => k.Name), onDisk.Select(f => f.Name));
+            // By the instants: the local time is the earlier one when the zone is ahead of UTC
+            Assert.Equal(offset > TimeSpan.Zero ? ["local.jpg", "utc.jpg"] : ["utc.jpg", "local.jpg"],
+                keys.Select(k => k.Name));
+        }
+        finally
+        {
+            Directory.Delete(folder, true);
+        }
+    }
+
     #endregion
 
     #region Cleanup

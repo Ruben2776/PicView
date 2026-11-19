@@ -884,6 +884,37 @@ public class TabOwnershipTests : IDisposable
     }
 
     [Fact]
+    public async Task Sort_SideBySide_ResortedBeforeAStepsPairShows_ShowsThePairAtTheIteratorsPosition()
+    {
+        Settings.Navigation.PositiveIterations = 0;
+        Settings.Navigation.NegativeIterations = 0;
+        ComposeServices();
+        _core.Services!.GlobalSettings.IsSideBySide.Value = true;
+        // By name a, b, c, d; by size c, a, b, d, so the shown pair a, b is still a pair, and the step's c is first
+        CreateFiles(("a.jpg", 10), ("b.jpg", 20), ("c.jpg", 5), ("d.jpg", 30));
+        var window = CreateWindow();
+        var tab = window.WindowTabs.ActiveTab.Value;
+        await OpenAsync(tab, "a.jpg");
+        Assert.Equal("b.jpg", tab.SecondaryModel?.FileInfo?.Name);
+        var iterator = tab.ImageIterator!;
+        var partner = HoldDecode("d.jpg");
+
+        // A Next to c and d, which makes c current before its pair shows
+        var step = iterator.NavigateAsync(NavigateTo.Next, SkipAmount.One, new CancellationTokenSource()).AsTask();
+        Assert.Equal("c.jpg", ListedAtShownIndex(tab));
+        await window.WindowTabs.SortAsync(SortFilesBy.FileSize);
+        await tab.Resorting;
+        partner.SetResult(new ImageModel { FileInfo = new FileInfo(PathOf("d.jpg")) });
+        await step.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+
+        Assert.Equal(["c.jpg", "a.jpg", "b.jpg", "d.jpg"], NamesOf(tab));
+        Assert.Equal(iterator.Files[iterator.CurrentIndex].Name, tab.Model?.FileInfo?.Name);
+        Assert.Equal(iterator.Files[iterator.SecondaryCurrentIndex].Name, tab.SecondaryModel?.FileInfo?.Name);
+        Assert.Equal("c.jpg", tab.Model?.FileInfo?.Name);
+        Assert.Equal("a.jpg", tab.SecondaryModel?.FileInfo?.Name);
+    }
+
+    [Fact]
     public async Task CheckMarks_DeriveFromTheWindowsFileOrder()
     {
         Settings.Sorting.SortPreference = (int)SortFilesBy.FileSize;

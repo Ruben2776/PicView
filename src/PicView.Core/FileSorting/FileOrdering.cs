@@ -100,7 +100,12 @@ public sealed class FileOrdering(FileOrder order, Func<string, string, int> comp
         return low;
     }
 
-    private int Direction(int result) => Order.Ascending ? result : -result;
+    // The sign alone is flipped, as negating int.MinValue gives int.MinValue
+    private int Direction(int result) => Order.Ascending ? result : -Math.Sign(result);
+
+    // The same extension for a file and an entry of the same name, compared without a string per comparison
+    private static int CompareExtensions(string a, string b) =>
+        Path.GetExtension(a.AsSpan()).CompareTo(Path.GetExtension(b.AsSpan()), StringComparison.OrdinalIgnoreCase);
 
     private int CompareField(FileInfo a, FileInfo b) => Order.By switch
     {
@@ -108,7 +113,7 @@ public sealed class FileOrdering(FileOrder order, Func<string, string, int> comp
         SortFilesBy.CreationTime => TimeOf(a, SortFilesBy.CreationTime).CompareTo(TimeOf(b, SortFilesBy.CreationTime)),
         SortFilesBy.LastAccessTime => TimeOf(a, SortFilesBy.LastAccessTime).CompareTo(TimeOf(b, SortFilesBy.LastAccessTime)),
         SortFilesBy.LastWriteTime => TimeOf(a, SortFilesBy.LastWriteTime).CompareTo(TimeOf(b, SortFilesBy.LastWriteTime)),
-        SortFilesBy.Extension => string.Compare(a.Extension, b.Extension, StringComparison.OrdinalIgnoreCase),
+        SortFilesBy.Extension => CompareExtensions(a.Name, b.Name),
         _ => compareNames(a.Name, b.Name)
     };
 
@@ -117,8 +122,7 @@ public sealed class FileOrdering(FileOrder order, Func<string, string, int> comp
         SortFilesBy.FileSize => a.Size.CompareTo(b.Size),
         SortFilesBy.CreationTime or SortFilesBy.LastAccessTime or SortFilesBy.LastWriteTime =>
             (a.Modified ?? DateTime.MinValue).CompareTo(b.Modified ?? DateTime.MinValue),
-        SortFilesBy.Extension => string.Compare(Path.GetExtension(a.Name), Path.GetExtension(b.Name),
-            StringComparison.OrdinalIgnoreCase),
+        SortFilesBy.Extension => CompareExtensions(a.Name, b.Name),
         _ => compareNames(a.Name, b.Name)
     };
 

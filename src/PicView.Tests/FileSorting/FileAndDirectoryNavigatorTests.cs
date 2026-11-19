@@ -3,6 +3,7 @@ using PicView.Core.FileSorting;
 
 namespace PicView.Tests.FileSorting;
 
+[Collection("Sequential")]
 public class FileAndDirectoryNavigatorTests : IDisposable
 {
     private readonly string _root = Path.Combine(Path.GetTempPath(), "PicViewNavigator_" + Guid.NewGuid().ToString("N"));

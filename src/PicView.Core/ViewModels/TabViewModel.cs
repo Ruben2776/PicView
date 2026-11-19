@@ -873,11 +873,15 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, TabServices? 
         }
     }
 
-    // Whether the tab shows the pair the iterator's list gives the image it shows first (ADR-0024)
+    // Whether the tab shows the pair at the iterator's position, as its list gives it (ADR-0024). The secondary index
+    // is not asked, as Initialize does not set it
     private bool IsShowingPairAt(IImageIterator iterator)
     {
         var files = iterator.Files;
-        if (Model?.FileInfo is not { } shown || SideBySidePair.IndexOf(files, shown) is not { } primary)
+        // A step whose target is current but whose pair has not shown yet leaves the old pair on screen, which a
+        // re-sort can leave a pair of the list though the position names the target
+        if (Model?.FileInfo is not { } shown || SideBySidePair.IndexOf(files, shown) is not { } primary ||
+            primary != iterator.CurrentIndex)
         {
             return false;
         }

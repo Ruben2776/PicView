@@ -422,6 +422,85 @@ public class ImageIteratorFileListTests : IDisposable
     }
 
     [Fact]
+    public async Task Resort_ListEmptiedMeanwhile_ReportsNothing()
+    {
+        var changes = new ConcurrentQueue<FileListChange>();
+        var iterator = new ImageIterator(_cache, TestTabServices.NoThumbnails(_cache), _tab, changes.Enqueue);
+        iterator.Initialize([File("a.jpg"), File("b.jpg"), File("c.jpg")], 1, OrderingBy(SortFilesBy.Name));
+        using var gate = new ComparisonGate();
+        changes.Clear();
+
+        // The tab drops its iterator while a long sort runs
+        var resort = Task.Run(() => iterator.Resort(gate.Ordering(new FileOrder(SortFilesBy.Name, false))),
+            TestContext.Current.CancellationToken);
+        await gate.Comparing.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+        iterator.Dispose();
+        gate.Open();
+        await resort.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+
+        Assert.Empty(changes);
+        Assert.Empty(iterator.Files);
+    }
+
+    [Fact]
+    public async Task Resort_FileInsertedWhileItSorts_SortsAgainWithTheInsertedFile()
+    {
+        var changes = new ConcurrentQueue<FileListChange>();
+        var iterator = new ImageIterator(_cache, TestTabServices.NoThumbnails(_cache), _tab, changes.Enqueue);
+        iterator.Initialize([File("a.jpg"), File("c.jpg"), File("e.jpg")], 1, OrderingBy(SortFilesBy.Name));
+        using var gate = new ComparisonGate();
+        var descending = gate.Ordering(new FileOrder(SortFilesBy.Name, false));
+
+        var resort = Task.Run(() => iterator.Resort(descending), TestContext.Current.CancellationToken);
+        await gate.Comparing.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+        // Inserted in the order the list is in still, outside the gate
+        iterator.Insert(File("b.jpg"));
+        gate.Open();
+        await resort.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+
+        Assert.Equal(["e.jpg", "c.jpg", "b.jpg", "a.jpg"], iterator.Files.Select(f => f.Name));
+        Assert.Same(descending, iterator.Ordering);
+        Assert.Equal("c.jpg", iterator.Files[iterator.CurrentIndex].Name);
+        var last = changes.Last();
+        Assert.Equal(FileListChangeKind.Listed, last.Kind);
+        Assert.Same(iterator.Files, last.Files);
+    }
+
+    // A name comparison that holds while closed, so a test can change the list while a sort runs outside the lock
+    private sealed class ComparisonGate : IDisposable
+    {
+        private readonly ManualResetEventSlim _open = new(false);
+        private readonly TaskCompletionSource _comparing = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        // Set once a comparison waits at the closed gate
+        public Task Comparing => _comparing.Task;
+
+        public FileOrdering Ordering(FileOrder order) => new(order, Compare);
+
+        public void Open() => _open.Set();
+
+        private int Compare(string a, string b)
+        {
+            if (!_open.IsSet)
+            {
+                _comparing.TrySetResult();
+                if (!_open.Wait(WaitLimit))
+                {
+                    throw new TimeoutException("The gate was never opened");
+                }
+            }
+
+            return string.CompareOrdinal(a, b);
+        }
+
+        public void Dispose()
+        {
+            _open.Set();
+            _open.Dispose();
+        }
+    }
+
+    [Fact]
     public void Resort_RandomAgain_ShufflesAgainAndReportsOneListedChange()
     {
         var changes = new List<FileListChange>();

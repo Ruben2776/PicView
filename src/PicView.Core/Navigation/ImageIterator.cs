@@ -278,7 +278,9 @@ public class ImageIterator(SharedImageCache cache, Thumbnails thumbnails, TabVie
             // Sorted outside the lock, as a sort by size or date reads the disk for a file it has not read yet. A change
             // to the list meanwhile sorts it again, so no insert or remove is lost
             var listed = Volatile.Read(ref _files);
-            if (IsSameOrder(ordering))
+            // An empty list has no order to publish, and one emptied meanwhile was dropped by the tab, whose next
+            // iterator reuses the gallery coordinator a Listed change would reach
+            if (listed.Length is 0 || IsSameOrder(ordering))
             {
                 return;
             }

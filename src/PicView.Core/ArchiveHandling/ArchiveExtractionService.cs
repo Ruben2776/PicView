@@ -639,10 +639,28 @@ internal class ArchiveExtractionService(IArchiveEntryWriter? entryWriter = null)
     internal static readonly DateTime NoModifiedTimeStamp = new(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
     /// <summary>
-    ///     When the entry was last modified, as the archive says, or null when it does not say.
+    ///     When the entry was last modified, as the archive says, in UTC, or null when it does not say.
     /// </summary>
-    private static DateTime? ModifiedTimeOf(IArchiveEntry entry) =>
-        entry.LastModifiedTime is { } modified && modified > NoModifiedTime ? modified : null;
+    private static DateTime? ModifiedTimeOf(IArchiveEntry entry) => ModifiedTimeOf(entry.LastModifiedTime);
+
+    /// <summary>
+    ///     The UTC instant <paramref name="lastModified" /> stands for, or null for none. The entry's key and its file's
+    ///     stamp both take this one value, so an archive that mixes UTC and local entry times orders its entries the same
+    ///     way by key and on disk.
+    /// </summary>
+    internal static DateTime? ModifiedTimeOf(DateTime? lastModified)
+    {
+        // Compared in the entry's own time, before any conversion, as the zero dates it is there for read as that time
+        if (lastModified is not { } modified || modified <= NoModifiedTime)
+        {
+            return null;
+        }
+
+        // Unspecified counts as local, as the archives that give one keep local time
+        return modified.Kind is DateTimeKind.Utc
+            ? modified
+            : DateTime.SpecifyKind(modified, DateTimeKind.Local).ToUniversalTime();
+    }
 
     /// <summary>
     ///     Deletes every extraction folder and forgets it. An extraction to any of them stops by itself.
@@ -830,16 +848,13 @@ internal class ArchiveExtractionService(IArchiveEntryWriter? entryWriter = null)
     ///     does. A time the file system refuses is left out, as the page is written all the same. Set on the open file, so
     ///     it is not opened again for each time.
     /// </summary>
-    private static void StampModifiedTime(FileStream file, DateTime? modified)
+    /// <param name="modified">The entry's time as <see cref="ModifiedTimeOf(DateTime?)" /> gives it, in UTC.</param>
+    internal static void StampModifiedTime(FileStream file, DateTime? modified)
     {
         try
         {
-            // Unspecified counts as local, as the archives that give one keep local time
-            var utc = modified is not { } time
-                ? NoModifiedTimeStamp
-                : time.Kind is DateTimeKind.Utc
-                    ? time
-                    : DateTime.SpecifyKind(time, DateTimeKind.Local).ToUniversalTime();
+            // In UTC already, from ModifiedTimeOf, so the file's times are the very value its entry was ordered by
+            var utc = modified ?? NoModifiedTimeStamp;
             var handle = file.SafeFileHandle;
             File.SetCreationTimeUtc(handle, utc);
             File.SetLastWriteTimeUtc(handle, utc);
