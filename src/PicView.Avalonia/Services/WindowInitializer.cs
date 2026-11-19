@@ -154,7 +154,7 @@ public class WindowInitializer(IWindowProvider provider, MainWindow mainWindow) 
         if (core.SettingsViewModel is null)
         {
             core.SettingsViewModel = new SettingsViewModel(core.Translation, core.GlobalSettings);
-            core.SettingsViewModel.Initialize(new ThemeService(), new LanguageService(), new ImageSettingsService());
+            core.SettingsViewModel.Initialize(new ThemeService(core.MainWindows), new LanguageService(), new ImageSettingsService());
         }
 
         if (core.SettingsViewModel.SettingsWindowConfig is null)

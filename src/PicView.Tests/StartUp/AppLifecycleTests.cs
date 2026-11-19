@@ -15,6 +15,7 @@ using PicView.Core.Svg;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Interfaces;
 using PicView.Avalonia.Printing;
+using PicView.Avalonia.Services;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.StartUp;
 using PicView.Avalonia.Views.Menu;
@@ -988,6 +989,148 @@ public class AppLifecycleTests : IAsyncDisposable
         Assert.True(ViewModelOf(first).IsUIShown.Value);
     }
 
+    private static void WhiteUnconstrainedBackgroundInTheRecord()
+    {
+        Settings.UIProperties.BgColorChoice = (int)BackgroundType.White;
+        Settings.UIProperties.IsConstrainBackgroundColorEnabled = false;
+    }
+
+    [AvaloniaFact]
+    public async Task Background_CycledInOneWindow_LeavesTheOtherAlone()
+    {
+        WhiteUnconstrainedBackgroundInTheRecord();
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var first = app.MainWindows.Open[0];
+        var second = await app.MainWindows.OpenNewAsync(first);
+        var firstVm = ViewModelOf(first);
+        var secondVm = ViewModelOf(second);
+        Dispatcher.UIThread.RunJobs();
+        var secondBrush = secondVm.WindowSettings.ImageBackground.Value;
+
+        await firstVm.ActionRunner!.Run(Actions.ChangeBackground);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Equal((int)BackgroundType.LightGray, firstVm.WindowSettings.BackgroundChoice.Value);
+        Assert.Equal(Color.FromRgb(200, 200, 200),
+            Assert.IsType<SolidColorBrush>(firstVm.WindowSettings.ImageBackground.Value).Color);
+        Assert.Equal((int)BackgroundType.White, secondVm.WindowSettings.BackgroundChoice.Value);
+        Assert.Same(secondBrush, secondVm.WindowSettings.ImageBackground.Value);
+        Assert.Equal(Colors.White, Assert.IsType<SolidColorBrush>(secondBrush).Color);
+
+        // The cycle goes on from the window's own choice and wraps after the last one
+        firstVm.WindowSettings.BackgroundChoice.Value = (int)BackgroundType.MaxValue;
+        await firstVm.ActionRunner.Run(Actions.ChangeBackground);
+        Assert.Equal((int)BackgroundType.Transparent, firstVm.WindowSettings.BackgroundChoice.Value);
+    }
+
+    [AvaloniaFact]
+    public async Task Background_ANewWindow_PaintsItsSeededChoiceBeforeItShows()
+    {
+        WhiteUnconstrainedBackgroundInTheRecord();
+        var app = CreateApp();
+        // What each window's two brushes were as it showed
+        var shownWith = new Dictionary<MainWindow, (object? Image, object? Constrained)>();
+        _provider.OnCreated = window =>
+        {
+            var vm = ViewModelOf(window);
+            window.Opened += (_, _) => shownWith[window] =
+                (vm.WindowSettings.ImageBackground.Value, vm.WindowSettings.ConstrainedImageBackground.Value);
+        };
+        await app.StartAsync(settingsExists: true, []);
+        var first = app.MainWindows.Open[0];
+        // The first window shows once App Start's posted work has run
+        Dispatcher.UIThread.RunJobs();
+        var firstVm = ViewModelOf(first);
+        firstVm.WindowSettings.BackgroundChoice.Value = (int)BackgroundType.DarkGray;
+        firstVm.WindowSettings.IsConstrainingBackgroundColor.Value = true;
+
+        var opened = await app.MainWindows.OpenNewAsync(first);
+
+        Assert.Equal(Colors.White, Assert.IsType<SolidColorBrush>(shownWith[first].Image).Color);
+        Assert.Equal(Colors.Transparent, Assert.IsType<SolidColorBrush>(shownWith[opened].Image).Color);
+        Assert.Equal(Color.FromRgb(48, 48, 48), Assert.IsType<SolidColorBrush>(shownWith[opened].Constrained).Color);
+    }
+
+    [AvaloniaFact]
+    public async Task ConstrainBackground_ToggledInOneWindow_ChangesOnlyItsBrushes()
+    {
+        WhiteUnconstrainedBackgroundInTheRecord();
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var first = app.MainWindows.Open[0];
+        var second = await app.MainWindows.OpenNewAsync(first);
+        var firstVm = ViewModelOf(first);
+        var secondVm = ViewModelOf(second);
+        Dispatcher.UIThread.RunJobs();
+        var secondBrush = secondVm.WindowSettings.ImageBackground.Value;
+        var secondConstrained = secondVm.WindowSettings.ConstrainedImageBackground.Value;
+
+        await firstVm.ActionRunner!.Run(Actions.ToggleConstrainBackgroundColor);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.True(firstVm.WindowSettings.IsConstrainingBackgroundColor.Value);
+        Assert.Equal(Colors.Transparent,
+            Assert.IsType<SolidColorBrush>(firstVm.WindowSettings.ImageBackground.Value).Color);
+        Assert.Equal(Colors.White,
+            Assert.IsType<SolidColorBrush>(firstVm.WindowSettings.ConstrainedImageBackground.Value).Color);
+        Assert.False(secondVm.WindowSettings.IsConstrainingBackgroundColor.Value);
+        Assert.Same(secondBrush, secondVm.WindowSettings.ImageBackground.Value);
+        Assert.Same(secondConstrained, secondVm.WindowSettings.ConstrainedImageBackground.Value);
+        Assert.False(Settings.UIProperties.IsConstrainBackgroundColorEnabled);
+    }
+
+    [AvaloniaFact]
+    public async Task Background_Change_WritesNothingToTheRecord_AndSavesNothing()
+    {
+        WhiteUnconstrainedBackgroundInTheRecord();
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var firstVm = ViewModelOf(app.MainWindows.Open[0]);
+        var savesBefore = _sharedFiles.Saves;
+        var settingsFile = SettingsManager.CurrentSettingsPath;
+        if (File.Exists(settingsFile))
+        {
+            File.Delete(settingsFile);
+        }
+
+        await firstVm.ActionRunner!.Run(Actions.ChangeBackground);
+        await firstVm.ActionRunner.Run(Actions.ToggleConstrainBackgroundColor);
+        new ThemeService(_core.MainWindows).SetBackground((int)BackgroundType.NearBlack);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Equal((int)BackgroundType.NearBlack, firstVm.WindowSettings.BackgroundChoice.Value);
+        Assert.True(firstVm.WindowSettings.IsConstrainingBackgroundColor.Value);
+        Assert.Equal((int)BackgroundType.White, Settings.UIProperties.BgColorChoice);
+        Assert.False(Settings.UIProperties.IsConstrainBackgroundColorEnabled);
+        Assert.Equal(savesBefore, _sharedFiles.Saves);
+        Assert.False(File.Exists(settingsFile));
+    }
+
+    [AvaloniaFact]
+    public async Task CloseAsync_StoresTheBackgroundChoiceAndConstrain()
+    {
+        WhiteUnconstrainedBackgroundInTheRecord();
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var first = app.MainWindows.Open[0];
+        var second = await app.MainWindows.OpenNewAsync(first);
+        await ViewModelOf(second).ActionRunner!.Run(Actions.ChangeBackground);
+        await ViewModelOf(second).ActionRunner!.Run(Actions.ToggleConstrainBackgroundColor);
+        Assert.Equal((int)BackgroundType.White, Settings.UIProperties.BgColorChoice);
+        Assert.False(Settings.UIProperties.IsConstrainBackgroundColorEnabled);
+        var savesBeforeClose = _sharedFiles.Saves;
+
+        await app.MainWindows.CloseAsync(second);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Equal((int)BackgroundType.LightGray, Settings.UIProperties.BgColorChoice);
+        Assert.True(Settings.UIProperties.IsConstrainBackgroundColorEnabled);
+        Assert.Equal(savesBeforeClose + 1, _sharedFiles.Saves);
+        Assert.Equal((int)BackgroundType.White, ViewModelOf(first).WindowSettings.BackgroundChoice.Value);
+        Assert.False(ViewModelOf(first).WindowSettings.IsConstrainingBackgroundColor.Value);
+    }
+
     [AvaloniaFact]
     public async Task TopMost_ChangedInOneMainWindow_OnlyThatWindowFollows()
     {
@@ -1044,22 +1187,15 @@ public class AppLifecycleTests : IAsyncDisposable
         Settings.UIProperties.BgColorChoice = (int)BackgroundType.White;
         Settings.UIProperties.IsConstrainBackgroundColorEnabled = false;
         var app = CreateApp();
-        // PicView's App sets its core as the app's data context before App Start
-        Application.Current!.DataContext = _core;
-        try
-        {
-            await app.StartAsync(settingsExists: true, []);
 
-            var settings = _core.GlobalSettings;
-            Assert.Equal(Colors.White, Assert.IsType<SolidColorBrush>(settings.ImageBackground.Value).Color);
-            Assert.Equal(Colors.Transparent,
-                Assert.IsType<SolidColorBrush>(settings.ConstrainedImageBackground.Value).Color);
-            Assert.Equal((int)BackgroundType.White, settings.BackgroundChoice.Value);
-        }
-        finally
-        {
-            Application.Current.DataContext = null;
-        }
+        await app.StartAsync(settingsExists: true, []);
+
+        // The first window's own, found without the app's data context
+        var settings = ViewModelOf(app.MainWindows.Open[0]).WindowSettings;
+        Assert.Equal(Colors.White, Assert.IsType<SolidColorBrush>(settings.ImageBackground.Value).Color);
+        Assert.Equal(Colors.Transparent,
+            Assert.IsType<SolidColorBrush>(settings.ConstrainedImageBackground.Value).Color);
+        Assert.Equal((int)BackgroundType.White, settings.BackgroundChoice.Value);
     }
 
     [AvaloniaFact]
@@ -1068,20 +1204,13 @@ public class AppLifecycleTests : IAsyncDisposable
         Settings.UIProperties.BgColorChoice = (int)BackgroundType.White;
         Settings.UIProperties.IsConstrainBackgroundColorEnabled = true;
         var app = CreateApp();
-        Application.Current!.DataContext = _core;
-        try
-        {
-            await app.StartAsync(settingsExists: true, []);
 
-            var settings = _core.GlobalSettings;
-            Assert.Equal(Colors.Transparent, Assert.IsType<SolidColorBrush>(settings.ImageBackground.Value).Color);
-            Assert.Equal(Colors.White,
-                Assert.IsType<SolidColorBrush>(settings.ConstrainedImageBackground.Value).Color);
-        }
-        finally
-        {
-            Application.Current.DataContext = null;
-        }
+        await app.StartAsync(settingsExists: true, []);
+
+        var settings = ViewModelOf(app.MainWindows.Open[0]).WindowSettings;
+        Assert.Equal(Colors.Transparent, Assert.IsType<SolidColorBrush>(settings.ImageBackground.Value).Color);
+        Assert.Equal(Colors.White,
+            Assert.IsType<SolidColorBrush>(settings.ConstrainedImageBackground.Value).Color);
     }
 
     [AvaloniaFact]

@@ -34,7 +34,7 @@
                     Width="{CompiledBinding ParentWindowContext.ScrollViewerWidth.Value}"
                     x:Name="StackScrollViewer">
                     <Border
-                        Background="{CompiledBinding ParentWindowContext.GlobalSettings.ConstrainedImageBackground.Value,
+                        Background="{CompiledBinding ParentWindowContext.WindowSettings.ConstrainedImageBackground.Value,
                                                      Mode=OneWay}"
                         Height="{CompiledBinding ParentWindowContext.ImageHeight.Value}"
                         HorizontalAlignment="Center"

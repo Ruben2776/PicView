@@ -1,9 +1,11 @@
 using PicView.Avalonia.ColorManagement;
 using PicView.Core.ISettings;
+using PicView.Core.ViewModels;
 
 namespace PicView.Avalonia.Services;
 
-public class ThemeService : IThemeService
+/// <param name="mainWindows">The Main Windows, whose active one the background is set for; null sets none.</param>
+public class ThemeService(MainWindowOverviewViewModel? mainWindows = null) : IThemeService
 {
     public void SetTheme(int themeIndex)
     {
@@ -18,8 +20,9 @@ public class ThemeService : IThemeService
         ThemeManager.SetColorTheme(colorIndex);
     }
 
+    /// <inheritdoc cref="BackgroundManager.SetBackground(MainWindowOverviewViewModel, int)"/>
     public void SetBackground(int backgroundIndex)
     {
-        BackgroundManager.SetBackground(backgroundIndex);
+        BackgroundManager.SetBackground(mainWindows, backgroundIndex);
     }
 }

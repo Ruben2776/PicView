@@ -186,7 +186,6 @@ public class SettingsViewModel : IDisposable
     // Appearance
     public BindableReactiveProperty<int> ThemeIndex { get; } = new(Settings.Theme.GlassTheme ? 2 : Settings.Theme.Dark ? 0 : 1);
     public BindableReactiveProperty<int> ColorThemeIndex { get; } = new(Settings.Theme.ColorTheme);
-    public BindableReactiveProperty<int> BackgroundChoice { get; } = new(Settings.UIProperties.BgColorChoice);
     
     // Image
     public BindableReactiveProperty<bool> IsScalingSetToNearestNeighbor { get; } = new(Settings.ImageScaling.IsScalingSetToNearestNeighbor);
@@ -291,7 +290,6 @@ public class SettingsViewModel : IDisposable
             DeletionIndex,
             ThemeIndex,
             ColorThemeIndex,
-            BackgroundChoice,
             IsScalingSetToNearestNeighbor,
             ImageScalingIndex,
             IsAutoPlayingMotionPhotos,
@@ -417,9 +415,9 @@ public class SettingsViewModel : IDisposable
         }, DebugHelper.LogError(nameof(SettingsViewModel), nameof(SubscriptionSettingsUpdate)))
         .AddTo(ref _disposables);
 
+        // The palette's one writer: the Active Main Window's own choice, which the palette shows
         SetBackgroundCommand
             .Subscribe(x => {
-            BackgroundChoice.Value = (int)x;
             _themeService?.SetBackground((int)x);
         }, DebugHelper.LogError(nameof(SettingsViewModel), nameof(SubscriptionSettingsUpdate)))
         .AddTo(ref _disposables);

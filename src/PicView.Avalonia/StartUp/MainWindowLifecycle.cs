@@ -5,6 +5,7 @@ using PicView.Avalonia.Views.UC;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
+using PicView.Avalonia.ColorManagement;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Functions;
 using PicView.Avalonia.Input;
@@ -335,6 +336,10 @@ public sealed class MainWindowLifecycle
         // adapter reacts to a new image before the fitter does
         window.Disposables.Add(window.WindowFitter.Follow());
         window.Disposables.Add(window.WindowFitter);
+        // Paints the window's two background brushes from its own seeded choice now, so it shows with them; a window
+        // copied from another derives its own, as the copy carries no brushes. The rest of its followers start once
+        // it is shown, in FollowSettings
+        window.Disposables.Add(BackgroundManager.Follow(vm.WindowSettings));
         _core.MainWindows.MainWindows.Add(vm);
         _core.MainWindows.ActiveWindow.Value = vm;
         _open.Add(window);
@@ -367,7 +372,8 @@ public sealed class MainWindowLifecycle
         ?? throw new InvalidOperationException("A main window needs a MainWindowViewModel as its DataContext.");
 
     /// <summary>
-    /// Every Main Window follows its own top most and the shared taskbar progress setting (ADR-0020).
+    /// Every Main Window follows its own top most and the shared taskbar progress setting (ADR-0020). Its own
+    /// background is followed from when it is made, before it shows (<see cref="BackgroundManager.Follow"/>).
     /// </summary>
     internal static IDisposable FollowSettings(MainWindow window)
     {

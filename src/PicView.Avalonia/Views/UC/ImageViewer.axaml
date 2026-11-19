@@ -31,7 +31,7 @@
                         Height="{Binding ParentWindowContext.ImageHeight.Value}"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
-                        Background="{CompiledBinding ParentWindowContext.GlobalSettings.ConstrainedImageBackground.Value,
+                        Background="{CompiledBinding ParentWindowContext.WindowSettings.ConstrainedImageBackground.Value,
                                                      Mode=OneWay}">
                         <DockPanel
                             HorizontalAlignment="Center"

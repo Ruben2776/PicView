@@ -285,7 +285,8 @@
                             x:Name="TransparentBgButton"
                             Background="Transparent"
                             Classes="colorBtn"
-                            Classes.activeColorAccentBtn="{CompiledBinding SettingsViewModel.BackgroundChoice.Value,
+                            Classes.activeColorAccentBtn="{CompiledBinding MainWindows.ActiveWindow.Value.WindowSettings.BackgroundChoice.Value,
+                                                                           Mode=OneWay,
                                                                            Converter={StaticResource IntToEnumBoolConverter},
                                                                            ConverterParameter={x:Static color:BackgroundType.Transparent}}"
                             Command="{CompiledBinding SettingsViewModel.SetBackgroundCommand}"
@@ -296,7 +297,8 @@
                             x:Name="NoiseTextureButton"
                             Background="{DynamicResource NoisyTexture}"
                             Classes="colorBtn"
-                            Classes.activeColorAccentBtn="{CompiledBinding SettingsViewModel.BackgroundChoice.Value,
+                            Classes.activeColorAccentBtn="{CompiledBinding MainWindows.ActiveWindow.Value.WindowSettings.BackgroundChoice.Value,
+                                                                           Mode=OneWay,
                                                                            Converter={StaticResource IntToEnumBoolConverter},
                                                                            ConverterParameter={x:Static color:BackgroundType.NoiseTexture}}"
                             Command="{CompiledBinding SettingsViewModel.SetBackgroundCommand}"
@@ -307,7 +309,8 @@
                             x:Name="DarkGraySemiTransparentAltBgButton"
                             Background="#C8323232"
                             Classes="colorBtn"
-                            Classes.activeColorAccentBtn="{CompiledBinding SettingsViewModel.BackgroundChoice.Value,
+                            Classes.activeColorAccentBtn="{CompiledBinding MainWindows.ActiveWindow.Value.WindowSettings.BackgroundChoice.Value,
+                                                                           Mode=OneWay,
                                                                            Converter={StaticResource IntToEnumBoolConverter},
                                                                            ConverterParameter={x:Static color:BackgroundType.SemiTransparentDarkerGray}}"
                             Command="{CompiledBinding SettingsViewModel.SetBackgroundCommand}"
@@ -318,7 +321,8 @@
                             x:Name="DarkGraySemiTransparentBgButton"
                             Background="#C8646464"
                             Classes="colorBtn"
-                            Classes.activeColorAccentBtn="{CompiledBinding SettingsViewModel.BackgroundChoice.Value,
+                            Classes.activeColorAccentBtn="{CompiledBinding MainWindows.ActiveWindow.Value.WindowSettings.BackgroundChoice.Value,
+                                                                           Mode=OneWay,
                                                                            Converter={StaticResource IntToEnumBoolConverter},
                                                                            ConverterParameter={x:Static color:BackgroundType.SemiTransparentDarkGray}}"
                             Command="{CompiledBinding SettingsViewModel.SetBackgroundCommand}"
@@ -329,7 +333,8 @@
                             x:Name="CheckerboardButton"
                             Background="Transparent"
                             Classes="colorBtn"
-                            Classes.activeColorAccentBtn="{CompiledBinding SettingsViewModel.BackgroundChoice.Value,
+                            Classes.activeColorAccentBtn="{CompiledBinding MainWindows.ActiveWindow.Value.WindowSettings.BackgroundChoice.Value,
+                                                                           Mode=OneWay,
                                                                            Converter={StaticResource IntToEnumBoolConverter},
                                                                            ConverterParameter={x:Static color:BackgroundType.Checkerboard}}"
                             Command="{CompiledBinding SettingsViewModel.SetBackgroundCommand}"
@@ -340,7 +345,8 @@
                             x:Name="CheckerboardAltButton"
                             Background="Transparent"
                             Classes="colorBtn"
-                            Classes.activeColorAccentBtn="{CompiledBinding SettingsViewModel.BackgroundChoice.Value,
+                            Classes.activeColorAccentBtn="{CompiledBinding MainWindows.ActiveWindow.Value.WindowSettings.BackgroundChoice.Value,
+                                                                           Mode=OneWay,
                                                                            Converter={StaticResource IntToEnumBoolConverter},
                                                                            ConverterParameter={x:Static color:BackgroundType.CheckerboardAlternative}}"
                             Command="{CompiledBinding SettingsViewModel.SetBackgroundCommand}"
@@ -351,7 +357,8 @@
                             x:Name="WhiteBgButton"
                             Background="#fff"
                             Classes="colorBtn"
-                            Classes.activeColorAccentBtn="{CompiledBinding SettingsViewModel.BackgroundChoice.Value,
+                            Classes.activeColorAccentBtn="{CompiledBinding MainWindows.ActiveWindow.Value.WindowSettings.BackgroundChoice.Value,
+                                                                           Mode=OneWay,
                                                                            Converter={StaticResource IntToEnumBoolConverter},
                                                                            ConverterParameter={x:Static color:BackgroundType.White}}"
                             Command="{CompiledBinding SettingsViewModel.SetBackgroundCommand}"
@@ -362,7 +369,8 @@
                             x:Name="GrayBgButton"
                             Background="#C8C8C8"
                             Classes="colorBtn"
-                            Classes.activeColorAccentBtn="{CompiledBinding SettingsViewModel.BackgroundChoice.Value,
+                            Classes.activeColorAccentBtn="{CompiledBinding MainWindows.ActiveWindow.Value.WindowSettings.BackgroundChoice.Value,
+                                                                           Mode=OneWay,
                                                                            Converter={StaticResource IntToEnumBoolConverter},
                                                                            ConverterParameter={x:Static color:BackgroundType.LightGray}}"
                             Command="{CompiledBinding SettingsViewModel.SetBackgroundCommand}"
@@ -373,7 +381,8 @@
                             x:Name="MediumGrayBgButton"
                             Background="#9B9B9B"
                             Classes="colorBtn"
-                            Classes.activeColorAccentBtn="{CompiledBinding SettingsViewModel.BackgroundChoice.Value,
+                            Classes.activeColorAccentBtn="{CompiledBinding MainWindows.ActiveWindow.Value.WindowSettings.BackgroundChoice.Value,
+                                                                           Mode=OneWay,
                                                                            Converter={StaticResource IntToEnumBoolConverter},
                                                                            ConverterParameter={x:Static color:BackgroundType.MediumGray}}"
                             Command="{CompiledBinding SettingsViewModel.SetBackgroundCommand}"
@@ -384,7 +393,8 @@
                             x:Name="DarkGrayBgButton"
                             Background="#303030"
                             Classes="colorBtn"
-                            Classes.activeColorAccentBtn="{CompiledBinding SettingsViewModel.BackgroundChoice.Value,
+                            Classes.activeColorAccentBtn="{CompiledBinding MainWindows.ActiveWindow.Value.WindowSettings.BackgroundChoice.Value,
+                                                                           Mode=OneWay,
                                                                            Converter={StaticResource IntToEnumBoolConverter},
                                                                            ConverterParameter={x:Static color:BackgroundType.DarkGray}}"
                             Command="{CompiledBinding SettingsViewModel.SetBackgroundCommand}"
@@ -395,7 +405,8 @@
                             x:Name="DarkMainBackgroundColorBgButton"
                             Background="#2b2b2b"
                             Classes="colorBtn"
-                            Classes.activeColorAccentBtn="{CompiledBinding SettingsViewModel.BackgroundChoice.Value,
+                            Classes.activeColorAccentBtn="{CompiledBinding MainWindows.ActiveWindow.Value.WindowSettings.BackgroundChoice.Value,
+                                                                           Mode=OneWay,
                                                                            Converter={StaticResource IntToEnumBoolConverter},
                                                                            ConverterParameter={x:Static color:BackgroundType.MainBackgroundColor}}"
                             Command="{CompiledBinding SettingsViewModel.SetBackgroundCommand}"
@@ -406,7 +417,8 @@
                             x:Name="BlackBgButton"
                             Background="#050505"
                             Classes="colorBtn"
-                            Classes.activeColorAccentBtn="{CompiledBinding SettingsViewModel.BackgroundChoice.Value,
+                            Classes.activeColorAccentBtn="{CompiledBinding MainWindows.ActiveWindow.Value.WindowSettings.BackgroundChoice.Value,
+                                                                           Mode=OneWay,
                                                                            Converter={StaticResource IntToEnumBoolConverter},
                                                                            ConverterParameter={x:Static color:BackgroundType.NearBlack}}"
                             Command="{CompiledBinding SettingsViewModel.SetBackgroundCommand}"
@@ -422,7 +434,7 @@
                 x:Name="ConstrainingBackgroundColorToggleButton"
                 Classes="MenuItemHover settingsToggleButton"
                 Command="{CompiledBinding MainWindows.ActiveWindow.Value.RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ToggleConstrainBackgroundColor}"
-                IsChecked="{CompiledBinding GlobalSettings.IsConstrainingBackgroundColor.Value, Mode=OneWay}"
+                IsChecked="{CompiledBinding MainWindows.ActiveWindow.Value.WindowSettings.IsConstrainingBackgroundColor.Value, Mode=OneWay}"
                 Text="{CompiledBinding Translation.ConstrainBackgroundToImage.Value,
                                        Mode=OneWay}" />
         </Border>

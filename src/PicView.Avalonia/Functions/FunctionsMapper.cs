@@ -737,9 +737,12 @@ public class FunctionsMapper : IActionRunner
 
     #region Image Functions
     
-    /// <inheritdoc cref="BackgroundManager.ChangeBackground(MainWindowViewModel)" />
-    private async ValueTask ChangeBackground() =>
-        await BackgroundManager.ChangeBackgroundAsync(_vm).ConfigureAwait(false);
+    /// <inheritdoc cref="BackgroundManager.ChangeBackground(WindowSettings)" />
+    private ValueTask ChangeBackground()
+    {
+        BackgroundManager.ChangeBackground(_vm.WindowSettings);
+        return ValueTask.CompletedTask;
+    }
 
     private ValueTask SideBySide() => ToggleHelper.Toggle(_vm.WindowSettings.IsSideBySide);
 

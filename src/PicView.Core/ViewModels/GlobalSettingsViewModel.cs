@@ -7,7 +7,7 @@ using R3;
 namespace PicView.Core.ViewModels;
 
 /// <summary>
-/// The six toggled settings publish their changes (ADR-0020): each is a bindable over its stored value, and the
+/// The five toggled settings publish their changes (ADR-0020): each is a bindable over its stored value, and the
 /// write-through here is the one writer of that stored value, followed by one coalesced save. The constructor
 /// subscribes nothing: the write-throughs start in two groups, <see cref="InitializeActionSettings"/> and
 /// <see cref="InitializeExtraSettings"/>, so a change before them writes and saves nothing.
@@ -29,8 +29,6 @@ public class GlobalSettingsViewModel
 
     public BindableReactiveProperty<bool> IsOpeningInSameWindow { get; }
 
-    public BindableReactiveProperty<bool> IsConstrainingBackgroundColor { get; }
-
     /// <summary>
     /// Whether the alt buttons and the hover bar fade in on hover; a hover bar that cannot fade in takes no clicks (ADR-0021).
     /// </summary>
@@ -51,12 +49,6 @@ public class GlobalSettingsViewModel
     public IReadOnlyBindableReactiveProperty<string?> FileHistoryText => _fileHistoryText;
 
     public BindableReactiveProperty<bool> ShowSetAsWallpaper { get; } = new(Settings.UIProperties.ShowSetAsWallpaper);
-
-    public BindableReactiveProperty<object?> ImageBackground { get; } = new();
-
-    public BindableReactiveProperty<object?> ConstrainedImageBackground { get; } = new();
-
-    public BindableReactiveProperty<int> BackgroundChoice { get; } = new();
 
     public BindableReactiveProperty<int> GalleryMouseWheelBehavior { get; } = new((int)Settings.Gallery.GalleryMouseWheelBehavior);
 
@@ -97,7 +89,6 @@ public class GlobalSettingsViewModel
         IsShowingFullPathInTitleBar = new BindableReactiveProperty<bool>(Settings.UIProperties.ShowFullPathInTitleBar);
         IsShowingTaskbarProgress = new BindableReactiveProperty<bool>(Settings.UIProperties.IsTaskbarProgressEnabled);
         IsOpeningInSameWindow = new BindableReactiveProperty<bool>(Settings.UIProperties.OpenInSameWindow);
-        IsConstrainingBackgroundColor = new BindableReactiveProperty<bool>(Settings.UIProperties.IsConstrainBackgroundColorEnabled);
         ShowFadeButtons = new BindableReactiveProperty<bool>(Settings.UIProperties.ShowAltInterfaceButtons);
         // Built before the first window rewrites a negative stored margin, so it gives the same margin that window does
         WindowMargin = new BindableReactiveProperty<double>(Settings.WindowProperties.Margin < 0 ? NegativeMarginReplacement : Settings.WindowProperties.Margin);
@@ -106,7 +97,7 @@ public class GlobalSettingsViewModel
     }
 
     /// <summary>
-    /// Starts the write-throughs of the six settings the Actions toggle. Idempotent and safe from any thread;
+    /// Starts the write-throughs of the five settings the Actions toggle. Idempotent and safe from any thread;
     /// a concurrent caller returns only after the subscriptions exist.
     /// </summary>
     public void InitializeActionSettings()
@@ -123,7 +114,6 @@ public class GlobalSettingsViewModel
             Follow(IsShowingFullPathInTitleBar, value => Settings.UIProperties.ShowFullPathInTitleBar = value);
             Follow(IsShowingTaskbarProgress, value => Settings.UIProperties.IsTaskbarProgressEnabled = value);
             Follow(IsOpeningInSameWindow, value => Settings.UIProperties.OpenInSameWindow = value);
-            Follow(IsConstrainingBackgroundColor, value => Settings.UIProperties.IsConstrainBackgroundColorEnabled = value);
             _isActionSettingsInitialized = true;
         }
     }

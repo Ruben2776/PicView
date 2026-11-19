@@ -50,5 +50,5 @@ public static class ToggleHelper
         Toggle(vm.GlobalSettings.IsShowingTaskbarProgress);
 
     public static ValueTask ToggleConstrainBackgroundColor(MainWindowViewModel vm) => 
-        Toggle(vm.GlobalSettings.IsConstrainingBackgroundColor);
+        Toggle(vm.WindowSettings.IsConstrainingBackgroundColor);
 }

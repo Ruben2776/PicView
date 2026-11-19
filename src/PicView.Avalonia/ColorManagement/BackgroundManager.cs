@@ -2,6 +2,7 @@
 using Avalonia.Media;
 using Avalonia.Threading;
 using PicView.Core.ColorHandling;
+using PicView.Core.DebugTools;
 using PicView.Core.ViewModels;
 using R3;
 
@@ -49,32 +50,32 @@ public static class BackgroundManager
     };
 
     /// <summary>
-    /// Changes the background to the next option in the cycle and updates the view model.
+    /// Moves the window's background choice on to the next one in the cycle, which the B key does. Its follower paints
+    /// the new brushes; nothing is written to the settings record, which the window stores when it closes.
     /// </summary>
-    /// <param name="vm">The main view model where the background is updated.</param>
-    public static void ChangeBackground(MainWindowViewModel vm)
+    public static void ChangeBackground(WindowSettings settings)
     {
-        // Cycle to the next background choice
-        var nextChoice = (Settings.UIProperties.BgColorChoice + 1) % ((int)BackgroundType.MaxValue + 1);
-        SetBackground(vm, nextChoice);
-    }
-    
-    
-    /// <inheritdoc cref="ChangeBackground(MainWindowViewModel)" />
-    public static async Task ChangeBackgroundAsync(MainWindowViewModel vm)
-    {
-        await Dispatcher.UIThread.InvokeAsync(() => ChangeBackground(vm));
-        await SaveSettingsAsync().ConfigureAwait(false);
+        // A closed window's settings take no change (ADR-0038)
+        if (settings.IsDisposed)
+        {
+            return;
+        }
+
+        settings.BackgroundChoice.Value = (settings.BackgroundChoice.Value + 1) % ((int)BackgroundType.MaxValue + 1);
     }
 
     /// <summary>
-    /// Sets the background of the view model to a specific background choice.
+    /// Sets the Active Main Window's background choice, as the Settings window's palette does; does nothing when no
+    /// Main Window is active.
     /// </summary>
-    /// <param name="vm">The main view model where the background is set.</param>
-    /// <param name="choice">The background choice to set.</param>
-    public static void SetBackground(MainWindowViewModel vm, int choice)
+    public static void SetBackground(MainWindowOverviewViewModel? mainWindows, int choice)
     {
-        SetBackground(vm.GlobalSettings, choice);
+        if (mainWindows?.ActiveWindow.Value?.WindowSettings is not { IsDisposed: false } settings)
+        {
+            return;
+        }
+
+        settings.BackgroundChoice.Value = choice;
     }
 
     /// <summary>
@@ -162,55 +163,52 @@ public static class BackgroundManager
         };
     }
     
-    public static void SetBackground(int backgroundIndex)
+    /// <summary>
+    /// Paints a Main Window's two brushes from its own background choice and constrain setting, now when it is made,
+    /// so it shows with them, and again on each change. The brushes are made on the UI thread whichever thread
+    /// changed the setting. Ends when the window's settings are disposed as it closes, and paints nothing after that.
+    /// </summary>
+    /// <remarks>Call on the UI thread, before the window shows.</remarks>
+    public static IDisposable Follow(WindowSettings settings)
     {
-        if (Application.Current.DataContext is not CoreViewModel core)
-        {
-            return;
-        }
-        
-        SetBackground(core.GlobalSettings, backgroundIndex);
-    }
-    
-    public static void SetBackground()
-    {
-        if (Application.Current.DataContext is not CoreViewModel core)
-        {
-            return;
-        }
-        
-        SetBackground(core.GlobalSettings, Settings.UIProperties.BgColorChoice);
+        // Captured here, on the UI thread: a pool thread can have a dispatcher of its own
+        var dispatcher = Dispatcher.UIThread;
+        return settings.BackgroundChoice.CombineLatest(settings.IsConstrainingBackgroundColor, static (_, _) => Unit.Default)
+            .Subscribe(_ =>
+            {
+                if (dispatcher.CheckAccess())
+                {
+                    Paint(settings);
+                }
+                else
+                {
+                    dispatcher.Post(() => Paint(settings));
+                }
+            }, DebugHelper.LogError(nameof(BackgroundManager), nameof(Follow)));
     }
 
     /// <summary>
-    /// Sets the two background brushes and the choice on the global settings.
+    /// Makes the two brushes from what the settings say now, on the UI thread.
     /// </summary>
-    public static void SetBackground(GlobalSettingsViewModel globalSettings, int choice)
+    private static void Paint(WindowSettings settings)
     {
-        Settings.UIProperties.BgColorChoice = choice;
-
-        var brush = GetBackgroundBrush((BackgroundType)choice);
-
-        if (Settings.UIProperties.IsConstrainBackgroundColorEnabled)
+        // A change posted just before the window closed
+        if (settings.IsDisposed)
         {
-            globalSettings.ImageBackground.Value = new SolidColorBrush(Colors.Transparent);
-            globalSettings.ConstrainedImageBackground.Value = brush;
+            return;
+        }
+
+        var brush = GetBackgroundBrush((BackgroundType)settings.BackgroundChoice.Value);
+        var transparent = new SolidColorBrush(Colors.Transparent);
+        if (settings.IsConstrainingBackgroundColor.Value)
+        {
+            settings.ImageBackground.Value = transparent;
+            settings.ConstrainedImageBackground.Value = brush;
         }
         else
         {
-            globalSettings.ImageBackground.Value = brush;
-            globalSettings.ConstrainedImageBackground.Value = new SolidColorBrush(Colors.Transparent);
+            settings.ImageBackground.Value = brush;
+            settings.ConstrainedImageBackground.Value = transparent;
         }
-
-        globalSettings.BackgroundChoice.Value = choice;
-    }
-
-    /// <summary>
-    /// Re-derives the two brushes when the constrain setting changes. Lives for the process.
-    /// </summary>
-    public static IDisposable Follow(GlobalSettingsViewModel globalSettings)
-    {
-        return globalSettings.IsConstrainingBackgroundColor.Skip(1).Subscribe(_ =>
-            Dispatcher.UIThread.Post(() => SetBackground(globalSettings, Settings.UIProperties.BgColorChoice)));
     }
 }

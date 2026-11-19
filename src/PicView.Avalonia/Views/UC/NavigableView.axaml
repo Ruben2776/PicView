@@ -16,7 +16,7 @@
 
         <Panel
             x:Name="ContentPanel"
-            Background="{CompiledBinding ParentWindowContext.GlobalSettings.ImageBackground.Value,
+            Background="{CompiledBinding ParentWindowContext.WindowSettings.ImageBackground.Value,
                                          Mode=OneWay}"
             DockPanel.Dock="Left">
             <ContentControl x:Name="Slot" />

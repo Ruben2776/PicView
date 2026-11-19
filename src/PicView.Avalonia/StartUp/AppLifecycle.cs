@@ -420,14 +420,13 @@ public sealed class AppLifecycle
         _core.GlobalSettings.FollowLanguage(_core.Translation.LanguageChanged);
         _ = Task.Run(() =>
         {
-            _core.GlobalSettings.BackgroundChoice.Value = Settings.UIProperties.BgColorChoice;
 #pragma warning disable MA0042
             LanguageUpdater.UpdateLanguage(_core.Translation, settingsExists);
 #pragma warning restore MA0042
         });
+        // Before the first window is made, so the brushes it paints its background with resolve in this theme
         ThemeManager.DetermineTheme(Application.Current, settingsExists);
         ColorManager.UpdateAccentColors(Settings.Theme.ColorTheme);
-        BackgroundManager.SetBackground();
     }
 
     // No setting is followed before the first Main Window is open, so it shows without the cost
@@ -455,8 +454,7 @@ public sealed class AppLifecycle
         // The write-throughs first, so each follower below is notified after the stored value is written
         settings.InitializeActionSettings();
         _core.GallerySettings.Start();
-        // Both live for the process. Open in same window has no follower: each hand-over reads it as it arrives
-        _ = BackgroundManager.Follow(settings);
+        // Lives for the process. Open in same window has no follower: each hand-over reads it as it arrives
         if (_core.SharedFileWatcher is { } fileWatcher)
         {
             // Every tab's watch follows the setting
