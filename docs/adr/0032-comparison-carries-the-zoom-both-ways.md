@@ -19,3 +19,4 @@ This differs from the crop on purpose. ADR-0027 carries the zoom one way, from t
 - `INavigableContent` has `ShowFactor`. `ImageViewer` sets its zoom control's scale at once; `ComparisonViewer` sets the stacked control's, or both synced controls'.
 - Comparing stays on when the tab closes its image or shows nothing, so the next image it shows compares. Side-by-side is still global; a tab shows a pair when side-by-side is on or the tab compares, which `TabViewModel.IsShowingPair` publishes for its Next and Prev, its Titles and the window's fit.
 - The window fits the pair beside each other only for side-by-side and for a comparison in the synced mode; the other modes stack the pair, so the window fits one image (`WindowFitter.ShowsPairBeside`).
+- Superseded in part by ADR-0040: Side-by-Side is a Window Setting of each Main Window, no longer global; `IsShowingPair` is the window's Side-by-Side or the tab's comparing state.

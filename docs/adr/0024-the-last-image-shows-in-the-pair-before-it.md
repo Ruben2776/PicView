@@ -19,3 +19,4 @@ Before this, five modules decided the partner themselves, and they disagreed at 
 - Only the modules that decide the pair or the position read the published settings: `ImageIterator`, `FolderChanges`, `TabLoad`, `QuickLoad`, `ArchiveOpenings` and the tab's `CanNavigateForwards`. Titles, conversion, printing and the window fitter still read the static settings.
 - The iterator reads Side-by-Side and looping from the tab's published settings (ADR-0020), and falls back to the static settings for a tab without them.
 - The tab publishes `PartnerIndex` (-1 when the image shows alone) beside `NavigationIndex`, so the gallery can mark both images even when the list loops back to the first.
+- Superseded in part by ADR-0040: the iterator reads the Side-by-Side and looping of the window the tab is in, and conversion, printing and the window fitter read that window's Side-by-Side too, not the static settings, which only a tab with no window falls back to.

@@ -64,7 +64,7 @@ A window that works on images. Most work on what their Main Window shows: Print,
 _Avoid_: Secondary window, child window, dialog
 
 **Interface Visibility**:
-Which of a Main Window's bars show, their heights, and whether the hover bar may show. Derived from the three interface settings and the window's Window Mode: fullscreen hides every bar; otherwise the titlebar follows the interface setting, the bottom bar shows only when the interface shows and its setting is on, and the hover bar may show when its setting is on and no bottom bar shows. The window derives it; nothing sets it.
+Which of a Main Window's bars show, their heights, and whether the hover bar may show. Derived from the window's own three interface settings and its Window Mode: fullscreen hides every bar; otherwise the titlebar follows the interface setting, the bottom bar shows only when the interface shows and its setting is on, and the hover bar may show when its setting is on and no bottom bar shows. The window derives it; nothing sets it.
 _Avoid_: UI shown, hidden UI, toggle UI (as a state)
 
 **App Window**:
@@ -140,7 +140,7 @@ _Avoid_: Last entry, current entry
 ## Images
 
 **Side-by-Side Pair**:
-Two images a tab shows beside each other when Side-by-Side is on: the shown image and its partner, the next image in the list. Going to the last image, whether by opening it, jumping to it, reloading it or turning Side-by-Side on, shows the pair that ends with it: the image before it and the last image. With looping, the last image pairs with the first instead. Only a list of one image shows alone. Paired navigation moves by two images at a time and always ends on a full pair. The gallery marks both images of the pair.
+Two images a tab shows beside each other when its Main Window's Side-by-Side is on: the shown image and its partner, the next image in the list. Going to the last image, whether by opening it, jumping to it, reloading it or turning Side-by-Side on, shows the pair that ends with it: the image before it and the last image. With looping, the last image pairs with the first instead. Only a list of one image shows alone. Paired navigation moves by two images at a time and always ends on a full pair. The gallery marks both images of the pair.
 _Avoid_: Dual view, two-up, double view
 
 **Thumbnail**:
@@ -208,11 +208,11 @@ _Avoid_: Source file, input path
 ## Settings
 
 **Setting**:
-A value the user chooses that PicView remembers between runs, stored in one record saved whole. The thirteen a menu toggles that are App Settings publish their changes: one bindable each, which writes the stored value and saves, and what reacts to it subscribes. The rest are read from the record. A Window Setting is stored only when its window closes. Every Setting is one or the other.
+A value the user chooses that PicView remembers between runs, stored in one record saved whole. The five a menu toggles that are App Settings publish their changes: one bindable each, which writes the stored value and saves, and what reacts to it subscribes. The rest are read from the record. A Window Setting is stored only when its window closes. Every Setting is one or the other.
 _Avoid_: Option, preference, flag, mirror (for the bindable), flip (for toggling)
 
 **Window Setting**:
-A Setting that belongs to one Main Window: the Window Mode, AutoFit, top most, Stay Centered, the window's last Normal size and position, and the File Order. Each Main Window has its own values, in its `WindowSettings`, and changing one in a window changes nothing in another. A window is seeded from the settings record at App Start, and from its opener's values when it opens while PicView runs (or from the record when no Main Window is open). Nothing is written to the record when a Window Setting changes: the window stores them when it closes, so the last window to close decides what is stored, and at App Shutdown with several windows open, the most recently active one. A crash loses the session's changes to them. The Settings window shows and edits those of the Active Main Window. More Settings become Window Settings in later slices; until then they are App Settings.
+A Setting that belongs to one Main Window: the Window Mode, AutoFit, top most, Stay Centered, the window's last Normal size and position, the File Order, Side-by-Side, looping, Zoom to Fit, scrolling, the three interface settings, and the image background and whether it is constrained to the image. Each Main Window has its own values, in its `WindowSettings`, and changing one in a window changes nothing in another. A window is seeded from the settings record at App Start, and from its opener's values when it opens while PicView runs (or from the record when no Main Window is open). Nothing is written to the record when a Window Setting changes: the window stores them when it closes, so the last window to close decides what is stored, and at App Shutdown with several windows open, the most recently active one. A crash loses the session's changes to them. The Settings window shows and edits those of the Active Main Window. The gallery's look becomes a Window Setting in a later slice; until then it is an App Setting.
 _Avoid_: Per-window option, window preference, local setting
 
 **File Order**:
@@ -234,7 +234,7 @@ The state a window is in, exactly one at a time: Normal, Minimized, Maximized or
 _Avoid_: Scaling mode, sizing mode, Manual
 
 **Zoom to Fit**:
-The setting that lets an image scale past its native pixel size to fill the Available Area. With it off, an image is never shown larger than 100%.
+The setting that lets an image scale past its native pixel size to fill the Available Area. With it off, an image is never shown larger than 100%. It is a Window Setting, so each Main Window has its own.
 _Avoid_: Stretch, upscale
 
 **Reserved Space**:

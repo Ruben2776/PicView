@@ -22,3 +22,4 @@ Before this, nothing checked the mirror and it had drifted: the Effects window h
 - `IsShowingFadingUIButtons` and `IsUsingTouchpad` stay on `TranslationViewModel`, written by `LanguageUpdater` and the Settings window's two commands.
 - Only English is checked for missing keys. Another language file missing a key shows nothing for it, as before.
 - The roughly 330 C# reads of `TranslationManager.Translation` that use a text at once and keep nothing are unchanged.
+- Superseded in part by ADR-0040: `GlobalSettingsViewModel` rephrases one menu text, the File History text; the other five are derived per window in `WindowSettings` from its setting and the translation bindables.

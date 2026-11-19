@@ -25,3 +25,4 @@ Before this, seven hand-written entries in four modules wrote the window's shown
 - The bottom bar sizes its own buttons when it becomes visible, from its top level's width, in place of the two posts the toggles made.
 - `IsTopToolbarShown` is `IsUIShown` under a second name, kept for its roughly 40 bindings. The one `IsChecked` binding on a bar, the bottom bar menu item, is `OneWay`.
 - The three interface settings publish their value (ADR-0020), and the window's shown state is derived from them; every Main Window derives from the same three and differs only by its Window Mode.
+- Superseded in part by ADR-0040: each Main Window derives its Interface Visibility from its own three interface settings (`WindowSettings.ShowInterface`, `ShowBottomBar`, `ShowHoverBar`) and its Window Mode, so "every Main Window derives from the same three" no longer holds.
