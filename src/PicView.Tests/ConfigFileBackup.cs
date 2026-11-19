@@ -23,20 +23,32 @@ internal class ConfigFileBackup : IDisposable
         ];
     }
 
+    /// <remarks>
+    /// Waits for <see cref="ConfigFolders.Gate" /> first: a window saves its config as it closes without the close
+    /// waiting for it, so a save may still hold the file, or land after the restore, when a test cleans up.
+    /// </remarks>
     public void Dispose()
     {
-        foreach (var (path, existed) in _files)
+        ConfigFolders.Gate.Wait();
+        try
         {
-            var backup = path + BackupExtension;
-            if (existed)
+            foreach (var (path, existed) in _files)
             {
-                File.Copy(backup, path, overwrite: true);
-                File.Delete(backup);
+                var backup = path + BackupExtension;
+                if (existed)
+                {
+                    File.Copy(backup, path, overwrite: true);
+                    File.Delete(backup);
+                }
+                else if (File.Exists(path))
+                {
+                    File.Delete(path);
+                }
             }
-            else if (File.Exists(path))
-            {
-                File.Delete(path);
-            }
+        }
+        finally
+        {
+            ConfigFolders.Gate.Release();
         }
     }
 

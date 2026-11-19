@@ -134,6 +134,10 @@ public class AppLifecycleTests : IAsyncDisposable
             Directory.Delete(_folder, true);
         }
 
+        // A closed window's save starts in a continuation of its Closing handler, so it must have reached the config
+        // gate before the backups wait on that gate
+        Dispatcher.UIThread.RunJobs();
+
         _fileHistoryBackup.Dispose();
         _batchResizeConfigBackup.Dispose();
         _effectsConfigBackup.Dispose();
