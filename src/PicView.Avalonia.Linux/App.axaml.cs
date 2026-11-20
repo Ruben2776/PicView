@@ -5,6 +5,7 @@ using PicView.Avalonia.Linux.WindowImpl;
 using PicView.Avalonia.StartUp;
 using PicView.Core.FileSorting;
 using PicView.Core.IPlatform;
+using PicView.Core.Linux;
 using PicView.Core.Linux.FileFunctions;
 using PicView.Core.ProcessHandling;
 using PicView.Core.ViewModels;
@@ -31,7 +32,7 @@ public class App : Application, IPlatformSpecificService
     {
         base.OnFrameworkInitializationCompleted();
         var settingsExists = LoadSettings();
-        _coreViewModel = new CoreViewModel(this, GetImageModel.GetImageModelAsync);
+        _coreViewModel = new CoreViewModel(this, static (file, core) => GetImageModel.GetImageModelAsync(file, core: core));
         DataContext = _coreViewModel;
 
         _ = new AppLifecycle(_coreViewModel, new LinuxWindowProvider(), SingleProcess.Listener)
@@ -109,7 +110,7 @@ public class App : Application, IPlatformSpecificService
 
     public string DefaultJsonKeyMap()
     {
-        return Core.Linux.LinuxKeybindings.DefaultKeybindings;
+        return LinuxKeybindings.DefaultKeybindings;
     }
 
     public void InitiateFileAssociationService()

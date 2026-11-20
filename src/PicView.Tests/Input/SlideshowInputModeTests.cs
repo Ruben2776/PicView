@@ -9,7 +9,6 @@ using PicView.Core.Sizing;
 using PicView.Core.ViewModels;
 using PicView.Tests.Navigation;
 using PicView.Tests.WindowBehavior;
-using R3;
 
 namespace PicView.Tests.Input;
 
@@ -28,13 +27,13 @@ public class SlideshowInputModeTests
     }
 
     [AvaloniaFact]
-    public async Task StateOf_OtherWindowRunsSlideshow_IsNotSlideshow()
+    public void StateOf_OtherWindowRunsSlideshow_IsNotSlideshow()
     {
         var (a, aVm) = CreateWindow();
         var (b, _) = CreateWindow();
         try
         {
-            await aVm.Slideshow.Toggle(60000, isKeyHeldDown: false);
+            aVm.Slideshow.Toggle(60000, isKeyHeldDown: false);
 
             Assert.Equal(InputMode.Slideshow, InputModes.StateOf(a).Resolve());
             Assert.NotEqual(InputMode.Slideshow, InputModes.StateOf(b).Resolve());
@@ -54,7 +53,7 @@ public class SlideshowInputModeTests
         var (b, bVm) = CreateWindow();
         try
         {
-            await aVm.Slideshow.Toggle(60000, isKeyHeldDown: false);
+            aVm.Slideshow.Toggle(60000, isKeyHeldDown: false);
 
             await new ContextualActionHandler(b, bVm).TryRunAsync(InputMode.Slideshow, ContextualActionHandler.Cancel);
 

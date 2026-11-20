@@ -17,7 +17,7 @@ public static class ComparisonPicker
     /// <summary>Picks a file for <paramref name="slot"/> of the active tab's comparison.</summary>
     public static ValueTask PickAsync(MainWindowViewModel vm, MainWindow window, ComparisonSlot slot) =>
         PickAsync(vm.WindowTabs.ActiveTab.CurrentValue, window, slot, FilePicker.SelectFile,
-            GetImageModel.GetImageModelAsync);
+            file => GetImageModel.GetImageModelAsync(file, core: vm.Core));
 
     /// <summary>
     /// Picks a file with <paramref name="selectFile"/>, loads it with <paramref name="load"/> and shows it in

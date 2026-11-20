@@ -6,26 +6,57 @@ using PicView.Core.Thumbnailing;
 
 namespace PicView.Core.ViewModels;
 
-public class CoreViewModel(
-    IPlatformSpecificService? platformSpecificService,
-    Func<FileInfo, ValueTask<ImageModel>> imageLoader,
-    GlobalSettingsViewModel? globalSettings = null,
-    Func<ValueTask<bool>>? saveGallerySettings = null,
-    TimeProvider? timeProvider = null)
+public class CoreViewModel
 {
+    /// <param name="platformSpecificService">The platform's services.</param>
+    /// <param name="imageLoader">
+    /// Loads an <see cref="ImageModel"/> for the <see cref="SharedCache"/>, given this view model, so decoders that
+    /// need it (such as the shell decoder) don't have to look it up.
+    /// </param>
+    /// <param name="globalSettings">The settings every tab follows; a test hands in one with a fake save.</param>
+    /// <param name="saveGallerySettings">Saves the gallery settings; a test hands in one that writes no file.</param>
+    /// <param name="timeProvider">The clock slideshows tick on; tests give their own.</param>
+    public CoreViewModel(
+        IPlatformSpecificService? platformSpecificService,
+        Func<FileInfo, CoreViewModel, ValueTask<ImageModel>> imageLoader,
+        GlobalSettingsViewModel? globalSettings = null,
+        Func<ValueTask<bool>>? saveGallerySettings = null,
+        TimeProvider? timeProvider = null)
+    {
+        PlatformService = platformSpecificService;
+        // One closure for the life of the app, not one per load.
+        SharedCache = new SharedImageCache(file => imageLoader(file, this));
+        Time = timeProvider ?? TimeProvider.System;
+        Screensaver = new ScreensaverHold(platformSpecificService);
+        GlobalSettings = globalSettings ?? new GlobalSettingsViewModel();
+        GallerySettings = new GallerySharedSettingsViewModel(saveGallerySettings);
+    }
+
+    /// <summary>For a loader that does not need the view model, as most tests have.</summary>
+    public CoreViewModel(
+        IPlatformSpecificService? platformSpecificService,
+        Func<FileInfo, ValueTask<ImageModel>> imageLoader,
+        GlobalSettingsViewModel? globalSettings = null,
+        Func<ValueTask<bool>>? saveGallerySettings = null,
+        TimeProvider? timeProvider = null)
+        : this(platformSpecificService, (file, _) => imageLoader(file), globalSettings, saveGallerySettings,
+            timeProvider)
+    {
+    }
+
     // Shared Services
-    public IPlatformSpecificService? PlatformService { get; } = platformSpecificService;
-    public SharedImageCache SharedCache { get; } = new(imageLoader);
+    public IPlatformSpecificService? PlatformService { get; }
+    public SharedImageCache SharedCache { get; }
 
     /// <summary>
     /// The clock slideshows tick on; tests give their own.
     /// </summary>
-    public TimeProvider Time { get; } = timeProvider ?? TimeProvider.System;
+    public TimeProvider Time { get; }
 
     /// <summary>
     /// Keeps the screensaver off while any Main Window runs a slideshow.
     /// </summary>
-    public ScreensaverHold Screensaver { get; } = new(platformSpecificService);
+    public ScreensaverHold Screensaver { get; }
 
     /// <summary>
     /// The services every tab of every Main Window is created with, set once. Null until
@@ -53,9 +84,9 @@ public class CoreViewModel(
     // --- Globally Shared State ---
     public TranslationViewModel Translation { get; } = new();
     /// <summary>The settings every tab follows; a test hands in one with a fake save.</summary>
-    public GlobalSettingsViewModel GlobalSettings { get; } = globalSettings ?? new GlobalSettingsViewModel();
+    public GlobalSettingsViewModel GlobalSettings { get; }
     /// <summary>The gallery settings every tab follows; a test hands in a save that writes no file.</summary>
-    public GallerySharedSettingsViewModel GallerySettings { get; } = new(saveGallerySettings);
+    public GallerySharedSettingsViewModel GallerySettings { get; }
     public KeybindingsViewModel? Keybindings { get; set; }
     public SettingsViewModel? SettingsViewModel { get; set; } // Single settings window
     public AboutViewModel? AboutView { get; set; } // Single about window

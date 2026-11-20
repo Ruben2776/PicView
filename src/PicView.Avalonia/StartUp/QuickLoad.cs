@@ -7,7 +7,6 @@ using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.Navigation;
 using PicView.Core.DebugTools;
 using PicView.Core.FileSorting;
-using PicView.Core.Models;
 using PicView.Core.Navigation;
 using PicView.Core.Sizing;
 using PicView.Core.ViewModels;
@@ -198,7 +197,7 @@ public static class QuickLoad
 
         // Decoded while the tab is hooked up, so the first image's reaction comes from the same subscription as every
         // later one's. The pinged size rides on the decoded model
-        var decoding = GetImageModel.GetImageModelAsync(fileInfo, isPinged ? magickImage : null);
+        var decoding = GetImageModel.GetImageModelAsync(fileInfo, isPinged ? magickImage : null, core);
         await HookUpAsync(tab).ConfigureAwait(false);
         var model = await decoding.ConfigureAwait(false);
         return await ShowThroughTheLoadAsync(core, tab, fileInfo,
@@ -270,8 +269,8 @@ public static class QuickLoad
         }
 
         // Both decode while the tab is hooked up, and the tab's Load shows them as the pair with the files listed above
-        var decodingFirst = GetImageModel.GetImageModelAsync(fileInfo, isPinged ? firstMagick : null);
-        var decodingSecond = GetImageModel.GetImageModelAsync(nextFileInfo, isPinged ? secondMagick : null);
+        var decodingFirst = GetImageModel.GetImageModelAsync(fileInfo, isPinged ? firstMagick : null, core);
+        var decodingSecond = GetImageModel.GetImageModelAsync(nextFileInfo, isPinged ? secondMagick : null, core);
         await HookUpAsync(tab).ConfigureAwait(false);
         var first = await decodingFirst.ConfigureAwait(false);
         var second = await decodingSecond.ConfigureAwait(false);

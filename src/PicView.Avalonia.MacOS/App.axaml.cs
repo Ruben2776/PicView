@@ -1,10 +1,8 @@
-using PicView.Avalonia.Navigation;
 using System.Diagnostics;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
-using PicView.Avalonia.ColorManagement;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.MacOS.Views;
 using PicView.Avalonia.MacOS.WindowImpl;
@@ -12,6 +10,7 @@ using PicView.Avalonia.StartUp;
 using PicView.Core.FileAssociations;
 using PicView.Core.FileSorting;
 using PicView.Core.IPlatform;
+using PicView.Core.Keybindings;
 using PicView.Core.Localization;
 using PicView.Core.MacOS;
 using PicView.Core.MacOS.Cursor;
@@ -19,11 +18,8 @@ using PicView.Core.MacOS.FileAssociation;
 using PicView.Core.MacOS.FileFunctions;
 using PicView.Core.MacOS.Imaging;
 using PicView.Core.MacOS.Wallpaper;
-using PicView.Core.ProcessHandling;
 using PicView.Core.ViewModels;
-using MainWindowViewModel = PicView.Core.ViewModels.MainWindowViewModel;
 using ShellThumbnailNative = PicView.Core.MacOS.Imaging.ShellThumbnailNative;
-using PicView.Core.Keybindings;
 
 #pragma warning disable CS0618 // Type or member is obsolete
 
@@ -77,7 +73,7 @@ public class App : Application, IPlatformSpecificService
         var settingsExists = LoadSettings();
         TranslationManager.Init();
 
-        _coreViewModel = new CoreViewModel(this, GetImageModel.GetImageModelAsync);
+        _coreViewModel = new CoreViewModel(this, static (file, core) => GetImageModel.GetImageModelAsync(file, core: core));
         DataContext = _coreViewModel;
 
         _app = new AppLifecycle(_coreViewModel, new MacWindowProvider());

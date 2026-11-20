@@ -1,4 +1,3 @@
-using PicView.Tests.Config;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Reflection;
@@ -11,12 +10,11 @@ using Avalonia.Platform;
 using Avalonia.Threading;
 using ImageMagick;
 using PicView.Avalonia.Clipboard;
-using PicView.Core.Svg;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Interfaces;
+using PicView.Avalonia.Navigation;
 using PicView.Avalonia.Printing;
 using PicView.Avalonia.Services;
-using PicView.Avalonia.Navigation;
 using PicView.Avalonia.StartUp;
 using PicView.Avalonia.Views.Gallery;
 using PicView.Avalonia.Views.Menu;
@@ -40,6 +38,7 @@ using PicView.Core.Navigation.Interfaces;
 using PicView.Core.Navigation.Tiff;
 using PicView.Core.ProcessHandling;
 using PicView.Core.Sizing;
+using PicView.Core.Svg;
 using PicView.Core.Titles;
 using PicView.Core.Update;
 using PicView.Core.ViewModels;
@@ -426,7 +425,7 @@ public class AppLifecycleTests : IAsyncDisposable
     }
 
     private static (double, double, GalleryStretchMode, GalleryStretchMode, GalleryDisplayMode, bool) LookOf(
-        PicView.Core.Config.Gallery record) =>
+        Core.Config.Gallery record) =>
         (record.DockedGalleryItemSize, record.ExpandedGalleryItemSize, record.DockedGalleryStretchMode,
             record.ExpandedGalleryStretchMode, record.ExpandedGalleryDisplayMode, record.RowsWasLastUsedDisplayMode);
 
@@ -715,7 +714,7 @@ public class AppLifecycleTests : IAsyncDisposable
         var app = CreateApp();
         await app.StartAsync(settingsExists: true, []);
         var first = app.MainWindows.Open[0];
-        await first.WindowModeSwitcher.SetAutoFit(true);
+        first.WindowModeSwitcher.SetAutoFit(true);
         ViewModelOf(first).WindowSettings.IsTopMost.Value = true;
         var record = (Settings.WindowProperties.AutoFit, Settings.WindowProperties.TopMost);
 
@@ -733,12 +732,12 @@ public class AppLifecycleTests : IAsyncDisposable
         await app.StartAsync(settingsExists: true, []);
         var first = app.MainWindows.Open[0];
         var firstVm = ViewModelOf(first);
-        await first.WindowModeSwitcher.SetAutoFit(true);
+        first.WindowModeSwitcher.SetAutoFit(true);
         firstVm.WindowSettings.IsTopMost.Value = true;
         var opened = await app.MainWindows.OpenNewAsync(first);
         var openedVm = ViewModelOf(opened);
 
-        await opened.WindowModeSwitcher.SetAutoFit(false);
+        opened.WindowModeSwitcher.SetAutoFit(false);
         openedVm.WindowSettings.IsTopMost.Value = false;
 
         Assert.False(openedVm.WindowModeState.CurrentValue.AutoFit);
@@ -780,7 +779,7 @@ public class AppLifecycleTests : IAsyncDisposable
         var app = CreateApp();
         await app.StartAsync(settingsExists: true, []);
         var first = app.MainWindows.Open[0];
-        await first.WindowModeSwitcher.SetAutoFit(true);
+        first.WindowModeSwitcher.SetAutoFit(true);
         var second = await app.MainWindows.OpenNewAsync(first);
         var firstVm = ViewModelOf(first);
         var secondVm = ViewModelOf(second);
@@ -801,7 +800,7 @@ public class AppLifecycleTests : IAsyncDisposable
         var app = CreateApp();
         await app.StartAsync(settingsExists: true, []);
         var source = app.MainWindows.Open[0];
-        await source.WindowModeSwitcher.SetAutoFit(true);
+        source.WindowModeSwitcher.SetAutoFit(true);
         var sourceVm = ViewModelOf(source);
         var tab = sourceVm.WindowTabs.CreateTab();
         sourceVm.WindowTabs.MoveOut(tab);
@@ -819,7 +818,7 @@ public class AppLifecycleTests : IAsyncDisposable
         var app = CreateApp();
         await app.StartAsync(settingsExists: true, []);
         var first = app.MainWindows.Open[0];
-        await first.WindowModeSwitcher.SetAutoFit(true);
+        first.WindowModeSwitcher.SetAutoFit(true);
         ViewModelOf(first).WindowSettings.IsTopMost.Value = true;
         using var fromRecord = WindowSettings.FromRecord(Settings);
 
@@ -842,7 +841,7 @@ public class AppLifecycleTests : IAsyncDisposable
         opener.Height = 600;
         Dispatcher.UIThread.RunJobs();
         opener.Position = new PixelPoint(123, 45);
-        await opener.WindowModeSwitcher.ToggleMaximized();
+        opener.WindowModeSwitcher.ToggleMaximized();
         // Where a maximized window sits, at the origin of its work area
         opener.Position = new PixelPoint(0, 0);
 
@@ -1330,7 +1329,7 @@ public class AppLifecycleTests : IAsyncDisposable
         var firstVm = ViewModelOf(app.MainWindows.Open[0]);
         var savesBefore = _sharedFiles.Saves;
         var globalSavesBefore = Volatile.Read(ref _globalSaves);
-        var settingsFile = SettingsManager.CurrentSettingsPath;
+        var settingsFile = CurrentSettingsPath;
         if (File.Exists(settingsFile))
         {
             File.Delete(settingsFile);
@@ -1524,7 +1523,7 @@ public class AppLifecycleTests : IAsyncDisposable
         await SourceOpener.OpenAsync(second, _core, a);
         Dispatcher.UIThread.RunJobs();
         var vm = (MainWindowViewModel)second.DataContext!;
-        await vm.Slideshow.Toggle(2000, isKeyHeldDown: false);
+        vm.Slideshow.Toggle(2000, isKeyHeldDown: false);
         Assert.True(vm.Slideshow.IsRunning);
         return (second, vm);
     }
@@ -1818,7 +1817,7 @@ public class AppLifecycleTests : IAsyncDisposable
         var app = CreateApp();
         await app.StartAsync(settingsExists: true, []);
         var second = await app.MainWindows.OpenNewAsync(app.MainWindows.Open[0]);
-        await second.WindowModeSwitcher.SetAutoFit(true);
+        second.WindowModeSwitcher.SetAutoFit(true);
         var recordBeforeClose = Settings.WindowProperties.AutoFit;
         var savesBeforeClose = _sharedFiles.Saves;
 
@@ -1837,8 +1836,8 @@ public class AppLifecycleTests : IAsyncDisposable
         await app.StartAsync(settingsExists: true, []);
         var first = app.MainWindows.Open[0];
         var second = await app.MainWindows.OpenNewAsync(first);
-        await second.WindowModeSwitcher.SetAutoFit(false);
-        await first.WindowModeSwitcher.SetAutoFit(true);
+        second.WindowModeSwitcher.SetAutoFit(false);
+        first.WindowModeSwitcher.SetAutoFit(true);
 
         await app.MainWindows.CloseAsync(first);
         await app.MainWindows.CloseAsync(second);
@@ -1853,9 +1852,9 @@ public class AppLifecycleTests : IAsyncDisposable
         var app = CreateApp();
         await app.StartAsync(settingsExists: true, []);
         var first = app.MainWindows.Open[0];
-        await first.WindowModeSwitcher.SetAutoFit(true);
+        first.WindowModeSwitcher.SetAutoFit(true);
         var second = await app.MainWindows.OpenNewAsync(first);
-        await second.WindowModeSwitcher.SetAutoFit(false);
+        second.WindowModeSwitcher.SetAutoFit(false);
         await ActivateAsync(first);
 
         await app.ShutdownAsync();
@@ -1912,8 +1911,8 @@ public class AppLifecycleTests : IAsyncDisposable
         await app.StartAsync(settingsExists: true, []);
         var window = app.MainWindows.Open[0];
 
-        await window.WindowModeSwitcher.ToggleMaximized();
-        await window.WindowModeSwitcher.SetAutoFit(!autoFitBefore);
+        window.WindowModeSwitcher.ToggleMaximized();
+        window.WindowModeSwitcher.SetAutoFit(!autoFitBefore);
         var remembered = ViewModelOf(window).WindowModeState.CurrentValue.Remembered;
         Dispatcher.UIThread.RunJobs();
 
@@ -1933,7 +1932,7 @@ public class AppLifecycleTests : IAsyncDisposable
         Dispatcher.UIThread.RunJobs();
         second.Position = new PixelPoint(123, 45);
 
-        await second.WindowModeSwitcher.ToggleMaximized();
+        second.WindowModeSwitcher.ToggleMaximized();
         // Where a maximized window sits, at the origin of its work area
         second.Position = new PixelPoint(0, 0);
         await app.MainWindows.CloseAsync(second);
@@ -3611,7 +3610,7 @@ public class AppLifecycleTests : IAsyncDisposable
         public void SetCursorPos(int x, int y) { }
         public void DisableScreensaver() { }
         public void EnableScreensaver() { }
-        public List<FileInfo> GetFiles(FileInfo fileInfo, PicView.Core.FileSorting.FileOrder order) => [];
+        public List<FileInfo> GetFiles(FileInfo fileInfo, FileOrder order) => [];
         // While closed, every name comparison waits for it, so a test can hold a listing while it sorts; Comparing says
         // when one waits
         public ManualResetEventSlim CompareGate { get; } = new(initialState: true);

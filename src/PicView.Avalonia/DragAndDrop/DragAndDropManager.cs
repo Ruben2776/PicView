@@ -9,8 +9,8 @@ using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.Views.UC;
-using PicView.Core.FileHandling;
 using PicView.Core.DebugTools;
+using PicView.Core.FileHandling;
 using PicView.Core.Sizing;
 using PicView.Core.Svg;
 using PicView.Core.ViewModels;
@@ -265,7 +265,7 @@ public static class DragAndDropManager
             // Load full image in background
             await Task.Run(async () =>
             {
-                var model = await GetImageModel.GetImageModelAsync(fileInfo).ConfigureAwait(false);
+                var model = await GetImageModel.GetImageModelAsync(fileInfo, core: core).ConfigureAwait(false);
                 await Dispatcher.UIThread.InvokeAsync(() =>
                 {
                     if (model is null || _dragDropView is null)

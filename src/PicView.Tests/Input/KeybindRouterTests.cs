@@ -4,10 +4,10 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using PicView.Avalonia.Input;
 using PicView.Core.IPlatform;
+using PicView.Core.Keybindings;
 using PicView.Core.Sizing;
 using PicView.Core.ViewModels;
 using MouseButton = PicView.Avalonia.Input.MouseButton;
-using PicView.Core.Keybindings;
 
 namespace PicView.Tests.Input;
 
@@ -437,7 +437,9 @@ public class KeybindRouterTests
                 return ValueTask.CompletedTask;
             }
 
-            return targetMethod.ReturnType.IsValueType ? Activator.CreateInstance(targetMethod.ReturnType) : null;
+            return targetMethod.ReturnType.IsValueType && targetMethod.ReturnType != typeof(void)
+                ? Activator.CreateInstance(targetMethod.ReturnType)
+                : null;
         }
     }
 }

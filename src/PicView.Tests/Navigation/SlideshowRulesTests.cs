@@ -31,13 +31,13 @@ public class SlideshowRulesTests
             }, () => _switcher, _state, hold ?? new ScreensaverHold(null), _clock);
 
     [Fact]
-    public async Task Toggle_NoNextFile_DoesNotStart()
+    public void Toggle_NoNextFile_DoesNotStart()
     {
         _canNavigateForwards = false;
         var hold = new ScreensaverHold(null);
         var slideshow = Create(hold);
 
-        await slideshow.Toggle(2000, isKeyHeldDown: false);
+        slideshow.Toggle(2000, isKeyHeldDown: false);
 
         Assert.False(slideshow.IsRunning);
         Assert.Equal(0, _switcher.Entered);
@@ -45,12 +45,12 @@ public class SlideshowRulesTests
     }
 
     [Fact]
-    public async Task Toggle_Starts_EntersSlideshowAndHoldsScreensaver()
+    public void Toggle_Starts_EntersSlideshowAndHoldsScreensaver()
     {
         var hold = new ScreensaverHold(null);
         var slideshow = Create(hold);
 
-        await slideshow.Toggle(2000, isKeyHeldDown: false);
+        slideshow.Toggle(2000, isKeyHeldDown: false);
 
         Assert.True(slideshow.IsRunning);
         Assert.Equal(1, _switcher.Entered);
@@ -59,10 +59,10 @@ public class SlideshowRulesTests
     }
 
     [Fact]
-    public async Task Tick_EachInterval_GoesNextOnce()
+    public void Tick_EachInterval_GoesNextOnce()
     {
         var slideshow = Create();
-        await slideshow.Toggle(2000, isKeyHeldDown: false);
+        slideshow.Toggle(2000, isKeyHeldDown: false);
 
         _clock.Advance(TimeSpan.FromSeconds(2));
         _clock.Advance(TimeSpan.FromSeconds(2));
@@ -72,11 +72,11 @@ public class SlideshowRulesTests
     }
 
     [Fact]
-    public async Task Toggle_ZeroMilliseconds_UsesSetting()
+    public void Toggle_ZeroMilliseconds_UsesSetting()
     {
         Settings.UIProperties.SlideShowTimer = 5;
         var slideshow = Create();
-        await slideshow.Toggle(0, isKeyHeldDown: false);
+        slideshow.Toggle(0, isKeyHeldDown: false);
 
         _clock.Advance(TimeSpan.FromSeconds(4.9));
         Assert.Equal(0, _next);
@@ -85,11 +85,11 @@ public class SlideshowRulesTests
     }
 
     [Fact]
-    public async Task Toggle_DefaultSettings_TicksEveryFiveSeconds()
+    public void Toggle_DefaultSettings_TicksEveryFiveSeconds()
     {
         SetDefaults();
         var slideshow = Create();
-        await slideshow.Toggle(0, isKeyHeldDown: false);
+        slideshow.Toggle(0, isKeyHeldDown: false);
 
         _clock.Advance(TimeSpan.FromSeconds(4.9));
         Assert.Equal(0, _next);
@@ -100,11 +100,11 @@ public class SlideshowRulesTests
     [Theory]
     [InlineData(0)]
     [InlineData(-3)]
-    public async Task Toggle_SettingZeroOrLess_TicksEverySecond(double seconds)
+    public void Toggle_SettingZeroOrLess_TicksEverySecond(double seconds)
     {
         Settings.UIProperties.SlideShowTimer = seconds;
         var slideshow = Create();
-        await slideshow.Toggle(-1, isKeyHeldDown: false);
+        slideshow.Toggle(-1, isKeyHeldDown: false);
 
         _clock.Advance(TimeSpan.FromSeconds(0.9));
         Assert.Equal(0, _next);
@@ -115,47 +115,47 @@ public class SlideshowRulesTests
     }
 
     [Fact]
-    public async Task Toggle_WhileRunning_Stops()
+    public void Toggle_WhileRunning_Stops()
     {
         var slideshow = Create();
-        await slideshow.Toggle(2000, isKeyHeldDown: false);
+        slideshow.Toggle(2000, isKeyHeldDown: false);
 
-        await slideshow.Toggle(2000, isKeyHeldDown: false);
+        slideshow.Toggle(2000, isKeyHeldDown: false);
 
         Assert.False(slideshow.IsRunning);
         Assert.Equal(1, _switcher.Left);
     }
 
     [Fact]
-    public async Task Toggle_WhileRunningKeyHeld_KeepsRunning()
+    public void Toggle_WhileRunningKeyHeld_KeepsRunning()
     {
         var slideshow = Create();
-        await slideshow.Toggle(2000, isKeyHeldDown: false);
+        slideshow.Toggle(2000, isKeyHeldDown: false);
 
-        await slideshow.Toggle(2000, isKeyHeldDown: true);
+        slideshow.Toggle(2000, isKeyHeldDown: true);
 
         Assert.True(slideshow.IsRunning);
         Assert.Equal(0, _switcher.Left);
     }
 
     [Fact]
-    public async Task Toggle_WhileRunningAtLastFile_Stops()
+    public void Toggle_WhileRunningAtLastFile_Stops()
     {
         var slideshow = Create();
-        await slideshow.Toggle(2000, isKeyHeldDown: false);
+        slideshow.Toggle(2000, isKeyHeldDown: false);
         _canNavigateForwards = false;
 
-        await slideshow.Toggle(2000, isKeyHeldDown: false);
+        slideshow.Toggle(2000, isKeyHeldDown: false);
 
         Assert.False(slideshow.IsRunning);
     }
 
     [Fact]
-    public async Task Stop_CallsLeaveSlideshowOnce_AndReleasesHold()
+    public void Stop_CallsLeaveSlideshowOnce_AndReleasesHold()
     {
         var hold = new ScreensaverHold(null);
         var slideshow = Create(hold);
-        await slideshow.Toggle(2000, isKeyHeldDown: false);
+        slideshow.Toggle(2000, isKeyHeldDown: false);
 
         slideshow.Stop();
         slideshow.Stop();
@@ -167,10 +167,10 @@ public class SlideshowRulesTests
     }
 
     [Fact]
-    public async Task LeavingFullscreen_Stops()
+    public void LeavingFullscreen_Stops()
     {
         var slideshow = Create();
-        await slideshow.Toggle(2000, isKeyHeldDown: false);
+        slideshow.Toggle(2000, isKeyHeldDown: false);
 
         _state.Value = _state.Value.ToggleFullscreen();
 
@@ -179,10 +179,10 @@ public class SlideshowRulesTests
     }
 
     [Fact]
-    public async Task Minimized_Stops()
+    public void Minimized_Stops()
     {
         var slideshow = Create();
-        await slideshow.Toggle(2000, isKeyHeldDown: false);
+        slideshow.Toggle(2000, isKeyHeldDown: false);
 
         _state.Value = _state.Value.OnNativeState(WindowMode.Minimized);
 
@@ -193,11 +193,11 @@ public class SlideshowRulesTests
     }
 
     [Fact]
-    public async Task Dispose_StopsTickingWithoutLeaving()
+    public void Dispose_StopsTickingWithoutLeaving()
     {
         var hold = new ScreensaverHold(null);
         var slideshow = Create(hold);
-        await slideshow.Toggle(2000, isKeyHeldDown: false);
+        slideshow.Toggle(2000, isKeyHeldDown: false);
 
         slideshow.Dispose();
         slideshow.Dispose();
@@ -210,16 +210,12 @@ public class SlideshowRulesTests
     }
 
     [Fact]
-    public async Task Stop_DuringEnterSlideshow_LateRunDoesNothing()
+    public void Stop_DuringEnterSlideshow_LateRunDoesNothing()
     {
         var slideshow = Create();
-        var entering = new TaskCompletionSource();
-        _switcher.HoldEnter = entering.Task;
+        _switcher.OnEnter = slideshow.Stop;
 
-        var toggle = slideshow.Toggle(2000, isKeyHeldDown: false);
-        slideshow.Stop();
-        entering.SetResult();
-        await toggle;
+        slideshow.Toggle(2000, isKeyHeldDown: false);
         var leftByStop = _switcher.Left;
         Assert.NotEqual(WindowMode.Fullscreen, _state.Value.Mode);
         _state.Value = _state.Value.ToggleFullscreen();
@@ -231,7 +227,7 @@ public class SlideshowRulesTests
     }
 
     [Fact]
-    public async Task TwoSlideshows_HoldScreensaverUntilLastStops()
+    public void TwoSlideshows_HoldScreensaverUntilLastStops()
     {
         var platform = new CountingPlatform();
         var hold = new ScreensaverHold(platform);
@@ -241,8 +237,8 @@ public class SlideshowRulesTests
         var otherSwitcher = new FakeSwitcher(otherState);
         var second = new Slideshow(static () => true, static () => ValueTask.CompletedTask, () => otherSwitcher,
             otherState, hold, _clock);
-        await first.Toggle(2000, isKeyHeldDown: false);
-        await second.Toggle(2000, isKeyHeldDown: false);
+        first.Toggle(2000, isKeyHeldDown: false);
+        second.Toggle(2000, isKeyHeldDown: false);
 
         first.Stop();
         Assert.Equal(0, platform.Enabled);
@@ -256,30 +252,27 @@ public class SlideshowRulesTests
     {
         public int Entered { get; private set; }
         public int Left { get; private set; }
-        public Task? HoldEnter { get; set; }
 
-        public async ValueTask EnterSlideshow()
+        /// <summary>Runs inside <see cref="EnterSlideshow"/>, before the window goes fullscreen.</summary>
+        public Action? OnEnter { get; set; }
+
+        public void EnterSlideshow()
         {
             Entered++;
-            if (HoldEnter is not null)
-            {
-                await HoldEnter.ConfigureAwait(false);
-            }
-
+            OnEnter?.Invoke();
             state.Value = state.Value.EnterSlideshow();
         }
 
-        public ValueTask LeaveSlideshow()
+        public void LeaveSlideshow()
         {
             Left++;
             state.Value = state.Value.LeaveSlideshow();
-            return ValueTask.CompletedTask;
         }
 
-        public ValueTask ToggleFullscreen() => ValueTask.CompletedTask;
-        public ValueTask ToggleMaximized() => ValueTask.CompletedTask;
-        public ValueTask LeaveTopMode() => ValueTask.CompletedTask;
-        public ValueTask SetAutoFit(bool autoFit) => ValueTask.CompletedTask;
-        public ValueTask ResizedByHand() => ValueTask.CompletedTask;
+        public void ToggleFullscreen() { }
+        public void ToggleMaximized() { }
+        public void LeaveTopMode() { }
+        public void SetAutoFit(bool autoFit) { }
+        public void ResizedByHand() { }
     }
 }

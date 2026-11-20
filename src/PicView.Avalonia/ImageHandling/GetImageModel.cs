@@ -18,10 +18,6 @@ namespace PicView.Avalonia.ImageHandling;
 
 public static class GetImageModel
 {
-    /// <inheritdoc cref="GetImageModelAsync(FileInfo, MagickImage?, CoreViewModel?, CancellationToken)"/>
-    public static async ValueTask<ImageModel> GetImageModelAsync(FileInfo fileInfo) =>
-        await GetImageModelAsync(fileInfo, magickImage: null).ConfigureAwait(false) ?? CreateErrorImageModel(fileInfo);
-
     /// <summary>
     /// Asynchronously retrieves an <see cref="ImageModel"/> instance based on the provided file and optional <see cref="MagickImage"/>.
     /// </summary>
@@ -133,6 +129,14 @@ public static class GetImageModel
                 case MagickFormat.Tif:
                 case MagickFormat.Tiff:
                     await ProcessTiffAsync(fileInfo, imageModel, magickImage).ConfigureAwait(false);
+                    break;
+
+                case MagickFormat.Tga:
+                {
+                    magickImage.Read(fileInfo);
+                    var bitmap = magickImage.ToWriteableBitmap();
+                    SetBitmapProperties(bitmap, imageModel);
+                }
                     break;
 
                 case MagickFormat.Svg:
@@ -359,7 +363,12 @@ public static class GetImageModel
         }
 
         core ??= await Dispatcher.UIThread.InvokeAsync(() => Application.Current?.DataContext as CoreViewModel);
-        var bitmap = GetImage.GetShellBitmap(fileInfo.FullName, core);
+        return ProcessShellBitmap(fileInfo.FullName, imageModel, core);
+    }
+
+    private static bool ProcessShellBitmap(string fileName, ImageModel imageModel, CoreViewModel core)
+    {
+        var bitmap = GetImage.GetShellBitmap(fileName, core);
         if (bitmap is null)
         {
             return false;
@@ -480,4 +489,5 @@ public static class GetImageModel
     }
 
     #endregion
+    
 }

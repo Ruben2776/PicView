@@ -482,21 +482,24 @@ public abstract class MainWindow : Window, IMainWindow
                     break;
             }
         }
-        if (vm.TopTitlebarViewModel.DropDownMenu.IsSettingsMenuVisible.CurrentValue)
+
+        if (!vm.TopTitlebarViewModel.DropDownMenu.IsSettingsMenuVisible.CurrentValue)
         {
-            switch (width)
-            {
-                case < SizeDefaults.FullBtnBp and > SizeDefaults.SearchResetAndRotateBtnBp:
-                    UIHelper.GetSettingsMenu.Margin = new Thickness(0, 0, -102, 0);
-                    break;
-                case <= SizeDefaults.BottomMenusBp:
-                    vm.TopTitlebarViewModel.DropDownMenu.IsSettingsMenuVisible.Value = false;
-                    AddQuickSettingsDialog();
-                    break;
-                default:
-                    UIHelper.GetSettingsMenu.Margin = new Thickness(0, 0, -40, 0);
-                    break;
-            }
+            return;
+        }
+
+        switch (width)
+        {
+            case < SizeDefaults.FullBtnBp and > SizeDefaults.SearchResetAndRotateBtnBp:
+                UIHelper.GetSettingsMenu.Margin = new Thickness(0, 0, -102, 0);
+                break;
+            case <= SizeDefaults.BottomMenusBp:
+                vm.TopTitlebarViewModel.DropDownMenu.IsSettingsMenuVisible.Value = false;
+                AddQuickSettingsDialog();
+                break;
+            default:
+                UIHelper.GetSettingsMenu.Margin = new Thickness(0, 0, -40, 0);
+                break;
         }
     }
     

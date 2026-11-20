@@ -1,15 +1,11 @@
 using Avalonia;
 using Avalonia.Threading;
-using ImageMagick;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Interfaces;
-using PicView.Avalonia.Navigation;
 using PicView.Avalonia.WindowBehavior;
-using PicView.Core.ImageDecoding;
 using PicView.Core.Localization;
 using PicView.Core.Models;
 using PicView.Core.Navigation;
-using PicView.Core.Navigation.Interfaces;
 using PicView.Core.Sizing;
 using PicView.Core.ViewModels;
 using PicView.Tests.WindowBehavior;
@@ -35,14 +31,14 @@ public class SlideshowTests
     }
 
     [AvaloniaFact]
-    public async Task StopSlideshow_AfterFullscreenWithAutoFit_CentersTheWindow()
+    public void StopSlideshow_AfterFullscreenWithAutoFit_CentersTheWindow()
     {
         var (window, vm) = CreateWindow(autoFit: true);
         try
         {
             Assert.True(vm.WindowTabs.ActiveTab.CurrentValue.CanNavigateForwards.Value);
 
-            await vm.Slideshow.Toggle(60000, isKeyHeldDown: false);
+            vm.Slideshow.Toggle(60000, isKeyHeldDown: false);
             Assert.True(vm.IsFullscreen.Value);
             vm.Slideshow.Stop();
 
@@ -62,12 +58,12 @@ public class SlideshowTests
     }
 
     [AvaloniaFact]
-    public async Task StopSlideshow_WithoutAutoFit_LeavesThePositionAlone()
+    public void StopSlideshow_WithoutAutoFit_LeavesThePositionAlone()
     {
         var (window, vm) = CreateWindow(autoFit: false);
         try
         {
-            await vm.Slideshow.Toggle(60000, isKeyHeldDown: false);
+            vm.Slideshow.Toggle(60000, isKeyHeldDown: false);
             Assert.True(vm.IsFullscreen.Value);
             vm.Slideshow.Stop();
             Pump(() => false);

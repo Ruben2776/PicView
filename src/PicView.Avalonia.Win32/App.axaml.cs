@@ -36,7 +36,7 @@ public class App : Application, IPlatformSpecificService
     {
         base.OnFrameworkInitializationCompleted();
         var settingsExists = LoadSettings();
-        _coreViewModel = new CoreViewModel(this, GetImageModel.GetImageModelAsync);
+        _coreViewModel = new CoreViewModel(this, static (file, core) => GetImageModel.GetImageModelAsync(file, core: core));
         DataContext = _coreViewModel;
 
         _ = new AppLifecycle(_coreViewModel, new Win32WindowProvider(), SingleProcess.Listener)

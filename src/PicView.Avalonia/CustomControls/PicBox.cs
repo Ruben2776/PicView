@@ -343,10 +343,8 @@ public class PicBox : Control
         }
         catch (ObjectDisposedException e)
         {
-            if (Application.Current.DataContext is CoreViewModel core)
-            {
-                core.SharedCache.ReleaseAll();
-            }
+            var core = Application.Current.DataContext as CoreViewModel;
+            core.SharedCache.ReleaseAll();
             if (DataContext is TabViewModel tab)
             {
                 try
@@ -355,7 +353,7 @@ public class PicBox : Control
                     {
                         return;
                     }
-                    var model = GetImageModel.GetImageModelAsync(tab.FileInfo?.CurrentValue).AsTask().Result;
+                    var model = GetImageModel.GetImageModelAsync(tab.FileInfo?.CurrentValue, core: core).AsTask().Result;
                     var bitmap = model?.Image;
                     if (bitmap is not null)
                     {

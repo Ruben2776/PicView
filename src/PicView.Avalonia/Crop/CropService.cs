@@ -1,21 +1,15 @@
 ﻿using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using ImageMagick;
-using PicView.Avalonia.Animations;
-using PicView.Avalonia.Clipboard;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.FileSystem;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.ImageTransformations;
-using PicView.Avalonia.WindowBehavior;
 using PicView.Core.DebugTools;
-using PicView.Core.Gallery;
 using PicView.Core.ImageTransformations;
 using PicView.Core.IPlatform;
 using PicView.Core.Localization;
-using PicView.Core.Preloading;
 using PicView.Core.ViewModels;
 using R3;
 using Orientation = PicView.Core.ImageTransformations.Orientation;
@@ -144,7 +138,7 @@ public class CropService(TabViewModel tabViewModel, MainWindow mainWindow) : ICr
         await SaveImage(fileName, fileInfo, bitmap).ConfigureAwait(false);
         if (ShouldResetOrientation(fileName, tabViewModel.FileInfo.Value))
         {
-            var newModel = await GetImageModel.GetImageModelAsync(fileInfo).ConfigureAwait(false);
+            var newModel = await GetImageModel.GetImageModelAsync(fileInfo, core: vm.Core).ConfigureAwait(false);
             tabViewModel.ImageIterator.Cache.Put(tabViewModel.Id, fileInfo, newModel);
             await Dispatcher.UIThread.InvokeAsync(tabViewModel.Orientation.Reset);
             tabViewModel.Display(newModel, tabViewModel.SecondaryModel);

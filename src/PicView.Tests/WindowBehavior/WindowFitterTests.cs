@@ -1,20 +1,20 @@
-using PicView.Tests.Config;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Threading;
-using PicView.Avalonia.Views.UC;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Interfaces;
 using PicView.Avalonia.UI;
+using PicView.Avalonia.Views.UC;
 using PicView.Avalonia.WindowBehavior;
 using PicView.Core.Config;
 using PicView.Core.Gallery;
-using PicView.Core.Navigation;
-using PicView.Tests.Navigation;
 using PicView.Core.Localization;
 using PicView.Core.Models;
+using PicView.Core.Navigation;
 using PicView.Core.Sizing;
 using PicView.Core.ViewModels;
+using PicView.Tests.Config;
+using PicView.Tests.Navigation;
 using R3;
 
 namespace PicView.Tests.WindowBehavior;
@@ -1488,7 +1488,7 @@ public class WindowFitterTests
     }
 
     [AvaloniaFact]
-    public async Task Follow_ReturnsToNormalWithAutoFit_IsCenteredOnItsScreen()
+    public void Follow_ReturnsToNormalWithAutoFit_IsCenteredOnItsScreen()
     {
         var screen = Screen(1920, 1040);
         var (fitter, vm, window) = CreateShownAutoFitWindow(() => screen);
@@ -1502,9 +1502,9 @@ public class WindowFitterTests
         otherWindow.Position = new PixelPoint(300, 200);
         var switcher = new WindowModeSwitcher(window, new NativeStateAdapter());
 
-        await switcher.ToggleFullscreen();
+        switcher.ToggleFullscreen();
         Dispatcher.UIThread.RunJobs();
-        await switcher.ToggleFullscreen();
+        switcher.ToggleFullscreen();
         Dispatcher.UIThread.RunJobs();
 
         Assert.Equal(WindowMode.Normal, vm.WindowModeState.Value.Mode);
@@ -1517,7 +1517,7 @@ public class WindowFitterTests
     }
 
     [AvaloniaFact]
-    public async Task Follow_ReturnsToNormalWithAutoFitAfterTheImageChanged_IsCenteredForItsNewSize()
+    public void Follow_ReturnsToNormalWithAutoFitAfterTheImageChanged_IsCenteredForItsNewSize()
     {
         var screen = Screen(1920, 1040);
         var (fitter, vm, window) = CreateShownAutoFitWindow(() => screen);
@@ -1526,13 +1526,13 @@ public class WindowFitterTests
         Dispatcher.UIThread.RunJobs();
         window.Position = new PixelPoint(100, 50);
         var switcher = new WindowModeSwitcher(window, new RestoringNativeStateAdapter());
-        await switcher.ToggleFullscreen();
+        switcher.ToggleFullscreen();
         Dispatcher.UIThread.RunJobs();
 
         // Next to an image of another size while fullscreen, so the window returns to Normal at a size it never had
         vm.WindowTabs.ActiveTab.Value.Display(Model("b.jpg", 800, 600));
         Dispatcher.UIThread.RunJobs();
-        await switcher.ToggleFullscreen();
+        switcher.ToggleFullscreen();
         Dispatcher.UIThread.RunJobs();
 
         Assert.Equal(WindowMode.Normal, vm.WindowModeState.Value.Mode);
@@ -1543,7 +1543,7 @@ public class WindowFitterTests
     }
 
     [AvaloniaFact]
-    public async Task Follow_ReturnsToNormalFromMaximizedWithAutoFit_IsCenteredOnItsScreen()
+    public void Follow_ReturnsToNormalFromMaximizedWithAutoFit_IsCenteredOnItsScreen()
     {
         var screen = Screen(1920, 1040);
         var (fitter, vm, window) = CreateShownAutoFitWindow(() => screen);
@@ -1553,9 +1553,9 @@ public class WindowFitterTests
         window.Position = new PixelPoint(100, 50);
         var switcher = new WindowModeSwitcher(window, new NativeStateAdapter());
 
-        await switcher.ToggleMaximized();
+        switcher.ToggleMaximized();
         Dispatcher.UIThread.RunJobs();
-        await switcher.ToggleMaximized();
+        switcher.ToggleMaximized();
         Dispatcher.UIThread.RunJobs();
 
         Assert.Equal(WindowMode.Normal, vm.WindowModeState.Value.Mode);
@@ -1566,7 +1566,7 @@ public class WindowFitterTests
     }
 
     [AvaloniaFact]
-    public async Task Follow_ReturnsToNormalWithoutAutoFit_KeepsItsPreviousSizeAndPosition()
+    public void Follow_ReturnsToNormalWithoutAutoFit_KeepsItsPreviousSizeAndPosition()
     {
         var (fitter, vm, window) = CreateShownWindow(800, 600, readScreen: () => Screen(1920, 1040));
         vm.WindowSettings.IsStayingCentered.Value = true;
@@ -1576,9 +1576,9 @@ public class WindowFitterTests
         window.Position = new PixelPoint(100, 50);
         var switcher = new WindowModeSwitcher(window, new NativeStateAdapter());
 
-        await switcher.ToggleFullscreen();
+        switcher.ToggleFullscreen();
         Dispatcher.UIThread.RunJobs();
-        await switcher.ToggleFullscreen();
+        switcher.ToggleFullscreen();
         Dispatcher.UIThread.RunJobs();
 
         // The operating system's native restore gives the window its previous size and position back; a headless
@@ -1590,7 +1590,7 @@ public class WindowFitterTests
     }
 
     [AvaloniaFact]
-    public async Task Follow_LeavesFullscreenToMaximized_IsNotMoved()
+    public void Follow_LeavesFullscreenToMaximized_IsNotMoved()
     {
         var (fitter, vm, window) = CreateShownAutoFitWindow(() => Screen(1920, 1040));
         vm.WindowSettings.IsStayingCentered.Value = true;
@@ -1598,13 +1598,13 @@ public class WindowFitterTests
         vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 400, 300));
         Dispatcher.UIThread.RunJobs();
         var switcher = new WindowModeSwitcher(window, new NativeStateAdapter());
-        await switcher.ToggleMaximized();
+        switcher.ToggleMaximized();
         Dispatcher.UIThread.RunJobs();
         window.Position = new PixelPoint(100, 50);
 
-        await switcher.ToggleFullscreen();
+        switcher.ToggleFullscreen();
         Dispatcher.UIThread.RunJobs();
-        await switcher.ToggleFullscreen();
+        switcher.ToggleFullscreen();
         Dispatcher.UIThread.RunJobs();
 
         Assert.Equal(WindowMode.Maximized, vm.WindowModeState.Value.Mode);
@@ -1621,7 +1621,7 @@ public class WindowFitterTests
         using var stopsFollowing = following;
         window.Position = new PixelPoint(100, 50);
 
-        await switcher.SetAutoFit(true);
+        switcher.SetAutoFit(true);
         Dispatcher.UIThread.RunJobs();
 
         // Through the after-resize rule: the window takes its Fit's size again
@@ -1640,7 +1640,7 @@ public class WindowFitterTests
         window.Position = new PixelPoint(500, 300);
         var centerBefore = CenterOf(window);
 
-        await switcher.SetAutoFit(true);
+        switcher.SetAutoFit(true);
         Dispatcher.UIThread.RunJobs();
 
         Assert.Equal(new Size(400, 300), window.ClientSize);
@@ -1650,7 +1650,7 @@ public class WindowFitterTests
     }
 
     [AvaloniaFact]
-    public async Task Follow_AutoFitTurnsOff_IsNotMoved()
+    public void Follow_AutoFitTurnsOff_IsNotMoved()
     {
         var (fitter, vm, window) = CreateShownAutoFitWindow(() => Screen(1920, 1040));
         vm.WindowSettings.IsStayingCentered.Value = true;
@@ -1660,7 +1660,7 @@ public class WindowFitterTests
         window.Position = new PixelPoint(100, 50);
         var switcher = new WindowModeSwitcher(window, new NativeStateAdapter());
 
-        await switcher.SetAutoFit(false);
+        switcher.SetAutoFit(false);
         Dispatcher.UIThread.RunJobs();
 
         Assert.False(vm.WindowModeState.Value.AutoFit);
@@ -1679,7 +1679,7 @@ public class WindowFitterTests
         vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 400, 300));
         Dispatcher.UIThread.RunJobs();
         var switcher = new WindowModeSwitcher(window, new NativeStateAdapter());
-        await switcher.SetAutoFit(false);
+        switcher.SetAutoFit(false);
         Dispatcher.UIThread.RunJobs();
         window.Width = 600;
         window.Height = 500;
