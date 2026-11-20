@@ -6,10 +6,10 @@
     x:Name="Titlebar"
     xmlns="https://github.com/avaloniaui"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls;assembly=PicView.Avalonia"
+    xmlns:keybindings="using:PicView.Core.Keybindings"
     xmlns:uc="clr-namespace:PicView.Avalonia.Views.UC;assembly=PicView.Avalonia"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:keybindings="using:PicView.Core.Keybindings">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <DockPanel
         Background="{DynamicResource TitleBarBackgroundColor}"
@@ -40,7 +40,8 @@
             BorderBrush="{DynamicResource TitleBarBorderColor}"
             BorderThickness="0"
             Classes="AltHover"
-            Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.NewTab}"
+            Command="{CompiledBinding RunActionCommand}"
+            CommandParameter="{x:Static keybindings:Actions.NewTab}"
             DockPanel.Dock="Right"
             Foreground="{DynamicResource MainTextColor}"
             Icon="{StaticResource PlusImage}"
@@ -48,7 +49,6 @@
             IconWidth="13"
             IsRepeatEnabled="False"
             IsTabStop="False"
-            IsVisible="{Binding !WindowTabs.ActiveTab.Value.Gallery.IsDocked.Value}"
             Margin="0"
             Width="30"
             x:Name="CreateTabButton" />
@@ -58,7 +58,8 @@
             BorderBrush="{DynamicResource TitleBarBorderColor}"
             BorderThickness="0"
             Classes="AltHover"
-            Command="{Binding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.Search}"
+            Command="{Binding RunActionCommand}"
+            CommandParameter="{x:Static keybindings:Actions.Search}"
             DockPanel.Dock="Right"
             Foreground="{DynamicResource TitleBarForeground}"
             Icon="{StaticResource SearchImage}"

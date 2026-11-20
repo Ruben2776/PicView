@@ -1078,7 +1078,6 @@
                 IconHeight="13"
                 IconWidth="13"
                 IsTabStop="False"
-                IsVisible="{Binding !WindowTabs.ActiveTab.Value.Gallery.IsDocked.Value}"
                 Margin="0,3,2,3"
                 Width="30"
                 x:Name="CreateTabButton" />

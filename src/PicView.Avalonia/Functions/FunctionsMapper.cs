@@ -915,11 +915,6 @@ public class FunctionsMapper : IActionRunner
 
     private ValueTask NewTab()
     {
-        if (_vm.WindowTabs.ActiveTab.CurrentValue.Gallery.IsDocked.Value)
-        {
-            // TODO: Consecutive tabs or windows currently not supported when gallery is enabled
-            return ValueTask.CompletedTask;
-        }
         _vm.WindowTabs.CreateTab();
         return ValueTask.CompletedTask;
     }
