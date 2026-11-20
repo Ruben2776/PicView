@@ -89,15 +89,7 @@ public class TempFileTests
 ```
 
 ## Code Style
-
-- **File-scoped namespaces** (`namespace X;` not block-scoped).
-- **Nullable reference types** enabled globally.
-- **Implicit usings** enabled — no need for `using System;` etc.
-- **Braces**: Use curly braces for if statements and loops.
-- **Naming**: PascalCase for public members, `_camelCase` for private fields. Test methods use `MethodOrScenario_Condition_ExpectedResult` pattern. Use American English.
-- **Async patterns**: `async Task` / `ValueTask` used extensively; avoid `async void`.
-- **Reactive extensions**: R3 (`ObservableCollections.R3`, `R3`) used for reactive patterns in ViewModels.
-- **Input hot path**: Turning a key press, mouse button or wheel step into its Action must not allocate per press. Don't build lists, LINQ queries, closures or objects per press; build them once and use hand-written if statements. `PicView.Tests/Input/InputAllocationTests.cs` guards it; run it in Release (see Running Tests).
+For coding conventions and best practices or code-reviews, refer to `docs/CodeStyle.md`.
 
 ## Project Structure
 
