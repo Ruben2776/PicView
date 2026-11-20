@@ -144,6 +144,61 @@ public class ImageSizeReaderTests : IDisposable
         Assert.Equal(default, ImageSizeReader.Read(path));
     }
 
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void TryReadHeader_Jpeg_AgreesWithTheMagickPing(bool progressive)
+    {
+        var path = Write(MagickFormat.Jpeg, progressive ? "progressive.jpg" : "baseline.jpg", image =>
+        {
+            if (progressive)
+            {
+                image.Settings.Interlace = Interlace.Jpeg;
+            }
+        });
+
+        AssertReadsFromTheHeaderLikeThePing(path);
+    }
+
+    [Fact]
+    public void TryReadHeader_JpegWithLargeMetadataBeforeTheFrame_ReadsTheSize()
+    {
+        // Four of the largest segments a JPEG can hold, as a camera's EXIF and embedded preview take up
+        byte[] segment = [0xFF, 0xE1, 0xFF, 0xFF, .. new byte[65533]];
+        var path = WriteJpegWithBytesAfterTheStart("metadata.jpg", [.. segment, .. segment, .. segment, .. segment]);
+
+        Assert.True(ImageSizeReader.TryReadHeader(path, out var size));
+        Assert.Equal(new ImageSize(Width, Height), size);
+    }
+
+    [Fact]
+    public void TryReadHeader_JpegWithFillBytesBeforeAMarker_ReadsTheSize()
+    {
+        var path = WriteJpegWithBytesAfterTheStart("fill.jpg", [0xFF, 0xFF, 0xFF]);
+
+        Assert.True(ImageSizeReader.TryReadHeader(path, out var size));
+        Assert.Equal(new ImageSize(Width, Height), size);
+    }
+
+    [Fact]
+    public void TryReadHeader_JpegSegmentRunningPastTheEnd_Fails()
+    {
+        var path = Path.Combine(_directory, "overrun.jpg");
+        File.WriteAllBytes(path, [0xFF, 0xD8, 0xFF, 0xE1, 0xFF, 0xFF, 0x00, 0x00]);
+
+        Assert.False(ImageSizeReader.TryReadHeader(path, out _));
+        Assert.Equal(default, ImageSizeReader.Read(path));
+    }
+
+    [Fact]
+    public void TryReadHeader_JpegWithoutAFrame_Fails()
+    {
+        var path = Path.Combine(_directory, "noframe.jpg");
+        File.WriteAllBytes(path, [0xFF, 0xD8, 0xFF, 0xD9]);
+
+        Assert.False(ImageSizeReader.TryReadHeader(path, out _));
+    }
+
     public void Dispose()
     {
         try
@@ -156,6 +211,17 @@ public class ImageSizeReaderTests : IDisposable
         }
 
         GC.SuppressFinalize(this);
+    }
+
+    /// <summary>
+    /// Writes a JPEG with <paramref name="bytes"/> put between its start marker and its first segment.
+    /// </summary>
+    private string WriteJpegWithBytesAfterTheStart(string fileName, byte[] bytes)
+    {
+        var path = Write(MagickFormat.Jpeg, fileName);
+        var jpeg = File.ReadAllBytes(path);
+        File.WriteAllBytes(path, [.. jpeg[..2], .. bytes, .. jpeg[2..]]);
+        return path;
     }
 
     /// <summary>

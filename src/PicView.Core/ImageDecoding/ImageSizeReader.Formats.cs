@@ -49,8 +49,88 @@ public static partial class ImageSizeReader
             return TryReadDds(header, out size);
         }
 
+        if (header.StartsWith(JpegSignature))
+        {
+            return TryReadJpeg(handle, out size);
+        }
+
         return false;
     }
+
+    private static ReadOnlySpan<byte> JpegSignature => [0xFF, 0xD8, 0xFF];
+
+    /// <summary>
+    /// Hops from segment to segment by their lengths until the frame header, which holds the size. It can sit past
+    /// hundreds of kilobytes of metadata, none of which is read.
+    /// </summary>
+    private static bool TryReadJpeg(SafeFileHandle handle, out ImageSize size)
+    {
+        size = default;
+
+        // A marker, the segment's length, then what a frame header starts with: precision, height, width
+        Span<byte> segment = stackalloc byte[9];
+        const int maxSegments = 1024;
+        long offset = 2;
+        for (var i = 0; i < maxSegments; i++)
+        {
+            var read = ReadUpTo(handle, offset, segment);
+            if (read < 2 || segment[0] is not 0xFF)
+            {
+                return false;
+            }
+
+            var marker = segment[1];
+            switch (marker)
+            {
+                case 0xFF:
+                    // A fill byte before the marker
+                    offset++;
+                    continue;
+                case 0xD8 or 0x01 or (>= 0xD0 and <= 0xD7):
+                    // Markers that stand alone, without a length
+                    offset += 2;
+                    continue;
+                case 0xD9 or 0xDA:
+                    // The end of the image, or the start of its pixel data, without a frame header before it
+                    return false;
+            }
+
+            if (read < 4)
+            {
+                return false;
+            }
+
+            // The length counts its own two bytes
+            var length = BinaryPrimitives.ReadUInt16BigEndian(segment[2..]);
+            if (length < 2)
+            {
+                return false;
+            }
+
+            if (IsJpegFrameHeader(marker))
+            {
+                if (read < segment.Length || length < 7)
+                {
+                    return false;
+                }
+
+                size = new ImageSize(BinaryPrimitives.ReadUInt16BigEndian(segment[7..]),
+                    BinaryPrimitives.ReadUInt16BigEndian(segment[5..]));
+                return true;
+            }
+
+            offset += 2 + length;
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// Whether <paramref name="marker"/> starts a frame: SOF0 to SOF15, whose range also holds three markers that
+    /// are something else (the Huffman tables, a reserved one and the arithmetic coding conditions).
+    /// </summary>
+    private static bool IsJpegFrameHeader(byte marker) =>
+        marker is >= 0xC0 and <= 0xCF and not (0xC4 or 0xC8 or 0xCC);
 
     private static ReadOnlySpan<byte> PngSignature => [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A];
 
