@@ -86,7 +86,7 @@
                                        Mode=OneWay}" />
         </Border>
 
-        <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.FileHistorySearchTags}" Classes="searchBorder">
+        <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.FullPathInTitleBarySearchTags}" Classes="searchBorder">
             <customControls:TextToggleButton
                 x:Name="ShowFullPathInTitleBarToggleButton"
                 Classes="MenuItemHover settingsToggleButton"

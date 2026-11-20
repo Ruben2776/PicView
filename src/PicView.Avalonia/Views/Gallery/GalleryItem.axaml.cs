@@ -18,6 +18,7 @@ using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.FileSystem;
 using PicView.Avalonia.Gallery;
 using PicView.Avalonia.ImageHandling;
+using PicView.Avalonia.Wallpaper;
 using PicView.Core.DebugTools;
 using PicView.Core.Navigation;
 using PicView.Core.ViewModels;
@@ -470,55 +471,27 @@ public partial class GalleryItem : NavigateAbleItem
         _ = FileManager.LocateOnDisk(fileName).ConfigureAwait(false);
     }
 
-    private void WallpaperFilled_OnClick(object? sender, RoutedEventArgs e)
+    // Through the Wallpaper Manager, which converts a file the OS cannot show, shows the busy indicator and reports a failure
+    private void SetAsWallpaper(WallpaperStyle style)
     {
-        if (Application.Current.DataContext is not CoreViewModel core || DataContext is not GalleryItemViewModel item)
+        if (DataContext is not GalleryItemViewModel item ||
+            TopLevel.GetTopLevel(this) is not MainWindow { DataContext: MainWindowViewModel vm })
         {
             return;
         }
-        var fileName = item.FileLocation;
-        _ = core.PlatformService.SetAsWallpaper(fileName, 4);
+
+        _ = WallpaperManager.SetAsWallpaper(item.FileLocation, style, vm);
     }
 
-    private void WallpaperFitted_OnClick(object? sender, RoutedEventArgs e)
-    {
-        if (Application.Current.DataContext is not CoreViewModel core || DataContext is not GalleryItemViewModel item)
-        {
-            return;
-        }
-        var fileName = item.FileLocation;
-        _ = core.PlatformService.SetAsWallpaper(fileName, 3);
-    }
+    private void WallpaperFilled_OnClick(object? sender, RoutedEventArgs e) => SetAsWallpaper(WallpaperStyle.Fill);
 
-    private void WallpaperStretched_OnClick(object? sender, RoutedEventArgs e)
-    {
-        if (Application.Current.DataContext is not CoreViewModel core || DataContext is not GalleryItemViewModel item)
-        {
-            return;
-        }
-        var fileName = item.FileLocation;
-        _ = core.PlatformService.SetAsWallpaper(fileName, 2);
-    }
+    private void WallpaperFitted_OnClick(object? sender, RoutedEventArgs e) => SetAsWallpaper(WallpaperStyle.Fit);
 
-    private void WallpaperCentered_OnClick(object? sender, RoutedEventArgs e)
-    {
-        if (Application.Current.DataContext is not CoreViewModel core || DataContext is not GalleryItemViewModel item)
-        {
-            return;
-        }
-        var fileName = item.FileLocation;
-        _ = core.PlatformService.SetAsWallpaper(fileName, 1);
-    }
+    private void WallpaperStretched_OnClick(object? sender, RoutedEventArgs e) => SetAsWallpaper(WallpaperStyle.Stretch);
 
-    private void WallpaperTiled_OnClick(object? sender, RoutedEventArgs e)
-    {
-        if (Application.Current.DataContext is not CoreViewModel core || DataContext is not GalleryItemViewModel item)
-        {
-            return;
-        }
-        var fileName = item.FileLocation;
-        _ = core.PlatformService.SetAsWallpaper(fileName, 0);
-    }
+    private void WallpaperCentered_OnClick(object? sender, RoutedEventArgs e) => SetAsWallpaper(WallpaperStyle.Center);
+
+    private void WallpaperTiled_OnClick(object? sender, RoutedEventArgs e) => SetAsWallpaper(WallpaperStyle.Tile);
 
     private void CopyFile_OnClick(object? sender, RoutedEventArgs e)
     {

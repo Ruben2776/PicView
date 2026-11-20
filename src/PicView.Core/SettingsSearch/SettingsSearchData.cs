@@ -103,7 +103,9 @@ public class SettingsSearchData
         sb.Append(space);
         sb.Append(TranslationManager.Translation.Navigation);
         SubDirectorySearchTags = sb.ToString();
-        
+
+        sb.Clear();
+
         sb.Append(TranslationManager.Translation.OpenFileHistory);
         sb.Append(space);
         sb.Append(TranslationManager.Translation.FileManagement);

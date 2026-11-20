@@ -149,12 +149,13 @@ public class CropService(TabViewModel tabViewModel, MainWindow mainWindow) : ICr
 
     private (string fileName, FileInfo? fileInfo, Bitmap? bitmap) PrepareCropData()
     {
-        if (tabViewModel.FileInfo is null || !tabViewModel.FileInfo.CurrentValue.Exists)
+        // A Single Image, such as a pasted one, has no file, so its crop is saved as a new one
+        if (tabViewModel.FileInfo.CurrentValue is not { Exists: true } file)
         {
             return CreateNewCroppedImage();
         }
 
-        return (tabViewModel.FileInfo.Value.FullName, tabViewModel.FileInfo.Value, null);
+        return (file.FullName, file, null);
     }
 
     private (string fileName, FileInfo fileInfo, Bitmap bitmap) CreateNewCroppedImage()

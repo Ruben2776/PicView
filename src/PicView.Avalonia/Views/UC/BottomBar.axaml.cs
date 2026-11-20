@@ -315,32 +315,20 @@ public partial class BottomBar : UserControl, IDisposable
 
     public void ResponsiveNavigationBtnSize(double width)
     {
-        switch (width)
-        {
-            case > SizeDefaults.FullBtnBp:
-                ResetZoomButton.IsVisible = RotateLeftButton.IsVisible = true;
-                PreviousButton.Width = NextButton.Width = 80;
-                return;
-            case < SizeDefaults.FullBtnBp and > SizeDefaults.SearchResetAndRotateBtnBp:
-                PreviousButton.Width = NextButton.Width = 65;
-                break;
-            case < SizeDefaults.SearchResetAndRotateBtnBp and > SizeDefaults.SmallNavBtnBp:
-                PreviousButton.Width = NextButton.Width = 60;
-                break;
-            default:
-                ZoomInButton.Width = ZoomOutButton.Width = FlipButton.Width = RotateRightButton.Width = 33;
-                PreviousButton.Width = NextButton.Width = 50;
-                break;
-        }
+        // Every button is set from the width alone, so the layout does not depend on the width it came from
+        var showsResetAndRotate = width >= SizeDefaults.SearchResetAndRotateBtnBp;
+        ResetZoomButton.IsVisible = RotateLeftButton.IsVisible = showsResetAndRotate;
 
-        if (width < SizeDefaults.SearchResetAndRotateBtnBp)
+        PreviousButton.Width = NextButton.Width = width switch
         {
-            ResetZoomButton.IsVisible = RotateLeftButton.IsVisible = false;
-        }
-        else
-        {
-            ZoomInButton.Width = ZoomOutButton.Width = FlipButton.Width = RotateRightButton.Width = 38;
-        }
+            >= SizeDefaults.FullBtnBp => 80,
+            >= SizeDefaults.SearchResetAndRotateBtnBp => 65,
+            > SizeDefaults.SmallNavBtnBp => 60,
+            _ => 50
+        };
+
+        ZoomInButton.Width = ZoomOutButton.Width = FlipButton.Width = RotateRightButton.Width =
+            width > SizeDefaults.SmallNavBtnBp ? 38 : 33;
     }
     
     public void Dispose()

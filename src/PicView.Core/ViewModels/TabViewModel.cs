@@ -1354,6 +1354,8 @@ public class TabViewModel : IDisposable
 
     public void DisposeImageIterator()
     {
+        // No files to browse, so their folder is not followed either: a deleted folder must not reset a Single Image
+        _fileWatcherService?.Unwatch(this);
         ImageIterator?.Dispose();
         ImageIterator = null;
         FileInfo.Value = null;

@@ -297,6 +297,12 @@ public static class SettingsSearchIndex
             list.Add(new SettingsSearchItem(t.ApplicationShortcuts, data.KeybindingsSearchTags));
         }
 
+        // File associations
+        if (t.FileAssociations != null)
+        {
+            list.Add(new SettingsSearchItem(t.FileAssociations, data.FileAssociationSearchTags));
+        }
+
         return list;
     }
 }

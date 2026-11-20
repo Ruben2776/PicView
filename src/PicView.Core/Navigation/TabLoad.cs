@@ -251,12 +251,7 @@ public sealed class TabLoad
 
     private async ValueTask<LoadResult> LoadUrlAsync(string url, Run run)
     {
-        // Drops the iterator, as for a clipboard image, so browsing files again makes a new one and SourceOpener docks
-        // the gallery again
-        _tab.DisposeImageIterator();
-
         var platform = _services.Platform;
-        platform.StopTaskbarProgress();
         var safeFileName = HttpManager.GetSafeFileName(url);
         var destPath = TempFileManager.GetNewTempFilePath(safeFileName);
 
@@ -282,6 +277,7 @@ public sealed class TabLoad
 
         try
         {
+            platform.StopTaskbarProgress();
             await client.StartDownloadAsync(run.Token).ConfigureAwait(false);
 
             platform.StopTaskbarProgress();
@@ -303,6 +299,10 @@ public sealed class TabLoad
             {
                 return LoadResult.Superseded;
             }
+
+            // Drops the iterator only now, as for a clipboard image, so browsing files again makes a new one and
+            // SourceOpener docks the gallery again. A download that fails leaves the tab browsing what it browsed.
+            _tab.DisposeImageIterator();
 
             // Set before the image is shown, since the tab records the URL then
             _tab.SourceURL = url;

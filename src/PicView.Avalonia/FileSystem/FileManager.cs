@@ -45,19 +45,7 @@ public static class FileManager
             }
             else
             {
-                var success = await platformService.DeleteFile(path, recycle).ConfigureAwait(false);
-
-                if (success)
-                {
-                    var msg = recycle
-                        ? TranslationManager.Translation.SentFileToRecycleBin
-                        : TranslationManager.Translation.DeletedFile;
-                    TooltipHelper.ShowTooltipMessage(mainWindow.ViewModel!, msg + Environment.NewLine + Path.GetFileName(path));
-                }
-                else if (File.Exists(path))
-                {
-                    TooltipHelper.ShowTooltipMessage(mainWindow.ViewModel!, TranslationManager.Translation.UnexpectedError, true);
-                }
+                await DeleteAndReportAsync(recycle, path, platformService, mainWindow).ConfigureAwait(false);
             }
         }
         catch (Exception ex)
@@ -72,9 +60,39 @@ public static class FileManager
             var prompt = recycle
                 ? TranslationManager.Translation.DeleteFile
                 : TranslationManager.Translation.DeleteFilePermanently;
-            var deleteDialog = new DeleteDialog(prompt, path, recycle);
+            // The dialog deletes on Confirm, and reports it as a deletion without the dialog would
+            var deleteDialog = new DeleteDialog(prompt, path, recycle,
+                () => DeleteAndReportAsync(recycle, path, platformService, mainWindow));
             mainWindow.UIHelper.GetMainView.MainPanel.Children.Add(deleteDialog);
-            // Dialog handles the deletion
+        }
+    }
+
+    /// <summary>
+    /// Deletes <paramref name="path"/> and says so in a tooltip, or that it failed.
+    /// </summary>
+    private static async Task DeleteAndReportAsync(bool recycle, string path,
+        IPlatformSpecificService platformService, MainWindow mainWindow)
+    {
+        try
+        {
+            var success = await platformService.DeleteFile(path, recycle).ConfigureAwait(false);
+
+            if (success)
+            {
+                var msg = recycle
+                    ? TranslationManager.Translation.SentFileToRecycleBin
+                    : TranslationManager.Translation.DeletedFile;
+                TooltipHelper.ShowTooltipMessage(mainWindow.ViewModel!, msg + Environment.NewLine + Path.GetFileName(path));
+            }
+            else if (File.Exists(path))
+            {
+                TooltipHelper.ShowTooltipMessage(mainWindow.ViewModel!, TranslationManager.Translation.UnexpectedError, true);
+            }
+        }
+        catch (Exception ex)
+        {
+            DebugHelper.LogDebug(nameof(FileManager), nameof(DeleteAndReportAsync), ex);
+            TooltipHelper.ShowTooltipMessage(mainWindow.ViewModel!, TranslationManager.Translation.UnexpectedError, true);
         }
     }
 

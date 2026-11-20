@@ -15,7 +15,7 @@
     mc:Ignorable="d">
     <StackPanel HorizontalAlignment="Center">
 
-        <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.KeybindingsSearchTags}" Classes="searchBorder">
+        <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.FileAssociationSearchTags}" Classes="searchBorder">
             <StackPanel>
                 <StackPanel Orientation="Horizontal" Spacing="12">
                     <Image

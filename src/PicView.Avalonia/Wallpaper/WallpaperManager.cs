@@ -3,6 +3,9 @@ using Avalonia;
 using Avalonia.Threading;
 using PicView.Avalonia.FileSystem;
 using PicView.Avalonia.UI;
+using PicView.Core.FileHandling;
+using PicView.Core.ImageDecoding;
+using PicView.Core.Localization;
 using PicView.Core.ViewModels;
 
 namespace PicView.Avalonia.Wallpaper;
@@ -40,11 +43,46 @@ public static class WallpaperManager
         {
             TooltipHelper.ShowTooltipMessage(vm, e.Message, true);
 #if DEBUG
-            Console.WriteLine(e);   
+            Console.WriteLine(e);
 #endif
         }
     }
-    
+
+    /// <summary>
+    /// Sets the file at <paramref name="path"/> as the wallpaper, such as a gallery item's: as it is when it is in a
+    /// common format, else as a temporary PNG, since the OS cannot show the others.
+    /// </summary>
+    public static async Task SetAsWallpaper(string path, WallpaperStyle style, MainWindowViewModel vm)
+    {
+        using var busy = vm.WindowTabs.ActiveTab.CurrentValue.ClaimBusy();
+        try
+        {
+            var file = path;
+            if (!path.IsCommon())
+            {
+                file = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + ".png");
+                if (!await SaveImageFileHelper.SaveImageAsync(null, path, file, ext: ".png").ConfigureAwait(false))
+                {
+                    TooltipHelper.ShowTooltipMessage(vm, TranslationManager.Translation.UnexpectedError ?? "Error", true);
+                    return;
+                }
+            }
+
+            var core = await Dispatcher.UIThread.InvokeAsync(() => Application.Current.DataContext as CoreViewModel);
+            if (core?.PlatformService is { } platform)
+            {
+                await platform.SetAsWallpaper(file, GetWallpaperStyle(style)).ConfigureAwait(false);
+            }
+        }
+        catch (Exception e)
+        {
+            TooltipHelper.ShowTooltipMessage(vm, e.Message, true);
+#if DEBUG
+            Console.WriteLine(e);
+#endif
+        }
+    }
+
     public static int GetWallpaperStyle(WallpaperStyle style)
     {
         switch (style)

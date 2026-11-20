@@ -204,11 +204,73 @@ public class TabLoadTests : IDisposable
     public async Task LoadAsync_Url_DropsImageIterator()
     {
         var tab = CreateTab(_testDirectory);
+        var (url, served) = ServeOnce(TestContext.Current.CancellationToken);
 
-        await tab.Load.LoadAsync("http://127.0.0.1:9/image.jpg");
+        var result = await tab.Load.LoadAsync(url);
+        await served.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
 
         // Opening a file afterwards recreates it and docks the gallery again, as after a clipboard image
+        Assert.True(result.IsLoaded);
         Assert.Null(tab.ImageIterator);
+    }
+
+    [Fact]
+    public async Task LoadAsync_FailedUrl_KeepsBrowsingTheFiles()
+    {
+        var a = await WriteImageAsync("a.jpg");
+        var tab = CreateTab(_testDirectory, withIterator: false);
+        await tab.Load.LoadAsync(a);
+
+        // Port 9 (discard) refuses connections on a machine without that service
+        var result = await tab.Load.LoadAsync("http://127.0.0.1:9/image.jpg");
+
+        // Nothing new shows, so the tab still browses the files of the image it still shows: Next and Prev work
+        Assert.False(result.IsLoaded);
+        Assert.NotNull(tab.ImageIterator);
+        Assert.Equal(a, tab.FileInfo.CurrentValue?.FullName);
+    }
+
+    /// <summary>
+    /// A server that answers one GET with an image body, so a URL Load downloads and shows it. Its task ends once
+    /// the answer is sent.
+    /// </summary>
+    private static (string Url, Task Served) ServeOnce(CancellationToken ct)
+    {
+        var server = new TcpListener(IPAddress.Loopback, 0);
+        server.Start();
+        var port = ((IPEndPoint)server.LocalEndpoint).Port;
+        var served = Task.Run(async () =>
+        {
+            try
+            {
+                using var client = await server.AcceptTcpClientAsync(ct);
+                var stream = client.GetStream();
+                var buffer = new byte[4096];
+                var request = "";
+                while (!request.Contains("\r\n\r\n", StringComparison.Ordinal))
+                {
+                    var read = await stream.ReadAsync(buffer, ct);
+                    if (read is 0)
+                    {
+                        return;
+                    }
+
+                    request += System.Text.Encoding.ASCII.GetString(buffer, 0, read);
+                }
+
+                byte[] body = [0xFF, 0xD8, 0xFF, 0xD9];
+                var header = System.Text.Encoding.ASCII.GetBytes(
+                    $"HTTP/1.1 200 OK\r\nContent-Type: image/jpeg\r\nContent-Length: {body.Length}\r\nConnection: close\r\n\r\n");
+                await stream.WriteAsync(header, ct);
+                await stream.WriteAsync(body, ct);
+                await stream.FlushAsync(ct);
+            }
+            finally
+            {
+                server.Stop();
+            }
+        }, ct);
+        return ($"http://127.0.0.1:{port}/image.jpg", served);
     }
 
     [Fact]
@@ -1259,10 +1321,12 @@ public class TabLoadTests : IDisposable
         var tab = CreateTab(_testDirectory, withIterator: false);
         if (!fresh)
         {
-            // A URL drops the iterator a file had made
+            // A URL that shows drops the iterator a file had made
             var a = await WriteImageAsync("a.jpg");
             await tab.Load.LoadAsync(a);
-            await tab.Load.LoadAsync("http://127.0.0.1:9/image.jpg");
+            var (url, served) = ServeOnce(TestContext.Current.CancellationToken);
+            await tab.Load.LoadAsync(url);
+            await served.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
             Assert.Null(tab.ImageIterator);
         }
         _decoded.Clear();

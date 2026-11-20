@@ -503,17 +503,23 @@ public class DraggableTabControl : TabControl
             return;
         }
 
-        // 1. Calculate Target Index
-        var newTargetIndex = _sourceIndex;
+        // 1. Calculate Target Index: the dragged tab lands after every other tab whose center it has passed, so
+        // overshooting the first tab still lands first, and the same distance is needed to move left as right
+        var newTargetIndex = 0;
         for (var i = 0; i < realizedItems.Length; i++)
         {
             var tab = realizedItems[i];
+            if (tab == _pressedTab)
+            {
+                continue;
+            }
+
             var tabStartX = _originalXPositions.TryGetValue(tab, out var val) ? val : tab.Bounds.X;
             var tabCenter = tabStartX + tab.Bounds.Width / 2;
 
             if (dragCenter > tabCenter)
             {
-                newTargetIndex = i;
+                newTargetIndex++;
             }
         }
 
