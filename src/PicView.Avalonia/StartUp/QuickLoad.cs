@@ -4,8 +4,9 @@ using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.Navigation;
-using PicView.Core.ImageDecoding;
+using PicView.Core.DebugTools;
 using PicView.Core.FileSorting;
+using PicView.Core.ImageDecoding;
 using PicView.Core.Navigation;
 using PicView.Core.Sizing;
 using PicView.Core.ViewModels;
@@ -170,10 +171,19 @@ public static class QuickLoad
             {
                 // Using await and DispatcherPriority.Render fixes cases where the window is not staying in place
                 // after resizing the next image
-                await Dispatcher.UIThread.InvokeAsync(() =>
+                try
                 {
-                    ShowSized(mainWindow, sizes);
-                }, DispatcherPriority.Render);
+                    await Dispatcher.UIThread.InvokeAsync(() =>
+                    {
+                        ShowSized(mainWindow, sizes);
+                    }, DispatcherPriority.Render);
+                }
+                catch (Exception e)
+                {
+                    // A window that could not be sized still shows, and the image loads into it
+                    ShowNow(mainWindow);
+                    DebugHelper.LogDebug(nameof(QuickLoad), nameof(LoadSingleAsync), e);
+                }
             }
             else
             {
@@ -236,13 +246,22 @@ public static class QuickLoad
                 var sizes = isOpenedFirst
                     ? new PixelSizes(firstSize.Width, firstSize.Height, secondSize.Width, secondSize.Height)
                     : new PixelSizes(secondSize.Width, secondSize.Height, firstSize.Width, firstSize.Height);
-                await Dispatcher.UIThread.InvokeAsync(() =>
+                try
                 {
-                    if (!ShowSized(mainWindow, sizes))
+                    await Dispatcher.UIThread.InvokeAsync(() =>
                     {
-                        mainWindow.Show();
-                    }
-                }, DispatcherPriority.Send);
+                        if (!ShowSized(mainWindow, sizes))
+                        {
+                            mainWindow.Show();
+                        }
+                    }, DispatcherPriority.Send);
+                }
+                catch (Exception e)
+                {
+                    // A window that could not be sized still shows, and the pair loads into it
+                    ShowNow(mainWindow);
+                    DebugHelper.LogDebug(nameof(QuickLoad), nameof(LoadSideBySideAsync), e);
+                }
             }
         }
 
