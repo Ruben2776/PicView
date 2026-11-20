@@ -23,7 +23,7 @@ public class ImageAndNavigationSettingsViewTests
     [AvaloniaFact]
     public void SideBySide_And_Looping_ShowTheActiveMainWindowsValueAndText_AndFollowASwitch()
     {
-        var core = new CoreViewModel(null, _ => ValueTask.FromResult(new ImageModel()), StartedSettings.New());
+        var core = new CoreViewModel(null, _ => new ImageModel(), StartedSettings.New());
         core.Translation.LoopingEnabled.Value = "on";
         core.Translation.LoopingDisabled.Value = "off";
         var a = new MainWindowViewModel(core, core.Translation, core.GlobalSettings!, core.GallerySettings);
@@ -73,7 +73,7 @@ public class ImageAndNavigationSettingsViewTests
     [AvaloniaFact]
     public void Scrolling_And_ZoomToFit_ShowTheActiveMainWindowsValueAndText_AndFollowASwitch()
     {
-        var core = new CoreViewModel(null, _ => ValueTask.FromResult(new ImageModel()), StartedSettings.New());
+        var core = new CoreViewModel(null, _ => new ImageModel(), StartedSettings.New());
         core.Translation.ScrollEnabled.Value = "on";
         core.Translation.ScrollDisabled.Value = "off";
         var a = new MainWindowViewModel(core, core.Translation, core.GlobalSettings!, core.GallerySettings);

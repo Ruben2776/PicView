@@ -22,7 +22,7 @@ public class MainWindowResizeTests
         SetDefaults();
         TranslationManager.Init();
         Settings.WindowProperties.AutoFit = false;
-        _core = new CoreViewModel(null, _ => ValueTask.FromResult(new ImageModel()));
+        _core = new CoreViewModel(null, _ => new ImageModel());
     }
 
     [AvaloniaFact]

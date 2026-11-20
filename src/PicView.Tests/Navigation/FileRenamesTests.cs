@@ -23,7 +23,7 @@ public class FileRenamesTests : IDisposable
         Settings.StartUp.LastFile = null;
         Directory.CreateDirectory(_folder);
         FileHistoryManager.Initialize(Path.Combine(_folder, "history.json"));
-        _core = new CoreViewModel(null, file => ValueTask.FromResult(new ImageModel { FileInfo = file }));
+        _core = new CoreViewModel(null, file => new ImageModel { FileInfo = file });
     }
 
     public void Dispose()

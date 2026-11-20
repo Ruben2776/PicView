@@ -1,7 +1,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Specialized;
-using ImageMagick;
 using ObservableCollections;
+using PicView.Avalonia.StartUp;
 using PicView.Core.FileSorting;
 using PicView.Core.Gallery;
 using PicView.Core.IPlatform;
@@ -47,10 +47,10 @@ public class TabOwnershipTests : IDisposable
             if (_heldDecodes.TryGetValue(file.Name, out var held))
             {
                 DecodeRequestedOf(file.Name).TrySetResult();
-                return new ValueTask<ImageModel>(held.Task);
+                return held.Task.GetAwaiter().GetResult();
             }
 
-            return ValueTask.FromResult(new ImageModel { FileInfo = file });
+            return new ImageModel { FileInfo = file };
         });
     }
 
@@ -1612,8 +1612,8 @@ public class TabOwnershipTests : IDisposable
         var closedTab = closed.WindowTabs.CreateTab();
 
         // As a tab opened for the first time starts
-        PicView.Avalonia.StartUp.TabNavigationInitializer.Initialize(_core, docked, dockedTab);
-        PicView.Avalonia.StartUp.TabNavigationInitializer.Initialize(_core, closed, closedTab);
+        TabNavigationInitializer.Initialize(_core, docked, dockedTab);
+        TabNavigationInitializer.Initialize(_core, closed, closedTab);
 
         Assert.Equal(GalleryMode.Docked, dockedTab.Gallery.Mode.Value);
         Assert.Equal(GalleryDockPosition.Right, dockedTab.Gallery.Appearance.Value.Dock);

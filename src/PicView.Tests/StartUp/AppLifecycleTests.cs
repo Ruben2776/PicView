@@ -110,19 +110,19 @@ public class AppLifecycleTests : IAsyncDisposable
             if (_holds.TryGetValue(file.FullName, out var hold))
             {
                 hold.Requested.TrySetResult();
-                return new ValueTask<ImageModel>(hold.Model.Task);
+                return hold.Model.Task.GetAwaiter().GetResult();
             }
 
             if (file.FullName == _heldPath)
             {
                 _heldRequested.TrySetResult();
-                return new ValueTask<ImageModel>(_held.Task);
+                return _held.Task.GetAwaiter().GetResult();
             }
 
-            return ValueTask.FromResult(
+            return 
                 file.Extension.Equals(".tif", StringComparison.OrdinalIgnoreCase)
                     ? ThreePageTiff(file)
-                    : new ImageModel { FileInfo = file });
+                    : new ImageModel { FileInfo = file };
         }, new GlobalSettingsViewModel(CountingGlobalSave),
             saveGallerySettings: CountingGallerySave, timeProvider: _clock);
         _provider = new LifecycleWindowProvider(_core);

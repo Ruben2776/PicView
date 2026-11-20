@@ -2,8 +2,8 @@ using Avalonia.Controls;
 using Avalonia.Threading;
 using ImageMagick;
 using PicView.Avalonia.Views.Main;
-using PicView.Core.Localization;
 using PicView.Core.ImageDecoding;
+using PicView.Core.Localization;
 using PicView.Core.Models;
 using PicView.Core.ViewModels;
 
@@ -171,7 +171,7 @@ public class ImageInfoViewTests : IDisposable
     // Set up as the window opener does it, with the Exif and Info Window view models the view reads
     private static MainWindowViewModel CreateViewModel()
     {
-        var core = new CoreViewModel(null, _ => ValueTask.FromResult(new ImageModel()));
+        var core = new CoreViewModel(null, _ => new ImageModel());
         var vm = new MainWindowViewModel(core, core.Translation, core.GlobalSettings!, core.GallerySettings)
         {
             Exif = new ExifViewModel()

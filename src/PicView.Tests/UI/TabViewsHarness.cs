@@ -1,7 +1,6 @@
 using Avalonia;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
-using ImageMagick;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Interfaces;
 using PicView.Avalonia.UI;
@@ -9,7 +8,6 @@ using PicView.Avalonia.Views.UC;
 using PicView.Core.ImageDecoding;
 using PicView.Core.Models;
 using PicView.Core.Navigation;
-using PicView.Core.Navigation.Interfaces;
 using PicView.Core.Sizing;
 using PicView.Core.Thumbnailing;
 using PicView.Core.ViewModels;
@@ -48,8 +46,8 @@ internal static class TabViewsHarness
     public static async Task WithWindowAsync(Func<TestMainWindow, MainWindowViewModel, TabViewModel, Task> test,
         Func<SharedImageCache, Thumbnails>? thumbnails = null)
     {
-        var core = new CoreViewModel(null, _ => ValueTask.FromResult(new ImageModel()));
-        var cache = new SharedImageCache(static f => ValueTask.FromResult(new ImageModel { FileInfo = f }));
+        var core = new CoreViewModel(null, _ => new ImageModel());
+        var cache = new SharedImageCache(static f => new ImageModel { FileInfo = f });
         core.InitializeNavigation(
             TestTabServices.For(cache, thumbnails?.Invoke(cache)),
             new NavigationService());

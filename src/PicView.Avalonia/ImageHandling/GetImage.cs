@@ -67,60 +67,71 @@ public static class GetImage
         return new Bitmap(stream);
     }
 
-    public static async ValueTask<Bitmap?> GetNonStandardBitmapAsync(FileInfo fileInfo, MagickImage? magickImage = null)
+    /// <summary>
+    /// Decodes any format ImageMagick supports, applying the EXIF orientation and converting to sRGB.
+    /// Falls back to Skia for common formats when ImageMagick cannot read the file.
+    /// </summary>
+    public static Bitmap? GetNonStandardBitmap(FileInfo fileInfo, MagickImage? magickImage = null)
     {
         var shouldDisposeMagickImage = magickImage is null;
-        if (shouldDisposeMagickImage)
-        {
-            magickImage = new MagickImage();
-        }
+        magickImage ??= new MagickImage();
 
         try
         {
-            magickImage = await MagickPerformanceReader.ReadMagickImageWithSpanAsync(fileInfo, magickImage).ConfigureAwait(false);
+            magickImage = MagickPerformanceReader.ReadMagickImageWithSpan(fileInfo, magickImage);
         }
         catch (Exception e)
         {
-            magickImage?.Dispose();
-            DebugHelper.LogDebug(nameof(GetImage), nameof(GetNonStandardBitmapAsync), e);
+            magickImage.Dispose();
+            DebugHelper.LogDebug(nameof(GetImage), nameof(GetNonStandardBitmap), e);
             return fileInfo.IsCommon() ? GetSkBitmap(fileInfo) : null;
         }
 
-        // Rotate image according to EXIF orientation
-        magickImage.AutoOrient();
-        TransformToSrgbIfNeeded(magickImage);
-
-        var bitmap = MagickBitmapConverter.ToBgraWriteableBitmap(magickImage);
-        if (shouldDisposeMagickImage)
-        {
-            magickImage.Dispose();
-        }
-        return bitmap;
+        return ToOrientedSrgbBitmap(magickImage, shouldDisposeMagickImage);
     }
-    
+
+    /// <summary>
+    /// <see cref="GetNonStandardBitmap" /> wrapped for async callers; the decode itself is synchronous.
+    /// </summary>
+    public static ValueTask<Bitmap?> GetNonStandardBitmapAsync(FileInfo fileInfo, MagickImage? magickImage = null) =>
+        ValueTask.FromResult(GetNonStandardBitmap(fileInfo, magickImage));
+
+    /// <summary>
+    /// Decodes a camera raw file. Raw images need to be loaded by file path, else only the embedded thumbnail
+    /// is read. https://github.com/Ruben2776/PicView/issues/221
+    /// </summary>
+    public static Bitmap? GetRawBitmap(FileInfo fileInfo, MagickImage? magickImage)
+    {
+        var shouldDisposeMagickImage = magickImage is null;
+        magickImage ??= new MagickImage();
+        magickImage.Read(fileInfo);
+        return ToOrientedSrgbBitmap(magickImage, shouldDisposeMagickImage);
+    }
+
+    /// <inheritdoc cref="GetRawBitmap" />
     public static async ValueTask<Bitmap?> GetRawBitmapAsync(FileInfo fileInfo, MagickImage? magickImage)
     {
         var shouldDisposeMagickImage = magickImage is null;
-        if (shouldDisposeMagickImage)
-        {
-            magickImage = new MagickImage();
-        }
-        // Raw images needs to be loaded by file path, else it just loads thumbnail 
-        // https://github.com/Ruben2776/PicView/issues/221
+        magickImage ??= new MagickImage();
         await magickImage.ReadAsync(fileInfo).ConfigureAwait(false);
-
-        // Rotate image according to EXIF orientation
-        magickImage.AutoOrient();
-        TransformToSrgbIfNeeded(magickImage);
-
-        var bitmap = MagickBitmapConverter.ToBgraWriteableBitmap(magickImage);
-        if (shouldDisposeMagickImage)
-        {
-            magickImage.Dispose();
-        }
-        return bitmap;
+        return ToOrientedSrgbBitmap(magickImage, shouldDisposeMagickImage);
     }
-    
+
+    /// <summary>Decodes a file holding base64 image data.</summary>
+    public static Bitmap? GetBase64Image(FileInfo fileInfo)
+    {
+        try
+        {
+            return GetBase64Image(File.ReadAllText(fileInfo.FullName));
+        }
+        catch (Exception e)
+        {
+            DebugHelper.LogDebug(nameof(GetImage), nameof(GetBase64Image), e);
+            return null;
+        }
+    }
+
+    /// <inheritdoc cref="GetBase64Image(FileInfo)" />
     public static async ValueTask<Bitmap?> GetBase64ImageAsync(FileInfo fileInfo, CancellationToken ct = default)
     {
         try
@@ -138,45 +149,57 @@ public static class GetImage
             return null;
         }
     }
-    
-    public static async ValueTask<Bitmap?> GetBase64ImageAsync(string base64String, CancellationToken ct = default)
+
+    /// <summary>Decodes base64 image data.</summary>
+    public static Bitmap? GetBase64Image(string base64String)
     {
-        try 
+        try
         {
             var base64Data = Convert.FromBase64String(base64String);
-            var magickImage = new MagickImage
-            {
-                Quality = 100,
-                ColorSpace = ColorSpace.Transparent
-            };
+            using var magickImage = new MagickImage();
+            magickImage.Quality = 100;
+            magickImage.ColorSpace = ColorSpace.Transparent;
 
             var readSettings = new MagickReadSettings
             {
                 Density = new Density(300, 300),
                 BackgroundColor = MagickColors.Transparent
             };
-        
-            await magickImage.ReadAsync(new MemoryStream(base64Data), readSettings, ct).ConfigureAwait(false);
 
-            // Rotate image according to EXIF orientation
-            magickImage.AutoOrient();
-            TransformToSrgbIfNeeded(magickImage);
-
-            var bitmap = MagickBitmapConverter.ToBgraWriteableBitmap(magickImage);
-            magickImage.Dispose();
-            return bitmap;
-        }
-        catch (OperationCanceledException)
-        {
-            return null;
+            magickImage.Read(base64Data, readSettings);
+            return ToOrientedSrgbBitmap(magickImage, dispose: false);
         }
         catch (Exception e)
         {
-            DebugHelper.LogDebug(nameof(GetImage), nameof(GetBase64ImageAsync), e);
+            DebugHelper.LogDebug(nameof(GetImage), nameof(GetBase64Image), e);
             return null;
         }
     }
-    
+
+    /// <summary>
+    /// <see cref="GetBase64Image(string)" /> for async callers; the data is already in memory, so decoding is synchronous.
+    /// </summary>
+    public static ValueTask<Bitmap?> GetBase64ImageAsync(string base64String, CancellationToken ct = default) =>
+        ValueTask.FromResult(ct.IsCancellationRequested ? null : GetBase64Image(base64String));
+
+    /// <summary>Applies the EXIF orientation, converts to sRGB and copies the pixels into a bitmap.</summary>
+    private static WriteableBitmap ToOrientedSrgbBitmap(MagickImage magickImage, bool dispose)
+    {
+        try
+        {
+            magickImage.AutoOrient();
+            TransformToSrgbIfNeeded(magickImage);
+            return MagickBitmapConverter.ToBgraWriteableBitmap(magickImage);
+        }
+        finally
+        {
+            if (dispose)
+            {
+                magickImage.Dispose();
+            }
+        }
+    }
+
     public static MagickImage CreateAndPingMagickImage(FileInfo fileInfo)
     {
         var magickImage = new MagickImage();

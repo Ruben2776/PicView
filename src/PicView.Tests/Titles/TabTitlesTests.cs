@@ -1,10 +1,7 @@
-using ImageMagick;
 using PicView.Core.Extensions;
-using PicView.Core.ImageDecoding;
 using PicView.Core.Localization;
 using PicView.Core.Models;
 using PicView.Core.Navigation;
-using PicView.Core.Navigation.Interfaces;
 using PicView.Core.Titles;
 using PicView.Core.ViewModels;
 using PicView.Tests.Navigation;
@@ -27,7 +24,7 @@ public class TabTitlesTests
         SetDefaults();
         TranslationManager.LoadLanguage("en");
         _tab = new TabViewModel(new MainWindowViewModel(null!, null!, null!, null!),
-            TestTabServices.For(new SharedImageCache(f => ValueTask.FromResult(Model(f.Name))!)));
+            TestTabServices.For(new SharedImageCache(f => Model(f.Name)!)));
     }
 
     private static string Loading => TranslationManager.Translation.Loading!;
@@ -269,7 +266,7 @@ public class TabTitlesTests
     {
         var settings = new GlobalSettingsViewModel(static () => ValueTask.FromResult(true));
         var tab = new TabViewModel(null!, TestTabServices.For(
-            new SharedImageCache(f => ValueTask.FromResult(Model(f.Name))!), globalSettings: settings));
+            new SharedImageCache(f => Model(f.Name)!), globalSettings: settings));
         // The titles subscribe as they are made, before the write-through starts
         _ = tab.Titles.Title;
         var files = new[] { Model("a.jpg").FileInfo! };

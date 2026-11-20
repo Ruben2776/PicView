@@ -1,21 +1,21 @@
-using PicView.Tests.Config;
 using System.Collections.Concurrent;
+using System.IO.Compression;
 using System.Net;
 using System.Net.Sockets;
-using ImageMagick;
 using PicView.Core.ArchiveHandling;
 using PicView.Core.FileHistory;
 using PicView.Core.FileSorting;
-using PicView.Core.Localization;
 using PicView.Core.IPlatform;
+using PicView.Core.Localization;
 using PicView.Core.Models;
 using PicView.Core.Navigation;
 using PicView.Core.Navigation.Interfaces;
 using PicView.Core.Titles;
 using PicView.Core.ViewModels;
-using R3;
 using PicView.Tests.ArchiveHandling;
+using PicView.Tests.Config;
 using PicView.Tests.FileHistory;
+using R3;
 
 namespace PicView.Tests.Navigation;
 
@@ -62,16 +62,16 @@ public class TabLoadTests : IDisposable
             if (_holds.TryGetValue(file.FullName, out var hold))
             {
                 hold.Requested.TrySetResult();
-                return new ValueTask<ImageModel>(hold.Model.Task);
+                return hold.Model.Task.GetAwaiter().GetResult();
             }
 
             if (file.FullName != _heldPath)
             {
-                return ValueTask.FromResult(new ImageModel { FileInfo = file });
+                return new ImageModel { FileInfo = file };
             }
 
             _heldRequested.TrySetResult();
-            return new ValueTask<ImageModel>(_held.Task);
+            return _held.Task.GetAwaiter().GetResult();
         });
         _mockFileWatcherService = new MockFileWatcherService();
     }
@@ -356,7 +356,7 @@ public class TabLoadTests : IDisposable
             await File.WriteAllBytesAsync(Path.Combine(archiveSourceDir, $"img_{i:D2}.jpg"), [0xFF, 0xD8, 0xFF], TestContext.Current.CancellationToken);
         }
 
-        System.IO.Compression.ZipFile.CreateFromDirectory(archiveSourceDir, tempZipPath);
+        ZipFile.CreateFromDirectory(archiveSourceDir, tempZipPath);
 
         var tab = CreateTab(_testDirectory);
 
@@ -394,7 +394,7 @@ public class TabLoadTests : IDisposable
             }
         }
 
-        System.IO.Compression.ZipFile.CreateFromDirectory(archiveSourceDir, tempZipPath);
+        ZipFile.CreateFromDirectory(archiveSourceDir, tempZipPath);
 
         var tab = CreateTab(_testDirectory);
 
@@ -684,11 +684,11 @@ public class TabLoadTests : IDisposable
         {
             if (file.Name != "2.jpg" || Interlocked.Exchange(ref isFirstPageAsked, 1) == 1)
             {
-                return ValueTask.FromResult(new ImageModel { FileInfo = file });
+                return new ImageModel { FileInfo = file };
             }
 
             firstPageAsked.SetResult(file);
-            return new ValueTask<ImageModel>(firstPage.Task);
+            return firstPage.Task.GetAwaiter().GetResult();
         });
         var tab = CreateTab(_testDirectory, cache: cache, platform: platform);
         var x = await WriteImageAsync("x.jpg");
@@ -762,11 +762,11 @@ public class TabLoadTests : IDisposable
         {
             if (file.Name != "b.jpg")
             {
-                return ValueTask.FromResult(new ImageModel { FileInfo = file });
+                return new ImageModel { FileInfo = file };
             }
 
             heldPageAsked.TrySetResult(file);
-            return new ValueTask<ImageModel>(heldPage.Task);
+            return heldPage.Task.GetAwaiter().GetResult();
         });
         var tab = CreateTab(_testDirectory, cache: cache, platform: platform);
         var c = await CreateZipAsync("c.zip", 2);
@@ -1566,7 +1566,7 @@ public class TabLoadTests : IDisposable
     {
         var a = await WriteImageAsync("a.jpg");
         var platform = new MockPlatformSpecificService();
-        var core = new CoreViewModel(platform, file => ValueTask.FromResult(new ImageModel { FileInfo = file }),
+        var core = new CoreViewModel(platform, file => new ImageModel { FileInfo = file },
             StartedSettings.New());
         core.InitializeNavigation(
             new TabServices(core.SharedCache, TestTabServices.NoThumbnails(core.SharedCache), _mockFileWatcherService,
@@ -1721,7 +1721,7 @@ public class TabLoadTests : IDisposable
             await File.WriteAllBytesAsync(path, [0xFF, 0xD8, 0xFF], TestContext.Current.CancellationToken);
         }
         var zip = Path.Combine(_testDirectory, name);
-        System.IO.Compression.ZipFile.CreateFromDirectory(source, zip);
+        ZipFile.CreateFromDirectory(source, zip);
         return zip;
     }
 
@@ -1778,7 +1778,7 @@ public class TabLoadTests : IDisposable
                 TestContext.Current.CancellationToken);
         }
         var zip = Path.Combine(_testDirectory, name);
-        System.IO.Compression.ZipFile.CreateFromDirectory(source, zip);
+        ZipFile.CreateFromDirectory(source, zip);
         return zip;
     }
 
@@ -1850,7 +1850,7 @@ public class TabLoadTests : IDisposable
         public void SetCursorPos(int x, int y) { }
         public void DisableScreensaver() { }
         public void EnableScreensaver() { }
-        public List<FileInfo> GetFiles(FileInfo fileInfo, PicView.Core.FileSorting.FileOrder order) => new();
+        public List<FileInfo> GetFiles(FileInfo fileInfo, FileOrder order) => new();
         // While closed, every name comparison waits for it, so a test can hold a listing while it sorts; Comparing says
         // when one waits
         public ManualResetEventSlim CompareGate { get; } = new(initialState: true);

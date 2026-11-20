@@ -296,7 +296,7 @@ public class GalleryDisplayModeSwitchingTests
 
     // The shared gallery settings save through the delegate, so no test here writes the settings file
     private static CoreViewModel NewCore(Func<ValueTask<bool>>? save = null) =>
-        new(null, _ => ValueTask.FromResult(new ImageModel()),
+        new(null, _ => new ImageModel(),
             saveGallerySettings: save ?? (static () => ValueTask.FromResult(true)));
 
     // The Settings window edits the Active Main Window, here the only one, whose gallery settings are given

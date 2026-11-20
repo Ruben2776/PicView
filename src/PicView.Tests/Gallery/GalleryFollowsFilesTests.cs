@@ -7,7 +7,6 @@ using PicView.Core.Gallery;
 using PicView.Core.Localization;
 using PicView.Core.Models;
 using PicView.Core.Navigation;
-using PicView.Core.Navigation.Interfaces;
 using PicView.Core.Thumbnailing;
 using PicView.Core.ViewModels;
 using PicView.Tests.Navigation;
@@ -23,7 +22,7 @@ namespace PicView.Tests.Gallery;
 [Collection("Sequential")]
 public class GalleryFollowsFilesTests : IDisposable
 {
-    private readonly SharedImageCache _cache = new(static f => ValueTask.FromResult(new ImageModel { FileInfo = f }));
+    private readonly SharedImageCache _cache = new(static f => new ImageModel { FileInfo = f });
     // Gives no thumbnails of its own, so a thumbnail it returns is one a tab keeps
     private readonly Thumbnails _thumbnails;
     private readonly string _directory = Path.Combine(Path.GetTempPath(), "PicViewGalleryTests_" + Guid.NewGuid());

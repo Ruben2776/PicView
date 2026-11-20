@@ -27,7 +27,7 @@ public class InterfaceConfigurationViewTests
         Settings.UIProperties.ShowInterface = true;
         Settings.UIProperties.ShowBottomNavBar = true;
         Settings.UIProperties.ShowHoverNavigationBar = true;
-        var core = new CoreViewModel(null, _ => ValueTask.FromResult(new ImageModel()), StartedSettings.New());
+        var core = new CoreViewModel(null, _ => new ImageModel(), StartedSettings.New());
         var t = core.Translation;
         t.HideUI.Value = "hide ui";
         t.ShowUI.Value = "show ui";
@@ -89,7 +89,7 @@ public class InterfaceConfigurationViewTests
     [AvaloniaFact]
     public void ActiveMainWindowClosesUnderTheView_ControlsFollowTheRemainingWindow_OrGoQuiet()
     {
-        var core = new CoreViewModel(null, _ => ValueTask.FromResult(new ImageModel()), StartedSettings.New());
+        var core = new CoreViewModel(null, _ => new ImageModel(), StartedSettings.New());
         var t = core.Translation;
         t.HideBottomToolbar.Value = "hide bottom";
         t.ShowBottomToolbar.Value = "show bottom";

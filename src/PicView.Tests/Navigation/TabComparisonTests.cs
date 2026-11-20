@@ -1,4 +1,3 @@
-using PicView.Core.Config;
 using PicView.Core.Models;
 using PicView.Core.Navigation;
 using PicView.Core.ViewModels;
@@ -22,7 +21,7 @@ public class TabComparisonTests
         _tab = NewTab(TestTabServices.For(Cache()));
     }
 
-    private static SharedImageCache Cache() => new(f => ValueTask.FromResult(Model(f.Name))!);
+    private static SharedImageCache Cache() => new(f => Model(f.Name)!);
 
     private static TabViewModel NewTab(TabServices services) => new(new MainWindowViewModel(null!, null!, null!, null!), services);
 

@@ -1,3 +1,4 @@
+using PicView.Core.Generators;
 using PicView.Core.ImageDecoding;
 using PicView.Core.Models;
 using PicView.Core.Navigation;
@@ -11,7 +12,7 @@ public class ThumbnailsTests
     private const uint OtherTab = 8;
 
     private readonly FakeThumbnailDecoder _decoder = new();
-    private readonly SharedImageCache _images = new(static file => ValueTask.FromResult(new ImageModel { FileInfo = file }));
+    private readonly SharedImageCache _images = new(static file => new ImageModel { FileInfo = file });
     private readonly Thumbnails _thumbnails;
 
     public ThumbnailsTests()
@@ -276,7 +277,7 @@ public class ThumbnailsTests
 
         _thumbnails.Release(Tab);
 
-        Assert.NotEqual(Thumbnails.AppOwner, Core.Generators.TabIDGenerator.GetNextId());
+        Assert.NotEqual(Thumbnails.AppOwner, TabIDGenerator.GetNextId());
         await _thumbnails.GetAsync(file, 150, Thumbnails.AppOwner);
         Assert.Single(_decoder.Calls, "decode:history.jpg");
     }

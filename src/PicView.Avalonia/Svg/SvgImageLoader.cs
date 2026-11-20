@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+using Avalonia.Media;
 using Avalonia.Threading;
 using PicView.Avalonia.UI;
 using PicView.Core.DebugTools;
@@ -7,11 +9,12 @@ namespace PicView.Avalonia.Svg;
 
 /// <summary>
 /// Loads an SVG file for showing: the parsed <see cref="SvgDrawing"/>, or, when the parser does not support the file,
-/// the ImageMagick fallback bitmap. Call it off the UI thread.
+/// the ImageMagick fallback bitmap. Call <see cref="LoadAsync"/> off the UI thread.
 /// </summary>
 internal static class SvgImageLoader
 {
     private const string CurrentColorKeyword = "currentColor";
+    private const string MainTextColorKey = "MainTextColor";
 
     /// <summary>
     /// Returns an <see cref="SvgDrawing"/>, a fallback bitmap, or null when ImageMagick cannot render the file either.
@@ -25,27 +28,66 @@ internal static class SvgImageLoader
         try
         {
             var text = await SvgFileReader.ReadAsync(fileInfo.FullName).ConfigureAwait(false);
-            var options = SvgParseOptions.Default;
-            if (UsesCurrentColor(text))
-            {
-                options = Themed(await GetMainTextColorAsync().ConfigureAwait(false));
-            }
+            var options = UsesCurrentColor(text)
+                ? Themed(await GetMainTextColorAsync().ConfigureAwait(false))
+                : SvgParseOptions.Default;
 
-            var result = SvgParser.Parse(text, options);
-            if (result.Drawing is not null)
+            if (TryParse(text, options, out var drawing, out reason))
             {
-                return result.Drawing;
+                return drawing;
             }
-
-            reason = result.UnsupportedReason ?? "unsupported";
         }
         catch (Exception e)
         {
-            // The exception itself, for its message and stack; its type goes with the file name below.
-            DebugHelper.LogDebug(nameof(SvgImageLoader), nameof(LoadAsync), e);
-            reason = e.GetType().Name;
+            reason = LogFailure(e);
         }
 
+        return Fallback(fileInfo, width, height, reason);
+    }
+
+    /// <summary>
+    /// The synchronous counterpart of <see cref="LoadAsync"/>. Safe to call on the UI thread: the theme color is
+    /// then read inline instead of being dispatched.
+    /// </summary>
+    /// <inheritdoc cref="LoadAsync"/>
+    public static object? Load(FileInfo fileInfo, uint width, uint height)
+    {
+        string reason;
+        try
+        {
+            var text = SvgFileReader.Read(fileInfo.FullName);
+            var options = UsesCurrentColor(text) ? Themed(GetMainTextColor()) : SvgParseOptions.Default;
+
+            if (TryParse(text, options, out var drawing, out reason))
+            {
+                return drawing;
+            }
+        }
+        catch (Exception e)
+        {
+            reason = LogFailure(e);
+        }
+
+        return Fallback(fileInfo, width, height, reason);
+    }
+
+    private static bool TryParse(string text, SvgParseOptions options, [NotNullWhen(true)] out SvgDrawing? drawing, out string reason)
+    {
+        var result = SvgParser.Parse(text, options);
+        drawing = result.Drawing;
+        reason = result.UnsupportedReason ?? "unsupported";
+        return drawing is not null;
+    }
+
+    /// <summary>Logs the exception itself, for its message and stack; its type goes with the file name later.</summary>
+    private static string LogFailure(Exception e)
+    {
+        DebugHelper.LogDebug(nameof(SvgImageLoader), nameof(LoadAsync), e);
+        return e.GetType().Name;
+    }
+
+    private static object? Fallback(FileInfo fileInfo, uint width, uint height, string reason)
+    {
         DebugHelper.LogDebug(nameof(SvgImageLoader), nameof(LoadAsync), $"{fileInfo.Name}: {reason}");
         return SvgFallback.Render(fileInfo, width, height);
     }
@@ -64,9 +106,13 @@ internal static class SvgImageLoader
     internal static SvgParseOptions Themed(SvgColor textColor) =>
         new() { CurrentColor = textColor, InitialFill = textColor };
 
-    private static async Task<SvgColor> GetMainTextColorAsync()
-    {
-        var color = await Dispatcher.UIThread.InvokeAsync(() => UIHelper.GetColor("MainTextColor"));
-        return color.A == 0 ? SvgColor.Black : new SvgColor(color.A, color.R, color.G, color.B);
-    }
+    private static async Task<SvgColor> GetMainTextColorAsync() =>
+        ToSvgColor(await Dispatcher.UIThread.InvokeAsync(static () => UIHelper.GetColor(MainTextColorKey)));
+
+    /// <summary>Runs inline on the UI thread; from any other thread it blocks until the UI thread has read it.</summary>
+    private static SvgColor GetMainTextColor() =>
+        ToSvgColor(Dispatcher.UIThread.Invoke(static () => UIHelper.GetColor(MainTextColorKey)));
+
+    private static SvgColor ToSvgColor(Color color) =>
+        color.A == 0 ? SvgColor.Black : new SvgColor(color.A, color.R, color.G, color.B);
 }

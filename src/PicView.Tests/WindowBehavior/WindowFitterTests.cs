@@ -33,7 +33,7 @@ public class WindowFitterTests
         TranslationManager.Init();
         Settings.WindowProperties.AutoFit = false;
         Settings.ImageScaling.ZoomToFit = false;
-        _core = new CoreViewModel(null, _ => ValueTask.FromResult(new ImageModel()),
+        _core = new CoreViewModel(null, _ => new ImageModel(),
             StartedSettings.New());
     }
 
@@ -1763,7 +1763,7 @@ public class WindowFitterTests
     private static TabViewModel ComparingTab()
     {
         var tab = new TabViewModel(null!, TestTabServices.For(
-            new SharedImageCache(static f => ValueTask.FromResult(new ImageModel { FileInfo = f }))));
+            new SharedImageCache(static f => new ImageModel { FileInfo = f })));
         tab.Display(Model("a.jpg", 400, 300), Model("b.jpg", 400, 300));
         tab.SetComparing(true);
         return tab;

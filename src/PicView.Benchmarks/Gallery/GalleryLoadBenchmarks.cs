@@ -7,9 +7,9 @@ using PicView.Core.Localization;
 using PicView.Core.Models;
 using PicView.Core.Navigation;
 using PicView.Core.Navigation.Interfaces;
+using PicView.Core.Thumbnailing;
 using PicView.Core.ViewModels;
 using R3;
-using PicView.Core.Thumbnailing;
 
 namespace PicView.Benchmarks.Gallery;
 
@@ -25,7 +25,7 @@ public class GalleryLoadBenchmarks
     private static readonly GalleryFileDetails Details = new(200, 100, null);
 
     private static readonly SharedImageCache Cache =
-        new(static file => ValueTask.FromResult(new ImageModel { FileInfo = file }));
+        new(static file => new ImageModel { FileInfo = file });
 
     private string _directory = string.Empty;
     private FileInfo[] _files = [];

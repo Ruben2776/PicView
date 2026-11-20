@@ -273,7 +273,7 @@ public class ComparisonViewModelTests
     {
         var files = Enumerable.Range(0, PreLoaderConfig.MaxCount * 3).Select(static i => Model($"{i}.jpg").FileInfo!)
             .ToArray();
-        var cache = new SharedImageCache(static f => ValueTask.FromResult(Model(f.Name)));
+        var cache = new SharedImageCache(static f => Model(f.Name));
         cache.SetFiles(TabId, files);
         var primary = await cache.GetAsync(TabId, files[0], TestContext.Current.CancellationToken);
         return (cache, Assert.IsType<ImageModel>(primary), files);

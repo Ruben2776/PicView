@@ -15,7 +15,7 @@ public class LastFileTests
         ObservableSystem.DefaultFrameProvider = new MockFrameProvider();
         SetDefaults();
         Settings.StartUp.LastFile = null;
-        _core = new CoreViewModel(null, file => ValueTask.FromResult(new ImageModel { FileInfo = file }));
+        _core = new CoreViewModel(null, file => new ImageModel { FileInfo = file });
     }
 
     [Fact]

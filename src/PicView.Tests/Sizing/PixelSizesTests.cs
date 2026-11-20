@@ -40,7 +40,7 @@ public class PixelSizesTests
     public async Task Of_SizeOnlyInTheCache_TakesItFromTheCache()
     {
         var file = new FileInfo("a.jpg");
-        var cache = new SharedImageCache(f => ValueTask.FromResult(Model(f.Name, 400, 300)));
+        var cache = new SharedImageCache(f => Model(f.Name, 400, 300));
         cache.SetFiles(Owner, [file]);
         await cache.GetAsync(Owner, file, TestContext.Current.CancellationToken);
         _tab.Display(new ImageModel { FileInfo = file });

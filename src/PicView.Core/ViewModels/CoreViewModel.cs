@@ -18,7 +18,7 @@ public class CoreViewModel
     /// <param name="timeProvider">The clock slideshows tick on; tests give their own.</param>
     public CoreViewModel(
         IPlatformSpecificService? platformSpecificService,
-        Func<FileInfo, CoreViewModel, ValueTask<ImageModel>> imageLoader,
+        Func<FileInfo, CoreViewModel, ImageModel> imageLoader,
         GlobalSettingsViewModel? globalSettings = null,
         Func<ValueTask<bool>>? saveGallerySettings = null,
         TimeProvider? timeProvider = null)
@@ -35,7 +35,7 @@ public class CoreViewModel
     /// <summary>For a loader that does not need the view model, as most tests have.</summary>
     public CoreViewModel(
         IPlatformSpecificService? platformSpecificService,
-        Func<FileInfo, ValueTask<ImageModel>> imageLoader,
+        Func<FileInfo, ImageModel> imageLoader,
         GlobalSettingsViewModel? globalSettings = null,
         Func<ValueTask<bool>>? saveGallerySettings = null,
         TimeProvider? timeProvider = null)

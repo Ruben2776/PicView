@@ -1,6 +1,6 @@
-using PicView.Core.Navigation;
 using PicView.Avalonia.Comparison;
 using PicView.Core.Models;
+using PicView.Core.Navigation;
 using PicView.Core.ViewModels;
 using PicView.Tests.Navigation;
 
@@ -18,7 +18,7 @@ public class ComparisonPickerTests
     public ComparisonPickerTests()
     {
         SetDefaults();
-        var cache = new SharedImageCache(static f => ValueTask.FromResult(Model(f.Name)));
+        var cache = new SharedImageCache(static f => Model(f.Name));
         _tab = new TabViewModel(null!, TestTabServices.For(cache));
     }
 

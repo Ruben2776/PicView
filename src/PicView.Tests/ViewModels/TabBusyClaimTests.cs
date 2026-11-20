@@ -1,9 +1,6 @@
-using ImageMagick;
-using PicView.Core.ImageDecoding;
 using PicView.Core.Localization;
 using PicView.Core.Models;
 using PicView.Core.Navigation;
-using PicView.Core.Navigation.Interfaces;
 using PicView.Core.ViewModels;
 using PicView.Tests.Navigation;
 using R3;
@@ -28,7 +25,7 @@ public class TabBusyClaimTests : IDisposable
     }
 
     private static TabViewModel NewTab() =>
-        new(null!, TestTabServices.For(new SharedImageCache(_ => ValueTask.FromResult(new ImageModel())!)));
+        new(null!, TestTabServices.For(new SharedImageCache(_ => new ImageModel()!)));
 
     public void Dispose() => _tab.Dispose();
 

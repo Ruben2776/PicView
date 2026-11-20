@@ -151,6 +151,47 @@ public class SvgImageLoaderTests : IDisposable
         Assert.IsType<SvgDrawing>(model.Image);
     }
 
+    [AvaloniaFact]
+    public void Load_Convertible_ReturnsDrawing()
+    {
+        var result = SvgImageLoader.Load(Write("convertible.svg", ConvertibleSvg), 40, 20);
+
+        var drawing = Assert.IsType<SvgDrawing>(result);
+        Assert.Equal(40, drawing.Width);
+        Assert.Equal(20, drawing.Height);
+    }
+
+    [AvaloniaFact]
+    public void Load_Unsupported_ReturnsFallbackBitmap()
+    {
+        var result = SvgImageLoader.Load(Write("unsupported.svg", UnsupportedSvg), 40, 20);
+
+        Assert.IsAssignableFrom<Bitmap>(result);
+        (result as IDisposable)?.Dispose();
+    }
+
+    [AvaloniaFact]
+    public void GetImageModelSync_Convertible()
+    {
+        using var model = GetImageModel.GetImageModelSync(Write("convertible.svg", ConvertibleSvg));
+
+        Assert.IsType<SvgDrawing>(model.Image);
+        Assert.Equal(ImageType.Svg, model.ImageType);
+        Assert.Equal(40u, model.PixelWidth);
+        Assert.Equal(20u, model.PixelHeight);
+    }
+
+    [AvaloniaFact]
+    public void GetImageModelSync_Unsupported()
+    {
+        using var model = GetImageModel.GetImageModelSync(Write("unsupported.svg", UnsupportedSvg));
+
+        Assert.IsAssignableFrom<Bitmap>(model.Image);
+        Assert.Equal(ImageType.Svg, model.ImageType);
+        Assert.Equal(40u, model.PixelWidth);
+        Assert.Equal(20u, model.PixelHeight);
+    }
+
     private FileInfo Write(string name, string content)
     {
         var path = Path.Combine(_directory, name);

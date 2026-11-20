@@ -28,7 +28,7 @@ public sealed class SharedImageCache
     /// </summary>
     private const int DisposalDelayInSeconds = 15;
 
-    private readonly Func<FileInfo, ValueTask<ImageModel>> _imageLoader;
+    private readonly Func<FileInfo, ImageModel> _imageLoader;
 
     /// <summary>
     /// Every cached or loading image by full path, whether or not an owner references it.
@@ -47,7 +47,7 @@ public sealed class SharedImageCache
     private readonly Preloader _preloader;
 
     /// <param name="imageLoader">Loads an <see cref="ImageModel"/> from disk; returns an error model on failure.</param>
-    public SharedImageCache(Func<FileInfo, ValueTask<ImageModel>> imageLoader)
+    public SharedImageCache(Func<FileInfo, ImageModel> imageLoader)
     {
         _imageLoader = imageLoader;
         _pathLookup = new ConcurrentDictionary<string, PreLoadValue>(StringComparer.Ordinal);
@@ -336,6 +336,7 @@ public sealed class SharedImageCache
     /// </summary>
     /// <param name="startLoadOnThreadPool">Start a new load on the thread pool instead of on the calling thread, where
     /// the loader would run synchronously until its first await.</param>
+    [SuppressMessage("Design", "MA0042")]
     private PreLoadValue Acquire(uint ownerId, FileInfo file, bool startLoadOnThreadPool)
     {
         var path = file.FullName;
@@ -345,26 +346,31 @@ public sealed class SharedImageCache
             value = _pathLookup.GetOrAdd(path, pending);
             if (ReferenceEquals(value, pending))
             {
-                _ = startLoadOnThreadPool
-                    ? Task.Run(() => LoadAsync(file, pending))
-                    : LoadAsync(file, pending);
+                if (startLoadOnThreadPool)
+                {
+                    _ = Task.Run(() => Load(file, pending));
+                }
+                else
+                {
+                    Load(file, pending);
+                }
             }
         }
 
         AddReference(ownerId, path, value);
         return value;
     }
-
-    private async Task LoadAsync(FileInfo file, PreLoadValue pending)
+    
+    private void Load(FileInfo file, PreLoadValue pending)
     {
         ImageModel model;
         try
         {
-            model = await _imageLoader(file).ConfigureAwait(false);
+            model = _imageLoader(file);
         }
         catch (Exception ex)
         {
-            DebugHelper.LogDebug(nameof(SharedImageCache), nameof(LoadAsync), ex);
+            DebugHelper.LogDebug(nameof(SharedImageCache), nameof(Load), ex);
             model = new ImageModel { FileInfo = file };
         }
 

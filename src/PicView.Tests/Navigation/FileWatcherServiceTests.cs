@@ -1,13 +1,15 @@
 using System.Collections.Concurrent;
+using System.IO.Compression;
 using ImageMagick;
 using PicView.Core.ImageDecoding;
 using PicView.Core.Localization;
 using PicView.Core.Models;
 using PicView.Core.Navigation;
-using PicView.Core.Thumbnailing;
 using PicView.Core.Navigation.Interfaces;
 using PicView.Core.Navigation.Tiff;
+using PicView.Core.Thumbnailing;
 using PicView.Core.ViewModels;
+using PicView.Tests.Input;
 using R3;
 
 namespace PicView.Tests.Navigation;
@@ -41,7 +43,7 @@ public class FileWatcherServiceTests : IDisposable
         _testDirectory = Path.Combine(Path.GetTempPath(), "PicViewTests_" + Guid.NewGuid());
         Directory.CreateDirectory(_testDirectory);
 
-        _cache = new SharedImageCache(static f => ValueTask.FromResult(new ImageModel { FileInfo = f }));
+        _cache = new SharedImageCache(static f => new ImageModel { FileInfo = f });
         _thumbnails = TestTabServices.NoThumbnails(_cache);
         // Use default ordinal comparison for tests
         _service = new FileWatcherService(_cache, _thumbnails,
@@ -73,7 +75,7 @@ public class FileWatcherServiceTests : IDisposable
         var source = Directory.CreateDirectory(Path.Combine(_testDirectory, "zip_source")).FullName;
         await File.WriteAllBytesAsync(Path.Combine(source, "page.jpg"), [0xFF, 0xD8, 0xFF], TestContext.Current.CancellationToken);
         var zip = Path.Combine(_testDirectory, "pages.zip");
-        System.IO.Compression.ZipFile.CreateFromDirectory(source, zip);
+        ZipFile.CreateFromDirectory(source, zip);
         var opening = await tab.Archives.OpenAsync(zip, null, (_, _) => Task.FromResult(false), TestOrderings.ByName(),
             TestContext.Current.CancellationToken);
 
@@ -229,7 +231,7 @@ public class FileWatcherServiceTests : IDisposable
             var exif = new ExifProfile();
             exif.SetValue(ExifTag.Orientation, (ushort)6);
             image.SetProfile(exif);
-            image.Orientation = ImageMagick.Orientation.RightTop;
+            image.Orientation = Orientation.RightTop;
             await image.WriteAsync(filePath, TestContext.Current.CancellationToken);
         }
         var file = new FileInfo(filePath);
@@ -570,7 +572,7 @@ public class FileWatcherServiceTests : IDisposable
     public async Task OnFileDeleted_LastFile_MakesTheTabFresh()
     {
         // Arrange
-        var actionRunner = new Input.RecordingActionRunner();
+        var actionRunner = new RecordingActionRunner();
         var files = await FilesOnDiskAsync("a.jpg", "b.jpg");
         var tab = CreateTab(_testDirectory, files, files[0], WindowWith(actionRunner));
         var watch = Watch(tab);
@@ -592,7 +594,7 @@ public class FileWatcherServiceTests : IDisposable
     public async Task OnFileDeleted_LastFile_ShowsTheStartUpMenuInEveryTabOfTheFolderOnly()
     {
         // Arrange: two tabs in the emptied folder, and the window's active tab in another folder
-        var actionRunner = new Input.RecordingActionRunner();
+        var actionRunner = new RecordingActionRunner();
         var window = WindowWith(actionRunner);
         var files = Files("a.jpg");
         var first = CreateTab(_testDirectory, files, files[0], window);
@@ -821,7 +823,7 @@ public class FileWatcherServiceTests : IDisposable
     public async Task OnFolderGone_MakesEveryTabOfTheFolderFresh()
     {
         // Arrange
-        var actionRunner = new Input.RecordingActionRunner();
+        var actionRunner = new RecordingActionRunner();
         var window = WindowWith(actionRunner);
         var files = Files("a.jpg", "b.jpg");
         var first = CreateTab(_testDirectory, files, files[0], window);
@@ -850,7 +852,7 @@ public class FileWatcherServiceTests : IDisposable
         await File.WriteAllTextAsync(file.FullName, "dummy content", TestContext.Current.CancellationToken);
         using var service = new FileWatcherService(_cache,
             _thumbnails);
-        var actionRunner = new Input.RecordingActionRunner();
+        var actionRunner = new RecordingActionRunner();
         var tab = new TabViewModel(WindowWith(actionRunner), ServicesWith(_cache, service));
         tab.Model = new ImageModel { FileInfo = file };
         tab.Initialize();
@@ -871,12 +873,12 @@ public class FileWatcherServiceTests : IDisposable
     {
         // Arrange: the watcher PicView uses, and a loader that fails for a file that is gone, as PicView's does
         var cache = new SharedImageCache(static f =>
-            ValueTask.FromResult(File.Exists(f.FullName)
+            File.Exists(f.FullName)
                 ? new ImageModel { FileInfo = f, Image = new object() }
-                : new ImageModel { FileInfo = f, ImageType = ImageType.Invalid }));
+                : new ImageModel { FileInfo = f, ImageType = ImageType.Invalid });
         using var service = new FileWatcherService(cache,
             _thumbnails);
-        var actionRunner = new Input.RecordingActionRunner();
+        var actionRunner = new RecordingActionRunner();
         var files = await FilesOnDiskAsync(Enumerable.Range(1, 30).Select(i => $"{i:D2}.jpg").ToArray());
         var tab = new TabViewModel(WindowWith(actionRunner), ServicesWith(cache, service));
         tab.Model = new ImageModel { FileInfo = files[0] };
@@ -903,7 +905,7 @@ public class FileWatcherServiceTests : IDisposable
     private TabServices ServicesWith(SharedImageCache cache, IFileWatcherService watcher) =>
         TestTabServices.For(cache, null, watcher);
 
-    private static MainWindowViewModel WindowWith(Input.RecordingActionRunner actionRunner) =>
+    private static MainWindowViewModel WindowWith(RecordingActionRunner actionRunner) =>
         new(null!, null!, null!, null!, null!) { ActionRunner = actionRunner };
 
     /// <summary>

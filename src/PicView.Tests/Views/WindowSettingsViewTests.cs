@@ -19,7 +19,7 @@ public class WindowSettingsViewTests
     private static (CoreViewModel Core, MainWindowViewModel A, MainWindowViewModel B, TextToggleButton StayCentered,
         Window Window) Create()
     {
-        var core = new CoreViewModel(null, _ => ValueTask.FromResult(new ImageModel()), StartedSettings.New());
+        var core = new CoreViewModel(null, _ => new ImageModel(), StartedSettings.New());
         var a = new MainWindowViewModel(core, core.Translation, core.GlobalSettings!, core.GallerySettings);
         var b = new MainWindowViewModel(core, core.Translation, core.GlobalSettings!, core.GallerySettings);
         core.MainWindows.MainWindows.Add(a);

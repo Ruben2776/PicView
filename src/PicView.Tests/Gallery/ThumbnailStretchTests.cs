@@ -126,7 +126,7 @@ public class ThumbnailStretchTests
     private static (WindowGallerySettings Gallery, GallerySettingsView View) ShowGallerySettings()
     {
         // The shared settings save through the delegate, so no test here writes the settings file
-        var core = new CoreViewModel(null, _ => ValueTask.FromResult(new ImageModel()),
+        var core = new CoreViewModel(null, _ => new ImageModel(),
             saveGallerySettings: static () => ValueTask.FromResult(true));
         core.GallerySettings.Start();
         var vm = new MainWindowViewModel(core, core.Translation, core.GlobalSettings!, core.GallerySettings);

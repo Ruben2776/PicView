@@ -99,26 +99,62 @@ public static class SvgFileReader
         return ReadAsync(path, MaxBytes, ct);
     }
 
+    /// <summary>The synchronous counterpart of <see cref="ReadAsync(string, CancellationToken)" />.</summary>
+    public static string Read(string path)
+    {
+        return Read(path, MaxBytes);
+    }
+
     internal static async Task<string> ReadAsync(string path, int maxBytes, CancellationToken ct)
     {
         byte[] bytes;
         var file = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, true);
         await using (file.ConfigureAwait(false))
         {
-            if (file.Length > maxBytes)
-            {
-                throw new InvalidDataException($"The file is larger than {maxBytes} bytes.");
-            }
-
-            bytes = new byte[file.Length];
+            bytes = AllocateFileBuffer(file, maxBytes);
             await file.ReadExactlyAsync(bytes, ct).ConfigureAwait(false);
         }
 
-        if (bytes.Length >= 2 && bytes[0] == 0x1F && bytes[1] == 0x8B)
+        if (IsGzip(bytes))
         {
             bytes = await GunzipAsync(bytes, maxBytes, ct).ConfigureAwait(false);
         }
 
+        return DecodeText(bytes);
+    }
+
+    internal static string Read(string path, int maxBytes)
+    {
+        byte[] bytes;
+        using (var file = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, false))
+        {
+            bytes = AllocateFileBuffer(file, maxBytes);
+            file.ReadExactly(bytes);
+        }
+
+        if (IsGzip(bytes))
+        {
+            bytes = Gunzip(bytes, maxBytes);
+        }
+
+        return DecodeText(bytes);
+    }
+
+    private static byte[] AllocateFileBuffer(FileStream file, int maxBytes)
+    {
+        if (file.Length > maxBytes)
+        {
+            throw new InvalidDataException($"The file is larger than {maxBytes} bytes.");
+        }
+
+        return new byte[file.Length];
+    }
+
+    private static bool IsGzip(byte[] bytes) => bytes.Length >= 2 && bytes[0] == 0x1F && bytes[1] == 0x8B;
+
+    /// <summary>Picks the encoding from the byte order mark; no mark means UTF-8.</summary>
+    private static string DecodeText(byte[] bytes)
+    {
         if (bytes.Length >= 3 && bytes[0] == 0xEF && bytes[1] == 0xBB && bytes[2] == 0xBF)
         {
             return Encoding.UTF8.GetString(bytes, 3, bytes.Length - 3);
@@ -148,14 +184,35 @@ public static class SvgFileReader
         int read;
         while ((read = await gzip.ReadAsync(buffer, ct).ConfigureAwait(false)) > 0)
         {
-            if (unzipped.Length + read > maxBytes)
-            {
-                throw new InvalidDataException($"The decompressed file is larger than {maxBytes} bytes.");
-            }
-
-            unzipped.Write(buffer, 0, read);
+            AppendWithinLimit(unzipped, buffer, read, maxBytes);
         }
 
         return unzipped.ToArray();
+    }
+
+    /// <inheritdoc cref="GunzipAsync" />
+    private static byte[] Gunzip(byte[] compressed, int maxBytes)
+    {
+        using var source = new MemoryStream(compressed);
+        using var gzip = new GZipStream(source, CompressionMode.Decompress);
+        using var unzipped = new MemoryStream();
+        var buffer = new byte[81920];
+        int read;
+        while ((read = gzip.Read(buffer)) > 0)
+        {
+            AppendWithinLimit(unzipped, buffer, read, maxBytes);
+        }
+
+        return unzipped.ToArray();
+    }
+
+    private static void AppendWithinLimit(MemoryStream unzipped, byte[] buffer, int read, int maxBytes)
+    {
+        if (unzipped.Length + read > maxBytes)
+        {
+            throw new InvalidDataException($"The decompressed file is larger than {maxBytes} bytes.");
+        }
+
+        unzipped.Write(buffer, 0, read);
     }
 }

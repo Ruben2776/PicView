@@ -31,7 +31,7 @@ public class AppearanceViewTests
 
     private static (CoreViewModel Core, AppearanceView View, Window Window) Create()
     {
-        var core = new CoreViewModel(null, _ => ValueTask.FromResult(new ImageModel()), StartedSettings.New());
+        var core = new CoreViewModel(null, _ => new ImageModel(), StartedSettings.New());
         core.SettingsViewModel = new SettingsViewModel(core.Translation, core.GlobalSettings);
         core.SettingsViewModel.Initialize(new ThemeService(core.MainWindows), new LanguageService(),
             new ImageSettingsService());

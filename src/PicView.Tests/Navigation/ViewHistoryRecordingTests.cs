@@ -1,10 +1,8 @@
 using System.IO.Compression;
-using ImageMagick;
 using PicView.Core.ArchiveHandling;
 using PicView.Core.FileHistory;
 using PicView.Core.Models;
 using PicView.Core.Navigation;
-using PicView.Core.Navigation.Interfaces;
 using PicView.Core.Navigation.Tiff;
 using PicView.Core.ViewModels;
 using PicView.Tests.FileHistory;
@@ -27,7 +25,7 @@ public class ViewHistoryRecordingTests : IDisposable
         Directory.CreateDirectory(_folder);
         FileHistoryManager.Initialize(Path.Combine(_folder, "history.json"));
         _tab = new TabViewModel(null!,
-            TestTabServices.For(new SharedImageCache(file => ValueTask.FromResult(new ImageModel { FileInfo = file })), null));
+            TestTabServices.For(new SharedImageCache(file => new ImageModel { FileInfo = file }), null));
     }
 
     public void Dispose()
@@ -380,8 +378,8 @@ public class ViewHistoryRecordingTests : IDisposable
         var files = new[] { "a.jpg", "b.jpg", "c.jpg", "d.jpg" }.Select(name => new FileInfo(PathOf(name))).ToList();
         var slow = new TaskCompletionSource<ImageModel>();
         var cache = new SharedImageCache(file => file.Name == "b.jpg"
-            ? new ValueTask<ImageModel>(slow.Task)
-            : ValueTask.FromResult(new ImageModel { FileInfo = file }));
+            ? slow.Task.GetAwaiter().GetResult()
+            : new ImageModel { FileInfo = file });
         var iterator = new ImageIterator(cache, TestTabServices.NoThumbnails(cache), _tab);
         iterator.Initialize(files);
         var cts = new CancellationTokenSource();
@@ -407,7 +405,7 @@ public class ViewHistoryRecordingTests : IDisposable
         }
         // Each load decodes the TIFF anew, at its first page, as a reload does
         var cache = new SharedImageCache(file =>
-            ValueTask.FromResult(file.Name == "t.tif" ? TiffModel(file.FullName, pageCount: 3) : Model(file.FullName)));
+            file.Name == "t.tif" ? TiffModel(file.FullName, pageCount: 3) : Model(file.FullName));
         var iterator = new ImageIterator(cache, TestTabServices.NoThumbnails(cache), _tab);
         iterator.Initialize(files, 1);
         await iterator.IterateToIndexAsync(1, new CancellationTokenSource());
@@ -538,7 +536,7 @@ public class ViewHistoryRecordingTests : IDisposable
     private static TabViewModel ActiveTabOfTheActiveMainWindow()
     {
         Settings.StartUp.LastFile = null;
-        var core = new CoreViewModel(null, file => ValueTask.FromResult(new ImageModel { FileInfo = file }));
+        var core = new CoreViewModel(null, file => new ImageModel { FileInfo = file });
         var window = new MainWindowViewModel(core, null!, null!, null!);
         core.MainWindows.MainWindows.Add(window);
         core.MainWindows.ActiveWindow.Value = window;

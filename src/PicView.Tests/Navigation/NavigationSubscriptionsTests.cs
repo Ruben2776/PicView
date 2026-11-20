@@ -1,6 +1,6 @@
 using Avalonia;
-using Avalonia.Media.Imaging;
 using Avalonia.Controls;
+using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.CustomControls.Zoom;
@@ -9,13 +9,11 @@ using PicView.Avalonia.Interfaces;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.Views.UC;
-using PicView.Avalonia.WindowBehavior;
 using PicView.Core.ImageDecoding;
-using PicView.Core.ImageTransformations;
 using PicView.Core.Localization;
 using PicView.Core.Models;
-using PicView.Core.ViewModels;
 using PicView.Core.Sizing;
+using PicView.Core.ViewModels;
 using PicView.Tests.WindowBehavior;
 using R3;
 
@@ -33,7 +31,7 @@ public class NavigationSubscriptionsTests
     [AvaloniaFact]
     public async Task Attach_FromABackgroundThread_AttachesTheTab()
     {
-        var core = new CoreViewModel(null, _ => ValueTask.FromResult(new ImageModel()));
+        var core = new CoreViewModel(null, _ => new ImageModel());
         var window = new TestMainWindow(new NoOpModeAdapter());
         var vm = new MainWindowViewModel(core, core.Translation, core.GlobalSettings!, core.GallerySettings);
         window.DataContext = vm;
@@ -348,7 +346,7 @@ public class NavigationSubscriptionsTests
 
     private static void WithWindow(Action<TestMainWindow, MainWindowViewModel, NavigationSubscriptions, TabViewModel> test)
     {
-        var core = new CoreViewModel(null, _ => ValueTask.FromResult(new ImageModel()));
+        var core = new CoreViewModel(null, _ => new ImageModel());
         var window = new TestMainWindow(new NoOpModeAdapter());
         var vm = new MainWindowViewModel(core, core.Translation, core.GlobalSettings!, core.GallerySettings);
         window.DataContext = vm;

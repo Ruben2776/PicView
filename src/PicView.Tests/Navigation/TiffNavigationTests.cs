@@ -1,9 +1,8 @@
 using ImageMagick;
+using PicView.Core.Localization;
 using PicView.Core.Models;
 using PicView.Core.Navigation;
-using PicView.Core.Navigation.Interfaces;
 using PicView.Core.Navigation.Tiff;
-using PicView.Core.Localization;
 using PicView.Core.ViewModels;
 using PicView.Tests.ArchiveHandling;
 using R3;
@@ -35,7 +34,7 @@ public class TiffNavigationTests : IDisposable
         ];
 
         _cache = new SharedImageCache(f =>
-            ValueTask.FromResult(_models.TryGetValue(f.FullName, out var model) ? model : new ImageModel { FileInfo = f }));
+            _models.TryGetValue(f.FullName, out var model) ? model : new ImageModel { FileInfo = f });
         _tab = new TabViewModel(null!);
         _iterator = new ImageIterator(_cache, TestTabServices.NoThumbnails(_cache), _tab);
         _iterator.Initialize(_files);

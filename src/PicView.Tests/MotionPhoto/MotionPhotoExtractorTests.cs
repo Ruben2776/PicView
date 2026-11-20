@@ -1,3 +1,4 @@
+using System.IO.Compression;
 using PicView.Core.FileHandling;
 using PicView.Core.MotionPhoto;
 
@@ -299,7 +300,7 @@ public class MotionPhotoExtractorTests : IDisposable
         var path = Path.Combine(_tempDirectory, "video-only.livp");
         await using (var stream = new FileStream(path, FileMode.Create, FileAccess.Write))
         {
-            using var zip = new System.IO.Compression.ZipArchive(stream, System.IO.Compression.ZipArchiveMode.Create);
+            using var zip = new ZipArchive(stream, ZipArchiveMode.Create);
             var entry = zip.CreateEntry("video.mov");
             await using var entryStream = entry.Open();
             await entryStream.WriteAsync(MotionPhotoFixtures.BuildMp4Head(), TestContext.Current.CancellationToken);
@@ -308,5 +309,31 @@ public class MotionPhotoExtractorTests : IDisposable
         var result = await MotionPhotoExtractor.ExtractLivpCoverToTempFileAsync(new FileInfo(path), TestContext.Current.CancellationToken);
 
         Assert.Null(result);
+    }
+
+    [Fact]
+    public void ExtractLivpCoverToTempFile_ExtractsImageEntry()
+    {
+        byte[] imageBytes = [10, 20, 30, 40];
+        var livp = MotionPhotoFixtures.CreateLivp(_tempDirectory, "IMG_601.livp", imageBytes, MotionPhotoFixtures.BuildMp4Head());
+
+        var tempPath = MotionPhotoExtractor.ExtractLivpCoverToTempFile(livp);
+
+        Assert.NotNull(tempPath);
+        Assert.Equal(imageBytes, File.ReadAllBytes(tempPath));
+    }
+
+    [Fact]
+    public void ExtractLivpCoverToTempFile_NoImageEntry_ReturnsNull()
+    {
+        var path = Path.Combine(_tempDirectory, "video-only-sync.livp");
+        using (var stream = new FileStream(path, FileMode.Create, FileAccess.Write))
+        {
+            using var zip = new ZipArchive(stream, ZipArchiveMode.Create);
+            using var entryStream = zip.CreateEntry("video.mov").Open();
+            entryStream.Write(MotionPhotoFixtures.BuildMp4Head());
+        }
+
+        Assert.Null(MotionPhotoExtractor.ExtractLivpCoverToTempFile(new FileInfo(path)));
     }
 }

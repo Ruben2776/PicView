@@ -1,4 +1,5 @@
-﻿using System.IO.Compression;
+﻿using System.Diagnostics;
+using System.IO.Compression;
 using System.Text;
 using PicView.Core.Svg;
 
@@ -97,7 +98,7 @@ public class SvgFileReaderTests : IDisposable
 
         var path = Write("bomb.svgz", compressed.ToArray());
         var before = GC.GetTotalAllocatedBytes(true);
-        var watch = System.Diagnostics.Stopwatch.StartNew();
+        var watch = Stopwatch.StartNew();
         await Assert.ThrowsAsync<InvalidDataException>(() =>
             SvgFileReader.ReadAsync(path, 1024 * 1024, TestContext.Current.CancellationToken));
         watch.Stop();
@@ -160,5 +161,40 @@ public class SvgFileReaderTests : IDisposable
     public void LooksLikeSvg_Text_ReturnsExpected(string? text, bool expected)
     {
         Assert.Equal(expected, SvgFileReader.LooksLikeSvg(text));
+    }
+
+    [Fact]
+    public void Read_EveryEncodingAndGzip_ReturnsText()
+    {
+        string[] paths =
+        [
+            Write("plain.svg", Encoding.UTF8.GetBytes(Text)),
+            Write("utf8bom.svg", WithBom([0xEF, 0xBB, 0xBF], Encoding.UTF8)),
+            Write("utf16le.svg", WithBom([0xFF, 0xFE], Encoding.Unicode)),
+            Write("utf16be.svg", WithBom([0xFE, 0xFF], Encoding.BigEndianUnicode)),
+            Write("gzip.svgz", Gzip(Encoding.UTF8.GetBytes(Text))),
+            Write("gzipbom.svgz", Gzip(WithBom([0xFF, 0xFE], Encoding.Unicode)))
+        ];
+
+        foreach (var path in paths)
+        {
+            Assert.Equal(Text, SvgFileReader.Read(path));
+        }
+    }
+
+    [Fact]
+    public void Read_FileOverLimit_Throws()
+    {
+        var path = Write("big.svg", new byte[2048]);
+
+        Assert.Throws<InvalidDataException>(() => SvgFileReader.Read(path, 1024));
+    }
+
+    [Fact]
+    public void Read_DecompressedOverLimit_Throws()
+    {
+        var path = Write("bomb.svgz", Gzip(new byte[4096]));
+
+        Assert.Throws<InvalidDataException>(() => SvgFileReader.Read(path, 1024));
     }
 }

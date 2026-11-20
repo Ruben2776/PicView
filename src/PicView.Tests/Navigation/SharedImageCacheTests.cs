@@ -53,7 +53,7 @@ public class SharedImageCacheTests
         var cache = new SharedImageCache(f =>
         {
             gate.Wait(TimeSpan.FromSeconds(5));
-            return ValueTask.FromResult(new ImageModel { FileInfo = f });
+            return new ImageModel { FileInfo = f };
         });
         var files = Files(1);
         cache.SetFiles(Owner, files);
@@ -72,10 +72,10 @@ public class SharedImageCacheTests
     {
         var gate = new TaskCompletionSource();
         var loads = 0;
-        var cache = new SharedImageCache(async f =>
+        var cache = new SharedImageCache(f =>
         {
             Interlocked.Increment(ref loads);
-            await gate.Task;
+            gate.Task.Wait(TestContext.Current.CancellationToken);
             return new ImageModel { FileInfo = f };
         });
         var files = Files(1);
@@ -94,9 +94,9 @@ public class SharedImageCacheTests
     public async Task GetAsync_Cancelled_ReturnsNullAndLoadStillCompletes()
     {
         var gate = new TaskCompletionSource();
-        var cache = new SharedImageCache(async f =>
+        var cache = new SharedImageCache(f =>
         {
-            await gate.Task;
+            gate.Task.Wait(TestContext.Current.CancellationToken);
             return new ImageModel { FileInfo = f, Image = new ProbeImage() };
         });
         var files = Files(1);
@@ -325,10 +325,10 @@ public class SharedImageCacheTests
         Assert.False(_cache.TryGetReady(files[current], out _), "Preloading skips the current file");
     }
 
-    private ValueTask<ImageModel> LoadProbe(FileInfo file)
+    private ImageModel LoadProbe(FileInfo file)
     {
         _loadCounts.AddOrUpdate(file.FullName, 1, static (_, count) => count + 1);
-        return ValueTask.FromResult(new ImageModel { FileInfo = file, Image = new ProbeImage() });
+        return new ImageModel { FileInfo = file, Image = new ProbeImage() };
     }
 
     private static FileInfo[] Files(int count) =>

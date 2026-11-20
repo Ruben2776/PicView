@@ -1,10 +1,10 @@
-using PicView.Tests.Config;
 using Avalonia.Controls;
 using Avalonia.Threading;
 using PicView.Avalonia.Views.UC.PopUps;
 using PicView.Core.Localization;
 using PicView.Core.Models;
 using PicView.Core.ViewModels;
+using PicView.Tests.Config;
 using R3;
 
 namespace PicView.Tests.Controls;
@@ -25,7 +25,7 @@ public class RenameDialogTests
     [InlineData("README", "README")]
     public void Opening_SelectsTheNameWithoutTheExtension(string fileName, string selected)
     {
-        var core = new CoreViewModel(null, _ => ValueTask.FromResult(new ImageModel()),
+        var core = new CoreViewModel(null, _ => new ImageModel(),
             StartedSettings.New());
         var vm = new MainWindowViewModel(core, core.Translation, core.GlobalSettings, core.GallerySettings);
         vm.WindowTabs.ActiveTab.Value.FileInfo.Value = new FileInfo(Path.Combine(Path.GetTempPath(), fileName));

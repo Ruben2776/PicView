@@ -7,7 +7,6 @@ using Avalonia.Threading;
 using Avalonia.VisualTree;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Interfaces;
-using PicView.Avalonia.UI;
 using PicView.Avalonia.Views.Gallery;
 using PicView.Core.Gallery;
 using PicView.Core.Localization;
@@ -616,10 +615,10 @@ public sealed class GalleryTileSharpeningTests : IDisposable
     {
         Settings.Gallery.DockPosition = GalleryDockPosition.Bottom;
         Settings.Gallery.ExpandedGalleryDisplayMode = mode;
-        var cache = new SharedImageCache(static f => ValueTask.FromResult(new ImageModel { FileInfo = f }));
+        var cache = new SharedImageCache(static f => new ImageModel { FileInfo = f });
         var thumbnails = new Thumbnails(_decoder, cache, slots);
         _thumbnails = thumbnails;
-        _core = new CoreViewModel(null, _ => ValueTask.FromResult(new ImageModel()),
+        _core = new CoreViewModel(null, _ => new ImageModel(),
             saveGallerySettings: static () => ValueTask.FromResult(true));
         _core.InitializeNavigation(TestTabServices.For(cache, thumbnails), new NavigationService());
         _window = new TestMainWindow(new NoOpModeAdapter()) { Width = width, Height = height };

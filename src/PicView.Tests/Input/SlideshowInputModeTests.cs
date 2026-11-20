@@ -69,11 +69,11 @@ public class SlideshowInputModeTests
 
     private (TestMainWindow Window, MainWindowViewModel Vm) CreateWindow()
     {
-        var core = new CoreViewModel(null, _ => ValueTask.FromResult(new ImageModel()), timeProvider: _clock);
+        var core = new CoreViewModel(null, _ => new ImageModel(), timeProvider: _clock);
 
         // Two files and at the first, so the slideshow has somewhere to go
         var tab = new TabViewModel(null!,
-            TestTabServices.For(new SharedImageCache(f => ValueTask.FromResult(new ImageModel { FileInfo = f })), null));
+            TestTabServices.For(new SharedImageCache(f => new ImageModel { FileInfo = f })));
         tab.Initialize();
         tab.ImageIterator!.Initialize([new FileInfo("a.jpg"), new FileInfo("b.jpg")]);
 

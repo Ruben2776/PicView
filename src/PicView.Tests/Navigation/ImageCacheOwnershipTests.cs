@@ -1,8 +1,6 @@
-using ImageMagick;
 using PicView.Core.Localization;
 using PicView.Core.Models;
 using PicView.Core.Navigation;
-using PicView.Core.Navigation.Interfaces;
 using PicView.Core.ViewModels;
 using R3;
 
@@ -77,8 +75,8 @@ public class ImageCacheOwnershipTests
         Assert.Equal(_fileB.FullName, image.File.FullName);
     }
 
-    private static ValueTask<ImageModel> LoadProbe(FileInfo file) =>
-        ValueTask.FromResult(new ImageModel { FileInfo = file, Image = new ProbeImage(file) });
+    private static ImageModel LoadProbe(FileInfo file) =>
+        new ImageModel { FileInfo = file, Image = new ProbeImage(file) };
 
     private sealed class ProbeImage(FileInfo file) : IDisposable
     {

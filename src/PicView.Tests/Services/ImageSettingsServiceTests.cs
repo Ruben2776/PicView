@@ -17,7 +17,7 @@ public class ImageSettingsServiceTests
     [AvaloniaFact]
     public void TriggerScalingModeUpdate_NoActiveMainWindow_DoesNothing()
     {
-        var core = new CoreViewModel(null, _ => ValueTask.FromResult(new ImageModel()), StartedSettings.New());
+        var core = new CoreViewModel(null, _ => new ImageModel(), StartedSettings.New());
         var previous = Application.Current!.DataContext;
         Application.Current.DataContext = core;
         try

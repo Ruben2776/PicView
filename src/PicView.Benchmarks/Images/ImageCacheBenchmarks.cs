@@ -25,7 +25,7 @@ public class ImageCacheBenchmarks
 
         // Use a no-op image loader since benchmarks only test the cache structure,
         // not actual image decoding.
-        _cache = new SharedImageCache(static f => new ValueTask<ImageModel>(new ImageModel { FileInfo = f }));
+        _cache = new SharedImageCache(static f => new ImageModel { FileInfo = f });
 
         _fileInfos = new FileInfo[ItemCount];
         _models = new ImageModel[ItemCount];

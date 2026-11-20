@@ -1,9 +1,8 @@
-using PicView.Tests.Config;
 using ImageMagick;
-using PicView.Core.Extensions;
 using PicView.Core.Models;
 using PicView.Core.Navigation;
 using PicView.Core.ViewModels;
+using PicView.Tests.Config;
 using PicView.Tests.Navigation;
 using R3;
 
@@ -43,7 +42,7 @@ public class ResizeImageViewModelTests
         var gallerySettings = new GallerySharedSettingsViewModel();
         var translations = new TranslationViewModel();
         // A converted file shows through the tab's Load, which needs the services
-        var core = new CoreViewModel(null, file => ValueTask.FromResult(new ImageModel { FileInfo = file }));
+        var core = new CoreViewModel(null, file => new ImageModel { FileInfo = file });
         core.InitializeNavigation(
             TestTabServices.For(core.SharedCache, null),
             new NavigationService());

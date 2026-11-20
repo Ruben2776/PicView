@@ -80,11 +80,11 @@ public class SlideshowTests
     private static (TestMainWindow Window, MainWindowViewModel Vm) CreateWindow(bool autoFit)
     {
         Settings.WindowProperties.AutoFit = autoFit;
-        var core = new CoreViewModel(null, _ => ValueTask.FromResult(new ImageModel()));
+        var core = new CoreViewModel(null, _ => new ImageModel());
 
         // Two files and at the first, so the slideshow has somewhere to go
         var tab = new TabViewModel(null!,
-            TestTabServices.For(new SharedImageCache(f => ValueTask.FromResult(new ImageModel { FileInfo = f })), null));
+            TestTabServices.For(new SharedImageCache(f => new ImageModel { FileInfo = f }), null));
         tab.Initialize();
         tab.ImageIterator!.Initialize([new FileInfo("a.jpg"), new FileInfo("b.jpg")]);
 

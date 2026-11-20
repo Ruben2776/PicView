@@ -12,7 +12,7 @@ public class GetOriginalImageTests : IDisposable
 {
     private readonly string _directory = Path.Combine(Path.GetTempPath(), $"PicView.GetOriginalImageTests.{Guid.NewGuid():N}");
 
-    private readonly SharedImageCache _cache = new(f => new ValueTask<ImageModel>(new ImageModel { FileInfo = f }));
+    private readonly SharedImageCache _cache = new(f => new ImageModel { FileInfo = f });
 
     public GetOriginalImageTests()
     {

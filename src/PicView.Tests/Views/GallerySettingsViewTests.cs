@@ -58,7 +58,7 @@ public class GallerySettingsViewTests
             saves++;
             return ValueTask.FromResult(true);
         };
-        var core = new CoreViewModel(null, _ => ValueTask.FromResult(new ImageModel()), StartedSettings.New(save),
+        var core = new CoreViewModel(null, _ => new ImageModel(), StartedSettings.New(save),
             save);
         core.GallerySettings.Start();
         var a = NewWindow(core);

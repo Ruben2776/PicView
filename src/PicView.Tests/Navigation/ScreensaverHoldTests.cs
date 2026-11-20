@@ -63,7 +63,7 @@ public class ScreensaverHoldTests
     [Fact]
     public void CoreViewModel_NoClock_UsesSystem()
     {
-        var core = new CoreViewModel(null, _ => ValueTask.FromResult(new ImageModel()));
+        var core = new CoreViewModel(null, _ => new ImageModel());
 
         Assert.Same(TimeProvider.System, core.Time);
         Assert.False(core.Screensaver.IsHeld);

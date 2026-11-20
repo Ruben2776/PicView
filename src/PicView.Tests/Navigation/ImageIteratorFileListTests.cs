@@ -1,12 +1,11 @@
 using System.Collections.Concurrent;
-using ImageMagick;
+using System.IO.Compression;
 using PicView.Core.FileSorting;
 using PicView.Core.Models;
-using PicView.Tests.ArchiveHandling;
 using PicView.Core.Navigation;
-using PicView.Core.Navigation.Interfaces;
 using PicView.Core.Titles;
 using PicView.Core.ViewModels;
+using PicView.Tests.ArchiveHandling;
 using R3;
 
 namespace PicView.Tests.Navigation;
@@ -45,7 +44,7 @@ public class ImageIteratorFileListTests : IDisposable
         _cache = new SharedImageCache(f =>
         {
             _loaded.Enqueue(f.Name);
-            return ValueTask.FromResult(new ImageModel { FileInfo = f, Image = new ProbeImage() });
+            return new ImageModel { FileInfo = f, Image = new ProbeImage() };
         });
         _tab = new TabViewModel(new MainWindowViewModel(null!, null!, null!, null!), TestTabServices.For(_cache, null),
             _extraction.Writer);
@@ -630,8 +629,8 @@ public class ImageIteratorFileListTests : IDisposable
         _tab.CurrentWindowSettings.CurrentValue!.IsSideBySide.Value = true;
         var held = new TaskCompletionSource<ImageModel>(TaskCreationOptions.RunContinuationsAsynchronously);
         var cache = new SharedImageCache(file => file.Name == "e.jpg"
-            ? new ValueTask<ImageModel>(held.Task)
-            : ValueTask.FromResult(new ImageModel { FileInfo = file, Image = new ProbeImage() }));
+            ? held.Task.GetAwaiter().GetResult()
+            : new ImageModel { FileInfo = file, Image = new ProbeImage() });
         var iterator = new ImageIterator(cache, TestTabServices.NoThumbnails(cache), _tab);
         var c = File("c.jpg");
         var e = File("e.jpg");
@@ -654,8 +653,8 @@ public class ImageIteratorFileListTests : IDisposable
     {
         var held = new TaskCompletionSource<ImageModel>(TaskCreationOptions.RunContinuationsAsynchronously);
         var cache = new SharedImageCache(file => file.Name == "c.jpg"
-            ? new ValueTask<ImageModel>(held.Task)
-            : ValueTask.FromResult(new ImageModel { FileInfo = file, Image = new ProbeImage() }));
+            ? held.Task.GetAwaiter().GetResult()
+            : new ImageModel { FileInfo = file, Image = new ProbeImage() });
         var iterator = new ImageIterator(cache, TestTabServices.NoThumbnails(cache), _tab);
         var b = File("b.jpg");
         var c = File("c.jpg");
@@ -706,8 +705,8 @@ public class ImageIteratorFileListTests : IDisposable
     {
         var held = new TaskCompletionSource<ImageModel>(TaskCreationOptions.RunContinuationsAsynchronously);
         var cache = new SharedImageCache(file => file.Name == "c.jpg"
-            ? new ValueTask<ImageModel>(held.Task)
-            : ValueTask.FromResult(new ImageModel { FileInfo = file, Image = new ProbeImage() }));
+            ? held.Task.GetAwaiter().GetResult()
+            : new ImageModel { FileInfo = file, Image = new ProbeImage() });
         var iterator = new ImageIterator(cache, TestTabServices.NoThumbnails(cache), _tab);
         var b = File("b.jpg");
         iterator.Initialize([b, File("c.jpg")], 0);
@@ -1075,7 +1074,7 @@ public class ImageIteratorFileListTests : IDisposable
         }
 
         var zip = Path.Combine(folder, name);
-        System.IO.Compression.ZipFile.CreateFromDirectory(source, zip);
+        ZipFile.CreateFromDirectory(source, zip);
         return zip;
     }
 

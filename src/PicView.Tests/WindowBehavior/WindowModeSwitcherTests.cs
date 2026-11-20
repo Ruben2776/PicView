@@ -21,7 +21,7 @@ public class WindowModeSwitcherTests
     {
         SetDefaults();
         TranslationManager.Init();
-        _core = new CoreViewModel(null, _ => ValueTask.FromResult(new ImageModel()));
+        _core = new CoreViewModel(null, _ => new ImageModel());
     }
 
     [AvaloniaFact]

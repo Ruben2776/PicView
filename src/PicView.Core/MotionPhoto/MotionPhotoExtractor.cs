@@ -86,6 +86,61 @@ public static class MotionPhotoExtractor
         }
     }
 
+    /// <summary>
+    /// The synchronous counterpart of <see cref="ExtractLivpCoverToTempFileAsync" />. The cover is streamed
+    /// straight from the archive to the temporary file, without an in-memory copy.
+    /// </summary>
+    /// <returns>The path of the temporary image file, or null when the container holds no image.</returns>
+    public static string? ExtractLivpCoverToTempFile(FileInfo fileInfo)
+    {
+        string? tempPath = null;
+        try
+        {
+            if (!IsReadableLivp(fileInfo))
+            {
+                return null;
+            }
+
+            using var stream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read,
+                FileShare.ReadWrite, 4096, FileOptions.SequentialScan);
+            using var archive = ArchiveFactory.OpenArchive(stream, new ReaderOptions());
+            var entry = FindLivpEntry(archive, IsImageFileName);
+            if (entry is null)
+            {
+                return null;
+            }
+
+            tempPath = TempFileManager.GetNewTempFilePath("livp-cover.jpg");
+            using var entryStream = entry.OpenEntryStream();
+            using var fileStream = new FileStream(tempPath, FileMode.Create, FileAccess.Write, FileShare.Read, 4096);
+            entryStream.CopyTo(fileStream);
+            return tempPath;
+        }
+        catch (Exception e)
+        {
+            DebugHelper.LogDebug(nameof(MotionPhotoExtractor), nameof(ExtractLivpCoverToTempFile), e);
+            DeletePartialFile(tempPath);
+            return null;
+        }
+    }
+
+    private static void DeletePartialFile(string? path)
+    {
+        if (path is null)
+        {
+            return;
+        }
+
+        try
+        {
+            File.Delete(path);
+        }
+        catch (Exception e)
+        {
+            DebugHelper.LogDebug(nameof(MotionPhotoExtractor), nameof(DeletePartialFile), e);
+        }
+    }
+
     private static async ValueTask<Stream?> ExtractEmbeddedAsync(FileInfo fileInfo, long expectedStart, CancellationToken ct)
     {
         var fileLength = fileInfo.Length;
@@ -130,7 +185,7 @@ public static class MotionPhotoExtractor
     private static async ValueTask<Stream?> ExtractLivpEntryToMemoryAsync(
         FileInfo fileInfo, Func<string, bool> entryPredicate, CancellationToken ct)
     {
-        if (!fileInfo.Exists || fileInfo.Length is 0 || fileInfo.Length > MaxVideoBytes)
+        if (!IsReadableLivp(fileInfo))
         {
             return null;
         }
@@ -140,29 +195,44 @@ public static class MotionPhotoExtractor
         await using (stream.ConfigureAwait(false))
         {
             using var archive = ArchiveFactory.OpenArchive(stream, new ReaderOptions());
-            foreach (var entry in archive.Entries)
+            var entry = FindLivpEntry(archive, entryPredicate);
+            if (entry is null)
             {
-                if (entry.IsDirectory || entry.Key is null || !entryPredicate(entry.Key))
-                {
-                    continue;
-                }
-
-                var size = entry.Size;
-                if (size <= 0 || size > MaxVideoBytes)
-                {
-                    continue;
-                }
-
-                var memory = new MemoryStream((int)size);
-                var entryStream = entry.OpenEntryStream();
-                await using (entryStream.ConfigureAwait(false))
-                {
-                    await entryStream.CopyToAsync(memory, ct).ConfigureAwait(false);
-                }
-
-                memory.Position = 0;
-                return memory;
+                return null;
             }
+
+            var memory = new MemoryStream((int)entry.Size);
+            var entryStream = entry.OpenEntryStream();
+            await using (entryStream.ConfigureAwait(false))
+            {
+                await entryStream.CopyToAsync(memory, ct).ConfigureAwait(false);
+            }
+
+            memory.Position = 0;
+            return memory;
+        }
+    }
+
+    private static bool IsReadableLivp(FileInfo fileInfo) =>
+        fileInfo.Exists && fileInfo.Length is not 0 && fileInfo.Length <= MaxVideoBytes;
+
+    /// <summary>The first file entry whose name matches and whose size is within <see cref="MaxVideoBytes" />.</summary>
+    private static IArchiveEntry? FindLivpEntry(IArchive archive, Func<string, bool> entryPredicate)
+    {
+        foreach (var entry in archive.Entries)
+        {
+            if (entry.IsDirectory || entry.Key is null || !entryPredicate(entry.Key))
+            {
+                continue;
+            }
+
+            var size = entry.Size;
+            if (size <= 0 || size > MaxVideoBytes)
+            {
+                continue;
+            }
+
+            return entry;
         }
 
         return null;

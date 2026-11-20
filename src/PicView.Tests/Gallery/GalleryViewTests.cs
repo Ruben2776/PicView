@@ -6,7 +6,6 @@ using Avalonia.Headless;
 using Avalonia.Layout;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
-using ImageMagick;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Gallery;
 using PicView.Avalonia.Interfaces;
@@ -17,7 +16,6 @@ using PicView.Core.Gallery;
 using PicView.Core.Localization;
 using PicView.Core.Models;
 using PicView.Core.Navigation;
-using PicView.Core.Navigation.Interfaces;
 using PicView.Core.Sizing;
 using PicView.Core.ViewModels;
 using PicView.Tests.Navigation;
@@ -582,7 +580,7 @@ public class GalleryViewTests
     {
         Settings.Gallery.DockPosition = GalleryDockPosition.Bottom;
         // The display mode saves through the delegate, so the tests that switch it write no settings file
-        var core = new CoreViewModel(null, _ => ValueTask.FromResult(new ImageModel()),
+        var core = new CoreViewModel(null, _ => new ImageModel(),
             saveGallerySettings: static () => ValueTask.FromResult(true));
         var window = new TestMainWindow(new NoOpModeAdapter());
         var vm = new MainWindowViewModel(core, core.Translation, core.GlobalSettings!, core.GallerySettings);
@@ -696,9 +694,9 @@ public class GalleryViewTests
     private static void WithTab(Func<MainWindowViewModel, TabViewModel> tabOf,
         Action<TabViewModel, MainWindowViewModel> test)
     {
-        var core = new CoreViewModel(null, _ => ValueTask.FromResult(new ImageModel()));
+        var core = new CoreViewModel(null, _ => new ImageModel());
         core.InitializeNavigation(
-            TestTabServices.For(new SharedImageCache(static f => ValueTask.FromResult(new ImageModel { FileInfo = f })), null),
+            TestTabServices.For(new SharedImageCache(static f => new ImageModel { FileInfo = f })),
             new NavigationService());
         var window = new TestMainWindow(new NoOpModeAdapter());
         var vm = new MainWindowViewModel(core, core.Translation, core.GlobalSettings!, core.GallerySettings);

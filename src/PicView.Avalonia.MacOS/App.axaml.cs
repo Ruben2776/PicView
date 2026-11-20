@@ -73,7 +73,7 @@ public class App : Application, IPlatformSpecificService
         var settingsExists = LoadSettings();
         TranslationManager.Init();
 
-        _coreViewModel = new CoreViewModel(this, static (file, core) => GetImageModel.GetImageModelAsync(file, core: core));
+        _coreViewModel = new CoreViewModel(this, static (file, core) => GetImageModel.GetImageModelSync(file, core: core));
         DataContext = _coreViewModel;
 
         _app = new AppLifecycle(_coreViewModel, new MacWindowProvider());

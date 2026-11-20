@@ -65,7 +65,7 @@ public class DockedGalleryWindowFitTests
     // The gallery view loads its XAML only when the application's DataContext is a CoreViewModel
     private static void WithDockedGallery(Action<MainWindow, MainWindowViewModel> test)
     {
-        var core = new CoreViewModel(null, _ => ValueTask.FromResult(new ImageModel()));
+        var core = new CoreViewModel(null, _ => new ImageModel());
         var window = new TestMainWindow(new NoOpModeAdapter());
         var vm = new MainWindowViewModel(core, core.Translation, core.GlobalSettings!, core.GallerySettings);
         window.DataContext = vm;

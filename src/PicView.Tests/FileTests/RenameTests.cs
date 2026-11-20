@@ -1,10 +1,10 @@
-using PicView.Tests.Config;
 using ImageMagick;
 using PicView.Avalonia.UI;
 using PicView.Core.FileHandling;
 using PicView.Core.Models;
 using PicView.Core.Navigation;
 using PicView.Core.ViewModels;
+using PicView.Tests.Config;
 using PicView.Tests.Navigation;
 
 namespace PicView.Tests.FileTests;
@@ -149,7 +149,7 @@ public class RenameTests : IDisposable
     // after, and went back to path
     private (MainWindowViewModel Vm, TabViewModel Tab) CreateTabInCore(string path, string after)
     {
-        var core = new CoreViewModel(null, file => ValueTask.FromResult(new ImageModel { FileInfo = file, Image = new object() }));
+        var core = new CoreViewModel(null, file => new ImageModel { FileInfo = file, Image = new object() });
         core.InitializeNavigation(
             TestTabServices.For(core.SharedCache, null),
             new NavigationService());

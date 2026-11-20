@@ -32,7 +32,7 @@ public class MouseViewTests
         try
         {
             Settings.UIProperties.DoubleClickBehavior = 2;
-            var core = new CoreViewModel(null, _ => ValueTask.FromResult(new ImageModel()), StartedSettings.New());
+            var core = new CoreViewModel(null, _ => new ImageModel(), StartedSettings.New());
             core.Translation.UpdateLanguage();
             using var settings = new SettingsViewModel(core.Translation, core.GlobalSettings);
             core.SettingsViewModel = settings;

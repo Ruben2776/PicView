@@ -14,7 +14,6 @@ using Avalonia.Threading;
 using Avalonia.VisualTree;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Interfaces;
-using PicView.Avalonia.UI;
 using PicView.Avalonia.Views.Gallery;
 using PicView.Core.Gallery;
 using PicView.Core.Localization;
@@ -298,7 +297,7 @@ public class GalleryItemLookTests
     {
         Settings.Gallery.DockPosition = GalleryDockPosition.Bottom;
         Settings.Gallery.ExpandedGalleryDisplayMode = displayMode;
-        var core = new CoreViewModel(null, _ => ValueTask.FromResult(new ImageModel()),
+        var core = new CoreViewModel(null, _ => new ImageModel(),
             saveGallerySettings: static () => ValueTask.FromResult(true));
         var window = new TestMainWindow(new NoOpModeAdapter());
         var vm = new MainWindowViewModel(core, core.Translation, core.GlobalSettings!, core.GallerySettings);

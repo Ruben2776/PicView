@@ -21,7 +21,7 @@ public class ComparisonPairTests
         ObservableSystem.DefaultFrameProvider = new MockFrameProvider();
         SetDefaults();
 
-        var cache = new SharedImageCache(f => ValueTask.FromResult(new ImageModel { FileInfo = f }));
+        var cache = new SharedImageCache(f => new ImageModel { FileInfo = f });
         _tab = new TabViewModel(new MainWindowViewModel(null!, null!, null!, null!), TestTabServices.For(cache, null));
         _tab.Initialize();
         _iterator = (ImageIterator)_tab.ImageIterator!;

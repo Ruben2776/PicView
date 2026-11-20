@@ -1,8 +1,6 @@
-using Avalonia;
 using Avalonia.Automation.Peers;
 using Avalonia.Automation.Provider;
 using Avalonia.Controls;
-using Avalonia.Headless;
 using Avalonia.Input;
 using Avalonia.Threading;
 using PicView.Avalonia.Controllers;
@@ -73,7 +71,7 @@ public class KeybindingsFavoritesTests : IDisposable
 
     private static CoreViewModel CreateCoreWithMainWindow(out MainWindowViewModel mainWindowVm)
     {
-        var core = new CoreViewModel(null, _ => ValueTask.FromResult(new ImageModel()));
+        var core = new CoreViewModel(null, _ => new ImageModel());
         core.Keybindings = new KeybindingsViewModel();
         mainWindowVm = new MainWindowViewModel(
             core,

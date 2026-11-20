@@ -1,8 +1,8 @@
-using ImageMagick;
+using System.Collections.Concurrent;
+using System.IO.Compression;
 using PicView.Core.ArchiveHandling;
 using PicView.Core.Models;
 using PicView.Core.Navigation;
-using PicView.Core.Navigation.Interfaces;
 using PicView.Core.ViewModels;
 using PicView.Tests.Navigation;
 using R3;
@@ -144,7 +144,7 @@ public class ArchiveOpeningsTests : IDisposable
         var zip = await CreateZipAsync("priority.zip", 13);
         var opening = (await OpenAsync(tab, zip, null))!;
         tab.ImageIterator!.Initialize(opening.Files);
-        var listedOn = new System.Collections.Concurrent.ConcurrentBag<ThreadPriority>();
+        var listedOn = new ConcurrentBag<ThreadPriority>();
         using var listing = tab.MaxIndex.Skip(1).Subscribe(_ => listedOn.Add(Thread.CurrentThread.Priority));
 
         opening.ExtractRest();
@@ -398,7 +398,7 @@ public class ArchiveOpeningsTests : IDisposable
         var noImages = Path.Combine(_folder, "readme.zip");
         var source = Directory.CreateDirectory(Path.Combine(_folder, "readme_source")).FullName;
         await File.WriteAllTextAsync(Path.Combine(source, "readme.txt"), "no images", TestContext.Current.CancellationToken);
-        System.IO.Compression.ZipFile.CreateFromDirectory(source, noImages);
+        ZipFile.CreateFromDirectory(source, noImages);
 
         var opening = await OpenAsync(tab, noImages, null);
 
@@ -410,7 +410,7 @@ public class ArchiveOpeningsTests : IDisposable
     // Records the priority of the thread each page is written on
     private sealed class PriorityRecordingWriter : IArchiveEntryWriter
     {
-        private readonly System.Collections.Concurrent.ConcurrentBag<ThreadPriority> _priorities = [];
+        private readonly ConcurrentBag<ThreadPriority> _priorities = [];
 
         public IReadOnlyCollection<ThreadPriority> Priorities => _priorities;
 
@@ -441,7 +441,7 @@ public class ArchiveOpeningsTests : IDisposable
     private TabViewModel CreateTab(IArchiveEntryWriter? writer = null)
     {
         var services = TestTabServices.For(
-            new SharedImageCache(file => ValueTask.FromResult(new ImageModel { FileInfo = file })), null);
+            new SharedImageCache(file => new ImageModel { FileInfo = file }));
         var tab = new TabViewModel(new MainWindowViewModel(null!, null!, null!, null!), services, writer);
         tab.Initialize();
         tab.ImageIterator!.Initialize([]);
@@ -460,7 +460,7 @@ public class ArchiveOpeningsTests : IDisposable
         }
 
         var zip = Path.Combine(_folder, name);
-        System.IO.Compression.ZipFile.CreateFromDirectory(source, zip);
+        ZipFile.CreateFromDirectory(source, zip);
         return zip;
     }
 

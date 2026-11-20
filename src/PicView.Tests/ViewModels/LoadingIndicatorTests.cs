@@ -1,7 +1,7 @@
-using PicView.Tests.Config;
 using PicView.Core.Localization;
 using PicView.Core.Models;
 using PicView.Core.ViewModels;
+using PicView.Tests.Config;
 using R3;
 
 namespace PicView.Tests.ViewModels;
@@ -20,7 +20,7 @@ public class LoadingIndicatorTests
         SetDefaults();
         TranslationManager.Init();
         ObservableSystem.DefaultFrameProvider = new MockFrameProvider();
-        _core = new CoreViewModel(null, _ => ValueTask.FromResult(new ImageModel()),
+        _core = new CoreViewModel(null, _ => new ImageModel(),
             StartedSettings.New());
     }
 

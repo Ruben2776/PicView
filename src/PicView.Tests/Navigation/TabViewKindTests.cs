@@ -1,9 +1,5 @@
-using ImageMagick;
-using PicView.Core.ArchiveHandling;
-using PicView.Core.ImageDecoding;
 using PicView.Core.Models;
 using PicView.Core.Navigation;
-using PicView.Core.Navigation.Interfaces;
 using PicView.Core.ViewModels;
 using R3;
 
@@ -22,7 +18,7 @@ public class TabViewKindTests
         ObservableSystem.DefaultFrameProvider = new MockFrameProvider();
         SetDefaults();
         _tab = new TabViewModel(null!,
-            TestTabServices.For(new SharedImageCache(f => ValueTask.FromResult(Model(f.Name))!)));
+            TestTabServices.For(new SharedImageCache(f => Model(f.Name)!)));
     }
 
     private static ImageModel Model(string name) => new()

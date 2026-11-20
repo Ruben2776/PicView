@@ -1,4 +1,4 @@
-﻿using System.Numerics;
+using System.Numerics;
 using Avalonia;
 using Avalonia.Automation;
 using Avalonia.Automation.Peers;
@@ -353,7 +353,7 @@ public class PicBox : Control
                     {
                         return;
                     }
-                    var model = GetImageModel.GetImageModelAsync(tab.FileInfo?.CurrentValue, core: core).AsTask().Result;
+                    var model = GetImageModel.GetImageModelSync(tab.FileInfo?.CurrentValue, core: core);
                     var bitmap = model?.Image;
                     if (bitmap is not null)
                     {
