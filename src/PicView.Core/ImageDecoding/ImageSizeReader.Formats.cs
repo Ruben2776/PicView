@@ -59,8 +59,127 @@ public static partial class ImageSizeReader
             return TryReadWebp(header, out size);
         }
 
+        var isLittleEndianTiff = header.StartsWith((ReadOnlySpan<byte>)[0x49, 0x49, 0x2A, 0x00]);
+        if (isLittleEndianTiff || header.StartsWith((ReadOnlySpan<byte>)[0x4D, 0x4D, 0x00, 0x2A]))
+        {
+            // A camera RAW looks like a TIFF whose first image is a preview, so its own decoder has to answer
+            return !IsCameraRawExtension(Path.GetExtension(path.AsSpan())) &&
+                   TryReadTiff(handle, header, isLittleEndianTiff, out size);
+        }
+
         return false;
     }
+
+    /// <summary>
+    /// Whether <paramref name="extension"/> is one of the camera RAW formats that are built on TIFF.
+    /// </summary>
+    private static bool IsCameraRawExtension(ReadOnlySpan<char> extension)
+    {
+        if (extension.Length is < 4 or > 4)
+        {
+            return false;
+        }
+
+        Span<char> lower = stackalloc char[4];
+        extension.ToLowerInvariant(lower);
+        return lower is ".3fr" or ".arw" or ".cr2" or ".crw" or ".dcr" or ".dng" or ".erf" or ".kdc" or ".mdc"
+            or ".mef" or ".mos" or ".mrw" or ".nef" or ".nrw" or ".orf" or ".pef" or ".raw" or ".rw2" or ".srf"
+            or ".x3f";
+    }
+
+    /// <summary>
+    /// Reads the width and height tags of the first image file directory, in the byte order the file names.
+    /// </summary>
+    private static bool TryReadTiff(SafeFileHandle handle, ReadOnlySpan<byte> header, bool isLittleEndian,
+        out ImageSize size)
+    {
+        size = default;
+        if (header.Length < 8)
+        {
+            return false;
+        }
+
+        long offset = ReadUInt32(header[4..], isLittleEndian);
+        Span<byte> count = stackalloc byte[2];
+        if (!TryReadAt(handle, offset, count))
+        {
+            return false;
+        }
+
+        const int entryLength = 12;
+        const int maxEntries = 512;
+        const int entriesPerRead = 16;
+        const ushort imageWidthTag = 256;
+        const ushort imageLengthTag = 257;
+
+        var entryCount = Math.Min((int)ReadUInt16(count, isLittleEndian), maxEntries);
+        offset += count.Length;
+        Span<byte> entries = stackalloc byte[entryLength * entriesPerRead];
+        uint width = 0, height = 0;
+        for (var done = 0; done < entryCount; done += entriesPerRead)
+        {
+            var block = entries[..(Math.Min(entriesPerRead, entryCount - done) * entryLength)];
+            if (!TryReadAt(handle, offset + (long)done * entryLength, block))
+            {
+                return false;
+            }
+
+            for (var i = 0; i < block.Length; i += entryLength)
+            {
+                var entry = block.Slice(i, entryLength);
+                var tag = ReadUInt16(entry, isLittleEndian);
+                if (tag > imageLengthTag)
+                {
+                    // The entries are sorted by tag, so neither size can follow
+                    return false;
+                }
+
+                if (tag is not (imageWidthTag or imageLengthTag))
+                {
+                    continue;
+                }
+
+                // A SHORT or a LONG value, held in the entry itself
+                uint value;
+                switch (ReadUInt16(entry[2..], isLittleEndian))
+                {
+                    case 3:
+                        value = ReadUInt16(entry[8..], isLittleEndian);
+                        break;
+                    case 4:
+                        value = ReadUInt32(entry[8..], isLittleEndian);
+                        break;
+                    default:
+                        return false;
+                }
+
+                if (tag is imageWidthTag)
+                {
+                    width = value;
+                }
+                else
+                {
+                    height = value;
+                }
+
+                if (width is not 0 && height is not 0)
+                {
+                    size = new ImageSize(width, height);
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private static ushort ReadUInt16(ReadOnlySpan<byte> bytes, bool isLittleEndian) => isLittleEndian
+        ? BinaryPrimitives.ReadUInt16LittleEndian(bytes)
+        : BinaryPrimitives.ReadUInt16BigEndian(bytes);
+
+    private static uint ReadUInt32(ReadOnlySpan<byte> bytes, bool isLittleEndian) => isLittleEndian
+        ? BinaryPrimitives.ReadUInt32LittleEndian(bytes)
+        : BinaryPrimitives.ReadUInt32BigEndian(bytes);
 
     /// <summary>
     /// The first chunk after the RIFF header says which of the three kinds of WebP this is, and each keeps its size

@@ -236,6 +236,49 @@ public class ImageSizeReaderTests : IDisposable
         Assert.Equal(new ImageSize(Width, Height), size);
     }
 
+    [Theory]
+    [InlineData(Endian.LSB, "II")]
+    [InlineData(Endian.MSB, "MM")]
+    public void TryReadHeader_Tiff_AgreesWithTheMagickPing(Endian endian, string byteOrder)
+    {
+        var path = Write(MagickFormat.Tiff, byteOrder + ".tif", image => image.Settings.Endian = endian);
+
+        Assert.Equal(byteOrder, System.Text.Encoding.ASCII.GetString(File.ReadAllBytes(path), 0, 2));
+        AssertReadsFromTheHeaderLikeThePing(path);
+    }
+
+    [Theory]
+    [InlineData("photo.dng")]
+    [InlineData("photo.NEF")]
+    [InlineData("photo.cr2")]
+    public void TryReadHeader_TiffBytesUnderACameraRawExtension_Fails(string fileName)
+    {
+        var path = Write(MagickFormat.Tiff, fileName);
+
+        Assert.False(ImageSizeReader.TryReadHeader(path, out _));
+        // Whatever the raw coder makes of it, it is not thrown at the caller
+        _ = ImageSizeReader.Read(path);
+    }
+
+    [Fact]
+    public void TryReadHeader_BigTiff_Fails()
+    {
+        var path = Path.Combine(_directory, "big.tif");
+        File.WriteAllBytes(path, [0x49, 0x49, 0x2B, 0x00, 0x08, 0x00, 0x00, 0x00, 0x10, 0, 0, 0, 0, 0, 0, 0]);
+
+        Assert.False(ImageSizeReader.TryReadHeader(path, out _));
+    }
+
+    [Fact]
+    public void TryReadHeader_TiffWithIfdOffsetPastTheEnd_Fails()
+    {
+        var path = Path.Combine(_directory, "offset.tif");
+        File.WriteAllBytes(path, [0x49, 0x49, 0x2A, 0x00, 0xFF, 0xFF, 0xFF, 0x7F]);
+
+        Assert.False(ImageSizeReader.TryReadHeader(path, out _));
+        Assert.Equal(default, ImageSizeReader.Read(path));
+    }
+
     public void Dispose()
     {
         try
