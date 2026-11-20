@@ -1,11 +1,10 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
-using ImageMagick;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.Navigation;
-using PicView.Core.DebugTools;
+using PicView.Core.ImageDecoding;
 using PicView.Core.FileSorting;
 using PicView.Core.Navigation;
 using PicView.Core.Sizing;
@@ -155,17 +154,15 @@ public static class QuickLoad
         MainWindowViewModel vm, TabViewModel tab, FileInfo fileInfo, ListedFiles? listed,
         string? rootDirectory)
     {
-        using var magickImage = new MagickImage();
-        var isPinged = false;
-        try
+        var size = ImageSizeReader.Read(fileInfo);
+        if (size.IsEmpty)
         {
-#pragma warning disable MA0042
-            // ReSharper disable once MethodHasAsyncOverloadWithCancellation
-            // ReSharper disable once MethodHasAsyncOverload
-            magickImage.Ping(fileInfo);
-#pragma warning restore MA0042
-            isPinged = true;
-            var sizes = new PixelSizes(magickImage.Width, magickImage.Height);
+            // A file whose size cannot be read still loads; the window shows without waiting for it
+            ShowNow(mainWindow);
+        }
+        else
+        {
+            var sizes = new PixelSizes(size.Width, size.Height);
 
             // Need to set size for the Maximize or fullscreen functions to work
             // Predict window size beforehand, so it opens centered at its size when double-clicking a file
@@ -185,19 +182,11 @@ public static class QuickLoad
                     ShowSized(mainWindow, sizes);
                 }, DispatcherPriority.Send);
             }
-
-        }
-        catch (Exception e)
-        {
-            // Pinging can lead to crashes when the file cannot be read.
-            // Just catching the exception here means it will still load correctly regardless
-            ShowNow(mainWindow);
-            DebugHelper.LogDebug(nameof(QuickLoad), nameof(LoadSingleAsync), e);
         }
 
         // Decoded while the tab is hooked up, so the first image's reaction comes from the same subscription as every
-        // later one's. The pinged size rides on the decoded model
-        var decoding = GetImageModel.GetImageModelAsync(fileInfo, isPinged ? magickImage : null, core);
+        // later one's
+        var decoding = GetImageModel.GetImageModelAsync(fileInfo, core: core);
         await HookUpAsync(tab).ConfigureAwait(false);
         var model = await decoding.ConfigureAwait(false);
         return await ShowThroughTheLoadAsync(core, tab, fileInfo,
@@ -233,44 +222,33 @@ public static class QuickLoad
         var isOpenedFirst = primary == index;
         var nextFileInfo = files[isOpenedFirst ? partnerIndex : primary];
 
-        using var firstMagick = new MagickImage();
-        using var secondMagick = new MagickImage();
-        var isPinged = false;
         if (vm.WindowModeState.CurrentValue.AutoFit)
         {
-            try
+            var firstSize = ImageSizeReader.Read(fileInfo);
+            var secondSize = ImageSizeReader.Read(nextFileInfo);
+            if (firstSize.IsEmpty || secondSize.IsEmpty)
             {
-#pragma warning disable MA0042
-                // ReSharper disable MethodHasAsyncOverloadWithCancellation
-                // ReSharper disable MethodHasAsyncOverload
-                firstMagick.Ping(fileInfo);
-                secondMagick.Ping(nextFileInfo);
-                // ReSharper restore MethodHasAsyncOverloadWithCancellation
-                // ReSharper restore MethodHasAsyncOverload
-#pragma warning restore MA0042
-                isPinged = true;
+                ShowNow(mainWindow);
+            }
+            else
+            {
+                // Sized in the order the pair shows, left to right
+                var sizes = isOpenedFirst
+                    ? new PixelSizes(firstSize.Width, firstSize.Height, secondSize.Width, secondSize.Height)
+                    : new PixelSizes(secondSize.Width, secondSize.Height, firstSize.Width, firstSize.Height);
                 await Dispatcher.UIThread.InvokeAsync(() =>
                 {
-                    // Sized in the order the pair shows, left to right
-                    var sizes = isOpenedFirst
-                        ? new PixelSizes(firstMagick.Width, firstMagick.Height, secondMagick.Width, secondMagick.Height)
-                        : new PixelSizes(secondMagick.Width, secondMagick.Height, firstMagick.Width, firstMagick.Height);
                     if (!ShowSized(mainWindow, sizes))
                     {
                         mainWindow.Show();
                     }
                 }, DispatcherPriority.Send);
             }
-            catch (Exception e)
-            {
-                ShowNow(mainWindow);
-                DebugHelper.LogDebug(nameof(QuickLoad), nameof(LoadSideBySideAsync), e);
-            }
         }
 
         // Both decode while the tab is hooked up, and the tab's Load shows them as the pair with the files listed above
-        var decodingFirst = GetImageModel.GetImageModelAsync(fileInfo, isPinged ? firstMagick : null, core);
-        var decodingSecond = GetImageModel.GetImageModelAsync(nextFileInfo, isPinged ? secondMagick : null, core);
+        var decodingFirst = GetImageModel.GetImageModelAsync(fileInfo, core: core);
+        var decodingSecond = GetImageModel.GetImageModelAsync(nextFileInfo, core: core);
         await HookUpAsync(tab).ConfigureAwait(false);
         var first = await decodingFirst.ConfigureAwait(false);
         var second = await decodingSecond.ConfigureAwait(false);

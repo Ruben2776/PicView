@@ -7,7 +7,6 @@ using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Metadata;
 using Avalonia.Rendering.Composition;
-using ImageMagick;
 using PicView.Avalonia.AnimatedImage;
 using PicView.Avalonia.ImageHandling;
 using PicView.Core.Animation;
@@ -472,18 +471,8 @@ public class PicBox : Control
             return new Size(ready.PixelWidth, ready.PixelHeight);
         }
 
-        try
-        {
-            using var magickImage = new MagickImage();
-            magickImage.Ping(model.FileInfo);
-            return new Size(magickImage.Width, magickImage.Height);
-        }
-        catch (Exception exception)
-        {
-            DebugHelper.LogDebug(nameof(PicBox), nameof(GetSizeFromAlternativeSources), exception);
-        }
-
-        return new Size();
+        var size = ImageSizeReader.Read(model.FileInfo);
+        return new Size(size.Width, size.Height);
     }
     
     #endregion Sizing
