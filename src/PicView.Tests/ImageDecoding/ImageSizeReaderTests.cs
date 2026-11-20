@@ -1,3 +1,4 @@
+using System.Buffers.Binary;
 using ImageMagick;
 using PicView.Core.ImageDecoding;
 
@@ -83,6 +84,66 @@ public class ImageSizeReaderTests : IDisposable
         Assert.Equal(default, ImageSizeReader.Read(path));
     }
 
+    [Theory]
+    [InlineData(MagickFormat.Png, "image.png")]
+    [InlineData(MagickFormat.Gif, "image.gif")]
+    [InlineData(MagickFormat.Bmp, "image.bmp")]
+    [InlineData(MagickFormat.Bmp3, "image3.bmp")]
+    [InlineData(MagickFormat.Bmp2, "image2.bmp")]
+    [InlineData(MagickFormat.Psd, "image.psd")]
+    [InlineData(MagickFormat.Psb, "image.psb")]
+    [InlineData(MagickFormat.Qoi, "image.qoi")]
+    [InlineData(MagickFormat.Dds, "image.dds")]
+    public void TryReadHeader_FixedHeaderFormat_AgreesWithTheMagickPing(MagickFormat format, string fileName)
+    {
+        var path = Write(format, fileName);
+
+        AssertReadsFromTheHeaderLikeThePing(path);
+    }
+
+    [Fact]
+    public void TryReadHeader_PngNamedAsJpeg_ReadsOnTheFastPath()
+    {
+        var path = Write(MagickFormat.Png, "misnamed.jpg");
+
+        Assert.True(ImageSizeReader.TryReadHeader(path, out var size));
+        Assert.Equal(new ImageSize(Width, Height), size);
+    }
+
+    [Fact]
+    public void TryReadHeader_TopDownBmp_ReportsPositiveHeight()
+    {
+        var path = Write(MagickFormat.Bmp, "topdown.bmp");
+        var bytes = File.ReadAllBytes(path);
+        BinaryPrimitives.WriteInt32LittleEndian(bytes.AsSpan(22), -(int)Height);
+        File.WriteAllBytes(path, bytes);
+
+        Assert.True(ImageSizeReader.TryReadHeader(path, out var size));
+        Assert.Equal(new ImageSize(Width, Height), size);
+    }
+
+    [Fact]
+    public void TryReadHeader_PngDeclaringZeroWidth_Fails()
+    {
+        var path = Write(MagickFormat.Png, "zerowidth.png");
+        var bytes = File.ReadAllBytes(path);
+        bytes.AsSpan(16, 4).Clear();
+        File.WriteAllBytes(path, bytes);
+
+        Assert.False(ImageSizeReader.TryReadHeader(path, out _));
+        Assert.True(ImageSizeReader.Read(path).IsEmpty);
+    }
+
+    [Fact]
+    public void TryReadHeader_PngCutOffInsideTheHeader_Fails()
+    {
+        var path = Write(MagickFormat.Png, "cutoff.png");
+        File.WriteAllBytes(path, File.ReadAllBytes(path)[..20]);
+
+        Assert.False(ImageSizeReader.TryReadHeader(path, out _));
+        Assert.Equal(default, ImageSizeReader.Read(path));
+    }
+
     public void Dispose()
     {
         try
@@ -95,6 +156,21 @@ public class ImageSizeReaderTests : IDisposable
         }
 
         GC.SuppressFinalize(this);
+    }
+
+    /// <summary>
+    /// Asserts the header alone gives the size of the image at <paramref name="path"/>, and that it is the size the
+    /// ImageMagick ping reports.
+    /// </summary>
+    private static void AssertReadsFromTheHeaderLikeThePing(string path)
+    {
+        using var magick = new MagickImage();
+        magick.Ping(path);
+
+        Assert.True(ImageSizeReader.TryReadHeader(path, out var size));
+        Assert.Equal(new ImageSize(magick.Width, magick.Height), size);
+        Assert.Equal(new ImageSize(Width, Height), size);
+        Assert.Equal(size, ImageSizeReader.Read(path));
     }
 
     /// <summary>
