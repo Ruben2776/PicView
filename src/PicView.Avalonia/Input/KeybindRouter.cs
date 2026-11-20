@@ -227,7 +227,7 @@ public sealed class KeybindRouter
         if (Settings.WindowProperties.EscLeavesFullscreen &&
             vm.WindowModeState.CurrentValue.Mode is WindowMode.Fullscreen && vm.WindowModeSwitcher is { } switcher)
         {
-            await switcher.LeaveTopMode().ConfigureAwait(false);
+            switcher.LeaveTopMode();
             return;
         }
 

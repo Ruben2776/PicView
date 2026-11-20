@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -10,7 +9,6 @@ using PicView.Avalonia.Crop;
 using PicView.Avalonia.DragAndDrop;
 using PicView.Avalonia.Input;
 using PicView.Avalonia.Interfaces;
-using PicView.Avalonia.Navigation;
 using PicView.Avalonia.Printing;
 using PicView.Avalonia.Services;
 using PicView.Avalonia.StartUp;
@@ -98,7 +96,6 @@ public abstract class MainWindow : Window, IMainWindow
         Resized += WindowSizeChanged;
         
         // Shows or hides the buttons that fit the window's width as it is resized
-        Debug.Assert(FrameProvider != null, nameof(FrameProvider) + " != null");
         ClientSizeProperty.Changed.ToObservable()
             .Skip(1)
             .SubscribeOn(FrameProvider)
@@ -128,7 +125,7 @@ public abstract class MainWindow : Window, IMainWindow
             windowStates = windowStates.Skip(1);
         }
         windowStates
-            .SubscribeAwait(async (state, _) => await WindowModeSwitcher.OnNativeStateAsync(state).ConfigureAwait(true),
+            .Subscribe(state => WindowModeSwitcher.OnNativeStateAsync(state),
                 DebugHelper.LogError(nameof(MainWindow), nameof(WindowState)))
             .AddTo(Disposables);
 
@@ -536,7 +533,7 @@ public abstract class MainWindow : Window, IMainWindow
         }
 
         // Resizing by hand turns AutoFit off for this window only
-        _ = WindowModeSwitcher.ResizedByHand();
+        WindowModeSwitcher.ResizedByHand();
     }
     
     // Window is being resized. The size changes of every window come through here, so only this window's count

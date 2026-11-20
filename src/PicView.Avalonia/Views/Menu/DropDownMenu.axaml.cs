@@ -2,10 +2,9 @@ using System.Collections.ObjectModel;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
 using ObservableCollections;
-using PicView.Avalonia.UI;
 using PicView.Avalonia.Crop;
 using PicView.Avalonia.CustomControls;
-using PicView.Avalonia.Navigation;
+using PicView.Avalonia.UI;
 using PicView.Core.Conversion;
 using PicView.Core.DebugTools;
 using PicView.Core.Localization;
@@ -136,7 +135,7 @@ public partial class DropDownMenu : AnimatedMenu
     {
         if (_mainWindow.ViewModel is { } vm)
         {
-            _ = vm.Slideshow.Toggle(milliseconds, isKeyHeldDown: false);
+            vm.Slideshow.Toggle(milliseconds, isKeyHeldDown: false);
         }
     }
 

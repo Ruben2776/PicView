@@ -205,7 +205,7 @@ public static class WindowFunctions
     {
         if (e.ClickCount == 2 && e.GetCurrentPoint(window).Properties.IsLeftButtonPressed)
         {
-            _ = window.WindowModeSwitcher.ToggleMaximized();
+            window.WindowModeSwitcher.ToggleMaximized();
             return;
         }
 

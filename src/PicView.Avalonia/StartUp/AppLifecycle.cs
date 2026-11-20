@@ -1,5 +1,3 @@
-using PicView.Avalonia.ImageHandling;
-using PicView.Core.Thumbnailing;
 using System.Diagnostics;
 using System.Runtime;
 using Avalonia;
@@ -8,17 +6,18 @@ using Avalonia.Threading;
 using ImageMagick;
 using PicView.Avalonia.ColorManagement;
 using PicView.Avalonia.CustomControls;
+using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.Interfaces;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.Navigation.Services;
 using PicView.Avalonia.Services;
-using PicView.Avalonia.WindowBehavior;
 using PicView.Avalonia.SettingsManagement;
 using PicView.Core.DebugTools;
 using PicView.Core.FileAssociations;
 using PicView.Core.FileHandling;
 using PicView.Core.Navigation;
 using PicView.Core.ProcessHandling;
+using PicView.Core.Thumbnailing;
 using PicView.Core.ViewModels;
 using R3;
 
@@ -390,14 +389,14 @@ public sealed class AppLifecycle
                 _startNewProcess(source, false);
                 break;
             case HandOverResponse.OpenInActiveMainWindow:
-                await BringToFrontAsync(active!).ConfigureAwait(true);
+                BringToFront(active);
                 // Need to stop taskbar progress if it's running, otherwise the new one will not be updated
                 _core.PlatformService?.StopTaskbarProgress();
                 // Off the UI thread, as every Source opens
                 await Task.Run(() => SourceOpener.OpenAsync(active!, _core, source!).AsTask()).ConfigureAwait(false);
                 break;
             case HandOverResponse.ActivateActiveMainWindow:
-                await BringToFrontAsync(active!).ConfigureAwait(true);
+                BringToFront(active);
                 break;
             default:
                 await MainWindows.OpenNewAsync(active, source).ConfigureAwait(false);
@@ -406,9 +405,9 @@ public sealed class AppLifecycle
     }
 
     // A minimized window is shown again first, in the Window Mode it had, or the user would see nothing happen
-    private async Task BringToFrontAsync(MainWindow window)
+    private void BringToFront(MainWindow window)
     {
-        await window.WindowModeSwitcher.LeaveMinimized().ConfigureAwait(true);
+        window.WindowModeSwitcher.LeaveMinimized();
         window.Activate();
         // Opening reads the active window's view model, and activating may report back later
         _core.MainWindows.ActiveWindow.Value = window.DataContext as MainWindowViewModel;

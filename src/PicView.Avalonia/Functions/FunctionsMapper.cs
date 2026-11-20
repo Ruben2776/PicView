@@ -444,12 +444,18 @@ public class FunctionsMapper : IActionRunner
     }
 
     /// <inheritdoc cref="WindowModeSwitcher.ToggleMaximized" />
-    private ValueTask Maximize() =>
+    private ValueTask Maximize()
+    {
         _mainWindow.WindowModeSwitcher.ToggleMaximized();
+        return ValueTask.CompletedTask;
+    }
     
     /// <inheritdoc cref="WindowModeSwitcher.LeaveTopMode" />
-    private ValueTask Restore() =>
+    private ValueTask Restore()
+    {
         _mainWindow.WindowModeSwitcher.LeaveTopMode();
+        return ValueTask.CompletedTask;
+    }
 
     private ValueTask Minimize()
     {
@@ -517,23 +523,33 @@ public class FunctionsMapper : IActionRunner
     #region Image Scaling and Window Behavior
     
     private ValueTask ZoomToFit() => ToggleHelper.Toggle(_vm.WindowSettings, static s => s.IsZoomedToFit);
-    
+
     /// <summary>
     /// Turns AutoFit on or off in this Main Window.
     /// </summary>
-    private async ValueTask AutoFitWindow() =>
-        await _mainWindow.WindowModeSwitcher.SetAutoFit(!_vm.WindowModeState.CurrentValue.AutoFit)
-            .ConfigureAwait(false);
+    private ValueTask AutoFitWindow()
+    {
+        _mainWindow.WindowModeSwitcher.SetAutoFit(!_vm.WindowModeState.CurrentValue.AutoFit);
+        return ValueTask.CompletedTask;
+    }
+
 
     /// <summary>
     /// Turns AutoFit off in this Main Window.
     /// </summary>
-    private async ValueTask NormalWindow() =>
-        await _mainWindow.WindowModeSwitcher.SetAutoFit(false).ConfigureAwait(false);
+    private ValueTask NormalWindow()
+    {
+        _mainWindow.WindowModeSwitcher.SetAutoFit(false);
+        return ValueTask.CompletedTask;
+    }
 
     /// <inheritdoc cref="WindowModeSwitcher.ToggleFullscreen" />
-    private ValueTask ToggleFullscreen() =>
+    private ValueTask ToggleFullscreen()
+    {
         _mainWindow.WindowModeSwitcher.ToggleFullscreen();
+        return ValueTask.CompletedTask;
+    }
+        
     
     /// <summary>
     /// Turns top most on or off for this Main Window.
@@ -811,8 +827,11 @@ public class FunctionsMapper : IActionRunner
         await ImageOptimizer.OptimizeImageAsync(_vm).ConfigureAwait(false);
 
     /// <inheritdoc cref="Core.Navigation.Slideshow.Toggle" />
-    private async ValueTask Slideshow() =>
-        await _vm.Slideshow.Toggle(0, _mainWindow.KeybindRouter.IsKeyHeldDown).ConfigureAwait(false);
+    private ValueTask Slideshow()
+    {
+        _vm.Slideshow.Toggle(0, _mainWindow.KeybindRouter.IsKeyHeldDown);
+        return ValueTask.CompletedTask;
+    }
 
     private ValueTask ColorPicker()
     {

@@ -19,31 +19,31 @@ public sealed class WindowModeSwitcher(MainWindow window, IWindowModeAdapter ada
     /// <inheritdoc cref="IWindowModeAdapter.SkipsInitialNativeState"/>
     public bool SkipsInitialNativeState => adapter.SkipsInitialNativeState;
 
-    public ValueTask ToggleFullscreen() => ChangeAsync(static state => state.ToggleFullscreen());
+    public void ToggleFullscreen() => Change(static state => state.ToggleFullscreen());
 
-    public ValueTask ToggleMaximized() => ChangeAsync(static state => state.ToggleMaximized());
+    public void ToggleMaximized() => Change(static state => state.ToggleMaximized());
 
-    public ValueTask LeaveTopMode() => ChangeAsync(static state => state.LeaveTopMode());
+    public void LeaveTopMode() => Change(static state => state.LeaveTopMode());
 
     /// <summary>
     /// Shows a minimized window again, in the mode it had before it was minimized. Any other window is left as it is.
     /// </summary>
-    public ValueTask LeaveMinimized() =>
-        ChangeAsync(static state => state.Mode is WindowMode.Minimized ? state.LeaveTopMode() : state);
+    public void LeaveMinimized() =>
+        Change(static state => state.Mode is WindowMode.Minimized ? state.LeaveTopMode() : state);
 
-    public ValueTask SetAutoFit(bool autoFit) => ChangeAsync(state => state.SetAutoFit(autoFit));
+    public void SetAutoFit(bool autoFit) => Change(state => state.SetAutoFit(autoFit));
 
-    public ValueTask ResizedByHand() => ChangeAsync(static state => state.ResizedByHand());
+    public void ResizedByHand() => Change(static state => state.ResizedByHand());
 
-    public ValueTask EnterSlideshow() => ChangeAsync(static state => state.EnterSlideshow());
+    public void EnterSlideshow() => Change(static state => state.EnterSlideshow());
 
-    public ValueTask LeaveSlideshow() => ChangeAsync(static state => state.LeaveSlideshow());
+    public void LeaveSlideshow() => Change(static state => state.LeaveSlideshow());
 
     /// <summary>
     /// Brings the Window Mode in line with a native state the operating system reports.
     /// </summary>
-    public ValueTask OnNativeStateAsync(WindowState state) =>
-        ChangeAsync(current => current.OnNativeState(ToWindowMode(state)));
+    public void OnNativeStateAsync(WindowState state) =>
+        Change(current => current.OnNativeState(ToWindowMode(state)));
 
     /// <summary>
     /// Starts the window in the mode its Window Settings start it in. Call on the UI thread.
@@ -114,38 +114,40 @@ public sealed class WindowModeSwitcher(MainWindow window, IWindowModeAdapter ada
         }
     }
 
-    private async ValueTask ChangeAsync(Func<WindowModeState, WindowModeState> rule)
-    {
-        if (Dispatcher.UIThread.CheckAccess())
-        {
-            Change(rule);
-        }
-        else
-        {
-            await Dispatcher.UIThread.InvokeAsync(() => Change(rule));
-        }
-    }
-
     /// <summary>
     /// Applies the rule to the window. Its remembered mode stays with it until it closes and stores it.
     /// </summary>
     private void Change(Func<WindowModeState, WindowModeState> rule)
     {
-        if (window.DataContext is not MainWindowViewModel vm)
+        if (Dispatcher.UIThread.CheckAccess())
         {
-            return;
+            ApplyChange();
         }
-
-        var previous = vm.WindowModeState.CurrentValue;
-        var next = rule(previous);
-        if (previous.Mode is WindowMode.Normal && next.Mode is not WindowMode.Normal)
+        else
         {
-            // While the window is still Normal, so its Window Settings keep its last Normal size and position. Not at
-            // Start, where a window that starts maximized or fullscreen was never given its Normal size
-            WindowFunctions.RememberBounds(window);
+            Dispatcher.UIThread.Invoke(() => Change(rule));
         }
+        
+        return;
+        
+        void ApplyChange()
+        {
+            if (window.DataContext is not MainWindowViewModel vm)
+            {
+                return;
+            }
 
-        Apply(vm, previous, next);
+            var previous = vm.WindowModeState.CurrentValue;
+            var next = rule(previous);
+            if (previous.Mode is WindowMode.Normal && next.Mode is not WindowMode.Normal)
+            {
+                // While the window is still Normal, so its Window Settings keep its last Normal size and position. Not at
+                // Start, where a window that starts maximized or fullscreen was never given its Normal size
+                WindowFunctions.RememberBounds(window);
+            }
+
+            Apply(vm, previous, next);
+        }
     }
 
     private void Apply(MainWindowViewModel vm, WindowModeState previous, WindowModeState next)

@@ -39,7 +39,7 @@ public sealed class Slideshow(
     /// </summary>
     /// <param name="milliseconds">The time per image; zero or less uses the slideshow timer setting.</param>
     /// <param name="isKeyHeldDown">Whether the Keybind that asked is only being held down.</param>
-    public Task Toggle(int milliseconds, bool isKeyHeldDown)
+    public void Toggle(int milliseconds, bool isKeyHeldDown)
     {
         if (IsRunning)
         {
@@ -48,10 +48,13 @@ public sealed class Slideshow(
                 Stop();
             }
 
-            return Task.CompletedTask;
+            return;
         }
 
-        return canNavigateForwards() ? StartAsync(milliseconds) : Task.CompletedTask;
+        if (canNavigateForwards())
+        {
+            Start(milliseconds);
+        }
     }
 
     /// <summary>
@@ -65,7 +68,7 @@ public sealed class Slideshow(
         }
 
         End();
-        _ = LeaveAsync();
+        LeaveAsync();
     }
 
     /// <summary>
@@ -79,7 +82,7 @@ public sealed class Slideshow(
         }
     }
 
-    private async Task StartAsync(int milliseconds)
+    private void Start(int milliseconds)
     {
         _context = SynchronizationContext.Current;
         var run = ++_run;
@@ -92,7 +95,7 @@ public sealed class Slideshow(
 
         if (switcher() is { } modeSwitcher)
         {
-            await modeSwitcher.EnterSlideshow().ConfigureAwait(false);
+            modeSwitcher.EnterSlideshow();
         }
 
         if (run != _run)
@@ -100,7 +103,7 @@ public sealed class Slideshow(
             // Stopped while it went fullscreen: leaving came first, so give back the mode now, unless a new run took over
             if (!IsRunning)
             {
-                await LeaveAsync().ConfigureAwait(false);
+                LeaveAsync();
             }
 
             return;
@@ -153,11 +156,11 @@ public sealed class Slideshow(
         screensaver.Release();
     }
 
-    private async Task LeaveAsync()
+    private void LeaveAsync()
     {
         if (switcher() is { } modeSwitcher)
         {
-            await modeSwitcher.LeaveSlideshow().ConfigureAwait(false);
+            modeSwitcher.LeaveSlideshow();
         }
     }
 

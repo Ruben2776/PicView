@@ -6,32 +6,32 @@ namespace PicView.Core.IPlatform;
 /// </summary>
 public interface IWindowModeSwitcher
 {
-    ValueTask ToggleFullscreen();
+    void ToggleFullscreen();
 
-    ValueTask ToggleMaximized();
+    void ToggleMaximized();
 
     /// <summary>
     /// Leaves the mode on top, as the Restore button does.
     /// </summary>
-    ValueTask LeaveTopMode();
+    void LeaveTopMode();
 
     /// <summary>
     /// Turns AutoFit on or off for this window, without writing it to the settings record.
     /// </summary>
-    ValueTask SetAutoFit(bool autoFit);
+    void SetAutoFit(bool autoFit);
 
     /// <summary>
     /// The user resized the window by hand, which turns AutoFit off for only this window.
     /// </summary>
-    ValueTask ResizedByHand();
+    void ResizedByHand();
 
     /// <summary>
     /// Shows the window fullscreen for a slideshow, without changing the remembered mode.
     /// </summary>
-    ValueTask EnterSlideshow();
+    void EnterSlideshow();
 
     /// <summary>
     /// Gives back the mode the window had before the slideshow.
     /// </summary>
-    ValueTask LeaveSlideshow();
+    void LeaveSlideshow();
 }
