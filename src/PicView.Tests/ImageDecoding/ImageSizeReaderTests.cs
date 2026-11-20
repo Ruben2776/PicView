@@ -123,6 +123,16 @@ public class ImageSizeReaderTests : IDisposable
     }
 
     [Fact]
+    public void TryReadHeader_TextStartingLikeABmp_Fails()
+    {
+        var path = Path.Combine(_directory, "notes.bmp");
+        File.WriteAllText(path, "BMW service notes, kept next to the photos of the car");
+
+        Assert.False(ImageSizeReader.TryReadHeader(path, out _));
+        Assert.Equal(default, ImageSizeReader.Read(path));
+    }
+
+    [Fact]
     public void TryReadHeader_PngDeclaringZeroWidth_Fails()
     {
         var path = Write(MagickFormat.Png, "zerowidth.png");
@@ -251,6 +261,8 @@ public class ImageSizeReaderTests : IDisposable
     [InlineData("photo.dng")]
     [InlineData("photo.NEF")]
     [InlineData("photo.cr2")]
+    [InlineData("photo.sr2")]
+    [InlineData("photo.iiq")]
     public void TryReadHeader_TiffBytesUnderACameraRawExtension_Fails(string fileName)
     {
         var path = Write(MagickFormat.Tiff, fileName);

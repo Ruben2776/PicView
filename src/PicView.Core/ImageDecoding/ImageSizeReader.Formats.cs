@@ -63,7 +63,7 @@ public static partial class ImageSizeReader
         if (isLittleEndianTiff || header.StartsWith((ReadOnlySpan<byte>)[0x4D, 0x4D, 0x00, 0x2A]))
         {
             // A camera RAW looks like a TIFF whose first image is a preview, so its own decoder has to answer
-            return !IsCameraRawExtension(Path.GetExtension(path.AsSpan())) &&
+            return IsTiffExtension(Path.GetExtension(path.AsSpan())) &&
                    TryReadTiff(handle, header, isLittleEndianTiff, out size);
         }
 
@@ -71,21 +71,12 @@ public static partial class ImageSizeReader
     }
 
     /// <summary>
-    /// Whether <paramref name="extension"/> is one of the camera RAW formats that are built on TIFF.
+    /// Whether <paramref name="extension"/> says the file is a TIFF itself. Many formats are built on TIFF, the
+    /// camera RAW ones above all, and new ones keep coming, so only the TIFF extensions are answered from the header.
     /// </summary>
-    private static bool IsCameraRawExtension(ReadOnlySpan<char> extension)
-    {
-        if (extension.Length is < 4 or > 4)
-        {
-            return false;
-        }
-
-        Span<char> lower = stackalloc char[4];
-        extension.ToLowerInvariant(lower);
-        return lower is ".3fr" or ".arw" or ".cr2" or ".crw" or ".dcr" or ".dng" or ".erf" or ".kdc" or ".mdc"
-            or ".mef" or ".mos" or ".mrw" or ".nef" or ".nrw" or ".orf" or ".pef" or ".raw" or ".rw2" or ".srf"
-            or ".x3f";
-    }
+    private static bool IsTiffExtension(ReadOnlySpan<char> extension) =>
+        extension.Equals(".tif", StringComparison.OrdinalIgnoreCase) ||
+        extension.Equals(".tiff", StringComparison.OrdinalIgnoreCase);
 
     /// <summary>
     /// Reads the width and height tags of the first image file directory, in the byte order the file names.
@@ -358,7 +349,15 @@ public static partial class ImageSizeReader
         }
 
         const uint coreHeaderSize = 12;
-        if (BinaryPrimitives.ReadUInt32LittleEndian(header[14..]) is coreHeaderSize)
+        var headerSize = BinaryPrimitives.ReadUInt32LittleEndian(header[14..]);
+
+        // The sizes the kinds of info header have. Two letters are a weak signature, so anything else is not a BMP
+        if (headerSize is not (coreHeaderSize or 16 or 40 or 52 or 56 or 64 or 108 or 124))
+        {
+            return false;
+        }
+
+        if (headerSize is coreHeaderSize)
         {
             size = new ImageSize(BinaryPrimitives.ReadUInt16LittleEndian(header[18..]),
                 BinaryPrimitives.ReadUInt16LittleEndian(header[20..]));
