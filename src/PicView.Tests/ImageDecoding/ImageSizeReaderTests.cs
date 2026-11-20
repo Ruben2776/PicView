@@ -199,6 +199,43 @@ public class ImageSizeReaderTests : IDisposable
         Assert.False(ImageSizeReader.TryReadHeader(path, out _));
     }
 
+    [Theory]
+    [InlineData("lossy", "VP8 ")]
+    [InlineData("lossless", "VP8L")]
+    [InlineData("extended", "VP8X")]
+    public void TryReadHeader_Webp_AgreesWithTheMagickPing(string kind, string firstChunk)
+    {
+        var path = Write(MagickFormat.WebP, kind + ".webp", image =>
+        {
+            image.Settings.SetDefine(MagickFormat.WebP, "lossless", kind is "lossless");
+            if (kind is "extended")
+            {
+                // A lossy image with transparency needs the extended format to hold its alpha chunk
+                image.Alpha(AlphaAction.On);
+                image.Evaluate(Channels.Alpha, EvaluateOperator.Multiply, 0.5);
+            }
+        });
+
+        Assert.Equal(firstChunk, System.Text.Encoding.ASCII.GetString(File.ReadAllBytes(path), 12, 4));
+        AssertReadsFromTheHeaderLikeThePing(path);
+    }
+
+    [Fact]
+    public void TryReadHeader_AnimatedWebp_ReportsTheCanvas()
+    {
+        var path = Path.Combine(_directory, "animated.webp");
+        using (var frames = new MagickImageCollection())
+        {
+            frames.Add(new MagickImage(MagickColors.CornflowerBlue, Width, Height));
+            frames.Add(new MagickImage(MagickColors.Tomato, Width, Height));
+            frames.Add(new MagickImage(MagickColors.SeaGreen, Width, Height));
+            frames.Write(path, MagickFormat.WebP);
+        }
+
+        Assert.True(ImageSizeReader.TryReadHeader(path, out var size));
+        Assert.Equal(new ImageSize(Width, Height), size);
+    }
+
     public void Dispose()
     {
         try

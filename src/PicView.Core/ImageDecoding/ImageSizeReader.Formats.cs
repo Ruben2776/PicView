@@ -54,8 +54,68 @@ public static partial class ImageSizeReader
             return TryReadJpeg(handle, out size);
         }
 
+        if (header.StartsWith("RIFF"u8) && header.Length >= 12 && header.Slice(8, 4).SequenceEqual("WEBP"u8))
+        {
+            return TryReadWebp(header, out size);
+        }
+
         return false;
     }
+
+    /// <summary>
+    /// The first chunk after the RIFF header says which of the three kinds of WebP this is, and each keeps its size
+    /// in its own way.
+    /// </summary>
+    private static bool TryReadWebp(ReadOnlySpan<byte> header, out ImageSize size)
+    {
+        size = default;
+        if (header.Length < 30)
+        {
+            return false;
+        }
+
+        var chunk = header.Slice(12, 4);
+        if (chunk.SequenceEqual("VP8 "u8))
+        {
+            // Lossy: after the frame tag and its start code, 14 bits each; the two above them are a scale
+            if (!header.Slice(23, 3).SequenceEqual((ReadOnlySpan<byte>)[0x9D, 0x01, 0x2A]))
+            {
+                return false;
+            }
+
+            const int sizeBits = 0x3FFF;
+            size = new ImageSize((uint)(BinaryPrimitives.ReadUInt16LittleEndian(header[26..]) & sizeBits),
+                (uint)(BinaryPrimitives.ReadUInt16LittleEndian(header[28..]) & sizeBits));
+            return true;
+        }
+
+        if (chunk.SequenceEqual("VP8L"u8))
+        {
+            // Lossless: after its signature byte, 14 bits of width then 14 of height, each stored one less
+            const byte losslessSignature = 0x2F;
+            if (header[20] is not losslessSignature)
+            {
+                return false;
+            }
+
+            const uint sizeBits = 0x3FFF;
+            var bits = BinaryPrimitives.ReadUInt32LittleEndian(header[21..]);
+            size = new ImageSize((bits & sizeBits) + 1, ((bits >> 14) & sizeBits) + 1);
+            return true;
+        }
+
+        if (chunk.SequenceEqual("VP8X"u8))
+        {
+            // Extended, which an animation also is: the canvas, 24 bits each, stored one less
+            size = new ImageSize(ReadUInt24LittleEndian(header[24..]) + 1, ReadUInt24LittleEndian(header[27..]) + 1);
+            return true;
+        }
+
+        return false;
+    }
+
+    private static uint ReadUInt24LittleEndian(ReadOnlySpan<byte> bytes) =>
+        (uint)(bytes[0] | bytes[1] << 8 | bytes[2] << 16);
 
     private static ReadOnlySpan<byte> JpegSignature => [0xFF, 0xD8, 0xFF];
 
