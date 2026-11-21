@@ -1,4 +1,3 @@
-using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -26,6 +25,8 @@ public class DraggableTabControl : TabControl
     // --- Constants ---
     private const double DragThreshold = 4.0;
     private const double DetachThreshold = 50.0;
+    
+    private const double SwapThresholdRatio = 0.7;
 
     // Auto-Scroll Settings
     private const double ScrollTriggerZone = 30.0; // Distance from edge to trigger scroll
@@ -515,9 +516,9 @@ public class DraggableTabControl : TabControl
             }
 
             var tabStartX = _originalXPositions.TryGetValue(tab, out var val) ? val : tab.Bounds.X;
-            var tabCenter = tabStartX + tab.Bounds.Width / 2;
+            var swapThreshold = tabStartX + tab.Bounds.Width * SwapThresholdRatio;
 
-            if (dragCenter > tabCenter)
+            if (dragCenter > swapThreshold)
             {
                 newTargetIndex++;
             }
