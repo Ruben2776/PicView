@@ -27,7 +27,7 @@ public sealed class Thumbnails
     private readonly SharedImageCache _images;
     private readonly ThumbnailStore _store = new();
     private readonly TileThumbnailStore _tiles;
-    private readonly SemaphoreSlim _slots;
+    private readonly DecodeSlots _slots;
 
     // Counts the files forgotten, so a thumbnail made from a file's old image while it was forgotten is not kept
     private long _forgotten;
@@ -42,7 +42,7 @@ public sealed class Thumbnails
         _decoder = decoder;
         _images = images;
         _tiles = new TileThumbnailStore(tileBudgetInBytes);
-        _slots = new SemaphoreSlim(slots > 0 ? slots : Math.Clamp(Environment.ProcessorCount / 2, 2, 4));
+        _slots = new DecodeSlots(slots > 0 ? slots : Math.Clamp(Environment.ProcessorCount / 2, 2, 4));
     }
 
     /// <summary>
@@ -61,34 +61,32 @@ public sealed class Thumbnails
     /// </summary>
     public ValueTask<object?> GetQuickAsync(FileInfo file, uint height, CancellationToken ct = default)
     {
-        if (_store.TryGet(file.FullName, out var kept, out _))
-        {
-            return ValueTask.FromResult(kept);
-        }
-
-        return new ValueTask<object?>(Task.Run(() => _decoder.GetReadyMade(file, height), ct));
+        return _store.TryGet(file.FullName, out var kept, out _) 
+            ? ValueTask.FromResult(kept) :
+            new ValueTask<object?>(Task.Run(() => _decoder.GetReadyMade(file, height), ct));
     }
 
     /// <summary>
     /// A thumbnail of <paramref name="file"/> no taller than <paramref name="height"/>, made if none is kept that tall.
     /// </summary>
     /// <param name="owner">Who keeps the thumbnail: a tab's id, <see cref="AppOwner"/>, or null to keep nothing.</param>
-    /// <param name="ct">Cancels a request still waiting for its turn to decode.</param>
-    /// <returns>The thumbnail, or null when the file gives none.</returns>
-    /// <exception cref="OperationCanceledException"><paramref name="ct"/> was cancelled before decoding started.</exception>
+    /// <param name="ct">Cancels a request still waiting for its turn to decode, without throwing.</param>
+    /// <returns>The thumbnail, or null when the file gives none or <paramref name="ct"/> was cancelled before
+    /// decoding started.</returns>
     public ValueTask<object?> GetAsync(FileInfo file, uint height, uint? owner, CancellationToken ct = default)
     {
-        if (_store.TryGet(file.FullName, out var kept, out var keptHeight) && keptHeight >= height)
+        if (!_store.TryGet(file.FullName, out var kept, out var keptHeight) || keptHeight < height)
         {
-            if (owner is { } id)
-            {
-                _store.AddOwner(id, file.FullName);
-            }
-
-            return ValueTask.FromResult(kept);
+            return new ValueTask<object?>(MakeAsync(file, height, owner, false, ct));
         }
 
-        return new ValueTask<object?>(MakeAsync(file, height, owner, false, ct));
+        if (owner is { } id)
+        {
+            _store.AddOwner(id, file.FullName);
+        }
+
+        return ValueTask.FromResult(kept);
+
     }
 
     /// <summary>
@@ -96,9 +94,9 @@ public sealed class Thumbnails
     /// <paramref name="height"/>, made if none is kept that was made for at least that height. Tile Thumbnails are
     /// kept for the whole app up to <see cref="TileBudgetInBytes"/>, and never in an owner's store.
     /// </summary>
-    /// <param name="ct">Cancels a request still waiting for its turn to decode.</param>
-    /// <returns>The thumbnail, or null when the file gives none.</returns>
-    /// <exception cref="OperationCanceledException"><paramref name="ct"/> was cancelled before decoding started.</exception>
+    /// <param name="ct">Cancels a request still waiting for its turn to decode, without throwing.</param>
+    /// <returns>The thumbnail, or null when the file gives none or <paramref name="ct"/> was cancelled before
+    /// decoding started.</returns>
     public ValueTask<object?> GetTileAsync(FileInfo file, uint height, CancellationToken ct = default)
     {
         if (_tiles.TryGet(file.FullName, out var kept, out var keptHeight) && keptHeight >= height)
@@ -163,7 +161,13 @@ public sealed class Thumbnails
 
     private async Task<object?> MakeAsync(FileInfo file, uint height, uint? owner, bool tile, CancellationToken ct)
     {
-        await _slots.WaitAsync(ct).ConfigureAwait(false);
+        // A tile that scrolls out cancels while it waits, the normal case during a fill or a fast scroll, so a
+        // cancel is a result here rather than an exception
+        if (!await _slots.TakeAsync(ct).ConfigureAwait(false))
+        {
+            return null;
+        }
+
         var forgotten = Interlocked.Read(ref _forgotten);
         object? thumbnail;
         try

@@ -1,8 +1,7 @@
-using PicView.Core.Thumbnailing;
 using PicView.Core.DebugTools;
 using PicView.Core.MotionPhoto;
 using PicView.Core.Navigation;
-using PicView.Core.Navigation.Interfaces;
+using PicView.Core.Thumbnailing;
 using PicView.Core.ViewModels;
 using R3;
 
@@ -627,7 +626,7 @@ public class GalleryCoordinator : IDisposable
     /// Loads <paramref name="item"/>'s thumbnail when the item is shown, which the tab then keeps. The motion photo
     /// badge is detected along with it.
     /// </summary>
-    /// <returns>The thumbnail, or null when the file gives none.</returns>
+    /// <returns>The thumbnail, or null when the file gives none or the request was cancelled.</returns>
     internal async ValueTask<object?> LoadThumbnailAsync(GalleryItemViewModel item, CancellationToken cancellationToken)
     {
         var file = item.FileInfo!;
@@ -636,10 +635,15 @@ public class GalleryCoordinator : IDisposable
         if (request.IsCompleted)
         {
             // A kept thumbnail, which comes back at once, on the caller's thread
-            return request.Result;
+            return await request.ConfigureAwait(false);
         }
 
         var thumbnail = await request.ConfigureAwait(false);
+        if (thumbnail is null && cancellationToken.IsCancellationRequested)
+        {
+            // Cancelled before its turn to decode came, so the file was never read
+            return null;
+        }
 
         // Off the UI thread now. Detection reads the file again up to three times, so skip it while the badges are
         // hidden
@@ -661,7 +665,7 @@ public class GalleryCoordinator : IDisposable
     /// <summary>
     /// Loads <paramref name="item"/>'s Tile Thumbnail made at <paramref name="height"/>.
     /// </summary>
-    /// <returns>The thumbnail, or null when the file gives none.</returns>
+    /// <returns>The thumbnail, or null when the file gives none or the request was cancelled.</returns>
     internal ValueTask<object?> LoadTileThumbnailAsync(GalleryItemViewModel item, uint height,
         CancellationToken cancellationToken) =>
         _thumbnails.GetTileAsync(item.FileInfo!, height, cancellationToken);

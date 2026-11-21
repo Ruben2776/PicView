@@ -249,10 +249,6 @@ public partial class GalleryItem : NavigateAbleItem
                 await Dispatcher.UIThread.InvokeAsync(() => ShowSmallThumbnail(vm, thumb, token));
             }
         }
-        catch (OperationCanceledException)
-        {
-            // Expected behavior when the user scrolls fast
-        }
         catch (Exception ex)
         {
             DebugHelper.LogDebug(nameof(GalleryItem), nameof(LoadImage), ex);
@@ -301,11 +297,9 @@ public partial class GalleryItem : NavigateAbleItem
         object? thumbnail = null;
         try
         {
+            // Scrolled again, or the item was unloaded, while it waited for its turn: null, and EndSharpening sees
+            // the cancel
             thumbnail = await vm.LoadTileThumbnailAsync(height, cts.Token).ConfigureAwait(false);
-        }
-        catch (OperationCanceledException)
-        {
-            // Scrolled again, or the item was unloaded, while it waited for its turn
         }
         catch (Exception ex)
         {

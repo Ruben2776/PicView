@@ -158,7 +158,7 @@ public class ThumbnailsTests
     }
 
     [Fact]
-    public async Task GetAsync_CancelledWhileWaitingForASlot_Throws()
+    public async Task GetAsync_CancelledWhileWaitingForASlot_ReturnsNullWithoutDecoding()
     {
         var thumbnails = new Thumbnails(_decoder, _images, slots: 1);
         using var gate = new ManualResetEventSlim(false);
@@ -169,10 +169,41 @@ public class ThumbnailsTests
         var waiting = thumbnails.GetAsync(File("waiting.jpg"), 200, Tab, cts.Token).AsTask();
         await cts.CancelAsync();
 
-        await Assert.ThrowsAnyAsync<OperationCanceledException>(() => waiting);
+        Assert.Null(await waiting);
         gate.Set();
         await busy;
         Assert.DoesNotContain("decode:waiting.jpg", _decoder.Calls);
+    }
+
+    [Fact]
+    public async Task GetAsync_CancelledWhileWaitingForASlot_LeavesTheSlotToTheNextRequest()
+    {
+        var thumbnails = new Thumbnails(_decoder, _images, slots: 1);
+        using var gate = new ManualResetEventSlim(false);
+        _decoder.DecodeGate = gate;
+        var busy = thumbnails.GetAsync(File("busy.jpg"), 200, Tab).AsTask();
+        using var cts = new CancellationTokenSource();
+        var cancelled = thumbnails.GetAsync(File("cancelled.jpg"), 200, Tab, cts.Token).AsTask();
+        var next = thumbnails.GetAsync(File("next.jpg"), 200, Tab).AsTask();
+
+        await cts.CancelAsync();
+        Assert.Null(await cancelled);
+        gate.Set();
+        await busy;
+
+        Assert.NotNull(await next);
+        Assert.DoesNotContain("decode:cancelled.jpg", _decoder.Calls);
+        Assert.Equal(1, _decoder.MostDecodesInFlight);
+    }
+
+    [Fact]
+    public async Task GetAsync_AlreadyCancelled_ReturnsNullWithoutDecoding()
+    {
+        using var cts = new CancellationTokenSource();
+        await cts.CancelAsync();
+
+        Assert.Null(await _thumbnails.GetAsync(File("a.jpg"), 200, Tab, cts.Token));
+        Assert.DoesNotContain("decode:a.jpg", _decoder.Calls);
     }
 
     [Fact]
@@ -425,7 +456,7 @@ public class ThumbnailsTests
     }
 
     [Fact]
-    public async Task GetTileAsync_CancelledWhileWaitingForASlot_Throws()
+    public async Task GetTileAsync_CancelledWhileWaitingForASlot_ReturnsNullWithoutDecoding()
     {
         var thumbnails = new Thumbnails(_decoder, _images, slots: 1);
         using var gate = new ManualResetEventSlim();
@@ -436,7 +467,7 @@ public class ThumbnailsTests
 
         await cts.CancelAsync();
 
-        await Assert.ThrowsAnyAsync<OperationCanceledException>(() => waiting);
+        Assert.Null(await waiting);
         gate.Set();
         await first;
         Assert.DoesNotContain("decode-full:b.jpg", _decoder.Calls);
