@@ -9,10 +9,8 @@ using Avalonia.Interactivity;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using PicView.Avalonia.Views.Gallery;
-using PicView.Core.DebugTools;
 using PicView.Core.Gallery;
 using PicView.Core.ViewModels;
-using R3;
 
 namespace PicView.Avalonia.CustomControls;
 
@@ -170,6 +168,8 @@ public class NavigateAbleItemsViewer : ItemsControl
         // Read from the panel: a recycled item is not in it yet, and the tile style may not be applied yet
         var isTile = ItemsPanelRoot is VirtualizingGallery gallery && ShowsTiles(gallery);
         _ = galleryItem.LoadImage(vm, isTile).ConfigureAwait(false);
+        // What the item showed by now, it showed at once. A thumbnail that comes later fades in
+        galleryItem.IsTakingItem = false;
         if (isTile)
         {
             RequestTileSharpen();
@@ -182,9 +182,20 @@ public class NavigateAbleItemsViewer : ItemsControl
         if (container is ContentPresenter { Child: GalleryItem galleryItem })
         {
             galleryItem.UnloadImage();
+            galleryItem.ReleaseContextMenu();
         }
 
-        base.ClearContainerForItemOverride(container);
+        if (container is ContentPresenter presenter)
+        {
+            // Only the content. The base clears the template too, and the presenter then discards the item, which the
+            // panel's next use of the container would have to build again
+            presenter.ClearValue(ContentPresenter.ContentProperty);
+        }
+        else
+        {
+            base.ClearContainerForItemOverride(container);
+        }
+
         if (container is not ContentPresenter { Child: NavigateAbleItem navItem })
         {
             return;

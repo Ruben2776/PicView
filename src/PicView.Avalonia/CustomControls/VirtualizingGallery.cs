@@ -94,6 +94,23 @@ public class VirtualizingGallery : VirtualizingPanel
 
     private readonly GalleryLayout _layout = new();
 
+    /// <summary>
+    ///     How many cleared containers the panel keeps at least, however few items are realized.
+    /// </summary>
+    private const int MinPooledContainers = 32;
+
+    /// <summary>
+    ///     The recycle key the generator gave a container when it was created, which says what it can be reused for.
+    /// </summary>
+    private static readonly AttachedProperty<object?> RecycleKeyProperty =
+        AvaloniaProperty.RegisterAttached<VirtualizingGallery, Control, object?>("RecycleKey");
+
+    /// <summary>
+    ///     Cleared containers by recycle key. They stay in the panel, hidden, and the next item that needs a container
+    ///     takes one, since creating a container costs far more than giving one another item.
+    /// </summary>
+    private readonly Dictionary<object, Stack<Control>> _pooledContainers = [];
+
     private readonly List<RealizedGalleryItem> _realizedItems = [];
     public IReadOnlyList<RealizedGalleryItem> RealizedItems => _realizedItems;
     private Rect _viewport;
@@ -534,8 +551,7 @@ public class VirtualizingGallery : VirtualizingPanel
         for (var i = _realizedItems.Count - 1; i >= 0; i--)
         {
             var realized = _realizedItems[i];
-            ItemContainerGenerator?.ClearItemContainer(realized.Element);
-            RemoveInternalChild(realized.Element);
+            Recycle(realized.Element);
         }
         _realizedItems.Clear();
         _layout.Clear();
@@ -619,7 +635,7 @@ public class VirtualizingGallery : VirtualizingPanel
             return _layout.Extent;
         }
 
-        // 5. Recycle items that are no longer visible
+        // 5. Recycle items that are no longer visible. Step 6 reuses their containers
         for (var i = _realizedItems.Count - 1; i >= 0; i--)
         {
             var realized = _realizedItems[i];
@@ -628,8 +644,7 @@ public class VirtualizingGallery : VirtualizingPanel
                 continue;
             }
 
-            ItemContainerGenerator?.ClearItemContainer(realized.Element);
-            RemoveInternalChild(realized.Element);
+            Recycle(realized.Element);
             _realizedItems.RemoveAt(i);
         }
 
@@ -649,6 +664,8 @@ public class VirtualizingGallery : VirtualizingPanel
                 RealizeAndMeasure(items, first - step);
             }
         }
+
+        TrimPool();
 
         // 7. Hold the item nearest the middle of that view, for when someone else scrolls it. A view on pixels holds it
         // at its exact distance, not where rounding put the view, so roundings never add up over many moves
@@ -779,8 +796,7 @@ public class VirtualizingGallery : VirtualizingPanel
         // If the realized container's DataContext does not match the current item, recycle it
         if (container is not null && !ReferenceEquals(container.DataContext, item))
         {
-            ItemContainerGenerator?.ClearItemContainer(container);
-            RemoveInternalChild(container);
+            Recycle(container);
             for (var i = _realizedItems.Count - 1; i >= 0; i--)
             {
                 if (_realizedItems[i].Element == container)
@@ -795,9 +811,21 @@ public class VirtualizingGallery : VirtualizingPanel
         // Generate and add container using Avalonia's generator
         if (container is null && ItemContainerGenerator.NeedsContainer(item, index, out var recycleKey))
         {
-            container = ItemContainerGenerator.CreateContainer(item, index, recycleKey);
-            ItemContainerGenerator.PrepareItemContainer(container, item, index);
-            AddInternalChild(container);
+            if (recycleKey is not null && _pooledContainers.TryGetValue(recycleKey, out var pooled) &&
+                pooled.TryPop(out container))
+            {
+                // A container another item left: it is in the panel already, hidden
+                ItemContainerGenerator.PrepareItemContainer(container, item, index);
+                container.SetCurrentValue(IsVisibleProperty, true);
+            }
+            else
+            {
+                container = ItemContainerGenerator.CreateContainer(item, index, recycleKey);
+                container.SetValue(RecycleKeyProperty, recycleKey);
+                ItemContainerGenerator.PrepareItemContainer(container, item, index);
+                AddInternalChild(container);
+            }
+
             ItemContainerGenerator.ItemContainerPrepared(container, item, index);
 
             // Keep the realized items list sorted by index
@@ -812,6 +840,51 @@ public class VirtualizingGallery : VirtualizingPanel
 
         // Measure the container using the exact bounds we already calculated
         container?.Measure(_layout.Bounds[index].Size);
+    }
+
+    /// <summary>
+    ///     Clears the container of its item and keeps it in the panel, hidden, for the next item that needs one. The
+    ///     caller takes it off the realized items.
+    /// </summary>
+    private void Recycle(Control container)
+    {
+        ItemContainerGenerator?.ClearItemContainer(container);
+        if (container.GetValue(RecycleKeyProperty) is not { } recycleKey)
+        {
+            RemoveInternalChild(container);
+            return;
+        }
+
+        container.SetCurrentValue(IsVisibleProperty, false);
+        if (!_pooledContainers.TryGetValue(recycleKey, out var pooled))
+        {
+            pooled = new Stack<Control>();
+            _pooledContainers[recycleKey] = pooled;
+        }
+
+        pooled.Push(container);
+    }
+
+    /// <summary>
+    ///     Removes the cleared containers beyond as many as are realized, so a view that showed many small items
+    ///     doesn't keep them all once it shows a few large ones.
+    /// </summary>
+    private void TrimPool()
+    {
+        var excess = -Math.Max(_realizedItems.Count, MinPooledContainers);
+        foreach (var pooled in _pooledContainers.Values)
+        {
+            excess += pooled.Count;
+        }
+
+        foreach (var pooled in _pooledContainers.Values)
+        {
+            while (excess > 0 && pooled.TryPop(out var container))
+            {
+                RemoveInternalChild(container);
+                excess--;
+            }
+        }
     }
 
     /// <inheritdoc />
@@ -867,8 +940,7 @@ public class VirtualizingGallery : VirtualizingPanel
                         var realized = _realizedItems[i];
                         if (realized.Index >= e.OldStartingIndex && realized.Index < oldEndIndex)
                         {
-                            ItemContainerGenerator?.ClearItemContainer(realized.Element);
-                            RemoveInternalChild(realized.Element);
+                            Recycle(realized.Element);
                             _realizedItems.RemoveAt(i);
                         }
                         else if (realized.Index >= oldEndIndex)
@@ -896,8 +968,7 @@ public class VirtualizingGallery : VirtualizingPanel
                             continue;
                         }
 
-                        ItemContainerGenerator?.ClearItemContainer(realized.Element);
-                        RemoveInternalChild(realized.Element);
+                        Recycle(realized.Element);
                         _realizedItems.RemoveAt(i);
                     }
                 }

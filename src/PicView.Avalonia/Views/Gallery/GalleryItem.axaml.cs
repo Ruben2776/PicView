@@ -49,6 +49,18 @@ public partial class GalleryItem : NavigateAbleItem
         InitializeComponent();
     }
 
+    /// <summary>
+    /// True from when the item's data context starts to change until the viewer has started loading the thumbnail of
+    /// the gallery item it shows now. A thumbnail shown in between shows at once, in a recycled item as in a new one.
+    /// </summary>
+    internal bool IsTakingItem { get; set; }
+
+    protected override void OnDataContextBeginUpdate()
+    {
+        base.OnDataContextBeginUpdate();
+        IsTakingItem = true;
+    }
+
     public bool IsTile
     {
         get => GetValue(IsTileProperty);
@@ -111,13 +123,27 @@ public partial class GalleryItem : NavigateAbleItem
 
     private void OnThumbnailChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
     {
-        // A thumbnail that is there before the item is first arranged shows at once
-        if (e.Property != Image.SourceProperty || e.OldValue is not null || e.NewValue is null || Bounds.Width <= 0)
+        if (e.Property != Image.SourceProperty || e.OldValue is not null || e.NewValue is null)
         {
             return;
         }
 
         var image = GalleryImage;
+        if (IsTakingItem)
+        {
+            // A thumbnail the new item has already shows at once, whatever the last item's fade left behind
+            image.Transitions = null;
+            image.Opacity = 1;
+            image.RenderTransform = ThumbnailEndScale;
+            return;
+        }
+
+        // A thumbnail that is there before the item is first arranged shows at once
+        if (Bounds.Width <= 0)
+        {
+            return;
+        }
+
         image.Transitions = null;
         image.Opacity = 0;
         image.RenderTransform = ThumbnailStartScale;
@@ -364,6 +390,12 @@ public partial class GalleryItem : NavigateAbleItem
         vm.TileHeightShown = 0;
     }
 
+    /// <summary>
+    /// Gives the gallery view's menu back, closing it, if this item has it: the menu would act on whatever the item
+    /// shows next, or keep an item that left the gallery alive.
+    /// </summary>
+    internal void ReleaseContextMenu() => (ContextMenu as GalleryItemContextMenu)?.DetachFrom(this);
+
     protected override void OnPointerPressed(PointerPressedEventArgs e)
     {
         base.OnPointerPressed(e);
@@ -404,7 +436,6 @@ public partial class GalleryItem : NavigateAbleItem
     protected override void OnDetachedFromLogicalTree(LogicalTreeAttachmentEventArgs e)
     {
         base.OnDetachedFromLogicalTree(e);
-        // The shared menu would keep an item that scrolled out of view alive
-        (ContextMenu as GalleryItemContextMenu)?.DetachFrom(this);
+        ReleaseContextMenu();
     }
 }

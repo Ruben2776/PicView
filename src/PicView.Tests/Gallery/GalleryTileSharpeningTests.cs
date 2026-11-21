@@ -163,6 +163,71 @@ public sealed class GalleryTileSharpeningTests : IDisposable
     }
 
     [AvaloniaFact]
+    public void Tiles_ScrolledOutOfView_AreReusedForTheItemsScrolledIn()
+    {
+        Show(itemCount: 60);
+        var atStart = RealizedItems();
+        Assert.Contains(":currentItem", ItemAt(0).Classes);
+
+        ScrollToEnd();
+
+        Assert.DoesNotContain(_panel!.RealizedItems, x => x.Index == 0);
+        var atEnd = RealizedItems();
+        // No item is built while one that left the view is free
+        Assert.Equal(Math.Min(atStart.Count, atEnd.Count), atEnd.Count(atStart.Contains));
+        foreach (var realized in _panel.RealizedItems)
+        {
+            var item = ItemAt(realized.Index);
+            // It shows the gallery item it was given, and nothing of the one it showed before
+            Assert.True(realized.Element.IsVisible);
+            Assert.Same(Item(realized.Index), item.DataContext);
+            Assert.True(ShowsItsImage(item));
+            Assert.DoesNotContain(":currentItem", item.Classes);
+        }
+
+        // The ones no item took wait in the panel, hidden and empty
+        var waiting = _panel.Children.Except(_panel.RealizedItems.Select(x => x.Element)).ToList();
+        Assert.All(waiting, container =>
+        {
+            Assert.False(container.IsVisible);
+            Assert.Null(container.DataContext);
+        });
+    }
+
+    [AvaloniaFact]
+    public void Tile_ReusedForAnItemThatHasItsThumbnail_ShowsItAtOnce()
+    {
+        Show(itemCount: 60);
+        var first = ItemAt(0);
+        ScrollToEnd();
+        Assert.DoesNotContain(_panel!.RealizedItems, x => x.Index == 0);
+
+        ScrollToStart();
+
+        // Reused, so arranged before: only an item that is being given its gallery item shows a thumbnail unfaded
+        Assert.Contains(first, RealizedItems());
+        Assert.All(RealizedItems(), item =>
+        {
+            var image = item.FindControl<ThumbImage>("GalleryImage")!;
+            Assert.True(ShowsItsImage(item));
+            Assert.Equal(1, image.Opacity);
+        });
+    }
+
+    [AvaloniaFact]
+    public void Tiles_AfterAViewOfManySmallItems_AreNotAllKept()
+    {
+        Show(itemCount: 400);
+        RaiseExpandedItemSizeTo(60);
+        var many = _panel!.Children.Count;
+
+        RaiseExpandedItemSizeTo(250);
+
+        Assert.True(_panel.RealizedItems.Count < many);
+        Assert.True(_panel.Children.Count <= Math.Max(32, _panel.RealizedItems.Count) + _panel.RealizedItems.Count);
+    }
+
+    [AvaloniaFact]
     public void Tile_DetailsNotRead_IsNotSharpenedUntilTheyAre()
     {
         Show(withoutDetails: [0]);
