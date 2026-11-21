@@ -1,6 +1,5 @@
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Styling;
 using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Views.Config;
@@ -151,9 +150,7 @@ public class GalleryDisplayModeSwitchingTests
     [AvaloniaFact]
     public void ItemMenu_HasTheThreeDisplayModesAsRadioItems()
     {
-        var galleryItem = new GalleryItem();
-        Assert.True(galleryItem.Resources.TryGetResource("GalleryContextMenu", ThemeVariant.Default, out var resource));
-        var displayModes = Item(Assert.IsType<ContextMenu>(resource), "ItemDisplayModeMenuItem")
+        var displayModes = Item(new GalleryItemContextMenu(), "ItemDisplayModeMenuItem")
             .Items.OfType<MenuItem>().ToList();
 
         Assert.Equal([GalleryDisplayMode.Columns, GalleryDisplayMode.Masonry, GalleryDisplayMode.Rows],

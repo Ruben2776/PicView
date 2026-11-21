@@ -5,6 +5,8 @@ using Avalonia.Animation.Easings;
 using Avalonia.Controls;
 using Avalonia.Controls.Presenters;
 using Avalonia.Headless;
+using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
@@ -207,6 +209,60 @@ public class GalleryItemLookTests
         });
     }
 
+    // The headless window opens no popup, so the tests keep the menu from opening and raise its events themselves
+    [AvaloniaFact]
+    public void RightClick_OnOneItemThenAnother_GivesTheViewsOneMenuToTheItemClicked()
+    {
+        WithMasonry((_, window, view, panel) =>
+        {
+            var (first, second) = (ItemAt(panel, 0), ItemAt(panel, 1));
+            // An item builds no menu of its own
+            Assert.Null(first.ContextMenu);
+            Assert.Empty(first.Resources);
+
+            RightClickWithoutOpening(window, first);
+
+            var menu = Assert.IsType<GalleryItemContextMenu>(first.ContextMenu);
+            Assert.Same(view.ItemContextMenu, menu);
+            menu.RaiseEvent(new RoutedEventArgs(ContextMenu.OpenedEvent));
+            Assert.Contains(":contextMenuOpen", first.Classes);
+            Assert.DoesNotContain(":contextMenuOpen", second.Classes);
+            menu.RaiseEvent(new RoutedEventArgs(ContextMenu.ClosedEvent));
+            Assert.DoesNotContain(":contextMenuOpen", first.Classes);
+
+            RightClickWithoutOpening(window, second);
+
+            Assert.Same(menu, second.ContextMenu);
+            Assert.Null(first.ContextMenu);
+            menu.RaiseEvent(new RoutedEventArgs(ContextMenu.OpenedEvent));
+            Assert.Contains(":contextMenuOpen", second.Classes);
+            Assert.DoesNotContain(":contextMenuOpen", first.Classes);
+        });
+    }
+
+    [AvaloniaFact]
+    public void ItemWithTheMenuOpen_RemovedFromTheGallery_GivesTheMenuBack()
+    {
+        WithMasonry((tab, window, _, panel) =>
+        {
+            var (first, second) = (ItemAt(panel, 0), ItemAt(panel, 1));
+            RightClickWithoutOpening(window, first);
+            var menu = Assert.IsType<GalleryItemContextMenu>(first.ContextMenu);
+            menu.RaiseEvent(new RoutedEventArgs(ContextMenu.OpenedEvent));
+
+            tab.Gallery.GalleryItems.RemoveAt(0);
+            Dispatcher.UIThread.RunJobs();
+            RenderFrame(window);
+
+            Assert.Null(first.ContextMenu);
+            Assert.DoesNotContain(":contextMenuOpen", first.Classes);
+            // The menu no longer answers for the item that left
+            menu.RaiseEvent(new RoutedEventArgs(ContextMenu.OpenedEvent));
+            Assert.DoesNotContain(":contextMenuOpen", first.Classes);
+            Assert.DoesNotContain(":contextMenuOpen", second.Classes);
+        });
+    }
+
     [AvaloniaFact]
     public void TilesClassRemovedAndAdded_RealizedItems_FollowAtOnce()
     {
@@ -371,6 +427,24 @@ public class GalleryItemLookTests
             ISolidColorBrush brush => brush.Color,
             _ => throw new InvalidOperationException($"{key} is neither a color nor a solid brush")
         };
+    }
+
+    // The release frees the pointer for the next press. Its request for the menu is answered before the menu hears it
+    private static void RightClickWithoutOpening(Window window, GalleryItem item)
+    {
+        EventHandler<ContextRequestedEventArgs> answer = (_, e) => e.Handled = true;
+        window.AddHandler(Control.ContextRequestedEvent, answer, RoutingStrategies.Tunnel);
+        try
+        {
+            var point = item.TranslatePoint(new Point(item.Bounds.Width / 2, item.Bounds.Height / 2), window)!.Value;
+            window.MouseDown(point, MouseButton.Right);
+            window.MouseUp(point, MouseButton.Right);
+            Dispatcher.UIThread.RunJobs();
+        }
+        finally
+        {
+            window.RemoveHandler(Control.ContextRequestedEvent, answer);
+        }
     }
 
     private static void RenderFrame(Window window)

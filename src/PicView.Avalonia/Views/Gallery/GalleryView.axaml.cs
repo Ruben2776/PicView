@@ -23,6 +23,11 @@ public partial class GalleryView : GalleryAnimationControl, IDisposable
     /// </summary>
     private int _isRelayoutPosted;
 
+    /// <summary>
+    /// The one context menu the Gallery Items of this view share, created when one is first right-clicked.
+    /// </summary>
+    internal GalleryItemContextMenu ItemContextMenu => field ??= new GalleryItemContextMenu();
+
     public GalleryView()
     {
         if (Application.Current.DataContext is not CoreViewModel)

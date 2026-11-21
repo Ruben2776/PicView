@@ -4,23 +4,16 @@ using Avalonia.Animation.Easings;
 using Avalonia.Controls;
 using Avalonia.Controls.Presenters;
 using Avalonia.Input;
-using Avalonia.Interactivity;
 using Avalonia.LogicalTree;
 using Avalonia.Markup.Xaml.MarkupExtensions;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Media.Transformation;
-using Avalonia.Styling;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
-using PicView.Avalonia.Clipboard;
 using PicView.Avalonia.CustomControls;
-using PicView.Avalonia.FileSystem;
 using PicView.Avalonia.Gallery;
-using PicView.Avalonia.ImageHandling;
-using PicView.Avalonia.Wallpaper;
 using PicView.Core.DebugTools;
-using PicView.Core.Navigation;
 using PicView.Core.ViewModels;
 
 namespace PicView.Avalonia.Views.Gallery;
@@ -42,7 +35,6 @@ public partial class GalleryItem : NavigateAbleItem
     private CancellationTokenSource? _sharpenCts;
     // What TileHeightAsked was before the request in flight, for when that request is cancelled
     private uint _tileHeightAskedBefore;
-    private ContextMenu? _contextMenu;
     private Border? _ring;
     private string? _ringBrushKey;
 
@@ -132,23 +124,6 @@ public partial class GalleryItem : NavigateAbleItem
         image.Transitions = [ThumbnailOpacityTransition, ThumbnailScaleTransition];
         image.Opacity = 1;
         image.RenderTransform = ThumbnailEndScale;
-    }
-
-    private void InitContextMenu()
-    {
-        // Snapshot analysis from timeline profiling shows a lot of allocations from ContextMenu bindings,
-        // so we lazily initialize the context menu.
-        if (_contextMenu is not null ||
-            !Resources.TryGetResource("GalleryContextMenu", ThemeVariant.Default, out var contextMenu)
-            || contextMenu is not ContextMenu cm)
-        {
-            return;
-        }
-        
-        _contextMenu = cm;
-        _contextMenu.Opened += GalleryContextMenuOnOpened;
-        _contextMenu.Closed += GalleryContextMenuOnClosed;
-        ContextMenu = _contextMenu;
     }
 
     /// <summary>
@@ -389,37 +364,14 @@ public partial class GalleryItem : NavigateAbleItem
         vm.TileHeightShown = 0;
     }
 
-    private void GalleryContextMenuOnClosed(object? sender, RoutedEventArgs e)
-    {
-        SetContextMenuOpen(false);
-    }
-
-    private void GalleryContextMenuOnOpened(object? sender, RoutedEventArgs e)
-    {
-        SetContextMenuOpen(true);
-    }
-
-    private void ShowGalleryItemSizeSlider(object? sender, PointerPressedEventArgs e)
-    {
-        _contextMenu.Close();
-        if (TopLevel.GetTopLevel(this) is not MainWindow mainWindow)
-        {
-            return;
-        }
-        mainWindow.AddGalleryItemSizeSlider();
-    }
-    
-    
     protected override void OnPointerPressed(PointerPressedEventArgs e)
     {
         base.OnPointerPressed(e);
 
         if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
         {
-            if (_contextMenu is null)
-            {
-                InitContextMenu();
-            }
+            // The gallery view's one menu, so an item builds none. It opens for this item as the button is released
+            this.FindLogicalAncestorOfType<GalleryView>()?.ItemContextMenu.AttachTo(this);
             return;
         }
 
@@ -449,133 +401,10 @@ public partial class GalleryItem : NavigateAbleItem
         }
     }
 
-    #region Menu click events
-
-    private void OpenWith_OnClick(object? sender, RoutedEventArgs e)
-    {
-        if (DataContext is not GalleryItemViewModel item)
-        {
-            return;
-        }
-        var fileName = item.FileLocation;
-        _ = FileManager.OpenWith(fileName).ConfigureAwait(false);
-    }
-
-    private void LocateOnDisk_OnClick(object? sender, RoutedEventArgs e)
-    {
-        if (DataContext is not GalleryItemViewModel item)
-        {
-            return;
-        }
-        var fileName = item.FileLocation;
-        _ = FileManager.LocateOnDisk(fileName).ConfigureAwait(false);
-    }
-
-    // Through the Wallpaper Manager, which converts a file the OS cannot show, shows the busy indicator and reports a failure
-    private void SetAsWallpaper(WallpaperStyle style)
-    {
-        if (DataContext is not GalleryItemViewModel item ||
-            TopLevel.GetTopLevel(this) is not MainWindow { DataContext: MainWindowViewModel vm })
-        {
-            return;
-        }
-
-        _ = WallpaperManager.SetAsWallpaper(item.FileLocation, style, vm);
-    }
-
-    private void WallpaperFilled_OnClick(object? sender, RoutedEventArgs e) => SetAsWallpaper(WallpaperStyle.Fill);
-
-    private void WallpaperFitted_OnClick(object? sender, RoutedEventArgs e) => SetAsWallpaper(WallpaperStyle.Fit);
-
-    private void WallpaperStretched_OnClick(object? sender, RoutedEventArgs e) => SetAsWallpaper(WallpaperStyle.Stretch);
-
-    private void WallpaperCentered_OnClick(object? sender, RoutedEventArgs e) => SetAsWallpaper(WallpaperStyle.Center);
-
-    private void WallpaperTiled_OnClick(object? sender, RoutedEventArgs e) => SetAsWallpaper(WallpaperStyle.Tile);
-
-    private void CopyFile_OnClick(object? sender, RoutedEventArgs e)
-    {
-        if (DataContext is not GalleryItemViewModel item ||
-            TopLevel.GetTopLevel(this) is not MainWindow { DataContext: MainWindowViewModel } mainWindow)
-        {
-            return;
-        }
-        var fileName = item.FileLocation;
-        _ = mainWindow.ClipboardCopyService.CopyFileAsync(fileName);
-    }
-
-    private void CopyImage_OnClick(object? sender, RoutedEventArgs e)
-    {
-        if (Application.Current.DataContext is not CoreViewModel core || DataContext is not GalleryItemViewModel item ||
-            TopLevel.GetTopLevel(this) is not MainWindow { DataContext: MainWindowViewModel vm } mainWindow)
-        {
-            return;
-        }
-
-        // The image open in the viewer is copied as it is shown there, turned and flipped
-        var tab = vm.WindowTabs.ActiveTab.CurrentValue;
-        if (item.FileLocation.Equals(tab.FileInfo.CurrentValue.FullName, StringComparison.Ordinal))
-        {
-            _ = mainWindow.ClipboardCopyService.CopyImageAsync(tab).ConfigureAwait(false);
-            return;
-        }
-
-        _ = CopyOriginalImageAsync(new FileInfo(item.FileLocation), core.SharedCache,
-            mainWindow.ClipboardCopyService);
-    }
-
-    private static async Task CopyOriginalImageAsync(FileInfo fileInfo, SharedImageCache cache,
-        ClipboardCopyService? clipboardCopyService)
-    {
-        if (clipboardCopyService is null)
-        {
-            return;
-        }
-
-        // A decoded bitmap is never disposed here, since pasting in PicView can show that same bitmap in a tab
-        var bitmap = await GetOriginalImage.GetBitmapAsync(fileInfo, cache).ConfigureAwait(false);
-        await clipboardCopyService.CopyImageAsync(bitmap).ConfigureAwait(false);
-    }
-
-    private void CopyBase64_OnClick(object? sender, RoutedEventArgs e)
-    {
-        if (DataContext is not GalleryItemViewModel item || TopLevel.GetTopLevel(this) is not MainWindow mainWindow)
-        {
-            return;
-        }
-        _ = mainWindow.ClipboardCopyService.CopyBase64Async(item.FileLocation).ConfigureAwait(false);
-    }
-
-    private void DuplicateFile_OnClick(object? sender, RoutedEventArgs e)
-    {
-        if (DataContext is not GalleryItemViewModel item ||
-            TopLevel.GetTopLevel(this) is not MainWindow { DataContext: MainWindowViewModel vm } mainWindow)
-        {
-            return;
-        }
-        var sourcePath = item.FileLocation;
-        var currentActiveFilePath = vm.WindowTabs.ActiveTab.CurrentValue?.FileInfo?.CurrentValue.FullName;
-        _ = FileManager.DuplicateFileAsync(sourcePath, currentActiveFilePath, vm, mainWindow)
-            .ConfigureAwait(false);
-    }
-
-    private void DeleteFile_OnClick(object? sender, RoutedEventArgs e)
-    {
-        if (Application.Current.DataContext is not CoreViewModel core || DataContext is not GalleryItemViewModel item ||
-            TopLevel.GetTopLevel(this) is not MainWindow mainWindow)
-        {
-            return;
-        }
-        var fileName = item.FileLocation;
-        _ = FileManager.DeleteFileWithOptionalDialog(recycle: true, fileName, core.PlatformService, mainWindow);
-    }
-    
-    #endregion
-    
     protected override void OnDetachedFromLogicalTree(LogicalTreeAttachmentEventArgs e)
     {
         base.OnDetachedFromLogicalTree(e);
-        _contextMenu?.Opened -= GalleryContextMenuOnOpened;
-        _contextMenu?.Closed -= GalleryContextMenuOnClosed;
+        // The shared menu would keep an item that scrolled out of view alive
+        (ContextMenu as GalleryItemContextMenu)?.DetachFrom(this);
     }
 }
