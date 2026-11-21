@@ -47,7 +47,7 @@ public class GalleryLayoutBenchmarks
         {
             var item = new GalleryItemViewModel();
             item.SetDetails(new GalleryFileDetails((uint)(200 + i * 37 % 380 * 10),
-                (uint)(200 + i * 91 % 380 * 10), null));
+                (uint)(200 + i * 91 % 380 * 10)));
             _items[i] = item;
         }
     }

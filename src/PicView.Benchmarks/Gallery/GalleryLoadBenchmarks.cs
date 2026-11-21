@@ -2,6 +2,7 @@ using BenchmarkDotNet.Attributes;
 using ImageMagick;
 using PicView.Core.FileSorting;
 using PicView.Core.Gallery;
+using PicView.Core.ImageDecoding;
 using PicView.Core.IPlatform;
 using PicView.Core.Localization;
 using PicView.Core.Models;
@@ -17,12 +18,13 @@ namespace PicView.Benchmarks.Gallery;
 /// Where a gallery load spends its allocations: building one item for each file, or the batches that read the files'
 /// details afterwards. <see cref="Load"/> runs a whole load with the details reader replaced, so disk reads don't
 /// drown the measurement; <see cref="ItemPerFile"/> is building one item and <see cref="TextsPerFile"/> the texts its
-/// tooltip adds; <see cref="PingPerFile"/> is one real details read, for scale.
+/// tooltip adds; <see cref="DetailsPerFile"/> is one real details read, from the header, and <see cref="PingPerFile"/>
+/// the ImageMagick ping it replaces, for scale.
 /// </summary>
 [MemoryDiagnoser]
 public class GalleryLoadBenchmarks
 {
-    private static readonly GalleryFileDetails Details = new(200, 100, null);
+    private static readonly GalleryFileDetails Details = new(200, 100);
 
     private static readonly SharedImageCache Cache =
         new(static file => new ImageModel { FileInfo = file });
@@ -123,7 +125,18 @@ public class GalleryLoadBenchmarks
 
     /// <summary>One real details read, of a small JPEG the OS has cached, so a lower bound on a read in the app.</summary>
     [Benchmark]
-    public GalleryFileDetails? PingPerFile() => GalleryFileDetails.Read(_image!);
+    public GalleryFileDetails? DetailsPerFile() => GalleryFileDetails.Read(_image!);
+
+    /// <summary>The ImageMagick ping the details read made for every file before it read headers, for scale.</summary>
+    [Benchmark]
+    public ImageSize PingPerFile()
+    {
+        using var magick = new MagickImage();
+        using var stream = new FileStream(_image!.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite,
+            bufferSize: 1);
+        magick.Ping(stream);
+        return new ImageSize(magick.Width, magick.Height);
+    }
 
     private sealed class NoFrameProvider : FrameProvider
     {

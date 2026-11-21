@@ -11,6 +11,7 @@ using Avalonia.Threading;
 using PicView.Avalonia.Views.Gallery;
 using PicView.Core.Gallery;
 using PicView.Core.ViewModels;
+using R3;
 
 namespace PicView.Avalonia.CustomControls;
 
@@ -27,6 +28,9 @@ public class NavigateAbleItemsViewer : ItemsControl
     private AutoScrollViewer? _scrollViewer;
 
     private IDisposable? _viewportSubscription;
+
+    // Turning the motion photo badges on, in the window the viewer is in
+    private IDisposable? _badgesSubscription;
 
     // Whether the viewer is on the visual tree, where a rest can sharpen its tiles
     private bool _isAttached;
@@ -87,6 +91,29 @@ public class NavigateAbleItemsViewer : ItemsControl
     {
         base.OnAttachedToVisualTree(e);
         _isAttached = true;
+        if (TopLevel.GetTopLevel(this)?.DataContext is MainWindowViewModel window)
+        {
+            // Posted, so it runs after the setting the detection reads has followed the switch
+            _badgesSubscription = window.GallerySettings.ShowMotionPhotoBadges
+                .Skip(1)
+                .Where(static show => show)
+                .Subscribe(this, static (_, viewer) => Dispatcher.UIThread.Post(viewer.DetectShownMotionPhotos));
+        }
+    }
+
+    /// <summary>
+    /// Detects the motion photo badges of the items shown, which were loaded while the badges were hidden and so never
+    /// checked. Each item that was checked before, or is not shown, is skipped.
+    /// </summary>
+    private void DetectShownMotionPhotos()
+    {
+        foreach (var container in GetRealizedContainers())
+        {
+            if (container is ContentPresenter { Child: GalleryItem item })
+            {
+                item.DetectMotionPhoto();
+            }
+        }
     }
 
     protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
@@ -96,6 +123,8 @@ public class NavigateAbleItemsViewer : ItemsControl
         base.OnDetachedFromVisualTree(e);
         _viewportSubscription?.Dispose();
         _viewportSubscription = null;
+        _badgesSubscription?.Dispose();
+        _badgesSubscription = null;
         TileRestTimer.Stop();
         CancelTileSharpening();
     }

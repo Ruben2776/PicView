@@ -424,7 +424,10 @@ public static class MotionPhotoDetector
                 if (ext.Equals(".jpg", StringComparison.OrdinalIgnoreCase) ||
                     ext.Equals(".jpeg", StringComparison.OrdinalIgnoreCase))
                 {
-                    return null;
+                    // The XMP segment can sit past a full EXIF segment and others. Hop to it by the segment lengths,
+                    // up to the image data, rather than scan the window, which would read image data for every JPEG
+                    // without XMP
+                    return ReadJpegXmpPacket(stream);
                 }
 
                 return ReadXmpPacketFull(stream, windowLength);
@@ -451,6 +454,94 @@ public static class MotionPhotoDetector
         {
             ArrayPool<byte>.Shared.Return(buffer);
         }
+    }
+
+    private static ReadOnlySpan<byte> JpegXmpNamespace => "http://ns.adobe.com/xap/1.0/\0"u8;
+
+    /// <summary>
+    /// Finds a JPEG's XMP packet in its APP1 XMP segment by hopping from segment to segment by their lengths, so
+    /// however much metadata comes first, only the segment headers and the XMP segment itself are read. It stops at
+    /// the start of the image data, after which no metadata segment comes.
+    /// </summary>
+    /// <returns>The packet, or null when the JPEG has none or its segments are damaged.</returns>
+    private static string? ReadJpegXmpPacket(Stream stream)
+    {
+        const int maxSegments = 1024;
+        const byte app1 = 0xE1;
+        Span<byte> segment = stackalloc byte[4];
+        long offset = 2;
+        for (var i = 0; i < maxSegments; i++)
+        {
+            stream.Position = offset;
+            if (stream.ReadAtLeast(segment, segment.Length, throwOnEndOfStream: false) < segment.Length ||
+                segment[0] is not 0xFF)
+            {
+                return null;
+            }
+
+            var marker = segment[1];
+            switch (marker)
+            {
+                case 0xFF:
+                    // A fill byte before the marker
+                    offset++;
+                    continue;
+                case 0xD8 or 0x01 or (>= 0xD0 and <= 0xD7):
+                    // Markers that stand alone, without a length
+                    offset += 2;
+                    continue;
+                case 0xD9 or 0xDA:
+                    // The end of the image, or the start of its pixel data
+                    return null;
+            }
+
+            // The length counts its own two bytes
+            var length = segment[2] << 8 | segment[3];
+            if (length < 2)
+            {
+                return null;
+            }
+
+            var dataLength = length - 2;
+            if (marker is app1 && dataLength > JpegXmpNamespace.Length)
+            {
+                var data = ArrayPool<byte>.Shared.Rent(dataLength);
+                try
+                {
+                    var read = stream.ReadAtLeast(data.AsSpan(0, dataLength), dataLength, throwOnEndOfStream: false);
+                    var span = data.AsSpan(0, read);
+                    if (span.StartsWith(JpegXmpNamespace))
+                    {
+                        return PacketText(span[JpegXmpNamespace.Length..]);
+                    }
+                }
+                finally
+                {
+                    ArrayPool<byte>.Shared.Return(data);
+                }
+            }
+
+            offset += 2 + length;
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    /// The XMP packet in <paramref name="bytes"/>, from its root element to its end tag, or to the end of the bytes when
+    /// the end tag is missing.
+    /// </summary>
+    private static string? PacketText(ReadOnlySpan<byte> bytes)
+    {
+        var start = bytes.IndexOf(XmpMetaStartBytes);
+        if (start < 0)
+        {
+            return null;
+        }
+
+        var packet = bytes[start..];
+        var end = packet.IndexOf(XmpEndTagBytes);
+        return Encoding.UTF8.GetString(end >= 0 ? packet[..(end + XmpEndTagBytes.Length)] : packet);
     }
 
     private static string? ReadXmpPacketFull(Stream stream, int windowLength, int knownStartIndex = -1)

@@ -120,7 +120,7 @@ public class NavigateAbleItemsViewerTests
     private static GalleryItemViewModel Item(uint width, uint height)
     {
         var item = new GalleryItemViewModel();
-        item.SetDetails(new GalleryFileDetails(width, height, null));
+        item.SetDetails(new GalleryFileDetails(width, height));
         return item;
     }
 

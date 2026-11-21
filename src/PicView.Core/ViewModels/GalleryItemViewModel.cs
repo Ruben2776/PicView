@@ -25,6 +25,18 @@ public class GalleryItemViewModel : IDisposable
     /// <summary>Whether the file carries a motion photo video (drives the gallery badge).</summary>
     public BindableReactiveProperty<bool> IsMotionPhoto { get; } = new(false);
 
+    private bool _isMotionPhotoChecked;
+
+    /// <summary>
+    /// Whether <see cref="IsMotionPhoto"/> was detected from the file, so it is not detected again. Detection waits for
+    /// the item to be shown with the badges on, so most items are never checked.
+    /// </summary>
+    internal bool IsMotionPhotoChecked
+    {
+        get => Volatile.Read(ref _isMotionPhotoChecked);
+        set => Volatile.Write(ref _isMotionPhotoChecked, value);
+    }
+
     public FileInfo? FileInfo { get; set; }
 
     // The texts about the file are plain strings made the first time the tooltip reads them: an item's file never
@@ -63,6 +75,20 @@ public class GalleryItemViewModel : IDisposable
         Coordinator is null
             ? ValueTask.FromResult<object?>(null)
             : Coordinator.LoadThumbnailAsync(this, cancellationToken);
+
+    /// <summary>
+    /// Detects <see cref="IsMotionPhoto"/> off the caller's thread, unless the badges are hidden, the item was checked
+    /// before or <paramref name="shownToken"/> says it is no longer shown. For an item shown without
+    /// <see cref="LoadThumbnailAsync"/>, which detects it along with the thumbnail.
+    /// </summary>
+    /// <param name="shownToken">Cancelled when the item scrolls out of view.</param>
+    public void DetectMotionPhoto(CancellationToken shownToken)
+    {
+        if (Coordinator is not null)
+        {
+            GalleryCoordinator.DetectMotionPhotoInBackground(this, shownToken);
+        }
+    }
 
     /// <summary>
     /// The height the Tile Thumbnail in <see cref="Image"/> was made for; 0 while <see cref="Image"/> holds a small

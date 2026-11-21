@@ -275,6 +275,7 @@ public class GalleryCoordinator : IDisposable
         var item = CreateItem(file, old.Details);
         item.Image.Value = old.Image.Value;
         item.IsMotionPhoto.Value = old.IsMotionPhoto.Value;
+        item.IsMotionPhotoChecked = old.IsMotionPhotoChecked;
         item.TileHeightShown = old.TileHeightShown;
         _thumbnails.Relocate(_tab.Id, old.FileInfo!.FullName, file.FullName);
         // A tile-sized bitmap must never be kept in the tab's store as a small thumbnail
@@ -624,36 +625,64 @@ public class GalleryCoordinator : IDisposable
 
     /// <summary>
     /// Loads <paramref name="item"/>'s thumbnail when the item is shown, which the tab then keeps. The motion photo
-    /// badge is detected along with it.
+    /// badge is detected along with it, once, while the badges are shown and the item is still in view.
     /// </summary>
+    /// <param name="cancellationToken">Cancelled when the item scrolls out of view.</param>
     /// <returns>The thumbnail, or null when the file gives none or the request was cancelled.</returns>
     internal async ValueTask<object?> LoadThumbnailAsync(GalleryItemViewModel item, CancellationToken cancellationToken)
     {
-        var file = item.FileInfo!;
         // Items that scroll out of view cancel while they wait for their turn, so the decoding goes to what is visible
-        var request = _thumbnails.GetAsync(file, item.ThumbnailHeight, _tab.Id, cancellationToken);
+        var request = _thumbnails.GetAsync(item.FileInfo!, item.ThumbnailHeight, _tab.Id, cancellationToken);
         if (request.IsCompleted)
         {
-            // A kept thumbnail, which comes back at once, on the caller's thread
-            return await request.ConfigureAwait(false);
+            // A kept thumbnail, which comes back at once, on the caller's thread: an item never checked, such as one
+            // that scrolled out before its check, is checked off it
+            var kept = await request.ConfigureAwait(false);
+            DetectMotionPhotoInBackground(item, cancellationToken);
+            return kept;
         }
 
         var thumbnail = await request.ConfigureAwait(false);
-        if (thumbnail is null && cancellationToken.IsCancellationRequested)
-        {
-            // Cancelled before its turn to decode came, so the file was never read
-            return null;
-        }
 
-        // Off the UI thread now. Detection reads the file again up to three times, so skip it while the badges are
-        // hidden
-        if (Settings.Gallery.ShowMotionPhotoBadges)
-        {
-            item.IsMotionPhoto.Value = MotionPhotoDetector.TryDetect(
-                file, item.Details?.XmpPacket, fastMode: true) is not null;
-        }
-
+        // Off the UI thread now
+        DetectMotionPhoto(item, cancellationToken);
         return thumbnail;
+    }
+
+    /// <summary>
+    /// Whether <paramref name="item"/>'s motion photo badge is still to be detected: the badges are shown, the item is
+    /// in view and it was not checked before. Detection reads the file again up to three times, so it is skipped
+    /// otherwise.
+    /// </summary>
+    private static bool ShouldDetectMotionPhoto(GalleryItemViewModel item, CancellationToken cancellationToken) =>
+        Settings.Gallery.ShowMotionPhotoBadges && !cancellationToken.IsCancellationRequested &&
+        !item.IsMotionPhotoChecked;
+
+    /// <summary>
+    /// Detects <paramref name="item"/>'s motion photo badge off the caller's thread, if it is still to be detected, for
+    /// an item that is shown without loading its thumbnail: one that shows a kept thumbnail, or one already shown
+    /// when the badges are turned on.
+    /// </summary>
+    /// <param name="cancellationToken">Cancelled when the item scrolls out of view.</param>
+    internal static void DetectMotionPhotoInBackground(GalleryItemViewModel item, CancellationToken cancellationToken)
+    {
+        if (ShouldDetectMotionPhoto(item, cancellationToken))
+        {
+            _ = Task.Run(() => DetectMotionPhoto(item, cancellationToken), CancellationToken.None);
+        }
+    }
+
+    // Off the UI thread
+    private static void DetectMotionPhoto(GalleryItemViewModel item, CancellationToken cancellationToken)
+    {
+        if (!ShouldDetectMotionPhoto(item, cancellationToken))
+        {
+            return;
+        }
+
+        item.IsMotionPhoto.Value = MotionPhotoDetector.TryDetect(
+            item.FileInfo!, xmpPacket: null, fastMode: true) is not null;
+        item.IsMotionPhotoChecked = true;
     }
 
     /// <summary>

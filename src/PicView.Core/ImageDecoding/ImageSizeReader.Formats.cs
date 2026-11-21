@@ -9,9 +9,12 @@ public static partial class ImageSizeReader
     /// Picks the parser from the signature in <paramref name="header"/>, the first bytes of the file, whatever the
     /// extension says.
     /// </summary>
+    /// <param name="upright">Whether to give the size the image is shown at: width and height swapped when its EXIF
+    /// orientation is a quarter turn. A format that may hold an orientation the parsers here do not read then answers
+    /// false, so a fuller reader decides.</param>
     /// <returns>Whether a parser knew the format and read its size.</returns>
     private static bool TryReadKnownFormat(SafeFileHandle handle, string path, ReadOnlySpan<byte> header,
-        out ImageSize size)
+        bool upright, out ImageSize size)
     {
         size = default;
         if (header.Length < 4)
@@ -21,7 +24,7 @@ public static partial class ImageSizeReader
 
         if (header.StartsWith(PngSignature))
         {
-            return TryReadPng(header, out size);
+            return TryReadPng(header, out size) && (!upright || HasNoPngExif(handle));
         }
 
         if (header.StartsWith("GIF87a"u8) || header.StartsWith("GIF89a"u8))
@@ -36,7 +39,8 @@ public static partial class ImageSizeReader
 
         if (header.StartsWith("8BPS"u8))
         {
-            return TryReadPsd(header, out size);
+            // A PSD can hold EXIF among its image resources
+            return !upright && TryReadPsd(header, out size);
         }
 
         if (header.StartsWith("qoif"u8))
@@ -51,12 +55,12 @@ public static partial class ImageSizeReader
 
         if (header.StartsWith(JpegSignature))
         {
-            return TryReadJpeg(handle, out size);
+            return TryReadJpeg(handle, upright, out size);
         }
 
         if (header.StartsWith("RIFF"u8) && header.Length >= 12 && header.Slice(8, 4).SequenceEqual("WEBP"u8))
         {
-            return TryReadWebp(header, out size);
+            return TryReadWebp(header, out size) && (!upright || !HasWebpExif(header));
         }
 
         var isLittleEndianTiff = header.StartsWith((ReadOnlySpan<byte>)[0x49, 0x49, 0x2A, 0x00]);
@@ -64,7 +68,7 @@ public static partial class ImageSizeReader
         {
             // A camera RAW looks like a TIFF whose first image is a preview, so its own decoder has to answer
             return IsTiffExtension(Path.GetExtension(path.AsSpan())) &&
-                   TryReadTiff(handle, header, isLittleEndianTiff, out size);
+                   TryReadTiff(handle, header, isLittleEndianTiff, upright, out size);
         }
 
         return false;
@@ -79,38 +83,67 @@ public static partial class ImageSizeReader
         extension.Equals(".tiff", StringComparison.OrdinalIgnoreCase);
 
     /// <summary>
-    /// Reads the width and height tags of the first image file directory, in the byte order the file names.
+    /// Reads the width and height tags of the first image file directory, in the byte order the file names, and its
+    /// orientation tag when <paramref name="upright"/>.
     /// </summary>
     private static bool TryReadTiff(SafeFileHandle handle, ReadOnlySpan<byte> header, bool isLittleEndian,
-        out ImageSize size)
+        bool upright, out ImageSize size)
     {
         size = default;
-        if (header.Length < 8)
+        if (header.Length < 8 ||
+            !TryReadIfd(handle, 0, long.MaxValue, ReadUInt32(header[4..], isLittleEndian), isLittleEndian,
+                upright ? OrientationTag : ImageLengthTag, out var width, out var height, out var orientation) ||
+            width is 0 || height is 0)
         {
             return false;
         }
 
-        long offset = ReadUInt32(header[4..], isLittleEndian);
-        Span<byte> count = stackalloc byte[2];
-        if (!TryReadAt(handle, offset, count))
-        {
-            return false;
-        }
+        size = upright && IsQuarterTurn(orientation) ? new ImageSize(height, width) : new ImageSize(width, height);
+        return true;
+    }
+
+    private const ushort ImageWidthTag = 256;
+    private const ushort ImageLengthTag = 257;
+    private const ushort OrientationTag = 274;
+
+    /// <summary>
+    /// Whether <paramref name="orientation"/>, an EXIF orientation, stores the image lying on its side: 5 to 8.
+    /// </summary>
+    private static bool IsQuarterTurn(ushort orientation) => orientation is >= 5 and <= 8;
+
+    /// <summary>
+    /// Reads the image width, image length and orientation entries of a TIFF directory, as a TIFF file and the EXIF
+    /// data of a JPEG both store them, up to <paramref name="lastTag"/>. Offsets count from
+    /// <paramref name="tiffStart"/>, and nothing is read from <paramref name="tiffEnd"/> on.
+    /// </summary>
+    /// <returns>Whether the entries were read; each one not found is 0. False when the directory is cut short, or
+    /// stores one of them in a way not read here.</returns>
+    private static bool TryReadIfd(SafeFileHandle handle, long tiffStart, long tiffEnd, uint ifdOffset,
+        bool isLittleEndian, ushort lastTag, out uint width, out uint height, out ushort orientation)
+    {
+        width = 0;
+        height = 0;
+        orientation = 0;
 
         const int entryLength = 12;
         const int maxEntries = 512;
         const int entriesPerRead = 16;
-        const ushort imageWidthTag = 256;
-        const ushort imageLengthTag = 257;
+
+        var offset = tiffStart + ifdOffset;
+        Span<byte> count = stackalloc byte[2];
+        if (offset + count.Length > tiffEnd || !TryReadAt(handle, offset, count))
+        {
+            return false;
+        }
 
         var entryCount = Math.Min((int)ReadUInt16(count, isLittleEndian), maxEntries);
         offset += count.Length;
         Span<byte> entries = stackalloc byte[entryLength * entriesPerRead];
-        uint width = 0, height = 0;
         for (var done = 0; done < entryCount; done += entriesPerRead)
         {
             var block = entries[..(Math.Min(entriesPerRead, entryCount - done) * entryLength)];
-            if (!TryReadAt(handle, offset + (long)done * entryLength, block))
+            var blockOffset = offset + (long)done * entryLength;
+            if (blockOffset + block.Length > tiffEnd || !TryReadAt(handle, blockOffset, block))
             {
                 return false;
             }
@@ -119,49 +152,55 @@ public static partial class ImageSizeReader
             {
                 var entry = block.Slice(i, entryLength);
                 var tag = ReadUInt16(entry, isLittleEndian);
-                if (tag > imageLengthTag)
+                if (tag > lastTag)
                 {
-                    // The entries are sorted by tag, so neither size can follow
-                    return false;
-                }
-
-                if (tag is not (imageWidthTag or imageLengthTag))
-                {
-                    continue;
+                    // The entries are sorted by tag, so none of the rest is wanted
+                    return true;
                 }
 
                 // A SHORT or a LONG value, held in the entry itself
-                uint value;
-                switch (ReadUInt16(entry[2..], isLittleEndian))
+                var type = ReadUInt16(entry[2..], isLittleEndian);
+                switch (tag)
                 {
-                    case 3:
-                        value = ReadUInt16(entry[8..], isLittleEndian);
-                        break;
-                    case 4:
-                        value = ReadUInt32(entry[8..], isLittleEndian);
-                        break;
-                    default:
-                        return false;
-                }
+                    case ImageWidthTag or ImageLengthTag:
+                    {
+                        uint value;
+                        switch (type)
+                        {
+                            case 3:
+                                value = ReadUInt16(entry[8..], isLittleEndian);
+                                break;
+                            case 4:
+                                value = ReadUInt32(entry[8..], isLittleEndian);
+                                break;
+                            default:
+                                return false;
+                        }
 
-                if (tag is imageWidthTag)
-                {
-                    width = value;
-                }
-                else
-                {
-                    height = value;
-                }
+                        if (tag is ImageWidthTag)
+                        {
+                            width = value;
+                        }
+                        else
+                        {
+                            height = value;
+                        }
 
-                if (width is not 0 && height is not 0)
-                {
-                    size = new ImageSize(width, height);
-                    return true;
+                        break;
+                    }
+                    case OrientationTag:
+                        if (type is not 3)
+                        {
+                            return false;
+                        }
+
+                        orientation = ReadUInt16(entry[8..], isLittleEndian);
+                        break;
                 }
             }
         }
 
-        return false;
+        return true;
     }
 
     private static ushort ReadUInt16(ReadOnlySpan<byte> bytes, bool isLittleEndian) => isLittleEndian
@@ -231,15 +270,21 @@ public static partial class ImageSizeReader
 
     /// <summary>
     /// Hops from segment to segment by their lengths until the frame header, which holds the size. It can sit past
-    /// hundreds of kilobytes of metadata, none of which is read.
+    /// hundreds of kilobytes of metadata, of which only the orientation in the EXIF data is read, and only when
+    /// <paramref name="upright"/>.
     /// </summary>
-    private static bool TryReadJpeg(SafeFileHandle handle, out ImageSize size)
+    private static bool TryReadJpeg(SafeFileHandle handle, bool upright, out ImageSize size)
     {
         size = default;
 
         // A marker, the segment's length, then what a frame header starts with: precision, height, width
         Span<byte> segment = stackalloc byte[9];
+        // What an EXIF segment holds after its length: its identifier, then the TIFF header
+        Span<byte> exif = stackalloc byte[14];
         const int maxSegments = 1024;
+        const byte app1 = 0xE1;
+        var exifRead = false;
+        ushort orientation = 0;
         long offset = 2;
         for (var i = 0; i < maxSegments; i++)
         {
@@ -284,9 +329,31 @@ public static partial class ImageSizeReader
                     return false;
                 }
 
-                size = new ImageSize(BinaryPrimitives.ReadUInt16BigEndian(segment[7..]),
-                    BinaryPrimitives.ReadUInt16BigEndian(segment[5..]));
+                var height = BinaryPrimitives.ReadUInt16BigEndian(segment[5..]);
+                var width = BinaryPrimitives.ReadUInt16BigEndian(segment[7..]);
+                size = upright && IsQuarterTurn(orientation)
+                    ? new ImageSize(height, width)
+                    : new ImageSize(width, height);
                 return true;
+            }
+
+            // The first EXIF segment is the one ImageMagick takes the orientation from
+            if (upright && !exifRead && marker is app1 && length >= 2 + exif.Length &&
+                TryReadAt(handle, offset + 4, exif) && exif.StartsWith("Exif\0\0"u8))
+            {
+                exifRead = true;
+                var tiff = exif[6..];
+                var isLittleEndian = tiff.StartsWith((ReadOnlySpan<byte>)[0x49, 0x49, 0x2A, 0x00]);
+                if (!isLittleEndian && !tiff.StartsWith((ReadOnlySpan<byte>)[0x4D, 0x4D, 0x00, 0x2A]))
+                {
+                    return false;
+                }
+
+                if (!TryReadIfd(handle, offset + 10, offset + 2 + length, ReadUInt32(tiff[4..], isLittleEndian),
+                        isLittleEndian, OrientationTag, out _, out _, out orientation))
+                {
+                    return false;
+                }
             }
 
             offset += 2 + length;
@@ -318,6 +385,61 @@ public static partial class ImageSizeReader
         size = new ImageSize(BinaryPrimitives.ReadUInt32BigEndian(header[16..]),
             BinaryPrimitives.ReadUInt32BigEndian(header[20..]));
         return true;
+    }
+
+    /// <summary>
+    /// Whether the PNG has no EXIF data before its pixel data, where an orientation would be: neither an eXIf chunk
+    /// nor a text chunk holding a raw profile, as ImageMagick writes EXIF. Only the chunk headers, and the keywords of
+    /// text chunks, are read.
+    /// </summary>
+    private static bool HasNoPngExif(SafeFileHandle handle)
+    {
+        const int maxChunks = 1024;
+        Span<byte> chunk = stackalloc byte[8];
+        Span<byte> keyword = stackalloc byte[RawProfileKeyword.Length];
+        long offset = PngSignature.Length;
+        for (var i = 0; i < maxChunks; i++)
+        {
+            if (!TryReadAt(handle, offset, chunk))
+            {
+                return false;
+            }
+
+            var length = BinaryPrimitives.ReadUInt32BigEndian(chunk);
+            var type = chunk[4..];
+            if (type.SequenceEqual("IDAT"u8) || type.SequenceEqual("IEND"u8))
+            {
+                return true;
+            }
+
+            if (type.SequenceEqual("eXIf"u8))
+            {
+                return false;
+            }
+
+            if ((type.SequenceEqual("tEXt"u8) || type.SequenceEqual("zTXt"u8) || type.SequenceEqual("iTXt"u8)) &&
+                length >= keyword.Length && TryReadAt(handle, offset + chunk.Length, keyword) &&
+                keyword.SequenceEqual(RawProfileKeyword))
+            {
+                return false;
+            }
+
+            // The length and type before the data, the CRC after it
+            offset += 12 + (long)length;
+        }
+
+        return false;
+    }
+
+    private static ReadOnlySpan<byte> RawProfileKeyword => "Raw profile type "u8;
+
+    /// <summary>
+    /// Whether an extended WebP says it holds EXIF data. A simple one cannot.
+    /// </summary>
+    private static bool HasWebpExif(ReadOnlySpan<byte> header)
+    {
+        const byte exifFlag = 0x08;
+        return header.Slice(12, 4).SequenceEqual("VP8X"u8) && (header[20] & exifFlag) is not 0;
     }
 
     /// <summary>

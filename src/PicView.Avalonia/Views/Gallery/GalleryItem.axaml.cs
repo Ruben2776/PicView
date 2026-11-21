@@ -33,6 +33,8 @@ public partial class GalleryItem : NavigateAbleItem
 
     private CancellationTokenSource? _loadCts;
     private CancellationTokenSource? _sharpenCts;
+    // Cancelled when the item is unloaded: the item is shown from LoadImage until then
+    private CancellationTokenSource? _shownCts;
     // What TileHeightAsked was before the request in flight, for when that request is cancelled
     private uint _tileHeightAskedBefore;
     private Border? _ring;
@@ -173,6 +175,12 @@ public partial class GalleryItem : NavigateAbleItem
     /// </param>
     internal async Task LoadImage(GalleryItemViewModel vm, bool isTile)
     {
+        // ReSharper disable once MethodHasAsyncOverload
+#pragma warning disable MA0042
+        _shownCts?.Cancel();
+#pragma warning restore MA0042
+        _shownCts = new CancellationTokenSource();
+
         if (isTile && vm.TileHeightShown is 0 && vm.TryGetKeptThumbnail(out var kept, out var tileHeight) &&
             kept is not null)
         {
@@ -192,12 +200,15 @@ public partial class GalleryItem : NavigateAbleItem
                 vm.Image.Value = kept;
             }
 
+            // Shown without loading the small thumbnail, which detects the badge along with it
+            DetectMotionPhoto();
             return;
         }
 
         // Fast-path: If the image is already loaded, skip
         if (vm.Image.Value is IImage)
         {
+            DetectMotionPhoto();
             return;
         }
 
@@ -366,8 +377,25 @@ public partial class GalleryItem : NavigateAbleItem
         vm.TileHeightShown = height;
     }
 
+    /// <summary>
+    /// Detects the motion photo badge of the item shown, off the UI thread, if the badges are shown and it was not
+    /// checked before. Nothing for an item that is not shown.
+    /// </summary>
+    internal void DetectMotionPhoto()
+    {
+        if (_shownCts is { } shown && DataContext is GalleryItemViewModel vm)
+        {
+            vm.DetectMotionPhoto(shown.Token);
+        }
+    }
+
     public void UnloadImage()
     {
+        // ReSharper disable once MethodHasAsyncOverload
+#pragma warning disable MA0042
+        _shownCts?.Cancel();
+#pragma warning restore MA0042
+        _shownCts = null;
         _loadCts?.Cancel();
         _sharpenCts?.Cancel();
         _sharpenCts = null;

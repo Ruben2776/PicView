@@ -1,5 +1,6 @@
 using System.Buffers.Binary;
 using ImageMagick;
+using PicView.Core.Exif;
 using PicView.Core.ImageDecoding;
 
 namespace PicView.Tests.ImageDecoding;
@@ -99,6 +100,66 @@ public class ImageSizeReaderTests : IDisposable
         var path = Write(format, fileName);
 
         AssertReadsFromTheHeaderLikeThePing(path);
+    }
+
+    [Theory]
+    [InlineData(MagickFormat.Jpeg, "turned.jpg", 1, Orientation.TopLeft)]
+    [InlineData(MagickFormat.Jpeg, "turned.jpg", 3, Orientation.BottomRight)]
+    [InlineData(MagickFormat.Jpeg, "turned.jpg", 5, Orientation.LeftTop)]
+    [InlineData(MagickFormat.Jpeg, "turned.jpg", 6, Orientation.RightTop)]
+    [InlineData(MagickFormat.Jpeg, "turned.jpg", 7, Orientation.RightBottom)]
+    [InlineData(MagickFormat.Jpeg, "turned.jpg", 8, Orientation.LeftBottom)]
+    [InlineData(MagickFormat.Tiff, "turned.tif", 1, Orientation.TopLeft)]
+    [InlineData(MagickFormat.Tiff, "turned.tif", 6, Orientation.RightTop)]
+    [InlineData(MagickFormat.Tiff, "turned.tif", 8, Orientation.LeftBottom)]
+    public void TryReadUprightHeader_JpegOrTiffWithOrientation_ReadsFromTheHeaderLikeThePing(MagickFormat format,
+        string fileName, int exifOrientation, Orientation orientation)
+    {
+        var path = Write(format, fileName, image => SetOrientation(image, exifOrientation, orientation));
+
+        Assert.True(ImageSizeReader.TryReadUprightHeader(path, out var size));
+        Assert.Equal(UprightByPing(path), size);
+        // The stored size stays what the plain read gives
+        Assert.True(ImageSizeReader.TryReadHeader(path, out var stored));
+        Assert.Equal(new ImageSize(Width, Height), stored);
+    }
+
+    [Theory]
+    [InlineData(MagickFormat.Png, "turned.png")]
+    [InlineData(MagickFormat.WebP, "turned.webp")]
+    public void TryReadUprightHeader_PngOrWebpWithExif_NeverDisagreesWithThePing(MagickFormat format, string fileName)
+    {
+        // Their EXIF data is not parsed here, so the header may only answer when it agrees with ImageMagick
+        var path = Write(format, fileName, image => SetOrientation(image, 6, Orientation.RightTop));
+
+        if (ImageSizeReader.TryReadUprightHeader(path, out var size))
+        {
+            Assert.Equal(UprightByPing(path), size);
+        }
+    }
+
+    [Theory]
+    [InlineData(MagickFormat.Png, "image.png")]
+    [InlineData(MagickFormat.WebP, "image.webp")]
+    [InlineData(MagickFormat.Gif, "image.gif")]
+    [InlineData(MagickFormat.Bmp, "image.bmp")]
+    [InlineData(MagickFormat.Jpeg, "image.jpg")]
+    [InlineData(MagickFormat.Tiff, "image.tif")]
+    public void TryReadUprightHeader_WithoutExif_ReadsTheStoredSize(MagickFormat format, string fileName)
+    {
+        var path = Write(format, fileName, static image => image.Strip());
+
+        Assert.True(ImageSizeReader.TryReadUprightHeader(path, out var size));
+        Assert.Equal(new ImageSize(Width, Height), size);
+    }
+
+    [Fact]
+    public void TryReadUprightHeader_Psd_LeavesItToImageMagick()
+    {
+        var path = Write(MagickFormat.Psd, "image.psd");
+
+        Assert.False(ImageSizeReader.TryReadUprightHeader(path, out _));
+        Assert.True(ImageSizeReader.TryReadHeader(path, out _));
     }
 
     [Fact]
@@ -329,6 +390,30 @@ public class ImageSizeReaderTests : IDisposable
         Assert.Equal(new ImageSize(magick.Width, magick.Height), size);
         Assert.Equal(new ImageSize(Width, Height), size);
         Assert.Equal(size, ImageSizeReader.Read(path));
+    }
+
+    private static void SetOrientation(MagickImage image, int exifOrientation, Orientation orientation)
+    {
+        // Magick writes the tag only with both an EXIF profile and the property set
+        var exif = new ExifProfile();
+        exif.SetValue(ExifTag.Orientation, (ushort)exifOrientation);
+        image.SetProfile(exif);
+        image.Orientation = orientation;
+    }
+
+    /// <summary>
+    /// The upright size ImageMagick gives, as the gallery read it before the header parsers knew orientations.
+    /// </summary>
+    private static ImageSize UprightByPing(string path)
+    {
+        using var magick = new MagickImage();
+        magick.Ping(path);
+        var quarterTurned = ExifOrientationHelper.GetImageOrientation(magick) is
+            ExifOrientation.MirrorHorizontalRotate270Cw or ExifOrientation.Rotate90Cw or
+            ExifOrientation.MirrorHorizontalRotate90Cw or ExifOrientation.Rotated270Cw;
+        return quarterTurned
+            ? new ImageSize(magick.Height, magick.Width)
+            : new ImageSize(magick.Width, magick.Height);
     }
 
     /// <summary>

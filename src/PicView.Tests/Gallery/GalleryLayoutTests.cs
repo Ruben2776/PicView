@@ -14,7 +14,7 @@ public class GalleryLayoutTests
     private static GalleryItemViewModel Item(uint width, uint height)
     {
         var item = new GalleryItemViewModel();
-        item.SetDetails(new GalleryFileDetails(width, height, null));
+        item.SetDetails(new GalleryFileDetails(width, height));
         return item;
     }
 
@@ -109,7 +109,7 @@ public class GalleryLayoutTests
         layout.Calculate(items, Docked, new Size(300, 100));
         foreach (var item in items[..5])
         {
-            ((GalleryItemViewModel)item!).SetDetails(new GalleryFileDetails(200, 100, null));
+            ((GalleryItemViewModel)item!).SetDetails(new GalleryFileDetails(200, 100));
         }
         layout.Calculate(items, Docked, new Size(300, 100));
         Assert.Equal(900, layout.HoldOffset(5, 0, 300)); // was 400, plus five items 100 wider
@@ -122,7 +122,7 @@ public class GalleryLayoutTests
         var layout = new GalleryLayout();
         foreach (var item in items[6..])
         {
-            ((GalleryItemViewModel)item!).SetDetails(new GalleryFileDetails(200, 100, null));
+            ((GalleryItemViewModel)item!).SetDetails(new GalleryFileDetails(200, 100));
         }
         layout.Calculate(items, Docked, new Size(300, 100));
         Assert.Equal(400, layout.HoldOffset(5, 0, 300));
@@ -340,7 +340,7 @@ public class GalleryLayoutTests
         layout.Calculate(items, options, new Size(300, 100));
         var centered = DevicePixels(layout.CenterOffset(5, 300), 1.25);
 
-        ((GalleryItemViewModel)items[0]!).SetDetails(new GalleryFileDetails(1008, 1000, null)); // 126 device pixels, not 125
+        ((GalleryItemViewModel)items[0]!).SetDetails(new GalleryFileDetails(1008, 1000)); // 126 device pixels, not 125
         layout.Calculate(items, options, new Size(300, 100));
 
         Assert.Equal(1063, centered); // the item's start, 1125, plus 125 − 187.5 rounded to even, −62

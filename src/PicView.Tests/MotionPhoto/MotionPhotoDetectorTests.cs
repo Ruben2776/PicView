@@ -1,3 +1,4 @@
+using System.Text;
 using PicView.Core.MotionPhoto;
 
 namespace PicView.Tests.MotionPhoto;
@@ -142,6 +143,52 @@ public class MotionPhotoDetectorTests : IDisposable
 
         Assert.NotNull(packet);
         Assert.Contains("x:xmpmeta", packet);
+    }
+
+    [Fact]
+    public void ReadXmpPacket_JpegXmpPastTheFirst64KB_ReturnsPacket()
+    {
+        // A near-full EXIF segment and another large segment come first, as from a camera with a big preview
+        var path = Path.Combine(_tempDirectory, "late-xmp.jpg");
+        var jpeg = MotionPhotoFixtures.BuildJpegWithXmp(MotionPhotoFixtures.PlainXmp);
+        using (var stream = new FileStream(path, FileMode.Create, FileAccess.Write))
+        {
+            stream.Write(jpeg.AsSpan(0, 2));
+            WriteSegment(stream, 0xE1, [.. "Exif\0\0"u8, .. new byte[65_000]]);
+            WriteSegment(stream, 0xE2, new byte[30_000]);
+            stream.Write(jpeg.AsSpan(2));
+        }
+
+        var packet = MotionPhotoDetector.ReadXmpPacket(new FileInfo(path));
+
+        Assert.NotNull(packet);
+        Assert.StartsWith("<x:xmpmeta", packet);
+        Assert.EndsWith("</x:xmpmeta>", packet);
+    }
+
+    [Fact]
+    public void ReadXmpPacket_JpegWithoutXmp_StopsAtTheImageData()
+    {
+        // Anything after the start of the image data is pixels, however much the bytes look like XMP
+        var path = Path.Combine(_tempDirectory, "no-xmp.jpg");
+        using (var stream = new FileStream(path, FileMode.Create, FileAccess.Write))
+        {
+            stream.Write([0xFF, 0xD8]);
+            WriteSegment(stream, 0xE2, new byte[40_000]);
+            WriteSegment(stream, 0xE2, new byte[40_000]);
+            WriteSegment(stream, 0xDA, new byte[10]);
+            stream.Write(Encoding.UTF8.GetBytes(MotionPhotoFixtures.PlainXmp));
+            stream.Write([0xFF, 0xD9]);
+        }
+
+        Assert.Null(MotionPhotoDetector.ReadXmpPacket(new FileInfo(path)));
+    }
+
+    private static void WriteSegment(Stream stream, byte marker, byte[] data)
+    {
+        var length = data.Length + 2;
+        stream.Write([0xFF, marker, (byte)(length >> 8), (byte)length]);
+        stream.Write(data);
     }
 
     [Fact]

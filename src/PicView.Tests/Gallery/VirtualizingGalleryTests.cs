@@ -515,7 +515,7 @@ public class VirtualizingGalleryTests
             // Item 0 at 203 by 200 is 126.875 device pixels wide, which rounds to 127, two more than the square's 125.
             // That moves the held item by 1.6 DIPs, and the view from the pixel it showed by as much: 1.4 DIPs from
             // where the user left it
-            strip.Items[0].SetDetails(new GalleryFileDetails(203, 200, null));
+            strip.Items[0].SetDetails(new GalleryFileDetails(203, 200));
             strip.Gallery.InvalidateMeasure();
             Dispatcher.UIThread.RunJobs();
             var corrected = strip.ScrollViewer.Offset.X;
@@ -740,7 +740,7 @@ public class VirtualizingGalleryTests
             for (var batch = 1; batch <= 6; batch++)
             {
                 // An item far before the view is read one device pixel wider than the square it was
-                strip.Items[99 + batch].SetDetails(new GalleryFileDetails((height + 1) * 10, height * 10, null));
+                strip.Items[99 + batch].SetDetails(new GalleryFileDetails((height + 1) * 10, height * 10));
                 strip.Gallery.InvalidateMeasure();
                 Dispatcher.UIThread.RunJobs();
                 AddMoves(strip, shownAt, renderScaling, batch, moves);
@@ -937,7 +937,7 @@ public class VirtualizingGalleryTests
             // centered offset by one at a time
             foreach (var item in strip.Items.Take(150))
             {
-                item.SetDetails(new GalleryFileDetails(400, 300, null));
+                item.SetDetails(new GalleryFileDetails(400, 300));
             }
 
             strip.Gallery.InvalidateMeasure();
@@ -1080,7 +1080,7 @@ public class VirtualizingGalleryTests
             var columns = Enumerable.Range(0, 200).Count(index => Top(strip, index) == 0);
             foreach (var item in strip.Items.Take(columns))
             {
-                item.SetDetails(new GalleryFileDetails(100, 200, null));
+                item.SetDetails(new GalleryFileDetails(100, 200));
             }
             strip.Gallery.InvalidateMeasure();
             Dispatcher.UIThread.RunJobs();
@@ -1464,7 +1464,7 @@ public class VirtualizingGalleryTests
         }
     }
 
-    private static GalleryFileDetails Details(uint width, uint height) => new(width, height, null);
+    private static GalleryFileDetails Details(uint width, uint height) => new(width, height);
 
     /// <summary>
     /// A panel 800 wide with an item size of 150 and one item with the details, shown at the render scaling, the way
@@ -1525,7 +1525,7 @@ public class VirtualizingGalleryTests
     {
         foreach (var item in items)
         {
-            item.SetDetails(new GalleryFileDetails(200, 100, null));
+            item.SetDetails(new GalleryFileDetails(200, 100));
         }
         gallery.InvalidateMeasure();
         Dispatcher.UIThread.RunJobs();
@@ -1554,7 +1554,7 @@ public class VirtualizingGalleryTests
     private static void ReadDetails(GalleryItemViewModel item, int index)
     {
         var (width, height) = MixedImageSizes[index % MixedImageSizes.Length];
-        item.SetDetails(new GalleryFileDetails(width, height, null));
+        item.SetDetails(new GalleryFileDetails(width, height));
     }
 
     /// <summary>
@@ -1570,7 +1570,7 @@ public class VirtualizingGalleryTests
         }
 
         var height = (uint)Math.Round(100 * renderScaling);
-        strip.Items[150].SetDetails(new GalleryFileDetails((2 * height + 1) * 10, height * 10, null));
+        strip.Items[150].SetDetails(new GalleryFileDetails((2 * height + 1) * 10, height * 10));
     }
 
     /// <summary>

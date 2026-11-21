@@ -10,7 +10,7 @@ public class GalleryItemDetailsTests
     public void SetDetails_NewDetails_ReplacesThemAndTheSizeText()
     {
         var item = new GalleryItemViewModel();
-        var details = new GalleryFileDetails(300, 200, null);
+        var details = new GalleryFileDetails(300, 200);
 
         item.SetDetails(details);
 

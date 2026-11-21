@@ -4,8 +4,8 @@ using PicView.Core.Gallery;
 namespace PicView.Tests.Gallery;
 
 /// <summary>
-/// Pins what <see cref="GalleryFileDetails.Read"/> gives for a file: its pixel size and XMP packet, whatever the
-/// format's signature, and null for a file that is not an image.
+/// Pins what <see cref="GalleryFileDetails.Read"/> gives for a file: its upright pixel size, whether its header answers
+/// or ImageMagick does, and null for a file that is not an image.
 /// </summary>
 public sealed class GalleryFileDetailsTests : IDisposable
 {
@@ -22,18 +22,40 @@ public sealed class GalleryFileDetailsTests : IDisposable
     }
 
     [Fact]
-    public void Read_JpegWithXmp_GivesItsSizeAndPacket()
+    public void Read_JpegWithXmp_GivesItsSizeWithoutThePacket()
     {
+        // The motion photo detector reads the packet itself, for the items shown only
         const string packet = "<x:xmpmeta xmlns:x=\"adobe:ns:meta/\"><rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"/></x:xmpmeta>";
         var file = WriteImage("photo.jpg", MagickFormat.Jpeg, 64, 48,
             image => image.SetProfile(new XmpProfile(System.Text.Encoding.UTF8.GetBytes(packet))));
 
         var details = GalleryFileDetails.Read(file);
 
-        Assert.NotNull(details);
-        Assert.Equal(64u, details.PixelWidth);
-        Assert.Equal(48u, details.PixelHeight);
-        Assert.Contains("x:xmpmeta", details.XmpPacket);
+        Assert.Equal(new GalleryFileDetails(64, 48), details);
+    }
+
+    [Theory]
+    [InlineData(MagickFormat.Png, "turned.png")]
+    [InlineData(MagickFormat.WebP, "turned.webp")]
+    [InlineData(MagickFormat.Psd, "turned.psd")]
+    public void Read_ExifOrientationTheHeaderDoesNotRead_GivesTheSizeImageMagickGives(MagickFormat format,
+        string name)
+    {
+        var file = WriteImage(name, format, 64, 48, image =>
+        {
+            var exif = new ExifProfile();
+            exif.SetValue(ExifTag.Orientation, (ushort)6);
+            image.SetProfile(exif);
+            image.Orientation = Orientation.RightTop;
+        });
+        using var magick = new MagickImage();
+        magick.Ping(file);
+        var turned = magick.Orientation is Orientation.RightTop ||
+                     magick.GetExifProfile()?.GetValue(ExifTag.Orientation)?.Value is 6;
+
+        var details = GalleryFileDetails.Read(file);
+
+        Assert.Equal(turned ? new GalleryFileDetails(48, 64) : new GalleryFileDetails(64, 48), details);
     }
 
     [Theory]
@@ -76,7 +98,6 @@ public sealed class GalleryFileDetailsTests : IDisposable
         Assert.NotNull(details);
         Assert.Equal(32u, details.PixelWidth);
         Assert.Equal(16u, details.PixelHeight);
-        Assert.Null(details.XmpPacket);
     }
 
     [Fact]

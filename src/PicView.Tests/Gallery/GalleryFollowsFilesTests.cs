@@ -479,7 +479,7 @@ public class GalleryFollowsFilesTests : IDisposable
     {
         var tab = CreateTab();
         var reader = UseRecordingReader(tab);
-        reader.DetailsOf = name => name == "045.jpg" ? null : new GalleryFileDetails(200, 100, null);
+        reader.DetailsOf = name => name == "045.jpg" ? null : new GalleryFileDetails(200, 100);
         Show(tab);
 
         tab.ImageIterator.Initialize(await FilesAsync(Names(0, 50)));
@@ -494,7 +494,7 @@ public class GalleryFollowsFilesTests : IDisposable
     {
         var tab = CreateTab();
         var reader = UseRecordingReader(tab);
-        reader.DetailsOf = name => name == "000.jpg" ? null : new GalleryFileDetails(200, 100, null);
+        reader.DetailsOf = name => name == "000.jpg" ? null : new GalleryFileDetails(200, 100);
         reader.Pause(afterReads: 41); // the current image and the 20 files on each side, read before the items are added
         Show(tab);
 
@@ -575,7 +575,7 @@ public class GalleryFollowsFilesTests : IDisposable
         var reader = UseRecordingReader(tab);
         reader.DetailsOf = name => name == "100.jpg"
             ? throw new IOException("Cannot read")
-            : new GalleryFileDetails(200, 100, null);
+            : new GalleryFileDetails(200, 100);
         Show(tab);
 
         // Initialize sets the tab's index only after it lists the files, and the first batch is read around that index
@@ -656,6 +656,74 @@ public class GalleryFollowsFilesTests : IDisposable
         await pending;
 
         Assert.False(decoder.RanOnCallersThread);
+    }
+
+    [Fact]
+    public async Task LoadThumbnailAsync_BadgesShownAndInView_DetectsTheMotionPhoto()
+    {
+        Settings.Gallery.ShowMotionPhotoBadges = true;
+        var item = await LoadedMotionPhotoAsync(new FakeThumbnailDecoder());
+
+        await item.LoadThumbnailAsync(TestContext.Current.CancellationToken);
+
+        Assert.True(item.IsMotionPhoto.Value);
+        Assert.True(item.IsMotionPhotoChecked);
+    }
+
+    [Fact]
+    public async Task LoadThumbnailAsync_BadgesHidden_DoesNotDetect()
+    {
+        Settings.Gallery.ShowMotionPhotoBadges = false;
+        var item = await LoadedMotionPhotoAsync(new FakeThumbnailDecoder());
+
+        await item.LoadThumbnailAsync(TestContext.Current.CancellationToken);
+
+        Assert.False(item.IsMotionPhoto.Value);
+        Assert.False(item.IsMotionPhotoChecked);
+    }
+
+    [Fact]
+    public async Task LoadThumbnailAsync_ScrolledOutWhileDecoding_DetectsOnlyOnceShownAgain()
+    {
+        Settings.Gallery.ShowMotionPhotoBadges = true;
+        var decoder = new FakeThumbnailDecoder();
+        var item = await LoadedMotionPhotoAsync(decoder);
+        using var gate = new ManualResetEventSlim(false);
+        decoder.DecodeGate = gate;
+        using var cts = new CancellationTokenSource();
+
+        var pending = item.LoadThumbnailAsync(cts.Token);
+        await cts.CancelAsync();
+        gate.Set();
+        var thumbnail = await pending;
+
+        // Decoded, as decoding had begun, but the badge waits for the item to be shown
+        Assert.NotNull(thumbnail);
+        Assert.False(item.IsMotionPhotoChecked);
+
+        // Shown again: the kept thumbnail comes back at once, and the badge is detected off the caller's thread
+        Assert.Same(thumbnail, await item.LoadThumbnailAsync(TestContext.Current.CancellationToken));
+        await WaitUntilAsync(() => item.IsMotionPhotoChecked);
+        Assert.True(item.IsMotionPhoto.Value);
+    }
+
+    /// <summary>
+    /// A loaded gallery of one Google-style motion photo, its video after the JPEG bytes and its XMP saying so.
+    /// </summary>
+    private async Task<GalleryItemViewModel> LoadedMotionPhotoAsync(FakeThumbnailDecoder decoder)
+    {
+        var video = MotionPhoto.MotionPhotoFixtures.BuildMp4Head(64);
+        var file = MotionPhoto.MotionPhotoFixtures.CreateEmbeddedMotionPhoto(_directory, "a.jpg", video,
+            MotionPhoto.MotionPhotoFixtures.NewStandardXmp(video.Length));
+        var tab = new TabViewModel(null!, TestTabServices.For(_cache, new Thumbnails(decoder, _cache)))
+        {
+            Model = new ImageModel { FileInfo = new FileInfo(Path.Combine(_directory, "shown.jpg")) }
+        };
+        tab.Initialize();
+        Show(tab);
+        tab.ImageIterator.Initialize([file]);
+        await WaitUntilLoadedAsync(tab, "a.jpg");
+        return tab.Gallery.GalleryItems[0];
     }
 
     #region File limit
@@ -891,7 +959,7 @@ public class GalleryFollowsFilesTests : IDisposable
         private int _started;
         private int _readsBeforePause = int.MaxValue;
 
-        public Func<string, GalleryFileDetails?> DetailsOf { get; set; } = _ => new GalleryFileDetails(200, 100, null);
+        public Func<string, GalleryFileDetails?> DetailsOf { get; set; } = _ => new GalleryFileDetails(200, 100);
 
         /// <summary>How many reads have begun, held ones included.</summary>
         public int Started => Volatile.Read(ref _started);
@@ -957,7 +1025,7 @@ public class GalleryFollowsFilesTests : IDisposable
             }
 
             Interlocked.Decrement(ref _inFlight);
-            return new GalleryFileDetails(200, 100, null);
+            return new GalleryFileDetails(200, 100);
         }
     }
 }

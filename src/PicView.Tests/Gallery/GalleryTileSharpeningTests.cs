@@ -730,7 +730,7 @@ public sealed class GalleryTileSharpeningTests : IDisposable
         {
             if (withoutDetails is null || !withoutDetails.Contains(i))
             {
-                _items[i].SetDetails(new GalleryFileDetails(pixelWidth, pixelHeight, null));
+                _items[i].SetDetails(new GalleryFileDetails(pixelWidth, pixelHeight));
             }
 
             if (keepSmallThumbnails)
@@ -933,7 +933,7 @@ public sealed class GalleryTileSharpeningTests : IDisposable
     /// <summary>Gives an item its details as the gallery's reader does, and tells the view sizes arrived.</summary>
     private void SetDetails(int index, uint width, uint height)
     {
-        Item(index).SetDetails(new GalleryFileDetails(width, height, null));
+        Item(index).SetDetails(new GalleryFileDetails(width, height));
         _tab!.Gallery.RaiseSizesChanged();
         Dispatcher.UIThread.RunJobs();
         RenderFrame();
