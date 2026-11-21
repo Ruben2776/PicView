@@ -35,6 +35,9 @@
             <Setter Property="ClipToBounds" Value="True" />
             <Setter Property="BorderThickness" Value="0" />
         </Style>
+        <Style Selector=":is(gallery|GalleryView).tiles customControls|NavigateAbleItem.galleryItem:pointerover /template/ Border#border">
+            <Setter Property="BorderThickness" Value="1" />
+        </Style>
         <!--  Masonry and Rows: the vertical scroll bar starts below the 85x60 button cluster at the top right  -->
         <Style Selector=":is(customControls|GalleryAnimationControl).tiles customControls|NavigateAbleItemsViewer /template/ customControls|AutoScrollViewer#PART_ScrollViewer /template/ ScrollBar#PART_VerticalScrollBar">
             <Setter Property="Margin" Value="0,60,0,0" />
@@ -44,10 +47,9 @@
             <Setter Property="ToolTip.Placement" Value="TopEdgeAlignedLeft" />
             <Setter Property="ToolTip.VerticalOffset" Value="0" />
         </Style>
-        <!--  Masonry and Rows: centered above the tile, reaching into it  -->
+        <!--  Masonry and Rows: no tooltip  -->
         <Style Selector=":is(customControls|GalleryAnimationControl).tiles customControls|NavigateAbleItem.galleryItem Panel#TipHost">
-            <Setter Property="ToolTip.Placement" Value="Top" />
-            <Setter Property="ToolTip.VerticalOffset" Value="50" />
+            <Setter Property="IsEnabled" Value="False" />
         </Style>
         <Style Selector=":is(customControls|GalleryAnimationControl).dockTop customControls|NavigateAbleItem.galleryItem Panel#TipHost">
             <Setter Property="ToolTip.Placement" Value="Bottom" />
@@ -71,7 +73,10 @@
                     IsVisible="{CompiledBinding Gallery.IsGalleryExpanded.Value}"
                     x:Name="DisplayModeMenuItem">
                     <MenuItem.Icon>
-                        <Image Height="12" Source="{StaticResource GalleryImage}" Width="12" />
+                        <Image
+                            Height="12"
+                            Source="{StaticResource GalleryImage}"
+                            Width="12" />
                     </MenuItem.Icon>
                     <customControls:StyledMenuItem
                         Command="{Binding ParentWindowContext.WindowSettings.Gallery.SetExpandedDisplayModeCommand}"
@@ -130,7 +135,10 @@
                         IsChecked="{Binding ParentWindowContext.WindowSettings.Gallery.IsExpandedStretchSquareFill.Value, Mode=OneWay}"
                         ToggleType="Radio" />
                 </customControls:StyledMenuItem>
-                <customControls:StyledMenuItem Header="{Binding ParentWindowContext.Translation.Stretch.Value, Mode=OneWay}" IsVisible="{CompiledBinding !Gallery.IsGalleryExpanded.Value}" x:Name="DockedStretchMenuItem">
+                <customControls:StyledMenuItem
+                    Header="{Binding ParentWindowContext.Translation.Stretch.Value, Mode=OneWay}"
+                    IsVisible="{CompiledBinding !Gallery.IsGalleryExpanded.Value}"
+                    x:Name="DockedStretchMenuItem">
                     <MenuItem.Icon>
                         <Image Classes="SquareDimensionsImage" />
                     </MenuItem.Icon>
@@ -273,7 +281,8 @@
                 IconWidth="18"
                 IsRepeatEnabled="False"
                 IsVisible="{CompiledBinding ParentWindowContext.WindowSettings.Gallery.IsExpandedDisplayModeColumns.Value}"
-                ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.ToggleGalleryDisplayMode.Value, Mode=OneWay}"
+                ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.ToggleGalleryDisplayMode.Value,
+                                              Mode=OneWay}"
                 VerticalAlignment="Stretch"
                 x:Name="ToTilesButton">
                 <customControls:IconButton.Template>
@@ -305,7 +314,8 @@
                 IconWidth="18"
                 IsRepeatEnabled="False"
                 IsVisible="{CompiledBinding ParentWindowContext.WindowSettings.Gallery.IsExpandedDisplayModeTiles.Value}"
-                ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.ToggleGalleryDisplayMode.Value, Mode=OneWay}"
+                ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.ToggleGalleryDisplayMode.Value,
+                                              Mode=OneWay}"
                 VerticalAlignment="Stretch"
                 x:Name="ToColumnsButton">
                 <customControls:IconButton.Template>

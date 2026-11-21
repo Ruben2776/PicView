@@ -7,7 +7,7 @@
     x:DataType="viewModels:GalleryItemViewModel"
     Classes="galleryItem">
     <!--  Size, margin, padding, border and background come from the styles in GalleryView.axaml  -->
-    <!--  GalleryView.axaml places the tooltip for each layout: above the item unless a style there says otherwise  -->
+    <!--  GalleryView.axaml places the tooltip for each layout: above the item unless a style there says otherwise; Masonry and Rows have none  -->
     <Panel
         x:Name="TipHost"
         MinWidth="25"
