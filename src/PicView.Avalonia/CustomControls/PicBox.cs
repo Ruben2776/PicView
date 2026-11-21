@@ -60,6 +60,12 @@ public class PicBox : Control
     public static readonly StyledProperty<AnimationPlayback?> PlaybackProperty =
         AvaloniaProperty.Register<PicBox, AnimationPlayback?>(nameof(Playback));
 
+    /// <summary>
+    ///     Defines the <see cref="IsPlaybackSuspended" /> property.
+    /// </summary>
+    public static readonly StyledProperty<bool> IsPlaybackSuspendedProperty =
+        AvaloniaProperty.Register<PicBox, bool>(nameof(IsPlaybackSuspended));
+
     private CompositionCustomVisual? _customVisual;
     private bool _isAttached;
     private int _openTicket;
@@ -81,6 +87,17 @@ public class PicBox : Control
     {
         get => GetValue(PlaybackProperty);
         set => SetValue(PlaybackProperty, value);
+    }
+
+    /// <summary>
+    ///     Gets or sets whether the animation stands still because nothing of it can be seen, as under the expanded
+    ///     gallery. No frame is decoded or drawn meanwhile, and the playback picks up where it stopped. This is not the
+    ///     user's pause, which is the playback's own.
+    /// </summary>
+    public bool IsPlaybackSuspended
+    {
+        get => GetValue(IsPlaybackSuspendedProperty);
+        set => SetValue(IsPlaybackSuspendedProperty, value);
     }
 
     /// <summary>Opens the player of a playback; runs off the UI thread. Tests replace it.</summary>
@@ -155,6 +172,12 @@ public class PicBox : Control
         else if (change.Property == BoundsProperty)
         {
             ResizeVisual();
+        }
+        else if (change.Property == IsPlaybackSuspendedProperty)
+        {
+            _customVisual?.SendHandlerMessage(IsPlaybackSuspended
+                ? CustomVisualHandler.StopMessage
+                : CustomVisualHandler.StartMessage);
         }
     }
 
@@ -248,7 +271,11 @@ public class PicBox : Control
 
             _customVisual = compositor.CreateCustomVisual(new CustomVisualHandler());
             ElementComposition.SetElementChildVisual(this, _customVisual);
-            _customVisual.SendHandlerMessage(CustomVisualHandler.StartMessage);
+            if (!IsPlaybackSuspended)
+            {
+                _customVisual.SendHandlerMessage(CustomVisualHandler.StartMessage);
+            }
+
             ResizeVisual();
         }
         catch (Exception e)

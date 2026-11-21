@@ -41,6 +41,7 @@
                                 <customControls:PicBox
                                     x:Name="MainImage"
                                     ImageType="{Binding ImageType.Value}"
+                                    IsPlaybackSuspended="{Binding Gallery.IsGalleryExpanded.Value}"
                                     Playback="{Binding Animation.Primary.Value}"
                                     Source="{CompiledBinding Image.Value,
                                                              Converter={StaticResource DisplayableConverter}}" />
@@ -50,6 +51,7 @@
                                 <customControls:PicBox
                                     x:Name="SecondaryImage"
                                     ImageType="{Binding SecondaryImageType.Value}"
+                                    IsPlaybackSuspended="{Binding Gallery.IsGalleryExpanded.Value}"
                                     Playback="{Binding Animation.Secondary.Value}"
                                     Source="{CompiledBinding SecondaryImage.Value,
                                                              Converter={StaticResource DisplayableConverter}}" />

@@ -7,7 +7,8 @@ namespace PicView.Avalonia.AnimatedImage;
 
 /// <summary>
 ///     Draws the frames of one <see cref="AnimationPlayer" /> on the compositor thread. A player sent as a message
-///     replaces the current one; <see cref="CloseMessage" /> ends it. The handler is the one that disposes a player it
+///     replaces the current one; <see cref="CloseMessage" /> ends it. Between <see cref="StopMessage" /> and
+///     <see cref="StartMessage" /> the playback stands still and no frame is asked for. The handler is the one that disposes a player it
 ///     was given, so nothing is disposed while it draws.
 /// </summary>
 public class CustomVisualHandler : CompositionCustomVisualHandler
@@ -76,9 +77,10 @@ public class CustomVisualHandler : CompositionCustomVisualHandler
             return;
         }
 
+        // While stopped the frame is still drawn when something else redraws the visual, but no time passes for it
         var now = CompositionNow;
-        var elapsed = _lastServerTime is { } last ? now - last : TimeSpan.Zero;
-        _lastServerTime = now;
+        var elapsed = _running && _lastServerTime is { } last ? now - last : TimeSpan.Zero;
+        _lastServerTime = _running ? now : null;
 
         try
         {

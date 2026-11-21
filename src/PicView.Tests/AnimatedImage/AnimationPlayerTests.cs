@@ -8,6 +8,9 @@ namespace PicView.Tests.AnimatedImage;
 
 public class AnimationPlayerTests
 {
+    // Decodes a frame inside the Frame call that asks for it, so a test sees it drawn right away
+    private static readonly Action<Action> Inline = decode => decode();
+
     private static AnimationPlayback NewPlayback() => new(new FileInfo("a.gif"), ImageType.AnimatedGif);
 
     [AvaloniaFact]
@@ -16,7 +19,7 @@ public class AnimationPlayerTests
         var playback = NewPlayback();
         var decoder = new FakeAnimationDecoder(100, 100, 100);
 
-        using var player = new AnimationPlayer(playback, decoder);
+        using var player = new AnimationPlayer(playback, decoder, schedule: Inline);
 
         Assert.Equal(3, playback.Timeline!.Count);
         Assert.Equal([0], decoder.Rendered);
@@ -28,7 +31,7 @@ public class AnimationPlayerTests
     public void Frame_SameFrame_DoesNotDrawAgain()
     {
         var decoder = new FakeAnimationDecoder(100, 100, 100);
-        using var player = new AnimationPlayer(NewPlayback(), decoder);
+        using var player = new AnimationPlayer(NewPlayback(), decoder, schedule: Inline);
 
         player.Frame(TimeSpan.FromMilliseconds(50));
         player.Frame(TimeSpan.Zero);
@@ -40,7 +43,7 @@ public class AnimationPlayerTests
     public void Frame_NextFrame_DrawsItOnce()
     {
         var decoder = new FakeAnimationDecoder(100, 100, 100);
-        using var player = new AnimationPlayer(NewPlayback(), decoder);
+        using var player = new AnimationPlayer(NewPlayback(), decoder, schedule: Inline);
 
         var first = player.Frame(TimeSpan.FromMilliseconds(150));
         var second = player.Frame(TimeSpan.Zero);
@@ -55,7 +58,7 @@ public class AnimationPlayerTests
     {
         var playback = NewPlayback();
         var decoder = new FakeAnimationDecoder(100, 100, 100);
-        using var player = new AnimationPlayer(playback, decoder);
+        using var player = new AnimationPlayer(playback, decoder, schedule: Inline);
 
         playback.SetPaused(true);
         player.Frame(TimeSpan.FromMilliseconds(250));
@@ -68,7 +71,7 @@ public class AnimationPlayerTests
     {
         var playback = NewPlayback();
         var decoder = new FakeAnimationDecoder(100, 100, 100);
-        using var player = new AnimationPlayer(playback, decoder);
+        using var player = new AnimationPlayer(playback, decoder, schedule: Inline);
 
         player.Frame(TimeSpan.FromMilliseconds(250));
         Assert.Equal(2, decoder.Rendered[^1]);
@@ -83,7 +86,7 @@ public class AnimationPlayerTests
     public void Frame_SingleFrameDecoder_KeepsDrawingFrameZero()
     {
         var decoder = new FakeAnimationDecoder(100);
-        using var player = new AnimationPlayer(NewPlayback(), decoder);
+        using var player = new AnimationPlayer(NewPlayback(), decoder, schedule: Inline);
 
         var bitmap = player.Frame(TimeSpan.FromSeconds(5));
 
@@ -95,7 +98,7 @@ public class AnimationPlayerTests
     public void Frame_DecoderWithNoFrames_ReturnsBitmapWithoutThrowing()
     {
         var decoder = new FakeAnimationDecoder();
-        using var player = new AnimationPlayer(NewPlayback(), decoder);
+        using var player = new AnimationPlayer(NewPlayback(), decoder, schedule: Inline);
 
         var bitmap = player.Frame(TimeSpan.FromSeconds(1));
 
@@ -109,7 +112,7 @@ public class AnimationPlayerTests
         var decoder = new FakeAnimationDecoder(100, 100, 100) { ThrowOnRender = true };
         var stream = new MemoryStream();
 
-        Assert.Throws<InvalidOperationException>(() => new AnimationPlayer(NewPlayback(), decoder, stream));
+        Assert.Throws<InvalidOperationException>(() => new AnimationPlayer(NewPlayback(), decoder, stream, schedule: Inline));
 
         Assert.True(decoder.IsDisposed);
         Assert.False(stream.CanRead);
@@ -119,7 +122,7 @@ public class AnimationPlayerTests
     public void Frame_DecoderThrows_KeepsLastDrawnFrameUntilANewOneDraws()
     {
         var decoder = new FakeAnimationDecoder(100, 100, 100);
-        using var player = new AnimationPlayer(NewPlayback(), decoder);
+        using var player = new AnimationPlayer(NewPlayback(), decoder, schedule: Inline);
         var before = player.Frame(TimeSpan.Zero);
 
         decoder.ThrowOnRender = true;
@@ -139,7 +142,7 @@ public class AnimationPlayerTests
     public void Frame_FailedFrame_IsAskedForOnce()
     {
         var decoder = new FakeAnimationDecoder(100, 100, 100);
-        using var player = new AnimationPlayer(NewPlayback(), decoder);
+        using var player = new AnimationPlayer(NewPlayback(), decoder, schedule: Inline);
 
         decoder.ThrowOnRender = true;
         player.Frame(TimeSpan.FromMilliseconds(150));
@@ -156,7 +159,7 @@ public class AnimationPlayerTests
     {
         var playback = NewPlayback();
         var decoder = new FakeAnimationDecoder(100, 100, 100);
-        using var player = new AnimationPlayer(playback, decoder);
+        using var player = new AnimationPlayer(playback, decoder, schedule: Inline);
 
         decoder.ThrowOnRender = true;
         player.Frame(TimeSpan.FromMilliseconds(150));
@@ -171,7 +174,7 @@ public class AnimationPlayerTests
     public void Frame_AllocatesNothing_WhenFrameHasFailed()
     {
         var decoder = new FakeAnimationDecoder(100, 100, 100);
-        using var player = new AnimationPlayer(NewPlayback(), decoder);
+        using var player = new AnimationPlayer(NewPlayback(), decoder, schedule: Inline);
         decoder.ThrowOnRender = true;
         player.Frame(TimeSpan.FromMilliseconds(150));
 
@@ -190,7 +193,7 @@ public class AnimationPlayerTests
     public void Frame_AllocatesNothing_WhenFrameIsUnchanged()
     {
         var decoder = new FakeAnimationDecoder(100, 100, 100);
-        using var player = new AnimationPlayer(NewPlayback(), decoder);
+        using var player = new AnimationPlayer(NewPlayback(), decoder, schedule: Inline);
         player.Frame(TimeSpan.Zero);
 
         var before = GC.GetAllocatedBytesForCurrentThread();
@@ -209,7 +212,7 @@ public class AnimationPlayerTests
     {
         var decoder = new FakeAnimationDecoder(100, 100);
         var stream = new MemoryStream();
-        var player = new AnimationPlayer(NewPlayback(), decoder, stream);
+        var player = new AnimationPlayer(NewPlayback(), decoder, stream, schedule: Inline);
 
         player.Dispose();
 
@@ -220,9 +223,99 @@ public class AnimationPlayerTests
     }
 
     [AvaloniaFact]
+    public void Frame_NextFrame_IsDecodedOffTheCallingThread()
+    {
+        var pending = new List<Action>();
+        var decoder = new FakeAnimationDecoder(100, 100, 100);
+        using var player = new AnimationPlayer(NewPlayback(), decoder, schedule: pending.Add);
+
+        var bitmap = player.Frame(TimeSpan.FromMilliseconds(150));
+
+        Assert.NotNull(bitmap);
+        Assert.Equal([0], decoder.Rendered);
+        Assert.Single(pending);
+
+        pending[0]();
+
+        Assert.Equal([0, 1], decoder.Rendered);
+        Assert.Same(bitmap, player.Frame(TimeSpan.Zero));
+        Assert.Single(pending);
+    }
+
+    [AvaloniaFact]
+    public void Frame_PlaybackMovesOnBeforeTheFrameIsDecoded_DecodesOnlyTheNewestOne()
+    {
+        var pending = new List<Action>();
+        var decoder = new FakeAnimationDecoder(100, 100, 100, 100);
+        using var player = new AnimationPlayer(NewPlayback(), decoder, schedule: pending.Add);
+
+        player.Frame(TimeSpan.FromMilliseconds(150));
+        player.Frame(TimeSpan.FromMilliseconds(100));
+        player.Frame(TimeSpan.FromMilliseconds(100));
+
+        Assert.Single(pending);
+        pending[0]();
+
+        Assert.Equal([0, 3], decoder.Rendered);
+    }
+
+    [AvaloniaFact]
+    public void Frame_PlaybackReturnsToTheShownFrameBeforeAnotherIsDecoded_DecodesNothing()
+    {
+        var pending = new List<Action>();
+        var playback = NewPlayback();
+        var decoder = new FakeAnimationDecoder(100, 100, 100);
+        using var player = new AnimationPlayer(playback, decoder, schedule: pending.Add);
+
+        player.Frame(TimeSpan.FromMilliseconds(150));
+        playback.Step(-1);
+        player.Frame(TimeSpan.Zero);
+        pending[0]();
+
+        Assert.Equal([0], decoder.Rendered);
+    }
+
+    [AvaloniaFact]
+    public void Dispose_WhileAFrameIsWaitingToBeDecoded_ReleasesOnceTheDecodingEnds()
+    {
+        var pending = new List<Action>();
+        var decoder = new FakeAnimationDecoder(100, 100, 100);
+        var stream = new MemoryStream();
+        var player = new AnimationPlayer(NewPlayback(), decoder, stream, pending.Add);
+        player.Frame(TimeSpan.FromMilliseconds(150));
+
+        player.Dispose();
+
+        Assert.True(player.IsDisposed);
+        Assert.Null(player.Frame(TimeSpan.Zero));
+        Assert.False(decoder.IsDisposed);
+
+        pending[0]();
+
+        Assert.True(decoder.IsDisposed);
+        Assert.False(stream.CanRead);
+        Assert.Equal([0], decoder.Rendered);
+    }
+
+    [AvaloniaFact]
+    public async Task Frame_OnTheThreadPool_ShowsTheFrameSoonAfter()
+    {
+        var decoder = new FakeAnimationDecoder(100, 100, 100);
+        using var player = new AnimationPlayer(NewPlayback(), decoder);
+
+        player.Frame(TimeSpan.FromMilliseconds(150));
+        for (var i = 0; i < 500 && decoder.Rendered.Count < 2; i++)
+        {
+            await Task.Delay(10, TestContext.Current.CancellationToken);
+        }
+
+        Assert.Equal([0, 1], decoder.Rendered);
+    }
+
+    [AvaloniaFact]
     public void Dispose_Twice_IsHarmless()
     {
-        var player = new AnimationPlayer(NewPlayback(), new FakeAnimationDecoder(100, 100));
+        var player = new AnimationPlayer(NewPlayback(), new FakeAnimationDecoder(100, 100), schedule: Inline);
 
         player.Dispose();
         var exception = Record.Exception(player.Dispose);

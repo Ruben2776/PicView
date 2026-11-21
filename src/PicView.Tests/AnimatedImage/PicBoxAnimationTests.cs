@@ -78,6 +78,42 @@ public class PicBoxAnimationTests
     }
 
     [AvaloniaFact]
+    public async Task IsPlaybackSuspended_SetAndCleared_KeepsThePlayerWithoutOpeningAgain()
+    {
+        var (window, box) = Show();
+        box.Playback = Playback("a.gif");
+        await SettleOpening(box);
+        var player = box.Player;
+
+        box.IsPlaybackSuspended = true;
+        AvaloniaHeadlessPlatform.ForceRenderTimerTick();
+        await SettleOpening(box);
+        box.IsPlaybackSuspended = false;
+        AvaloniaHeadlessPlatform.ForceRenderTimerTick();
+        await SettleOpening(box);
+
+        Assert.Equal(1, _opens);
+        Assert.NotNull(player);
+        Assert.Same(player, box.Player);
+        Assert.False(player.IsDisposed);
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public async Task Playback_SetWhileSuspended_StillOpensThePlayer()
+    {
+        var (window, box) = Show();
+        box.IsPlaybackSuspended = true;
+        var playback = Playback("a.gif");
+
+        box.Playback = playback;
+        await SettleOpening(box);
+
+        Assert.Same(playback, box.Player?.Playback);
+        window.Close();
+    }
+
+    [AvaloniaFact]
     public async Task Layout_SeveralPassesAndResizes_DoesNotOpenAgain()
     {
         var (window, box) = Show();

@@ -16,6 +16,12 @@ namespace PicView.Avalonia.AnimatedImage;
 ///         forward, so the worker decodes its way there, from the start when the frame lies behind.
 ///     </para>
 /// </summary>
+// TODO: Stepping back a frame is slow. The video only decodes forward, so the frame before the one shown is reached
+// by rewinding and decoding every frame up to it again: almost two seconds near the end of a 156-frame 1080p file.
+// Suggested fix: keep the last few frames shown instead of giving their buffers straight back in TryTakeReady (a
+// short history beside _current, the oldest going back to _free), and have WaitFor look there before it sets _skipTo.
+// That makes a few steps back instant. For longer ways back, pv_rewind could take a timestamp and seek to the sync
+// sample before it (the stss box lists them), so only the frames since that keyframe are decoded again.
 internal sealed unsafe class FFmpegAvifAnimationDecoder : IAnimationDecoder
 {
     private const int BytesPerPixel = 4;
