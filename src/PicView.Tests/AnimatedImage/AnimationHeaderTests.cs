@@ -1,3 +1,5 @@
+using System.Buffers.Binary;
+using System.Text;
 using ImageMagick;
 using PicView.Core.ImageDecoding;
 
@@ -22,6 +24,7 @@ public class AnimationHeaderTests : IDisposable
     [InlineData(MagickFormat.Gif, 1, false)]
     [InlineData(MagickFormat.Gif, 3, true)]
     [InlineData(MagickFormat.Avif, 1, false)]
+    [InlineData(MagickFormat.Avif, 3, true)]
     public void HeaderCheck_KnownFormat_AnswersLikeTheMagickPing(MagickFormat format, int frames, bool animated)
     {
         var path = Write(format, frames);
@@ -31,13 +34,62 @@ public class AnimationHeaderTests : IDisposable
         Assert.Equal(animated, ImageAnalyzer.IsAnimated(new FileInfo(path)));
     }
 
-    [Fact]
-    public void HeaderCheck_AvifSequence_LeavesTheAnswerToTheMagickPing()
+    [Theory]
+    [InlineData(1u, false)]
+    [InlineData(2u, true)]
+    [InlineData(500u, true)]
+    public void HeaderCheck_AvifSequence_CountsTheSamplesOfItsPictureTrack(uint samples, bool animated)
     {
-        var path = Write(MagickFormat.Avif, 3);
+        var path = Path.Combine(_directory, $"sequence{samples}.avif");
+        File.WriteAllBytes(path, [.. SequenceFileType(), .. Box("mdat", new byte[64]), .. Movie(Track("pict", samples))]);
+
+        Assert.Equal(animated, ImageAnalyzer.TryDetectAnimationFromHeader(path));
+    }
+
+    [Fact]
+    public void HeaderCheck_AvifSequenceWithAlphaTrack_CountsOnlyThePictureTrack()
+    {
+        var path = Path.Combine(_directory, "alpha.avif");
+        File.WriteAllBytes(path, [.. SequenceFileType(), .. Movie([.. Track("auxv", 9), .. Track("pict", 1)])]);
+
+        Assert.False(ImageAnalyzer.TryDetectAnimationFromHeader(path));
+    }
+
+    [Fact]
+    public void HeaderCheck_AvifSequenceBehindLargeSizeBox_IsFound()
+    {
+        var path = Path.Combine(_directory, "large.avif");
+        byte[] largeData = [0, 0, 0, 1, .. "mdat"u8, 0, 0, 0, 0, 0, 0, 0, 24, 1, 2, 3, 4, 5, 6, 7, 8];
+        File.WriteAllBytes(path, [.. SequenceFileType(), .. largeData, .. Movie(Track("pict", 4))]);
+
+        Assert.True(ImageAnalyzer.TryDetectAnimationFromHeader(path));
+    }
+
+    [Fact]
+    public void HeaderCheck_AvifSequenceWithoutMovie_GivesNoAnswer()
+    {
+        var path = Path.Combine(_directory, "nomovie.avif");
+        File.WriteAllBytes(path, [.. SequenceFileType(), .. Box("mdat", new byte[64])]);
 
         Assert.Null(ImageAnalyzer.TryDetectAnimationFromHeader(path));
-        Assert.True(ImageAnalyzer.IsAnimated(new FileInfo(path)));
+    }
+
+    [Fact]
+    public void HeaderCheck_AvifSequenceWithoutSamples_GivesNoAnswer()
+    {
+        var path = Path.Combine(_directory, "fragmented.avif");
+        File.WriteAllBytes(path, [.. SequenceFileType(), .. Movie(Track("pict", 0))]);
+
+        Assert.Null(ImageAnalyzer.TryDetectAnimationFromHeader(path));
+    }
+
+    [Fact]
+    public void HeaderCheck_AvifSequenceWithBoxLongerThanTheFile_GivesNoAnswer()
+    {
+        var path = Path.Combine(_directory, "damaged.avif");
+        File.WriteAllBytes(path, [.. SequenceFileType(), 0, 0, 1, 0, .. "moov"u8, 0, 0, 0, 0]);
+
+        Assert.Null(ImageAnalyzer.TryDetectAnimationFromHeader(path));
     }
 
     [Fact]
@@ -78,6 +130,31 @@ public class AnimationHeaderTests : IDisposable
     [Fact]
     public void HeaderCheck_MissingFile_GivesNoAnswer() =>
         Assert.Null(ImageAnalyzer.TryDetectAnimationFromHeader(Path.Combine(_directory, "missing.webp")));
+
+    private static byte[] SequenceFileType() => Box("ftyp", [.. "avis"u8, 0, 0, 0, 0, .. "avis"u8, .. "msf1"u8]);
+
+    private static byte[] Movie(byte[] tracks) => Box("moov", [.. Box("mvhd", new byte[100]), .. tracks]);
+
+    /// <summary>
+    /// A track as an ISO media file lays it out, down to the sample size box that holds the count.
+    /// </summary>
+    private static byte[] Track(string handler, uint samples)
+    {
+        var sampleCount = new byte[4];
+        BinaryPrimitives.WriteUInt32BigEndian(sampleCount, samples);
+        var sampleSizes = Box("stsz", [0, 0, 0, 0, 0, 0, 0, 0, .. sampleCount]);
+        var sampleTable = Box("stbl", [.. Box("stsd", new byte[8]), .. sampleSizes]);
+        var handlerBox = Box("hdlr", [0, 0, 0, 0, 0, 0, 0, 0, .. Encoding.ASCII.GetBytes(handler), .. new byte[13]]);
+        var media = Box("mdia", [.. Box("mdhd", new byte[24]), .. handlerBox, .. Box("minf", sampleTable)]);
+        return Box("trak", [.. Box("tkhd", new byte[84]), .. media]);
+    }
+
+    private static byte[] Box(string type, byte[] content)
+    {
+        var size = new byte[4];
+        BinaryPrimitives.WriteUInt32BigEndian(size, (uint)(content.Length + 8));
+        return [.. size, .. Encoding.ASCII.GetBytes(type), .. content];
+    }
 
     private string Write(MagickFormat format, int frames)
     {

@@ -1,5 +1,6 @@
 ﻿using System.Buffers.Binary;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using ImageMagick;
 using PicView.Core.DebugTools;
 
@@ -58,7 +59,7 @@ public static class ImageAnalyzer
     /// </summary>
     /// <returns>
     /// Whether the file is animated, or null when the header does not settle it: an unknown or damaged file, or an AVIF
-    /// that says it holds an image sequence, whose frames only a decoder can count.
+    /// image sequence whose sample table cannot be read.
     /// </returns>
     internal static bool? TryDetectAnimationFromHeader(string file)
     {
@@ -223,7 +224,8 @@ public static class ImageAnalyzer
     }
 
     /// <summary>
-    /// Reads the brands of an ISO media file, such as an AVIF. A still image names no sequence brand.
+    /// Reads the brands of an ISO media file, such as an AVIF. A still image names no sequence brand; a sequence
+    /// says how many frames it holds in its track's sample table.
     /// </summary>
     private static bool? IsAnimatedIsoMedia(FileStream stream, ReadOnlySpan<byte> majorBrand, uint boxSize)
     {
@@ -251,14 +253,159 @@ public static class ImageAnalyzer
             isAvif |= brand.SequenceEqual("avif"u8);
         }
 
-        if (isSequence)
+        if (!isSequence)
         {
-            // A sequence can still hold a single frame, which only a decoder can tell
+            return isAvif ? false : null;
+        }
+
+        // A sequence can still hold a single frame
+        return CountSequenceFrames(stream, boxSize) switch
+        {
+            null => null,
+            var frames => frames > 1
+        };
+    }
+
+    /// <summary>
+    /// Reads the frame count of an image sequence from the sample table of its picture track
+    /// (moov, trak, mdia, minf, stbl, stsz), which is there without decoding a frame.
+    /// </summary>
+    /// <returns>
+    /// The largest sample count among the picture tracks, or null when the file has no readable one: no movie box, a
+    /// damaged box, or a fragmented file whose samples are listed elsewhere.
+    /// </returns>
+    private static uint? CountSequenceFrames(FileStream stream, long start)
+    {
+        if (!TryFindBox(stream, start, stream.Length, "moov"u8, out var movie))
+        {
             return null;
         }
 
-        return isAvif ? false : null;
+        uint? frames = null;
+        var next = movie.Start;
+        while (TryFindBox(stream, next, movie.End, "trak"u8, out var track))
+        {
+            next = track.End;
+            if (!TryFindBox(stream, track.Start, track.End, "mdia"u8, out var media) || !IsPictureTrack(stream, media))
+            {
+                continue;
+            }
+
+            if (CountSamples(stream, media) is { } samples && samples > (frames ?? 0))
+            {
+                frames = samples;
+            }
+        }
+
+        // No samples in the movie box means they are listed in fragments, which this does not walk
+        return frames is 0 ? null : frames;
     }
+
+    /// <summary>
+    /// Tells a track of pictures from the others a sequence can carry, such as its alpha plane or audio.
+    /// </summary>
+    private static bool IsPictureTrack(FileStream stream, BoxRange media)
+    {
+        if (!TryFindBox(stream, media.Start, media.End, "hdlr"u8, out var handler))
+        {
+            return false;
+        }
+
+        // The version and flags, then a reserved field, then the handler type
+        Span<byte> content = stackalloc byte[12];
+        stream.Position = handler.Start;
+        return handler.End - handler.Start >= content.Length && TryRead(stream, content) &&
+               content[8..].SequenceEqual("pict"u8);
+    }
+
+    private static uint? CountSamples(FileStream stream, BoxRange media)
+    {
+        if (!TryFindBox(stream, media.Start, media.End, "minf"u8, out var information) ||
+            !TryFindBox(stream, information.Start, information.End, "stbl"u8, out var table))
+        {
+            return null;
+        }
+
+        // The sample size box and its compact form both hold the count after eight bytes
+        if (!TryFindBox(stream, table.Start, table.End, "stsz"u8, out var sizes) &&
+            !TryFindBox(stream, table.Start, table.End, "stz2"u8, out sizes))
+        {
+            return null;
+        }
+
+        Span<byte> content = stackalloc byte[12];
+        stream.Position = sizes.Start;
+        if (sizes.End - sizes.Start < content.Length || !TryRead(stream, content))
+        {
+            return null;
+        }
+
+        return BinaryPrimitives.ReadUInt32BigEndian(content[8..]);
+    }
+
+    /// <summary>
+    /// Walks the boxes between <paramref name="start"/> and <paramref name="end"/> for the first of
+    /// <paramref name="type"/>, skipping the content of the others.
+    /// </summary>
+    private static bool TryFindBox(FileStream stream, long start, long end, ReadOnlySpan<byte> type, out BoxRange content)
+    {
+        // Far more boxes than a real file holds at one level, so a damaged one cannot keep this walking
+        const int maxBoxes = 4096;
+        const int headerLength = 8;
+        const int largeSizeLength = 8;
+        content = default;
+        Span<byte> header = stackalloc byte[headerLength];
+        Span<byte> largeSize = stackalloc byte[largeSizeLength];
+        var position = start;
+        for (var i = 0; i < maxBoxes && position + headerLength <= end; i++)
+        {
+            stream.Position = position;
+            if (!TryRead(stream, header))
+            {
+                return false;
+            }
+
+            long size = BinaryPrimitives.ReadUInt32BigEndian(header);
+            var contentStart = position + headerLength;
+            switch (size)
+            {
+                case 0:
+                    // The box runs to the end of what holds it
+                    size = end - position;
+                    break;
+                case 1:
+                    if (!TryRead(stream, largeSize))
+                    {
+                        return false;
+                    }
+
+                    size = (long)Math.Min(BinaryPrimitives.ReadUInt64BigEndian(largeSize), long.MaxValue);
+                    contentStart += largeSizeLength;
+                    break;
+            }
+
+            if (size < contentStart - position || size > end - position)
+            {
+                return false;
+            }
+
+            if (header[4..].SequenceEqual(type))
+            {
+                content = new BoxRange(contentStart, position + size);
+                return true;
+            }
+
+            position += size;
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// Where the content of an ISO media box starts and ends in the file.
+    /// </summary>
+    [StructLayout(LayoutKind.Auto)]
+    private readonly record struct BoxRange(long Start, long End);
 
     private static bool IsSequenceBrand(ReadOnlySpan<byte> brand) =>
         brand.SequenceEqual("avis"u8) || brand.SequenceEqual("msf1"u8);
