@@ -1,17 +1,21 @@
 /*
  * picview_ffmpeg.c
  *
- * Minimal statically-linked FFmpeg wrapper for motion photo video playback.
+ * Minimal statically-linked FFmpeg wrapper for motion photo video playback
+ * and, when built with dav1d, for animated AVIF images.
  * It exposes a tiny, stable C ABI so the managed side never touches FFmpeg
  * structs or version-dependent layouts:
  *
  *   pv_open         open a media stream via caller-supplied read/seek callbacks
  *   pv_decode_next  decode the next video frame, scaled to BGRA32
+ *   pv_rewind       go back to before the first frame (optional for callers:
+ *                   older builds of this library do not export it)
  *   pv_close        release everything
  *
  * Video-only by design: no audio decoding/output is built into this library
  * (the bundled FFmpeg configuration disables everything except the mov/mp4
- * demuxer, the h264/hevc decoders and libswscale).
+ * demuxer, the h264/hevc decoders, the optional dav1d AV1 decoder and
+ * libswscale).
  *
  * Threading: a session is driven by exactly one thread at a time.
  */
@@ -73,6 +77,9 @@ typedef struct PvSession
     int src_w;
     int src_h;
     enum AVPixelFormat src_fmt;
+    int src_colorspace;
+    int src_full_range;
+    int honor_color_tags;
     int rotation;
     uint8_t *scratch;
     int scratch_capacity;
@@ -210,6 +217,15 @@ PV_API PvSession *pv_open(void *opaque, PvReadCb read_cb, PvSeekCb seek_cb, PvVi
     }
     PV_DBG("codec=%s extradata_size=%d w=%d h=%d\n", decoder->name,
            s->dec->extradata_size, s->dec->width, s->dec->height);
+    if (decoder->id == AV_CODEC_ID_AV1)
+    {
+        /* Animated AVIF images: decode on every core (the default is a single
+         * thread), and convert with the matrix and range the frames are tagged
+         * with, as an image decoder does. Motion photo videos keep libswscale's
+         * defaults. */
+        s->dec->thread_count = 0;
+        s->honor_color_tags = 1;
+    }
     r = avcodec_open2(s->dec, decoder, NULL);
     if (r < 0)
     {
@@ -361,8 +377,12 @@ static int pv_ensure_sws(PvSession *s, const AVFrame *frame, int *out_w, int *ou
     *out_w = dst_w;
     *out_h = dst_h;
 
+    int colorspace = s->honor_color_tags ? (int)frame->colorspace : AVCOL_SPC_UNSPECIFIED;
+    int full_range = s->honor_color_tags && frame->color_range == AVCOL_RANGE_JPEG;
+
     if (s->sws != NULL && fmt == s->src_fmt &&
-        frame->width == s->src_w && frame->height == s->src_h)
+        frame->width == s->src_w && frame->height == s->src_h &&
+        colorspace == s->src_colorspace && full_range == s->src_full_range)
     {
         return 0;
     }
@@ -381,7 +401,26 @@ static int pv_ensure_sws(PvSession *s, const AVFrame *frame, int *out_w, int *ou
         return -1;
     }
 
+    if (s->honor_color_tags)
+    {
+        int *inv_table, *table;
+        int src_range, dst_range, brightness, contrast, saturation;
+        if (sws_getColorspaceDetails(s->sws, &inv_table, &src_range, &table, &dst_range,
+                                     &brightness, &contrast, &saturation) >= 0)
+        {
+            /* An untagged matrix is BT.601, the default of the AVIF container
+             * and of libswscale alike. The SWS_CS_* values are the AVCOL_SPC_* ones. */
+            const int *coefficients = colorspace == AVCOL_SPC_UNSPECIFIED || colorspace == AVCOL_SPC_RGB
+                                          ? inv_table
+                                          : sws_getCoefficients(colorspace);
+            sws_setColorspaceDetails(s->sws, coefficients, full_range, table, dst_range,
+                                     brightness, contrast, saturation);
+        }
+    }
+
     s->src_fmt = fmt;
+    s->src_colorspace = colorspace;
+    s->src_full_range = full_range;
     s->src_w = frame->width;
     s->src_h = frame->height;
     return 0;
@@ -519,6 +558,35 @@ PV_API int pv_decode_next(PvSession *s, uint8_t *dst, int dst_capacity, double *
             return -1;
         }
     }
+}
+
+/*
+ * Goes back to before the first frame, so the next pv_decode_next returns it
+ * again. Much cheaper than closing and reopening, which probes the stream anew.
+ * Returns 0 on success, negative when the stream cannot seek; the session then
+ * has to be closed.
+ */
+PV_API int pv_rewind(PvSession *s)
+{
+    if (s == NULL || s->fmt == NULL || s->dec == NULL)
+    {
+        return -1;
+    }
+
+    int r = av_seek_frame(s->fmt, s->video_index, s->start_ts, AVSEEK_FLAG_BACKWARD);
+    if (r < 0)
+    {
+        PV_DBG("av_seek_frame -> %d (%s)\n", r, av_err2str(r));
+        return -1;
+    }
+
+    avcodec_flush_buffers(s->dec);
+    av_packet_unref(s->pkt);
+    av_frame_unref(s->frame);
+    s->frame_count = 0;
+    s->eof = 0;
+    s->flushed = 0;
+    return 0;
 }
 
 PV_API void pv_close(PvSession *s)

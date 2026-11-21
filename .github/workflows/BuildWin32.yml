@@ -57,7 +57,7 @@ jobs:
         shell: pwsh
         run: |
           # FFmpeg build toolchain inside the preinstalled MSYS2
-          & C:\msys64\usr\bin\pacman.exe -Sy --noconfirm --needed base-devel mingw-w64-x86_64-gcc mingw-w64-x86_64-nasm diffutils tar
+          & C:\msys64\usr\bin\pacman.exe -Sy --noconfirm --needed base-devel mingw-w64-x86_64-gcc mingw-w64-x86_64-nasm mingw-w64-x86_64-meson mingw-w64-x86_64-ninja mingw-w64-x86_64-pkgconf diffutils tar
 
           $targets = @()
           if ('${{ steps.cache-ffmpeg-win-x64.outputs.cache-hit }}' -ne 'true') { $targets += 'win-x64' }

@@ -11,7 +11,8 @@ namespace PicView.Avalonia.MotionPhoto;
 /// <para>
 /// The native library is a purpose-built FFmpeg build (mov/mp4 demuxer + h264/hevc
 /// decoders + libswscale, no audio) wrapped behind a tiny C ABI, so no FFmpeg types
-/// or struct layouts leak into managed code.
+/// or struct layouts leak into managed code. It also plays animated AVIF images when
+/// it was built with the dav1d AV1 decoder; a build without it fails to open them.
 /// </para>
 /// </summary>
 public static class FFmpegService
@@ -38,6 +39,9 @@ public static class FFmpegService
     public delegate int PvDecodeNextCallback(IntPtr session, IntPtr dst, int dstCapacity, out double pts, out int width, out int height);
     public delegate void PvCloseCallback(IntPtr session);
 
+    /// <summary>Goes back to before the first frame; returns 0 on success, negative when the stream cannot seek.</summary>
+    public delegate int PvRewindCallback(IntPtr session);
+
     private static readonly Lock InitLock = new();
     private static IntPtr _library;
     private static bool _initialized;
@@ -46,6 +50,9 @@ public static class FFmpegService
     internal static PvOpenCallback PvOpen { get; private set; } = null!;
     internal static PvDecodeNextCallback PvDecodeNext { get; private set; } = null!;
     internal static PvCloseCallback PvClose { get; private set; } = null!;
+
+    /// <summary>Null when the library was built before it had this export; the video is then reopened instead.</summary>
+    internal static PvRewindCallback? PvRewind { get; private set; }
 
     /// <summary>
     /// Attempts to load the native library. Returns false when playback is
@@ -91,6 +98,11 @@ public static class FFmpegService
                     NativeLibrary.GetExport(_library, "pv_decode_next"));
                 PvClose = Marshal.GetDelegateForFunctionPointer<PvCloseCallback>(
                     NativeLibrary.GetExport(_library, "pv_close"));
+                if (NativeLibrary.TryGetExport(_library, "pv_rewind", out var rewind))
+                {
+                    PvRewind = Marshal.GetDelegateForFunctionPointer<PvRewindCallback>(rewind);
+                }
+
                 _initialized = true;
                 return true;
             }

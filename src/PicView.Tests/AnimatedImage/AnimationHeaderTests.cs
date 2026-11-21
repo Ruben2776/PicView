@@ -93,6 +93,68 @@ public class AnimationHeaderTests : IDisposable
     }
 
     [Fact]
+    public void FrameDurations_MagickWrittenSequence_MatchTheDelaysMagickReads()
+    {
+        var path = Write(MagickFormat.Avif, 3);
+
+        using var stream = File.OpenRead(path);
+        var durations = IsoMediaSequence.ReadFrameDurations(stream);
+
+        using var collection = new MagickImageCollection(path);
+        Assert.NotNull(durations);
+        Assert.Equal(collection.Count, durations.Length);
+        for (var i = 0; i < durations.Length; i++)
+        {
+            var expected = collection[i].AnimationDelay * 1000.0 / collection[i].AnimationTicksPerSecond;
+            Assert.Equal(expected, durations[i].TotalMilliseconds, tolerance: 10.0);
+        }
+    }
+
+    [Fact]
+    public void FrameDurations_RunsOfSamples_AreExpandedPerFrame()
+    {
+        // Two frames of 40 units and one of 500, at 1000 units a second, in a track that holds four
+        byte[] times = [0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0, 40, 0, 0, 0, 1, 0, 0, 1, 0xF4];
+        using var stream = new MemoryStream([.. SequenceFileType(), .. Movie(Track("pict", 4, 1000, times))]);
+
+        var durations = IsoMediaSequence.ReadFrameDurations(stream);
+
+        Assert.Equal([40, 40, 500, 500], durations?.Select(duration => duration.TotalMilliseconds));
+    }
+
+    [Fact]
+    public void FrameDurations_TrackWithoutTimes_GivesNoAnswer()
+    {
+        using var stream = new MemoryStream([.. SequenceFileType(), .. Movie(Track("pict", 4))]);
+
+        Assert.Null(IsoMediaSequence.ReadFrameDurations(stream));
+    }
+
+    [Fact]
+    public void FrameDurations_StillImage_GivesNoAnswer()
+    {
+        using var stream = File.OpenRead(Write(MagickFormat.Avif, 1));
+
+        Assert.Null(IsoMediaSequence.ReadFrameDurations(stream));
+    }
+
+    [Fact]
+    public void AuxiliaryTrack_SequenceWithAlphaTrack_IsFound()
+    {
+        using var stream = new MemoryStream([.. SequenceFileType(), .. Movie([.. Track("pict", 4), .. Track("auxv", 4)])]);
+
+        Assert.True(IsoMediaSequence.HasAuxiliaryTrack(stream));
+    }
+
+    [Fact]
+    public void AuxiliaryTrack_SequenceOfPicturesOnly_IsNotFound()
+    {
+        using var stream = new MemoryStream([.. SequenceFileType(), .. Movie(Track("pict", 4))]);
+
+        Assert.False(IsoMediaSequence.HasAuxiliaryTrack(stream));
+    }
+
+    [Fact]
     public void HeaderCheck_LossyWebpWithoutExtendedHeader_IsNotAnimated()
     {
         var path = Path.Combine(_directory, "simple.webp");
@@ -138,14 +200,17 @@ public class AnimationHeaderTests : IDisposable
     /// <summary>
     /// A track as an ISO media file lays it out, down to the sample size box that holds the count.
     /// </summary>
-    private static byte[] Track(string handler, uint samples)
+    private static byte[] Track(string handler, uint samples, uint timescale = 0, byte[]? times = null)
     {
         var sampleCount = new byte[4];
         BinaryPrimitives.WriteUInt32BigEndian(sampleCount, samples);
         var sampleSizes = Box("stsz", [0, 0, 0, 0, 0, 0, 0, 0, .. sampleCount]);
-        var sampleTable = Box("stbl", [.. Box("stsd", new byte[8]), .. sampleSizes]);
+        byte[] sampleTimes = times is null ? [] : Box("stts", times);
+        var sampleTable = Box("stbl", [.. Box("stsd", new byte[8]), .. sampleTimes, .. sampleSizes]);
+        var mediaHeader = new byte[24];
+        BinaryPrimitives.WriteUInt32BigEndian(mediaHeader.AsSpan(12), timescale);
         var handlerBox = Box("hdlr", [0, 0, 0, 0, 0, 0, 0, 0, .. Encoding.ASCII.GetBytes(handler), .. new byte[13]]);
-        var media = Box("mdia", [.. Box("mdhd", new byte[24]), .. handlerBox, .. Box("minf", sampleTable)]);
+        var media = Box("mdia", [.. Box("mdhd", mediaHeader), .. handlerBox, .. Box("minf", sampleTable)]);
         return Box("trak", [.. Box("tkhd", new byte[84]), .. media]);
     }
 

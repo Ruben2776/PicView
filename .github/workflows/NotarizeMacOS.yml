@@ -58,7 +58,7 @@ jobs:
         if: steps.cache-ffmpeg.outputs.cache-hit != 'true'
         shell: pwsh
         run: |
-          brew install nasm make
+          brew install nasm make meson ninja pkgconf
 
           # FFmpeg needs GNU make; brew installs it keg-only as gmake, so expose
           # the directory containing it as 'make' to the build script

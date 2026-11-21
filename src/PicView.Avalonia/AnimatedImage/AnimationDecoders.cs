@@ -14,9 +14,19 @@ internal static class AnimationDecoders
         {
             ImageType.AnimatedGif => new GifAnimationDecoder(stream),
             ImageType.AnimatedWebp => new WebpAnimationDecoder(stream),
-            ImageType.AnimatedAvif => new AvifAnimationDecoder(stream),
+            ImageType.AnimatedAvif => CreateAvif(stream),
             _ => throw new ArgumentOutOfRangeException(nameof(imageType), imageType, "The image type is not animated.")
         };
+    }
+
+    /// <summary>
+    ///     An animated AVIF is decoded as it plays when the bundled FFmpeg library can do it. Otherwise ImageMagick
+    ///     decodes every frame before the first one is shown.
+    /// </summary>
+    private static IAnimationDecoder CreateAvif(Stream stream)
+    {
+        PrepareStream(stream);
+        return FFmpegAvifAnimationDecoder.TryCreate(stream) ?? (IAnimationDecoder)new AvifAnimationDecoder(stream);
     }
 
     internal static void PrepareStream(Stream stream)

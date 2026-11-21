@@ -10,20 +10,24 @@ projects at build/publish time (motion photos degrade to still images when absen
 
 .DESCRIPTION
 The FFmpeg build is trimmed to exactly what motion photo playback needs:
-mov/mp4 demuxer + h264/hevc decoders + libswscale. No audio, no network, no
-devices, no filters, no programs. The result is statically linked into a single
-native library per target that exports only four functions (pv_open,
-pv_decode_next, pv_close, pv_version) - see Native\ffmpeg\picview_ffmpeg.c.
+mov/mp4 demuxer + h264/hevc decoders + libswscale, plus the dav1d AV1 decoder
+that plays animated AVIF images. No audio, no network, no devices, no filters,
+no programs. dav1d is optional: a target it fails to build for gets a library
+without it, and animated AVIFs are then decoded by ImageMagick. The result is
+statically linked into a single
+native library per target that exports only five functions (pv_open,
+pv_decode_next, pv_rewind, pv_close, pv_version) - see Native\ffmpeg\picview_ffmpeg.c.
 
 Prerequisites (one-time):
   Windows host (builds every target by cross-compiling):
     * MSYS2 (https://www.msys2.org), installed to C:\msys64 by default:
         pacman -Syu
         pacman -S base-devel mingw-w64-x86_64-gcc mingw-w64-x86_64-nasm diffutils tar
+        pacman -S mingw-w64-x86_64-meson mingw-w64-x86_64-ninja mingw-w64-x86_64-pkgconf    (for dav1d)
     * zig on PATH (https://ziglang.org - used to cross-compile Linux/macOS/ARM):
         winget install Zig.Zig    (or scoop install zig)
   macOS host (builds the osx-* targets):
-    * brew install nasm zig make
+    * brew install nasm zig make meson ninja pkgconf
     * GNU make must be reachable as 'make'; set PV_EXTRA_PATH to the directory
       that contains it, e.g. "$((brew --prefix make))/libexec/gnubin"
 
@@ -47,6 +51,7 @@ param (
 $ErrorActionPreference = "Stop"
 
 $ffmpegVersion = "9.0.1"
+$dav1dVersion = "1.5.5"
 $scriptRoot = $PSScriptRoot
 $repoRoot = Join-Path $scriptRoot ".."
 $shim = Join-Path $repoRoot "Native\ffmpeg\picview_ffmpeg.c"
@@ -105,6 +110,25 @@ if (-not (Test-Path $sourceDir)) {
     }
 }
 
+# 1.1 Fetch the dav1d source once (the AV1 decoder for animated AVIF images)
+$dav1dSourceDir = Join-Path $workRoot "dav1d-$dav1dVersion"
+if (-not (Test-Path $dav1dSourceDir)) {
+    $tarball = Join-Path $workRoot "dav1d-$dav1dVersion.tar.xz"
+    if (-not (Test-Path $tarball)) {
+        Write-Host "Downloading dav1d $dav1dVersion source..."
+        Invoke-WebRequest -Uri "https://downloads.videolan.org/pub/videolan/dav1d/$dav1dVersion/dav1d-$dav1dVersion.tar.xz" -OutFile $tarball
+    }
+    Write-Host "Extracting dav1d source..."
+    if ($IsWindows) {
+        & $bash -lc "tar -xf `"`$(cygpath -u '$tarball')`" -C `"`$(cygpath -u '$workRoot')`""
+        if ($LASTEXITCODE -ne 0) { throw "Failed to extract dav1d source" }
+    }
+    else {
+        tar -xf $tarball -C $workRoot
+        if ($LASTEXITCODE -ne 0) { throw "Failed to extract dav1d source" }
+    }
+}
+
 # 2. Build the small Mach-O nm used by configure to detect the '_' symbol prefix
 #    when cross-compiling for Apple targets from Windows (GNU nm cannot read
 #    Mach-O objects). Apple hosts use their native nm instead.
@@ -126,6 +150,7 @@ $env:PV_EXTRA_PATH = [string]::IsNullOrEmpty($env:PV_EXTRA_PATH) ? $zigDir : "$e
 
 $env:PV_ROOT = ConvertTo-ShellPath $workRoot
 $env:PV_SRC = ConvertTo-ShellPath $sourceDir
+$env:PV_DAV1D_SRC = ConvertTo-ShellPath $dav1dSourceDir
 $env:PV_SHIM = ConvertTo-ShellPath $shim
 $env:PV_OUT = ConvertTo-ShellPath $outputDir
 $env:MACHONM = $IsWindows ? (ConvertTo-ShellPath $machonm) : "nm"
