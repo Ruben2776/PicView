@@ -1,10 +1,10 @@
-using PicView.Core.Thumbnailing;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using PicView.Core.FileSorting;
 using PicView.Core.IPlatform;
 using PicView.Core.Navigation;
 using PicView.Core.Navigation.Interfaces;
+using PicView.Core.Thumbnailing;
 using R3;
 
 namespace PicView.Core.ViewModels;
@@ -295,6 +295,58 @@ public class TabOverviewViewModel
         }
 
         Release(tab);
+    }
+
+    /// <summary>
+    /// Closes every tab of this window but <paramref name="tab"/>, which becomes the active tab if the active tab closes.
+    /// </summary>
+    public void CloseOtherTabs(TabViewModel tab) =>
+        CloseTabsAround(tab, static (index, keep) => index != keep);
+
+    /// <summary>
+    /// Closes the tabs to the left of <paramref name="tab"/>, which becomes the active tab if the active tab closes.
+    /// </summary>
+    public void CloseTabsToTheLeft(TabViewModel tab) =>
+        CloseTabsAround(tab, static (index, keep) => index < keep);
+
+    /// <summary>
+    /// Closes the tabs to the right of <paramref name="tab"/>, which becomes the active tab if the active tab closes.
+    /// </summary>
+    public void CloseTabsToTheRight(TabViewModel tab) =>
+        CloseTabsAround(tab, static (index, keep) => index > keep);
+
+    private void CloseTabsAround(TabViewModel keep, Func<int, int, bool> closes)
+    {
+        var keepIndex = Tabs.Value.IndexOf(keep);
+        if (keepIndex < 0)
+        {
+            return;
+        }
+
+        var closing = new List<TabViewModel>(Tabs.Value.Count);
+        for (var i = 0; i < Tabs.Value.Count; i++)
+        {
+            if (closes(i, keepIndex))
+            {
+                closing.Add(Tabs.Value[i]);
+            }
+        }
+
+        if (closing.Count == 0)
+        {
+            return;
+        }
+
+        // Select the kept tab first, so closing the active tab does not select tabs that close next
+        if (closing.Contains(ActiveTab.Value))
+        {
+            SelectTab(keep);
+        }
+
+        foreach (var tab in closing)
+        {
+            tab.CloseTab();
+        }
     }
 
     /// <summary>

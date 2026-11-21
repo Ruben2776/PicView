@@ -1,4 +1,5 @@
 using System.Collections.Specialized;
+using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
@@ -50,8 +51,7 @@ public class VirtualizingGallery : VirtualizingPanel
     ///     How the Expanded Gallery arranges its items. It is ignored while the gallery is not expanded.
     /// </summary>
     public static readonly StyledProperty<GalleryDisplayMode> DisplayModeProperty =
-        AvaloniaProperty.Register<VirtualizingGallery, GalleryDisplayMode>(nameof(DisplayMode),
-            GalleryDisplayMode.Columns);
+        AvaloniaProperty.Register<VirtualizingGallery, GalleryDisplayMode>(nameof(DisplayMode));
 
     /// <summary>
     ///     The width Masonry and Rows wrap in while the gallery's width animates. NaN to wrap in the available width.
@@ -84,6 +84,7 @@ public class VirtualizingGallery : VirtualizingPanel
             WrapWidthOverrideProperty);
     }
     
+    [StructLayout(LayoutKind.Auto)]
     public readonly record struct RealizedGalleryItem(int Index, Control Element);
 
     /// <summary>

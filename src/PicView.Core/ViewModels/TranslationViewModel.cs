@@ -76,7 +76,10 @@ public class TranslationViewModel
         ClearEffects.Value = t.ClearEffects;
         Close.Value = t.Close;
         CloseGallery.Value = t.CloseGallery;
+        CloseOtherTabs.Value = t.CloseOtherTabs;
         CloseTab.Value = t.CloseTab;
+        CloseTabsToTheLeft.Value = t.CloseTabsToTheLeft;
+        CloseTabsToTheRight.Value = t.CloseTabsToTheRight;
         CloseImage.Value = t.CloseImage;
         CloseWindowPrompt.Value = t.CloseWindowPrompt;
         Color.Value = t.Color;
@@ -488,7 +491,10 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> ClearEffects { get; } = new();
     public BindableReactiveProperty<string?> Close { get; } = new();
     public BindableReactiveProperty<string?> CloseGallery { get; } = new();
+    public BindableReactiveProperty<string?> CloseOtherTabs { get; } = new();
     public BindableReactiveProperty<string?> CloseTab { get; } = new();
+    public BindableReactiveProperty<string?> CloseTabsToTheLeft { get; } = new();
+    public BindableReactiveProperty<string?> CloseTabsToTheRight { get; } = new();
     public BindableReactiveProperty<string?> CloseImage { get; } = new();
     public BindableReactiveProperty<string?> CloseWindowPrompt { get; } = new();
     public BindableReactiveProperty<string?> Color { get; } = new();

@@ -1332,6 +1332,21 @@ public class TabViewModel : IDisposable
         ParentWindowContext.WindowTabs.CloseTab(this);
     }
 
+    /// <summary>
+    /// Closes every other tab of the Main Window that owns this tab.
+    /// </summary>
+    public void CloseOtherTabs() => ParentWindowContext.WindowTabs.CloseOtherTabs(this);
+
+    /// <summary>
+    /// Closes the tabs to the left of this tab in the Main Window that owns it.
+    /// </summary>
+    public void CloseTabsToTheLeft() => ParentWindowContext.WindowTabs.CloseTabsToTheLeft(this);
+
+    /// <summary>
+    /// Closes the tabs to the right of this tab in the Main Window that owns it.
+    /// </summary>
+    public void CloseTabsToTheRight() => ParentWindowContext.WindowTabs.CloseTabsToTheRight(this);
+
     public CancellationTokenSource GetTabCancellation()
     {
         if ( !NavigationCts.IsCancellationRequested)

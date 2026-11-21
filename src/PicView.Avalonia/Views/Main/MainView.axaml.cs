@@ -1,6 +1,9 @@
-﻿using Avalonia;
+﻿using System.ComponentModel;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Threading;
+using Avalonia.VisualTree;
 using PicView.Avalonia.Crop;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.DragAndDrop;
@@ -10,8 +13,8 @@ using PicView.Avalonia.WindowBehavior;
 using PicView.Core.Conversion;
 using PicView.Core.Sizing;
 using PicView.Core.ViewModels;
-using MainWindowViewModel = PicView.Core.ViewModels.MainWindowViewModel;
 using R3;
+using MainWindowViewModel = PicView.Core.ViewModels.MainWindowViewModel;
 
 namespace PicView.Avalonia.Views.Main;
 
@@ -59,7 +62,7 @@ public partial class MainView : UserControl
             {
                 // The buttons sit below the tab strip while it shows
                 mainWindow.Disposables.Add(vm.WindowTabs.IsTabStripShown.Subscribe(shown =>
-                    global::Avalonia.Threading.Dispatcher.UIThread.Post(() => AltButtonsPanel.Margin =
+                    Dispatcher.UIThread.Post(() => AltButtonsPanel.Margin =
                         shown ? new Thickness(0, SizeDefaults.TabHeight, 0, 0) : new Thickness(0))));
             }
         };
@@ -112,6 +115,13 @@ public partial class MainView : UserControl
         }
         else if (e.Properties.IsRightButtonPressed)
         {
+            // A tab of the tab strip shows its own menu
+            if (IsOnTabStrip(e.Source))
+            {
+                return;
+            }
+
+
             if (!Resources.TryGetResource("MainContextMenu", Application.Current.ActualThemeVariant, out var value))
             {
                 return;
@@ -152,6 +162,48 @@ public partial class MainView : UserControl
         }
     }
     
+    private bool IsOnTabStrip(object? source)
+    {
+        var tabItem = (source as Visual)?.FindAncestorOfType<TabItem>(includeSelf: true);
+        // Only this window's tab strip: a tab control inside a tab's content has its own tabs
+        return tabItem is not null && MainTabControl.IndexFromContainer(tabItem) >= 0;
+    }
+
+    /// <summary>
+    /// Enables only the tab menu's items that would close a tab: the last tab, the first tab's left and the last tab's
+    /// right have nothing to close.
+    /// </summary>
+    private void TabContextMenuOpening(object? sender, CancelEventArgs e)
+    {
+        if (sender is not ContextMenu { DataContext: TabViewModel tab } menu)
+        {
+            return;
+        }
+
+        var tabs = tab.ParentWindowContext.WindowTabs.Tabs.Value;
+        var index = tabs.IndexOf(tab);
+        if (index < 0)
+        {
+            e.Cancel = true;
+            return;
+        }
+
+        var enabled = new[]
+        {
+            tabs.Count > 1, // Close
+            tabs.Count > 1, // Close other tabs
+            index > 0, // Close tabs to the left
+            index < tabs.Count - 1 // Close tabs to the right
+        };
+        for (var i = 0; i < menu.Items.Count && i < enabled.Length; i++)
+        {
+            if (menu.Items[i] is MenuItem item)
+            {
+                item.IsEnabled = enabled[i];
+            }
+        }
+    }
+
     private void HandleLostFocus(object? sender, EventArgs e)
     {
         DragAndDropManager.RemoveDragDropView(TopLevel.GetTopLevel(this) as MainWindow);

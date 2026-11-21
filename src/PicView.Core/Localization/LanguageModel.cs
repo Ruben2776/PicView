@@ -73,7 +73,10 @@ public class LanguageModel
     public string? Close { get; set; }
     public string? CloseApp { get; set; }
     public string? CloseGallery { get; set; }
+    public string? CloseOtherTabs { get; set; }
     public string? CloseTab { get; set; }
+    public string? CloseTabsToTheLeft { get; set; }
+    public string? CloseTabsToTheRight { get; set; }
     public string? CloseImage { get; set; }
     public string? CloseWindowPrompt { get; set; }
     public string? CloudyWeather { get; set; }

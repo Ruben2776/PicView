@@ -188,7 +188,8 @@
                     GroupName="SortDirection"
                     Header="{CompiledBinding Translation.Ascending.Value,
                                              Mode=OneWay}"
-                    IsChecked="{CompiledBinding WindowTabs.IsAscending.Value, Mode=OneWay}"
+                    IsChecked="{CompiledBinding WindowTabs.IsAscending.Value,
+                                                Mode=OneWay}"
                     ToggleType="Radio" />
 
                 <!--  Sort files descending  -->
@@ -198,7 +199,8 @@
                     GroupName="SortDirection"
                     Header="{CompiledBinding Translation.Descending.Value,
                                              Mode=OneWay}"
-                    IsChecked="{CompiledBinding !WindowTabs.IsAscending.Value, Mode=OneWay}"
+                    IsChecked="{CompiledBinding !WindowTabs.IsAscending.Value,
+                                                Mode=OneWay}"
                     ToggleType="Radio" />
             </customControls:StyledMenuItem>
 
@@ -1100,6 +1102,45 @@
             <customControls:DraggableTabControl.Styles>
                 <Style Selector="TabItem">
                     <Setter Property="Theme" Value="{StaticResource DraggableTabItem}" />
+                    <!--  Each tab gets its own menu, built from the template  -->
+                    <Setter Property="ContextMenu">
+                        <Template>
+                            <ContextMenu Opening="TabContextMenuOpening" x:DataType="viewModels:TabViewModel">
+                                <!--  Close  -->
+                                <customControls:StyledMenuItem
+                                    Command="{CompiledBinding CloseTab}"
+                                    Header="{CompiledBinding ParentWindowContext.Translation.Close.Value,
+                                                             Mode=OneWay}"
+                                    MinWidth="180">
+                                    <MenuItem.Icon>
+                                        <Path Classes="ClosePath" />
+                                    </MenuItem.Icon>
+                                </customControls:StyledMenuItem>
+
+                                <!--  Close other tabs  -->
+                                <customControls:StyledMenuItem Command="{CompiledBinding CloseOtherTabs}" Header="{CompiledBinding ParentWindowContext.Translation.CloseOtherTabs.Value, Mode=OneWay}">
+                                    <MenuItem.Icon>
+                                        <Path Classes="ClosePath" />
+                                    </MenuItem.Icon>
+                                </customControls:StyledMenuItem>
+
+                                <!--  Close tabs to the left  -->
+                                <customControls:StyledMenuItem Command="{CompiledBinding CloseTabsToTheLeft}" Header="{CompiledBinding ParentWindowContext.Translation.CloseTabsToTheLeft.Value, Mode=OneWay}">
+                                    <MenuItem.Icon>
+                                        <Path Classes="ClosePath" />
+                                    </MenuItem.Icon>
+                                </customControls:StyledMenuItem>
+
+                                <!--  Close tabs to the right  -->
+                                <customControls:StyledMenuItem Command="{CompiledBinding CloseTabsToTheRight}" Header="{CompiledBinding ParentWindowContext.Translation.CloseTabsToTheRight.Value, Mode=OneWay}">
+                                    <MenuItem.Icon>
+                                        <Path Classes="ClosePath" />
+                                    </MenuItem.Icon>
+                                </customControls:StyledMenuItem>
+
+                            </ContextMenu>
+                        </Template>
+                    </Setter>
                 </Style>
             </customControls:DraggableTabControl.Styles>
 
