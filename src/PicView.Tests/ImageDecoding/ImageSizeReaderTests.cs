@@ -1,4 +1,5 @@
 using System.Buffers.Binary;
+using System.Text;
 using ImageMagick;
 using PicView.Core.Exif;
 using PicView.Core.ImageDecoding;
@@ -20,6 +21,20 @@ public class ImageSizeReaderTests : IDisposable
     public ImageSizeReaderTests()
     {
         Directory.CreateDirectory(_directory);
+    }
+
+    [Theory]
+    [InlineData(MagickFormat.Ico, "image.ico")]
+    [InlineData(MagickFormat.Wbmp, "image.wbmp")]
+    [InlineData(MagickFormat.Pcx, "image.pcx")]
+    [InlineData(MagickFormat.Hdr, "image.hdr")]
+    public void Read_OtherFormatsWithoutParser_ReturnSizeThroughFallback(MagickFormat format, string fileName)
+    {
+        // With and without a signature: the ones without are pinged by path, the rest as a buffered stream
+        var path = Write(format, fileName);
+
+        Assert.False(ImageSizeReader.TryReadHeader(path, out _));
+        Assert.Equal(new ImageSize(Width, Height), ImageSizeReader.Read(path));
     }
 
     [Fact]
@@ -287,7 +302,7 @@ public class ImageSizeReaderTests : IDisposable
             }
         });
 
-        Assert.Equal(firstChunk, System.Text.Encoding.ASCII.GetString(File.ReadAllBytes(path), 12, 4));
+        Assert.Equal(firstChunk, Encoding.ASCII.GetString(File.ReadAllBytes(path), 12, 4));
         AssertReadsFromTheHeaderLikeThePing(path);
     }
 
@@ -314,7 +329,7 @@ public class ImageSizeReaderTests : IDisposable
     {
         var path = Write(MagickFormat.Tiff, byteOrder + ".tif", image => image.Settings.Endian = endian);
 
-        Assert.Equal(byteOrder, System.Text.Encoding.ASCII.GetString(File.ReadAllBytes(path), 0, 2));
+        Assert.Equal(byteOrder, Encoding.ASCII.GetString(File.ReadAllBytes(path), 0, 2));
         AssertReadsFromTheHeaderLikeThePing(path);
     }
 

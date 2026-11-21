@@ -87,48 +87,66 @@ public static partial class ImageSizeReader
     /// Whether <paramref name="extension"/> names a container that holds an image without being one: the image model
     /// reads these in its own way, and ImageMagick only throws on them.
     /// </summary>
-    private static bool IsContainer(ReadOnlySpan<char> extension) =>
+    internal static bool IsContainer(ReadOnlySpan<char> extension) =>
         extension.Equals(".b64", StringComparison.OrdinalIgnoreCase) ||
         extension.Equals(".livp", StringComparison.OrdinalIgnoreCase);
 
     /// <summary>
-    /// Pings the file as a stream first: before each of the several opens a ping by path makes, ImageMagick checks the
-    /// path against its security policy, which costs more than the ping itself. A stream names no format, so a file
-    /// whose format has no signature, such as a TGA, is pinged by its path after all, where its extension says what it is.
+    /// Whether <paramref name="extension"/> names a format ImageMagick cannot tell from its bytes, as it has no
+    /// signature, so only a ping by path, where the extension says what the file is, can read it. Measured on the
+    /// formats PicView opens that ImageMagick writes: a format missing here still reads, after a failed stream ping.
     /// </summary>
+    private static bool HasNoSignature(ReadOnlySpan<char> extension) =>
+        extension.Equals(".tga", StringComparison.OrdinalIgnoreCase) ||
+        extension.Equals(".ico", StringComparison.OrdinalIgnoreCase) ||
+        extension.Equals(".wbmp", StringComparison.OrdinalIgnoreCase);
+
+    /// <summary>
+    /// The buffer of the stream ImageMagick pings: ImageMagick asks for a few bytes at a time while it reads a header,
+    /// and without one each of those asks is its own read from the file.
+    /// </summary>
+    private const int PingBufferSize = 8 * 1024;
+
     private static ImageSize PingWithMagick(string path)
     {
-        using var magick = new MagickImage();
-        // A camera RAW is read by its extension's raw coder: its bytes look like a TIFF whose first image is a preview
-        if (!IsCameraRaw(path))
-        {
-            try
-            {
-                // Unbuffered, as ImageMagick reads in its own chunks, and shared, so a file another program holds
-                // open still reads
-                using var stream = new FileStream(path, FileMode.Open, FileAccess.Read,
-                    FileShare.ReadWrite | FileShare.Delete, bufferSize: 1);
-#pragma warning disable MA0042
-                // ReSharper disable once MethodHasAsyncOverloadWithCancellation
-                magick.Ping(stream);
-#pragma warning restore MA0042
-                return new ImageSize(magick.Width, magick.Height);
-            }
-            catch (Exception)
-            {
-                // Pinged by its path below
-            }
-        }
-
         try
         {
-            magick.Ping(path);
+            using var magick = new MagickImage();
+            Ping(magick, path);
             return new ImageSize(magick.Width, magick.Height);
         }
         catch (Exception)
         {
             return default;
         }
+    }
+
+    /// <summary>
+    /// Pings the file at <paramref name="path"/> into <paramref name="magick"/>. A stream first: before each of the
+    /// several opens a ping by path makes, ImageMagick checks the path against its security policy, which costs more
+    /// than the ping itself. By its path when the stream cannot be read, and straight away for a camera RAW, which its
+    /// extension's raw coder reads (its bytes look like a TIFF whose first image is a preview), and for a format without
+    /// a signature, which a stream ping would only fail on.
+    /// </summary>
+    /// <exception cref="MagickException">The file could not be read as an image by its path either.</exception>
+    internal static void Ping(MagickImage magick, string path)
+    {
+        if (!HasNoSignature(Path.GetExtension(path.AsSpan())) && !IsCameraRaw(path))
+        {
+            try
+            {
+                // Shared, so a file another program holds open still reads
+                using var stream = new FileStream(path, FileMode.Open, FileAccess.Read,
+                    FileShare.ReadWrite | FileShare.Delete, PingBufferSize);
+                magick.Ping(stream);
+                return;
+            }
+            catch (Exception)
+            {
+                // Pinged by its path below
+            }
+        }
+        magick.Ping(path);
     }
 
     /// <summary>

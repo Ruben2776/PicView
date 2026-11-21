@@ -31,7 +31,14 @@ public sealed record GalleryFileDetails(uint PixelWidth, uint PixelHeight)
     /// is a quarter turn), or null when the file could not be read as an image.</returns>
     public static GalleryFileDetails? Read(FileInfo file)
     {
-        if (ImageSizeReader.TryReadUprightHeader(file.FullName, out var size))
+        var path = file.FullName;
+        if (ImageSizeReader.IsContainer(Path.GetExtension(path.AsSpan())))
+        {
+            // A .b64 or .livp file holds an image without being one, and ImageMagick only throws on it
+            return null;
+        }
+
+        if (ImageSizeReader.TryReadUprightHeader(path, out var size))
         {
             return new GalleryFileDetails(size.Width, size.Height);
         }
@@ -39,17 +46,7 @@ public sealed record GalleryFileDetails(uint PixelWidth, uint PixelHeight)
         try
         {
             using var magick = new MagickImage();
-            if (ImageSizeReader.IsCameraRaw(file.FullName) || !TryPingStream(magick, file))
-            {
-                // A camera RAW is read by its extension's raw coder: its bytes look like a TIFF whose first image is a
-                // preview. A stream names no format either, so a file whose format has no signature, such as a TGA,
-                // is pinged by its path too, where its extension says what it is
-#pragma warning disable MA0042
-                // ReSharper disable once MethodHasAsyncOverloadWithCancellation
-                magick.Ping(file);
-#pragma warning restore MA0042
-            }
-
+            ImageSizeReader.Ping(magick, path);
             return IsQuarterTurned(magick)
                 ? new GalleryFileDetails(magick.Height, magick.Width)
                 : new GalleryFileDetails(magick.Width, magick.Height);
@@ -72,29 +69,4 @@ public sealed record GalleryFileDetails(uint PixelWidth, uint PixelHeight)
             or ExifOrientation.Rotate90Cw
             or ExifOrientation.MirrorHorizontalRotate90Cw
             or ExifOrientation.Rotated270Cw;
-
-    /// <summary>
-    /// Pings <paramref name="file"/> as a stream. Before each of the several opens a ping by path makes, ImageMagick
-    /// checks the path against its security policy, which costs more than the ping itself. The stream is unbuffered,
-    /// as ImageMagick reads in its own chunks, and shared for writing, so a file another program holds open still
-    /// reads.
-    /// </summary>
-    /// <returns>Whether the ping succeeded.</returns>
-    private static bool TryPingStream(MagickImage magick, FileInfo file)
-    {
-        try
-        {
-            using var stream = new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite,
-                bufferSize: 1);
-#pragma warning disable MA0042
-            // ReSharper disable once MethodHasAsyncOverloadWithCancellation
-            magick.Ping(stream);
-#pragma warning restore MA0042
-            return true;
-        }
-        catch (Exception)
-        {
-            return false;
-        }
-    }
 }

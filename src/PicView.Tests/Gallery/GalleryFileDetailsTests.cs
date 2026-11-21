@@ -1,3 +1,5 @@
+using System.Runtime.ExceptionServices;
+using System.Text;
 using ImageMagick;
 using PicView.Core.Gallery;
 
@@ -27,7 +29,7 @@ public sealed class GalleryFileDetailsTests : IDisposable
         // The motion photo detector reads the packet itself, for the items shown only
         const string packet = "<x:xmpmeta xmlns:x=\"adobe:ns:meta/\"><rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"/></x:xmpmeta>";
         var file = WriteImage("photo.jpg", MagickFormat.Jpeg, 64, 48,
-            image => image.SetProfile(new XmpProfile(System.Text.Encoding.UTF8.GetBytes(packet))));
+            image => image.SetProfile(new XmpProfile(Encoding.UTF8.GetBytes(packet))));
 
         var details = GalleryFileDetails.Read(file);
 
@@ -98,6 +100,61 @@ public sealed class GalleryFileDetailsTests : IDisposable
         Assert.NotNull(details);
         Assert.Equal(32u, details.PixelWidth);
         Assert.Equal(16u, details.PixelHeight);
+    }
+
+    [Theory]
+    [InlineData(MagickFormat.Tga, "texture.tga")]
+    [InlineData(MagickFormat.Ico, "icon.ico")]
+    [InlineData(MagickFormat.Wbmp, "mono.wbmp")]
+    public void Read_FormatWithoutSignature_GivesItsSizeWithoutAFailedStreamPing(MagickFormat format, string name)
+    {
+        // ImageMagick cannot tell these from their bytes, so a stream ping would only throw before the path ping
+        var file = WriteImage(name, format, 32, 16);
+
+        var (details, thrown) = ReadCountingMagickExceptions(file);
+
+        Assert.Equal(new GalleryFileDetails(32, 16), details);
+        Assert.Equal(0, thrown);
+    }
+
+    [Fact]
+    public void Read_Container_GivesNullWithoutPinging()
+    {
+        var path = Path.Combine(_directory, "image.b64");
+        File.WriteAllText(path, "data:image/png;base64,iVBORw0KGgo=");
+
+        var (details, thrown) = ReadCountingMagickExceptions(new FileInfo(path));
+
+        Assert.Null(details);
+        Assert.Equal(0, thrown);
+    }
+
+    /// <summary>
+    /// Reads <paramref name="file"/>'s details, counting the ImageMagick exceptions thrown on this thread meanwhile,
+    /// caught or not: other tests may run on other threads.
+    /// </summary>
+    private static (GalleryFileDetails? Details, int Thrown) ReadCountingMagickExceptions(FileInfo file)
+    {
+        var thread = Environment.CurrentManagedThreadId;
+        var thrown = 0;
+        void Count(object? sender, FirstChanceExceptionEventArgs e)
+        {
+            if (e.Exception is MagickException && Environment.CurrentManagedThreadId == thread)
+            {
+                Interlocked.Increment(ref thrown);
+            }
+        }
+
+        AppDomain.CurrentDomain.FirstChanceException += Count;
+        try
+        {
+            var details = GalleryFileDetails.Read(file);
+            return (details, Volatile.Read(ref thrown));
+        }
+        finally
+        {
+            AppDomain.CurrentDomain.FirstChanceException -= Count;
+        }
     }
 
     [Fact]
