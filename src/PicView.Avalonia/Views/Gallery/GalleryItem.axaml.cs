@@ -95,12 +95,14 @@ public partial class GalleryItem : NavigateAbleItem
         var panel = (Panel)GalleryImage.Parent!;
         if (brushKey is null)
         {
-            if (_ring is not null)
+            if (_ring is null)
             {
-                panel.Children.Remove(_ring);
-                _ring = null;
-                _ringBrushKey = null;
+                return;
             }
+
+            panel.Children.Remove(_ring);
+            _ring = null;
+            _ringBrushKey = null;
             return;
         }
 
@@ -116,11 +118,13 @@ public partial class GalleryItem : NavigateAbleItem
             panel.Children.Add(_ring);
         }
 
-        if (_ringBrushKey != brushKey)
+        if (string.Equals(_ringBrushKey, brushKey, StringComparison.Ordinal))
         {
-            _ringBrushKey = brushKey;
-            _ring.Bind(Border.BorderBrushProperty, new DynamicResourceExtension(brushKey));
+            return;
         }
+
+        _ringBrushKey = brushKey;
+        _ring.Bind(Border.BorderBrushProperty, new DynamicResourceExtension(brushKey));
     }
 
     private void OnThumbnailChanged(object? sender, AvaloniaPropertyChangedEventArgs e)

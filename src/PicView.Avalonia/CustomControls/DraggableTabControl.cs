@@ -98,7 +98,6 @@ public class DraggableTabControl : TabControl
     /// A tab was dragged to another place in this strip.
     /// </summary>
     public event EventHandler<TabReorderedEventArgs>? TabReordered;
-    public event EventHandler<TabCreatedEventArgs>? TabCreated;
 
     #region Auto-Scroll Logic
 
@@ -148,11 +147,6 @@ public class DraggableTabControl : TabControl
         if (container is not TabItem tabItem)
         {
             return;
-        }
-
-        if (item is TabViewModel { IsClosing: false })
-        {
-            TabCreated?.Invoke(this, new TabCreatedEventArgs(item, index));
         }
         
         tabItem.AddHandler(PointerPressedEvent, OnItemPointerPressed,
@@ -897,12 +891,6 @@ public class TabReorderedEventArgs(object tab, int newIndex) : EventArgs
 {
     public object Tab { get; } = tab;
     public int NewIndex { get; } = newIndex;
-}
-
-public class TabCreatedEventArgs(object createdItem, int index) : EventArgs
-{
-    public object CreatedItem { get; } = createdItem;
-    public int Index { get; } = index;
 }
 
 // Helper for Shared Drag State

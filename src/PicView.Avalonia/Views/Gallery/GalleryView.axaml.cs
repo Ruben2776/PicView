@@ -47,12 +47,6 @@ public partial class GalleryView : GalleryAnimationControl, IDisposable
     /// </summary>
     public void Initialize(TabViewModel tab)
     {
-        // The designer loads no XAML
-        if (GalleryItemsControl is null)
-        {
-            return;
-        }
-
         var gallery = tab.Gallery;
         NotifyCollectionChangedEventHandler<GalleryItemViewModel> onItemsChanged =
             (in e) => OnGalleryItemsChanged(tab, in e);
@@ -256,5 +250,9 @@ public partial class GalleryView : GalleryAnimationControl, IDisposable
     /// Stops following the tab's gallery, as when the tab's navigable view that holds this view is disposed. The tab
     /// outlives its views, so it would keep this view in step with it otherwise.
     /// </summary>
-    public void Dispose() => _disposables.Dispose();
+    public void Dispose()
+    {
+        _disposables.Dispose();
+        GC.SuppressFinalize(this);
+    } 
 }

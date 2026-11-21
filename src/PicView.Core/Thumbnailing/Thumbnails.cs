@@ -52,7 +52,7 @@ public sealed class Thumbnails
     public static uint GalleryHeight(double dockedItemSize, double expandedItemSize)
     {
         var height = Math.Max(dockedItemSize, expandedItemSize);
-        return (uint)(height <= 0 || double.IsNaN(height) ? GalleryDefaults.DefaultDockedGalleryHeight : height);
+        return (uint)(height is <= 0 or double.NaN ? GalleryDefaults.DefaultDockedGalleryHeight : height);
     }
 
     /// <summary>

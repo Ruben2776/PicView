@@ -115,7 +115,8 @@ public abstract class MainWindow : Window, IMainWindow
 
         // The cursor goes back on the button whose click resized the window, once the fitter has placed it
         WindowFitter.Placed
-            .Subscribe(size => SetCursorOnButton.AfterResize(this, vm, size.Width))
+            .Subscribe(size => SetCursorOnButton.AfterResize(this, vm, size.Width),
+                DebugHelper.LogError(nameof(MainWindow), nameof(WindowFitter.Placed)))
             .AddTo(Disposables);
 
         // Changes the user makes with the operating system's own window controls
@@ -230,7 +231,7 @@ public abstract class MainWindow : Window, IMainWindow
 
     #endregion
 
-    public void SetClipboardServices(IPlatformSpecificService? platformService = null, CoreViewModel? core = null)
+    private void SetClipboardServices(IPlatformSpecificService? platformService = null, CoreViewModel? core = null)
     {
         core ??= Application.Current?.DataContext as CoreViewModel;
         platformService ??= core?.PlatformService;
@@ -250,7 +251,7 @@ public abstract class MainWindow : Window, IMainWindow
     public void SetClipboardCopyService(IPlatformSpecificService? platformService = null) =>
         SetClipboardServices(platformService);
 
-    private void OnDeactivated(object? sender, EventArgs e)
+    private static void OnDeactivated(object? sender, EventArgs e)
     {
         if (Application.Current.DataContext is not CoreViewModel core)
         {
