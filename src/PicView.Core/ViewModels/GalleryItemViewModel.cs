@@ -10,6 +10,13 @@ public class GalleryItemViewModel : IDisposable
     private string? _fileSize;
     private string? _fileDate;
     private GalleryFileDetails? _details;
+    private static long _detailsVersion;
+
+    /// <summary>
+    /// Goes up each time any item is given <see cref="Details"/>. A layout made from the items' details compares it
+    /// with what it was when the layout was made: the same number means no item's details changed since.
+    /// </summary>
+    public static long DetailsVersion => Interlocked.Read(ref _detailsVersion);
 
     public void Dispose()
     {
@@ -129,6 +136,8 @@ public class GalleryItemViewModel : IDisposable
     internal void SetDetails(GalleryFileDetails details)
     {
         Volatile.Write(ref _details, details);
+        // After the write, so a reader that sees the old number again has read these details already
+        Interlocked.Increment(ref _detailsVersion);
         ImageSize.Value = StringExtensions.CombineSize(details.PixelWidth, details.PixelHeight);
     }
 }

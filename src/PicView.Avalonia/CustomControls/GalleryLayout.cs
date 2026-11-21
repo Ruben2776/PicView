@@ -69,6 +69,28 @@ public sealed class GalleryLayout
     private bool _searchesByTop;
 
     /// <summary>
+    ///     Whether the bounds are a Masonry or Rows placement that the next <see cref="Calculate" /> can keep. Scrolling
+    ///     measures the panel at every step and moves no tile, so such a placement is kept for as long as what it was
+    ///     made from stays the same: <see cref="_placedItems" />, <see cref="_placedOptions" />,
+    ///     <see cref="_placedMode" /> and <see cref="_placedDetailsVersion" />.
+    /// </summary>
+    private bool _hasPlacement;
+
+    private IReadOnlyList<object?>? _placedItems;
+    private GalleryPlacementOptions _placedOptions;
+    private GalleryDisplayMode _placedMode;
+
+    /// <summary>
+    ///     <see cref="GalleryItemViewModel.DetailsVersion" /> as it was just before the placement read the items.
+    /// </summary>
+    private long _placedDetailsVersion;
+
+    /// <summary>
+    ///     Whether <see cref="InvalidateItems" /> was called since the placement.
+    /// </summary>
+    private bool _itemsInvalidated;
+
+    /// <summary>
     ///     The bounds of every item, in item order. <see cref="Calculate" /> and <see cref="Clear" /> change the list
     ///     in place, so read it again after either.
     /// </summary>
@@ -95,7 +117,10 @@ public sealed class GalleryLayout
         => isExpanded ? GalleryDisplayModes.ShowsTiles(displayMode) : orientation == Orientation.Vertical;
 
     /// <summary>
-    ///     Places every item, replacing the earlier bounds and extent.
+    ///     Places every item, replacing the earlier bounds and extent. Masonry and Rows keep the earlier placement when
+    ///     nothing it was made from changed: the same list with as many items, the same options and wrap width, no
+    ///     <see cref="InvalidateItems" /> and no item given details since. Masonry places again only from the first
+    ///     item whose height changed.
     /// </summary>
     /// <param name="items">
     ///     The items in order. Each is <see cref="GalleryLayoutOptions.ItemWidth" /> wide when that is set. Otherwise a
@@ -107,7 +132,6 @@ public sealed class GalleryLayout
     /// <param name="availableSize">The size the panel was given.</param>
     public void Calculate(IReadOnlyList<object?> items, GalleryLayoutOptions options, Size availableSize)
     {
-        _bounds.Clear();
         ScrollsVertically = ScrollsVerticallyFor(options.Orientation, options.IsExpanded, options.DisplayMode);
         _scale = options.LayoutScale > 0 && double.IsFinite(options.LayoutScale) ? options.LayoutScale : 1;
         _searchesByTop = options.IsExpanded && GalleryDisplayModes.ShowsTiles(options.DisplayMode);
@@ -118,12 +142,36 @@ public sealed class GalleryLayout
                 : options.WrapWidthOverride;
             var placement = new GalleryPlacementOptions(wrapWidth, options.ItemHeight, options.ItemSpacing,
                 options.LineSpacing, _scale);
-            Extent = options.DisplayMode is GalleryDisplayMode.Rows
-                ? RowsPlacement.Place(items, placement, _bounds)
-                : MasonryPlacement.Place(items, placement, _bounds, ref _columnHeights);
+            // Read before the items are, so details that arrive while they are read count as arriving after
+            var detailsVersion = GalleryItemViewModel.DetailsVersion;
+            var sameOptions = _hasPlacement && _placedMode == options.DisplayMode && _placedOptions == placement;
+            if (sameOptions && !_itemsInvalidated && ReferenceEquals(_placedItems, items) &&
+                _bounds.Count == items.Count && _placedDetailsVersion == detailsVersion)
+            {
+                return;
+            }
+
+            if (options.DisplayMode is GalleryDisplayMode.Rows)
+            {
+                _bounds.Clear();
+                Extent = RowsPlacement.Place(items, placement, _bounds);
+            }
+            else
+            {
+                Extent = MasonryPlacement.Place(items, placement, _bounds, ref _columnHeights, sameOptions);
+            }
+
+            _hasPlacement = true;
+            _placedItems = items;
+            _placedOptions = placement;
+            _placedMode = options.DisplayMode;
+            _placedDetailsVersion = detailsVersion;
+            _itemsInvalidated = false;
             return;
         }
 
+        _bounds.Clear();
+        ForgetPlacement();
         var itemSpacing = Snap(options.ItemSpacing);
         var lineSpacing = Snap(options.LineSpacing);
 
@@ -221,11 +269,29 @@ public sealed class GalleryLayout
     }
 
     /// <summary>
+    ///     Tells the layout that the items list changed in place: items were added, removed, replaced or moved. The
+    ///     next <see cref="Calculate" /> then reads the items again, where it would otherwise keep a Masonry or Rows
+    ///     placement of the same list with as many items. Details given to an item need no call.
+    /// </summary>
+    public void InvalidateItems() => _itemsInvalidated = true;
+
+    /// <summary>
+    ///     Forgets what the bounds were placed from, so the next <see cref="Calculate" /> places every item.
+    /// </summary>
+    private void ForgetPlacement()
+    {
+        _hasPlacement = false;
+        _placedItems = null;
+        _itemsInvalidated = false;
+    }
+
+    /// <summary>
     ///     Forgets the bounds and the extent, so the layout is as new.
     /// </summary>
     public void Clear()
     {
         _bounds.Clear();
+        ForgetPlacement();
         Extent = default;
         ScrollsVertically = false;
         _scale = 1;

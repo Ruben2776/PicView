@@ -68,19 +68,41 @@ public class GalleryLayoutBenchmarks
         return _layout.Extent;
     }
 
-    /// <summary>The Expanded Gallery in Masonry.</summary>
+    /// <summary>The Expanded Gallery in Masonry, every item placed, as on the first measure or at a new width.</summary>
     [Benchmark]
     public Size Masonry()
+    {
+        _layout.Clear();
+        _layout.Calculate(_items, MasonryOptions, ExpandedSize);
+        return _layout.Extent;
+    }
+
+    /// <summary>The Expanded Gallery in Rows, every item placed, as on the first measure or at a new width.</summary>
+    [Benchmark]
+    public Size Rows()
+    {
+        _layout.Clear();
+        _layout.Calculate(_items, RowsOptions, ExpandedSize);
+        return _layout.Extent;
+    }
+
+    /// <summary>Masonry measured again with nothing changed, as at each scroll step: the placement is kept.</summary>
+    [Benchmark]
+    public Size MasonryScrolled()
     {
         _layout.Calculate(_items, MasonryOptions, ExpandedSize);
         return _layout.Extent;
     }
 
-    /// <summary>The Expanded Gallery in Rows.</summary>
+    /// <summary>
+    ///     Masonry measured again after a batch of details arrived that changed no height: every item is read, and
+    ///     none is placed again.
+    /// </summary>
     [Benchmark]
-    public Size Rows()
+    public Size MasonryDetailsArrived()
     {
-        _layout.Calculate(_items, RowsOptions, ExpandedSize);
+        _layout.InvalidateItems();
+        _layout.Calculate(_items, MasonryOptions, ExpandedSize);
         return _layout.Extent;
     }
 }

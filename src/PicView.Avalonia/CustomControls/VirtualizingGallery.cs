@@ -907,6 +907,9 @@ public class VirtualizingGallery : VirtualizingPanel
     {
         base.OnItemsChanged(items, e);
 
+        // The list is the same one with other items in it, which the layout cannot see by itself
+        _layout.InvalidateItems();
+
         switch (e.Action)
         {
             case NotifyCollectionChangedAction.Reset:

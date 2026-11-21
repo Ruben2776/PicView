@@ -1,3 +1,4 @@
+using System.Collections;
 using Avalonia;
 using Avalonia.Layout;
 using PicView.Avalonia.CustomControls;
@@ -604,8 +605,9 @@ public class GalleryLayoutTests
         var layout = new GalleryLayout();
         layout.Calculate(items, Masonry, new Size(1000, 500));
 
+        // Another width, so every item is placed again rather than kept
         var before = GC.GetAllocatedBytesForCurrentThread();
-        layout.Calculate(items, Masonry, new Size(1000, 500));
+        layout.Calculate(items, Masonry, new Size(990, 500));
 
         Assert.Equal(0L, GC.GetAllocatedBytesForCurrentThread() - before);
     }
@@ -776,9 +778,219 @@ public class GalleryLayoutTests
         var layout = new GalleryLayout();
         layout.Calculate(items, Rows, new Size(1000, 500));
 
+        // Another width, so every item is placed again rather than kept
         var before = GC.GetAllocatedBytesForCurrentThread();
-        layout.Calculate(items, Rows, new Size(1000, 500));
+        layout.Calculate(items, Rows, new Size(990, 500));
 
         Assert.Equal(0L, GC.GetAllocatedBytesForCurrentThread() - before);
+    }
+
+    /// <summary>A list that counts how often its items are read.</summary>
+    private sealed class CountingItems(object?[] items) : IReadOnlyList<object?>
+    {
+        public int Reads { get; private set; }
+
+        public int Count => items.Length;
+
+        public object? this[int index]
+        {
+            get
+            {
+                Reads++;
+                return items[index];
+            }
+        }
+
+        public IEnumerator<object?> GetEnumerator()
+        {
+            foreach (var item in items)
+            {
+                Reads++;
+                yield return item;
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+    }
+
+    private static void AssertSameAsAFreshLayout(GalleryLayout layout, IReadOnlyList<object?> items,
+        GalleryLayoutOptions options, Size availableSize)
+    {
+        var fresh = new GalleryLayout();
+        fresh.Calculate(items, options, availableSize);
+        Assert.Equal(fresh.Bounds, layout.Bounds);
+        Assert.Equal(fresh.Extent, layout.Extent);
+    }
+
+    [Theory]
+    [InlineData(GalleryDisplayMode.Masonry)]
+    [InlineData(GalleryDisplayMode.Rows)]
+    public void Calculate_TilesCalculatedAgainWithNothingChanged_KeepsThePlacementWithoutReadingAnItem(
+        GalleryDisplayMode displayMode)
+    {
+        var options = Masonry with { DisplayMode = displayMode, LayoutScale = 1.5 };
+        var items = new CountingItems(Varied(200));
+        var layout = new GalleryLayout();
+        layout.Calculate(items, options, new Size(1000, 500));
+        var bounds = layout.Bounds.ToArray();
+        var extent = layout.Extent;
+
+        // Other test classes run at the same time and give their items details, which makes this layout read its
+        // items again. So measure a pair of calls during which no item anywhere was given details
+        long version;
+        int before;
+        do
+        {
+            version = GalleryItemViewModel.DetailsVersion;
+            layout.Calculate(items, options, new Size(1000, 500));
+            before = items.Reads;
+            layout.Calculate(items, options, new Size(1000, 500));
+        } while (version != GalleryItemViewModel.DetailsVersion);
+
+        Assert.Equal(before, items.Reads);
+        Assert.Equal(bounds, layout.Bounds);
+        Assert.Equal(extent, layout.Extent);
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(1)]
+    [InlineData(7)]
+    [InlineData(250)]
+    [InlineData(499)]
+    public void Calculate_MasonryAfterAnItemGetsDetails_PlacesAsAFreshLayoutDoes(int index)
+    {
+        var options = Masonry with { LayoutScale = 1.5 };
+        var items = Varied(500);
+        var late = new GalleryItemViewModel();
+        items[index] = late;
+        var layout = new GalleryLayout();
+        layout.Calculate(items, options, new Size(1000, 500));
+
+        late.SetDetails(new GalleryFileDetails(300, 2000));
+        layout.Calculate(items, options, new Size(1000, 500));
+
+        AssertSameAsAFreshLayout(layout, items, options, new Size(1000, 500));
+        AssertOnDevicePixels(layout.Bounds, 1.5);
+    }
+
+    [Fact]
+    public void Calculate_MasonryAfterDetailsThatLeaveTheHeightAsItWas_KeepsEveryBound()
+    {
+        var items = Varied(100);
+        var late = new GalleryItemViewModel();
+        items[40] = late;
+        var layout = new GalleryLayout();
+        layout.Calculate(items, Masonry, new Size(1000, 500));
+        var bounds = layout.Bounds.ToArray();
+        var extent = layout.Extent;
+
+        late.SetDetails(new GalleryFileDetails(640, 640)); // a square, as an item without details is placed
+        layout.Calculate(items, Masonry, new Size(1000, 500));
+
+        Assert.Equal(bounds, layout.Bounds);
+        Assert.Equal(extent, layout.Extent);
+    }
+
+    [Fact]
+    public void Calculate_RowsAfterAnItemGetsDetails_PlacesAsAFreshLayoutDoes()
+    {
+        var items = Varied(200);
+        var late = new GalleryItemViewModel();
+        items[90] = late;
+        var layout = new GalleryLayout();
+        layout.Calculate(items, Rows, new Size(1000, 500));
+
+        late.SetDetails(new GalleryFileDetails(4000, 1000));
+        layout.Calculate(items, Rows, new Size(1000, 500));
+
+        AssertSameAsAFreshLayout(layout, items, Rows, new Size(1000, 500));
+    }
+
+    [Theory]
+    [InlineData(GalleryDisplayMode.Masonry)]
+    [InlineData(GalleryDisplayMode.Rows)]
+    public void Calculate_TilesAfterInvalidateItems_PlacesTheListAsItIsNow(GalleryDisplayMode displayMode)
+    {
+        var options = Masonry with { DisplayMode = displayMode };
+        var items = Varied(200).ToList();
+        var layout = new GalleryLayout();
+        layout.Calculate(items, options, new Size(1000, 500));
+
+        // As many items as before, and none given details since
+        var moved = items[30];
+        items.RemoveAt(30);
+        items.Insert(120, moved);
+        layout.InvalidateItems();
+        layout.Calculate(items, options, new Size(1000, 500));
+
+        AssertSameAsAFreshLayout(layout, items, options, new Size(1000, 500));
+    }
+
+    [Theory]
+    [InlineData(GalleryDisplayMode.Masonry, 60)]
+    [InlineData(GalleryDisplayMode.Masonry, 199)]
+    [InlineData(GalleryDisplayMode.Rows, 60)]
+    public void Calculate_TilesWithAnItemRemoved_PlacesTheItemsLeft(GalleryDisplayMode displayMode, int index)
+    {
+        var options = Masonry with { DisplayMode = displayMode };
+        var items = Varied(200).ToList();
+        var layout = new GalleryLayout();
+        layout.Calculate(items, options, new Size(1000, 500));
+
+        items.RemoveAt(index);
+        layout.Calculate(items, options, new Size(1000, 500));
+
+        Assert.Equal(199, layout.Bounds.Count);
+        AssertSameAsAFreshLayout(layout, items, options, new Size(1000, 500));
+    }
+
+    [Theory]
+    [InlineData(GalleryDisplayMode.Masonry)]
+    [InlineData(GalleryDisplayMode.Rows)]
+    public void Calculate_TilesAtAnotherWidthItemSizeOrScale_PlacesEveryItemAgain(GalleryDisplayMode displayMode)
+    {
+        var options = Masonry with { DisplayMode = displayMode };
+        var items = Varied(200);
+        var layout = new GalleryLayout();
+        layout.Calculate(items, options, new Size(1000, 500));
+
+        layout.Calculate(items, options, new Size(700, 500));
+        AssertSameAsAFreshLayout(layout, items, options, new Size(700, 500));
+
+        layout.Calculate(items, options with { ItemHeight = 120 }, new Size(700, 500));
+        AssertSameAsAFreshLayout(layout, items, options with { ItemHeight = 120 }, new Size(700, 500));
+
+        layout.Calculate(items, options with { LayoutScale = 1.25 }, new Size(700, 500));
+        AssertSameAsAFreshLayout(layout, items, options with { LayoutScale = 1.25 }, new Size(700, 500));
+    }
+
+    [Fact]
+    public void Calculate_MasonryAfterRowsAndAfterTheDockedStrip_PlacesMasonryAgain()
+    {
+        var items = Varied(100);
+        var layout = new GalleryLayout();
+        layout.Calculate(items, Masonry, new Size(1000, 500));
+
+        layout.Calculate(items, Rows, new Size(1000, 500));
+        layout.Calculate(items, Masonry, new Size(1000, 500));
+        AssertSameAsAFreshLayout(layout, items, Masonry, new Size(1000, 500));
+
+        layout.Calculate(items, Docked, new Size(1000, 100));
+        layout.Calculate(items, Masonry, new Size(1000, 500));
+        AssertSameAsAFreshLayout(layout, items, Masonry, new Size(1000, 500));
+    }
+
+    [Fact]
+    public void Calculate_MasonryAfterClear_PlacesEveryItemAgain()
+    {
+        var items = Varied(50);
+        var layout = new GalleryLayout();
+        layout.Calculate(items, Masonry, new Size(1000, 500));
+
+        layout.Clear();
+        layout.Calculate(items, Masonry, new Size(1000, 500));
+
+        AssertSameAsAFreshLayout(layout, items, Masonry, new Size(1000, 500));
     }
 }
