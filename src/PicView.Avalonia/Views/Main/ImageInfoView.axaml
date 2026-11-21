@@ -18,6 +18,13 @@
             <Style Selector="TextBox.x">
                 <Setter Property="TextWrapping" Value="NoWrap" />
             </Style>
+            <!--  A dropdown's list is no wider than its box, so it stays inside the window: long words wrap  -->
+            <Style Selector="ComboBox.x /template/ Popup#PART_Popup">
+                <Setter Property="MaxWidth" Value="{CompiledBinding $parent[ComboBox].Bounds.Width}" />
+            </Style>
+            <Style Selector="ComboBox.x ComboBoxItem /template/ ContentPresenter#PART_ContentPresenter">
+                <Setter Property="TextWrapping" Value="Wrap" />
+            </Style>
         </Styles>
     </UserControl.Styles>
     <UserControl.ContextMenu>
@@ -1615,17 +1622,22 @@
                                     Classes="txt"
                                     Text="{CompiledBinding Translation.ExposureProgram.Value,
                                                            Mode=OneWay}" />
-                                <customControls:FuncTextBox
+                                <ComboBox
                                     x:Name="ExposureProgramBox"
                                     Width="{CompiledBinding InfoWindow.TextBoxWidth.Value}"
-                                    Classes=" TStyle x"
-                                    Command="{CompiledBinding Exif.SetExposureProgramCommand}"
-                                    CommandParameter="{Binding $self.Text}"
-                                    Text="{CompiledBinding Exif.ExposureProgram.Value,
-                                                           Mode=TwoWay}" />
+                                    MinWidth="180"
+                                    Margin="5,0,0,0"
+                                    Padding="5,7,1,7"
+                                    Background="{DynamicResource DisabledBackgroundColor}"
+                                    Classes="CStyle x"
+                                    CornerRadius="2"
+                                    ItemsSource="{CompiledBinding Exif.ExposureProgram.Choices}"
+                                    SelectedIndex="{CompiledBinding Exif.ExposureProgram.SelectedIndex.Value,
+                                                                    Mode=TwoWay}"
+                                    Tag="{CompiledBinding Exif.ExposureProgram}" />
                                 <customControls:CopyButton
                                     Classes="ToolButtonHover ToolWindowBorderStyle"
-                                    CopyText="{CompiledBinding Exif.ExposureProgram.Value,
+                                    CopyText="{CompiledBinding Exif.ExposureProgram.Text.Value,
                                                                Mode=OneWay}"
                                     IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
                                     ToolTip.Tip="{CompiledBinding Translation.Copy.Value,
@@ -1780,17 +1792,22 @@
                                     Classes="txt"
                                     Text="{CompiledBinding Translation.Contrast.Value,
                                                            Mode=OneWay}" />
-                                <customControls:FuncTextBox
+                                <ComboBox
                                     x:Name="ContrastBox"
                                     Width="{CompiledBinding InfoWindow.TextBoxWidth.Value}"
-                                    Classes=" TStyle x"
-                                    Command="{CompiledBinding Exif.SetContrastCommand}"
-                                    CommandParameter="{Binding $self.Text}"
-                                    Text="{CompiledBinding Exif.Contrast.Value,
-                                                           Mode=TwoWay}" />
+                                    MinWidth="180"
+                                    Margin="5,0,0,0"
+                                    Padding="5,7,1,7"
+                                    Background="{DynamicResource DisabledBackgroundColor}"
+                                    Classes="CStyle x"
+                                    CornerRadius="2"
+                                    ItemsSource="{CompiledBinding Exif.Contrast.Choices}"
+                                    SelectedIndex="{CompiledBinding Exif.Contrast.SelectedIndex.Value,
+                                                                    Mode=TwoWay}"
+                                    Tag="{CompiledBinding Exif.Contrast}" />
                                 <customControls:CopyButton
                                     Classes="ToolButtonHover ToolWindowBorderStyle"
-                                    CopyText="{CompiledBinding Exif.Contrast.Value,
+                                    CopyText="{CompiledBinding Exif.Contrast.Text.Value,
                                                                Mode=OneWay}"
                                     IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
                                     ToolTip.Tip="{CompiledBinding Translation.Copy.Value,
@@ -1807,17 +1824,22 @@
                                     Classes="txt"
                                     Text="{CompiledBinding Translation.Saturation.Value,
                                                            Mode=OneWay}" />
-                                <customControls:FuncTextBox
+                                <ComboBox
                                     x:Name="SaturationBox"
                                     Width="{CompiledBinding InfoWindow.TextBoxWidth.Value}"
-                                    Classes=" TStyle x"
-                                    Command="{CompiledBinding Exif.SetSaturationCommand}"
-                                    CommandParameter="{Binding $self.Text}"
-                                    Text="{CompiledBinding Exif.Saturation.Value,
-                                                           Mode=TwoWay}" />
+                                    MinWidth="180"
+                                    Margin="5,0,0,0"
+                                    Padding="5,7,1,7"
+                                    Background="{DynamicResource DisabledBackgroundColor}"
+                                    Classes="CStyle x"
+                                    CornerRadius="2"
+                                    ItemsSource="{CompiledBinding Exif.Saturation.Choices}"
+                                    SelectedIndex="{CompiledBinding Exif.Saturation.SelectedIndex.Value,
+                                                                    Mode=TwoWay}"
+                                    Tag="{CompiledBinding Exif.Saturation}" />
                                 <customControls:CopyButton
                                     Classes="ToolButtonHover ToolWindowBorderStyle"
-                                    CopyText="{CompiledBinding Exif.Saturation.Value,
+                                    CopyText="{CompiledBinding Exif.Saturation.Text.Value,
                                                                Mode=OneWay}"
                                     IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
                                     ToolTip.Tip="{CompiledBinding Translation.Copy.Value,
@@ -1835,17 +1857,22 @@
                                     Classes="txt"
                                     Text="{CompiledBinding Translation.Sharpness.Value,
                                                            Mode=OneWay}" />
-                                <customControls:FuncTextBox
+                                <ComboBox
                                     x:Name="SharpnessBox"
                                     Width="{CompiledBinding InfoWindow.TextBoxWidth.Value}"
-                                    Classes=" TStyle x"
-                                    Command="{CompiledBinding Exif.SetSharpnessCommand}"
-                                    CommandParameter="{Binding $self.Text}"
-                                    Text="{CompiledBinding Exif.Sharpness.Value,
-                                                           Mode=TwoWay}" />
+                                    MinWidth="180"
+                                    Margin="5,0,0,0"
+                                    Padding="5,7,1,7"
+                                    Background="{DynamicResource DisabledBackgroundColor}"
+                                    Classes="CStyle x"
+                                    CornerRadius="2"
+                                    ItemsSource="{CompiledBinding Exif.Sharpness.Choices}"
+                                    SelectedIndex="{CompiledBinding Exif.Sharpness.SelectedIndex.Value,
+                                                                    Mode=TwoWay}"
+                                    Tag="{CompiledBinding Exif.Sharpness}" />
                                 <customControls:CopyButton
                                     Classes="ToolButtonHover ToolWindowBorderStyle"
-                                    CopyText="{CompiledBinding Exif.Sharpness.Value,
+                                    CopyText="{CompiledBinding Exif.Sharpness.Text.Value,
                                                                Mode=OneWay}"
                                     IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
                                     ToolTip.Tip="{CompiledBinding Translation.Copy.Value,
@@ -1862,17 +1889,22 @@
                                     Classes="txt"
                                     Text="{CompiledBinding Translation.WhiteBalance.Value,
                                                            Mode=OneWay}" />
-                                <customControls:FuncTextBox
+                                <ComboBox
                                     x:Name="WhiteBalanceBox"
                                     Width="{CompiledBinding InfoWindow.TextBoxWidth.Value}"
-                                    Classes=" TStyle x"
-                                    Command="{CompiledBinding Exif.SetWhiteBalanceCommand}"
-                                    CommandParameter="{Binding $self.Text}"
-                                    Text="{CompiledBinding Exif.WhiteBalance.Value,
-                                                           Mode=TwoWay}" />
+                                    MinWidth="180"
+                                    Margin="5,0,0,0"
+                                    Padding="5,7,1,7"
+                                    Background="{DynamicResource DisabledBackgroundColor}"
+                                    Classes="CStyle x"
+                                    CornerRadius="2"
+                                    ItemsSource="{CompiledBinding Exif.WhiteBalance.Choices}"
+                                    SelectedIndex="{CompiledBinding Exif.WhiteBalance.SelectedIndex.Value,
+                                                                    Mode=TwoWay}"
+                                    Tag="{CompiledBinding Exif.WhiteBalance}" />
                                 <customControls:CopyButton
                                     Classes="ToolButtonHover ToolWindowBorderStyle"
-                                    CopyText="{CompiledBinding Exif.WhiteBalance.Value,
+                                    CopyText="{CompiledBinding Exif.WhiteBalance.Text.Value,
                                                                Mode=OneWay}"
                                     IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
                                     ToolTip.Tip="{CompiledBinding Translation.Copy.Value,
@@ -1917,17 +1949,22 @@
                                     Classes="txt"
                                     Text="{CompiledBinding Translation.FlashMode.Value,
                                                            Mode=OneWay}" />
-                                <customControls:FuncTextBox
+                                <ComboBox
                                     x:Name="FlashModeBox"
                                     Width="{CompiledBinding InfoWindow.TextBoxWidth.Value}"
-                                    Classes=" TStyle x"
-                                    Command="{CompiledBinding Exif.SetFlashModeCommand}"
-                                    CommandParameter="{Binding $self.Text}"
-                                    Text="{CompiledBinding Exif.FlashMode.Value,
-                                                           Mode=TwoWay}" />
+                                    MinWidth="180"
+                                    Margin="5,0,0,0"
+                                    Padding="5,7,1,7"
+                                    Background="{DynamicResource DisabledBackgroundColor}"
+                                    Classes="CStyle x"
+                                    CornerRadius="2"
+                                    ItemsSource="{CompiledBinding Exif.FlashMode.Choices}"
+                                    SelectedIndex="{CompiledBinding Exif.FlashMode.SelectedIndex.Value,
+                                                                    Mode=TwoWay}"
+                                    Tag="{CompiledBinding Exif.FlashMode}" />
                                 <customControls:CopyButton
                                     Classes="ToolButtonHover ToolWindowBorderStyle"
-                                    CopyText="{CompiledBinding Exif.FlashMode.Value,
+                                    CopyText="{CompiledBinding Exif.FlashMode.Text.Value,
                                                                Mode=OneWay}"
                                     IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
                                     ToolTip.Tip="{CompiledBinding Translation.Copy.Value,
@@ -1944,17 +1981,22 @@
                                     Classes="txt"
                                     Text="{CompiledBinding Translation.LightSource.Value,
                                                            Mode=OneWay}" />
-                                <customControls:FuncTextBox
+                                <ComboBox
                                     x:Name="LightSourceBox"
                                     Width="{CompiledBinding InfoWindow.TextBoxWidth.Value}"
-                                    Classes=" TStyle x"
-                                    Command="{CompiledBinding Exif.SetLightSourceCommand}"
-                                    CommandParameter="{Binding $self.Text}"
-                                    Text="{CompiledBinding Exif.LightSource.Value,
-                                                           Mode=TwoWay}" />
+                                    MinWidth="180"
+                                    Margin="5,0,0,0"
+                                    Padding="5,7,1,7"
+                                    Background="{DynamicResource DisabledBackgroundColor}"
+                                    Classes="CStyle x"
+                                    CornerRadius="2"
+                                    ItemsSource="{CompiledBinding Exif.LightSource.Choices}"
+                                    SelectedIndex="{CompiledBinding Exif.LightSource.SelectedIndex.Value,
+                                                                    Mode=TwoWay}"
+                                    Tag="{CompiledBinding Exif.LightSource}" />
                                 <customControls:CopyButton
                                     Classes="ToolButtonHover ToolWindowBorderStyle"
-                                    CopyText="{CompiledBinding Exif.LightSource.Value,
+                                    CopyText="{CompiledBinding Exif.LightSource.Text.Value,
                                                                Mode=OneWay}"
                                     IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
                                     ToolTip.Tip="{CompiledBinding Translation.Copy.Value,
@@ -1998,17 +2040,22 @@
                                     Classes="txt"
                                     Text="{CompiledBinding Translation.PhotometricInterpretation.Value,
                                                            Mode=OneWay}" />
-                                <customControls:FuncTextBox
+                                <ComboBox
                                     x:Name="PhotometricInterpretationBox"
                                     Width="{CompiledBinding InfoWindow.TextBoxWidth.Value}"
-                                    Classes=" TStyle x"
-                                    Command="{CompiledBinding Exif.SetPhotometricInterpretationCommand}"
-                                    CommandParameter="{Binding $self.Text}"
-                                    Text="{CompiledBinding Exif.PhotometricInterpretation.Value,
-                                                           Mode=TwoWay}" />
+                                    MinWidth="180"
+                                    Margin="5,0,0,0"
+                                    Padding="5,7,1,7"
+                                    Background="{DynamicResource DisabledBackgroundColor}"
+                                    Classes="CStyle x"
+                                    CornerRadius="2"
+                                    ItemsSource="{CompiledBinding Exif.PhotometricInterpretation.Choices}"
+                                    SelectedIndex="{CompiledBinding Exif.PhotometricInterpretation.SelectedIndex.Value,
+                                                                    Mode=TwoWay}"
+                                    Tag="{CompiledBinding Exif.PhotometricInterpretation}" />
                                 <customControls:CopyButton
                                     Classes="ToolButtonHover ToolWindowBorderStyle"
-                                    CopyText="{CompiledBinding Exif.PhotometricInterpretation.Value,
+                                    CopyText="{CompiledBinding Exif.PhotometricInterpretation.Text.Value,
                                                                Mode=OneWay}"
                                     IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
                                     ToolTip.Tip="{CompiledBinding Translation.Copy.Value,

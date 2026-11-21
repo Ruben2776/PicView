@@ -42,28 +42,25 @@ public static class ExifReader
     }
 
 
-    public static string? GetExposureProgram(IExifProfile? profile)
-    {
-        var exposureProgram = profile?.GetValue(ExifTag.ExposureProgram)?.Value;
-        if (exposureProgram is null)
-        {
-            return string.Empty;
-        }
+    // Each enumerated tag reads through a Label function, which Image Information's dropdown of that tag shares, so
+    // the word shown for a file is always one of its choices
 
-        return exposureProgram switch
-        {
-            0 => TranslationManager.Translation.NotDefined,
-            1 => TranslationManager.Translation.Manual,
-            2 => TranslationManager.Translation.Normal,
-            3 => TranslationManager.Translation.AperturePriority,
-            4 => TranslationManager.Translation.ShutterPriority,
-            5 => TranslationManager.Translation.CreativeProgram,
-            6 => TranslationManager.Translation.ActionProgram,
-            7 => TranslationManager.Translation.Portrait,
-            8 => TranslationManager.Translation.Landscape,
-            _ => string.Empty
-        };
-    }
+    public static string? GetExposureProgram(IExifProfile? profile) =>
+        Label(profile?.GetValue(ExifTag.ExposureProgram)?.Value, ExposureProgramLabel);
+
+    internal static string ExposureProgramLabel(ushort code) => (code switch
+    {
+        0 => TranslationManager.Translation.NotDefined,
+        1 => TranslationManager.Translation.Manual,
+        2 => TranslationManager.Translation.Normal,
+        3 => TranslationManager.Translation.AperturePriority,
+        4 => TranslationManager.Translation.ShutterPriority,
+        5 => TranslationManager.Translation.CreativeProgram,
+        6 => TranslationManager.Translation.ActionProgram,
+        7 => TranslationManager.Translation.Portrait,
+        8 => TranslationManager.Translation.Landscape,
+        _ => null
+    }) ?? string.Empty;
 
     public static string GetISOSpeed(IExifProfile? profile)
     {
@@ -87,72 +84,41 @@ public static class ExifReader
         return isoSpeed.ToString() ?? string.Empty;
     }
 
-    public static string GetSaturation(IExifProfile? profile)
+    public static string GetSaturation(IExifProfile? profile) =>
+        Label(profile?.GetValue(ExifTag.Saturation)?.Value, SaturationLabel);
+
+    internal static string SaturationLabel(ushort code) => (code switch
     {
-        var saturation = profile?.GetValue(ExifTag.Saturation)?.Value;
-        if (saturation is null)
-        {
-            return string.Empty;
-        }
+        0 => TranslationManager.Translation.Normal,
+        1 => TranslationManager.Translation.Low,
+        2 => TranslationManager.Translation.High,
+        _ => null
+    }) ?? string.Empty;
 
-        return (saturation switch
-        {
-            0 => TranslationManager.Translation.Normal,
-            1 => TranslationManager.Translation.Low,
-            2 => TranslationManager.Translation.High,
-            _ => string.Empty
-        })!;
-    }
+    public static string GetContrast(IExifProfile? profile) =>
+        Label(profile?.GetValue(ExifTag.Contrast)?.Value, SoftHardLabel);
 
-    public static string GetContrast(IExifProfile profile)
+    public static string GetSharpness(IExifProfile? profile) =>
+        Label(profile?.GetValue(ExifTag.Sharpness)?.Value, SoftHardLabel);
+
+    /// <summary>The words of Contrast and Sharpness, which share their codes.</summary>
+    internal static string SoftHardLabel(ushort code) => (code switch
     {
-        var contrast = profile?.GetValue(ExifTag.Contrast)?.Value;
-        if (contrast is null)
-        {
-            return string.Empty;
-        }
+        0 => TranslationManager.Translation.Normal,
+        1 => TranslationManager.Translation.Soft,
+        2 => TranslationManager.Translation.Hard,
+        _ => null
+    }) ?? string.Empty;
 
-        return (contrast switch
-        {
-            0 => TranslationManager.Translation.Normal,
-            1 => TranslationManager.Translation.Soft,
-            2 => TranslationManager.Translation.Hard,
-            _ => string.Empty
-        })!;
-    }
+    public static string GetWhiteBalance(IExifProfile? profile) =>
+        Label(profile?.GetValue(ExifTag.WhiteBalance)?.Value, WhiteBalanceLabel);
 
-    public static string GetSharpness(IExifProfile profile)
+    internal static string WhiteBalanceLabel(ushort code) => (code switch
     {
-        var sharpness = profile?.GetValue(ExifTag.Sharpness)?.Value;
-        if (sharpness is null)
-        {
-            return string.Empty;
-        }
-
-        return (sharpness switch
-        {
-            0 => TranslationManager.Translation.Normal,
-            1 => TranslationManager.Translation.Soft,
-            2 => TranslationManager.Translation.Hard,
-            _ => string.Empty
-        })!;
-    }
-
-    public static string GetWhiteBalance(IExifProfile profile)
-    {
-        var whiteBalance = profile?.GetValue(ExifTag.WhiteBalance)?.Value;
-        if (whiteBalance is null)
-        {
-            return string.Empty;
-        }
-
-        return (whiteBalance switch
-        {
-            0 => TranslationManager.Translation.Auto,
-            1 => TranslationManager.Translation.Manual,
-            _ => string.Empty
-        })!;
-    }
+        0 => TranslationManager.Translation.Auto,
+        1 => TranslationManager.Translation.Manual,
+        _ => null
+    }) ?? string.Empty;
 
     public static ushort GetResolutionUnit(IExifProfile? profile)
     {
@@ -176,168 +142,79 @@ public static class ExifReader
     /// Retrieves the flash mode information from the specified Exif profile.
     /// </summary>
     /// <param name="profile">The Exif profile from which to extract the flash mode. Can be null.</param>
-    /// <returns>A string indicating the flash mode. Returns an empty string if the flash mode is not found or in case of an error.</returns>
-    public static string GetFlashMode(IExifProfile? profile)
+    /// <returns>A string indicating the flash mode. Returns an empty string if the flash mode is not found.</returns>
+    public static string GetFlashMode(IExifProfile? profile) =>
+        Label(profile?.GetValue(ExifTag.Flash)?.Value, FlashModeLabel);
+
+    // https://exiftool.org/TagNames/EXIF.html
+    internal static string FlashModeLabel(ushort code) => code switch
     {
-        var flash = profile?.GetValue(ExifTag.Flash)?.Value;
-        if (flash is null)
-        {
-            return string.Empty;
-        }
+        0 or 9 or 24 or 32 => TranslationManager.Translation.FlashDidNotFire ?? string.Empty,
+        1 or 13 or 25 => TranslationManager.Translation.FlashFired ?? string.Empty,
+        5 or 15 or 29 => TranslationManager.Translation.FlashFired + ", " + TranslationManager.Translation.StrobeReturnLightDetected,
+        7 or 16 or 31 => TranslationManager.Translation.FlashFired + ", " + TranslationManager.Translation.StrobeReturnLightNotDetected,
+        65 or 73 or 93 => TranslationManager.Translation.FlashFired + ", " + TranslationManager.Translation.RedEyeReduction,
+        69 or 77 or 95 => TranslationManager.Translation.FlashFired + ", " + TranslationManager.Translation.RedEyeReduction + ", " + TranslationManager.Translation.StrobeReturnLightDetected,
+        71 or 97 => TranslationManager.Translation.FlashFired + ", " + TranslationManager.Translation.RedEyeReduction + ", " + TranslationManager.Translation.StrobeReturnLightNotDetected,
+        79 => TranslationManager.Translation.Unknown + ", " + TranslationManager.Translation.RedEyeReduction + ", " + TranslationManager.Translation.StrobeReturnLightNotDetected,
+        89 => TranslationManager.Translation.FlashDidNotFire + ", " + TranslationManager.Translation.RedEyeReduction,
+        _ => string.Empty
+    };
 
-        // https://exiftool.org/TagNames/EXIF.html
-        // ReSharper disable once ConvertSwitchStatementToSwitchExpression
-        switch (flash)
-        {
-            case 0:
-            case 9:
-            case 24:
-            case 32:
-                return TranslationManager.Translation.FlashDidNotFire!;
+    public static string GetLightSource(IExifProfile? profile) =>
+        Label(profile?.GetValue(ExifTag.LightSource)?.Value, LightSourceLabel);
 
-            case 1:
-            case 13:
-            case 25:
-                return TranslationManager.Translation.FlashFired!;
-
-            case 5:
-                return TranslationManager.Translation.FlashFired + ", " +
-                       TranslationManager.Translation.StrobeReturnLightDetected;
-
-            case 7:
-                return TranslationManager.Translation.FlashFired + ", " +
-                       TranslationManager.Translation.StrobeReturnLightNotDetected;
-
-            case 15:
-                return TranslationManager.Translation.FlashFired + ", " +
-                       TranslationManager.Translation.StrobeReturnLightDetected;
-
-            case 16:
-                return TranslationManager.Translation.FlashFired + ", " +
-                       TranslationManager.Translation.StrobeReturnLightNotDetected;
-
-            case 29:
-                return TranslationManager.Translation.FlashFired + ", " +
-                       TranslationManager.Translation.StrobeReturnLightDetected;
-
-            case 31:
-                return TranslationManager.Translation.FlashFired + ", " +
-                       TranslationManager.Translation.StrobeReturnLightNotDetected;
-
-            case 65:
-                return TranslationManager.Translation.FlashFired + ", " +
-                       TranslationManager.Translation.RedEyeReduction;
-
-            case 69:
-                return TranslationManager.Translation.FlashFired + ", " +
-                       TranslationManager.Translation.RedEyeReduction + ", " +
-                       TranslationManager.Translation.StrobeReturnLightDetected;
-
-            case 71:
-                return TranslationManager.Translation.FlashFired + ", " +
-                       TranslationManager.Translation.RedEyeReduction + ", " +
-                       TranslationManager.Translation.StrobeReturnLightNotDetected;
-
-            case 73:
-                return TranslationManager.Translation.FlashFired + ", " +
-                       TranslationManager.Translation.RedEyeReduction;
-
-            case 77:
-                return TranslationManager.Translation.FlashFired + ", " +
-                       TranslationManager.Translation.RedEyeReduction + ", " +
-                       TranslationManager.Translation.StrobeReturnLightDetected;
-
-            case 79:
-                return TranslationManager.Translation.Unknown + ", " +
-                       TranslationManager.Translation.RedEyeReduction + ", " +
-                       TranslationManager.Translation.StrobeReturnLightNotDetected;
-
-            case 89:
-                return TranslationManager.Translation.FlashDidNotFire + ", " +
-                       TranslationManager.Translation.RedEyeReduction;
-
-            case 93:
-                return TranslationManager.Translation.FlashFired + ", " +
-                       TranslationManager.Translation.RedEyeReduction;
-
-            case 95:
-                return TranslationManager.Translation.FlashFired + ", " +
-                       TranslationManager.Translation.RedEyeReduction + ", " +
-                       TranslationManager.Translation.StrobeReturnLightDetected;
-
-            case 97:
-                return TranslationManager.Translation.FlashFired + ", " +
-                       TranslationManager.Translation.RedEyeReduction + ", " +
-                       TranslationManager.Translation.StrobeReturnLightNotDetected;
-
-            default: return string.Empty;
-        }
-    }
-
-    public static string GetLightSource(IExifProfile? profile)
+    internal static string LightSourceLabel(ushort code) => (code switch
     {
-        var lightSource = profile?.GetValue(ExifTag.LightSource)?.Value;
-        if (lightSource is null)
-        {
-            return string.Empty;
-        }
+        0 => TranslationManager.Translation.Unknown,
+        1 => TranslationManager.Translation.Daylight,
+        2 => TranslationManager.Translation.Fluorescent,
+        3 => "Tungsten",
+        4 => TranslationManager.Translation.Flash,
+        9 => TranslationManager.Translation.FineWeather,
+        10 => TranslationManager.Translation.CloudyWeather,
+        11 => TranslationManager.Translation.Shade,
+        12 => TranslationManager.Translation.DaylightFluorescent,
+        13 => TranslationManager.Translation.DayWhiteFluorescent,
+        14 => TranslationManager.Translation.CoolWhiteFluorescent,
+        15 => TranslationManager.Translation.WhiteFluorescent,
+        17 => "Illuminants A",
+        18 => "Illuminants B",
+        19 => "Illuminants C",
+        20 => "D55",
+        21 => "D65",
+        22 => "D75",
+        23 => "D50",
+        24 => "ISO Studio Tungsten",
+        255 => TranslationManager.Translation.NotDefined,
+        _ => null
+    }) ?? string.Empty;
 
-        return lightSource switch
-        {
-            0 => TranslationManager.Translation.Unknown!,
-            1 => TranslationManager.Translation.Daylight!,
-            2 => TranslationManager.Translation.Fluorescent!,
-            3 => "Tungsten",
-            4 => TranslationManager.Translation.Flash!,
-            9 => TranslationManager.Translation.FineWeather!,
-            10 => TranslationManager.Translation.CloudyWeather!,
-            11 => TranslationManager.Translation.Shade!,
-            12 => TranslationManager.Translation.DaylightFluorescent!,
-            13 => TranslationManager.Translation.DayWhiteFluorescent!,
-            14 => TranslationManager.Translation.CoolWhiteFluorescent!,
-            15 => TranslationManager.Translation.WhiteFluorescent!,
-            17 => "Illuminants A",
-            18 => "Illuminants B",
-            19 => "Illuminants C",
-            20 => "D55",
-            21 => "D65",
-            22 => "D75",
-            23 => "D50",
-            24 => "ISO Studio Tungsten",
-            255 => TranslationManager.Translation.NotDefined!,
-            _ => string.Empty
-        };
-    }
+    public static string GetPhotometricInterpretation(IExifProfile? profile) =>
+        Label(profile?.GetValue(ExifTag.PhotometricInterpretation)?.Value, PhotometricInterpretationLabel);
 
-    public static string GetPhotometricInterpretation(IExifProfile? profile)
+    internal static string PhotometricInterpretationLabel(ushort code) => code switch
     {
-        var photometricInterpretation = profile?.GetValue(ExifTag.PhotometricInterpretation)?.Value;
-        if (photometricInterpretation is null)
-        {
-            return string.Empty;
-        }
+        0 => "WhiteIsZero",
+        1 => "BlackIsZero",
+        2 => "RGB",
+        3 => "RGBPalette",
+        4 => "TransparencyMask",
+        5 => "CMYK",
+        6 => "YCbCr",
+        8 => "CIELab",
+        9 => "ICCLab",
+        10 => "ITULab",
+        32803 => "ColorFilterArray",
+        32844 => "PixarLogL",
+        32845 => "PixarLogLuv",
+        32892 or 34892 => "LinearRaw",
+        65535 => "Undefined",
+        _ => string.Empty
+    };
 
-        return photometricInterpretation switch
-        {
-            0 => "WhiteIsZero",
-            1 => "BlackIsZero",
-            2 => "RGB",
-            3 => "RGBPalette",
-            4 => "TransparencyMask",
-            5 => "CMYK",
-            6 => "YCbCr",
-            8 => "CIELab",
-            9 => "ICCLab",
-            10 => "ITULab",
-            32803 => "ColorFilterArray",
-            32844 => "PixarLogL",
-            32845 => "PixarLogLuv",
-            32892 => "LinearRaw",
-            34892 => "LinearRaw",
-            65535 => "Undefined",
-            _ => string.Empty
-        };
-    }
+    private static string Label(ushort? code, Func<ushort, string> label) =>
+        code is { } value ? label(value) : string.Empty;
 
     public static string GetExifVersion(IExifProfile? profile)
     {

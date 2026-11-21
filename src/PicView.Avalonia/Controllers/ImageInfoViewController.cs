@@ -45,6 +45,14 @@ public class ImageInfoViewController(ImageInfoView view) : IDisposable
             view.ResolutionUnitBox.DropDownClosed += OnResolutionUnitBoxDropDownClosed;
             view.ColorRepresentationBox.DropDownClosed += OnColorRepresentationBoxDropDownClosed;
             view.CompressionBox.DropDownClosed += OnCompressionBoxDropDownClosed;
+            view.ExposureProgramBox.DropDownClosed += OnExifChoiceBoxDropDownClosed;
+            view.ContrastBox.DropDownClosed += OnExifChoiceBoxDropDownClosed;
+            view.SaturationBox.DropDownClosed += OnExifChoiceBoxDropDownClosed;
+            view.SharpnessBox.DropDownClosed += OnExifChoiceBoxDropDownClosed;
+            view.WhiteBalanceBox.DropDownClosed += OnExifChoiceBoxDropDownClosed;
+            view.FlashModeBox.DropDownClosed += OnExifChoiceBoxDropDownClosed;
+            view.LightSourceBox.DropDownClosed += OnExifChoiceBoxDropDownClosed;
+            view.PhotometricInterpretationBox.DropDownClosed += OnExifChoiceBoxDropDownClosed;
 
             // Whatever the active tab shows: a file, a clipboard, base64 or URL image, a renamed file, and the tab
             // switched to, also when the window was opened from a blank tab, whose empty model clears the values
@@ -207,6 +215,15 @@ public class ImageInfoViewController(ImageInfoView view) : IDisposable
         }
     }
 
+    // The dropdowns of enumerated Exif tags, such as Contrast, each carry their field in Tag
+    private void OnExifChoiceBoxDropDownClosed(object? sender, EventArgs e)
+    {
+        if (sender is ComboBox { Tag: ExifChoiceField field } && view.DataContext is MainWindowViewModel { Exif: { } exif })
+        {
+            _ = Task.Run(() => exif.CommitChoiceAsync(field));
+        }
+    }
+
     private void SetLoadingState(bool isLoading)
     {
         view.ParentPanel.Opacity = isLoading ? 0.1 : 1;
@@ -319,6 +336,14 @@ public class ImageInfoViewController(ImageInfoView view) : IDisposable
         view.ResolutionUnitBox.DropDownClosed -= OnResolutionUnitBoxDropDownClosed;
         view.ColorRepresentationBox.DropDownClosed -= OnColorRepresentationBoxDropDownClosed;
         view.CompressionBox.DropDownClosed -= OnCompressionBoxDropDownClosed;
+        view.ExposureProgramBox.DropDownClosed -= OnExifChoiceBoxDropDownClosed;
+        view.ContrastBox.DropDownClosed -= OnExifChoiceBoxDropDownClosed;
+        view.SaturationBox.DropDownClosed -= OnExifChoiceBoxDropDownClosed;
+        view.SharpnessBox.DropDownClosed -= OnExifChoiceBoxDropDownClosed;
+        view.WhiteBalanceBox.DropDownClosed -= OnExifChoiceBoxDropDownClosed;
+        view.FlashModeBox.DropDownClosed -= OnExifChoiceBoxDropDownClosed;
+        view.LightSourceBox.DropDownClosed -= OnExifChoiceBoxDropDownClosed;
+        view.PhotometricInterpretationBox.DropDownClosed -= OnExifChoiceBoxDropDownClosed;
 
         _disposables.Dispose();
         GC.SuppressFinalize(this);

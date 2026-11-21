@@ -48,21 +48,13 @@ public class ExifViewModel : IDisposable
         SetMaxApertureCommand = new ReactiveCommand<string>(async (s, _) => { MaxAperture.Value = s; await AddExifPropertyAsync(ExifWriter.AddMaxAperture, s).ConfigureAwait(false); });
         SetExposureBiasCommand = new ReactiveCommand<string>(async (s, _) => { ExposureBias.Value = s; await AddExifPropertyAsync(ExifWriter.AddExposureBias, s).ConfigureAwait(false); });
         SetExposureTimeCommand = new ReactiveCommand<string>(async (s, _) => { ExposureTime.Value = s; await AddExifPropertyAsync(ExifWriter.AddExposureTime, s).ConfigureAwait(false); });
-        SetExposureProgramCommand = new ReactiveCommand<string>(async (s, _) => { ExposureProgram.Value = s; await AddExifPropertyAsync(ExifWriter.AddExposureProgram, s).ConfigureAwait(false); });
         SetDigitalZoomCommand = new ReactiveCommand<string>(async (s, _) => { DigitalZoom.Value = s; await AddExifPropertyAsync(ExifWriter.AddDigitalZoom, s).ConfigureAwait(false); });
         SetFocalLengthCommand = new ReactiveCommand<string>(async (s, _) => { FocalLength.Value = s; await AddExifPropertyAsync(ExifWriter.AddFocalLength, s).ConfigureAwait(false); });
         SetFocalLength35MmCommand = new ReactiveCommand<string>(async (s, _) => { FocalLength35Mm.Value = s; await AddExifPropertyAsync(ExifWriter.AddFocalLength35mm, s).ConfigureAwait(false); });
         SetISOSpeedCommand = new ReactiveCommand<string>(async (s, _) => { ISOSpeed.Value = s; await AddExifPropertyAsync(ExifWriter.AddIsoSpeed, s).ConfigureAwait(false); });
         SetMeteringModeCommand = new ReactiveCommand<string>(async (s, _) => { MeteringMode.Value = s; await AddExifPropertyAsync(ExifWriter.AddMeteringMode, s).ConfigureAwait(false); });
-        SetContrastCommand = new ReactiveCommand<string>(async (s, _) => { Contrast.Value = s; await AddExifPropertyAsync(ExifWriter.AddContrast, s).ConfigureAwait(false); });
-        SetSaturationCommand = new ReactiveCommand<string>(async (s, _) => { Saturation.Value = s; await AddExifPropertyAsync(ExifWriter.AddSaturation, s).ConfigureAwait(false); });
-        SetSharpnessCommand = new ReactiveCommand<string>(async (s, _) => { Sharpness.Value = s; await AddExifPropertyAsync(ExifWriter.AddSharpness, s).ConfigureAwait(false); });
-        SetWhiteBalanceCommand = new ReactiveCommand<string>(async (s, _) => { WhiteBalance.Value = s; await AddExifPropertyAsync(ExifWriter.AddWhiteBalance, s).ConfigureAwait(false); });
         SetFlashEnergyCommand = new ReactiveCommand<string>(async (s, _) => { FlashEnergy.Value = s; await AddExifPropertyAsync(ExifWriter.AddFlashEnergy, s).ConfigureAwait(false); });
-        SetFlashModeCommand = new ReactiveCommand<string>(async (s, _) => { FlashMode.Value = s; await AddExifPropertyAsync(ExifWriter.AddFlashMode, s).ConfigureAwait(false); });
-        SetLightSourceCommand = new ReactiveCommand<string>(async (s, _) => { LightSource.Value = s; await AddExifPropertyAsync(ExifWriter.AddLightSource, s).ConfigureAwait(false); });
         SetBrightnessCommand = new ReactiveCommand<string>(async (s, _) => { Brightness.Value = s; await AddExifPropertyAsync(ExifWriter.AddBrightness, s).ConfigureAwait(false); });
-        SetPhotometricInterpretationCommand = new ReactiveCommand<string>(async (s, _) => { PhotometricInterpretation.Value = s; await AddExifPropertyAsync(ExifWriter.AddPhotometricInterpretation, s).ConfigureAwait(false); });
         SetLensMakerCommand = new ReactiveCommand<string>(async (s, _) => { LensMaker.Value = s; await AddExifPropertyAsync(ExifWriter.AddLensMaker, s).ConfigureAwait(false); });
         SetLensModelCommand = new ReactiveCommand<string>(async (s, _) => { LensModel.Value = s; await AddExifPropertyAsync(ExifWriter.AddLensModel, s).ConfigureAwait(false); });
         SetExifVersionCommand = new ReactiveCommand<string>(async (s, _) => { ExifVersion.Value = s; await AddExifPropertyAsync(ExifWriter.AddExifVersion, s).ConfigureAwait(false); });
@@ -181,21 +173,13 @@ public class ExifViewModel : IDisposable
     public ReactiveCommand<string> SetMaxApertureCommand { get; set; }
     public ReactiveCommand<string> SetExposureBiasCommand { get; set; }
     public ReactiveCommand<string> SetExposureTimeCommand { get; set; }
-    public ReactiveCommand<string> SetExposureProgramCommand { get; set; }
     public ReactiveCommand<string> SetDigitalZoomCommand { get; set; }
     public ReactiveCommand<string> SetFocalLengthCommand { get; set; }
     public ReactiveCommand<string> SetFocalLength35MmCommand { get; set; }
     public ReactiveCommand<string> SetISOSpeedCommand { get; set; }
     public ReactiveCommand<string> SetMeteringModeCommand { get; set; }
-    public ReactiveCommand<string> SetContrastCommand { get; set; }
-    public ReactiveCommand<string> SetSaturationCommand { get; set; }
-    public ReactiveCommand<string> SetSharpnessCommand { get; set; }
-    public ReactiveCommand<string> SetWhiteBalanceCommand { get; set; }
     public ReactiveCommand<string> SetFlashEnergyCommand { get; set; }
-    public ReactiveCommand<string> SetFlashModeCommand { get; set; }
-    public ReactiveCommand<string> SetLightSourceCommand { get; set; }
     public ReactiveCommand<string> SetBrightnessCommand { get; set; }
-    public ReactiveCommand<string> SetPhotometricInterpretationCommand { get; set; }
     public ReactiveCommand<string> SetLensMakerCommand { get; set; }
     public ReactiveCommand<string> SetLensModelCommand { get; set; }
     public ReactiveCommand<string> SetExifVersionCommand { get; set; }
@@ -263,7 +247,8 @@ public class ExifViewModel : IDisposable
 
     public BindableReactiveProperty<string?> CameraModel { get; } = new();
 
-    public BindableReactiveProperty<string?> ExposureProgram { get; } = new();
+    public ExifChoiceField ExposureProgram { get; } =
+        new(ExifTag.ExposureProgram, [0, 1, 2, 3, 4, 5, 6, 7, 8], ExifReader.ExposureProgramLabel);
 
     public BindableReactiveProperty<string?> ExposureTime { get; } = new();
 
@@ -284,23 +269,30 @@ public class ExifViewModel : IDisposable
 
     public BindableReactiveProperty<string?> MeteringMode { get; } = new();
 
-    public BindableReactiveProperty<string?> Contrast { get; } = new();
+    public ExifChoiceField Contrast { get; } =
+        new(ExifTag.Contrast, [0, 1, 2], ExifReader.SoftHardLabel);
 
-    public BindableReactiveProperty<string?> Saturation { get; } = new();
+    public ExifChoiceField Saturation { get; } =
+        new(ExifTag.Saturation, [0, 1, 2], ExifReader.SaturationLabel);
 
-    public BindableReactiveProperty<string?> Sharpness { get; } = new();
+    public ExifChoiceField Sharpness { get; } =
+        new(ExifTag.Sharpness, [0, 1, 2], ExifReader.SoftHardLabel);
 
-    public BindableReactiveProperty<string?> WhiteBalance { get; } = new();
+    public ExifChoiceField WhiteBalance { get; } =
+        new(ExifTag.WhiteBalance, [0, 1], ExifReader.WhiteBalanceLabel);
 
-    public BindableReactiveProperty<string?> FlashMode { get; } = new();
+    public ExifChoiceField FlashMode { get; } =
+        new(ExifTag.Flash, [0, 1, 5, 7, 65, 69, 71, 89, 79], ExifReader.FlashModeLabel);
 
     public BindableReactiveProperty<string?> FlashEnergy { get; } = new();
 
-    public BindableReactiveProperty<string?> LightSource { get; } = new();
+    public ExifChoiceField LightSource { get; } =
+        new(ExifTag.LightSource, [0, 1, 2, 3, 4, 9, 10, 11, 12, 13, 14, 15, 17, 18, 19, 20, 21, 22, 23, 24, 255], ExifReader.LightSourceLabel);
 
     public BindableReactiveProperty<string?> Brightness { get; } = new();
 
-    public BindableReactiveProperty<string?> PhotometricInterpretation { get; } = new();
+    public ExifChoiceField PhotometricInterpretation { get; } =
+        new(ExifTag.PhotometricInterpretation, [0, 1, 2, 3, 4, 5, 6, 8, 9, 10, 32803, 32844, 32845, 32892, 65535], ExifReader.PhotometricInterpretationLabel);
 
     public BindableReactiveProperty<string?> ExifVersion { get; } = new();
 
@@ -402,21 +394,13 @@ public class ExifViewModel : IDisposable
             SetMaxApertureCommand,
             SetExposureBiasCommand,
             SetExposureTimeCommand,
-            SetExposureProgramCommand,
             SetDigitalZoomCommand,
             SetFocalLengthCommand,
             SetFocalLength35MmCommand,
             SetISOSpeedCommand,
             SetMeteringModeCommand,
-            SetContrastCommand,
-            SetSaturationCommand,
-            SetSharpnessCommand,
-            SetWhiteBalanceCommand,
             SetFlashEnergyCommand,
-            SetFlashModeCommand,
-            SetLightSourceCommand,
             SetBrightnessCommand,
-            SetPhotometricInterpretationCommand,
             SetLensMakerCommand,
             SetLensModelCommand,
             SetExifVersionCommand);
@@ -827,7 +811,7 @@ public class ExifViewModel : IDisposable
                 profile?.GetValue(ExifTag.CompressedBitsPerPixel)?.Value.ToString(CultureInfo.InvariantCulture) ?? string.Empty;
             CameraMaker.Value = profile?.GetValue(ExifTag.Make)?.Value ?? string.Empty;
             CameraModel.Value = profile?.GetValue(ExifTag.Model)?.Value ?? string.Empty;
-            ExposureProgram.Value = ExifReader.GetExposureProgram(profile);
+            ExposureProgram.Read(profile);
             ExposureTime.Value = profile?.GetValue(ExifTag.ExposureTime)?.Value.ToString(CultureInfo.InvariantCulture) ?? string.Empty;
             FNumber.Value = profile?.GetValue(ExifTag.FNumber)?.Value.ToString(CultureInfo.InvariantCulture) ?? string.Empty;
             MaxAperture.Value = profile?.GetValue(ExifTag.MaxApertureValue)?.Value.ToString(CultureInfo.InvariantCulture) ?? string.Empty;
@@ -837,16 +821,16 @@ public class ExifViewModel : IDisposable
             FocalLength.Value = profile?.GetValue(ExifTag.FocalLength)?.Value.ToString(CultureInfo.InvariantCulture) ?? string.Empty;
             ISOSpeed.Value = ExifReader.GetISOSpeed(profile);
             MeteringMode.Value = profile?.GetValue(ExifTag.MeteringMode)?.Value.ToString() ?? string.Empty;
-            Contrast.Value = ExifReader.GetContrast(profile);
-            Saturation.Value = ExifReader.GetSaturation(profile);
-            Sharpness.Value = ExifReader.GetSharpness(profile);
-            WhiteBalance.Value = ExifReader.GetWhiteBalance(profile);
-            FlashMode.Value = ExifReader.GetFlashMode(profile);
+            Contrast.Read(profile);
+            Saturation.Read(profile);
+            Sharpness.Read(profile);
+            WhiteBalance.Read(profile);
+            FlashMode.Read(profile);
             FlashEnergy.Value = profile?.GetValue(ExifTag.FlashEnergy)?.Value.ToString(CultureInfo.InvariantCulture) ?? string.Empty;
-            LightSource.Value = ExifReader.GetLightSource(profile);
+            LightSource.Read(profile);
             Brightness.Value = profile?.GetValue(ExifTag.BrightnessValue)?.Value.ToString(CultureInfo.CurrentCulture) ??
                                null;
-            PhotometricInterpretation.Value = ExifReader.GetPhotometricInterpretation(profile);
+            PhotometricInterpretation.Read(profile);
             ExifVersion.Value = ExifReader.GetExifVersion(profile);
             LensModel.Value = profile?.GetValue(ExifTag.LensModel)?.Value ?? string.Empty;
             LensMaker.Value = profile?.GetValue(ExifTag.LensMake)?.Value ?? string.Empty;
@@ -887,6 +871,12 @@ public class ExifViewModel : IDisposable
         }
     }
 
+    /// <summary>
+    /// Writes what the user picked in the dropdown of <paramref name="field"/> to the file shown, when it differs from
+    /// what the file holds.
+    /// </summary>
+    public Task<bool> CommitChoiceAsync(ExifChoiceField field) => field.CommitAsync(_fileInfo);
+
     private async Task AddExifPropertyAsync<T>(Func<FileInfo?, T, Task<bool>> addAction, T value)
     {
         if (_fileInfo is not null)
@@ -922,21 +912,22 @@ public class ExifViewModel : IDisposable
         FNumber.Value = string.Empty;
         MaxAperture.Value = string.Empty;
         ExposureBias.Value = string.Empty;
+        ExposureProgram.Clear();
         ExposureTime.Value = string.Empty;
         DigitalZoom.Value = string.Empty;
         FocalLength.Value = string.Empty;
         FocalLength35Mm.Value = string.Empty;
         ISOSpeed.Value = string.Empty;
         MeteringMode.Value = string.Empty;
-        Contrast.Value = string.Empty;
-        Saturation.Value = string.Empty;
-        Sharpness.Value = string.Empty;
-        WhiteBalance.Value = string.Empty;
+        Contrast.Clear();
+        Saturation.Clear();
+        Sharpness.Clear();
+        WhiteBalance.Clear();
         FlashEnergy.Value = string.Empty;
-        FlashMode.Value = string.Empty;
-        LightSource.Value = string.Empty;
+        FlashMode.Clear();
+        LightSource.Clear();
         Brightness.Value = string.Empty;
-        PhotometricInterpretation.Value = string.Empty;
+        PhotometricInterpretation.Clear();
         LensMaker.Value = string.Empty;
         LensModel.Value = string.Empty;
         ExifVersion.Value = string.Empty;

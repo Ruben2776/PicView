@@ -388,26 +388,6 @@ public static class ExifWriter
             nameof(ExifWriter), nameof(AddExposureTime));
 
     /// <summary>
-    /// Adds the exposure program to the EXIF metadata of an image file.
-    /// </summary>
-    /// <param name="fileInfo">The image file to update.</param>
-    /// <param name="value">The exposure program value to add.</param>
-    /// <returns>A task that represents the asynchronous operation. The task result contains true if the operation succeeded; otherwise, false.</returns>
-    public static Task<bool> AddExposureProgram(FileInfo? fileInfo, string? value) =>
-        ExifFunctions.TryUpdateImageProfileAsync(fileInfo, magickImage =>
-        {
-            if (!ushort.TryParse(value, out var program))
-            {
-                return false;
-            }
-
-            var profile = magickImage.GetExifProfile() ?? new ExifProfile();
-            profile.SetValue(ExifTag.ExposureProgram, program);
-            magickImage.SetProfile(profile);
-            return true;
-        }, nameof(ExifWriter), nameof(AddExposureProgram));
-
-    /// <summary>
     /// Adds the digital zoom ratio to the EXIF metadata of an image file.
     /// </summary>
     /// <param name="fileInfo">The image file to update.</param>
@@ -499,6 +479,39 @@ public static class ExifWriter
         }, nameof(ExifWriter), nameof(AddIsoSpeed));
 
     /// <summary>
+    /// Writes <paramref name="code"/> to the enumerated <paramref name="tag"/> of an image file, such as Contrast, as
+    /// Image Information's dropdown of that tag picks it. A <see langword="null"/> code removes the tag.
+    /// </summary>
+    /// <returns>True if the file was written; otherwise, false.</returns>
+    public static Task<bool> SetChoiceAsync(FileInfo? fileInfo, ExifTag<ushort> tag, ushort? code) =>
+        ExifFunctions.TryUpdateImageProfileAsync(fileInfo, magickImage =>
+        {
+            var profile = magickImage.GetExifProfile();
+            if (code is null)
+            {
+                if (profile is null || !profile.RemoveValue(tag))
+                {
+                    return false;
+                }
+
+                // An empty profile is not written, which would leave the old one in the file
+                if (profile.Values.Count is 0)
+                {
+                    magickImage.RemoveProfile(profile);
+                    return true;
+                }
+            }
+            else
+            {
+                profile ??= new ExifProfile();
+                profile.SetValue(tag, code.Value);
+            }
+
+            magickImage.SetProfile(profile);
+            return true;
+        }, nameof(ExifWriter), nameof(SetChoiceAsync));
+
+    /// <summary>
     /// Adds the metering mode to the EXIF metadata of an image file.
     /// </summary>
     /// <param name="fileInfo">The image file to update.</param>
@@ -517,87 +530,6 @@ public static class ExifWriter
             magickImage.SetProfile(profile);
             return true;
         }, nameof(ExifWriter), nameof(AddMeteringMode));
-
-    /// <summary>
-    /// Adds the contrast setting to the EXIF metadata of an image file.
-    /// </summary>
-    /// <param name="fileInfo">The image file to update.</param>
-    /// <param name="value">The contrast setting to add (e.g., 0 = Normal, 1 = Soft, 2 = Hard).</param>
-    /// <returns>A task that represents the asynchronous operation. The task result contains true if the operation succeeded; otherwise, false.</returns>
-    public static Task<bool> AddContrast(FileInfo? fileInfo, string? value) =>
-        ExifFunctions.TryUpdateImageProfileAsync(fileInfo, magickImage =>
-        {
-            if (!ushort.TryParse(value, out var contrast))
-            {
-                return false;
-            }
-
-            var profile = magickImage.GetExifProfile() ?? new ExifProfile();
-            profile.SetValue(ExifTag.Contrast, contrast);
-            magickImage.SetProfile(profile);
-            return true;
-        }, nameof(ExifWriter), nameof(AddContrast));
-
-
-    /// <summary>
-    /// Adds the saturation level to the EXIF metadata of an image file.
-    /// </summary>
-    /// <param name="fileInfo">The image file to update.</param>
-    /// <param name="value">The saturation level to add (e.g., 0 = Normal, 1 = Low, 2 = High).</param>
-    /// <returns>A task that represents the asynchronous operation. The task result contains true if the operation succeeded; otherwise, false.</returns>
-    public static Task<bool> AddSaturation(FileInfo? fileInfo, string? value) =>
-        ExifFunctions.TryUpdateImageProfileAsync(fileInfo, magickImage =>
-        {
-            if (!ushort.TryParse(value, out var saturation))
-            {
-                return false;
-            }
-
-            var profile = magickImage.GetExifProfile() ?? new ExifProfile();
-            profile.SetValue(ExifTag.Saturation, saturation);
-            magickImage.SetProfile(profile);
-            return true;
-        }, nameof(ExifWriter), nameof(AddSaturation));
-
-    /// <summary>
-    /// Adds the sharpness level to the EXIF metadata of an image file.
-    /// </summary>
-    /// <param name="fileInfo">The image file to update.</param>
-    /// <param name="value">The sharpness level to add (e.g., 0 = Normal, 1 = Soft, 2 = Hard).</param>
-    /// <returns>A task that represents the asynchronous operation. The task result contains true if the operation succeeded; otherwise, false.</returns>
-    public static Task<bool> AddSharpness(FileInfo? fileInfo, string? value) =>
-        ExifFunctions.TryUpdateImageProfileAsync(fileInfo, magickImage =>
-        {
-            if (!ushort.TryParse(value, out var sharpness))
-            {
-                return false;
-            }
-
-            var profile = magickImage.GetExifProfile() ?? new ExifProfile();
-            profile.SetValue(ExifTag.Sharpness, sharpness);
-            magickImage.SetProfile(profile);
-            return true;
-        }, nameof(ExifWriter), nameof(AddSharpness));
-
-    /// <summary>
-    /// Adds the white balance mode to the EXIF metadata of an image file.
-    /// </summary>
-    /// <param name="fileInfo">The image file to update.</param>
-    /// <param name="value">The white balance mode to add (e.g., 0 = Auto, 1 = Manual).</param>
-    /// <returns>A task that represents the asynchronous operation. The task result contains true if the operation succeeded; otherwise, false.</returns>
-    public static Task<bool> AddWhiteBalance(FileInfo? fileInfo, string? value) =>
-        ExifFunctions.TryUpdateImageProfileAsync(fileInfo, magickImage =>
-        {
-            if (!ushort.TryParse(value, out var whiteBalance))
-            {
-                return false;
-            }
-
-            var profile = magickImage.GetExifProfile() ?? new ExifProfile();
-            profile.SetValue(ExifTag.WhiteBalance, whiteBalance);
-            magickImage.SetProfile(profile);
-            return true;
-        }, nameof(ExifWriter), nameof(AddWhiteBalance));
 
     /// <summary>
     /// Adds the flash energy to the EXIF metadata of an image file.
@@ -626,46 +558,6 @@ public static class ExifWriter
             nameof(ExifWriter), nameof(AddFlashEnergy));
 
     /// <summary>
-    /// Adds the flash mode to the EXIF metadata of an image file.
-    /// </summary>
-    /// <param name="fileInfo">The image file to update.</param>
-    /// <param name="value">The flash mode to add.</param>
-    /// <returns>A task that represents the asynchronous operation. The task result contains true if the operation succeeded; otherwise, false.</returns>
-    public static Task<bool> AddFlashMode(FileInfo? fileInfo, string? value) =>
-        ExifFunctions.TryUpdateImageProfileAsync(fileInfo, magickImage =>
-        {
-            if (!ushort.TryParse(value, out var flash))
-            {
-                return false;
-            }
-
-            var profile = magickImage.GetExifProfile() ?? new ExifProfile();
-            profile.SetValue(ExifTag.Flash, flash);
-            magickImage.SetProfile(profile);
-            return true;
-        }, nameof(ExifWriter), nameof(AddFlashMode));
-
-    /// <summary>
-    /// Adds the light source to the EXIF metadata of an image file.
-    /// </summary>
-    /// <param name="fileInfo">The image file to update.</param>
-    /// <param name="value">The light source to add.</param>
-    /// <returns>A task that represents the asynchronous operation. The task result contains true if the operation succeeded; otherwise, false.</returns>
-    public static Task<bool> AddLightSource(FileInfo? fileInfo, string? value) =>
-        ExifFunctions.TryUpdateImageProfileAsync(fileInfo, magickImage =>
-        {
-            if (!ushort.TryParse(value, out var source))
-            {
-                return false;
-            }
-
-            var profile = magickImage.GetExifProfile() ?? new ExifProfile();
-            profile.SetValue(ExifTag.LightSource, source);
-            magickImage.SetProfile(profile);
-            return true;
-        }, nameof(ExifWriter), nameof(AddLightSource));
-
-    /// <summary>
     /// Adds the brightness value to the EXIF metadata of an image file.
     /// </summary>
     /// <param name="fileInfo">The image file to update.</param>
@@ -692,26 +584,6 @@ public static class ExifWriter
             magickImage.SetProfile(profile);
             return true;
         }, nameof(ExifWriter), nameof(AddBrightness));
-
-    /// <summary>
-    /// Adds the photometric interpretation to the EXIF metadata of an image file.
-    /// </summary>
-    /// <param name="fileInfo">The image file to update.</param>
-    /// <param name="value">The photometric interpretation value to add (e.g., 2 for RGB, 6 for YCbCr).</param>
-    /// <returns>A task that represents the asynchronous operation. The task result contains true if the operation succeeded; otherwise, false.</returns>
-    public static Task<bool> AddPhotometricInterpretation(FileInfo? fileInfo, string? value) =>
-        ExifFunctions.TryUpdateImageProfileAsync(fileInfo, magickImage =>
-        {
-            if (!ushort.TryParse(value, out var interpretation))
-            {
-                return false;
-            }
-
-            var profile = magickImage.GetExifProfile() ?? new ExifProfile();
-            profile.SetValue(ExifTag.PhotometricInterpretation, interpretation);
-            magickImage.SetProfile(profile);
-            return true;
-        }, nameof(ExifWriter), nameof(AddPhotometricInterpretation));
 
     /// <summary>
     /// Adds the lens manufacturer to the EXIF metadata of an image file.
