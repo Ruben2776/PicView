@@ -45,10 +45,18 @@ public interface IPlatformSpecificService
     Task<bool> CutFile(string path);
 
     /// <summary>
-    /// Gets an OS-level thumbnail as raw BGRA pixel data.
+    /// Gets an OS-level thumbnail as raw BGRA pixel data, which the OS makes if it has none yet.
     /// Implemented on Windows and macOS, returns null on unsupported platforms or on failure.
     /// </summary>
     byte[]? GetShellThumbnail(string path, int width, int height, out int pixelWidth, out int pixelHeight);
+
+    /// <summary>
+    /// Like <see cref="GetShellThumbnail"/>, for a caller that can decode the file itself: where the OS making a
+    /// thumbnail costs more than that decode, only one it has made already, of at least the size asked for, else null.
+    /// On Windows, one in its thumbnail cache. Elsewhere the same as <see cref="GetShellThumbnail"/>.
+    /// </summary>
+    byte[]? GetCachedShellThumbnail(string path, int width, int height, out int pixelWidth, out int pixelHeight) =>
+        GetShellThumbnail(path, width, height, out pixelWidth, out pixelHeight);
     
     byte[]? GetPixelsFromNativeImagingComponent(string path, out int pixelWidth, out int pixelHeight);
 }

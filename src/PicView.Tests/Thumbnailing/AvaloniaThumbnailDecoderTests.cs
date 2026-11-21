@@ -80,9 +80,10 @@ public class AvaloniaThumbnailDecoderTests : IDisposable
     [AvaloniaFact]
     public void DecodeWithoutReadyMade_NeverAsksTheShell()
     {
-        // _platform counts GetShellThumbnail calls and would return a 10 x 10 bitmap
+        // _platform counts the shell thumbnails asked for and would return a 10 x 10 bitmap
         _decoder.DecodeWithoutReadyMade(_jpeg, 300);
         Assert.Equal(0, _platform.ShellThumbnailCalls);
+        Assert.Equal(0, _platform.CachedShellThumbnailCalls);
     }
 
     [AvaloniaFact]
@@ -98,16 +99,33 @@ public class AvaloniaThumbnailDecoderTests : IDisposable
     }
 
     [AvaloniaFact]
-    public void Decode_CommonFormat_AsksTheShellFirst()
+    public void Decode_CommonFormat_AsksTheShellFirstForOneItHasAlready()
     {
-        // Pins what DecodeWithoutReadyMade is not: the existing Decode keeps going to the shell on Windows and macOS
+        // Pins what DecodeWithoutReadyMade is not: Decode keeps going to the shell on Windows and macOS, but only for a
+        // thumbnail it has made already, as Decode can decode the file itself
         if (!OperatingSystem.IsWindows() && !OperatingSystem.IsMacOS())
         {
             return;
         }
 
         var bitmap = Assert.IsAssignableFrom<Bitmap>(_decoder.Decode(_jpeg, 300));
+        Assert.Equal(1, _platform.CachedShellThumbnailCalls);
+        Assert.Equal(0, _platform.ShellThumbnailCalls);
+        Assert.Equal(new PixelSize(10, 10), bitmap.PixelSize);
+    }
+
+    [AvaloniaFact]
+    public void GetReadyMade_CommonFormat_LetsTheShellMakeOne()
+    {
+        // The quick stand-in decodes nothing itself, so the shell may extract a thumbnail it has not made yet
+        if (!OperatingSystem.IsWindows() && !OperatingSystem.IsMacOS())
+        {
+            return;
+        }
+
+        var bitmap = Assert.IsAssignableFrom<Bitmap>(_decoder.GetReadyMade(_jpeg, 300));
         Assert.Equal(1, _platform.ShellThumbnailCalls);
+        Assert.Equal(0, _platform.CachedShellThumbnailCalls);
         Assert.Equal(new PixelSize(10, 10), bitmap.PixelSize);
     }
 
@@ -121,16 +139,26 @@ public class AvaloniaThumbnailDecoderTests : IDisposable
     [Fact]
     public void SizeInBytes_NotABitmap_IsZero() => Assert.Equal(0, new AvaloniaThumbnailDecoder(null).SizeInBytes("x"));
 
-    // Counts the shell thumbnails asked for, and gives a 10 x 10 bitmap for each
+    // Counts the shell thumbnails asked for, of each kind, and gives a 10 x 10 bitmap for each
     private sealed class CountingShellPlatform : IPlatformSpecificService
     {
         private int _shellThumbnailCalls;
+        private int _cachedShellThumbnailCalls;
 
         public int ShellThumbnailCalls => Volatile.Read(ref _shellThumbnailCalls);
+        public int CachedShellThumbnailCalls => Volatile.Read(ref _cachedShellThumbnailCalls);
 
         public byte[]? GetShellThumbnail(string path, int width, int height, out int pixelWidth, out int pixelHeight)
         {
             Interlocked.Increment(ref _shellThumbnailCalls);
+            pixelWidth = pixelHeight = 10;
+            return new byte[10 * 10 * 4];
+        }
+
+        public byte[]? GetCachedShellThumbnail(string path, int width, int height, out int pixelWidth,
+            out int pixelHeight)
+        {
+            Interlocked.Increment(ref _cachedShellThumbnailCalls);
             pixelWidth = pixelHeight = 10;
             return new byte[10 * 10 * 4];
         }

@@ -20,7 +20,8 @@ public static class GetThumbnails
 {
     /// <summary>
     /// Makes a thumbnail of <paramref name="fileInfo"/> no taller than <paramref name="height"/>: the shell's when
-    /// <paramref name="platform"/> has one, else the EXIF thumbnail when it is tall enough, else a decode of the file.
+    /// <paramref name="platform"/> has one already (on Windows, in its thumbnail cache), as making one costs the shell
+    /// more than the decode here, else the EXIF thumbnail when it is tall enough, else a decode of the file.
     /// The thumbnail is upright: a file stored turned, as its EXIF orientation says, is turned to show.
     /// Blocks while it reads the file.
     /// </summary>
@@ -35,7 +36,7 @@ public static class GetThumbnails
 
             if (platform is not null && fileInfo.IsCommon() && (OperatingSystem.IsWindows() || OperatingSystem.IsMacOS()))
             {
-                var shellThumb = GetShellThumb(fileInfo.FullName, 0, (int)height, platform);
+                var shellThumb = GetShellThumb(fileInfo.FullName, 0, (int)height, platform, cachedOnly: true);
                 if (shellThumb is not null)
                 {
                     return shellThumb;
@@ -132,13 +133,14 @@ public static class GetThumbnails
 
     /// <summary>
     /// The thumbnail the OS shell or the file's EXIF data already has, without decoding the image; null if neither has
-    /// one.
+    /// one. The shell makes one if it has none yet, as nothing here would decode the file in its place.
     /// </summary>
     public static Bitmap? GetReadyMade(FileInfo fileInfo, uint height, IPlatformSpecificService? platform = null)
     {
         if (platform is not null && fileInfo.IsCommon() && (OperatingSystem.IsWindows() || OperatingSystem.IsMacOS()))
         {
-            return GetShellThumb(fileInfo.FullName, 0, (int)height, platform) ?? GetExifThumb(fileInfo.FullName);
+            return GetShellThumb(fileInfo.FullName, 0, (int)height, platform, cachedOnly: false) ??
+                   GetExifThumb(fileInfo.FullName);
         }
         return GetExifThumb(fileInfo.FullName);
     }
@@ -198,12 +200,17 @@ public static class GetThumbnails
     /// On macOS, this uses ImageIO (CGImageSource).
     /// Returns null on unsupported platforms or on failure.
     /// </summary>
-    private static WriteableBitmap? GetShellThumb(string path, int width, int height, IPlatformSpecificService platform)
+    /// <param name="cachedOnly">Whether only a thumbnail the shell has already is wanted, for a caller that decodes
+    /// the file itself when there is none: see <see cref="IPlatformSpecificService.GetCachedShellThumbnail"/>.</param>
+    private static WriteableBitmap? GetShellThumb(string path, int width, int height, IPlatformSpecificService platform,
+        bool cachedOnly)
     {
         try
         {
-            var pixels = platform.GetShellThumbnail(path, width, height,
-                out var pixelWidth, out var pixelHeight);
+            int pixelWidth, pixelHeight;
+            var pixels = cachedOnly
+                ? platform.GetCachedShellThumbnail(path, width, height, out pixelWidth, out pixelHeight)
+                : platform.GetShellThumbnail(path, width, height, out pixelWidth, out pixelHeight);
 
             if (pixels is null || pixelWidth <= 0 || pixelHeight <= 0)
             {

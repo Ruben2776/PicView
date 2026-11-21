@@ -168,7 +168,15 @@ public class App : Application, IPlatformSpecificService
 
     public byte[]? GetShellThumbnail(string path, int width, int height, out int pixelWidth, out int pixelHeight)
     {
-        return ShellThumbnailNative.GetShellThumbnailBytes(path, width, height, out pixelWidth, out pixelHeight);
+        return ShellThumbnailNative.GetShellThumbnailBytes(path, width, height, cacheOnly: false, out pixelWidth,
+            out pixelHeight);
+    }
+
+    public byte[]? GetCachedShellThumbnail(string path, int width, int height, out int pixelWidth,
+        out int pixelHeight)
+    {
+        return ShellThumbnailNative.GetShellThumbnailBytes(path, width, height, cacheOnly: true, out pixelWidth,
+            out pixelHeight);
     }
 
     public byte[]? GetPixelsFromNativeImagingComponent(string path, out int pixelWidth, out int pixelHeight)
