@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using Avalonia;
 using Avalonia.Collections;
 using Avalonia.Controls;
@@ -9,8 +10,6 @@ using Avalonia.VisualTree;
 using PicView.Avalonia.CustomControls;
 using PicView.Core.Gallery;
 using PicView.Core.ViewModels;
-using System.Linq;
-using Xunit;
 
 namespace PicView.Tests.Gallery;
 
@@ -187,7 +186,7 @@ public class VirtualizingGalleryTests
                 Orientation = Orientation.Horizontal
             };
 
-            var items = new System.Collections.ObjectModel.ObservableCollection<string> { "Old_Dir_Item_0", "Old_Dir_Item_1" };
+            var items = new ObservableCollection<string> { "Old_Dir_Item_0", "Old_Dir_Item_1" };
             var viewer = new NavigateAbleItemsViewer
             {
                 ItemsPanel = new FuncTemplate<Panel?>(() => gallery),
@@ -1075,16 +1074,13 @@ public class VirtualizingGalleryTests
             Dispatcher.UIThread.RunJobs();
             Assert.Equal(scrolledTo, strip.ScrollViewer.Offset.Y, Tolerance);
 
-            // The first row is read twice as tall, which moves every row after it down by as much
+            // A row of items is inserted at the start, which moves every row after it down by one. Details read for
+            // items already shown would move nothing, as Masonry keeps them where they are
             var before = Top(strip, 70);
             var columns = Enumerable.Range(0, 200).Count(index => Top(strip, index) == 0);
-            foreach (var item in strip.Items.Take(columns))
-            {
-                item.SetDetails(new GalleryFileDetails(100, 200));
-            }
-            strip.Gallery.InvalidateMeasure();
+            strip.Items.InsertRange(0, Enumerable.Range(0, columns).Select(_ => new GalleryItemViewModel()));
             Dispatcher.UIThread.RunJobs();
-            var moved = Top(strip, 70) - before;
+            var moved = Top(strip, 70 + columns) - before;
             Assert.True(moved > 0);
             Assert.Equal(scrolledTo + moved, strip.ScrollViewer.Offset.Y, Tolerance);
 
@@ -1114,6 +1110,68 @@ public class VirtualizingGalleryTests
             for (var first = shownAt.Keys.Max() + 1; first < strip.Items.Count; first += 20)
             {
                 for (var index = first; index < Math.Min(first + 20, strip.Items.Count); index++)
+                {
+                    ReadDetails(strip.Items[index], index);
+                }
+                strip.Gallery.InvalidateMeasure();
+                Dispatcher.UIThread.RunJobs();
+                moves.AddRange(shownAt.Where(shown => Position(strip, shown.Key, renderScaling) != shown.Value)
+                    .Select(shown => $"item {shown.Key} after reading from {first}"));
+            }
+            Assert.True(moves.Count is 0, $"Shown thumbnails moved: {string.Join("; ", moves)}");
+            Assert.Equal(offset, strip.ScrollViewer.Offset);
+        }
+        finally
+        {
+            strip.Window.Close();
+        }
+    }
+
+    [AvaloniaFact]
+    public void Masonry_ItemReplacedBeforeTheView_MovesNothingShown()
+    {
+        // As a file changed on disk is: its item is replaced by one with the file's details
+        var strip = ShowTiles(300, 150, GalleryDisplayMode.Masonry);
+        try
+        {
+            var shownAt = strip.Gallery.RealizedItems.ToDictionary(r => r.Index, r => Position(strip, r.Index, 1));
+            var replacement = new GalleryItemViewModel();
+            replacement.SetDetails(new GalleryFileDetails(300, 2000));
+            strip.Items[5] = replacement;
+            Dispatcher.UIThread.RunJobs();
+            // Items read after the replace, as the rest of the folder's details arrive
+            for (var index = 6; index <= shownAt.Keys.Max(); index++)
+            {
+                ReadDetails(strip.Items[index], index);
+            }
+            strip.Gallery.InvalidateMeasure();
+            Dispatcher.UIThread.RunJobs();
+
+            var moved = shownAt.Where(shown => Position(strip, shown.Key, 1) != shown.Value).Select(s => s.Key).ToList();
+            Assert.True(moved.Count is 0, $"Shown thumbnails moved: {string.Join(", ", moved)}");
+        }
+        finally
+        {
+            strip.Window.Close();
+        }
+    }
+
+    [AvaloniaTheory]
+    [InlineData(1.0)]
+    [InlineData(1.5)]
+    public void Masonry_SizesReadForItemsBeforeAndInTheView_MoveNothingShown(double renderScaling)
+    {
+        var strip = ShowTiles(300, 150, GalleryDisplayMode.Masonry, renderScaling);
+        try
+        {
+            var shownAt = strip.Gallery.RealizedItems.ToDictionary(r => r.Index, r => Position(strip, r.Index, renderScaling));
+            Assert.NotEmpty(shownAt);
+            var offset = strip.ScrollViewer.Offset;
+            var moves = new List<string>();
+            var last = shownAt.Keys.Max();
+            for (var first = 0; first <= last; first += 20)
+            {
+                for (var index = first; index <= Math.Min(first + 19, last); index++)
                 {
                     ReadDetails(strip.Items[index], index);
                 }

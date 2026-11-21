@@ -340,8 +340,10 @@ public class GalleryAnimationControl : UserControl
 
     private void ParentSizeChanged(object? sender, SizeChangedEventArgs e)
     {
-        // Keep the layout correct when the view is resized
-        if (_applied.Mode is GalleryMode.Expanded)
+        // Keep the layout correct when the view is resized. An animation sets the final extent itself once its tween
+        // ends: closing to Docked keeps Expanded's look until then, and the window fitting itself to the docked gallery
+        // as the tween lands would otherwise fill the parent again for a moment
+        if (_applied.Mode is GalleryMode.Expanded && !IsInAnimation)
         {
             SetExtent(_applied);
         }

@@ -616,8 +616,9 @@ public sealed class GalleryTileSharpeningTests : IDisposable
     [AvaloniaFact]
     public void SizesArriving_AfterAScrollWhileThePanelHoldsAnItem_DoNotPostponeSharpening()
     {
-        // The items above the view have no details yet, so their sizes arriving move everything below them
-        Show(itemCount: 60, slots: 64, withoutDetails: [0, 1, 2]);
+        // The items above the view have no details yet, so their sizes arriving move everything below them. In Rows:
+        // Masonry keeps the items it showed, and every one before them, where they are
+        Show(GalleryDisplayMode.Rows, itemCount: 60, slots: 64, withoutDetails: [0, 1, 2]);
         ScrollBy(1500);
         Assert.DoesNotContain(_panel!.RealizedItems, x => x.Index <= 2);
         var offsetBefore = ScrollViewer.Offset.Y;

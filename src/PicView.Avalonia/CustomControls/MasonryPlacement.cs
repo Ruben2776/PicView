@@ -27,9 +27,13 @@ internal static class MasonryPlacement
     ///     items before the first whose height changed then keep their bounds, since an item's place depends only on
     ///     the heights before it, and placing starts at that item.
     /// </param>
+    /// <param name="lockedCount">
+    ///     With <paramref name="keepPlaced" />, how many items from the start keep their bounds whatever their details
+    ///     say now, so tiles already shown stay where they are while details arrive. Ignored otherwise.
+    /// </param>
     /// <returns>The extent: the wrap width, or one column without a usable one, by the tallest column.</returns>
     internal static Size Place(IReadOnlyList<object?> items, GalleryPlacementOptions options, List<Rect> bounds,
-        ref double[] columnHeights, bool keepPlaced = false)
+        ref double[] columnHeights, bool keepPlaced = false, int lockedCount = 0)
     {
         var scale = options.Scale;
         var columnGap = options.InDevicePixels(options.LineSpacing);
@@ -60,6 +64,7 @@ internal static class MasonryPlacement
         {
             // Bounds are whole device pixels divided by the scale, so rounding gives the placed height back exactly
             var placed = Math.Min(items.Count, bounds.Count);
+            first = Math.Clamp(lockedCount, 0, placed);
             while (first < placed && HeightOf(items[first], columnWidth) == Math.Round(bounds[first].Height * scale))
             {
                 first++;

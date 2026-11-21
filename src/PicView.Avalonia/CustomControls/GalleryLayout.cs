@@ -91,6 +91,14 @@ public sealed class GalleryLayout
     private bool _itemsInvalidated;
 
     /// <summary>
+    ///     How many Masonry items from the start keep their bounds whatever details they are given: the items the panel
+    ///     has shown, and every one before them, since an item's place depends on the heights before it. Set by
+    ///     <see cref="KeepPlacedThrough" />, cut back to an edit by <see cref="InvalidateItems" />, and back to 0
+    ///     whenever the placement is made from scratch: other options, another display mode or list, or none kept.
+    /// </summary>
+    private int _lockedCount;
+
+    /// <summary>
     ///     The bounds of every item, in item order. <see cref="Calculate" /> and <see cref="Clear" /> change the list
     ///     in place, so read it again after either.
     /// </summary>
@@ -120,7 +128,7 @@ public sealed class GalleryLayout
     ///     Places every item, replacing the earlier bounds and extent. Masonry and Rows keep the earlier placement when
     ///     nothing it was made from changed: the same list with as many items, the same options and wrap width, no
     ///     <see cref="InvalidateItems" /> and no item given details since. Masonry places again only from the first
-    ///     item whose height changed.
+    ///     item whose height changed, and never before the items <see cref="KeepPlacedThrough" /> locked.
     /// </summary>
     /// <param name="items">
     ///     The items in order. Each is <see cref="GalleryLayoutOptions.ItemWidth" /> wide when that is set. Otherwise a
@@ -151,6 +159,11 @@ public sealed class GalleryLayout
                 return;
             }
 
+            if (!sameOptions || !ReferenceEquals(_placedItems, items))
+            {
+                _lockedCount = 0;
+            }
+
             if (options.DisplayMode is GalleryDisplayMode.Rows)
             {
                 _bounds.Clear();
@@ -158,7 +171,8 @@ public sealed class GalleryLayout
             }
             else
             {
-                Extent = MasonryPlacement.Place(items, placement, _bounds, ref _columnHeights, sameOptions);
+                Extent = MasonryPlacement.Place(items, placement, _bounds, ref _columnHeights, sameOptions,
+                    _lockedCount);
             }
 
             _hasPlacement = true;
@@ -273,7 +287,27 @@ public sealed class GalleryLayout
     ///     next <see cref="Calculate" /> then reads the items again, where it would otherwise keep a Masonry or Rows
     ///     placement of the same list with as many items. Details given to an item need no call.
     /// </summary>
-    public void InvalidateItems() => _itemsInvalidated = true;
+    /// <param name="firstChangedIndex">
+    ///     The first index the change touched. The Masonry items before it stay locked; the lock ends there.
+    /// </param>
+    public void InvalidateItems(int firstChangedIndex = 0)
+    {
+        _itemsInvalidated = true;
+        _lockedCount = Math.Min(_lockedCount, Math.Max(0, firstChangedIndex));
+    }
+
+    /// <summary>
+    ///     Keeps the Masonry items up to and including <paramref name="lastIndex" /> where they are now, whatever details
+    ///     they are given later, as the panel does for the items it shows. The lock only grows, until the placement is
+    ///     made again from scratch. Does nothing outside Masonry.
+    /// </summary>
+    public void KeepPlacedThrough(int lastIndex)
+    {
+        if (_hasPlacement && _placedMode is GalleryDisplayMode.Masonry && lastIndex >= 0)
+        {
+            _lockedCount = Math.Max(_lockedCount, Math.Min(lastIndex + 1, _bounds.Count));
+        }
+    }
 
     /// <summary>
     ///     Forgets what the bounds were placed from, so the next <see cref="Calculate" /> places every item.
@@ -283,6 +317,7 @@ public sealed class GalleryLayout
         _hasPlacement = false;
         _placedItems = null;
         _itemsInvalidated = false;
+        _lockedCount = 0;
     }
 
     /// <summary>

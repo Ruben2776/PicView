@@ -532,6 +532,38 @@ public class GalleryViewTests
         }, startClosed: true);
     }
 
+    [AvaloniaFact]
+    public void ClosingToDocked_ParentResizedDuringTheTween_DoesNotFillTheParentAgain()
+    {
+        WithShownExpandedGallery(GalleryDisplayMode.Masonry, (_, window, view, _) =>
+        {
+            ((TabViewModel)view.DataContext!).Gallery.Switcher.ToggleExpanded();
+            Dispatcher.UIThread.RunJobs();
+            Assert.True(view.IsInAnimation);
+
+            // The parent changes size as the tween reaches the docked extent, as it does in the app when the window fits
+            // itself to the docked gallery: the animation has let go of the height, and the look is still Expanded's
+            var heights = new List<double>();
+            var resized = false;
+            view.SizeChanged += (_, e) =>
+            {
+                if (resized && view.IsInAnimation)
+                {
+                    heights.Add(e.NewSize.Height);
+                }
+                else if (!resized && view.IsInAnimation && e.NewSize.Height <= 100.5) // the docked extent here
+                {
+                    resized = true;
+                    window.Height = 598;
+                }
+            };
+            WaitForAnimation(window, view);
+
+            Assert.True(resized);
+            Assert.DoesNotContain(heights, height => height > 200);
+        });
+    }
+
     // The same window, 1000 by 600, with the tab expanded before its view loads, so the view shows it without an
     // animation. With startClosed the tab is closed instead, for a test that expands it itself
     private static void WithShownExpandedGallery(GalleryDisplayMode displayMode,

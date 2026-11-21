@@ -993,4 +993,189 @@ public class GalleryLayoutTests
 
         AssertSameAsAFreshLayout(layout, items, Masonry, new Size(1000, 500));
     }
+
+    private static readonly Size MasonrySize = new(1000, 500);
+
+    /// <summary>
+    /// <see cref="Varied"/> with item 10 not read yet, placed in Masonry and kept placed through item 60.
+    /// </summary>
+    private static (GalleryLayout Layout, object?[] Items, GalleryItemViewModel Unread) LockedMasonry(int count = 200)
+    {
+        var items = Varied(count);
+        var unread = new GalleryItemViewModel();
+        items[10] = unread;
+        var layout = new GalleryLayout();
+        layout.Calculate(items, Masonry, MasonrySize);
+        layout.KeepPlacedThrough(60);
+        return (layout, items, unread);
+    }
+
+    /// <summary>The items with item 10 a square, as it was placed before it was read.</summary>
+    private static object?[] AsPlacedWhileUnread(IEnumerable<object?> items)
+    {
+        var copy = items.ToArray();
+        copy[10] = Item(100, 100);
+        return copy;
+    }
+
+    [Fact]
+    public void Calculate_MasonryAfterDetailsForLockedItems_KeepsEveryBound()
+    {
+        var items = Varied(200);
+        GalleryItemViewModel unread = new(), other = new();
+        items[10] = unread;
+        items[50] = other;
+        var layout = new GalleryLayout();
+        layout.Calculate(items, Masonry, MasonrySize);
+        layout.KeepPlacedThrough(60);
+        var bounds = layout.Bounds.ToArray();
+        var extent = layout.Extent;
+
+        unread.SetDetails(new GalleryFileDetails(300, 2000));
+        other.SetDetails(new GalleryFileDetails(4000, 1000));
+        layout.Calculate(items, Masonry, MasonrySize);
+
+        Assert.Equal(bounds, layout.Bounds);
+        Assert.Equal(extent, layout.Extent);
+    }
+
+    [Fact]
+    public void Calculate_MasonryAfterDetailsPastTheLock_PlacesThemAsIfTheLockedItemsWereAsPlaced()
+    {
+        var (layout, items, unread) = LockedMasonry();
+        var past = new GalleryItemViewModel();
+        items[150] = past;
+        layout.InvalidateItems(150);
+        layout.Calculate(items, Masonry, MasonrySize);
+
+        unread.SetDetails(new GalleryFileDetails(300, 2000));
+        past.SetDetails(new GalleryFileDetails(300, 2000));
+        layout.Calculate(items, Masonry, MasonrySize);
+
+        AssertSameAsAFreshLayout(layout, AsPlacedWhileUnread(items), Masonry, MasonrySize);
+    }
+
+    [Fact]
+    public void KeepPlacedThrough_ASmallerIndexLater_DoesNotShrinkTheLock()
+    {
+        var (layout, items, unread) = LockedMasonry();
+        var bounds = layout.Bounds.ToArray();
+
+        layout.KeepPlacedThrough(5);
+        unread.SetDetails(new GalleryFileDetails(300, 2000));
+        layout.Calculate(items, Masonry, MasonrySize);
+
+        Assert.Equal(bounds, layout.Bounds);
+    }
+
+    [Theory]
+    [InlineData("width")]
+    [InlineData("itemSize")]
+    [InlineData("scale")]
+    [InlineData("rows")]
+    [InlineData("docked")]
+    [InlineData("clear")]
+    [InlineData("list")]
+    public void Calculate_MasonryAfterALift_PlacesEveryItemFromItsDetails(string lift)
+    {
+        var (layout, items, unread) = LockedMasonry();
+        unread.SetDetails(new GalleryFileDetails(300, 2000));
+
+        IReadOnlyList<object?> placed = items;
+        switch (lift)
+        {
+            case "width":
+                layout.Calculate(items, Masonry, new Size(700, 500));
+                break;
+            case "itemSize":
+                layout.Calculate(items, Masonry with { ItemHeight = 120 }, MasonrySize);
+                break;
+            case "scale":
+                layout.Calculate(items, Masonry with { LayoutScale = 1.25 }, MasonrySize);
+                break;
+            case "rows":
+                layout.Calculate(items, Rows, MasonrySize);
+                break;
+            case "docked":
+                layout.Calculate(items, Docked, new Size(1000, 100));
+                break;
+            case "clear":
+                layout.Clear();
+                break;
+            case "list":
+                placed = items.ToArray();
+                break;
+        }
+
+        layout.Calculate(placed, Masonry, MasonrySize);
+
+        AssertSameAsAFreshLayout(layout, placed, Masonry, MasonrySize);
+    }
+
+    [Fact]
+    public void Calculate_MasonryAfterAnInsertInsideTheLock_KeepsTheItemsBeforeItAndPlacesTheRestFromDetails()
+    {
+        var (layout, array, unread) = LockedMasonry();
+        var items = array.ToList(); // another list object, which lifts the lock: place it once, then lock it
+        layout.Calculate(items, Masonry, MasonrySize);
+        layout.KeepPlacedThrough(60);
+        var before = layout.Bounds.Take(30).ToArray();
+
+        unread.SetDetails(new GalleryFileDetails(300, 2000));
+        items.Insert(30, Item(100, 300));
+        layout.InvalidateItems(30);
+        layout.Calculate(items, Masonry, MasonrySize);
+
+        Assert.Equal(before, layout.Bounds.Take(30));
+        AssertSameAsAFreshLayout(layout, AsPlacedWhileUnread(items), Masonry, MasonrySize);
+    }
+
+    [Fact]
+    public void Calculate_MasonryAfterAnEditPastTheLock_KeepsTheWholeLock()
+    {
+        var (layout, array, unread) = LockedMasonry();
+        var items = array.ToList();
+        layout.Calculate(items, Masonry, MasonrySize);
+        layout.KeepPlacedThrough(60);
+        var before = layout.Bounds.Take(61).ToArray();
+
+        items.RemoveAt(150);
+        layout.InvalidateItems(150);
+        unread.SetDetails(new GalleryFileDetails(300, 2000));
+        layout.Calculate(items, Masonry, MasonrySize);
+
+        Assert.Equal(before, layout.Bounds.Take(61));
+    }
+
+    [Fact]
+    public void Calculate_MasonryListShorterThanTheLock_PlacesWithoutThrowing()
+    {
+        var items = Varied(200).ToList();
+        var layout = new GalleryLayout();
+        layout.Calculate(items, Masonry, MasonrySize);
+        layout.KeepPlacedThrough(150);
+
+        items.RemoveRange(20, 180);
+        layout.InvalidateItems(20);
+        layout.Calculate(items, Masonry, MasonrySize);
+
+        Assert.Equal(20, layout.Bounds.Count);
+        AssertSameAsAFreshLayout(layout, items, Masonry, MasonrySize);
+    }
+
+    [Fact]
+    public void KeepPlacedThrough_InRows_ChangesNothing()
+    {
+        var items = Varied(200);
+        var unread = new GalleryItemViewModel();
+        items[10] = unread;
+        var layout = new GalleryLayout();
+        layout.Calculate(items, Rows, MasonrySize);
+
+        layout.KeepPlacedThrough(60);
+        unread.SetDetails(new GalleryFileDetails(300, 2000));
+        layout.Calculate(items, Rows, MasonrySize);
+
+        AssertSameAsAFreshLayout(layout, items, Rows, MasonrySize);
+    }
 }

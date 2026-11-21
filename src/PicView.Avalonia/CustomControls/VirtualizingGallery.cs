@@ -665,6 +665,12 @@ public class VirtualizingGallery : VirtualizingPanel
             }
         }
 
+        // Masonry keeps what it shows, and every item before it, where it is when their details arrive later
+        if (IsExpanded && DisplayMode is GalleryDisplayMode.Masonry)
+        {
+            _layout.KeepPlacedThrough(endIndex);
+        }
+
         TrimPool();
 
         // 7. Hold the item nearest the middle of that view, for when someone else scrolls it. A view on pixels holds it
@@ -907,8 +913,15 @@ public class VirtualizingGallery : VirtualizingPanel
     {
         base.OnItemsChanged(items, e);
 
-        // The list is the same one with other items in it, which the layout cannot see by itself
-        _layout.InvalidateItems();
+        // The list is the same one with other items in it, which the layout cannot see by itself. Masonry items before
+        // the change keep their place. A replaced item moves no other, so a locked one keeps its slot for the new item
+        _layout.InvalidateItems(e.Action switch
+        {
+            NotifyCollectionChangedAction.Replace => int.MaxValue,
+            NotifyCollectionChangedAction.Add => e.NewStartingIndex,
+            NotifyCollectionChangedAction.Remove => e.OldStartingIndex,
+            _ => 0
+        });
 
         switch (e.Action)
         {
