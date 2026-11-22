@@ -47,7 +47,7 @@ _Avoid_: Tool Window Action, since Settings, About, Keybindings and File Associa
 ## Windows
 
 **Main Window**:
-A window that shows tabs of images. PicView can have several, all in one process: one opens at App Start, and more open as a new window, when a tab is dragged out of one, or when PicView is started again while it runs and files do not open in the same window. Closing one that is not the last ends only that window. Closing the last one is App Shutdown, unless Batch Resize is open: then PicView keeps running until Batch Resize closes too.
+A window that shows tabs of images. PicView can have several, all in one process: one opens at App Start, and more open as a new window, when a tab is dragged out of one, or when PicView is started again while it runs and the Opening Mode is New Window. Closing one that is not the last ends only that window. Closing the last one is App Shutdown, unless Batch Resize is open: then PicView keeps running until Batch Resize closes too.
 What sits inside a Main Window (its buttons, menus, views and pop-ups) acts on that Main Window, even while another one is the Active Main Window.
 _Avoid_: Viewer window, image window
 
@@ -68,7 +68,7 @@ A window that belongs to PicView as a whole rather than to a Main Window: Settin
 _Avoid_: Secondary window, global window, singleton window
 
 **App Start**:
-What runs once when the PicView process starts, around its first Main Window: loading the settings, the Keymap, file history and favorites. A Main Window opened later never repeats it. Starting PicView again while it runs does not run it again either: the new process hands its Source over to the running PicView and exits, and the running one opens it, in the Active Main Window when files open in the same window, else in a new Main Window. Only when the running PicView does not take the Source, as once App Shutdown has begun, does the new process run its own App Start.
+What runs once when the PicView process starts, around its first Main Window: loading the settings, the Keymap, file history and favorites. A Main Window opened later never repeats it. Starting PicView again while it runs does not run it again either: the new process hands its Source over to the running PicView and exits, and the running one opens it where the Opening Mode says: in a new tab of the Active Main Window, in place of what its active tab shows, or in a new Main Window. Only when the running PicView does not take the Source, as once App Shutdown has begun, does the new process run its own App Start.
 _Avoid_: Initialization, boot, instance (for a PicView process)
 
 **App Shutdown**:
@@ -126,12 +126,16 @@ What a tab has shown, oldest to newest, with a cursor on what it shows now: each
 _Avoid_: Navigation history, back stack, file history (for Back and Forward)
 
 **File History**:
-The files, archives and URLs viewed most recently in any tab, listed in the dropdown menu by when each was last viewed: up to 50, plus up to 5 pinned ones. It is remembered between runs, renaming a file or folder renames its entries, and turning file history off stops it recording. Back and Forward don't use it.
+The files, archives and URLs viewed most recently in any tab, listed in the dropdown menu by when each was last viewed: up to 50, plus up to 5 pinned ones. It is remembered between runs, renaming a file or folder renames its entries, and turning file history off stops it recording, the Last File and the Last Session too. Clearing it clears both too. Back and Forward don't use it.
 _Avoid_: Recent files, history list
 
 **Last File**:
-The file, archive or URL that the active tab of the Active Main Window showed most recently. "Open last file" opens it, and so does App Start when it opens the last file. Closing a Main Window, and App Shutdown, make that window's active tab's file the Last File. A Single Image without a path never becomes it, and renaming its file, or the folder it's in, renames it.
+The file, archive or URL that the active tab of the Active Main Window showed most recently. "Open last file" opens it, and so does App Start when it opens the last file. Closing a Main Window, and App Shutdown, make that window's active tab's file the Last File, while File History is on. With it off, or once it is cleared, there is none. A Single Image without a path never becomes it, and renaming its file, or the folder it's in, renames it.
 _Avoid_: Last entry, current entry
+
+**Last Session**:
+The tabs of the last Main Window to close, in their order, each by the file, archive or URL it showed, and which of them was active. It is recorded when a Main Window closes, and at App Shutdown from the most recently active one, as Last File is. Fresh Tabs and Single Images without a path are left out, and an archive is remembered without its page. "Continue where you left off" opens it at App Start without a Source: the active tab first, then the others in the background, each in its place. A tab whose file is gone is skipped, and with nothing left, or with File History off, the start-up menu shows.
+_Avoid_: TabFileHistory, restored tabs, workspace
 
 ## Images
 
@@ -218,6 +222,10 @@ _Avoid_: Sort order, sort preference, sorting
 **App Setting**:
 A Setting that belongs to PicView as a whole: every Setting that is not a Window Setting. One value serves every Main Window, and a change is written to the record and saved at once.
 _Avoid_: Global setting, shared setting
+
+**Opening Mode**:
+The App Setting that decides where a Source opens when it is pasted, dropped, or handed to the running PicView, as by double-clicking a file: New Window, Same Window or New Tab. New Tab opens it in a new tab at the end of the strip, which becomes active, or in the active tab when that is a Fresh Tab. Same Window and New Window replace what the active tab shows, except that a hand-over in New Window opens a new Main Window. Dropping several files opens the first as the mode says and makes it active; each other file opens in the background, in a new tab under New Tab and Same Window, in a new Main Window under New Window. Opening from inside PicView, as from File History, Favorites or the open dialog, always replaces what the active tab shows.
+_Avoid_: Open in same window, open in new tab (for the setting)
 
 ## Sizing
 
