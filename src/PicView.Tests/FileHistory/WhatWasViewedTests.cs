@@ -215,6 +215,31 @@ public class WhatWasViewedTests : IDisposable
     }
 
     [Fact]
+    public void RenameFolder_StartUpDirectoryIsTheFolder_FollowsIt()
+    {
+        var oldFolder = Path.Combine(_tempRoot, "old");
+        var newFolder = Path.Combine(_tempRoot, "new");
+        FileHistoryManager.Initialize(_configPath);
+        FileHistoryManager.StartUpDirectory = oldFolder.ToUpperInvariant();
+
+        FileHistoryManager.RenameFolder(oldFolder, newFolder);
+
+        Assert.Equal(newFolder, FileHistoryManager.StartUpDirectory);
+    }
+
+    [Fact]
+    public void RecordSession_StoresACopy()
+    {
+        FileHistoryManager.Initialize(_configPath);
+        var session = new LastSession { Sources = ["C:\a.jpg"] };
+
+        FileHistoryManager.RecordSession(session);
+        session.Sources.Add("C:\b.jpg");
+
+        Assert.Single(FileHistoryManager.LastSession!.Sources);
+    }
+
+    [Fact]
     public void Rename_RenamesSessionSourcesAndLastFile()
     {
         FileHistoryManager.Initialize(_configPath);

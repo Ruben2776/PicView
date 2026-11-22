@@ -46,7 +46,7 @@ public static class FileHistoryManager
         }
     }
 
-    // Serializes the loads, so Initialize runs once when SharedFiles and App Start both ask for it
+    // Held while loading. EnsureInitialized checks for a load under it, so callers of that load once; Initialize itself always loads
     private static readonly Lock InitLock = new();
     private static string? _lastFile;
     private static string? _startUpDirectory;
@@ -114,7 +114,10 @@ public static class FileHistoryManager
 
         lock (Lock)
         {
-            _lastSession = session is { Sources.Count: > 0 } ? session : null;
+            // A copy, so the caller's list is not shared live
+            _lastSession = session is { Sources.Count: > 0 }
+                ? new LastSession { Sources = [..session.Sources], ActiveIndex = session.ActiveIndex }
+                : null;
         }
     }
 
@@ -499,7 +502,11 @@ public static class FileHistoryManager
             return;
         }
 
-        RenameMatching(path => FolderChange.PathInRenamedFolder(path, oldFolder, newFolder));
+        RenameMatching(path =>
+            string.Equals(Path.TrimEndingDirectorySeparator(path), Path.TrimEndingDirectorySeparator(oldFolder),
+                StringComparison.OrdinalIgnoreCase)
+                ? newFolder
+                : FolderChange.PathInRenamedFolder(path, oldFolder, newFolder));
     }
 
     // newPathOf gives the path a listed path is renamed to, or null for one that stays. A rename never runs on a load, so
@@ -551,15 +558,16 @@ public static class FileHistoryManager
     // entries
     private static void RenameSessionAndLastFile(Func<string, string?> newPathOf)
     {
+        // Compare-exchange, so a newer value a load thread wrote since the read is not overwritten
         if (Volatile.Read(ref _lastFile) is { } lastFile && newPathOf(lastFile) is { } newLastFile)
         {
-            Volatile.Write(ref _lastFile, newLastFile);
+            Interlocked.CompareExchange(ref _lastFile, newLastFile, lastFile);
         }
 
         if (Volatile.Read(ref _startUpDirectory) is { } startUpDirectory &&
             newPathOf(startUpDirectory) is { } newStartUpDirectory)
         {
-            Volatile.Write(ref _startUpDirectory, newStartUpDirectory);
+            Interlocked.CompareExchange(ref _startUpDirectory, newStartUpDirectory, startUpDirectory);
         }
 
         if (_lastSession is null)
@@ -567,14 +575,14 @@ public static class FileHistoryManager
             return;
         }
 
-        var sources = _lastSession.Sources;
-        for (var i = 0; i < sources.Count; i++)
+        // Swapped for a new session, so a copy handed out earlier is not edited
+        var sources = new List<string>(_lastSession.Sources.Count);
+        foreach (var source in _lastSession.Sources)
         {
-            if (newPathOf(sources[i]) is { } newSource)
-            {
-                sources[i] = newSource;
-            }
+            sources.Add(newPathOf(source) ?? source);
         }
+
+        _lastSession = new LastSession { Sources = sources, ActiveIndex = _lastSession.ActiveIndex };
     }
 
     // Callers hold the lock. If the new path waits as well, the load lists the two as one, as it does any path added twice

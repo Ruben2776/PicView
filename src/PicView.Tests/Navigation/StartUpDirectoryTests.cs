@@ -23,6 +23,7 @@ public class StartUpDirectoryTests : IDisposable
 
     public void Dispose()
     {
+        FileHistoryManager.StartUpDirectory = null;
         Directory.Delete(_root, recursive: true);
     }
 
