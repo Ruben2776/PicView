@@ -11,33 +11,30 @@ public class InputModeTests
     }
 
     [Theory]
-    [InlineData(true, false, false, false, false, InputMode.Dialog)]
-    [InlineData(false, true, false, false, false, InputMode.Renaming)]
-    [InlineData(false, false, true, false, false, InputMode.Crop)]
-    [InlineData(false, false, false, true, false, InputMode.MotionPhoto)]
-    [InlineData(false, false, false, false, true, InputMode.Slideshow)]
+    [InlineData(true, false, false, false, InputMode.Dialog)]
+    [InlineData(false, true, false, false, InputMode.Renaming)]
+    [InlineData(false, false, true, false, InputMode.Crop)]
+    [InlineData(false, false, false, true, InputMode.MotionPhoto)]
     public void Resolve_OneActive_IsThatMode(
-        bool isDialogOpen, bool isRenaming, bool isCropping, bool isMotionPhotoActive, bool isSlideshowRunning,
+        bool isDialogOpen, bool isRenaming, bool isCropping, bool isMotionPhotoActive,
         InputMode expected)
     {
-        var state = new InputModeState(isDialogOpen, isRenaming, isCropping, isMotionPhotoActive, isSlideshowRunning);
+        var state = new InputModeState(isDialogOpen, isRenaming, isCropping, isMotionPhotoActive);
 
         Assert.Equal(expected, state.Resolve());
     }
 
     [Theory]
     // A dialog opened while cropping takes over, so Esc closes the dialog, not the crop
-    [InlineData(true, false, true, false, false, InputMode.Dialog)]
-    [InlineData(true, true, true, true, true, InputMode.Dialog)]
-    [InlineData(false, true, true, false, false, InputMode.Renaming)]
-    [InlineData(false, false, true, true, true, InputMode.Crop)]
-    // A slideshow reaching a motion photo: the motion photo ranks higher
-    [InlineData(false, false, false, true, true, InputMode.MotionPhoto)]
+    [InlineData(true, false, true, false, InputMode.Dialog)]
+    [InlineData(true, true, true, true, InputMode.Dialog)]
+    [InlineData(false, true, true, false, InputMode.Renaming)]
+    [InlineData(false, false, true, true, InputMode.Crop)]
     public void Resolve_SeveralActive_HighestRankedWins(
-        bool isDialogOpen, bool isRenaming, bool isCropping, bool isMotionPhotoActive, bool isSlideshowRunning,
+        bool isDialogOpen, bool isRenaming, bool isCropping, bool isMotionPhotoActive,
         InputMode expected)
     {
-        var state = new InputModeState(isDialogOpen, isRenaming, isCropping, isMotionPhotoActive, isSlideshowRunning);
+        var state = new InputModeState(isDialogOpen, isRenaming, isCropping, isMotionPhotoActive);
 
         Assert.Equal(expected, state.Resolve());
     }
@@ -47,7 +44,6 @@ public class InputModeTests
     [InlineData(InputMode.Renaming, true)]
     [InlineData(InputMode.Crop, true)]
     [InlineData(InputMode.MotionPhoto, false)]
-    [InlineData(InputMode.Slideshow, false)]
     [InlineData(InputMode.Normal, false)]
     public void IsBlocking_OnlyDialogRenamingAndCrop(InputMode mode, bool expected)
     {
@@ -85,20 +81,6 @@ public class InputModeTests
         Assert.Equal(expected, mode.Allows(action));
     }
 
-    [Theory]
-    [InlineData(false, false, InputMode.AnimatedImage)]
-    // A slideshow reaching an animated image: the animated image ranks higher
-    [InlineData(true, false, InputMode.AnimatedImage)]
-    [InlineData(true, true, InputMode.Crop)]
-    public void Resolve_AnimatedImage_RanksAboveSlideshowAndBelowBlockingModes(
-        bool isSlideshowRunning, bool isCropping, InputMode expected)
-    {
-        var state = new InputModeState(IsCropping: isCropping, IsSlideshowRunning: isSlideshowRunning,
-            IsAnimatedImageActive: true);
-
-        Assert.Equal(expected, state.Resolve());
-    }
-
     [Fact]
     public void AnimatedImage_IsNonBlockingAndDisallowsStillImageActions()
     {
@@ -113,15 +95,15 @@ public class InputModeTests
     }
 
     [Theory]
-    // The expanded gallery covers the image, so it ranks above what the image or the slideshow is doing
-    [InlineData(true, false, false)]
-    [InlineData(false, true, false)]
-    [InlineData(false, false, true)]
+    // The expanded gallery covers the image, so it ranks above what the image is doing
+    [InlineData(true, false)]
+    [InlineData(false, true)]
+    [InlineData(false, false)]
     public void Resolve_GalleryRanksAboveNonBlockingModes(
-        bool isMotionPhotoActive, bool isAnimatedImageActive, bool isSlideshowRunning)
+        bool isMotionPhotoActive, bool isAnimatedImageActive)
     {
         var state = new InputModeState(IsMotionPhotoActive: isMotionPhotoActive,
-            IsSlideshowRunning: isSlideshowRunning, IsAnimatedImageActive: isAnimatedImageActive,
+            IsAnimatedImageActive: isAnimatedImageActive,
             IsGalleryExpanded: true);
 
         Assert.Equal(InputMode.Gallery, state.Resolve());

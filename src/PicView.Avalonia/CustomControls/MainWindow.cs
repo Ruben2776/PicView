@@ -334,13 +334,6 @@ public abstract class MainWindow : Window, IMainWindow
             CropManager.CloseCropControl(vm);
             return;
         }
-
-        // Handle slideshow
-        if (vm.Slideshow.IsRunning)
-        {
-            vm.Slideshow.Stop();
-            return;
-        }
         
         // Handle window close
         await Dispatcher.UIThread.InvokeAsync(CloseWithOptionalDialog);

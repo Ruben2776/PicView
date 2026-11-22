@@ -164,16 +164,6 @@ public class App : Application, IPlatformSpecificService
         // TODO: Implement ExtractWithLocalSoftwareAsync
         return Task.FromResult(false);
     }
-    
-    public void DisableScreensaver()
-    {
-        // TODO: Implement DisableScreensaver
-    }
-    
-    public void EnableScreensaver()
-    {
-        // TODO: Implement EnableScreensaver
-    }
 
     public string DefaultJsonKeyMap()
     {

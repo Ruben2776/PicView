@@ -116,15 +116,6 @@ public class App : Application, IPlatformSpecificService
     public void InitiateFileAssociationService()
     {
     }
-
-    public void DisableScreensaver()
-    {
-    }
-
-    public void EnableScreensaver()
-    {
-    }
-
     // TODO: Implement Linux thumbnail extraction (e.g. via freedesktop thumbnail spec)
     public byte[]? GetShellThumbnail(string path, int width, int height, out int pixelWidth, out int pixelHeight)
     {

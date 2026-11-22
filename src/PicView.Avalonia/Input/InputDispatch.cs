@@ -96,11 +96,6 @@ public static class InputDispatch
             return true;
         }
 
-        if (state.IsSlideshowRunning && await handler.TryRunAsync(InputMode.Slideshow, contextualAction).ConfigureAwait(true))
-        {
-            return true;
-        }
-
         return await handler.TryRunAsync(InputMode.Normal, contextualAction).ConfigureAwait(true);
     }
 }

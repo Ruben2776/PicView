@@ -1,11 +1,10 @@
-using Avalonia;
 using Avalonia.Interactivity;
 using Avalonia.LogicalTree;
 using PicView.Avalonia.CustomControls;
 using PicView.Core.DebugTools;
+using PicView.Core.Keybindings;
 using PicView.Core.ViewModels;
 using R3;
-using PicView.Core.Keybindings;
 
 namespace PicView.Avalonia.Views.UC.PopUps;
 
@@ -86,19 +85,6 @@ public partial class QuickEditingDialog : AnimatedPopUp
                 }
                 await vm.ActionRunner.Run(Actions.Crop).ConfigureAwait(false);
             }, DebugHelper.LogError(nameof(QuickEditingDialog), Actions.Crop))
-            .AddTo(ref _disposables);
-        
-        Observable.FromEventHandler<RoutedEventArgs>(h => SlideshowButton.Click += h,
-                h => SlideshowButton.Click -= h)
-            .SubscribeAwait(async (_, _) =>
-            {
-                await AnimatedClosing().ConfigureAwait(false);
-                if (DataContext is not MainWindowViewModel vm)
-                {
-                    return;
-                }
-                await vm.ActionRunner.Run(Actions.Slideshow).ConfigureAwait(false);
-            }, DebugHelper.LogError(nameof(QuickEditingDialog), Actions.Slideshow))
             .AddTo(ref _disposables);
                 
         Observable.FromEventHandler<RoutedEventArgs>(h => ShowDockedGalleryButton.Click += h,

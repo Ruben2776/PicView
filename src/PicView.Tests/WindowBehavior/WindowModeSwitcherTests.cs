@@ -179,22 +179,6 @@ public class WindowModeSwitcherTests
     }
 
     [AvaloniaFact]
-    public void Slideshow_FromMaximized_IsNotSavedAndGivesBackMaximized()
-    {
-        Settings.WindowProperties.Maximized = true;
-        var (switcher, _, vm, _) = CreateWindow();
-        switcher.Start(isAppStart: true);
-
-        switcher.EnterSlideshow();
-        Assert.True(vm.IsFullscreen.Value);
-        switcher.LeaveSlideshow();
-
-        Assert.True(vm.IsMaximized.Value);
-        Assert.True(vm.WindowModeState.CurrentValue.Remembered.Maximized);
-        Assert.False(vm.WindowModeState.CurrentValue.Remembered.Fullscreen);
-    }
-
-    [AvaloniaFact]
     public void SetAutoFit_NormalWindow_FollowsItsContentAndWritesNothing()
     {
         var (switcher, _, vm, window) = CreateWindow();

@@ -11,9 +11,6 @@ public class DropDownMenuViewModel : IDisposable
     
     public BindableReactiveProperty<int> GalleryCarouselIndex { get; } = new(0);
     public BindableReactiveProperty<bool> IsGalleryCarouselVisible { get; } = new(true);
-
-    public BindableReactiveProperty<int> SlideshowCarouselIndex { get; } = new(0);
-    public BindableReactiveProperty<bool> IsSlideshowCarouselVisible { get; } = new(true);
     
     public BindableReactiveProperty<int> SettingsCarouselIndex { get; } = new(0);
     public BindableReactiveProperty<bool> IsSettingsCarouselVisible { get; } = new(true);
@@ -58,11 +55,9 @@ public class DropDownMenuViewModel : IDisposable
     public void OpenGalleryOptions()
     {
         GalleryCarouselIndex.Value = 1;
-        SlideshowCarouselIndex.Value = 0;
         SettingsCarouselIndex.Value = 0;
         IsGalleryCarouselVisible.Value = true;
         IsExpandedOptionsOpened.Value = true;
-        IsSlideshowCarouselVisible.Value = false;
         IsSettingsCarouselVisible.Value = false;
         IsExtraButtonsVisible.Value = false;
     }
@@ -74,43 +69,21 @@ public class DropDownMenuViewModel : IDisposable
         IsExtraButtonsVisible.Value = true;
     }
 
-    public void OpenSlideshowOptions()
-    {
-        SlideshowCarouselIndex.Value = 1;
-        GalleryCarouselIndex.Value = 0;
-        SettingsCarouselIndex.Value = 0;
-        IsExpandedOptionsOpened.Value = true;
-        IsSlideshowCarouselVisible.Value = true;
-        IsGalleryCarouselVisible.Value = false;
-        IsSettingsCarouselVisible.Value = false;
-        IsExtraButtonsVisible.Value = false;
-    }
-
-    public async ValueTask CloseSlideshowOptions()
-    {
-        SlideshowCarouselIndex.Value = 0;
-        await CloseCarousel().ConfigureAwait(false);
-        IsExtraButtonsVisible.Value = true;
-    }
-
     public async ValueTask CloseCarousel()
     {
         await Task.Delay(DefaultDelay).ConfigureAwait(false);
         IsExpandedOptionsOpened.Value = false;
         IsGalleryCarouselVisible.Value = true;
-        IsSlideshowCarouselVisible.Value = true;
         IsSettingsCarouselVisible.Value = true;
         IsExtraButtonsVisible.Value = true;
     }
 
     public void CloseToDefault()
     {
-        SlideshowCarouselIndex.Value = 0;
         GalleryCarouselIndex.Value = 0;
         SettingsCarouselIndex.Value = 0;
         IsExpandedOptionsOpened.Value = false;
         IsGalleryCarouselVisible.Value = true;
-        IsSlideshowCarouselVisible.Value = true;
         IsSettingsCarouselVisible.Value = true;
         IsExtraButtonsVisible.Value = true;
     }
@@ -119,10 +92,8 @@ public class DropDownMenuViewModel : IDisposable
     {
         SettingsCarouselIndex.Value = 1;
         GalleryCarouselIndex.Value = 0;
-        SlideshowCarouselIndex.Value = 0;
         IsExpandedOptionsOpened.Value = true;
         IsGalleryCarouselVisible.Value = false;
-        IsSlideshowCarouselVisible.Value = false;
         IsSettingsCarouselVisible.Value = true;
         IsExtraButtonsVisible.Value = false;
     }

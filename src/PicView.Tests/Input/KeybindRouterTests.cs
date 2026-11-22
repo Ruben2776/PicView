@@ -151,21 +151,6 @@ public class KeybindRouterTests
         Assert.DoesNotContain(Actions.Close, _calls);
     }
 
-    [Fact]
-    public async Task Escape_SlideshowClaimsItInFullscreen_DoesNotLeaveFullscreen()
-    {
-        Settings.WindowProperties.EscLeavesFullscreen = true;
-        _state = new InputModeState(IsSlideshowRunning: true);
-        _vm.WindowModeState.Value = WindowModeState.Opening(autoFit: false).ToggleFullscreen();
-        var router = new KeybindRouter(() => _vm, () => _state, () => _keymap, _ => ClaimingContextualActions.Instance,
-            () => _secondaryWindow);
-
-        await router.KeyDownAsync(InputDispatch.CancelKeybind, null);
-
-        Assert.Empty(_windowModeCalls);
-        Assert.Empty(_calls);
-    }
-
     [AvaloniaFact]
     public async Task Escape_SecondaryWindowOpen_ClosesItAndIgnoresTheHeldPress()
     {

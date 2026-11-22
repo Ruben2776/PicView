@@ -78,7 +78,7 @@ public class InputAllocationTests
     public void KeyDown_EscapeThroughEveryNonBlockingMode_AllocatesNothing()
     {
         // Every mode leaves Cancel to the next one, down to what Escape closes in the Normal mode
-        _state = new InputModeState(IsMotionPhotoActive: true, IsSlideshowRunning: true);
+        _state = new InputModeState(IsMotionPhotoActive: true);
         var router = Router(Claims.Nothing);
 
         Assert.Equal(0, AllocatedBytes(() => PressAsync(router, InputDispatch.CancelKeybind)));

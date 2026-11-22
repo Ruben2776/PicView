@@ -66,7 +66,6 @@ public static class Actions
 
     // Interface
     public const string ToggleInterface = nameof(ToggleInterface);
-    public const string Slideshow = nameof(Slideshow);
     public const string ToggleGallery = nameof(ToggleGallery);
     public const string OpenCloseDockedGallery = nameof(OpenCloseDockedGallery);
     public const string ToggleBottomToolbar = nameof(ToggleBottomToolbar);

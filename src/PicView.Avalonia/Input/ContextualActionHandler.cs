@@ -1,7 +1,6 @@
 using Avalonia.Controls;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Gallery;
-using PicView.Avalonia.Navigation;
 using PicView.Avalonia.Views.UC;
 using PicView.Core.Navigation;
 using PicView.Core.ViewModels;
@@ -73,13 +72,6 @@ public sealed class ContextualActionHandler(MainWindow window, MainWindowViewMod
 
             // TODO: Give the animated image keybinds their meanings here, such as PlayPause and frame stepping.
             // Until then an animated image claims nothing, so its Keybinds fall through as usual.
-
-            case (InputMode.Slideshow, Cancel):
-                vm.Slideshow.Stop();
-                return true;
-            case (InputMode.Slideshow, PlayPause):
-                // TODO: Pause and resume the slideshow. Claimed so Space does not run its ordinary Action meanwhile.
-                return true;
 
             case (InputMode.Gallery, Up):
                 activeTab.Gallery.Navigate(NavigateTo.Up);

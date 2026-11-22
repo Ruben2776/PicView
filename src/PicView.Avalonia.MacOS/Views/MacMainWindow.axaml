@@ -497,7 +497,8 @@
                                 CommandParameter="{x:Static keybindings:Actions.SortFilesAscending}"
                                 Header="{CompiledBinding Translation.Ascending.Value,
                                                          Mode=OneWay}"
-                                IsChecked="{CompiledBinding WindowTabs.IsAscending.Value, Mode=OneWay}"
+                                IsChecked="{CompiledBinding WindowTabs.IsAscending.Value,
+                                                            Mode=OneWay}"
                                 ToggleType="Radio" />
 
                             <!--  Sort files descending  -->
@@ -506,19 +507,11 @@
                                 CommandParameter="{x:Static keybindings:Actions.SortFilesDescending}"
                                 Header="{CompiledBinding Translation.Descending.Value,
                                                          Mode=OneWay}"
-                                IsChecked="{CompiledBinding !WindowTabs.IsAscending.Value, Mode=OneWay}"
+                                IsChecked="{CompiledBinding !WindowTabs.IsAscending.Value,
+                                                            Mode=OneWay}"
                                 ToggleType="Radio" />
                         </NativeMenu>
                     </NativeMenuItem>
-
-                    <NativeMenuItemSeparator />
-
-                    <!--  Slideshow  -->
-                    <NativeMenuItem
-                        Command="{CompiledBinding RunActionCommand}"
-                        CommandParameter="{x:Static keybindings:Actions.Slideshow}"
-                        Header="{CompiledBinding Translation.Slideshow.Value,
-                                                 Mode=OneWay}" />
 
                     <NativeMenuItemSeparator />
 

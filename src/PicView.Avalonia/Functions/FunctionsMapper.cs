@@ -245,7 +245,6 @@ public class FunctionsMapper : IActionRunner
             Actions.ComparisonModeSynced => ComparisonModeSynced,
             Actions.ComparisonPickA => ComparisonPickA,
             Actions.ComparisonPickB => ComparisonPickB,
-            Actions.Slideshow => Slideshow,
             Actions.ColorPicker => ColorPicker,
             Actions.Restart => Restart,
 
@@ -825,13 +824,6 @@ public class FunctionsMapper : IActionRunner
     /// <inheritdoc cref="ImageOptimizer.OptimizeImageAsync(MainWindowViewModel)" />
     private async ValueTask OptimizeImage() =>
         await ImageOptimizer.OptimizeImageAsync(_vm).ConfigureAwait(false);
-
-    /// <inheritdoc cref="Core.Navigation.Slideshow.Toggle" />
-    private ValueTask Slideshow()
-    {
-        _vm.Slideshow.Toggle(0, _mainWindow.KeybindRouter.IsKeyHeldDown);
-        return ValueTask.CompletedTask;
-    }
 
     private ValueTask ColorPicker()
     {

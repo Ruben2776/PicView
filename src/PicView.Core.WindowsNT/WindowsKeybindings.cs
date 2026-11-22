@@ -8,7 +8,6 @@ public static class WindowsKeybindings
                                                "F2": "Rename",
                                                "F3": "OpenInExplorer",
                                                "F4": "SettingsWindow",
-                                               "F5": "Slideshow",
                                                "F6": "EffectsWindow",
                                                "F7": "BatchResizeWindow",
                                                "F10": "ToggleInterface",

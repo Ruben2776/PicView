@@ -215,12 +215,6 @@ public static class SettingsSearchIndex
             list.Add(new SettingsSearchItem(t.DockedGalleryThumbnailStretch, data.GalleryStretchSearchTags));
         }
 
-        // Slideshow
-        if (t.AdjustTimingForSlideshow != null)
-        {
-            list.Add(new SettingsSearchItem(t.AdjustTimingForSlideshow, data.SlideshowSearchTags));
-        }
-
         // Window
         if (t.WindowScaling != null)
         {

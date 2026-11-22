@@ -1,6 +1,5 @@
 using PicView.Core.Config;
 using PicView.Core.IPlatform;
-using PicView.Core.Navigation;
 using PicView.Core.Sizing;
 using R3;
 
@@ -65,11 +64,6 @@ public class MainWindowViewModel : IDisposable
     public WindowSettings WindowSettings { get; }
 
     public IWindowModeSwitcher? WindowModeSwitcher { get; set; }
-
-    /// <summary>
-    /// This window's slideshow, which only puts this window in the Slideshow Input Mode.
-    /// </summary>
-    public Slideshow Slideshow { get; }
 
     public IReadOnlyBindableReactiveProperty<bool> IsAutoFit { get; }
 
@@ -176,15 +170,6 @@ public class MainWindowViewModel : IDisposable
             .ToReadOnlyBindableReactiveProperty(StringComparer.Ordinal);
 
         RunActionCommand = new ReactiveCommand<string>(RunAction);
-
-        // A test may give no core: then the slideshow ticks on the system clock and holds no screensaver
-        Slideshow = new Slideshow(
-            () => WindowTabs.ActiveTab.CurrentValue.CanNavigateForwards.Value,
-            () => WindowTabs.NextFile(),
-            () => WindowModeSwitcher,
-            WindowModeState,
-            core?.Screensaver ?? new ScreensaverHold(null),
-            core?.Time ?? TimeProvider.System);
     }
 
     /// <summary>
@@ -221,8 +206,7 @@ public class MainWindowViewModel : IDisposable
             IsFullscreen,
             Interface,
             IsHoverBarShown,
-            TopTitlebarViewModel.DropDownMenu,
-            Slideshow
+            TopTitlebarViewModel.DropDownMenu
         );
         GC.SuppressFinalize(this);
     }

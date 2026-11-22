@@ -7,9 +7,6 @@ public interface IPlatformSpecificService
     void SetTaskbarProgress(ulong progress, ulong maximum);
     void StopTaskbarProgress();
     void SetCursorPos(int x, int y);
-    
-    void DisableScreensaver();
-    void EnableScreensaver();
 
     /// <summary>
     /// The files around <paramref name="fileInfo"/>, in <paramref name="order"/> with this platform's name comparison.

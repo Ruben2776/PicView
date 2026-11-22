@@ -156,16 +156,6 @@ public class App : Application, IPlatformSpecificService
         FileAssociationManager.Initialize(iIFileAssociationService);
     }
 
-    public void DisableScreensaver()
-    {
-        NativeMethods.DisableScreensaver();
-    }
-
-    public void EnableScreensaver()
-    {
-        NativeMethods.EnableScreensaver();
-    }
-
     public byte[]? GetShellThumbnail(string path, int width, int height, out int pixelWidth, out int pixelHeight)
     {
         return ShellThumbnailNative.GetShellThumbnailBytes(path, width, height, cacheOnly: false, out pixelWidth,

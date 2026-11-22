@@ -1,8 +1,8 @@
-using PicView.Core.Config;
-using PicView.Core.Localization;
 using PicView.Core.ColorHandling;
+using PicView.Core.Config;
 using PicView.Core.DebugTools;
 using PicView.Core.ISettings;
+using PicView.Core.Localization;
 using PicView.Core.SettingsSearch;
 using R3;
 
@@ -39,7 +39,6 @@ public class SettingsViewModel : IDisposable
             new SettingsCategoryItem(translation.Image, "ImageSettingImage", SettingsCategory.Image),
             new SettingsCategoryItem(translation.Navigation, "SignPostImage", SettingsCategory.Navigation),
             new SettingsCategoryItem(translation.GallerySettings, "GalleryImage", SettingsCategory.Gallery),
-            new SettingsCategoryItem(translation.Slideshow, "SlideshowImage", SettingsCategory.Slideshow),
             new SettingsCategoryItem(translation.Window, "WindowImage", SettingsCategory.Window),
             new SettingsCategoryItem(translation.Zoom, "ZoomImage", SettingsCategory.Zoom),
             new SettingsCategoryItem(translation.Mouse, "MouseWheelIcon", SettingsCategory.Mouse),
@@ -237,9 +236,6 @@ public class SettingsViewModel : IDisposable
 
     public BindableReactiveProperty<double> ZoomSpeed { get; } = new(Settings.Zoom.ZoomSpeed);
     public BindableReactiveProperty<double> GetZoomSpeed { get; } = new();
-
-    public BindableReactiveProperty<double> SlideshowSpeed { get; } = new(Settings.UIProperties.SlideShowTimer);
-    public BindableReactiveProperty<double> GetSlideshowSpeed { get; } = new();
     
     // Commands for simple toggles or actions
     public ReactiveCommand<ColorOptions> SetColorThemeCommand { get; } = new();
@@ -265,7 +261,6 @@ public class SettingsViewModel : IDisposable
     {
         Disposable.Dispose(_disposables,
             GetNavSpeed,
-            GetSlideshowSpeed,
             GetZoomSpeed,
             GoBackCommand,
             GoForwardCommand,
@@ -278,7 +273,6 @@ public class SettingsViewModel : IDisposable
             IsShowingRecycleDialog,
             IsUsingTouchpad,
             NavSpeed,
-            SlideshowSpeed,
             ZoomSpeed,
             MouseDoubleClickBehaviorIndex,
             NavigateToCategoryCommand,
@@ -325,14 +319,6 @@ public class SettingsViewModel : IDisposable
             {
                 Settings.Zoom.ZoomSpeed = x;
                 GetZoomSpeed.Value = Math.Round(Settings.Zoom.ZoomSpeed, 2);
-            }, DebugHelper.LogError(nameof(SettingsViewModel), nameof(SubscriptionSettingsUpdate)))
-            .AddTo(ref _disposables);
-        Observable.EveryValueChanged(this, x => x.SlideshowSpeed.CurrentValue)
-            .Subscribe(x =>
-            {
-                var roundedValue = Math.Round(x, 2);
-                Settings.UIProperties.SlideShowTimer = roundedValue;
-                GetSlideshowSpeed.Value = roundedValue;
             }, DebugHelper.LogError(nameof(SettingsViewModel), nameof(SubscriptionSettingsUpdate)))
             .AddTo(ref _disposables);
 
@@ -616,7 +602,6 @@ public enum SettingsCategory
     Image,
     Navigation,
     Gallery,
-    Slideshow,
     Window,
     Zoom,
     Mouse,

@@ -30,7 +30,6 @@ public class TranslationViewModel
         AdditionalFunctions.Value = t.AdditionalFunctions;
         AboutWindow.Value = t.InfoWindow;
         AdjustNavSpeed.Value = t.AdjustNavSpeed;
-        AdjustTimingForSlideshow.Value = t.AdjustTimingForSlideshow;
         AdjustTimingForZoom.Value = t.AdjustTimingForZoom;
         AdvanceBy10Images.Value = t.AdvanceBy10Images;
         AdvanceBy100Images.Value = t.AdvanceBy100Images;
@@ -368,7 +367,6 @@ public class TranslationViewModel
         SideBySideTooltip.Value = t.SideBySideTooltip;
         SizeMp.Value = t.SizeMp;
         SizeTooltip.Value = t.SizeTooltip;
-        Slideshow.Value = t.Slideshow;
         SmartPresets.Value = t.SmartPresets;
         Software.Value = t.Software;
         Solarize.Value = t.Solarize;
@@ -445,7 +443,6 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> AddFolder { get; } = new();
     public BindableReactiveProperty<string?> AdditionalFunctions { get; } = new();
     public BindableReactiveProperty<string?> AdjustNavSpeed { get; } = new();
-    public BindableReactiveProperty<string?> AdjustTimingForSlideshow { get; } = new();
     public BindableReactiveProperty<string?> AdjustTimingForZoom { get; } = new();
     public BindableReactiveProperty<string?> AdvanceBy100Images { get; } = new();
     public BindableReactiveProperty<string?> AdvanceBy10Images { get; } = new();
@@ -783,7 +780,6 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> SideBySideTooltip { get; } = new();
     public BindableReactiveProperty<string?> SizeMp { get; } = new();
     public BindableReactiveProperty<string?> SizeTooltip { get; } = new();
-    public BindableReactiveProperty<string?> Slideshow { get; } = new();
     public BindableReactiveProperty<string?> SmartPresets { get; } = new();
     public BindableReactiveProperty<string?> Software { get; } = new();
     public BindableReactiveProperty<string?> Solarize { get; } = new();

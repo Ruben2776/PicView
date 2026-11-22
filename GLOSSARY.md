@@ -25,7 +25,7 @@ The single mode a window is in, which decides what its Keybinds do. It follows f
 _Avoid_: Context, state, focus, dialog mode
 
 **Contextual Action**:
-A generic Action, such as `Confirm`, `Cancel`, `PlayPause` or the arrows `Up`, `Down`, `Left` and `Right`, whose meaning comes from the current Input Mode. When the mode gives it no meaning, each lower-ranked Non-blocking Input Mode that also applies is asked in turn, then Normal, and when none gives it a meaning, its Keybind falls through to the ordinary Action bound to the same Keybind. A Blocking Input Mode asks no other mode. This is why Escape stops a playing motion photo, then a slideshow, before it closes the window, and why the arrow keys move through the Expanded Gallery but otherwise scroll a tall image, rotate it, or go to the previous or next file. `Cancel` (Escape) and `Copy` (the platform's copy keys) are fixed to their keys; the others can be rebound.
+A generic Action, such as `Confirm`, `Cancel`, `PlayPause` or the arrows `Up`, `Down`, `Left` and `Right`, whose meaning comes from the current Input Mode. When the mode gives it no meaning, each lower-ranked Non-blocking Input Mode that also applies is asked in turn, then Normal, and when none gives it a meaning, its Keybind falls through to the ordinary Action bound to the same Keybind. A Blocking Input Mode asks no other mode. This is why Escape stops a playing motion photo, before it closes the window, and why the arrow keys move through the Expanded Gallery but otherwise scroll a tall image, rotate it, or go to the previous or next file. `Cancel` (Escape) and `Copy` (the platform's copy keys) are fixed to their keys; the others can be rebound.
 _Avoid_: Mode action, special key
 
 **Blocking Input Mode**:
@@ -37,12 +37,8 @@ What `Confirm` does in the Dialog Input Mode: the top dialog's main button, such
 _Avoid_: Enter action, OK button
 
 **Non-blocking Input Mode**:
-An Input Mode that overrides specific Actions, disallows Actions that need a still image (such as `Crop`), and lets every other Keybind work as usual. Slideshow, Motion Photo, Animated Image and Gallery are non-blocking.
+An Input Mode that overrides specific Actions, disallows Actions that need a still image (such as `Crop`), and lets every other Keybind work as usual. Motion Photo, Animated Image and Gallery are non-blocking.
 _Avoid_: Overlay mode, passive mode
-
-**Slideshow**:
-A Main Window going to its next file on a timer, shown fullscreen while it runs. Each Main Window has its own, with its own interval, and several can run at once. It puts only its own window in the Slideshow Input Mode, so another window's Keybinds, Escape and Close leave it alone. It stops when its window leaves fullscreen any other way and when the window closes. The screensaver stays off while any window runs one.
-_Avoid_: Slide show, autoplay
 
 **Window Action**:
 An Action whose only effect is to open a window of its own, or bring it forward: About, Settings, Image Information, Effects, Convert, Keybindings, Batch Resize, Resize and File Associations. Crop and Dialog let them run, since the window works outside the main view; an open menu closes as the window opens, and an open pop-up stays. Print is not one, since it may print at once.
@@ -230,7 +226,7 @@ The setting of a Normal window where the window takes its size from the image it
 _Avoid_: Auto-size, auto resize, Manual
 
 **Window Mode**:
-The state a window is in, exactly one at a time: Normal, Minimized, Maximized or Fullscreen. Fullscreen covers the screen, Maximized fills the work area, and a Normal window follows the shown image with AutoFit, else keeps the size the user gave it. A maximized window fits the image to itself, as a Normal window without AutoFit does. Leaving Fullscreen or Minimized gives back the mode the window had before it, so a maximized window that went fullscreen is maximized again; leaving Maximized gives back Normal. Nothing is resized while a window is minimized. Each window has its own Window Mode, whether the user changes it in PicView or through the operating system's window controls. The Window Mode is a Window Setting: a window opened while PicView runs starts in the mode of the window it was opened from, and the settings remember the mode of the last Main Window closed, which App Start reads, and so does a window opened while no Main Window is open; they never remember Minimized, nor Fullscreen and Maximized together. A window opened while PicView is running never starts fullscreen. A slideshow shows its window fullscreen without changing the remembered mode, and stopping it gives back the mode the window had.
+The state a window is in, exactly one at a time: Normal, Minimized, Maximized or Fullscreen. Fullscreen covers the screen, Maximized fills the work area, and a Normal window follows the shown image with AutoFit, else keeps the size the user gave it. A maximized window fits the image to itself, as a Normal window without AutoFit does. Leaving Fullscreen or Minimized gives back the mode the window had before it, so a maximized window that went fullscreen is maximized again; leaving Maximized gives back Normal. Nothing is resized while a window is minimized. Each window has its own Window Mode, whether the user changes it in PicView or through the operating system's window controls. The Window Mode is a Window Setting: a window opened while PicView runs starts in the mode of the window it was opened from, and the settings remember the mode of the last Main Window closed, which App Start reads, and so does a window opened while no Main Window is open; they never remember Minimized, nor Fullscreen and Maximized together. A window opened while PicView is running never starts fullscreen.
 _Avoid_: Scaling mode, sizing mode, Manual
 
 **Zoom to Fit**:

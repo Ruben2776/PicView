@@ -36,7 +36,6 @@ public class SettingsSearchData
     public string GalleryStretchSearchTags { get; }
     public string GalleryDisplayModeSearchTags { get; }
     public string GalleryMouseWheelSearchTags { get; }
-    public string SlideshowSearchTags { get; }
     public string WindowScalingSearchTags { get; }
     public string WindowTopMostSearchTags { get; }
     public string WindowCenteredSearchTags { get; }
@@ -365,15 +364,6 @@ public class SettingsSearchData
         sb.Append(space);
         sb.Append(TranslationManager.Translation.MouseWheel);
         GalleryMouseWheelSearchTags = sb.ToString();
-        
-        sb.Clear();
-
-        sb.Append(TranslationManager.Translation.Slideshow);
-        sb.Append(space);
-        sb.Append(TranslationManager.Translation.AdjustTimingForSlideshow);
-        sb.Append(space);
-        sb.Append("Timer Speed Presentation");
-        SlideshowSearchTags = sb.ToString();
         
         sb.Clear();
 

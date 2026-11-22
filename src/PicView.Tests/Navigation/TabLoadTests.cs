@@ -2032,8 +2032,6 @@ public class TabLoadTests : IDisposable
         public void SetTaskbarProgress(ulong progress, ulong maximum) { }
         public void StopTaskbarProgress() { }
         public void SetCursorPos(int x, int y) { }
-        public void DisableScreensaver() { }
-        public void EnableScreensaver() { }
         public List<FileInfo> GetFiles(FileInfo fileInfo, FileOrder order) => new();
         // While closed, every name comparison waits for it, so a test can hold a listing while it sorts; Comparing says
         // when one waits

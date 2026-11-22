@@ -15,19 +15,15 @@ public class CoreViewModel
     /// </param>
     /// <param name="globalSettings">The settings every tab follows; a test hands in one with a fake save.</param>
     /// <param name="saveGallerySettings">Saves the gallery settings; a test hands in one that writes no file.</param>
-    /// <param name="timeProvider">The clock slideshows tick on; tests give their own.</param>
     public CoreViewModel(
         IPlatformSpecificService? platformSpecificService,
         Func<FileInfo, CoreViewModel, ImageModel> imageLoader,
         GlobalSettingsViewModel? globalSettings = null,
-        Func<ValueTask<bool>>? saveGallerySettings = null,
-        TimeProvider? timeProvider = null)
+        Func<ValueTask<bool>>? saveGallerySettings = null)
     {
         PlatformService = platformSpecificService;
         // One closure for the life of the app, not one per load.
         SharedCache = new SharedImageCache(file => imageLoader(file, this));
-        Time = timeProvider ?? TimeProvider.System;
-        Screensaver = new ScreensaverHold(platformSpecificService);
         GlobalSettings = globalSettings ?? new GlobalSettingsViewModel();
         GallerySettings = new GallerySharedSettingsViewModel(saveGallerySettings);
     }
@@ -37,26 +33,14 @@ public class CoreViewModel
         IPlatformSpecificService? platformSpecificService,
         Func<FileInfo, ImageModel> imageLoader,
         GlobalSettingsViewModel? globalSettings = null,
-        Func<ValueTask<bool>>? saveGallerySettings = null,
-        TimeProvider? timeProvider = null)
-        : this(platformSpecificService, (file, _) => imageLoader(file), globalSettings, saveGallerySettings,
-            timeProvider)
+        Func<ValueTask<bool>>? saveGallerySettings = null)
+        : this(platformSpecificService, (file, _) => imageLoader(file), globalSettings, saveGallerySettings)
     {
     }
 
     // Shared Services
     public IPlatformSpecificService? PlatformService { get; }
     public SharedImageCache SharedCache { get; }
-
-    /// <summary>
-    /// The clock slideshows tick on; tests give their own.
-    /// </summary>
-    public TimeProvider Time { get; }
-
-    /// <summary>
-    /// Keeps the screensaver off while any Main Window runs a slideshow.
-    /// </summary>
-    public ScreensaverHold Screensaver { get; }
 
     /// <summary>
     /// The services every tab of every Main Window is created with, set once. Null until

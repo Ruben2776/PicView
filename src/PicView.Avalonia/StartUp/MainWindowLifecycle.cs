@@ -1,7 +1,5 @@
 using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
-using PicView.Avalonia.Views.UC;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
@@ -13,6 +11,7 @@ using PicView.Avalonia.Interfaces;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.Services;
 using PicView.Avalonia.UI;
+using PicView.Avalonia.Views.UC;
 using PicView.Avalonia.WindowBehavior;
 using PicView.Core.Navigation;
 using PicView.Core.ViewModels;
@@ -241,9 +240,6 @@ public sealed class MainWindowLifecycle
         {
             return;
         }
-
-        // First, so no tick or stop of its slideshow runs while the window hides, and its screensaver hold ends with it
-        vm.Slideshow.Dispose();
 
         var remembers = !_app.IsShuttingDown;
         if (remembers)

@@ -168,8 +168,6 @@ public class AvaloniaThumbnailDecoderTests : IDisposable
         public void SetTaskbarProgress(ulong progress, ulong maximum) { }
         public void StopTaskbarProgress() { }
         public void SetCursorPos(int x, int y) { }
-        public void DisableScreensaver() { }
-        public void EnableScreensaver() { }
         public List<FileInfo> GetFiles(FileInfo fileInfo, FileOrder order) => [];
         public int CompareStrings(string str1, string str2) => string.CompareOrdinal(str1, str2);
         public void OpenWith(string path) { }

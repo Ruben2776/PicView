@@ -9,13 +9,12 @@ namespace PicView.Avalonia.Input;
 public enum InputMode
 {
     Normal = 0,
-    Slideshow,
 
     // An image is a motion photo or an animated image, never both
     AnimatedImage,
     MotionPhoto,
 
-    // The expanded gallery covers the image, so it ranks above what the image or the slideshow is doing
+    // The expanded gallery covers the image, so it ranks above what the image is doing
     Gallery,
     Crop,
     Renaming,
@@ -33,7 +32,6 @@ public readonly record struct InputModeState(
     bool IsRenaming = false,
     bool IsCropping = false,
     bool IsMotionPhotoActive = false,
-    bool IsSlideshowRunning = false,
     bool IsAnimatedImageActive = false,
     bool IsGalleryExpanded = false)
 {
@@ -67,12 +65,7 @@ public readonly record struct InputModeState(
             return InputMode.MotionPhoto;
         }
 
-        if (IsAnimatedImageActive)
-        {
-            return InputMode.AnimatedImage;
-        }
-
-        return IsSlideshowRunning ? InputMode.Slideshow : InputMode.Normal;
+        return IsAnimatedImageActive ? InputMode.AnimatedImage : InputMode.Normal;
     }
 }
 
@@ -109,6 +102,6 @@ public static class InputModeExtensions
         /// that need a still image.
         /// </summary>
         public bool DisallowsStillImageActions() =>
-            mode is InputMode.Gallery or InputMode.MotionPhoto or InputMode.AnimatedImage or InputMode.Slideshow;
+            mode is InputMode.Gallery or InputMode.MotionPhoto or InputMode.AnimatedImage;
     }
 }

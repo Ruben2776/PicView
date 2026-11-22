@@ -44,7 +44,6 @@ public static class MacOsKeybindings
                                                 "Cmd+Shift+O": "OpenInExplorer",
                                                 "Alt+S": "SettingsWindow",
                                                 "Cmd+,": "SettingsWindow",
-                                                "Cmd+Shift+P": "Slideshow",
                                                 "Ctrl+Cmd+F": "Fullscreen",
                                                 "B": "ChangeBackground",
                                                 "Space": "Center",

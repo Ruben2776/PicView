@@ -19,7 +19,6 @@ public class LanguageModel
     public string? AddFolder { get; set; }
     public string? AdditionalFunctions { get; set; }
     public string? AdjustNavSpeed { get; set; }
-    public string? AdjustTimingForSlideshow { get; set; }
     public string? AdjustTimingForZoom { get; set; }
     public string? AdjustZoomLevel { get; set; }
     public string? AdvanceBy100Images { get; set; }
@@ -455,7 +454,6 @@ public class LanguageModel
     public string? Size { get; set; }
     public string? SizeMp { get; set; }
     public string? SizeTooltip { get; set; }
-    public string? Slideshow { get; set; }
     public string? SmartPresets { get; set; }
     public string? Soft { get; set; }
     public string? SoftMatte { get; set; }
@@ -466,7 +464,6 @@ public class LanguageModel
     public string? Split { get; set; }
     public string? Square { get; set; }
     public string? Start { get; set; }
-    public string? StartSlideshow { get; set; }
     public string? StayCentered { get; set; }
     public string? StayTopMost { get; set; }
     public string? Stretch { get; set; }

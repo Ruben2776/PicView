@@ -183,7 +183,6 @@ public static class KeybindCategoryDefinition
     public static List<(string FunctionName, string DisplayName)> GetInterfaceConfigurationEntries(LanguageModel t) =>
     [
         (Actions.ToggleInterface, t.HideUI ?? string.Empty),
-        (Actions.Slideshow, t.Slideshow ?? string.Empty),
         (Actions.ToggleGallery, t.ShowImageGallery ?? string.Empty),
         (Actions.CloseImage, t.CloseImage ?? string.Empty),
     ];

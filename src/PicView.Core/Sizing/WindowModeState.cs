@@ -34,11 +34,6 @@ public readonly record struct WindowModeState
     /// </summary>
     private WindowMode BeforeMinimized { get; init; }
 
-    /// <summary>
-    /// Whether a slideshow made the window fullscreen, which the settings do not remember.
-    /// </summary>
-    private bool IsSlideshowFullscreen { get; init; }
-
     public FitMode FitMode => Mode.ToFitMode(AutoFit);
 
     public RememberedWindowMode Remembered
@@ -46,11 +41,6 @@ public readonly record struct WindowModeState
         get
         {
             var shown = Shown;
-            if (shown is WindowMode.Fullscreen && IsSlideshowFullscreen)
-            {
-                shown = BeforeFullscreen;
-            }
-
             return new RememberedWindowMode(shown is WindowMode.Fullscreen, shown is WindowMode.Maximized, AutoFit);
         }
     }
@@ -78,7 +68,7 @@ public readonly record struct WindowModeState
     };
 
     public WindowModeState ToggleFullscreen() =>
-        Shown is WindowMode.Fullscreen ? LeaveFullscreen() : EnterFullscreen(bySlideshow: false);
+        Shown is WindowMode.Fullscreen ? LeaveFullscreen() : EnterFullscreen();
 
     public WindowModeState ToggleMaximized() =>
         Show(Shown is WindowMode.Maximized ? WindowMode.Normal : WindowMode.Maximized);
@@ -101,26 +91,6 @@ public readonly record struct WindowModeState
     /// Resizing a Normal window by hand turns AutoFit off for it.
     /// </summary>
     public WindowModeState ResizedByHand() => Mode is WindowMode.Normal ? this with { AutoFit = false } : this;
-
-    /// <summary>
-    /// Shows the window fullscreen for a slideshow, without changing the remembered mode.
-    /// </summary>
-    public WindowModeState EnterSlideshow() => EnterFullscreen(bySlideshow: true);
-
-    /// <summary>
-    /// Gives back the mode the window had before the slideshow made it fullscreen.
-    /// </summary>
-    public WindowModeState LeaveSlideshow()
-    {
-        if (!IsSlideshowFullscreen)
-        {
-            return this;
-        }
-
-        return Mode is WindowMode.Minimized
-            ? this with { BeforeMinimized = BeforeFullscreen, IsSlideshowFullscreen = false }
-            : LeaveFullscreen();
-    }
 
     /// <summary>
     /// Brings the state in line with a native state the operating system reports, such as after the user used its
@@ -148,25 +118,25 @@ public readonly record struct WindowModeState
         {
             // Leaving native fullscreen can pass through Maximized
             WindowMode.Maximized when Mode is WindowMode.Fullscreen => this,
-            WindowMode.Fullscreen => EnterFullscreen(bySlideshow: false),
+            WindowMode.Fullscreen => EnterFullscreen(),
             _ => Show(native)
         };
     }
 
-    private WindowModeState EnterFullscreen(bool bySlideshow)
+    private WindowModeState EnterFullscreen()
     {
         var shown = Shown;
         if (shown is WindowMode.Fullscreen)
         {
-            return this with { Mode = WindowMode.Fullscreen, IsSlideshowFullscreen = IsSlideshowFullscreen && bySlideshow };
+            return this with { Mode = WindowMode.Fullscreen};
         }
 
-        return this with { Mode = WindowMode.Fullscreen, BeforeFullscreen = shown, IsSlideshowFullscreen = bySlideshow };
+        return this with { Mode = WindowMode.Fullscreen, BeforeFullscreen = shown };
     }
 
     private WindowModeState LeaveMinimized() => this with { Mode = BeforeMinimized, BeforeMinimized = default };
 
-    private WindowModeState LeaveFullscreen() => this with { Mode = BeforeFullscreen, IsSlideshowFullscreen = false };
+    private WindowModeState LeaveFullscreen() => this with { Mode = BeforeFullscreen };
 
-    private WindowModeState Show(WindowMode mode) => this with { Mode = mode, IsSlideshowFullscreen = false };
+    private WindowModeState Show(WindowMode mode) => this with { Mode = mode };
 }

@@ -151,48 +151,6 @@ public class WindowModeStateTests
     }
 
     [Fact]
-    public void Slideshow_FromMaximized_IsNotRememberedAndGivesBackMaximized()
-    {
-        var maximized = Start(maximized: true);
-
-        var slideshow = maximized.EnterSlideshow();
-
-        Assert.Equal(WindowMode.Fullscreen, slideshow.Mode);
-        Assert.Equal(maximized.Remembered, slideshow.Remembered);
-        Assert.Equal(maximized, slideshow.LeaveSlideshow());
-    }
-
-    [Fact]
-    public void Slideshow_InFullscreen_StaysFullscreenAfterwards()
-    {
-        var fullscreen = Start(fullscreen: true);
-
-        var afterSlideshow = fullscreen.EnterSlideshow().LeaveSlideshow();
-
-        Assert.Equal(fullscreen, afterSlideshow);
-    }
-
-    [Fact]
-    public void Slideshow_UserLeftFullscreenDuringIt_StoppingChangesNothing()
-    {
-        var left = Start(maximized: true).EnterSlideshow().ToggleFullscreen();
-
-        Assert.Equal(WindowMode.Maximized, left.Mode);
-        Assert.Equal(left, left.LeaveSlideshow());
-    }
-
-    [Fact]
-    public void Slideshow_StoppedWhileMinimized_GivesBackTheModeBeforeIt()
-    {
-        var state = Start(maximized: true).EnterSlideshow()
-            .OnNativeState(WindowMode.Minimized)
-            .LeaveSlideshow()
-            .OnNativeState(WindowMode.Normal);
-
-        Assert.Equal(WindowMode.Maximized, state.Mode);
-    }
-
-    [Fact]
     public void ResizedByHand_NormalWindow_TurnsAutoFitOff()
     {
         var state = Start(autoFit: true).ResizedByHand();

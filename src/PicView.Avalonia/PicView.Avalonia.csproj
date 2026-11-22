@@ -93,10 +93,6 @@
             <DependentUpon>MouseWheelView.axaml</DependentUpon>
             <SubType>Code</SubType>
         </Compile>
-        <Compile Update="Views\SlideshowSettingsView.axaml.cs">
-            <DependentUpon>SlideshowSettingsView.axaml</DependentUpon>
-            <SubType>Code</SubType>
-        </Compile>
         <Compile Update="Views\ZoomSettingsView.axaml.cs">
             <DependentUpon>ZoomSettingsView.axaml</DependentUpon>
             <SubType>Code</SubType>
@@ -136,85 +132,10 @@
             <DependentUpon>InterfaceConfigurationView.axaml</DependentUpon>
             <SubType>Code</SubType>
         </Compile>
-        <Compile Update="Views\UC\BottomBar2.axaml.cs">
-            <DependentUpon>BottomBar2.axaml</DependentUpon>
-            <SubType>Code</SubType>
-        </Compile>
-        <Compile Update="Views\UC\ImageViewer2.axaml.cs">
-            <DependentUpon>ImageViewer2.axaml</DependentUpon>
-            <SubType>Code</SubType>
-        </Compile>
-        <Compile Update="Views\UC\ZoomPreviewer2.axaml.cs">
-            <DependentUpon>ZoomPreviewer2.axaml</DependentUpon>
-            <SubType>Code</SubType>
-        </Compile>
         <Compile Update="Views\UC\Menus\DropDownMenu.axaml.cs">
             <DependentUpon>DropDownMenu.axaml</DependentUpon>
         </Compile>
-        <Compile Update="Views\Main\MainView3.axaml.cs">
-            <DependentUpon>MainView3.axaml</DependentUpon>
-            <SubType>Code</SubType>
-        </Compile>
-        <Compile Update="Views\UC\HoverBar2.axaml.cs">
-            <DependentUpon>HoverBar2.axaml</DependentUpon>
-            <SubType>Code</SubType>
-        </Compile>
-        <Compile Update="Views\Main\SettingsView2.axaml.cs">
-            <DependentUpon>SettingsView2.axaml</DependentUpon>
-            <SubType>Code</SubType>
-        </Compile>
-        <Compile Update="Views\Config\GeneralSettingsView2.axaml.cs">
-            <DependentUpon>GeneralSettingsView2.axaml</DependentUpon>
-            <SubType>Code</SubType>
-        </Compile>
-        <Compile Update="Views\Config\AppearanceView2.axaml.cs">
-            <DependentUpon>AppearanceView2.axaml</DependentUpon>
-            <SubType>Code</SubType>
-        </Compile>
-        <Compile Update="Views\Config\InterfaceConfigurationView2.axaml.cs">
-            <DependentUpon>InterfaceConfigurationView2.axaml</DependentUpon>
-            <SubType>Code</SubType>
-        </Compile>
-        <Compile Update="Views\Config\ImageSettingsView2.axaml.cs">
-            <DependentUpon>ImageSettingsView2.axaml</DependentUpon>
-            <SubType>Code</SubType>
-        </Compile>
-        <Compile Update="Views\Config\WindowSettingsView2.axaml.cs">
-            <DependentUpon>WindowSettingsView2.axaml</DependentUpon>
-            <SubType>Code</SubType>
-        </Compile>
-        <Compile Update="Views\Config\GallerySettingsView2.axaml.cs">
-            <DependentUpon>GallerySettingsView2.axaml</DependentUpon>
-            <SubType>Code</SubType>
-        </Compile>
-        <Compile Update="Views\Config\SlideshowSettingsView2.axaml.cs">
-            <DependentUpon>SlideshowSettingsView2.axaml</DependentUpon>
-            <SubType>Code</SubType>
-        </Compile>
-        <Compile Update="Views\Config\NavigationView2.axaml.cs">
-            <DependentUpon>NavigationView2.axaml</DependentUpon>
-            <SubType>Code</SubType>
-        </Compile>
-        <Compile Update="Views\Config\ZoomSettingsView2.axaml.cs">
-            <DependentUpon>ZoomSettingsView2.axaml</DependentUpon>
-            <SubType>Code</SubType>
-        </Compile>
-        <Compile Update="Views\Config\MouseView2.axaml.cs">
-            <DependentUpon>MouseView2.axaml</DependentUpon>
-            <SubType>Code</SubType>
-        </Compile>
-        <Compile Update="Views\Config\LanguageView2.axaml.cs">
-            <DependentUpon>LanguageView2.axaml</DependentUpon>
-            <SubType>Code</SubType>
-        </Compile>
-        <Compile Update="Views\Main\PrintPreviewView2.axaml.cs">
-            <DependentUpon>PrintPreviewView2.axaml</DependentUpon>
-            <SubType>Code</SubType>
-        </Compile>
-        <Compile Update="Views\Main\AboutView2.axaml.cs">
-            <DependentUpon>AboutView2.axaml</DependentUpon>
-            <SubType>Code</SubType>
-        </Compile>
+
         <Compile Update="Views\UC\DragDropView.axaml.cs">
             <DependentUpon>DragDropView.axaml</DependentUpon>
             <SubType>Code</SubType>
@@ -277,6 +198,10 @@
 
     <ItemGroup>
         <PackageReference Include="Avalonia" Version="12.1.6" />
+        <PackageReference Include="Avalonia.BuildServices" Version="12.0.0">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
         <PackageReference Include="Avalonia.Desktop" Version="12.1.6" />
         <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="AvaloniaUI.DiagnosticsSupport" Version="2.2.3" />
         <PackageReference Include="Magick.NET.AvaloniaMediaImaging" Version="$(MagickAvaloniaVersion)" />

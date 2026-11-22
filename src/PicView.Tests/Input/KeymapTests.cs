@@ -163,7 +163,6 @@ public class KeymapTests
     [Theory]
     [InlineData(InputMode.Normal)]
     [InlineData(InputMode.MotionPhoto)]
-    [InlineData(InputMode.Slideshow)]
     public void Resolve_InNonBlockingMode_ResolvesAction(InputMode mode)
     {
         var keymap = Keymap.FromJson(null, Defaults);
@@ -174,7 +173,6 @@ public class KeymapTests
     [Theory]
     [InlineData(InputMode.MotionPhoto)]
     [InlineData(InputMode.AnimatedImage)]
-    [InlineData(InputMode.Slideshow)]
     public void Resolve_InNonBlockingMode_DisallowsActionsThatNeedAStillImage(InputMode mode)
     {
         var keymap = Keymap.FromJson(null, Defaults).Assign(new Keybind(Key.C), "Crop").Assign(new Keybind(Key.R), "RotateRight");

@@ -40,27 +40,6 @@ public static partial class NativeMethods
     // Notify the system about the change
     [LibraryImport("shell32.dll")]
     public static partial void SHChangeNotify(int wEventId, int uFlags, IntPtr dwItem1, IntPtr dwItem2);
-
-    #region Disable Screensaver and Power options
-
-    private const uint ES_CONTINUOUS = 0x80000000;
-    private const uint ES_SYSTEM_REQUIRED = 0x00000001;
-    private const uint ES_DISPLAY_REQUIRED = 0x00000002;
-
-    [LibraryImport("kernel32.dll", SetLastError = true)]
-    public static partial uint SetThreadExecutionState(uint esFlags);
-    
-    public static void DisableScreensaver()
-    {
-        _ = SetThreadExecutionState(ES_CONTINUOUS | ES_DISPLAY_REQUIRED | ES_SYSTEM_REQUIRED);
-    }
-    
-    public static void EnableScreensaver()
-    {
-        _ = SetThreadExecutionState(ES_CONTINUOUS);
-    }
-
-    #endregion Disable Screensaver and Power options
     
     #region Printing
 

@@ -10,7 +10,7 @@ using PicView.Core.ViewModels;
 namespace PicView.Avalonia.WindowBehavior;
 
 /// <summary>
-/// Changes one window's Window Mode. Every request, operating-system report, slideshow and start goes through it;
+/// Changes one window's Window Mode. Every request, operating-system report,
 /// its platform's <see cref="IWindowModeAdapter"/> only enters native states. It writes nothing to the settings record;
 /// the window stores its mode there when it closes.
 /// </summary>
@@ -34,10 +34,6 @@ public sealed class WindowModeSwitcher(MainWindow window, IWindowModeAdapter ada
     public void SetAutoFit(bool autoFit) => Change(state => state.SetAutoFit(autoFit));
 
     public void ResizedByHand() => Change(static state => state.ResizedByHand());
-
-    public void EnterSlideshow() => Change(static state => state.EnterSlideshow());
-
-    public void LeaveSlideshow() => Change(static state => state.LeaveSlideshow());
 
     /// <summary>
     /// Brings the Window Mode in line with a native state the operating system reports.

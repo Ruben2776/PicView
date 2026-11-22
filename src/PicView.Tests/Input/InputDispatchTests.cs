@@ -28,7 +28,6 @@ public class InputDispatchTests
     private static readonly InputModeState Crop = new(IsCropping: true);
     private static readonly InputModeState Dialog = new(IsDialogOpen: true);
     private static readonly InputModeState Gallery = new(IsGalleryExpanded: true);
-    private static readonly InputModeState MotionPhotoInSlideshow = new(IsMotionPhotoActive: true, IsSlideshowRunning: true);
 
     private sealed class FakeHandler(params (InputMode Mode, string Action)[] claims) : IContextualActionHandler
     {
@@ -78,43 +77,13 @@ public class InputDispatchTests
     [Fact]
     public async Task BlockingMode_OnlyAsksItself()
     {
-        var state = new InputModeState(IsDialogOpen: true, IsCropping: true, IsSlideshowRunning: true);
+        var state = new InputModeState(IsDialogOpen: true, IsCropping: true);
 
         var (handler, _) = await Dispatch(Escape, state);
 
         Assert.Equal([(InputMode.Dialog, "Cancel")], handler.Asked);
     }
-
-    [Fact]
-    public async Task NonBlockingModes_AskEachActiveModeByRankThenNormal()
-    {
-        var (handler, ordinary) = await Dispatch(Escape, MotionPhotoInSlideshow);
-
-        Assert.Equal(
-            [(InputMode.MotionPhoto, "Cancel"), (InputMode.Slideshow, "Cancel"), (InputMode.Normal, "Cancel")],
-            handler.Asked);
-        Assert.Equal(KeymapResolution.Action("Close"), ordinary);
-    }
-
-    [Fact]
-    public async Task NonBlockingModes_StopAtTheFirstModeThatClaims()
-    {
-        // A stopped motion photo leaves Cancel to the slideshow
-        var (handler, ordinary) = await Dispatch(Escape, MotionPhotoInSlideshow, (InputMode.Slideshow, "Cancel"));
-
-        Assert.Equal([(InputMode.MotionPhoto, "Cancel"), (InputMode.Slideshow, "Cancel")], handler.Asked);
-        Assert.Equal(KeymapResolution.None, ordinary);
-    }
-
-    [Fact]
-    public async Task OrdinaryKeybind_InNonBlockingMode_Runs()
-    {
-        var (handler, ordinary) = await Dispatch(Right, MotionPhotoInSlideshow);
-
-        Assert.Empty(handler.Asked);
-        Assert.Equal(KeymapResolution.Action("Next"), ordinary);
-    }
-
+    
     [Fact]
     public async Task OrdinaryKeybind_InBlockingMode_IsBlocked()
     {
@@ -148,18 +117,17 @@ public class InputDispatchTests
     }
 
     [Theory]
-    [InlineData(false, false, false, false, false, false, new[] { InputMode.Normal })]
-    [InlineData(true, false, true, false, false, false, new[] { InputMode.Dialog })]
-    [InlineData(false, false, false, false, true, false, new[] { InputMode.Slideshow, InputMode.Normal })]
-    [InlineData(false, false, false, true, true, false,
-        new[] { InputMode.MotionPhoto, InputMode.Slideshow, InputMode.Normal })]
-    [InlineData(false, false, false, false, true, true,
-        new[] { InputMode.AnimatedImage, InputMode.Slideshow, InputMode.Normal })]
+    [InlineData(false, false, false, false, false, new[] { InputMode.Normal })]
+    [InlineData(true, false, true, false, false, new[] { InputMode.Dialog })]
+    [InlineData(false, false, false, true, false,
+        new[] { InputMode.MotionPhoto, InputMode.Normal })]
+    [InlineData(false, false, false, false, true,
+        new[] { InputMode.AnimatedImage, InputMode.Normal })]
     public async Task UnclaimedContextualAction_AsksTheBlockingModeOrEveryActiveNonBlockingModeThenNormal(
-        bool isDialogOpen, bool isRenaming, bool isCropping, bool isMotionPhotoActive, bool isSlideshowRunning,
+        bool isDialogOpen, bool isRenaming, bool isCropping, bool isMotionPhotoActive,
         bool isAnimatedImageActive, InputMode[] expected)
     {
-        var state = new InputModeState(isDialogOpen, isRenaming, isCropping, isMotionPhotoActive, isSlideshowRunning,
+        var state = new InputModeState(isDialogOpen, isRenaming, isCropping, isMotionPhotoActive,
             isAnimatedImageActive);
 
         var (handler, _) = await Dispatch(Escape, state);

@@ -24,14 +24,4 @@ public interface IWindowModeSwitcher
     /// The user resized the window by hand, which turns AutoFit off for only this window.
     /// </summary>
     void ResizedByHand();
-
-    /// <summary>
-    /// Shows the window fullscreen for a slideshow, without changing the remembered mode.
-    /// </summary>
-    void EnterSlideshow();
-
-    /// <summary>
-    /// Gives back the mode the window had before the slideshow.
-    /// </summary>
-    void LeaveSlideshow();
 }

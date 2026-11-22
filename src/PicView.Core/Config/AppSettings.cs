@@ -174,11 +174,6 @@ public class UIProperties
     public int BgColorChoice { get; set; } = 0;
 
     /// <summary>
-    /// Gets or sets the time, in seconds, each image is shown during a slideshow; the settings slider gives 1 to 120.
-    /// </summary>
-    public double SlideShowTimer { get; set; } = 5;
-
-    /// <summary>
     /// Determines whether the application should open pictures in the same window
     /// or open a new window for each action.
     /// When set to true, all actions are handled within the existing application window.
