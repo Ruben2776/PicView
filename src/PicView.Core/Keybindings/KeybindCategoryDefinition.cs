@@ -35,7 +35,7 @@ public static class KeybindCategoryDefinition
         Actions.CloseWindow, Actions.Minimize, Actions.OpenCloseDockedGallery, Actions.ResetSettings,
         Actions.SetConfigLocationAuto, Actions.SetConfigLocationPortable, Actions.SetConfigLocationRoaming,
         Actions.ToggleBottomToolbar, Actions.ToggleConstrainBackgroundColor,
-        Actions.ToggleFileHistory, Actions.ToggleHoverBar, Actions.ToggleOpeningInSameWindow,
+        Actions.ToggleFileHistory, Actions.ToggleHoverBar,
         Actions.ToggleShowFullPathInTitleBar, Actions.ToggleSubdirectories, Actions.ToggleTaskbarProgress,
     ];
 

@@ -38,6 +38,13 @@ public class ActionListContractTests
     }
 
     [Fact]
+    public void ActionNames_DoNotIncludeToggleOpeningInSameWindow()
+    {
+        Assert.DoesNotContain("ToggleOpeningInSameWindow", (IReadOnlySet<string>)KeybindCategoryDefinition.ActionNames);
+        Assert.Null(_mapper.GetFunctionByName("ToggleOpeningInSameWindow"));
+    }
+
+    [Fact]
     public void ActionNames_AllResolveThroughFunctionsMapper()
     {
         var unresolved = KeybindCategoryDefinition.ActionNames

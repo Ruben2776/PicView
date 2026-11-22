@@ -305,6 +305,8 @@
   "OpenInSameWindow": "Fájlok megnyitása ugyanabban az ablakban",
   "OpenLastFile": "Utolsó fájl megnyitása",
   "ContinueWhereYouLeftOff": "Continue where you left off",
+  "OpenInNewWindow": "Open files in a new window",
+  "OpenInNewTab": "Open files in a new tab",
   "OpenWith": "Nyissa meg...",
   "OptimizeImage": "Kép optimalizálása",
   "Orientation": "Tájolás",

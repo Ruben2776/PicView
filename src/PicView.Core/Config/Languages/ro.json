@@ -305,6 +305,8 @@
   "OpenInSameWindow": "Deschideți fișierele în aceeași fereastră",
   "OpenLastFile": "Deschide ultimul fișier",
   "ContinueWhereYouLeftOff": "Continue where you left off",
+  "OpenInNewWindow": "Open files in a new window",
+  "OpenInNewTab": "Open files in a new tab",
   "OpenWith": "Deschidere cu....",
   "OptimizeImage": "Optimizare imagine",
   "Orientation": "Orientare",

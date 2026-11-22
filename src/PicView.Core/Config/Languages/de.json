@@ -305,6 +305,8 @@
   "OpenInSameWindow": "Dateien im selben Fenster öffnen",
   "OpenLastFile": "Letzte Datei öffnen",
   "ContinueWhereYouLeftOff": "Continue where you left off",
+  "OpenInNewWindow": "Open files in a new window",
+  "OpenInNewTab": "Open files in a new tab",
   "OpenWith": "Öffnen mit...",
   "OptimizeImage": "Bild optimieren",
   "Orientation": "Orientierung",

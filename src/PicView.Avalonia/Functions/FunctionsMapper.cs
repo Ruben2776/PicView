@@ -260,7 +260,6 @@ public class FunctionsMapper : IActionRunner
             Actions.ToggleConstrainBackgroundColor => ToggleConstrainBackgroundColor,
             Actions.ToggleFileHistory => ToggleFileHistory,
             Actions.ToggleHoverBar => ToggleHoverBar,
-            Actions.ToggleOpeningInSameWindow => ToggleOpeningInSameWindow,
             Actions.ToggleShowFullPathInTitleBar => ToggleShowFullPathInTitleBar,
             Actions.ToggleSubdirectories => ToggleSubdirectories,
             Actions.ToggleTaskbarProgress => ToggleTaskbarProgress,
@@ -988,7 +987,6 @@ public class FunctionsMapper : IActionRunner
 
     private ValueTask ShowFavoritesFile() => PlatformActions.ShowFile(_vm, FavoritesManager.CurrentFavoritesFile);
     
-    private ValueTask ToggleOpeningInSameWindow() => ToggleHelper.Toggle(_vm.GlobalSettings.IsOpeningInSameWindow);
 
     private ValueTask ToggleFileHistory() => ToggleHelper.Toggle(_vm.GlobalSettings.IsFileHistoryEnabled);
 

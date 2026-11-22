@@ -305,6 +305,8 @@
   "OpenInSameWindow": "Odpri datoteke v istem oknu",
   "OpenLastFile": "Odpri zadnjo datoteko",
   "ContinueWhereYouLeftOff": "Continue where you left off",
+  "OpenInNewWindow": "Open files in a new window",
+  "OpenInNewTab": "Open files in a new tab",
   "OpenWith": "Odpri z...",
   "OptimizeImage": "Optimiziraj sliko",
   "Orientation": "Orientacija",

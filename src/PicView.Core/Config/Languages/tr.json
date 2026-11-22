@@ -305,6 +305,8 @@
   "OpenInSameWindow": "Dosyaları aynı pencerede aç",
   "OpenLastFile": "Son dosyayı aç",
   "ContinueWhereYouLeftOff": "Continue where you left off",
+  "OpenInNewWindow": "Open files in a new window",
+  "OpenInNewTab": "Open files in a new tab",
   "OpenWith": "Birlikte aç...",
   "OptimizeImage": "Görüntüyü optimize et",
   "Orientation": "Yönlendirme",

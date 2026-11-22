@@ -305,6 +305,8 @@
   "OpenInSameWindow": "동일한 창에서 파일 열기",
   "OpenLastFile": "마지막 파일 열기",
   "ContinueWhereYouLeftOff": "Continue where you left off",
+  "OpenInNewWindow": "Open files in a new window",
+  "OpenInNewTab": "Open files in a new tab",
   "OpenWith": "다음으로 열기...",
   "OptimizeImage": "이미지 최적화",
   "Orientation": "방향",

@@ -19,7 +19,7 @@ public partial class WindowSettingRecordReadsTests
     private static partial Regex IncludeSubDirectoriesRead();
 
     // The nine record properties that moved onto the window, read or written through their group. The groups also
-    // hold App Settings that stay on the record (OpenInSameWindow, ZoomSpeed, ...), so the group must precede the
+    // hold App Settings that stay on the record (OpeningMode, ZoomSpeed, ...), so the group must precede the
     // property; that keeps Translation.Looping and another type's ZoomToFit out. An alias of a whole group
     // (var ui = Settings.UIProperties;) is not caught, because those groups also hold App Settings.
     // Nor is a group and its property split across lines, or a property pattern (is { Looping: true }).
@@ -218,7 +218,7 @@ public partial class WindowSettingRecordReadsTests
     [InlineData("var h = Settings.UIProperties.ShowHoverNavigationBar;", true)]
     [InlineData("var c = Settings.UIProperties.BgColorChoice;", true)]
     [InlineData("Settings.UIProperties.IsConstrainBackgroundColorEnabled = true;", true)]
-    [InlineData("if (Settings.UIProperties.OpenInSameWindow)", false)]
+    [InlineData("if (Settings.UIProperties.OpeningMode == OpeningMode.NewTab)", false)]
     [InlineData("var s = Settings.Zoom.ZoomSpeed;", false)]
     [InlineData("var n = Settings.ImageScaling.IsScalingSetToNearestNeighbor;", false)]
     [InlineData("var t = Translation.Looping;", false)]

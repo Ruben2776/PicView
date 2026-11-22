@@ -247,6 +247,8 @@ public class TranslationViewModel
         OpenInSameWindow.Value = t.OpenInSameWindow;
         OpenLastFile.Value = t.OpenLastFile;
         ContinueWhereYouLeftOff.Value = t.ContinueWhereYouLeftOff;
+        OpenInNewWindow.Value = t.OpenInNewWindow;
+        OpenInNewTab.Value = t.OpenInNewTab;
         OpenWith.Value = t.OpenWith;
         OptimizeImage.Value = t.OptimizeImage;
         Orientation.Value = t.Orientation;
@@ -661,6 +663,8 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> OpenInSameWindow { get; } = new();
     public BindableReactiveProperty<string?> OpenLastFile { get; } = new();
     public BindableReactiveProperty<string?> ContinueWhereYouLeftOff { get; } = new();
+    public BindableReactiveProperty<string?> OpenInNewWindow { get; } = new();
+    public BindableReactiveProperty<string?> OpenInNewTab { get; } = new();
     public BindableReactiveProperty<string?> OpenWith { get; } = new();
     public BindableReactiveProperty<string?> OptimizeImage { get; } = new();
     public BindableReactiveProperty<string?> Orientation { get; } = new();

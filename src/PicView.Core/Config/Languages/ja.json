@@ -305,6 +305,8 @@
   "OpenInSameWindow": "同じウィンドウへファイルを開く",
   "OpenLastFile": "最後に使ったファイルを開く",
   "ContinueWhereYouLeftOff": "Continue where you left off",
+  "OpenInNewWindow": "Open files in a new window",
+  "OpenInNewTab": "Open files in a new tab",
   "OpenWith": "アプリで開く...",
   "OptimizeImage": "画像の最適化",
   "Orientation": "画像の向き",

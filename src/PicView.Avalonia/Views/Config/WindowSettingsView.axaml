@@ -97,13 +97,21 @@
         </Border>
 
         <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.WindowSameWindowSearchTags}" Classes="searchBorder">
-            <customControls:TextToggleButton
-                x:Name="OpenInSameWindowToggleButton"
-                Classes="MenuItemHover settingsToggleButton"
-                Command="{CompiledBinding MainWindows.ActiveWindow.Value.RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ToggleOpeningInSameWindow}"
-                IsChecked="{CompiledBinding GlobalSettings.IsOpeningInSameWindow.Value, Mode=OneWay}"
-                Text="{CompiledBinding Translation.OpenInSameWindow.Value,
-                                       Mode=OneWay}" />
+            <ComboBox
+                x:Name="OpeningModeBox"
+                Width="300"
+                Margin="0,6,0,10"
+                Padding="5,7,0,7"
+                HorizontalAlignment="Left"
+                BorderThickness="1"
+                FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
+                Foreground="{DynamicResource MainTextColor}"
+                SelectedIndex="{CompiledBinding GlobalSettings.OpeningModeIndex.Value,
+                                                Mode=TwoWay}">
+                <ComboBoxItem Content="{CompiledBinding Translation.OpenInNewWindow.Value, Mode=OneWay}" Foreground="{DynamicResource MainTextColor}" />
+                <ComboBoxItem Content="{CompiledBinding Translation.OpenInSameWindow.Value, Mode=OneWay}" Foreground="{DynamicResource MainTextColor}" />
+                <ComboBoxItem Content="{CompiledBinding Translation.OpenInNewTab.Value, Mode=OneWay}" Foreground="{DynamicResource MainTextColor}" />
+            </ComboBox>
         </Border>
 
         <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.WindowEscSearchTags}" Classes="searchBorder">

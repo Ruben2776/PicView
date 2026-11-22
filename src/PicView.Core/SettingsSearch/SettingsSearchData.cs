@@ -400,6 +400,10 @@ public class SettingsSearchData
         sb.Append(space);
         sb.Append(TranslationManager.Translation.OpenInSameWindow);
         sb.Append(space);
+        sb.Append(TranslationManager.Translation.OpenInNewWindow);
+        sb.Append(space);
+        sb.Append(TranslationManager.Translation.OpenInNewTab);
+        sb.Append(space);
         sb.Append("New Window");
         WindowSameWindowSearchTags = sb.ToString();
         

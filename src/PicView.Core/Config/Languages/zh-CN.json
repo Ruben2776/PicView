@@ -305,6 +305,8 @@
   "OpenInSameWindow": "在同一窗口中打开文件",
   "OpenLastFile": "打开最后一个文件",
   "ContinueWhereYouLeftOff": "Continue where you left off",
+  "OpenInNewWindow": "Open files in a new window",
+  "OpenInNewTab": "Open files in a new tab",
   "OpenWith": "打开使用",
   "OptimizeImage": "优化图像",
   "Orientation": "方向",

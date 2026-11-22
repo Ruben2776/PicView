@@ -160,7 +160,6 @@ public static class Actions
     public const string ToggleSubdirectories = nameof(ToggleSubdirectories);
     public const string ToggleTaskbarProgress = nameof(ToggleTaskbarProgress);
     public const string ToggleFileHistory = nameof(ToggleFileHistory);
-    public const string ToggleOpeningInSameWindow = nameof(ToggleOpeningInSameWindow);
     public const string ToggleShowFullPathInTitleBar = nameof(ToggleShowFullPathInTitleBar);
     public const string ResetSettings = nameof(ResetSettings);
     public const string Restart = nameof(Restart);

@@ -7,7 +7,7 @@ using R3;
 namespace PicView.Tests.Config;
 
 /// <summary>
-/// The five toggled settings publish their changes (ADR-0020): each writes its stored value before any
+/// The four toggled settings and the Opening Mode publish their changes (ADR-0020): each writes its stored value before any
 /// subscriber hears of it, and a change saves the settings once, however many land during a save.
 /// </summary>
 [Collection("Sequential")]
@@ -37,7 +37,6 @@ public class GlobalSettingsViewModelTests
         { "FileHistory", s => s.IsFileHistoryEnabled, () => Settings.Navigation.IsFileHistoryEnabled },
         { "FullPath", s => s.IsShowingFullPathInTitleBar, () => Settings.UIProperties.ShowFullPathInTitleBar },
         { "TaskbarProgress", s => s.IsShowingTaskbarProgress, () => Settings.UIProperties.IsTaskbarProgressEnabled },
-        { "OpenInSameWindow", s => s.IsOpeningInSameWindow, () => Settings.UIProperties.OpeningMode == OpeningMode.SameWindow },
     };
 
     public static TheoryData<string, Func<GlobalSettingsViewModel, BindableReactiveProperty<bool>>, Func<bool>> Published
@@ -79,6 +78,37 @@ public class GlobalSettingsViewModelTests
 
         Assert.Equal(!before, stored());
         Assert.Equal(1, _saves);
+    }
+
+    [Fact]
+    public void OpeningModeIndex_Set2_WritesNewTabAndSaves()
+    {
+        var settings = Unstarted();
+        settings.InitializeActionSettings();
+
+        settings.OpeningModeIndex.Value = 2;
+
+        Assert.Equal(OpeningMode.NewTab, Settings.UIProperties.OpeningMode);
+        Assert.Equal(1, _saves);
+    }
+
+    [Fact]
+    public void OpeningModeIndex_ChangedBeforeInitialize_WritesAndSavesNothing()
+    {
+        var settings = Unstarted();
+
+        settings.OpeningModeIndex.Value = 2;
+
+        Assert.Equal(OpeningMode.NewWindow, Settings.UIProperties.OpeningMode);
+        Assert.Equal(0, _saves);
+    }
+
+    [Fact]
+    public void OpeningModeIndex_StartsAtTheStoredMode()
+    {
+        Settings.UIProperties.OpeningMode = OpeningMode.SameWindow;
+
+        Assert.Equal(1, Unstarted().OpeningModeIndex.Value);
     }
 
     [Fact]
@@ -196,7 +226,7 @@ public class GlobalSettingsViewModelTests
 
         settings.IsFileHistoryEnabled.Value = !Settings.Navigation.IsFileHistoryEnabled; // save 1 starts and is held
         settings.IsShowingTaskbarProgress.Value = !Settings.UIProperties.IsTaskbarProgressEnabled; // two changes land while it runs
-        settings.IsOpeningInSameWindow.Value = Settings.UIProperties.OpeningMode != OpeningMode.SameWindow;
+        settings.OpeningModeIndex.Value = (int)OpeningMode.NewTab;
         Assert.Equal(1, saves);
         gate.SetResult(true);
         await settings.Saving;

@@ -208,7 +208,7 @@ _Avoid_: Source file, input path
 ## Settings
 
 **Setting**:
-A value the user chooses that PicView remembers between runs, stored in one record saved whole. The five a menu toggles that are App Settings publish their changes: one bindable each, which writes the stored value and saves, and what reacts to it subscribes. The rest are read from the record. A Window Setting is stored only when its window closes. Every Setting is one or the other.
+A value the user chooses that PicView remembers between runs, stored in one record saved whole. The four menu toggles and the Opening Mode choice, which are App Settings, publish their changes: one bindable each, which writes the stored value and saves, and what reacts to it subscribes. The rest are read from the record. A Window Setting is stored only when its window closes. Every Setting is one or the other.
 _Avoid_: Option, preference, flag, mirror (for the bindable), flip (for toggling)
 
 **Window Setting**:

@@ -244,6 +244,14 @@ public static class SettingsSearchIndex
         {
             list.Add(new SettingsSearchItem(t.OpenInSameWindow, data.WindowSameWindowSearchTags));
         }
+        if (t.OpenInNewWindow != null)
+        {
+            list.Add(new SettingsSearchItem(t.OpenInNewWindow, data.WindowSameWindowSearchTags));
+        }
+        if (t.OpenInNewTab != null)
+        {
+            list.Add(new SettingsSearchItem(t.OpenInNewTab, data.WindowSameWindowSearchTags));
+        }
         if (t.ShowConfirmationOnEsc != null)
         {
             list.Add(new SettingsSearchItem(t.ShowConfirmationOnEsc, data.WindowEscSearchTags));
