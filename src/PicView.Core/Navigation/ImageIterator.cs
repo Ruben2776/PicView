@@ -594,6 +594,19 @@ public class ImageIterator(SharedImageCache cache, Thumbnails thumbnails, TabVie
     {
         if (clearCache)
         {
+            // The shown files may have changed on disk. Releasing alone keeps their models in the cache until their
+            // disposal delay ends, so the reload would find and show the old pixels again
+            var files = Volatile.Read(ref _files);
+            if (FileAt(files, CurrentIndex) is { } shown)
+            {
+                Cache.Invalidate(shown.FullName);
+            }
+
+            if (FileAt(files, SecondaryCurrentIndex) is { } beside)
+            {
+                Cache.Invalidate(beside.FullName);
+            }
+
             Cache.ReleaseImages(_tab.Id);
         }
         var ct = _tab.GetTabCancellation();

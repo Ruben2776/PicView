@@ -1292,6 +1292,53 @@ public class TabLoadTests : IDisposable
     }
 
     [Fact]
+    public async Task ReloadAsync_ShownFile_DecodesItAgain()
+    {
+        var a = await WriteImageAsync("a.jpg");
+        var tab = CreateTab(_testDirectory, withIterator: false);
+        await tab.Load.LoadAsync(a);
+        var before = tab.Model;
+        _decoded.Clear();
+
+        await tab.ImageIterator!.ReloadAsync();
+
+        // The file may have changed on disk, so the cached model, held for a while after its release, is not shown again
+        Assert.Contains(a, _decoded);
+        Assert.NotSame(before, tab.Model);
+        Assert.Equal(a, tab.Model.FileInfo?.FullName);
+    }
+
+    [Fact]
+    public async Task ReloadAsync_ShownPair_DecodesBothAgain()
+    {
+        var a = await WriteImageAsync("a.jpg");
+        var b = await WriteImageAsync("b.jpg");
+        var tab = CreateTab(_testDirectory, withIterator: false);
+        await tab.Load.LoadAsync(a);
+        tab.CurrentWindowSettings.CurrentValue!.IsSideBySide.Value = true;
+        await WaitUntil(() => tab.SecondaryModel?.FileInfo?.FullName == b, () => "the pair");
+        _decoded.Clear();
+
+        await tab.ImageIterator!.ReloadAsync();
+
+        Assert.Contains(a, _decoded);
+        Assert.Contains(b, _decoded);
+    }
+
+    [Fact]
+    public async Task ReloadAsync_WithoutClearingTheCache_ShowsTheCachedModel()
+    {
+        var a = await WriteImageAsync("a.jpg");
+        var tab = CreateTab(_testDirectory, withIterator: false);
+        await tab.Load.LoadAsync(a);
+        _decoded.Clear();
+
+        await tab.ImageIterator!.ReloadAsync(clearCache: false);
+
+        Assert.DoesNotContain(a, _decoded);
+    }
+
+    [Fact]
     public async Task SideBySide_TurnedOnAtTheLastFile_PairsItWithTheFileBefore_ThenOffShowsThatFileAlone()
     {
         var a = await WriteImageAsync("a.jpg");
