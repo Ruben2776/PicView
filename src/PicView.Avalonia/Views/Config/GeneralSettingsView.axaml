@@ -43,7 +43,8 @@
                     SelectedIndex="{CompiledBinding SettingsViewModel.StartUpIndex.Value,
                                                     Mode=TwoWay}">
                     <ComboBoxItem Content="{CompiledBinding Translation.None.Value, Mode=OneWay}" Foreground="{DynamicResource MainTextColor}" />
-                    <ComboBoxItem Content="{CompiledBinding Translation.OpenLastFile.Value, Mode=OneWay}" Foreground="{DynamicResource MainTextColor}" />
+                    <ComboBoxItem Content="{CompiledBinding Translation.OpenLastFile.Value, Mode=OneWay}" IsEnabled="{CompiledBinding GlobalSettings.IsFileHistoryEnabled.Value}" Foreground="{DynamicResource MainTextColor}" />
+                    <ComboBoxItem Content="{CompiledBinding Translation.ContinueWhereYouLeftOff.Value, Mode=OneWay}" IsEnabled="{CompiledBinding GlobalSettings.IsFileHistoryEnabled.Value}" Foreground="{DynamicResource MainTextColor}" />
                 </ComboBox>
             </StackPanel>
         </Border>

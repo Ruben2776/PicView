@@ -14,6 +14,10 @@ public static class SettingsSearchIndex
         {
             list.Add(new SettingsSearchItem(t.OpenLastFile, data.StartUpSearchTags));
         }
+        if (t.ContinueWhereYouLeftOff != null)
+        {
+            list.Add(new SettingsSearchItem(t.ContinueWhereYouLeftOff, data.StartUpSearchTags));
+        }
         if (t.ApplicationStartup != null)
         {
             list.Add(new SettingsSearchItem(t.ApplicationStartup, data.StartUpSearchTags));

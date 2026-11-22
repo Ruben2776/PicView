@@ -315,6 +315,7 @@ public class LanguageModel
     public string? OpenFileHistory { get; set; }
     public string? OpenInSameWindow { get; set; }
     public string? OpenLastFile { get; set; }
+    public string? ContinueWhereYouLeftOff { get; set; }
     public string? OpenWith { get; set; }
     public string? OptimizeImage { get; set; }
     public string? Orientation { get; set; }

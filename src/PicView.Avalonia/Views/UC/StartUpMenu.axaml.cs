@@ -4,20 +4,25 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.Media;
+using Avalonia.Threading;
 using PicView.Avalonia.Clipboard;
 using PicView.Avalonia.ColorManagement;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.FileSystem;
 using PicView.Avalonia.Navigation;
+using PicView.Core.DebugTools;
 using PicView.Core.Extensions;
 using PicView.Core.Localization;
 using PicView.Core.Sizing;
 using PicView.Core.ViewModels;
+using R3;
 
 namespace PicView.Avalonia.Views.UC;
 
 public partial class StartUpMenu : UserControl
 {
+    private IDisposable? _fileHistorySubscription;
+
     public StartUpMenu()
     {
         MinHeight = SizeDefaults.WindowMinSize;
@@ -40,6 +45,24 @@ public partial class StartUpMenu : UserControl
         OpenLastFileButton.PointerEntered += OpenLastFileLabelOnPointerEntered;
         OpenLastFileButton.PointerExited += OpenLastFileLabelOnPointerExited;
         OpenLastFileButton.Click += OpenLastFileButtonOnClick;
+
+        // The last file is part of File History, so the button follows it
+        if (TopLevel.GetTopLevel(this) is MainWindow { ViewModel: { } viewModel })
+        {
+            _fileHistorySubscription?.Dispose();
+            _fileHistorySubscription = viewModel.GlobalSettings.IsFileHistoryEnabled.Subscribe(isEnabled =>
+                {
+                    if (Dispatcher.UIThread.CheckAccess())
+                    {
+                        OpenLastFileButton.IsEnabled = isEnabled;
+                    }
+                    else
+                    {
+                        Dispatcher.UIThread.Post(() => OpenLastFileButton.IsEnabled = isEnabled);
+                    }
+                },
+                DebugHelper.LogError(nameof(StartUpMenu), nameof(StartUpMenu_Loaded)));
+        }
 
         PasteButton.PointerEntered += PasteButtonOnPointerEntered;
         PasteButton.PointerExited += PasteButtonOnPointerExited;
@@ -222,6 +245,9 @@ public partial class StartUpMenu : UserControl
     
     protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
     {
+        _fileHistorySubscription?.Dispose();
+        _fileHistorySubscription = null;
+
         SelectFileButton.PointerEntered -= SelectFileButtonOnPointerEntered;
         SelectFileButton.PointerExited -= SelectFileButtonOnPointerExited;
         SelectFileButton.Click -= SelectFileButtonOnClick;

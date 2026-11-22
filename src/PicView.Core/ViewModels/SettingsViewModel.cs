@@ -47,6 +47,7 @@ public class SettingsViewModel : IDisposable
         ];
         
         MouseDoubleClickBehaviorIndex = new BindableReactiveProperty<int>(Settings.UIProperties.DoubleClickBehavior);
+        StartUpIndex = new BindableReactiveProperty<int>(StartUpIndexFor(globalSettings.IsFileHistoryEnabled.Value));
 
         NavigateToCategoryCommand = new ReactiveCommand<SettingsCategory>();
         NavigateToCategoryCommand.Subscribe(category =>
@@ -175,9 +176,15 @@ public class SettingsViewModel : IDisposable
 
     public SettingsWindowConfig? SettingsWindowConfig { get; set; }
 
+    private static int StartUpIndexFor(bool isFileHistoryEnabled) =>
+        isFileHistoryEnabled ? (int)Settings.StartUp.Behavior : (int)StartUpBehavior.None;
+
     // General
-    public BindableReactiveProperty<bool> OpenLastFile { get; } = new(Settings.StartUp.Behavior == StartUpBehavior.OpenLastFile);
-    public BindableReactiveProperty<int> StartUpIndex { get; } = new(Settings.StartUp.Behavior == StartUpBehavior.OpenLastFile ? 1 : 0);
+    /// <summary>
+    /// The start-up choice, the index of <see cref="StartUpBehavior"/>. It shows <see cref="StartUpBehavior.None"/> while
+    /// file history is off, without touching the stored behavior.
+    /// </summary>
+    public BindableReactiveProperty<int> StartUpIndex { get; }
     
     public BindableReactiveProperty<bool> IsNavigatingBackwardsWhenDeleting { get; } = new(Settings.Navigation.IsNavigatingBackwardsWhenDeleting);
     public BindableReactiveProperty<int> DeletionIndex { get; } = new(Settings.Navigation.IsNavigatingBackwardsWhenDeleting ? 1 : 0);
@@ -278,7 +285,6 @@ public class SettingsViewModel : IDisposable
             NavigateToCategoryCommand,
             IsOverviewVisible,
             SelectedCategory,
-            OpenLastFile,
             StartUpIndex,
             IsNavigatingBackwardsWhenDeleting,
             DeletionIndex,
@@ -369,14 +375,25 @@ public class SettingsViewModel : IDisposable
             .Subscribe(x => Settings.Navigation.IsNavigatingByClicking = x).AddTo(ref _disposables);
         
         // General
-        Observable.EveryValueChanged(this, x => x.StartUpIndex.CurrentValue)
-             .SubscribeAwait(async (x, _) => {
-                 OpenLastFile.Value = x == 1;
-                 Settings.StartUp.Behavior = x == 1 ? StartUpBehavior.OpenLastFile : StartUpBehavior.None;
-                 await SaveSettingsAsync().ConfigureAwait(false);
-             }, DebugHelper.LogError(nameof(SettingsViewModel), nameof(SubscriptionSettingsUpdate)))
-             .AddTo(ref _disposables);
-             
+        _globalSettings.IsFileHistoryEnabled
+            .Subscribe(isEnabled => StartUpIndex.Value = StartUpIndexFor(isEnabled),
+                DebugHelper.LogError(nameof(SettingsViewModel), nameof(SubscriptionSettingsUpdate)))
+            .AddTo(ref _disposables);
+
+        StartUpIndex
+            .SubscribeAwait(async (x, _) =>
+            {
+                // History off shows None and stores nothing, so a stored choice survives until history is back on.
+                if (!_globalSettings.IsFileHistoryEnabled.Value || x == (int)Settings.StartUp.Behavior)
+                {
+                    return;
+                }
+
+                Settings.StartUp.Behavior = (StartUpBehavior)x;
+                await SaveSettingsAsync().ConfigureAwait(false);
+            }, DebugHelper.LogError(nameof(SettingsViewModel), nameof(SubscriptionSettingsUpdate)))
+            .AddTo(ref _disposables);
+
         Observable.EveryValueChanged(this, x => x.DeletionIndex.CurrentValue)
              .SubscribeAwait(async (x, _) => {
                  IsNavigatingBackwardsWhenDeleting.Value = x == 1;

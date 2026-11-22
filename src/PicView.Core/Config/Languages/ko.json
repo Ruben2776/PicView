@@ -304,6 +304,7 @@
   "OpenFileHistory": "파일 기록 열기",
   "OpenInSameWindow": "동일한 창에서 파일 열기",
   "OpenLastFile": "마지막 파일 열기",
+  "ContinueWhereYouLeftOff": "Continue where you left off",
   "OpenWith": "다음으로 열기...",
   "OptimizeImage": "이미지 최적화",
   "Orientation": "방향",

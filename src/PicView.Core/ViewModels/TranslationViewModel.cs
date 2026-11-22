@@ -246,6 +246,7 @@ public class TranslationViewModel
         OpenFileHistory.Value = t.OpenFileHistory;
         OpenInSameWindow.Value = t.OpenInSameWindow;
         OpenLastFile.Value = t.OpenLastFile;
+        ContinueWhereYouLeftOff.Value = t.ContinueWhereYouLeftOff;
         OpenWith.Value = t.OpenWith;
         OptimizeImage.Value = t.OptimizeImage;
         Orientation.Value = t.Orientation;
@@ -659,6 +660,7 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> OpenFileHistory { get; } = new();
     public BindableReactiveProperty<string?> OpenInSameWindow { get; } = new();
     public BindableReactiveProperty<string?> OpenLastFile { get; } = new();
+    public BindableReactiveProperty<string?> ContinueWhereYouLeftOff { get; } = new();
     public BindableReactiveProperty<string?> OpenWith { get; } = new();
     public BindableReactiveProperty<string?> OptimizeImage { get; } = new();
     public BindableReactiveProperty<string?> Orientation { get; } = new();

@@ -304,6 +304,7 @@
   "OpenFileHistory": "ファイル履歴を開く。",
   "OpenInSameWindow": "同じウィンドウへファイルを開く",
   "OpenLastFile": "最後に使ったファイルを開く",
+  "ContinueWhereYouLeftOff": "Continue where you left off",
   "OpenWith": "アプリで開く...",
   "OptimizeImage": "画像の最適化",
   "Orientation": "画像の向き",

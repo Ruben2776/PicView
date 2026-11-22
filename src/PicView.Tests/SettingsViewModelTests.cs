@@ -86,16 +86,108 @@ public class SettingsViewModelTests
     private static GlobalSettingsViewModel NewSettings() => StartedSettings.New();
 
     [Fact]
+    public void StartUpIndex_StoredContinueSession_IsKeptOnSubscribe()
+    {
+        Settings.Navigation.IsFileHistoryEnabled = true;
+        Settings.StartUp.Behavior = StartUpBehavior.ContinueSession;
+
+        using var vm = Started(NewSettings());
+
+        Assert.Equal(2, vm.StartUpIndex.Value);
+        Assert.Equal(StartUpBehavior.ContinueSession, Settings.StartUp.Behavior);
+    }
+
+    [Fact]
+    public void StartUpIndex_HistoryOff_ShowsNone_AndKeepsStoredBehavior()
+    {
+        Settings.Navigation.IsFileHistoryEnabled = true;
+        Settings.StartUp.Behavior = StartUpBehavior.ContinueSession;
+        var settings = NewSettings();
+        using var vm = Started(settings);
+
+        settings.IsFileHistoryEnabled.Value = false;
+
+        Assert.Equal(0, vm.StartUpIndex.Value);
+        Assert.Equal(StartUpBehavior.ContinueSession, Settings.StartUp.Behavior);
+    }
+
+    [Fact]
+    public void StartUpIndex_HistoryOff_ChangeWritesNothing()
+    {
+        Settings.Navigation.IsFileHistoryEnabled = true;
+        Settings.StartUp.Behavior = StartUpBehavior.OpenLastFile;
+        var settings = NewSettings();
+        using var vm = Started(settings);
+        settings.IsFileHistoryEnabled.Value = false;
+
+        vm.StartUpIndex.Value = 2;
+
+        Assert.Equal(StartUpBehavior.OpenLastFile, Settings.StartUp.Behavior);
+    }
+
+    [Fact]
+    public void StartUpIndex_HistoryBackOn_ShowsStoredBehavior()
+    {
+        Settings.Navigation.IsFileHistoryEnabled = true;
+        Settings.StartUp.Behavior = StartUpBehavior.ContinueSession;
+        var settings = NewSettings();
+        using var vm = Started(settings);
+        settings.IsFileHistoryEnabled.Value = false;
+
+        settings.IsFileHistoryEnabled.Value = true;
+
+        Assert.Equal(2, vm.StartUpIndex.Value);
+        Assert.Equal(StartUpBehavior.ContinueSession, Settings.StartUp.Behavior);
+    }
+
+    [Fact]
+    public void StartUpIndex_Set2_WritesContinueSession()
+    {
+        Settings.Navigation.IsFileHistoryEnabled = true;
+        Settings.StartUp.Behavior = StartUpBehavior.None;
+        using var vm = Started(NewSettings());
+
+        vm.StartUpIndex.Value = 2;
+
+        Assert.Equal(StartUpBehavior.ContinueSession, Settings.StartUp.Behavior);
+    }
+
+    [Fact]
     public void ToggleFadeButtons_WritesThePublishedSetting()
     {
         var settings = NewSettings();
-        using var vm = new SettingsViewModel(new TranslationViewModel(), settings);
+        using var vm = Started(settings);
         var before = settings.ShowFadeButtons.Value;
 
         vm.ToggleFadeButtonsCommand.Execute(Unit.Default);
 
         Assert.Equal(!before, settings.ShowFadeButtons.Value);
         Assert.Equal(!before, Settings.UIProperties.ShowAltInterfaceButtons);
+    }
+
+    private static SettingsViewModel Started(GlobalSettingsViewModel settings)
+    {
+        var vm = new SettingsViewModel(new TranslationViewModel(), settings);
+        vm.Initialize(new NoThemeService(), new NoLanguageService(), new NoImageSettingsService());
+        return vm;
+    }
+
+    private sealed class NoThemeService : PicView.Core.ISettings.IThemeService
+    {
+        public void SetTheme(int themeIndex) { }
+        public void SetColorTheme(int colorIndex) { }
+        public void SetBackground(int backgroundIndex) { }
+    }
+
+    private sealed class NoLanguageService : ILanguageService
+    {
+        public ValueTask UpdateLanguageAsync(string languageCode) => ValueTask.CompletedTask;
+        public IEnumerable<(string Code, string DisplayName)> GetAvailableLanguages() => [];
+    }
+
+    private sealed class NoImageSettingsService : PicView.Core.ISettings.IImageSettingsService
+    {
+        public void TriggerScalingModeUpdate(bool nearestNeighbor) { }
     }
 
     // A language where every text is its key and a suffix, so a test can tell which language a text is in.
