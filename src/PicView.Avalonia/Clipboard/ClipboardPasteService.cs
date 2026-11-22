@@ -48,7 +48,7 @@ public class ClipboardPasteService(
                     file.Dispose();
                 }
 
-                pasted = await PasteFilesAsync(paths, vm).ConfigureAwait(false);
+                pasted = await PasteFilesAsync(paths, vm, tab).ConfigureAwait(false);
                 return pasted;
             }
 
@@ -56,7 +56,7 @@ public class ClipboardPasteService(
             var text = await clipboard.TryGetTextAsync().ConfigureAwait(false);
             if (!string.IsNullOrWhiteSpace(text))
             {
-                if (await PasteTextAsync(text, vm).ConfigureAwait(false))
+                if (await PasteTextAsync(text, vm, tab).ConfigureAwait(false))
                 {
                     pasted = true;
                     return true;
@@ -64,7 +64,7 @@ public class ClipboardPasteService(
             }
 
             // 3. Try to paste image data
-            pasted = await PasteImageAsync(vm).ConfigureAwait(false);
+            pasted = await PasteImageAsync(vm, tab).ConfigureAwait(false);
             return pasted;
         }
         catch (Exception ex)
@@ -99,7 +99,8 @@ public class ClipboardPasteService(
         return await Dispatcher.UIThread.InvokeAsync(() => OpeningTarget.PrepareNewTab(tabs, mode));
     }
 
-    public async ValueTask<bool> PasteFilesAsync(IReadOnlyList<string> filePaths, MainWindowViewModel vm)
+    public async ValueTask<bool> PasteFilesAsync(IReadOnlyList<string> filePaths, MainWindowViewModel vm,
+        TabViewModel? tab = null)
     {
         if (filePaths.Count is 0 || mainWindow is null)
         {
@@ -114,11 +115,12 @@ public class ClipboardPasteService(
 
         var firstItem = filePaths[0];
 
-        var result = await SourceOpener.OpenAsync(mainWindow, activeCore, firstItem).ConfigureAwait(false);
+        var target = tab ?? vm.WindowTabs.ActiveTab.CurrentValue;
+        var result = await SourceOpener.OpenAsync(mainWindow, activeCore, firstItem, tab: target).ConfigureAwait(false);
         // Only a failed load leaves the tab showing nothing; one a newer load overtook shows what that loads
         var shown = result.Outcome is not LoadOutcome.Failed;
 
-        if (vm.WindowTabs.ActiveTab.CurrentValue.Gallery.IsDocked.Value)
+        if (target.Gallery.IsDocked.Value)
         {
             return shown;
         }
@@ -126,26 +128,26 @@ public class ClipboardPasteService(
         // Open consecutive files in new tabs
         foreach (var path in filePaths.Skip(1))
         {
-            var tab = vm.WindowTabs.CreateTab();
-            _ = Task.Run(() => SourceOpener.OpenAsync(mainWindow, activeCore, path, tab: tab).AsTask());
+            var other = vm.WindowTabs.CreateTab();
+            _ = Task.Run(() => SourceOpener.OpenAsync(mainWindow, activeCore, path, tab: other).AsTask());
         }
 
         return shown;
     }
 
-    public async ValueTask<bool> PasteTextAsync(string text, MainWindowViewModel vm)
+    public async ValueTask<bool> PasteTextAsync(string text, MainWindowViewModel vm, TabViewModel? tab = null)
     {
         if (string.IsNullOrWhiteSpace(text) || mainWindow == null)
         {
             return false;
         }
 
-        var tab = vm.WindowTabs.ActiveTab.CurrentValue;
+        tab ??= vm.WindowTabs.ActiveTab.CurrentValue;
 
         if (Base64Decoder.IsBase64String(text, out var base64))
         {
-            await UpdateImage.SetSingeBase64ImageAsync(base64, vm, tab.GetTabCancellation().Token).ConfigureAwait(false);
-            return true;
+            return await UpdateImage.SetSingeBase64ImageAsync(base64, vm, tab.GetTabCancellation().Token, tab)
+                .ConfigureAwait(false);
         }
 
         if (await PasteSvgCodeAsync(text, vm, tab).ConfigureAwait(false))
@@ -159,7 +161,9 @@ public class ClipboardPasteService(
             return false;
         }
 
-        return (await SourceOpener.OpenAsync(mainWindow, activeCore, text).ConfigureAwait(false)).IsLoaded;
+        // Only a failed load, as a failed download, shows nothing; one a newer load overtook shows what that loads
+        return (await SourceOpener.OpenAsync(mainWindow, activeCore, text, tab: tab).ConfigureAwait(false)).Outcome
+            is not LoadOutcome.Failed;
     }
 
     /// <summary>
@@ -213,7 +217,7 @@ public class ClipboardPasteService(
         return endIndex < 0 ? code : code[(endIndex + end.Length)..].TrimStart();
     }
 
-    public async ValueTask<bool> PasteImageAsync(MainWindowViewModel vm)
+    public async ValueTask<bool> PasteImageAsync(MainWindowViewModel vm, TabViewModel? tab = null)
     {
         if (clipboard is null || mainWindow is null)
         {
@@ -228,7 +232,8 @@ public class ClipboardPasteService(
                 return false;
             }
 
-            UpdateImage.SetSingleImage(vm, bitmap, SingleImageType.Clipboard, TranslationManager.Translation?.ClipboardImage);
+            UpdateImage.SetSingleImage(vm, bitmap, SingleImageType.Clipboard, TranslationManager.Translation?.ClipboardImage,
+                tab);
             return true;
         }
         catch (Exception ex)

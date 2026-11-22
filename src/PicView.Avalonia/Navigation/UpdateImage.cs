@@ -42,7 +42,9 @@ public static class UpdateImage
         }
     }
 
-    public static void SetSingleImage(MainWindowViewModel vm, Bitmap image, SingleImageType type, string name)
+    /// <param name="tab">The tab to show it in; the active one when null.</param>
+    public static void SetSingleImage(MainWindowViewModel vm, Bitmap image, SingleImageType type, string name,
+        TabViewModel? tab = null)
     {
         // Its own model, so the previous file's cached model keeps its own size
         SetSingleImage(vm, new ImageModel
@@ -51,7 +53,7 @@ public static class UpdateImage
             PixelWidth = (uint)image.PixelSize.Width,
             PixelHeight = (uint)image.PixelSize.Height,
             ImageType = ImageType.Bitmap
-        }, type, name);
+        }, type, name, tab);
     }
 
     /// <summary>
@@ -77,17 +79,21 @@ public static class UpdateImage
         tabViewModel.DisposeImageIterator(); // SourceOpener creates a new one when browsing files again
     }
 
-    public static async ValueTask SetSingeBase64ImageAsync(string base64, MainWindowViewModel vm, CancellationToken ct)
+    /// <param name="tab">The tab to show it in; the active one when null.</param>
+    /// <returns>Whether it shows: false when the text decodes to no image, or the decoding was cancelled.</returns>
+    public static async ValueTask<bool> SetSingeBase64ImageAsync(string base64, MainWindowViewModel vm,
+        CancellationToken ct, TabViewModel? tab = null)
     {
         var base64Model =
             await GetImageModel.GetBase64ImageModelAsync(base64, ct)
                 .ConfigureAwait(false);
 
-        if (base64Model is null)
+        if (base64Model?.Image is not Bitmap bitmap)
         {
-            return;
+            return false;
         }
 
-        SetSingleImage(vm, base64Model.Image as Bitmap, SingleImageType.Base64, TranslationManager.Translation.Base64Image);
+        SetSingleImage(vm, bitmap, SingleImageType.Base64, TranslationManager.Translation.Base64Image, tab);
+        return true;
     }
 }

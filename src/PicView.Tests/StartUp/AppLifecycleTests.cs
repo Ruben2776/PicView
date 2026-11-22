@@ -2989,6 +2989,62 @@ public class AppLifecycleTests : IAsyncDisposable
     }
 
     [AvaloniaFact]
+    public async Task Paste_NewTab_InvalidBase64_ClosesCreatedTab()
+    {
+        Settings.UIProperties.OpeningMode = OpeningMode.NewTab;
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var window = app.MainWindows.Open[0];
+        var vm = ViewModelOf(window);
+        var tabs = vm.WindowTabs;
+        var browsing = tabs.ActiveTab.CurrentValue;
+        var viewed = await WriteImageAsync("viewed.jpg");
+        var service = new ClipboardPasteService(window.Clipboard, window, _core);
+        Application.Current!.DataContext = _core;
+        try
+        {
+            await SourceOpener.OpenAsync(window, _core, viewed);
+            // Base64, but of bytes that are no image
+            await window.Clipboard!.SetTextAsync("data:image/png;base64,AAAAAAAAAAAAAAAA");
+
+            var pasted = await service.PasteAsync(vm);
+            Dispatcher.UIThread.RunJobs();
+
+            Assert.False(pasted);
+            Assert.Same(browsing, Assert.Single(tabs.Tabs.Value));
+            Assert.Same(browsing, tabs.ActiveTab.CurrentValue);
+            Assert.Equal(viewed, browsing.Model?.FileInfo?.FullName);
+        }
+        finally
+        {
+            Application.Current.DataContext = null;
+        }
+    }
+
+    [AvaloniaFact]
+    public async Task PasteText_InvalidBase64_ReturnsFalseAndShowsNothing()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var window = app.MainWindows.Open[0];
+        var vm = ViewModelOf(window);
+        var tab = vm.WindowTabs.ActiveTab.CurrentValue;
+        var service = new ClipboardPasteService(clipboard: null, window, _core);
+        Application.Current!.DataContext = _core;
+        try
+        {
+            var pasted = await service.PasteTextAsync("data:image/png;base64,AAAAAAAAAAAAAAAA", vm);
+
+            Assert.False(pasted);
+            Assert.Equal(SingleImageType.None, tab.SingleImageType);
+        }
+        finally
+        {
+            Application.Current.DataContext = null;
+        }
+    }
+
+    [AvaloniaFact]
     public async Task Paste_NewTab_File_OpensInNewActiveTab()
     {
         Settings.UIProperties.OpeningMode = OpeningMode.NewTab;
