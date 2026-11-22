@@ -125,14 +125,10 @@ public class ClipboardPasteService(
             return shown;
         }
 
-        // The other files open in tabs after the last, as a drop's do, and load in the background, so the first file's
-        // tab stays the active one. Made on the UI thread, where its views are attached
-        var tabs = vm.WindowTabs;
-        foreach (var path in filePaths.Skip(1))
-        {
-            var other = await Dispatcher.UIThread.InvokeAsync(() => tabs.InsertTab(tabs.Tabs.Value.Count));
-            _ = Task.Run(() => SourceOpener.OpenAsync(mainWindow, activeCore, path, tab: other).AsTask());
-        }
+        // The other files open in the background, as a drop's do: in new tabs under New Tab, so the first file's tab
+        // stays the active one, and otherwise in new Main Windows
+        var others = filePaths.Skip(1).ToArray();
+        _ = Task.Run(() => OtherFilesOpener.OpenAsync(mainWindow, activeCore, others, Settings.UIProperties.OpeningMode));
 
         return shown;
     }

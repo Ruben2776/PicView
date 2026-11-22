@@ -57,8 +57,8 @@ public class OpeningTargetTests
 
     [Theory]
     [InlineData(OpeningMode.NewWindow, true)]
-    [InlineData(OpeningMode.SameWindow, false)]
+    [InlineData(OpeningMode.SameWindow, true)]
     [InlineData(OpeningMode.NewTab, false)]
-    public void OpensOthersInWindows_OnlyNewWindow(OpeningMode mode, bool expected) =>
+    public void OpensOthersInWindows_UnlessNewTab(OpeningMode mode, bool expected) =>
         Assert.Equal(expected, OpeningTarget.OpensOthersInWindows(mode));
 }

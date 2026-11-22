@@ -2287,11 +2287,10 @@ public class AppLifecycleTests : IAsyncDisposable
     }
 
     // The other files of a drop of several; the first opens before them as the mode says
-    [AvaloniaTheory]
-    [InlineData(OpeningMode.SameWindow)]
-    [InlineData(OpeningMode.NewTab)]
-    public async Task Drop_OtherFilesUnderSameWindowOrNewTab_OpenInBackgroundTabs(OpeningMode mode)
+    [AvaloniaFact]
+    public async Task Drop_OtherFilesUnderNewTab_OpenInBackgroundTabs()
     {
+        const OpeningMode mode = OpeningMode.NewTab;
         Settings.UIProperties.OpeningMode = mode;
         var app = CreateApp();
         await app.StartAsync(settingsExists: true, []);
@@ -2316,17 +2315,19 @@ public class AppLifecycleTests : IAsyncDisposable
         Assert.Equal(b, tabs.Tabs.Value[2].Model?.FileInfo?.FullName);
     }
 
-    [AvaloniaFact]
-    public async Task Drop_OtherFilesUnderNewWindow_OpenInNewMainWindows()
+    [AvaloniaTheory]
+    [InlineData(OpeningMode.NewWindow)]
+    [InlineData(OpeningMode.SameWindow)]
+    public async Task Drop_OtherFilesUnderNewWindowOrSameWindow_OpenInNewMainWindows(OpeningMode mode)
     {
-        Settings.UIProperties.OpeningMode = OpeningMode.NewWindow;
+        Settings.UIProperties.OpeningMode = mode;
         var app = CreateApp();
         await app.StartAsync(settingsExists: true, []);
         var window = app.MainWindows.Open[0];
         var a = await WriteImageAsync("a.jpg");
         var items = new[] { await window.StorageProvider.TryGetFileFromPathAsync(new Uri(a)) };
 
-        await DragAndDropManager.HandleAdditionalFiles(items!, window, _core, OpeningMode.NewWindow);
+        await DragAndDropManager.HandleAdditionalFiles(items!, window, _core, mode);
         await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Background);
 
         Assert.Equal(2, app.MainWindows.Open.Count);
@@ -3122,8 +3123,9 @@ public class AppLifecycleTests : IAsyncDisposable
     }
 
     [AvaloniaFact]
-    public async Task Paste_SeveralFiles_FirstStaysActive()
+    public async Task Paste_SeveralFilesUnderNewTab_FirstStaysActive_OthersInTabs()
     {
+        Settings.UIProperties.OpeningMode = OpeningMode.NewTab;
         var app = CreateApp();
         await app.StartAsync(settingsExists: true, []);
         var window = app.MainWindows.Open[0];
@@ -3143,6 +3145,34 @@ public class AppLifecycleTests : IAsyncDisposable
         Assert.Same(first, tabs.ActiveTab.CurrentValue);
         Assert.Same(first, tabs.Tabs.Value[0]);
         Assert.Equal([a, b, c], tabs.Tabs.Value.Select(static tab => tab.Model?.FileInfo?.FullName));
+    }
+
+    // Pasting several files under New Window or Same Window opens each further file in a Main Window of its own
+    [AvaloniaTheory]
+    [InlineData(OpeningMode.NewWindow)]
+    [InlineData(OpeningMode.SameWindow)]
+    public async Task Paste_SeveralFilesUnderNewWindowOrSameWindow_OpensOthersInNewMainWindows(OpeningMode mode)
+    {
+        Settings.UIProperties.OpeningMode = mode;
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var window = app.MainWindows.Open[0];
+        var vm = ViewModelOf(window);
+        var tabs = vm.WindowTabs;
+        var first = tabs.ActiveTab.CurrentValue;
+        var a = await WriteImageAsync("a.jpg");
+        var b = await WriteImageAsync("b.jpg");
+        var c = await WriteImageAsync("c.jpg");
+        var service = new ClipboardPasteService(window.Clipboard, window, _core);
+
+        var pasted = await service.PasteFilesAsync([a, b, c], vm);
+        await WaitUntilAsync(() => app.MainWindows.Open.Count == 3 &&
+                                   app.MainWindows.Open.Skip(1).All(w => ShownFileOf(w) is not null));
+
+        Assert.True(pasted);
+        Assert.Same(first, Assert.Single(tabs.Tabs.Value));
+        Assert.Equal(a, first.Model?.FileInfo?.FullName);
+        Assert.Equal([b, c], app.MainWindows.Open.Skip(1).Select(ShownFileOf));
     }
 
     [AvaloniaFact]

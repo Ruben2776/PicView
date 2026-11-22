@@ -25,7 +25,8 @@ public static class OpeningTarget
     }
 
     /// <summary>
-    /// Whether the other files of a drop of several open in new Main Windows rather than in new tabs.
+    /// Whether the other files of a paste or a drop of several open in new Main Windows rather than in new tabs: they do
+    /// unless the mode is New Tab.
     /// </summary>
-    public static bool OpensOthersInWindows(OpeningMode mode) => mode == OpeningMode.NewWindow;
+    public static bool OpensOthersInWindows(OpeningMode mode) => mode != OpeningMode.NewTab;
 }

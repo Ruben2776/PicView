@@ -224,7 +224,7 @@ A Setting that belongs to PicView as a whole: every Setting that is not a Window
 _Avoid_: Global setting, shared setting
 
 **Opening Mode**:
-The App Setting that decides where a Source opens when it is pasted, dropped, or handed to the running PicView, as by double-clicking a file: New Window, Same Window or New Tab. New Tab opens it in a new tab at the end of the strip, which becomes active, or in the active tab when that is a Fresh Tab. Same Window and New Window replace what the active tab shows, except that a hand-over in New Window opens a new Main Window. Dropping several files opens the first as the mode says and makes it active; each other file opens in the background, in a new tab under New Tab and Same Window, in a new Main Window under New Window. Opening from inside PicView, as from File History, Favorites or the open dialog, always replaces what the active tab shows.
+The App Setting that decides where a Source opens when it is pasted, dropped, or handed to the running PicView, as by double-clicking a file: New Window, Same Window or New Tab. New Tab opens it in a new tab at the end of the strip, which becomes active, or in the active tab when that is a Fresh Tab. Same Window and New Window replace what the active tab shows, except that a hand-over in New Window opens a new Main Window. Pasting or dropping several files opens the first as the mode says and makes it active; each other file opens in the background, in a new tab under New Tab, and in a new Main Window under Same Window and New Window. Opening from inside PicView, as from File History, Favorites or the open dialog, always replaces what the active tab shows.
 _Avoid_: Open in same window, open in new tab (for the setting)
 
 ## Sizing

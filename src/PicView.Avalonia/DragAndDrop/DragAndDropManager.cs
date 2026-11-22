@@ -142,54 +142,12 @@ public static class DragAndDropManager
         await Dispatcher.UIThread.InvokeAsync(() => tabs.CloseTab(created));
     }
 
-    // Each further file opens in the background: under New Window in a new Main Window of this PicView, opened from
-    // the one they were dropped on, and otherwise in a new tab at the end of that one, leaving the active tab active
-    internal static async Task HandleAdditionalFiles(IEnumerable<IStorageItem> additionalFiles, MainWindow mainWindow,
+    // Each further supported file opens in the background, in a new tab or a new Main Window as the mode says
+    internal static Task HandleAdditionalFiles(IEnumerable<IStorageItem> additionalFiles, MainWindow mainWindow,
         CoreViewModel core, OpeningMode mode)
     {
-        var inWindows = OpeningTarget.OpensOthersInWindows(mode);
-        var lifecycle = mainWindow.Lifecycle;
-        if (inWindows && lifecycle is null)
-        {
-            return;
-        }
-
-        var tabs = mainWindow.ViewModel!.WindowTabs;
-        var opening = new List<Task>();
-        foreach (var file in additionalFiles)
-        {
-            var filepath = file.Path.LocalPath;
-            if (!filepath.IsSupported())
-            {
-                continue;
-            }
-
-            try
-            {
-                if (inWindows)
-                {
-                    await lifecycle!.OpenNewAsync(mainWindow, filepath).ConfigureAwait(false);
-                    continue;
-                }
-
-                // Made on the UI thread, where its views are attached
-                var tab = await Dispatcher.UIThread.InvokeAsync(() => tabs.InsertTab(tabs.Tabs.Value.Count));
-                opening.Add(SourceOpener.OpenAsync(mainWindow, core, filepath, tab: tab).AsTask());
-            }
-            catch (Exception e)
-            {
-                DebugHelper.LogDebug(nameof(DragAndDropManager), nameof(HandleAdditionalFiles), e);
-            }
-        }
-
-        try
-        {
-            await Task.WhenAll(opening).ConfigureAwait(false);
-        }
-        catch (Exception e)
-        {
-            DebugHelper.LogDebug(nameof(DragAndDropManager), nameof(HandleAdditionalFiles), e);
-        }
+        var paths = additionalFiles.Select(static file => file.Path.LocalPath).Where(static path => path.IsSupported());
+        return OtherFilesOpener.OpenAsync(mainWindow, core, paths, mode);
     }
 
     private static async Task HandleDropFromUrl(DragEventArgs e, MainWindow mainWindow)
