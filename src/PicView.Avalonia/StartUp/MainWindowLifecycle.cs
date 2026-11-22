@@ -302,7 +302,8 @@ public sealed class MainWindowLifecycle
     }
 
     /// <summary>
-    /// Remembers what the window shows, for the next App Start to open when it opens the last file.
+    /// Remembers what the window shows, for the next App Start to open when it opens the last file, and what its tabs
+    /// show, for it to open when it continues the last session.
     /// </summary>
     internal static void RememberFile(MainWindow window)
     {
@@ -312,6 +313,7 @@ public sealed class MainWindowLifecycle
         }
 
         LastFile.Remember(vm.WindowTabs.ActiveTab.CurrentValue);
+        FileHistoryManager.RecordSession(LastSession.Of(vm.WindowTabs.Tabs.Value, vm.WindowTabs.ActiveTab.CurrentValue));
     }
 
     private MainWindow Create(TabViewModel? firstTab = null, bool setMainWindow = true, bool opensSource = false, WindowSettings? windowSettings = null)
