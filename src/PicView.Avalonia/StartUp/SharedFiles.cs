@@ -30,7 +30,8 @@ internal sealed class SharedFiles(IPlatformSpecificService? platform) : ISharedF
         Task.WhenAll(
             Task.Run(() =>
             {
-                FileHistoryManager.Initialize();
+                // App Start may have loaded it already; a second load would drop what was added since
+                FileHistoryManager.EnsureInitialized();
                 FavoritesManager.Initialize();
             }),
             Task.Run(() => Keymaps.Load(platform)));

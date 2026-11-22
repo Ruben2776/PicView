@@ -15,6 +15,7 @@ using PicView.Avalonia.Views.UC;
 using PicView.Avalonia.WindowBehavior;
 using PicView.Core.FileHistory;
 using PicView.Core.Config;
+using PicView.Core.DebugTools;
 using PicView.Core.Navigation;
 using PicView.Core.ViewModels;
 using R3;
@@ -158,16 +159,18 @@ public sealed class MainWindowLifecycle
     /// <summary>
     /// Opens the first Main Window at App Start, following the order in <see cref="QuickLoad"/>.
     /// </summary>
-    /// <param name="source">What to open, or null for the start-up menu or the last file.</param>
-    /// <param name="launchFileArrived">When given, a launch file may still arrive; the start-up menu or last file is
+    /// <param name="source">What to open, or null for what the start-up behavior opens: the start-up menu, the Last
+    /// File or the Last Session.</param>
+    /// <param name="launchFileArrived">When given, a launch file may still arrive; what the start-up behavior opens is
     /// shown only if none has by the time the window is idle.</param>
     /// <returns>The window, and a task that completes once it is set up.</returns>
     internal (MainWindow Window, Task SetUp) OpenAtAppStart(string? source, Func<bool>? launchFileArrived)
     {
+        // Once, after App Start has loaded the file history it reads
+        var plan = source is null ? DecideStartUp() : default;
         // A window that opens a source says Loading from the start, so no menu is made for it; QuickLoad replaces the
         // ticket with its own
-        var opensSource = source is not null || (launchFileArrived is null && Settings.StartUp.Behavior == StartUpBehavior.OpenLastFile &&
-                                                 !string.IsNullOrWhiteSpace(FileHistoryManager.LastFile));
+        var opensSource = source is not null || (launchFileArrived is null && !plan.ShowsMenu);
         var window = Create(null, false, opensSource);
         WindowFunctions.HandleWindowScalingMode(window, isAppStart: true,
             adjustPos: !ViewModelOf(window).WindowSettings.StartingMode.AutoFit);
@@ -177,7 +180,7 @@ public sealed class MainWindowLifecycle
         }
         else if (launchFileArrived is null)
         {
-            ShowStartUpMenuOrLastFile(window);
+            ShowStartUpMenuOrLastFile(window, plan);
         }
         else
         {
@@ -185,7 +188,7 @@ public sealed class MainWindowLifecycle
             {
                 if (!launchFileArrived())
                 {
-                    ShowStartUpMenuOrLastFile(window);
+                    ShowStartUpMenuOrLastFile(window, plan);
                 }
             }, DispatcherPriority.Background);
         }
@@ -205,11 +208,27 @@ public sealed class MainWindowLifecycle
             new OpenOptions(IsStartup: true, ContinueFromLeftOff: continueFromLeftOff)).AsTask());
     }
 
-    private void ShowStartUpMenuOrLastFile(MainWindow window)
+    private static StartUpPlan DecideStartUp() =>
+        StartUpPlan.Decide(Settings.StartUp.Behavior, Settings.Navigation.IsFileHistoryEnabled,
+            FileHistoryManager.LastFile, FileHistoryManager.LastSession, File.Exists);
+
+    /// <summary>
+    /// Shows the start-up menu, or opens what <paramref name="plan"/> opens: its active Source in the startup order,
+    /// continuing from where the user left off, then the other tabs of the Last Session.
+    /// </summary>
+    private void ShowStartUpMenuOrLastFile(MainWindow window, StartUpPlan plan)
     {
-        if (Settings.StartUp.Behavior == StartUpBehavior.OpenLastFile && !string.IsNullOrWhiteSpace(FileHistoryManager.LastFile))
+        if (!plan.ShowsMenu)
         {
-            OpenStartSource(window, FileHistoryManager.LastFile, continueFromLeftOff: true);
+            _ = Task.Run(async () =>
+            {
+                await SourceOpener.OpenAsync(window, _core, plan.ActiveSource!,
+                    new OpenOptions(IsStartup: true, ContinueFromLeftOff: true)).ConfigureAwait(false);
+                if (plan.HasOtherTabs)
+                {
+                    await RestoreOtherTabsAsync(window, plan).ConfigureAwait(false);
+                }
+            });
             return;
         }
 
@@ -227,6 +246,42 @@ public sealed class MainWindowLifecycle
                 desktop.MainWindow = window;
             }
         }, DispatcherPriority.Send);
+    }
+
+    /// <summary>
+    /// Opens the Last Session's other tabs around the active one, in order, once it shows; the window is shown and
+    /// sized by then, so each loads through Core (ADR-0005). Only the active tab lists from the start-up directory.
+    /// </summary>
+    private async Task RestoreOtherTabsAsync(MainWindow window, StartUpPlan plan)
+    {
+        for (var i = 0; i < plan.Sources.Count; i++)
+        {
+            if (i == plan.ActiveIndex)
+            {
+                continue;
+            }
+
+            var index = i;
+            try
+            {
+                // The window's view model is read on the UI thread too, as its DataContext lives there. A window
+                // closed meanwhile gets no more tabs
+                var tab = await _dispatcher.InvokeAsync(() =>
+                    MayBecomeActive(window) ? ViewModelOf(window).WindowTabs.InsertTab(index) : null);
+                if (tab is null)
+                {
+                    return;
+                }
+
+                // Off the UI thread, as every Source opens; the insert may have resumed on it
+                await Task.Run(() => SourceOpener.OpenAsync(window, _core, plan.Sources[index], tab: tab).AsTask())
+                    .ConfigureAwait(false);
+            }
+            catch (Exception e)
+            {
+                DebugHelper.LogDebug(nameof(MainWindowLifecycle), nameof(RestoreOtherTabsAsync), e);
+            }
+        }
     }
 
     /// <summary>

@@ -159,6 +159,18 @@ public class TabOverviewViewModel
     }
 
     /// <summary>
+    /// Creates a tab at <paramref name="index"/>, or after the others when it is past them, without selecting it. Its
+    /// Load makes its iterator when it first opens a source.
+    /// </summary>
+    public TabViewModel InsertTab(int index)
+    {
+        var tab = new TabViewModel(_parentVm, Core?.Services);
+        Tabs.Value.Insert(Math.Clamp(index, 0, Tabs.Value.Count), tab);
+        AttachViews(tab);
+        return tab;
+    }
+
+    /// <summary>
     /// Creates a tab and selects it. Its Load makes its iterator when it first opens a source.
     /// </summary>
     public TabViewModel CreateTab()

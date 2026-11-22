@@ -520,6 +520,88 @@ public class AppLifecycleTests : IAsyncDisposable
     }
 
     [AvaloniaFact]
+    public async Task AppStart_ContinueSession_OpensActiveFirst_ThenOthersInOrder()
+    {
+        Settings.StartUp.Behavior = StartUpBehavior.ContinueSession;
+        _provider.GivesBars = true;
+        var a = WritePng("a.png");
+        var b = WritePng("b.png");
+        var c = WritePng("c.png");
+        RecordLastSession([a, b, c], activeIndex: 1);
+        var app = CreateApp();
+        string? activeWhenOthersBegan = null;
+        _provider.OnCreated = window =>
+        {
+            var created = ViewModelOf(window).WindowTabs;
+            created.Tabs.Value.CollectionChanged += (_, _) =>
+                activeWhenOthersBegan ??= created.ActiveTab.Value.ViewHistory.Current?.HistoryPath;
+        };
+
+        await app.StartAsync(settingsExists: true, []);
+        var window = app.MainWindows.Open[0];
+        var tabs = ViewModelOf(window).WindowTabs;
+        var opensWith = tabs.ActiveTab.CurrentValue;
+        // Only the startup order shows a window that App Start has not shown
+        await WaitUntilOpenedAsync(window);
+        await WaitUntilAsync(() => tabs.Tabs.Value.Count == 3 &&
+                                   tabs.Tabs.Value.All(static tab => tab.ViewHistory.Current is not null));
+
+        Assert.Equal(b, activeWhenOthersBegan);
+        Assert.Equal([a, b, c], tabs.Tabs.Value.Select(static tab => tab.ViewHistory.Current?.HistoryPath));
+        Assert.Same(opensWith, tabs.Tabs.Value[1]);
+        Assert.Same(opensWith, tabs.ActiveTab.CurrentValue);
+    }
+
+    [AvaloniaFact]
+    public async Task AppStart_ContinueSession_HistoryOff_ShowsStartUpMenu()
+    {
+        Settings.StartUp.Behavior = StartUpBehavior.ContinueSession;
+        _provider.GivesBars = true;
+        var a = WritePng("a.png");
+        var b = WritePng("b.png");
+        RecordLastSession([a, b], activeIndex: 0);
+        Settings.Navigation.IsFileHistoryEnabled = false;
+        var app = CreateApp();
+
+        await app.StartAsync(settingsExists: true, []);
+        var window = app.MainWindows.Open[0];
+        await WaitUntilOpenedAsync(window);
+
+        Assert.IsType<StartUpMenu>(ViewOf(window));
+        Assert.Single(ViewModelOf(window).WindowTabs.Tabs.Value);
+    }
+
+    [AvaloniaFact]
+    public async Task AppStart_WithSource_IgnoresContinueSession()
+    {
+        Settings.StartUp.Behavior = StartUpBehavior.ContinueSession;
+        _provider.GivesBars = true;
+        var a = WritePng("a.png");
+        var b = WritePng("b.png");
+        var x = WritePng("x.png");
+        RecordLastSession([a, b], activeIndex: 1);
+        var app = CreateApp();
+
+        await app.StartAsync(settingsExists: true, ["PicView", x]);
+        var window = app.MainWindows.Open[0];
+        var tabs = ViewModelOf(window).WindowTabs;
+        await WaitUntilOpenedAsync(window);
+        await WaitUntilAsync(() => tabs.ActiveTab.CurrentValue.ViewHistory.Current is not null);
+        // Time for a restore to begin, had one been started
+        await Task.Delay(EarlyEndWait, TestContext.Current.CancellationToken);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Equal(x, Assert.Single(tabs.Tabs.Value).ViewHistory.Current?.HistoryPath);
+    }
+
+    // The Last Session as the file history of the test folder holds it, loaded already, so App Start reads no other
+    private void RecordLastSession(List<string> sources, int activeIndex)
+    {
+        FileHistoryManager.Initialize(Path.Combine(_folder, "history.json"));
+        FileHistoryManager.RecordSession(new LastSession { Sources = sources, ActiveIndex = activeIndex });
+    }
+
+    [AvaloniaFact]
     public async Task AppStart_AutoFit_OpensCenteredOnItsScreen()
     {
         Settings.WindowProperties.AutoFit = true;

@@ -16,6 +16,7 @@ using PicView.Core.Config;
 using PicView.Core.DebugTools;
 using PicView.Core.FileAssociations;
 using PicView.Core.FileHandling;
+using PicView.Core.FileHistory;
 using PicView.Core.Navigation;
 using PicView.Core.ProcessHandling;
 using PicView.Core.Thumbnailing;
@@ -267,6 +268,12 @@ public sealed class AppLifecycle
         // Without a launch file to wait for, every one that arrives is a later launch
         _launchFileArrived = !launchFileMayFollow;
         ApplySharedSettings(settingsExists);
+        if (Settings.StartUp.Behavior != StartUpBehavior.None && Settings.Navigation.IsFileHistoryEnabled)
+        {
+            // What the start-up behavior opens is read from the file history, before the first window is made
+            FileHistoryManager.EnsureInitialized();
+        }
+
         var (window, settingUp) = MainWindows.OpenAtAppStart(source, launchFileMayFollow ? () => _launchFileArrived : null);
         _firstWindow = window;
         FollowOnceOpened(window);
