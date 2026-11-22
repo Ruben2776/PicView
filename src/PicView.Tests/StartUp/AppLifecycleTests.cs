@@ -572,6 +572,24 @@ public class AppLifecycleTests : IAsyncDisposable
     }
 
     [AvaloniaFact]
+    public async Task AppStart_OpenLastFile_HistoryOff_ShowsStartUpMenu()
+    {
+        Settings.StartUp.Behavior = StartUpBehavior.OpenLastFile;
+        var a = WritePng("a.png");
+        FileHistoryManager.Initialize(Path.Combine(_folder, "history.json"));
+        FileHistoryManager.LastFile = a;
+        Settings.Navigation.IsFileHistoryEnabled = false;
+        var app = CreateApp();
+
+        await app.StartAsync(settingsExists: true, []);
+        var window = app.MainWindows.Open[0];
+        await WaitUntilOpenedAsync(window);
+
+        Assert.IsType<StartUpMenu>(ViewOf(window));
+        Assert.Null(Assert.Single(ViewModelOf(window).WindowTabs.Tabs.Value).ViewHistory.Current);
+    }
+
+    [AvaloniaFact]
     public async Task AppStart_WithSource_IgnoresContinueSession()
     {
         Settings.StartUp.Behavior = StartUpBehavior.ContinueSession;

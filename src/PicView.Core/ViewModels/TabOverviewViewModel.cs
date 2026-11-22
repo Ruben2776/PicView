@@ -150,13 +150,7 @@ public class TabOverviewViewModel
         return tab;
     }
     
-    private TabViewModel CreateTabInternal()
-    {
-        var tab = new TabViewModel(_parentVm, Core?.Services);
-        Tabs.Value.Add(tab);
-        AttachViews(tab);
-        return tab;
-    }
+    private TabViewModel CreateTabInternal() => InsertTab(Tabs.Value.Count);
 
     /// <summary>
     /// Creates a tab at <paramref name="index"/>, or after the others when it is past them, without selecting it. Its

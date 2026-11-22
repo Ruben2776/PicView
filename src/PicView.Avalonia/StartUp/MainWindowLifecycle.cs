@@ -222,8 +222,17 @@ public sealed class MainWindowLifecycle
         {
             _ = Task.Run(async () =>
             {
-                await SourceOpener.OpenAsync(window, _core, plan.ActiveSource!,
-                    new OpenOptions(IsStartup: true, ContinueFromLeftOff: true)).ConfigureAwait(false);
+                try
+                {
+                    await SourceOpener.OpenAsync(window, _core, plan.ActiveSource!,
+                        new OpenOptions(IsStartup: true, ContinueFromLeftOff: true)).ConfigureAwait(false);
+                }
+                catch (Exception e)
+                {
+                    // The other tabs still restore
+                    DebugHelper.LogDebug(nameof(MainWindowLifecycle), nameof(ShowStartUpMenuOrLastFile), e);
+                }
+
                 if (plan.HasOtherTabs)
                 {
                     await RestoreOtherTabsAsync(window, plan).ConfigureAwait(false);
