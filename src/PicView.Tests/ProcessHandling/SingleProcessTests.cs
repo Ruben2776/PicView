@@ -1,3 +1,4 @@
+using PicView.Core.Config;
 using PicView.Core.ProcessHandling;
 
 namespace PicView.Tests.ProcessHandling;
@@ -74,22 +75,27 @@ public class SingleProcessTests : IDisposable
 
     [Theory]
     // App Shutdown has begun: the new PicView starts on its own, whatever else holds
-    [InlineData(true, false, true, true, HandOverResponse.Refuse)]
-    [InlineData(true, true, true, true, HandOverResponse.Refuse)]
-    [InlineData(true, false, false, false, HandOverResponse.Refuse)]
-    // Open in same window is off: always a new Main Window
-    [InlineData(false, false, true, true, HandOverResponse.OpenInNewMainWindow)]
-    [InlineData(false, false, false, true, HandOverResponse.OpenInNewMainWindow)]
-    // Open in same window is on
-    [InlineData(false, true, true, true, HandOverResponse.OpenInActiveMainWindow)]
-    [InlineData(false, true, false, true, HandOverResponse.ActivateActiveMainWindow)]
+    [InlineData(true, OpeningMode.NewWindow, true, true, HandOverResponse.Refuse)]
+    [InlineData(true, OpeningMode.SameWindow, true, true, HandOverResponse.Refuse)]
+    [InlineData(true, OpeningMode.NewTab, true, true, HandOverResponse.Refuse)]
+    [InlineData(true, OpeningMode.NewWindow, false, false, HandOverResponse.Refuse)]
+    // New Window: always a new Main Window
+    [InlineData(false, OpeningMode.NewWindow, true, true, HandOverResponse.OpenInNewMainWindow)]
+    [InlineData(false, OpeningMode.NewWindow, false, true, HandOverResponse.OpenInNewMainWindow)]
+    // Same Window
+    [InlineData(false, OpeningMode.SameWindow, true, true, HandOverResponse.OpenInActiveMainWindow)]
+    [InlineData(false, OpeningMode.SameWindow, false, true, HandOverResponse.ActivateActiveMainWindow)]
+    // New Tab
+    [InlineData(false, OpeningMode.NewTab, true, true, HandOverResponse.OpenInNewTab)]
+    [InlineData(false, OpeningMode.NewTab, false, true, HandOverResponse.ActivateActiveMainWindow)]
     // No Main Window is open, as while only Batch Resize is: there is none to open in or bring forward
-    [InlineData(false, true, true, false, HandOverResponse.OpenInNewMainWindow)]
-    [InlineData(false, true, false, false, HandOverResponse.OpenInNewMainWindow)]
-    [InlineData(false, false, true, false, HandOverResponse.OpenInNewMainWindow)]
-    public void Respond_FollowsShutdownThenTheSettingThenTheSource(bool isShuttingDown, bool openInSameWindow,
+    [InlineData(false, OpeningMode.SameWindow, true, false, HandOverResponse.OpenInNewMainWindow)]
+    [InlineData(false, OpeningMode.SameWindow, false, false, HandOverResponse.OpenInNewMainWindow)]
+    [InlineData(false, OpeningMode.NewWindow, true, false, HandOverResponse.OpenInNewMainWindow)]
+    [InlineData(false, OpeningMode.NewTab, true, false, HandOverResponse.OpenInNewMainWindow)]
+    public void Respond_FollowsShutdownThenTheOpeningModeThenTheSource(bool isShuttingDown, OpeningMode mode,
         bool hasSource, bool hasMainWindow, HandOverResponse expected) =>
-        Assert.Equal(expected, HandOverReceipt.Respond(isShuttingDown, openInSameWindow, hasSource, hasMainWindow));
+        Assert.Equal(expected, HandOverReceipt.Respond(isShuttingDown, mode, hasSource, hasMainWindow));
 
     [Theory]
     [InlineData(@"C:\pictures\a b\ø.jpg")]

@@ -1,4 +1,5 @@
 ﻿using Avalonia.Input.Platform;
+using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Navigation;
 using PicView.Core.DebugTools;
@@ -7,6 +8,7 @@ using PicView.Core.ImageDecoding;
 using PicView.Core.IPlatform;
 using PicView.Core.Localization;
 using PicView.Core.Models;
+using PicView.Core.Navigation;
 using PicView.Core.Svg;
 using PicView.Core.ViewModels;
 
@@ -27,6 +29,8 @@ public class ClipboardPasteService(
         }
 
         var tabs = vm.WindowTabs;
+        // Under New Tab the paste opens in a tab of its own, which everything below finds as the active one
+        var created = await PrepareNewTabAsync(tabs).ConfigureAwait(false);
         var tab = tabs.ActiveTab.CurrentValue;
         var ticket = tab.SetLoading();
 
@@ -74,8 +78,25 @@ public class ClipboardPasteService(
             {
                 // Nothing was shown, so the titles stop saying Loading
                 tab.EndLoading(ticket);
+                if (created is not null)
+                {
+                    // Nor is a tab left that was made for it
+                    await Dispatcher.UIThread.InvokeAsync(() => tabs.CloseTab(created));
+                }
             }
         }
+    }
+
+    // The tab is made on the UI thread, where its views are attached
+    private static async ValueTask<TabViewModel?> PrepareNewTabAsync(TabOverviewViewModel tabs)
+    {
+        var mode = Settings.UIProperties.OpeningMode;
+        if (Dispatcher.UIThread.CheckAccess())
+        {
+            return OpeningTarget.PrepareNewTab(tabs, mode);
+        }
+
+        return await Dispatcher.UIThread.InvokeAsync(() => OpeningTarget.PrepareNewTab(tabs, mode));
     }
 
     public async ValueTask<bool> PasteFilesAsync(IReadOnlyList<string> filePaths, MainWindowViewModel vm)
@@ -93,11 +114,13 @@ public class ClipboardPasteService(
 
         var firstItem = filePaths[0];
 
-        await SourceOpener.OpenAsync(mainWindow, activeCore, firstItem).ConfigureAwait(false);
+        var result = await SourceOpener.OpenAsync(mainWindow, activeCore, firstItem).ConfigureAwait(false);
+        // Only a failed load leaves the tab showing nothing; one a newer load overtook shows what that loads
+        var shown = result.Outcome is not LoadOutcome.Failed;
 
         if (vm.WindowTabs.ActiveTab.CurrentValue.Gallery.IsDocked.Value)
         {
-            return true;
+            return shown;
         }
 
         // Open consecutive files in new tabs
@@ -107,7 +130,7 @@ public class ClipboardPasteService(
             _ = Task.Run(() => SourceOpener.OpenAsync(mainWindow, activeCore, path, tab: tab).AsTask());
         }
 
-        return true;
+        return shown;
     }
 
     public async ValueTask<bool> PasteTextAsync(string text, MainWindowViewModel vm)

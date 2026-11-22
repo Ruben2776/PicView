@@ -12,6 +12,7 @@ using PicView.Avalonia.Views.UC;
 using PicView.Core.Config;
 using PicView.Core.DebugTools;
 using PicView.Core.FileHandling;
+using PicView.Core.Navigation;
 using PicView.Core.Sizing;
 using PicView.Core.Svg;
 using PicView.Core.ViewModels;
@@ -46,21 +47,36 @@ public static class DragAndDropManager
             return;
         }
         
-        // Handle opening additional files in new windows if needed
+        var path = firstFile.Path.LocalPath;
+        var isSupported = path.IsSupported();
+        var opensFirst = isSupported || Directory.Exists(path) || path.IsArchive();
+        var mode = Settings.UIProperties.OpeningMode;
+        var tabs = mainWindow.ViewModel!.WindowTabs;
+        // Under New Tab the first opens in a tab of its own, made before those of the other files so theirs follow it
+        var created = opensFirst ? OpeningTarget.PrepareNewTab(tabs, mode) : null;
+        var tab = created ?? tabs.ActiveTab.CurrentValue;
+
+        var core = await Dispatcher.UIThread.InvokeAsync(() => Application.Current.DataContext as CoreViewModel);
         if (files.Length > 1)
         {
-            _ = Task.Run(() => HandleAdditionalFiles(files.Skip(1), mainWindow));
+            _ = Task.Run(() => HandleAdditionalFiles(files.Skip(1), mainWindow, core, mode));
         }
-        
-        var path = firstFile.Path.LocalPath;
-        var core = await Dispatcher.UIThread.InvokeAsync(() => Application.Current.DataContext as CoreViewModel);
-        if (path.IsSupported())
+
+        if (!opensFirst)
         {
-            await LoadSupportedFile(mainWindow, path, core).ConfigureAwait(false);
+            return;
         }
-        else if (Directory.Exists(path) || path.IsArchive())
+
+        var shown = false;
+        try
         {
-            await SourceOpener.OpenAsync(mainWindow, core, path).ConfigureAwait(false);
+            shown = isSupported
+                ? await LoadSupportedFile(mainWindow, path, core, tab).ConfigureAwait(false)
+                : Shows(await SourceOpener.OpenAsync(mainWindow, core, path, tab: tab).ConfigureAwait(false));
+        }
+        finally
+        {
+            await CloseIfNothingShownAsync(tabs, created, shown).ConfigureAwait(false);
         }
     }
 
@@ -112,14 +128,34 @@ public static class DragAndDropManager
 
     #region Private Helpers
 
-    // Each further file opens in a new Main Window of this PicView, opened from the one they were dropped on
-    private static async Task HandleAdditionalFiles(IEnumerable<IStorageItem> additionalFiles, MainWindow mainWindow)
+    // Whether a load left the tab showing something: a newer load that took it over shows something too
+    private static bool Shows(LoadResult result) => result.Outcome is not LoadOutcome.Failed;
+
+    // A tab made for a drop that then showed nothing closes again
+    private static async ValueTask CloseIfNothingShownAsync(TabOverviewViewModel tabs, TabViewModel? created, bool shown)
     {
-        if (Settings.UIProperties.OpeningMode == OpeningMode.SameWindow || mainWindow.Lifecycle is not { } lifecycle)
+        if (created is null || shown)
         {
             return;
         }
 
+        await Dispatcher.UIThread.InvokeAsync(() => tabs.CloseTab(created));
+    }
+
+    // Each further file opens in the background: under New Window in a new Main Window of this PicView, opened from
+    // the one they were dropped on, and otherwise in a new tab at the end of that one, leaving the active tab active
+    internal static async Task HandleAdditionalFiles(IEnumerable<IStorageItem> additionalFiles, MainWindow mainWindow,
+        CoreViewModel core, OpeningMode mode)
+    {
+        var inWindows = OpeningTarget.OpensOthersInWindows(mode);
+        var lifecycle = mainWindow.Lifecycle;
+        if (inWindows && lifecycle is null)
+        {
+            return;
+        }
+
+        var tabs = mainWindow.ViewModel!.WindowTabs;
+        var opening = new List<Task>();
         foreach (var file in additionalFiles)
         {
             var filepath = file.Path.LocalPath;
@@ -130,12 +166,29 @@ public static class DragAndDropManager
 
             try
             {
-                await lifecycle.OpenNewAsync(mainWindow, filepath).ConfigureAwait(false);
+                if (inWindows)
+                {
+                    await lifecycle!.OpenNewAsync(mainWindow, filepath).ConfigureAwait(false);
+                    continue;
+                }
+
+                // Made on the UI thread, where its views are attached
+                var tab = await Dispatcher.UIThread.InvokeAsync(() => tabs.InsertTab(tabs.Tabs.Value.Count));
+                opening.Add(SourceOpener.OpenAsync(mainWindow, core, filepath, tab: tab).AsTask());
             }
             catch (Exception e)
             {
                 DebugHelper.LogDebug(nameof(DragAndDropManager), nameof(HandleAdditionalFiles), e);
             }
+        }
+
+        try
+        {
+            await Task.WhenAll(opening).ConfigureAwait(false);
+        }
+        catch (Exception e)
+        {
+            DebugHelper.LogDebug(nameof(DragAndDropManager), nameof(HandleAdditionalFiles), e);
         }
     }
 
@@ -170,7 +223,20 @@ public static class DragAndDropManager
             }
         }
 
-        await SourceOpener.OpenAsync(mainWindow, mainWindow.ViewModel.Core, source).ConfigureAwait(false);
+        var tabs = mainWindow.ViewModel!.WindowTabs;
+        var created = OpeningTarget.PrepareNewTab(tabs, Settings.UIProperties.OpeningMode);
+        var tab = created ?? tabs.ActiveTab.CurrentValue;
+        var shown = false;
+        try
+        {
+            // A download that fails shows nothing
+            shown = Shows(await SourceOpener.OpenAsync(mainWindow, mainWindow.ViewModel.Core, source, tab: tab)
+                .ConfigureAwait(false));
+        }
+        finally
+        {
+            await CloseIfNothingShownAsync(tabs, created, shown).ConfigureAwait(false);
+        }
     }
 
     private static async Task HandleDragEnterWithFiles(IEnumerable<IStorageItem> files, MainWindow mainWindow)
@@ -328,7 +394,9 @@ public static class DragAndDropManager
         });
     }
 
-    private static async ValueTask LoadSupportedFile(MainWindow mainWindow, string path, CoreViewModel core)
+    /// <returns>Whether the tab shows something.</returns>
+    private static async ValueTask<bool> LoadSupportedFile(MainWindow mainWindow, string path, CoreViewModel core,
+        TabViewModel tab)
     {
         // A file dropped from a browser may sit in the temp folder and be deleted right after, which the file
         // watcher would follow, and browsing it would show the folder's unrelated files. So it is shown as a
@@ -337,14 +405,14 @@ public static class DragAndDropManager
         {
             var fileInfo = new FileInfo(path);
             // As a bitmap also for an SVG, so that saving, copying and printing the dropped image keep working
-            if (await TempFileSingleImage.ShowAsync(vm, fileInfo, fileInfo.Name, svgAsDrawing: false)
+            if (await TempFileSingleImage.ShowAsync(vm, fileInfo, fileInfo.Name, tab, svgAsDrawing: false)
                     .ConfigureAwait(false))
             {
-                return;
+                return true;
             }
         }
 
-        await SourceOpener.OpenAsync(mainWindow, core, path).ConfigureAwait(false);
+        return Shows(await SourceOpener.OpenAsync(mainWindow, core, path, tab: tab).ConfigureAwait(false));
     }
 
     #endregion

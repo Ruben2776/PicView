@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using PicView.Core.Config;
 
 namespace PicView.Core.ProcessHandling;
 
@@ -17,7 +18,13 @@ public enum HandOverResponse
     ActivateActiveMainWindow,
 
     /// <summary>Opens a new Main Window that shows the Source, or a Fresh Tab when there is none.</summary>
-    OpenInNewMainWindow
+    OpenInNewMainWindow,
+
+    /// <summary>
+    /// Opens the Source in a new tab of the Active Main Window, or in its active tab when that is a Fresh Tab, and
+    /// brings that window to the front.
+    /// </summary>
+    OpenInNewTab
 }
 
 /// <summary>
@@ -26,10 +33,10 @@ public enum HandOverResponse
 public static class HandOverReceipt
 {
     /// <param name="isShuttingDown">Whether App Shutdown has begun.</param>
-    /// <param name="openInSameWindow">The open in same window setting.</param>
+    /// <param name="mode">The Opening Mode.</param>
     /// <param name="hasSource">Whether the other PicView was started with a Source.</param>
     /// <param name="hasMainWindow">Whether a Main Window is open; none is while only Batch Resize is.</param>
-    public static HandOverResponse Respond(bool isShuttingDown, bool openInSameWindow, bool hasSource,
+    public static HandOverResponse Respond(bool isShuttingDown, OpeningMode mode, bool hasSource,
         bool hasMainWindow)
     {
         if (isShuttingDown)
@@ -37,12 +44,17 @@ public static class HandOverReceipt
             return HandOverResponse.Refuse;
         }
 
-        if (!openInSameWindow || !hasMainWindow)
+        if (mode == OpeningMode.NewWindow || !hasMainWindow)
         {
             return HandOverResponse.OpenInNewMainWindow;
         }
 
-        return hasSource ? HandOverResponse.OpenInActiveMainWindow : HandOverResponse.ActivateActiveMainWindow;
+        if (!hasSource)
+        {
+            return HandOverResponse.ActivateActiveMainWindow;
+        }
+
+        return mode == OpeningMode.NewTab ? HandOverResponse.OpenInNewTab : HandOverResponse.OpenInActiveMainWindow;
     }
 }
 

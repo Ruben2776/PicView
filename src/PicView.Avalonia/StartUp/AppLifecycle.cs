@@ -306,8 +306,9 @@ public sealed class AppLifecycle
 
     /// <summary>
     /// Opens a file the operating system launched PicView with. The first one, while App Start shows the first Main
-    /// Window, opens there and continues from where the user left off; a later one opens as a hand-over does, in the
-    /// Active Main Window or in a new Main Window, following the open in same window setting.
+    /// Window, opens there and continues from where the user left off; a later one opens as a hand-over does, where
+    /// the Opening Mode says: in a new tab of the Active Main Window, in place of what its active tab shows, or in a
+    /// new Main Window.
     /// </summary>
     public async Task OpenLaunchFileAsync(string path)
     {
@@ -377,8 +378,9 @@ public sealed class AppLifecycle
 
     /// <summary>
     /// Opens a Source that reached the running PicView from outside it: one another PicView process handed over, or a
-    /// file the operating system launched PicView with again. With open in same window on, it opens in the Active Main
-    /// Window, and a start without a Source only brings that window to the front. With it off, or with no Main Window
+    /// file the operating system launched PicView with again. Under Same Window it opens in the active tab of the
+    /// Active Main Window, and under New Tab in a new tab of it, or in its active tab when that is a Fresh Tab; under
+    /// either, a start without a Source only brings that window to the front. Under New Window, or with no Main Window
     /// open, it opens in a new Main Window, opened from the Active Main Window, which shows a Fresh Tab when there is
     /// no Source. One taken just as App Shutdown began goes to a new PicView process instead, so it is not lost.
     /// </summary>
@@ -391,8 +393,8 @@ public sealed class AppLifecycle
         }
 
         var active = MainWindows.MostRecentlyActive;
-        switch (HandOverReceipt.Respond(IsShuttingDown, Settings.UIProperties.OpeningMode == OpeningMode.SameWindow, source is not null,
-                    active is not null))
+        var mode = Settings.UIProperties.OpeningMode;
+        switch (HandOverReceipt.Respond(IsShuttingDown, mode, source is not null, active is not null))
         {
             case HandOverResponse.Refuse:
                 _startNewProcess(source, false);
@@ -403,6 +405,14 @@ public sealed class AppLifecycle
                 _core.PlatformService?.StopTaskbarProgress();
                 // Off the UI thread, as every Source opens
                 await Task.Run(() => SourceOpener.OpenAsync(active!, _core, source!).AsTask()).ConfigureAwait(false);
+                break;
+            case HandOverResponse.OpenInNewTab:
+                BringToFront(active!);
+                _core.PlatformService?.StopTaskbarProgress();
+                var tabs = active!.ViewModel!.WindowTabs;
+                var tab = OpeningTarget.PrepareNewTab(tabs, mode) ?? tabs.ActiveTab.CurrentValue;
+                await Task.Run(() => SourceOpener.OpenAsync(active, _core, source!, tab: tab).AsTask())
+                    .ConfigureAwait(false);
                 break;
             case HandOverResponse.ActivateActiveMainWindow:
                 BringToFront(active);
@@ -462,7 +472,7 @@ public sealed class AppLifecycle
         // The write-throughs first, so each follower below is notified after the stored value is written
         settings.InitializeActionSettings();
         _core.GallerySettings.Start();
-        // Lives for the process. Open in same window has no follower: each hand-over reads it as it arrives
+        // Lives for the process. The Opening Mode has no follower: each hand-over reads it as it arrives
         if (_core.SharedFileWatcher is { } fileWatcher)
         {
             // Every tab's watch follows the setting

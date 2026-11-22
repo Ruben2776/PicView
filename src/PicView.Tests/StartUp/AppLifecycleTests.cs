@@ -11,6 +11,7 @@ using Avalonia.Threading;
 using ImageMagick;
 using PicView.Avalonia.Clipboard;
 using PicView.Avalonia.CustomControls;
+using PicView.Avalonia.DragAndDrop;
 using PicView.Avalonia.Interfaces;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.Printing;
@@ -2160,6 +2161,103 @@ public class AppLifecycleTests : IAsyncDisposable
     }
 
     [AvaloniaFact]
+    public async Task HandOver_NewTab_OpensInNewTabOfActiveWindow()
+    {
+        Settings.UIProperties.OpeningMode = OpeningMode.NewTab;
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var first = app.MainWindows.Open[0];
+        var second = await app.MainWindows.OpenNewAsync(app.MainWindows.Open[0]);
+        first.Activate();
+        await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Background);
+        var tabs = ViewModelOf(first).WindowTabs;
+        var browsing = tabs.ActiveTab.CurrentValue;
+        var viewed = await WriteImageAsync("viewed.jpg");
+        await SourceOpener.OpenAsync(first, _core, viewed);
+        var handedOver = await WriteImageAsync("handed over.jpg");
+
+        await app.OpenHandOverAsync(handedOver);
+        await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Background);
+
+        Assert.Equal(2, app.MainWindows.Open.Count);
+        Assert.Equal(2, tabs.Tabs.Value.Count);
+        var opened = tabs.ActiveTab.CurrentValue;
+        Assert.NotSame(browsing, opened);
+        Assert.Same(opened, tabs.Tabs.Value[^1]);
+        Assert.Equal(handedOver, opened.Model?.FileInfo?.FullName);
+        Assert.Equal(viewed, browsing.Model?.FileInfo?.FullName);
+        Assert.Single(ViewModelOf(second).WindowTabs.Tabs.Value);
+    }
+
+    [AvaloniaFact]
+    public async Task HandOver_NewTab_FreshActiveTab_OpensInIt()
+    {
+        Settings.UIProperties.OpeningMode = OpeningMode.NewTab;
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var first = app.MainWindows.Open[0];
+        await WaitUntilOpenedAsync(first);
+        var tabs = ViewModelOf(first).WindowTabs;
+        var fresh = tabs.ActiveTab.CurrentValue;
+        var handedOver = await WriteImageAsync("handed over.jpg");
+
+        await app.OpenHandOverAsync(handedOver);
+        await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Background);
+
+        Assert.Same(first, Assert.Single(app.MainWindows.Open));
+        Assert.Same(fresh, Assert.Single(tabs.Tabs.Value));
+        Assert.Equal(handedOver, ShownFileOf(first));
+    }
+
+    // The other files of a drop of several; the first opens before them as the mode says
+    [AvaloniaTheory]
+    [InlineData(OpeningMode.SameWindow)]
+    [InlineData(OpeningMode.NewTab)]
+    public async Task Drop_OtherFilesUnderSameWindowOrNewTab_OpenInBackgroundTabs(OpeningMode mode)
+    {
+        Settings.UIProperties.OpeningMode = mode;
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var window = app.MainWindows.Open[0];
+        var tabs = ViewModelOf(window).WindowTabs;
+        var active = tabs.ActiveTab.CurrentValue;
+        var a = await WriteImageAsync("a.jpg");
+        var b = await WriteImageAsync("b.jpg");
+        var items = new[]
+        {
+            await window.StorageProvider.TryGetFileFromPathAsync(new Uri(a)),
+            await window.StorageProvider.TryGetFileFromPathAsync(new Uri(b))
+        };
+
+        await DragAndDropManager.HandleAdditionalFiles(items!, window, _core, mode);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Same(window, Assert.Single(app.MainWindows.Open));
+        Assert.Equal(3, tabs.Tabs.Value.Count);
+        Assert.Same(active, tabs.ActiveTab.CurrentValue);
+        Assert.Equal(a, tabs.Tabs.Value[1].Model?.FileInfo?.FullName);
+        Assert.Equal(b, tabs.Tabs.Value[2].Model?.FileInfo?.FullName);
+    }
+
+    [AvaloniaFact]
+    public async Task Drop_OtherFilesUnderNewWindow_OpenInNewMainWindows()
+    {
+        Settings.UIProperties.OpeningMode = OpeningMode.NewWindow;
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var window = app.MainWindows.Open[0];
+        var a = await WriteImageAsync("a.jpg");
+        var items = new[] { await window.StorageProvider.TryGetFileFromPathAsync(new Uri(a)) };
+
+        await DragAndDropManager.HandleAdditionalFiles(items!, window, _core, OpeningMode.NewWindow);
+        await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Background);
+
+        Assert.Equal(2, app.MainWindows.Open.Count);
+        Assert.Single(ViewModelOf(window).WindowTabs.Tabs.Value);
+        Assert.Equal(a, ShownFileOf(app.MainWindows.Open[1]));
+    }
+
+    [AvaloniaFact]
     public async Task OpenHandOverAsync_SameWindowOnWithoutASource_BringsTheActiveMainWindowToTheFrontAndOpensNothing()
     {
         Settings.UIProperties.OpeningMode = OpeningMode.SameWindow;
@@ -2851,6 +2949,76 @@ public class AppLifecycleTests : IAsyncDisposable
 
             Assert.False(pasted);
             Assert.Equal(SingleImageType.None, tab.SingleImageType);
+        }
+        finally
+        {
+            Application.Current.DataContext = null;
+        }
+    }
+
+    [AvaloniaFact]
+    public async Task Paste_NewTab_NothingToPaste_ClosesCreatedTab()
+    {
+        Settings.UIProperties.OpeningMode = OpeningMode.NewTab;
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var window = app.MainWindows.Open[0];
+        var vm = ViewModelOf(window);
+        var tabs = vm.WindowTabs;
+        var browsing = tabs.ActiveTab.CurrentValue;
+        var viewed = await WriteImageAsync("viewed.jpg");
+        var service = new ClipboardPasteService(window.Clipboard, window, _core);
+        Application.Current!.DataContext = _core;
+        try
+        {
+            await SourceOpener.OpenAsync(window, _core, viewed);
+            await window.Clipboard!.ClearAsync();
+
+            var pasted = await service.PasteAsync(vm);
+            Dispatcher.UIThread.RunJobs();
+
+            Assert.False(pasted);
+            Assert.Same(browsing, Assert.Single(tabs.Tabs.Value));
+            Assert.Same(browsing, tabs.ActiveTab.CurrentValue);
+            Assert.Equal(viewed, browsing.Model?.FileInfo?.FullName);
+        }
+        finally
+        {
+            Application.Current.DataContext = null;
+        }
+    }
+
+    [AvaloniaFact]
+    public async Task Paste_NewTab_File_OpensInNewActiveTab()
+    {
+        Settings.UIProperties.OpeningMode = OpeningMode.NewTab;
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var window = app.MainWindows.Open[0];
+        var vm = ViewModelOf(window);
+        var tabs = vm.WindowTabs;
+        var browsing = tabs.ActiveTab.CurrentValue;
+        var viewed = await WriteImageAsync("viewed.jpg");
+        var copied = await WriteImageAsync("copied.jpg");
+        var service = new ClipboardPasteService(window.Clipboard, window, _core);
+        Application.Current!.DataContext = _core;
+        try
+        {
+            await SourceOpener.OpenAsync(window, _core, viewed);
+            var file = await window.StorageProvider.TryGetFileFromPathAsync(new Uri(copied));
+            Assert.NotNull(file);
+            await window.Clipboard!.SetFileAsync(file);
+
+            var pasted = await service.PasteAsync(vm);
+            Dispatcher.UIThread.RunJobs();
+
+            Assert.True(pasted);
+            Assert.Equal(2, tabs.Tabs.Value.Count);
+            var opened = tabs.ActiveTab.CurrentValue;
+            Assert.NotSame(browsing, opened);
+            Assert.Same(opened, tabs.Tabs.Value[^1]);
+            Assert.Equal(copied, opened.Model?.FileInfo?.FullName);
+            Assert.Equal(viewed, browsing.Model?.FileInfo?.FullName);
         }
         finally
         {
