@@ -1326,6 +1326,52 @@ public class TabLoadTests : IDisposable
     }
 
     [Fact]
+    public async Task SaveAsync_TurnedThenSavedTwice_TurnsTheFileOnce()
+    {
+        // 2 wide, 1 high, so a quarter turn shows in its size
+        var path = Path.Combine(_testDirectory, "wide.png");
+        using (var image = new ImageMagick.MagickImage(ImageMagick.MagickColors.Red, 2, 1))
+        {
+            await image.WriteAsync(path, TestContext.Current.CancellationToken);
+        }
+
+        var tab = CreateTab(_testDirectory, withIterator: false);
+        await tab.Load.LoadAsync(path);
+        tab.Orientation.TurnRight();
+        var saving = new PicView.Avalonia.FileSystem.FileSavingService(new PicView.Tests.FileTests.StubSavePathPicker(null), () => null);
+
+        Assert.True(await saving.SaveAsync(tab));
+        // The file is upright now, so the tab no longer turns it, and shows the saved file
+        Assert.Equal(PicView.Core.ImageTransformations.Orientation.Upright, tab.Orientation.Current.CurrentValue);
+        Assert.True(await saving.SaveAsync(tab));
+
+        using var saved = new ImageMagick.MagickImage(path);
+        Assert.Equal((1u, 2u), (saved.Width, saved.Height));
+    }
+
+    [Fact]
+    public async Task SaveAsync_Upright_KeepsTheShownModel()
+    {
+        var path = Path.Combine(_testDirectory, "upright.png");
+        using (var image = new ImageMagick.MagickImage(ImageMagick.MagickColors.Red, 2, 1))
+        {
+            await image.WriteAsync(path, TestContext.Current.CancellationToken);
+        }
+
+        var tab = CreateTab(_testDirectory, withIterator: false);
+        await tab.Load.LoadAsync(path);
+        var before = tab.Model;
+        _decoded.Clear();
+        var saving = new PicView.Avalonia.FileSystem.FileSavingService(new PicView.Tests.FileTests.StubSavePathPicker(null), () => null);
+
+        Assert.True(await saving.SaveAsync(tab));
+
+        // Nothing was turned, so what shows is what was saved: no decode is needed
+        Assert.Same(before, tab.Model);
+        Assert.Empty(_decoded);
+    }
+
+    [Fact]
     public async Task ReloadAsync_WithoutClearingTheCache_ShowsTheCachedModel()
     {
         var a = await WriteImageAsync("a.jpg");

@@ -117,7 +117,15 @@ public class FileSavingService(ISavePathPicker pathPicker, Func<EffectsViewModel
 
         if (isSaved && file is not null && file.FullName.Equals(destination, StringComparison.Ordinal))
         {
-            tab.ImageIterator?.Cache.Invalidate(file.FullName);
+            if (orientation == Orientation.Upright)
+            {
+                tab.ImageIterator?.Cache.Invalidate(file.FullName);
+            }
+            else
+            {
+                // The file now holds the turn, so the tab shows it again upright: else a second save turns it twice
+                await tab.ShowRewrittenUprightAsync().ConfigureAwait(false);
+            }
         }
 
         return isSaved;

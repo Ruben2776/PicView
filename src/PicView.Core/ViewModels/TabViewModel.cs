@@ -389,6 +389,14 @@ public class TabViewModel : IDisposable
             Orientation.Reset();
         }
 
+        // A file PicView rewrote with the turn applied shows upright, in the same showing, so it never shows turned
+        // twice. Any other image showing first ends the wait, as the user moved on
+        if (change is ShownChange.Image && Interlocked.Exchange(ref _uprightOnShownPath, null) is { } upright &&
+            string.Equals(Model.FileInfo?.FullName, upright, StringComparison.Ordinal))
+        {
+            Orientation.Reset();
+        }
+
         // The titles are marked after the image bindable is set and before the UI reacts
         Titles.OnShown(change);
         DeriveViewKind();
@@ -1305,6 +1313,35 @@ public class TabViewModel : IDisposable
         _hasLostItsFiles = true;
         return ValueTask.CompletedTask;
     }
+
+    /// <summary>
+    /// Shows the tab's file again after PicView wrote it with the tab's turn and flip applied, such as a save over it:
+    /// decoded anew, and upright, since keeping the turn would show it turned twice and the next save would turn the
+    /// file twice. The turn is undone as the rewritten file shows, so it never shows turned twice even for a moment.
+    /// </summary>
+    public async ValueTask ShowRewrittenUprightAsync()
+    {
+        if (FileInfo.CurrentValue is not { } file || ImageIterator is not { } iterator)
+        {
+            return;
+        }
+
+        var path = file.FullName;
+        Volatile.Write(ref _uprightOnShownPath, path);
+        try
+        {
+            iterator.Cache.Invalidate(path);
+            await iterator.ReloadAsync(clearCache: false).ConfigureAwait(false);
+        }
+        finally
+        {
+            // A reload that showed nothing must not undo the turn of a later showing of the file
+            Interlocked.CompareExchange(ref _uprightOnShownPath, null, path);
+        }
+    }
+
+    // The rewritten file whose next showing undoes the turn, set by ShowRewrittenUprightAsync
+    private string? _uprightOnShownPath;
 
     /// <summary>
     /// Closes the image the tab shows and shows the start-up menu, as the Close image action: the tab becomes fresh, as
