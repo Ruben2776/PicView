@@ -1064,6 +1064,16 @@ public class TabViewModel : IDisposable
     internal int BeginLoad() => Interlocked.Increment(ref _loadVersion);
 
     /// <summary>
+    /// Makes any load still running give way to what the tab shows next without one, such as a pasted image: it is
+    /// superseded and cancelled, so the file it decodes does not replace that image when it ends.
+    /// </summary>
+    public void SupersedeLoads()
+    {
+        BeginLoad();
+        ResetNavigationCts();
+    }
+
+    /// <summary>
     /// Whether no load began after the one with <paramref name="version"/>, so it may still change the tab's image,
     /// files and gallery.
     /// </summary>

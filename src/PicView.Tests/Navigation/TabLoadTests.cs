@@ -2,6 +2,7 @@ using System.Collections.Concurrent;
 using System.IO.Compression;
 using System.Net;
 using System.Net.Sockets;
+using PicView.Avalonia.Navigation;
 using PicView.Core.ArchiveHandling;
 using PicView.Core.FileHistory;
 using PicView.Core.FileSorting;
@@ -1556,6 +1557,27 @@ public class TabLoadTests : IDisposable
         Assert.False(overtaken.IsLoaded);
         Assert.Null(overtaken.Error);
         Assert.Equal(b, tab.Model.FileInfo?.FullName);
+    }
+
+    [Fact]
+    public async Task LoadAsync_PasteWhileTheFileDecodes_KeepsThePastedImage()
+    {
+        var a = await WriteImageAsync("a.jpg");
+        var parent = new MainWindowViewModel(null!, null!, null!, null!);
+        var tab = CreateTab(_testDirectory, parent);
+        _heldPath = a;
+
+        var load = tab.Load.LoadAsync(a).AsTask();
+        await _heldRequested.Task.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+        var pasted = new ImageModel { Image = new object(), PixelWidth = 1, PixelHeight = 1 };
+        UpdateImage.SetSingleImage(parent, pasted, SingleImageType.Clipboard, "Clipboard image", tab);
+        _held.SetResult(new ImageModel { FileInfo = new FileInfo(a) });
+        var result = await load.WaitAsync(WaitLimit, TestContext.Current.CancellationToken);
+
+        Assert.Equal(LoadOutcome.Superseded, result.Outcome);
+        Assert.Same(pasted, tab.Model);
+        Assert.Equal(SingleImageType.Clipboard, tab.SingleImageType);
+        Assert.Null(tab.ImageIterator);
     }
 
     [Fact]

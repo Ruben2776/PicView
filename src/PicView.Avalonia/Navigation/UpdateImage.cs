@@ -67,6 +67,9 @@ public static class UpdateImage
     {
         var tabViewModel = tab ?? vm.WindowTabs.ActiveTab.CurrentValue;
 
+        // A slow load of a file that was still running would replace this image once it ends
+        tabViewModel.SupersedeLoads();
+
         // The window's fitter follows the new image, and its viewer follows that Fit (ADR-0026)
         tabViewModel.DisplaySingleImage(model, type, title);
 
