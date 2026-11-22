@@ -1,12 +1,12 @@
-using PicView.Tests.Config;
 using PicView.Core.FileSorting;
 using PicView.Core.IPlatform;
 using PicView.Core.Models;
 using PicView.Core.Navigation;
 using PicView.Core.Navigation.Interfaces;
 using PicView.Core.Thumbnailing;
-using PicView.Tests.Thumbnailing;
 using PicView.Core.ViewModels;
+using PicView.Tests.Config;
+using PicView.Tests.Thumbnailing;
 
 namespace PicView.Tests.Navigation;
 
@@ -61,7 +61,7 @@ public static class TestTabServices
         public void LocateOnDisk(string path) { }
         public void ShowFileProperties(string path) { }
         public Task SetAsWallpaper(string path, int wallpaperStyle) => Task.CompletedTask;
-        public bool SetAsLockScreen(string path) => false;
+        public Task<bool> SetAsLockScreen(string path) => Task.FromResult(false);
         public Task<bool> ExtractWithLocalSoftwareAsync(string path, string tempDirectory) => Task.FromResult(false);
         public string DefaultJsonKeyMap() => "{}";
         public void InitiateFileAssociationService() { }

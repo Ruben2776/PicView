@@ -1,3 +1,4 @@
+using PicView.Core.FileSorting;
 using PicView.Core.IPlatform;
 
 namespace PicView.Tests.Navigation;
@@ -16,13 +17,13 @@ internal sealed class CountingPlatform : IPlatformSpecificService
     public void SetTaskbarProgress(ulong progress, ulong maximum) { }
     public void StopTaskbarProgress() { }
     public void SetCursorPos(int x, int y) { }
-    public List<FileInfo> GetFiles(FileInfo fileInfo, PicView.Core.FileSorting.FileOrder order) => [];
+    public List<FileInfo> GetFiles(FileInfo fileInfo, FileOrder order) => [];
     public int CompareStrings(string str1, string str2) => string.CompareOrdinal(str1, str2);
     public void OpenWith(string path) { }
     public void LocateOnDisk(string path) { }
     public void ShowFileProperties(string path) { }
     public Task SetAsWallpaper(string path, int wallpaperStyle) => Task.CompletedTask;
-    public bool SetAsLockScreen(string path) => false;
+    public Task<bool> SetAsLockScreen(string path) => Task.FromResult(false);
     public Task<bool> ExtractWithLocalSoftwareAsync(string path, string tempDirectory) => Task.FromResult(false);
     public string DefaultJsonKeyMap() => "{}";
     public void InitiateFileAssociationService() { }

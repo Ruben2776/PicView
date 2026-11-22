@@ -1,6 +1,9 @@
 using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
+using PicView.Avalonia.UI;
+using PicView.Core.DebugTools;
 using PicView.Core.IPlatform;
+using PicView.Core.Localization;
 using PicView.Core.ViewModels;
 
 namespace PicView.Avalonia.FileSystem;
@@ -23,8 +26,32 @@ public static class PlatformActions
     public static ValueTask ShowFile(MainWindowViewModel vm, string path) =>
         ShowFile(vm.Core.PlatformService, path);
 
-    public static ValueTask SetAsLockScreen(MainWindowViewModel vm) =>
-        SetAsLockScreen(vm.Core.PlatformService, ShownPath(vm));
+    /// <summary>
+    /// Sets the active tab's image as the lock screen image, as a save would write it. Says so when the platform
+    /// refuses it.
+    /// </summary>
+    public static async ValueTask SetAsLockScreen(MainWindowViewModel vm)
+    {
+        using var busy = vm.WindowTabs.ActiveTab.CurrentValue.ClaimBusy();
+        try
+        {
+            var file = await FileSaver.ExportCommonFormat(vm).ConfigureAwait(false);
+            if (string.IsNullOrEmpty(file))
+            {
+                return;
+            }
+
+            if (!await SetAsLockScreen(vm.Core.PlatformService, file).ConfigureAwait(false))
+            {
+                TooltipHelper.ShowTooltipMessage(vm, TranslationManager.Translation.UnexpectedError);
+            }
+        }
+        catch (Exception e)
+        {
+            TooltipHelper.ShowTooltipMessage(vm, e.Message);
+            DebugHelper.LogDebug(nameof(PlatformActions), nameof(SetAsLockScreen), e);
+        }
+    }
 
     public static ValueTask ShowFileProperties(MainWindowViewModel vm)
     {
@@ -71,15 +98,16 @@ public static class PlatformActions
 
     internal static ValueTask ShowFile(IPlatformSpecificService? platform, string path) => OpenWith(platform, path);
 
-    /// <remarks>Setting the lock screen is slow, so it runs on the thread pool. With no file open there is nothing to set.</remarks>
-    internal static async ValueTask SetAsLockScreen(IPlatformSpecificService? platform, string? path)
+    /// <returns>Whether the platform set the image.</returns>
+    /// <remarks>Setting the lock screen is slow, so it runs on the thread pool. With no file there is nothing to set.</remarks>
+    internal static async ValueTask<bool> SetAsLockScreen(IPlatformSpecificService? platform, string? path)
     {
         if (platform is null || path is null)
         {
-            return;
+            return false;
         }
 
-        await Task.Run(() => platform.SetAsLockScreen(path)).ConfigureAwait(false);
+        return await Task.Run(() => platform.SetAsLockScreen(path)).ConfigureAwait(false);
     }
 
     private static string? ShownPath(MainWindowViewModel vm) =>

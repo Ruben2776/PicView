@@ -161,7 +161,7 @@ public class TabServicesTests
         public void LocateOnDisk(string path) { }
         public void ShowFileProperties(string path) { }
         public Task SetAsWallpaper(string path, int wallpaperStyle) => Task.CompletedTask;
-        public bool SetAsLockScreen(string path) => false;
+        public Task<bool> SetAsLockScreen(string path) => Task.FromResult(false);
         public bool CopyFile(string path) => false;
         public Task<bool> CutFile(string path) => throw new NotImplementedException();
         public Task CopyImageToClipboard(object bitmap) => Task.CompletedTask;

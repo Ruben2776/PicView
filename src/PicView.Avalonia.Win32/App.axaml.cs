@@ -12,6 +12,7 @@ using PicView.Core.WindowsNT;
 using PicView.Core.WindowsNT.FileAssociation;
 using PicView.Core.WindowsNT.FileHandling;
 using PicView.Core.WindowsNT.Imaging;
+using PicView.Core.WindowsNT.Lockscreen;
 using PicView.Core.WindowsNT.Taskbar;
 using PicView.Core.WindowsNT.Wallpaper;
 
@@ -134,10 +135,9 @@ public class App : Application, IPlatformSpecificService
         }).ConfigureAwait(false);
     }
 
-    public bool SetAsLockScreen(string path)
+    public async Task<bool> SetAsLockScreen(string path)
     {
-        return false;
-        // return LockscreenHelper.SetLockScreenImage(path);
+        return await LockscreenHelper.SetLockScreenImageAsync(path).ConfigureAwait(false);
     }
 
     public async Task<bool> ExtractWithLocalSoftwareAsync(string path, string tempDirectory)

@@ -26,7 +26,7 @@ public interface IPlatformSpecificService
     
     Task SetAsWallpaper(string path, int wallpaperStyle);
     
-    bool SetAsLockScreen(string path);
+    Task<bool> SetAsLockScreen(string path);
     
     Task<bool> ExtractWithLocalSoftwareAsync(string path, string tempDirectory);
 

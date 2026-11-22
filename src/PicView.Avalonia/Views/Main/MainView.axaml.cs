@@ -26,6 +26,8 @@ public partial class MainView : UserControl
 
         if (OperatingSystem.IsMacOS())
         {
+            LockScreenItem.IsVisible = false;
+            
             // Move alt hover to left side on macOS and switch button order
             DockPanel.SetDock(AltClose, Dock.Left);
             DockPanel.SetDock(AltMinimize, Dock.Left);
@@ -58,13 +60,14 @@ public partial class MainView : UserControl
             }
             mainWindow.Disposables.Add(new HoverFadeButtonHandler(AltButtonsPanel, AltButtonHolder));
 
-            if (DataContext is MainWindowViewModel vm)
+            if (DataContext is not MainWindowViewModel vm)
             {
-                // The buttons sit below the tab strip while it shows
-                mainWindow.Disposables.Add(vm.WindowTabs.IsTabStripShown.Subscribe(shown =>
-                    Dispatcher.UIThread.Post(() => AltButtonsPanel.Margin =
-                        shown ? new Thickness(0, SizeDefaults.TabHeight, 0, 0) : new Thickness(0))));
+                return;
             }
+            // The buttons sit below the tab strip while it shows
+            mainWindow.Disposables.Add(vm.WindowTabs.IsTabStripShown.Subscribe(shown =>
+                Dispatcher.UIThread.Post(() => AltButtonsPanel.Margin =
+                    shown ? new Thickness(0, SizeDefaults.TabHeight, 0, 0) : new Thickness(0))));
         };
     }
 

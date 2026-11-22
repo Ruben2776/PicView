@@ -2,6 +2,9 @@ using System.Collections.Concurrent;
 using System.IO.Compression;
 using System.Net;
 using System.Net.Sockets;
+using System.Text;
+using ImageMagick;
+using PicView.Avalonia.FileSystem;
 using PicView.Avalonia.Navigation;
 using PicView.Core.ArchiveHandling;
 using PicView.Core.FileHistory;
@@ -16,7 +19,9 @@ using PicView.Core.ViewModels;
 using PicView.Tests.ArchiveHandling;
 using PicView.Tests.Config;
 using PicView.Tests.FileHistory;
+using PicView.Tests.FileTests;
 using R3;
+using Orientation = PicView.Core.ImageTransformations.Orientation;
 
 namespace PicView.Tests.Navigation;
 
@@ -256,11 +261,11 @@ public class TabLoadTests : IDisposable
                         return;
                     }
 
-                    request += System.Text.Encoding.ASCII.GetString(buffer, 0, read);
+                    request += Encoding.ASCII.GetString(buffer, 0, read);
                 }
 
                 byte[] body = [0xFF, 0xD8, 0xFF, 0xD9];
-                var header = System.Text.Encoding.ASCII.GetBytes(
+                var header = Encoding.ASCII.GetBytes(
                     $"HTTP/1.1 200 OK\r\nContent-Type: image/jpeg\r\nContent-Length: {body.Length}\r\nConnection: close\r\n\r\n");
                 await stream.WriteAsync(header, ct);
                 await stream.WriteAsync(body, ct);
@@ -1331,7 +1336,7 @@ public class TabLoadTests : IDisposable
     {
         // 2 wide, 1 high, so a quarter turn shows in its size
         var path = Path.Combine(_testDirectory, "wide.png");
-        using (var image = new ImageMagick.MagickImage(ImageMagick.MagickColors.Red, 2, 1))
+        using (var image = new MagickImage(MagickColors.Red, 2, 1))
         {
             await image.WriteAsync(path, TestContext.Current.CancellationToken);
         }
@@ -1339,14 +1344,14 @@ public class TabLoadTests : IDisposable
         var tab = CreateTab(_testDirectory, withIterator: false);
         await tab.Load.LoadAsync(path);
         tab.Orientation.TurnRight();
-        var saving = new PicView.Avalonia.FileSystem.FileSavingService(new PicView.Tests.FileTests.StubSavePathPicker(null), () => null);
+        var saving = new FileSavingService(new StubSavePathPicker(null), () => null);
 
         Assert.True(await saving.SaveAsync(tab));
         // The file is upright now, so the tab no longer turns it, and shows the saved file
-        Assert.Equal(PicView.Core.ImageTransformations.Orientation.Upright, tab.Orientation.Current.CurrentValue);
+        Assert.Equal(Orientation.Upright, tab.Orientation.Current.CurrentValue);
         Assert.True(await saving.SaveAsync(tab));
 
-        using var saved = new ImageMagick.MagickImage(path);
+        using var saved = new MagickImage(path);
         Assert.Equal((1u, 2u), (saved.Width, saved.Height));
     }
 
@@ -1354,7 +1359,7 @@ public class TabLoadTests : IDisposable
     public async Task SaveAsync_Upright_KeepsTheShownModel()
     {
         var path = Path.Combine(_testDirectory, "upright.png");
-        using (var image = new ImageMagick.MagickImage(ImageMagick.MagickColors.Red, 2, 1))
+        using (var image = new MagickImage(MagickColors.Red, 2, 1))
         {
             await image.WriteAsync(path, TestContext.Current.CancellationToken);
         }
@@ -1363,7 +1368,7 @@ public class TabLoadTests : IDisposable
         await tab.Load.LoadAsync(path);
         var before = tab.Model;
         _decoded.Clear();
-        var saving = new PicView.Avalonia.FileSystem.FileSavingService(new PicView.Tests.FileTests.StubSavePathPicker(null), () => null);
+        var saving = new FileSavingService(new StubSavePathPicker(null), () => null);
 
         Assert.True(await saving.SaveAsync(tab));
 
@@ -2049,7 +2054,7 @@ public class TabLoadTests : IDisposable
         public void LocateOnDisk(string path) { }
         public void ShowFileProperties(string path) { }
         public Task SetAsWallpaper(string path, int wallpaperStyle) => Task.CompletedTask;
-        public bool SetAsLockScreen(string path) => false;
+        public Task<bool> SetAsLockScreen(string path) => Task.FromResult(false);
         public bool CopyFile(string path) => false;
         public Task<bool> CutFile(string path) => throw new NotImplementedException();
         public Task CopyImageToClipboard(object bitmap) => Task.CompletedTask;

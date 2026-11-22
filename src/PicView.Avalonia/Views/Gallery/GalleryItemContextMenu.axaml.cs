@@ -26,6 +26,10 @@ public partial class GalleryItemContextMenu : ContextMenu
         InitializeComponent();
         Opened += (_, _) => _item?.SetContextMenuOpen(true);
         Closed += (_, _) => _item?.SetContextMenuOpen(false);
+        if (!OperatingSystem.IsWindows())
+        {
+            LockscreenItem.IsVisible = false;
+        }
     }
 
     protected override Type StyleKeyOverride => typeof(ContextMenu);
@@ -107,6 +111,16 @@ public partial class GalleryItemContextMenu : ContextMenu
         _ = WallpaperManager.SetAsWallpaper(item.FileLocation, style, vm);
     }
 
+    private void SetAsLockScreenImage()
+    {
+        if (ItemViewModel is not { } item || Application.Current.DataContext is not CoreViewModel core)
+        {
+            return;
+        }
+
+        _ = core.PlatformService.SetAsLockScreen(item.FileLocation);
+    }
+
     private void WallpaperFilled_OnClick(object? sender, RoutedEventArgs e) => SetAsWallpaper(WallpaperStyle.Fill);
 
     private void WallpaperFitted_OnClick(object? sender, RoutedEventArgs e) => SetAsWallpaper(WallpaperStyle.Fit);
@@ -116,6 +130,7 @@ public partial class GalleryItemContextMenu : ContextMenu
     private void WallpaperCentered_OnClick(object? sender, RoutedEventArgs e) => SetAsWallpaper(WallpaperStyle.Center);
 
     private void WallpaperTiled_OnClick(object? sender, RoutedEventArgs e) => SetAsWallpaper(WallpaperStyle.Tile);
+    private void Lockscreen_OnClick(object? sender, RoutedEventArgs e) => SetAsLockScreenImage();
 
     private void CopyFile_OnClick(object? sender, RoutedEventArgs e)
     {

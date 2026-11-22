@@ -1,4 +1,5 @@
 using PicView.Avalonia.FileSystem;
+using PicView.Core.FileSorting;
 using PicView.Core.IPlatform;
 
 namespace PicView.Tests.FileTests;
@@ -47,6 +48,40 @@ public class PlatformActionsTests
         Assert.Equal(["OpenWith C:\\settings.json"], _platform.Calls);
     }
 
+    [Fact]
+    public async Task SetAsLockScreen_PlatformSetsIt_PassesPathAndReturnsTrue()
+    {
+        _platform.LockScreenResult = true;
+
+        var isSet = await PlatformActions.SetAsLockScreen(_platform, "C:\\a.jpg");
+
+        Assert.True(isSet);
+        Assert.Equal(["SetAsLockScreen C:\\a.jpg"], _platform.Calls);
+    }
+
+    [Fact]
+    public async Task SetAsLockScreen_PlatformRefuses_ReturnsFalse()
+    {
+        _platform.LockScreenResult = false;
+
+        Assert.False(await PlatformActions.SetAsLockScreen(_platform, "C:\\a.jpg"));
+    }
+
+    [Fact]
+    public async Task SetAsLockScreen_NoFile_DoesNotAskThePlatform()
+    {
+        _platform.LockScreenResult = true;
+
+        Assert.False(await PlatformActions.SetAsLockScreen(_platform, null));
+        Assert.Empty(_platform.Calls);
+    }
+
+    [Fact]
+    public async Task SetAsLockScreen_NoPlatform_ReturnsFalse()
+    {
+        Assert.False(await PlatformActions.SetAsLockScreen(null, "C:\\a.jpg"));
+    }
+
     private sealed class RecordingPlatform : IPlatformSpecificService
     {
         public List<string> Calls { get; } = [];
@@ -55,13 +90,20 @@ public class PlatformActionsTests
 
         public void LocateOnDisk(string path) => Calls.Add($"LocateOnDisk {path}");
 
-        public bool SetAsLockScreen(string path) => false;
+        public bool LockScreenResult { get; set; }
+
+        public async Task<bool> SetAsLockScreen(string path)
+        {
+            Calls.Add($"SetAsLockScreen {path}");
+            return LockScreenResult;
+        }
+
         public void SetTaskbarProgress(ulong progress, ulong maximum) { }
         public void StopTaskbarProgress() { }
         public void SetCursorPos(int x, int y) { }
         public void DisableScreensaver() { }
         public void EnableScreensaver() { }
-        public List<FileInfo> GetFiles(FileInfo fileInfo, PicView.Core.FileSorting.FileOrder order) => [];
+        public List<FileInfo> GetFiles(FileInfo fileInfo, FileOrder order) => [];
         public int CompareStrings(string str1, string str2) => string.CompareOrdinal(str1, str2);
         public void ShowFileProperties(string path) { }
         public Task SetAsWallpaper(string path, int wallpaperStyle) => Task.CompletedTask;

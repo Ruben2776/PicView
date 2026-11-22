@@ -1,46 +1,34 @@
-﻿// using System.Runtime.InteropServices;
-// using Microsoft.Win32;
-//
-// namespace PicView.Core.WindowsNT.Lockscreen;
-//
-// public static partial class LockscreenHelper
-// {
-//     [LibraryImport("kernel32.dll", SetLastError = true)]
-//     [return: MarshalAs(UnmanagedType.Bool)]
-//     public static partial bool Wow64DisableWow64FsRedirection(ref IntPtr ptr);
-//
-//     public static bool SetLockScreenImage(string path)
-//     {
-//         const string personalizationcsp =
-//             @"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\PersonalizationCSP";
-//         // const string enforceLockScreenAndLogonImage =
-//         //     @"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\PolicyManager\default\DeviceLock\EnforceLockScreenAndLogonImage";
-//         // const string enforcelockscreenprovider =
-//         //     @"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\PolicyManager\default\DeviceLock\EnforceLockScreenProvider";
-//         var ptr = new IntPtr();
-//         Wow64DisableWow64FsRedirection(ref ptr);
-//
-//         try
-//         {
-//             Registry.SetValue(personalizationcsp, "LockScreenImageStatus", 1, RegistryValueKind.DWord);
-//             Registry.SetValue(personalizationcsp, "LockScreenImagePath", path, RegistryValueKind.String);
-//             Registry.SetValue(personalizationcsp, "LockScreenImageUrl", path, RegistryValueKind.String);
-//             
-//             // Registry.SetValue(enforceLockScreenAndLogonImage, "policytype", 0, RegistryValueKind.DWord);
-//             // Registry.SetValue(enforcelockscreenprovider, "policytype", 0, RegistryValueKind.DWord);
-//             
-//             // Seems to only work once, and then have to restart the machine to make it work again. 
-//             // It seems to disable setting the lock screen image in the settings app with the text:
-//             // *Some settings are managed by your organization
-//             // enforceLockScreenAndLogonImage and enforcelockscreenprovider are both set to 0 to try to disable it,
-//             // but it doesn't seem to work.
-//             // Need to investigate further and disable it for now.
-//         }
-//         catch
-//         {
-//             return false;
-//         }
-//
-//         return true;
-//     }
-// }
+﻿using Windows.Storage;
+using Windows.System.UserProfile;
+using PicView.Core.DebugTools;
+
+namespace PicView.Core.WindowsNT.Lockscreen;
+
+public static class LockscreenHelper
+{
+    /// <summary>
+    /// Sets the file at <paramref name="path"/> as the current user's lock screen image.
+    /// </summary>
+    /// <remarks>
+    /// This is the same per-user setting the Settings app writes, so the user can change the image there afterwards.
+    /// It does not write the PersonalizationCSP registry values: those are a device policy, which locks the setting
+    /// behind "Some settings are managed by your organization" and needs administrator rights.
+    /// The call waits for Windows and is slow; run it on the thread pool.
+    /// </remarks>
+    /// <returns><see langword="false"/> when Windows refused the image, such as a format it cannot decode or a
+    /// lock screen that a policy manages.</returns>
+    public static async Task<bool>  SetLockScreenImageAsync(string path)
+    {
+        try
+        {
+            var file = await StorageFile.GetFileFromPathAsync(path);
+            await LockScreen.SetImageFileAsync(file);
+            return true;
+        }
+        catch (Exception e)
+        {
+            DebugHelper.LogDebug(nameof(LockscreenHelper), nameof(SetLockScreenImageAsync), e);
+            return false;
+        }
+    }
+}

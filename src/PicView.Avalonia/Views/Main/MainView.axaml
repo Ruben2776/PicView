@@ -590,15 +590,12 @@
 
             <Separator />
 
-            <!--  Set as wallpaper  -->
             <customControls:StyledMenuItem
-                Header="{CompiledBinding Translation.SetAsWallpaper.Value,
-                                         Mode=OneWay}"
+                Header="{Binding Translation.SetAsWallpaper.Value}"
                 IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.Image.Value,
                                             Converter={x:Static ObjectConverters.IsNotNull},
                                             FallbackValue=False}"
-                IsVisible="{CompiledBinding GlobalSettings.ShowSetAsWallpaper.Value}"
-                x:Name="WallpaperMenuItem">
+                IsVisible="{CompiledBinding GlobalSettings.ShowSetAsWallpaper.Value}">
                 <MenuItem.Icon>
                     <Image Classes="WallpaperImage" />
                 </MenuItem.Icon>
@@ -674,6 +671,24 @@
                                                 Converter={x:Static ObjectConverters.IsNotNull},
                                                 FallbackValue=False}"
                     IsVisible="{CompiledBinding GlobalSettings.ShowSetAsWallpaper.Value}">
+                    <MenuItem.Icon>
+                        <Image Classes="WallpaperImage" />
+                    </MenuItem.Icon>
+                </customControls:StyledMenuItem>
+
+                <Separator />
+
+                <!--  Set as lockscreen  -->
+                <customControls:StyledMenuItem
+                    Command="{CompiledBinding RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.SetAsLockScreen}"
+                    Header="{CompiledBinding Translation.SetAsLockScreenImage.Value,
+                                             Mode=OneWay}"
+                    IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.Image.Value,
+                                                Converter={x:Static ObjectConverters.IsNotNull},
+                                                FallbackValue=False}"
+                    IsVisible="{CompiledBinding GlobalSettings.ShowSetAsWallpaper.Value}"
+                    x:Name="LockScreenItem">
                     <MenuItem.Icon>
                         <Image Classes="WallpaperImage" />
                     </MenuItem.Icon>

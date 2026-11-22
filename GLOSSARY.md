@@ -118,7 +118,7 @@ A state a tab is told it is in, which stands in for its derived Titles until it 
 _Avoid_: Loading title, temporary title, title override
 
 **Busy**:
-A tab is Busy while an operation on it holds a busy claim: a crop save, an optimize, setting the wallpaper, a rename or a duplicate. It ends when the last claim ends, however the operation ends. A Main Window shows its loading indicator while its active tab is Busy, or while the tab's Title Phase is Loading or Downloading and the titlebar is hidden.
+A tab is Busy while an operation on it holds a busy claim: a crop save, an optimize, setting the wallpaper or the lock screen image, a rename or a duplicate. It ends when the last claim ends, however the operation ends. A Main Window shows its loading indicator while its active tab is Busy, or while the tab's Title Phase is Loading or Downloading and the titlebar is hidden.
 _Avoid_: loading indicator shown, busy flag
 
 **Tab View**:
@@ -202,7 +202,7 @@ _Avoid_: Gallery layout, view mode, Gallery Mode (that is Closed, Docked or Expa
 ## Saving
 
 **Save Source**:
-What a save writes out, decided by the save module rather than the caller: the Effects Render when there is one for the shown file, else the file on disk, else the in-memory bitmap of a Single Image. The tab's rotation and flip are applied to each. Setting a wallpaper writes out the same Save Source, and a Print Job prints it.
+What a save writes out, decided by the save module rather than the caller: the Effects Render when there is one for the shown file, else the file on disk, else the in-memory bitmap of a Single Image. The tab's rotation and flip are applied to each. Setting a wallpaper or a lock screen image writes out the same Save Source, and a Print Job prints it.
 _Avoid_: Source file, input path
 
 ## Settings

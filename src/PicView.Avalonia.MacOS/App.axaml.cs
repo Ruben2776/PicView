@@ -153,10 +153,10 @@ public class App : Application, IPlatformSpecificService
          await WallpaperHelper.SetWallpaper(path).ConfigureAwait(false);
     }
 
-    public bool SetAsLockScreen(string path)
+    public Task<bool> SetAsLockScreen(string path)
     {
         // wallpaper and lockscreen are the same in macOS
-        return false;
+        return Task.FromResult(false);
     }
 
     public Task<bool> ExtractWithLocalSoftwareAsync(string path, string tempDirectory)

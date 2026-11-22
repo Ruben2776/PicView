@@ -1,8 +1,10 @@
+using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using ImageMagick;
 using PicView.Avalonia.ImageHandling;
+using PicView.Core.FileSorting;
 using PicView.Core.IPlatform;
 
 namespace PicView.Tests.Thumbnailing;
@@ -168,13 +170,13 @@ public class AvaloniaThumbnailDecoderTests : IDisposable
         public void SetCursorPos(int x, int y) { }
         public void DisableScreensaver() { }
         public void EnableScreensaver() { }
-        public List<FileInfo> GetFiles(FileInfo fileInfo, PicView.Core.FileSorting.FileOrder order) => [];
+        public List<FileInfo> GetFiles(FileInfo fileInfo, FileOrder order) => [];
         public int CompareStrings(string str1, string str2) => string.CompareOrdinal(str1, str2);
         public void OpenWith(string path) { }
         public void LocateOnDisk(string path) { }
         public void ShowFileProperties(string path) { }
         public Task SetAsWallpaper(string path, int wallpaperStyle) => Task.CompletedTask;
-        public bool SetAsLockScreen(string path) => false;
+        public Task<bool> SetAsLockScreen(string path) => Task.FromResult(false);
         public Task<bool> ExtractWithLocalSoftwareAsync(string path, string tempDirectory) => Task.FromResult(false);
         public string DefaultJsonKeyMap() => "{}";
         public void InitiateFileAssociationService() { }
@@ -224,14 +226,14 @@ public class AvaloniaThumbnailDecoderTests : IDisposable
         {
             // Opaque red, in BGRA order
             var pixels = Enumerable.Repeat(new byte[] { 0, 0, 255, 255 }, 40 * 40).SelectMany(p => p).ToArray();
-            System.Runtime.InteropServices.Marshal.Copy(pixels, 0, framebuffer.Address, pixels.Length);
+            Marshal.Copy(pixels, 0, framebuffer.Address, pixels.Length);
         }
 
         var scaled = Assert.IsAssignableFrom<Bitmap>(
             await Task.Run(() => _decoder.ScaleDown(image, 10), TestContext.Current.CancellationToken));
 
         var center = new byte[4];
-        var handle = System.Runtime.InteropServices.GCHandle.Alloc(center, System.Runtime.InteropServices.GCHandleType.Pinned);
+        var handle = GCHandle.Alloc(center, GCHandleType.Pinned);
         try
         {
             scaled.CopyPixels(new PixelRect(5, 5, 1, 1), handle.AddrOfPinnedObject(), 4, 4);

@@ -97,9 +97,9 @@ public class App : Application, IPlatformSpecificService
         throw new NotImplementedException();
     }
 
-    public bool SetAsLockScreen(string path)
+    public Task<bool> SetAsLockScreen(string path)
     {
-        return false;
+        return Task.FromResult(false);
         // return LockscreenHelper.SetLockScreenImage(path);
     }
 
