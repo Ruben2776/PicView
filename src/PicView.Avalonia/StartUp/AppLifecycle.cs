@@ -12,6 +12,7 @@ using PicView.Avalonia.Navigation;
 using PicView.Avalonia.Navigation.Services;
 using PicView.Avalonia.Services;
 using PicView.Avalonia.SettingsManagement;
+using PicView.Core.Config;
 using PicView.Core.DebugTools;
 using PicView.Core.FileAssociations;
 using PicView.Core.FileHandling;
@@ -382,7 +383,7 @@ public sealed class AppLifecycle
         }
 
         var active = MainWindows.MostRecentlyActive;
-        switch (HandOverReceipt.Respond(IsShuttingDown, Settings.UIProperties.OpenInSameWindow, source is not null,
+        switch (HandOverReceipt.Respond(IsShuttingDown, Settings.UIProperties.OpeningMode == OpeningMode.SameWindow, source is not null,
                     active is not null))
         {
             case HandOverResponse.Refuse:

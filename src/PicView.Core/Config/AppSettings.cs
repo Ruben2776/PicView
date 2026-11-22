@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using PicView.Core.Gallery;
 
 // ReSharper disable All
@@ -174,11 +175,15 @@ public class UIProperties
     public int BgColorChoice { get; set; } = 0;
 
     /// <summary>
-    /// Determines whether the application should open pictures in the same window
-    /// or open a new window for each action.
-    /// When set to true, all actions are handled within the existing application window.
+    /// Where a file that is opened from outside the current view goes. Stored as a number.
     /// </summary>
-    public bool OpenInSameWindow { get; set; } = false;
+    public OpeningMode OpeningMode { get; set; } = OpeningMode.NewWindow;
+
+    /// <summary>
+    /// Read only to migrate it; see <see cref="OpeningMode"/>.
+    /// </summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public bool? OpenInSameWindow { get; set; }
 
     /// <summary>
     /// Determines whether a confirmation dialog is displayed when the Escape key is pressed.
@@ -445,9 +450,15 @@ public class Sorting
 public class StartUp
 {
     /// <summary>
-    /// Indicates whether the application should automatically open the last file used upon startup.
+    /// What PicView does at startup when it was not launched with a file. Stored as a number.
     /// </summary>
-    public bool OpenLastFile { get; set; } = false;
+    public StartUpBehavior Behavior { get; set; } = StartUpBehavior.None;
+
+    /// <summary>
+    /// Read only to migrate it; see <see cref="Behavior"/>.
+    /// </summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public bool? OpenLastFile { get; set; }
     // Not used yet...
     public bool OpenSpecificFile { get; set; } = false;
     // Not used yet...
@@ -457,16 +468,20 @@ public class StartUp
     /// Represents the path to the last file accessed or opened.
     /// </summary>
     /// <remarks>
-    /// Used to load the file when <see cref="OpenLastFile"/> is <c>true</c>.
+    /// Used to load the file when <see cref="Behavior"/> is <see cref="StartUpBehavior.OpenLastFile"/>.
+    /// Read only to migrate it; see ADR 0042.
     /// </remarks>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public string? LastFile { get; set; } = "";
 
     /// <summary>
     /// Specifies the initial directory path used by the application at startup.
     /// </summary>
     /// <remarks>
-    /// Used to remember directory structure upon startup, when <see cref="OpenLastFile"/> and <see cref="Sorting.IncludeSubDirectories"/> are <c>true</c>.
+    /// Used to remember directory structure upon startup, when <see cref="Behavior"/> is <see cref="StartUpBehavior.OpenLastFile"/> and <see cref="Sorting.IncludeSubDirectories"/> is <c>true</c>.
+    /// Read only to migrate it; see ADR 0042.
     /// </remarks>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public string? StartUpDirectory { get; set; } = "";
 
     /// <summary>

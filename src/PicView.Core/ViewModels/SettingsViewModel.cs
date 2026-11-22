@@ -176,8 +176,8 @@ public class SettingsViewModel : IDisposable
     public SettingsWindowConfig? SettingsWindowConfig { get; set; }
 
     // General
-    public BindableReactiveProperty<bool> OpenLastFile { get; } = new(Settings.StartUp.OpenLastFile);
-    public BindableReactiveProperty<int> StartUpIndex { get; } = new(Settings.StartUp.OpenLastFile ? 1 : 0);
+    public BindableReactiveProperty<bool> OpenLastFile { get; } = new(Settings.StartUp.Behavior == StartUpBehavior.OpenLastFile);
+    public BindableReactiveProperty<int> StartUpIndex { get; } = new(Settings.StartUp.Behavior == StartUpBehavior.OpenLastFile ? 1 : 0);
     
     public BindableReactiveProperty<bool> IsNavigatingBackwardsWhenDeleting { get; } = new(Settings.Navigation.IsNavigatingBackwardsWhenDeleting);
     public BindableReactiveProperty<int> DeletionIndex { get; } = new(Settings.Navigation.IsNavigatingBackwardsWhenDeleting ? 1 : 0);
@@ -372,7 +372,7 @@ public class SettingsViewModel : IDisposable
         Observable.EveryValueChanged(this, x => x.StartUpIndex.CurrentValue)
              .SubscribeAwait(async (x, _) => {
                  OpenLastFile.Value = x == 1;
-                 Settings.StartUp.OpenLastFile = x == 1;
+                 Settings.StartUp.Behavior = x == 1 ? StartUpBehavior.OpenLastFile : StartUpBehavior.None;
                  await SaveSettingsAsync().ConfigureAwait(false);
              }, DebugHelper.LogError(nameof(SettingsViewModel), nameof(SubscriptionSettingsUpdate)))
              .AddTo(ref _disposables);

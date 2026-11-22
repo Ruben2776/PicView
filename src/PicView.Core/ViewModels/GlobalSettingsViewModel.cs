@@ -88,7 +88,7 @@ public class GlobalSettingsViewModel
         IsFileHistoryEnabled = new BindableReactiveProperty<bool>(Settings.Navigation.IsFileHistoryEnabled);
         IsShowingFullPathInTitleBar = new BindableReactiveProperty<bool>(Settings.UIProperties.ShowFullPathInTitleBar);
         IsShowingTaskbarProgress = new BindableReactiveProperty<bool>(Settings.UIProperties.IsTaskbarProgressEnabled);
-        IsOpeningInSameWindow = new BindableReactiveProperty<bool>(Settings.UIProperties.OpenInSameWindow);
+        IsOpeningInSameWindow = new BindableReactiveProperty<bool>(Settings.UIProperties.OpeningMode == OpeningMode.SameWindow);
         ShowFadeButtons = new BindableReactiveProperty<bool>(Settings.UIProperties.ShowAltInterfaceButtons);
         // Built before the first window rewrites a negative stored margin, so it gives the same margin that window does
         WindowMargin = new BindableReactiveProperty<double>(Settings.WindowProperties.Margin < 0 ? NegativeMarginReplacement : Settings.WindowProperties.Margin);
@@ -113,7 +113,7 @@ public class GlobalSettingsViewModel
             Follow(IsFileHistoryEnabled, value => Settings.Navigation.IsFileHistoryEnabled = value, rephrases: true);
             Follow(IsShowingFullPathInTitleBar, value => Settings.UIProperties.ShowFullPathInTitleBar = value);
             Follow(IsShowingTaskbarProgress, value => Settings.UIProperties.IsTaskbarProgressEnabled = value);
-            Follow(IsOpeningInSameWindow, value => Settings.UIProperties.OpenInSameWindow = value);
+            Follow(IsOpeningInSameWindow, value => Settings.UIProperties.OpeningMode = value ? OpeningMode.SameWindow : OpeningMode.NewWindow);
             _isActionSettingsInitialized = true;
         }
     }

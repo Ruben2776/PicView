@@ -343,7 +343,7 @@ public static class SettingsManager
             uiProperties = new UIProperties
             {
                 IsTaskbarProgressEnabled = false,
-                OpenInSameWindow = true
+                OpeningMode = OpeningMode.SameWindow
             };
         }
         else
@@ -467,6 +467,24 @@ public static class SettingsManager
             existingSettings.Gallery.DockedGalleryStretchMode = GalleryStretchMode.UniformToFill;
         }
 
+        existingSettings.StartUp ??= new StartUp();
+        if (existingSettings.Version < 3.2)
+        {
+            // The two booleans of 3.1 became a startup behavior and an Opening Mode
+            if (existingSettings.StartUp.OpenLastFile is { } openLastFile)
+            {
+                existingSettings.StartUp.Behavior = openLastFile ? StartUpBehavior.OpenLastFile : StartUpBehavior.None;
+                existingSettings.StartUp.OpenLastFile = null;
+            }
+
+            if (existingSettings.UIProperties.OpenInSameWindow is { } openInSameWindow)
+            {
+                existingSettings.UIProperties.OpeningMode =
+                    openInSameWindow ? OpeningMode.SameWindow : OpeningMode.NewWindow;
+                existingSettings.UIProperties.OpenInSameWindow = null;
+            }
+        }
+
         // The dock position once had a Closed value (0) that doubled as "not docked"; whether the gallery starts
         // docked is IsGalleryDocked alone now
         if (existingSettings.Gallery.DockPosition is not (GalleryDockPosition.Bottom or GalleryDockPosition.Top
@@ -491,7 +509,6 @@ public static class SettingsManager
 
         existingSettings.WindowProperties ??= new WindowProperties();
         existingSettings.Zoom ??= GetDefaultZoom();
-        existingSettings.StartUp ??= new StartUp();
         existingSettings.Navigation ??= new Navigation();
 
         existingSettings.Version = SettingsConfiguration.CurrentSettingsVersion;

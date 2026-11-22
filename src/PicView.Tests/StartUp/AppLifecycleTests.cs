@@ -489,7 +489,7 @@ public class AppLifecycleTests : IAsyncDisposable
         // Without AutoFit the window is shown at once, so the first image's Fit comes only from the fitter's NewImage
         // input, which must be attached before the image shows
         Settings.WindowProperties.AutoFit = false;
-        Settings.UIProperties.OpenInSameWindow = false;
+        Settings.UIProperties.OpeningMode = OpeningMode.NewWindow;
         _provider.GivesBars = true;
         var a = WritePng("a.png");
         var app = CreateApp();
@@ -553,7 +553,7 @@ public class AppLifecycleTests : IAsyncDisposable
     {
         Settings.WindowProperties.AutoFit = true;
         Settings.WindowProperties.KeepCentered = false;
-        Settings.UIProperties.OpenInSameWindow = false;
+        Settings.UIProperties.OpeningMode = OpeningMode.NewWindow;
         _provider.GivesBars = true;
         var a = WritePng("a.png", 640, 480);
         PixelPoint? centerWhenOpened = null;
@@ -1941,7 +1941,7 @@ public class AppLifecycleTests : IAsyncDisposable
     [AvaloniaFact]
     public async Task OpenLaunchFileAsync_AfterAppStart_OpensInTheMostRecentlyActiveMainWindow()
     {
-        Settings.UIProperties.OpenInSameWindow = true;
+        Settings.UIProperties.OpeningMode = OpeningMode.SameWindow;
         var app = CreateApp();
         await app.StartAsync(settingsExists: true, []);
         var first = app.MainWindows.Open[0];
@@ -1963,7 +1963,7 @@ public class AppLifecycleTests : IAsyncDisposable
     [AvaloniaFact]
     public async Task OpenLaunchFileAsync_AfterAppStartWithSameWindowOff_OpensInANewMainWindowOfThisPicView()
     {
-        Settings.UIProperties.OpenInSameWindow = false;
+        Settings.UIProperties.OpeningMode = OpeningMode.NewWindow;
         var app = CreateApp();
         await app.StartAsync(settingsExists: true, []);
         var first = app.MainWindows.Open[0];
@@ -1982,7 +1982,7 @@ public class AppLifecycleTests : IAsyncDisposable
     [AvaloniaFact]
     public async Task OpenHandOverAsync_SameWindowOffWithASource_OpensItInANewMainWindow()
     {
-        Settings.UIProperties.OpenInSameWindow = false;
+        Settings.UIProperties.OpeningMode = OpeningMode.NewWindow;
         var app = CreateApp();
         await app.StartAsync(settingsExists: true, []);
         var first = app.MainWindows.Open[0];
@@ -2004,7 +2004,7 @@ public class AppLifecycleTests : IAsyncDisposable
     [AvaloniaFact]
     public async Task OpenHandOverAsync_SameWindowOffWithASourceThatCannotBeOpened_LeavesTheNewMainWindowNotLoading()
     {
-        Settings.UIProperties.OpenInSameWindow = false;
+        Settings.UIProperties.OpeningMode = OpeningMode.NewWindow;
         var app = CreateApp();
         await app.StartAsync(settingsExists: true, []);
 
@@ -2019,7 +2019,7 @@ public class AppLifecycleTests : IAsyncDisposable
     [AvaloniaFact]
     public async Task OpenHandOverAsync_SameWindowOffWithoutASource_OpensANewMainWindowWithAFreshTab()
     {
-        Settings.UIProperties.OpenInSameWindow = false;
+        Settings.UIProperties.OpeningMode = OpeningMode.NewWindow;
         var app = CreateApp();
         await app.StartAsync(settingsExists: true, []);
         Dispatcher.UIThread.RunJobs();
@@ -2041,7 +2041,7 @@ public class AppLifecycleTests : IAsyncDisposable
     [AvaloniaFact]
     public async Task OpenHandOverAsync_SameWindowOnWithASource_OpensItInTheActiveMainWindow()
     {
-        Settings.UIProperties.OpenInSameWindow = true;
+        Settings.UIProperties.OpeningMode = OpeningMode.SameWindow;
         var app = CreateApp();
         await app.StartAsync(settingsExists: true, []);
         var first = app.MainWindows.Open[0];
@@ -2062,7 +2062,7 @@ public class AppLifecycleTests : IAsyncDisposable
     [AvaloniaFact]
     public async Task OpenHandOverAsync_SameWindowOnWithoutASource_BringsTheActiveMainWindowToTheFrontAndOpensNothing()
     {
-        Settings.UIProperties.OpenInSameWindow = true;
+        Settings.UIProperties.OpeningMode = OpeningMode.SameWindow;
         var app = CreateApp();
         await app.StartAsync(settingsExists: true, []);
         var first = app.MainWindows.Open[0];
@@ -2091,7 +2091,7 @@ public class AppLifecycleTests : IAsyncDisposable
     [InlineData(false)]
     public async Task OpenHandOverAsync_SameWindowOnWithTheActiveMainWindowMinimized_ShowsItAgain(bool withSource)
     {
-        Settings.UIProperties.OpenInSameWindow = true;
+        Settings.UIProperties.OpeningMode = OpeningMode.SameWindow;
         _provider.EntersNativeStates = true;
         var app = CreateApp();
         await app.StartAsync(settingsExists: true, []);
@@ -2121,7 +2121,7 @@ public class AppLifecycleTests : IAsyncDisposable
     [AvaloniaFact]
     public async Task OpenHandOverAsync_SameWindowOffWithTheActiveMainWindowMinimized_OpensAVisibleWindowWhereTheLastOneWas()
     {
-        Settings.UIProperties.OpenInSameWindow = false;
+        Settings.UIProperties.OpeningMode = OpeningMode.NewWindow;
         Settings.WindowProperties.AutoFit = false;
         // Where the window was last in Normal mode, which it opens at
         Settings.WindowProperties.Left = 123;
@@ -2232,7 +2232,7 @@ public class AppLifecycleTests : IAsyncDisposable
     [AvaloniaFact]
     public async Task OpenHandOverAsync_SameWindowOnWithOnlyBatchResizeOpen_OpensItInANewMainWindow()
     {
-        Settings.UIProperties.OpenInSameWindow = true;
+        Settings.UIProperties.OpeningMode = OpeningMode.SameWindow;
         var app = CreateApp();
         await app.StartAsync(settingsExists: true, []);
         var main = app.MainWindows.Open[0];
@@ -2251,7 +2251,7 @@ public class AppLifecycleTests : IAsyncDisposable
     [AvaloniaFact]
     public async Task ReceiveHandOver_WhilePicViewRuns_TakesItAndOpensItOnTheUiThread()
     {
-        Settings.UIProperties.OpenInSameWindow = false;
+        Settings.UIProperties.OpeningMode = OpeningMode.NewWindow;
         var app = CreateApp();
         await app.StartAsync(settingsExists: true, []);
         var handedOver = await WriteImageAsync("handed over.jpg");
@@ -2296,7 +2296,7 @@ public class AppLifecycleTests : IAsyncDisposable
     [AvaloniaFact]
     public async Task StartAsync_WithAListener_OpensWhatAnotherPicViewHandsOver()
     {
-        Settings.UIProperties.OpenInSameWindow = false;
+        Settings.UIProperties.OpeningMode = OpeningMode.NewWindow;
         var pipe = "PicViewTests-" + Guid.NewGuid().ToString("N");
         var listener = new HandOverListener(pipe);
         Assert.True(listener.TryStart());

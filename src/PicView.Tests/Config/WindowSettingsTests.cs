@@ -275,10 +275,10 @@ public class WindowSettingsTests
     public void Store_WritesTheNineSettings_AndLeavesTheAppSettingsOfThoseGroupsAlone()
     {
         var record = GetDefaults();
-        record.UIProperties!.OpenInSameWindow = !record.UIProperties.OpenInSameWindow;
+        record.UIProperties!.OpeningMode = record.UIProperties.OpeningMode == OpeningMode.NewTab ? OpeningMode.NewWindow : OpeningMode.NewTab;
         record.Zoom!.ZoomSpeed = 7.5;
         record.ImageScaling!.IsScalingSetToNearestNeighbor = !record.ImageScaling.IsScalingSetToNearestNeighbor;
-        var openInSameWindow = record.UIProperties.OpenInSameWindow;
+        var openingMode = record.UIProperties.OpeningMode;
         var zoomSpeed = record.Zoom.ZoomSpeed;
         var nearestNeighbor = record.ImageScaling.IsScalingSetToNearestNeighbor;
 
@@ -294,7 +294,7 @@ public class WindowSettingsTests
         Assert.Equal(4, record.UIProperties.BgColorChoice);
         Assert.True(record.UIProperties.IsConstrainBackgroundColorEnabled);
         Assert.True(record.Zoom.ScrollEnabled);
-        Assert.Equal(openInSameWindow, record.UIProperties.OpenInSameWindow);
+        Assert.Equal(openingMode, record.UIProperties.OpeningMode);
         Assert.Equal(zoomSpeed, record.Zoom.ZoomSpeed);
         Assert.Equal(nearestNeighbor, record.ImageScaling.IsScalingSetToNearestNeighbor);
     }

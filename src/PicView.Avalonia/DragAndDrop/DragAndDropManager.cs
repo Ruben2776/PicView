@@ -9,6 +9,7 @@ using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.Views.UC;
+using PicView.Core.Config;
 using PicView.Core.DebugTools;
 using PicView.Core.FileHandling;
 using PicView.Core.Sizing;
@@ -114,7 +115,7 @@ public static class DragAndDropManager
     // Each further file opens in a new Main Window of this PicView, opened from the one they were dropped on
     private static async Task HandleAdditionalFiles(IEnumerable<IStorageItem> additionalFiles, MainWindow mainWindow)
     {
-        if (Settings.UIProperties.OpenInSameWindow || mainWindow.Lifecycle is not { } lifecycle)
+        if (Settings.UIProperties.OpeningMode == OpeningMode.SameWindow || mainWindow.Lifecycle is not { } lifecycle)
         {
             return;
         }

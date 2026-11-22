@@ -1,4 +1,5 @@
 ﻿using PicView.Core.Gallery;
+using PicView.Core.Config;
 using PicView.Core.Localization;
 using PicView.Core.ViewModels;
 using R3;
@@ -36,7 +37,7 @@ public class GlobalSettingsViewModelTests
         { "FileHistory", s => s.IsFileHistoryEnabled, () => Settings.Navigation.IsFileHistoryEnabled },
         { "FullPath", s => s.IsShowingFullPathInTitleBar, () => Settings.UIProperties.ShowFullPathInTitleBar },
         { "TaskbarProgress", s => s.IsShowingTaskbarProgress, () => Settings.UIProperties.IsTaskbarProgressEnabled },
-        { "OpenInSameWindow", s => s.IsOpeningInSameWindow, () => Settings.UIProperties.OpenInSameWindow },
+        { "OpenInSameWindow", s => s.IsOpeningInSameWindow, () => Settings.UIProperties.OpeningMode == OpeningMode.SameWindow },
     };
 
     public static TheoryData<string, Func<GlobalSettingsViewModel, BindableReactiveProperty<bool>>, Func<bool>> Published
@@ -195,7 +196,7 @@ public class GlobalSettingsViewModelTests
 
         settings.IsFileHistoryEnabled.Value = !Settings.Navigation.IsFileHistoryEnabled; // save 1 starts and is held
         settings.IsShowingTaskbarProgress.Value = !Settings.UIProperties.IsTaskbarProgressEnabled; // two changes land while it runs
-        settings.IsOpeningInSameWindow.Value = !Settings.UIProperties.OpenInSameWindow;
+        settings.IsOpeningInSameWindow.Value = Settings.UIProperties.OpeningMode != OpeningMode.SameWindow;
         Assert.Equal(1, saves);
         gate.SetResult(true);
         await settings.Saving;
