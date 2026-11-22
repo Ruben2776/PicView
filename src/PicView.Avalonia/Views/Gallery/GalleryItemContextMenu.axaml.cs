@@ -28,6 +28,7 @@ public partial class GalleryItemContextMenu : ContextMenu
         Closed += (_, _) => _item?.SetContextMenuOpen(false);
         if (!OperatingSystem.IsWindows())
         {
+            LockscreenSeparator.IsVisible = false;
             LockscreenItem.IsVisible = false;
         }
     }
