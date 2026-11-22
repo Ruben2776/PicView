@@ -193,7 +193,7 @@ public static class FileHistoryManager
         lock (InitLock)
         {
             _fileHistoryConfiguration = new FileHistoryConfiguration();
-            ReplaceEntries(LoadFromFile(_fileHistoryConfiguration.FilePath));
+            Load(_fileHistoryConfiguration.FilePath);
         }
     }
 
@@ -228,7 +228,19 @@ public static class FileHistoryManager
             {
                 PathOverride = configPath
             };
-            ReplaceEntries(LoadFromFile(configPath));
+            Load(configPath);
+        }
+    }
+
+    // Callers hold InitLock
+    private static void Load(string? configPath)
+    {
+        ReplaceEntries(LoadFromFile(configPath, out var migrated));
+        if (migrated)
+        {
+            // The record is emptied by the next settings save, so the history file must hold them before it. Started
+            // here, it takes the config gate ahead of any save made after the load
+            _ = SaveToFileAsync();
         }
     }
 
@@ -666,11 +678,16 @@ public static class FileHistoryManager
     ///     Loads the history from the specified history file path. The Last File and start-up directory the settings
     ///     used to hold are migrated here: where the file has none, the record's is taken, and the record is emptied.
     /// </summary>
+    /// <param name="migrated">Whether a value was taken from the record, which the history file does not hold yet.</param>
     /// <returns>What the file holds, or null when there is nothing to load.</returns>
-    private static FileHistoryEntries? LoadFromFile(string? configPath)
+    private static FileHistoryEntries? LoadFromFile(string? configPath, out bool migrated)
     {
+        migrated = false;
         if (!Settings.Navigation.IsFileHistoryEnabled)
         {
+            // Nothing is taken while history is off, but the record still drops them; the file is left alone
+            Settings.StartUp.LastFile = null;
+            Settings.StartUp.StartUpDirectory = null;
             return null;
         }
 
@@ -706,12 +723,14 @@ public static class FileHistoryManager
         {
             entries ??= new FileHistoryEntries();
             entries.LastFile = legacyLastFile;
+            migrated = true;
         }
 
         if (!string.IsNullOrWhiteSpace(legacyDirectory) && string.IsNullOrWhiteSpace(entries?.StartUpDirectory))
         {
             entries ??= new FileHistoryEntries();
             entries.StartUpDirectory = legacyDirectory;
+            migrated = true;
         }
 
         Settings.StartUp.LastFile = null;

@@ -24,6 +24,14 @@ public class StartUpPlanTests
     }
 
     [Fact]
+    public void Menu_ShowsMenu_WithNoSources()
+    {
+        Assert.True(StartUpPlan.Menu.ShowsMenu);
+        Assert.Empty(StartUpPlan.Menu.Sources);
+        Assert.False(StartUpPlan.Menu.HasOtherTabs);
+    }
+
+    [Fact]
     public void None_ShowsMenu()
     {
         var plan = StartUpPlan.Decide(StartUpBehavior.None, true, "a.jpg", Session(0, "a.jpg"), Everything);
@@ -88,13 +96,36 @@ public class StartUpPlanTests
     }
 
     [Fact]
-    public void ContinueSession_EarlierFileGone_ActiveIndexShifts()
+    public void ContinueSession_EarlierFileGone_IsLeftForTheRestore()
     {
         var plan = StartUpPlan.Decide(StartUpBehavior.ContinueSession, true, null, Session(2, "a", "b", "c"),
             path => path != "a");
 
-        Assert.Equal(["b", "c"], plan.Sources);
+        Assert.Equal(["a", "b", "c"], plan.Sources);
+        Assert.Equal(2, plan.ActiveIndex);
+        Assert.Equal("c", plan.ActiveSource);
+    }
+
+    [Fact]
+    public void ContinueSession_ActiveAndNextGone_WalksOnToTheFirstThatExists()
+    {
+        var plan = StartUpPlan.Decide(StartUpBehavior.ContinueSession, true, null, Session(1, "a", "b", "c", "d"),
+            path => path is "a" or "d");
+
+        Assert.Equal(["a", "d"], plan.Sources);
         Assert.Equal(1, plan.ActiveIndex);
+        Assert.Equal("d", plan.ActiveSource);
+    }
+
+    [Fact]
+    public void Decide_DoesNotCheckNonActiveSources()
+    {
+        var plan = StartUpPlan.Decide(StartUpBehavior.ContinueSession, true, null, Session(1, "a", "b", "c"),
+            path => path == "b" ? true : throw new InvalidOperationException($"{path} was checked"));
+
+        Assert.Equal(["a", "b", "c"], plan.Sources);
+        Assert.Equal(1, plan.ActiveIndex);
+        Assert.Equal("b", plan.ActiveSource);
     }
 
     [Fact]
@@ -119,7 +150,7 @@ public class StartUpPlanTests
     [InlineData("HTTP://example.com/a.png")]
     public void ContinueSession_UrlKeptWithoutExistenceCheck(string url)
     {
-        var plan = StartUpPlan.Decide(StartUpBehavior.ContinueSession, true, null, Session(1, "a", url),
+        var plan = StartUpPlan.Decide(StartUpBehavior.ContinueSession, true, null, Session(0, "a", url),
             _ => false);
 
         Assert.Equal([url], plan.Sources);

@@ -69,6 +69,8 @@ public class SettingsSearchData
         sb.Append(space);
         sb.Append(TranslationManager.Translation.OpenLastFile);
         sb.Append(space);
+        sb.Append(TranslationManager.Translation.ContinueWhereYouLeftOff);
+        sb.Append(space);
         sb.Append("Boot");
         sb.Append(space);
         sb.Append("Launch");

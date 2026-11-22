@@ -268,10 +268,12 @@ public sealed class AppLifecycle
         // Without a launch file to wait for, every one that arrives is a later launch
         _launchFileArrived = !launchFileMayFollow;
         ApplySharedSettings(settingsExists);
-        if (source is null && Settings.StartUp.Behavior != StartUpBehavior.None && Settings.Navigation.IsFileHistoryEnabled)
+        if (source is null && Settings.Navigation.IsFileHistoryEnabled)
         {
-            // What the start-up behavior opens is read from the file history, before the first window is made; a start
-            // with a Source opens that instead, so it reads nothing before its window
+            // Loaded before the first window is made, whatever the start-up behavior: it opens the Last File or the Last
+            // Session from it, and the start-up menu's Open last file and a launch file that arrives later, as on
+            // macOS, read the Last File and start-up directory from it. A start with a Source opens that instead, so it
+            // reads nothing before its window
             FileHistoryManager.EnsureInitialized();
         }
 

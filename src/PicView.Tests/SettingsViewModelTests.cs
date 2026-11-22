@@ -153,6 +153,18 @@ public class SettingsViewModelTests
     }
 
     [Fact]
+    public void StartUpIndex_SetMinus1_WritesNothing()
+    {
+        Settings.Navigation.IsFileHistoryEnabled = true;
+        Settings.StartUp.Behavior = StartUpBehavior.OpenLastFile;
+        using var vm = Started(NewSettings());
+
+        vm.StartUpIndex.Value = -1;
+
+        Assert.Equal(StartUpBehavior.OpenLastFile, Settings.StartUp.Behavior);
+    }
+
+    [Fact]
     public void ToggleFadeButtons_WritesThePublishedSetting()
     {
         var settings = NewSettings();
@@ -220,6 +232,23 @@ public class SettingsViewModelTests
 
             Assert.Contains("ApplicationStartup-b", vm.SearchData.Value.StartUpSearchTags, StringComparison.Ordinal);
             Assert.DoesNotContain("-a", vm.SearchData.Value.StartUpSearchTags, StringComparison.Ordinal);
+        }
+        finally
+        {
+            TranslationManager.Swap(previous);
+        }
+    }
+
+    [Fact]
+    public void StartUpSearchTags_HoldContinueWhereYouLeftOff()
+    {
+        var previous = TranslationManager.Swap(Language("a"));
+        try
+        {
+            using var vm = new SettingsViewModel(new TranslationViewModel(), NewSettings());
+
+            Assert.Contains("ContinueWhereYouLeftOff-a", vm.SearchData.Value.StartUpSearchTags,
+                StringComparison.Ordinal);
         }
         finally
         {

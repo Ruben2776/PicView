@@ -16,7 +16,7 @@ internal interface ISharedFiles
     Task LoadAsync();
 
     /// <summary>
-    /// Saves the settings, the Keymap and file history.
+    /// Saves file history, the settings and the Keymap.
     /// </summary>
     Task SaveAsync();
 }
@@ -38,8 +38,10 @@ internal sealed class SharedFiles(IPlatformSpecificService? platform) : ISharedF
 
     public async Task SaveAsync()
     {
+        // File history first: the settings save drops the Last File the record held before, so a crash between the two
+        // must not leave it in neither
+        await FileHistoryManager.SaveToFileAsync().ConfigureAwait(true);
         await SaveSettingsAsync().ConfigureAwait(true);
         await Keymaps.SaveAsync().ConfigureAwait(true);
-        await FileHistoryManager.SaveToFileAsync().ConfigureAwait(true);
     }
 }

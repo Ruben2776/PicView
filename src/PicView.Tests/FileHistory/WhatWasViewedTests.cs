@@ -1,3 +1,4 @@
+using PicView.Core.Config.ConfigFileManagement;
 using PicView.Core.FileHistory;
 
 namespace PicView.Tests.FileHistory;
@@ -66,6 +67,49 @@ public class WhatWasViewedTests : IDisposable
         Assert.Equal("C:\\legacy", FileHistoryManager.StartUpDirectory);
         Assert.Null(Settings.StartUp.LastFile);
         Assert.Null(Settings.StartUp.StartUpDirectory);
+    }
+
+    [Fact]
+    public async Task Load_MigratedLegacyRecord_SavesTheHistoryFileAtOnce()
+    {
+        Settings.StartUp.LastFile = "C:\\legacy\\last.jpg";
+        Settings.StartUp.StartUpDirectory = "C:\\legacy";
+
+        FileHistoryManager.Initialize(_configPath);
+        // The save took the config gate before the load returned, so it has finished once the gate is free
+        await ConfigFolders.Gate.WaitAsync(TestContext.Current.CancellationToken);
+        ConfigFolders.Gate.Release();
+
+        // A crash now loses nothing: the record is empty, and the history file holds them
+        FileHistoryManager.Unload();
+        FileHistoryManager.Initialize(_configPath);
+        Assert.Equal("C:\\legacy\\last.jpg", FileHistoryManager.LastFile);
+        Assert.Equal("C:\\legacy", FileHistoryManager.StartUpDirectory);
+    }
+
+    [Fact]
+    public async Task Load_NothingMigrated_SavesNothing()
+    {
+        FileHistoryManager.Initialize(_configPath);
+        await ConfigFolders.Gate.WaitAsync(TestContext.Current.CancellationToken);
+        ConfigFolders.Gate.Release();
+
+        Assert.False(File.Exists(_configPath));
+    }
+
+    [Fact]
+    public void Load_HistoryOff_NullsLegacyRecordValues()
+    {
+        Settings.Navigation.IsFileHistoryEnabled = false;
+        Settings.StartUp.LastFile = "C:\\legacy\\last.jpg";
+        Settings.StartUp.StartUpDirectory = "C:\\legacy";
+
+        FileHistoryManager.Initialize(_configPath);
+
+        Assert.Null(Settings.StartUp.LastFile);
+        Assert.Null(Settings.StartUp.StartUpDirectory);
+        Assert.Null(FileHistoryManager.LastFile);
+        Assert.False(File.Exists(_configPath));
     }
 
     [Fact]

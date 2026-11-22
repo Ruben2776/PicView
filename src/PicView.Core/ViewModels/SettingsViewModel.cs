@@ -383,8 +383,10 @@ public class SettingsViewModel : IDisposable
         StartUpIndex
             .SubscribeAwait(async (x, _) =>
             {
-                // History off shows None and stores nothing, so a stored choice survives until history is back on.
-                if (!_globalSettings.IsFileHistoryEnabled.Value || x == (int)Settings.StartUp.Behavior)
+                // History off shows None and stores nothing, so a stored choice survives until history is back on. An
+                // index with no behavior, as -1 when the combobox has no selection, stores nothing either
+                if (!_globalSettings.IsFileHistoryEnabled.Value || x == (int)Settings.StartUp.Behavior ||
+                    !Enum.IsDefined((StartUpBehavior)x))
                 {
                     return;
                 }

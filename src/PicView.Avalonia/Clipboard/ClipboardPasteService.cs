@@ -125,10 +125,12 @@ public class ClipboardPasteService(
             return shown;
         }
 
-        // Open consecutive files in new tabs
+        // The other files open in tabs after the last, as a drop's do, and load in the background, so the first file's
+        // tab stays the active one. Made on the UI thread, where its views are attached
+        var tabs = vm.WindowTabs;
         foreach (var path in filePaths.Skip(1))
         {
-            var other = vm.WindowTabs.CreateTab();
+            var other = await Dispatcher.UIThread.InvokeAsync(() => tabs.InsertTab(tabs.Tabs.Value.Count));
             _ = Task.Run(() => SourceOpener.OpenAsync(mainWindow, activeCore, path, tab: other).AsTask());
         }
 

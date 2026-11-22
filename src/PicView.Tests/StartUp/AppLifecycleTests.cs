@@ -554,6 +554,83 @@ public class AppLifecycleTests : IAsyncDisposable
     }
 
     [AvaloniaFact]
+    public async Task AppStart_ContinueSession_OtherFileGone_IsSkipped_AndTheRestKeepTheirOrder()
+    {
+        Settings.StartUp.Behavior = StartUpBehavior.ContinueSession;
+        _provider.GivesBars = true;
+        var a = WritePng("a.png");
+        var b = WritePng("b.png");
+        var c = WritePng("c.png");
+        var d = WritePng("d.png");
+        RecordLastSession([a, b, c, d], activeIndex: 2);
+        File.Delete(b);
+        var app = CreateApp();
+
+        await app.StartAsync(settingsExists: true, []);
+        var window = app.MainWindows.Open[0];
+        var tabs = ViewModelOf(window).WindowTabs;
+        var opensWith = tabs.ActiveTab.CurrentValue;
+        await WaitUntilOpenedAsync(window);
+        await WaitUntilAsync(() => tabs.Tabs.Value.Count == 3 &&
+                                   tabs.Tabs.Value.All(static tab => tab.ViewHistory.Current is not null));
+        // Time for a tab for the missing file to be made, had one been
+        await Task.Delay(EarlyEndWait, TestContext.Current.CancellationToken);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Equal([a, c, d], tabs.Tabs.Value.Select(static tab => tab.ViewHistory.Current?.HistoryPath));
+        Assert.Same(opensWith, tabs.Tabs.Value[1]);
+        Assert.Same(opensWith, tabs.ActiveTab.CurrentValue);
+    }
+
+    [AvaloniaFact]
+    public async Task Shutdown_RecordsTheLastSession_InTheFileHistoryFile()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var window = app.MainWindows.Open[0];
+        var tabs = ViewModelOf(window).WindowTabs;
+        var a = await WriteImageAsync("a.jpg");
+        var b = await WriteImageAsync("b.jpg");
+        var c = await WriteImageAsync("c.jpg");
+        await SourceOpener.OpenAsync(window, _core, a);
+        var second = tabs.CreateTab();
+        await SourceOpener.OpenAsync(window, _core, b, tab: second);
+        var third = tabs.CreateTab();
+        await SourceOpener.OpenAsync(window, _core, c, tab: third);
+        tabs.SelectTab(second);
+        Dispatcher.UIThread.RunJobs();
+
+        await app.ShutdownAsync();
+        FileHistoryManager.Unload();
+        FileHistoryManager.Initialize(Path.Combine(_folder, "history.json"));
+
+        var session = FileHistoryManager.LastSession;
+        Assert.NotNull(session);
+        Assert.Equal([a, b, c], session.Sources);
+        Assert.Equal(1, session.ActiveIndex);
+    }
+
+    [AvaloniaFact]
+    public async Task AppStart_BehaviorNone_LoadsTheLastFileBeforeTheFirstWindow()
+    {
+        Settings.StartUp.Behavior = StartUpBehavior.None;
+        var a = WritePng("a.png");
+        // The Last File as the user's own file history holds it, which App Start loads
+        FileHistoryManager.Initialize();
+        FileHistoryManager.LastFile = a;
+        await FileHistoryManager.SaveToFileAsync();
+        FileHistoryManager.Unload();
+        string? lastFileWhenWindowMade = null;
+        _provider.OnCreated = _ => lastFileWhenWindowMade ??= FileHistoryManager.LastFile;
+        var app = CreateApp();
+
+        await app.StartAsync(settingsExists: true, []);
+
+        // The start-up menu's Open last file finds it however fast it is clicked
+        Assert.Equal(a, lastFileWhenWindowMade);
+    }
+
+    [AvaloniaFact]
     public async Task AppStart_ContinueSession_HistoryOff_ShowsStartUpMenu()
     {
         Settings.StartUp.Behavior = StartUpBehavior.ContinueSession;
@@ -3042,6 +3119,30 @@ public class AppLifecycleTests : IAsyncDisposable
         {
             Application.Current.DataContext = null;
         }
+    }
+
+    [AvaloniaFact]
+    public async Task Paste_SeveralFiles_FirstStaysActive()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var window = app.MainWindows.Open[0];
+        var vm = ViewModelOf(window);
+        var tabs = vm.WindowTabs;
+        var first = tabs.ActiveTab.CurrentValue;
+        var a = await WriteImageAsync("a.jpg");
+        var b = await WriteImageAsync("b.jpg");
+        var c = await WriteImageAsync("c.jpg");
+        var service = new ClipboardPasteService(window.Clipboard, window, _core);
+
+        var pasted = await service.PasteFilesAsync([a, b, c], vm);
+        await WaitUntilAsync(() => tabs.Tabs.Value.Count == 3 &&
+                                   tabs.Tabs.Value.All(static tab => tab.Model?.FileInfo is not null));
+
+        Assert.True(pasted);
+        Assert.Same(first, tabs.ActiveTab.CurrentValue);
+        Assert.Same(first, tabs.Tabs.Value[0]);
+        Assert.Equal([a, b, c], tabs.Tabs.Value.Select(static tab => tab.Model?.FileInfo?.FullName));
     }
 
     [AvaloniaFact]

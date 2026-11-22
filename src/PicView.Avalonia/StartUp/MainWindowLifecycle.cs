@@ -167,7 +167,7 @@ public sealed class MainWindowLifecycle
     internal (MainWindow Window, Task SetUp) OpenAtAppStart(string? source, Func<bool>? launchFileArrived)
     {
         // Once, after App Start has loaded the file history it reads
-        var plan = source is null ? DecideStartUp() : default;
+        var plan = source is null ? DecideStartUp() : StartUpPlan.Menu;
         // A window that opens a source says Loading from the start, so no menu is made for it; QuickLoad replaces the
         // ticket with its own
         var opensSource = source is not null || (launchFileArrived is null && !plan.ShowsMenu);
@@ -260,9 +260,14 @@ public sealed class MainWindowLifecycle
     /// <summary>
     /// Opens the Last Session's other tabs around the active one, in order, once it shows; the window is shown and
     /// sized by then, so each loads through Core (ADR-0005). Only the active tab lists from the start-up directory.
+    /// Each local path is checked off the UI thread, as one on a network path can block for long, and one that is gone
+    /// gets no tab; the rest keep the session's order.
     /// </summary>
     private async Task RestoreOtherTabsAsync(MainWindow window, StartUpPlan plan)
     {
+        // Which of the plan's sources have a tab in the window, the active one from the start
+        var inWindow = new bool[plan.Sources.Count];
+        inWindow[plan.ActiveIndex] = true;
         for (var i = 0; i < plan.Sources.Count; i++)
         {
             if (i == plan.ActiveIndex)
@@ -270,20 +275,36 @@ public sealed class MainWindowLifecycle
                 continue;
             }
 
-            var index = i;
+            var source = plan.Sources[i];
             try
             {
+                if (!StartUpPlan.IsUrl(source) && !await Task.Run(() => File.Exists(source)).ConfigureAwait(false))
+                {
+                    continue;
+                }
+
+                // After the tabs of the sources before it that are in the window
+                var at = 0;
+                for (var j = 0; j < i; j++)
+                {
+                    if (inWindow[j])
+                    {
+                        at++;
+                    }
+                }
+
                 // The window's view model is read on the UI thread too, as its DataContext lives there. A window
                 // closed meanwhile gets no more tabs
                 var tab = await _dispatcher.InvokeAsync(() =>
-                    MayBecomeActive(window) ? ViewModelOf(window).WindowTabs.InsertTab(index) : null);
+                    MayBecomeActive(window) ? ViewModelOf(window).WindowTabs.InsertTab(at) : null);
                 if (tab is null)
                 {
                     return;
                 }
 
+                inWindow[i] = true;
                 // Off the UI thread, as every Source opens; the insert may have resumed on it
-                await Task.Run(() => SourceOpener.OpenAsync(window, _core, plan.Sources[index], tab: tab).AsTask())
+                await Task.Run(() => SourceOpener.OpenAsync(window, _core, source, tab: tab).AsTask())
                     .ConfigureAwait(false);
             }
             catch (Exception e)
