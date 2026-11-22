@@ -16,6 +16,30 @@ public class SettingsMigrationTests
     }
 
     [Fact]
+    public void EnsureSettings_OpeningModeOutOfRange_FallsBackToDefault()
+    {
+        var settings = new AppSettings { Version = 3.2, UIProperties = new UIProperties { OpeningMode = (OpeningMode)7 } };
+
+        settings = SettingsManager.EnsureSettings(settings);
+
+        Assert.Equal(SettingsManager.GetDefaultUIProperties().OpeningMode, settings.UIProperties.OpeningMode);
+    }
+
+    [Fact]
+    public void EnsureSettings_BehaviorOutOfRange_FallsBackToNone()
+    {
+        var settings = new AppSettings
+        {
+            Version = 3.2,
+            StartUp = new PicView.Core.Config.StartUp { Behavior = (StartUpBehavior)9 }
+        };
+
+        settings = SettingsManager.EnsureSettings(settings);
+
+        Assert.Equal(StartUpBehavior.None, settings.StartUp!.Behavior);
+    }
+
+    [Fact]
     public void EnsureSettings_FromVersion31_MapsOpenLastFileTrue_ToOpenLastFileBehavior()
     {
         var settings = SettingsManager.EnsureSettings(Version31(openLastFile: true));

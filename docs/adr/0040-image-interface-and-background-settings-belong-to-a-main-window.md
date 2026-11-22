@@ -11,7 +11,7 @@ Before this, each of the nine was one shared bindable on `GlobalSettingsViewMode
 
 ## Consequences
 
-- `GlobalSettingsViewModel` keeps five Action settings, `IsIncludingSubdirectories`, `IsFileHistoryEnabled`, `IsShowingFullPathInTitleBar`, `IsShowingTaskbarProgress` and `IsOpeningInSameWindow`, which `InitializeActionSettings` starts, and the extra ones, `ShowFadeButtons`, `WindowMargin` and `GalleryMouseWheelBehavior`, which `InitializeExtraSettings` starts.
+- `GlobalSettingsViewModel` keeps five Action settings, `IsIncludingSubdirectories`, `IsFileHistoryEnabled`, `IsShowingFullPathInTitleBar`, `IsShowingTaskbarProgress` and `OpeningModeIndex`, which `InitializeActionSettings` starts, and the extra ones, `ShowFadeButtons`, `WindowMargin` and `GalleryMouseWheelBehavior`, which `InitializeExtraSettings` starts.
 - A crash loses the session's changes to these nine too, as ADR-0038 says of the others; App Settings still save at once.
 - The guard cannot see an alias of a whole group (`var ui = Settings.UIProperties;`, then `ui.Looping`), because those groups also hold App Settings. A read through an alias is found in review. A new allowed file needs a reason in the test, as for the other scans.
 - A Settings window control for one of the nine shows and edits the Active Main Window. Where no Action writes a setting its binding may be two-way, Stay Centered being the one; `SettingBindingContractTests` requires every other `IsChecked` binding to a `WindowSettings` member beside an Action to be `Mode=OneWay`, as for `GlobalSettings`.

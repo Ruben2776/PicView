@@ -485,6 +485,17 @@ public static class SettingsManager
             }
         }
 
+        // A hand-edited number that is not an Opening Mode or a startup behavior loads as the default
+        if (!Enum.IsDefined(existingSettings.UIProperties.OpeningMode))
+        {
+            existingSettings.UIProperties.OpeningMode = GetDefaultUIProperties().OpeningMode;
+        }
+
+        if (!Enum.IsDefined(existingSettings.StartUp.Behavior))
+        {
+            existingSettings.StartUp.Behavior = StartUpBehavior.None;
+        }
+
         // The dock position once had a Closed value (0) that doubled as "not docked"; whether the gallery starts
         // docked is IsGalleryDocked alone now
         if (existingSettings.Gallery.DockPosition is not (GalleryDockPosition.Bottom or GalleryDockPosition.Top

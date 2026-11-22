@@ -116,7 +116,13 @@ public class GlobalSettingsViewModel
             Follow(IsFileHistoryEnabled, value => Settings.Navigation.IsFileHistoryEnabled = value, rephrases: true);
             Follow(IsShowingFullPathInTitleBar, value => Settings.UIProperties.ShowFullPathInTitleBar = value);
             Follow(IsShowingTaskbarProgress, value => Settings.UIProperties.IsTaskbarProgressEnabled = value);
-            Follow(OpeningModeIndex, value => Settings.UIProperties.OpeningMode = (OpeningMode)value);
+            Follow(OpeningModeIndex, value =>
+            {
+                if (Enum.IsDefined((OpeningMode)value))
+                {
+                    Settings.UIProperties.OpeningMode = (OpeningMode)value;
+                }
+            });
             _isActionSettingsInitialized = true;
         }
     }

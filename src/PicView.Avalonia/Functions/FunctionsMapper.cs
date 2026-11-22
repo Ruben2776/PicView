@@ -986,7 +986,6 @@ public class FunctionsMapper : IActionRunner
     private ValueTask ShowRecentHistoryFile() => PlatformActions.ShowFile(_vm, FileHistoryManager.CurrentFileHistoryFile);
 
     private ValueTask ShowFavoritesFile() => PlatformActions.ShowFile(_vm, FavoritesManager.CurrentFavoritesFile);
-    
 
     private ValueTask ToggleFileHistory() => ToggleHelper.Toggle(_vm.GlobalSettings.IsFileHistoryEnabled);
 

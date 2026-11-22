@@ -93,6 +93,17 @@ public class GlobalSettingsViewModelTests
     }
 
     [Fact]
+    public void OpeningModeIndex_SetMinus1_WritesNothing()
+    {
+        var settings = Unstarted();
+        settings.InitializeActionSettings();
+
+        settings.OpeningModeIndex.Value = -1;
+
+        Assert.Equal(OpeningMode.NewWindow, Settings.UIProperties.OpeningMode);
+    }
+
+    [Fact]
     public void OpeningModeIndex_ChangedBeforeInitialize_WritesAndSavesNothing()
     {
         var settings = Unstarted();
