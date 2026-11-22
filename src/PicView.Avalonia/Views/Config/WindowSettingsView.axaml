@@ -1,135 +1,140 @@
 ﻿<UserControl
     x:Class="PicView.Avalonia.Views.Config.WindowSettingsView"
+    x:DataType="viewModels:CoreViewModel"
     xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:keybindings="using:PicView.Core.Keybindings"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
+    xmlns:keybindings="using:PicView.Core.Keybindings"
     xmlns:ui="clr-namespace:PicView.Avalonia.UI"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
-    x:DataType="viewModels:CoreViewModel">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <StackPanel HorizontalAlignment="Center">
 
         <StackPanel Classes="searchHeader">
             <Image
-                Width="18"
                 Height="18"
-                Source="{StaticResource WindowImage}" />
+                Source="{StaticResource WindowImage}"
+                Width="18" />
             <TextBlock
-                Margin="0,20,0,20"
                 Classes="txt bold"
+                Margin="0,20,0,20"
                 Text="{CompiledBinding Translation.Window.Value,
                                        Mode=OneWay}" />
         </StackPanel>
 
-        <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.WindowScalingSearchTags}" Classes="searchBorder">
+        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.WindowScalingSearchTags}">
             <StackPanel>
                 <TextBlock
-                    Margin="0,20,0,20"
                     Classes="txt bold"
+                    Margin="0,20,0,20"
                     Text="{CompiledBinding Translation.WindowScaling.Value,
                                            Mode=OneWay}" />
 
                 <!--  Auto fit  -->
                 <customControls:TextToggleButton
-                    x:Name="AutoFitToggleButton"
                     Classes="MenuItemHover settingsToggleButton"
-                    Command="{CompiledBinding MainWindows.ActiveWindow.Value.RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.AutoFitWindow}"
-                    IsChecked="{CompiledBinding MainWindows.ActiveWindow.Value.IsAutoFit.Value, Mode=OneWay}"
+                    Command="{CompiledBinding MainWindows.ActiveWindow.Value.RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.AutoFitWindow}"
+                    IsChecked="{CompiledBinding MainWindows.ActiveWindow.Value.IsAutoFit.Value,
+                                                Mode=OneWay}"
                     Text="{CompiledBinding Translation.AutoFitWindow.Value,
-                                           Mode=OneWay}" />
+                                           Mode=OneWay}"
+                    x:Name="AutoFitToggleButton" />
 
                 <!--  Window spacing  -->
                 <TextBlock
-                    MaxWidth="300"
-                    Margin="0,10,0,10"
                     Classes="txt bold"
                     IsEnabled="{CompiledBinding MainWindows.ActiveWindow.Value.IsAutoFit.Value}"
+                    Margin="0,10,0,10"
+                    MaxWidth="300"
                     Text="{CompiledBinding Translation.WindowMargin.Value,
                                            Mode=OneWay}" />
                 <customControls:CustomSlider
-                    Width="300"
                     Height="30"
-                    Margin="0,1,0,1"
                     HorizontalAlignment="Center"
                     IsEnabled="{CompiledBinding MainWindows.ActiveWindow.Value.IsAutoFit.Value}"
                     IsSnapToTickEnabled="True"
+                    Margin="0,1,0,1"
                     Maximum="100"
                     Minimum="0"
                     TickFrequency="1"
                     TickPlacement="BottomRight"
-                    Value="{CompiledBinding SettingsViewModel.WindowMargin.Value}" />
+                    Value="{CompiledBinding SettingsViewModel.WindowMargin.Value}"
+                    Width="300" />
                 <TextBlock
-                    Margin="0,0,0,15"
                     Classes="txt"
                     FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
                     Foreground="{StaticResource MainTextColorFaded}"
                     IsEnabled="{CompiledBinding MainWindows.ActiveWindow.Value.IsAutoFit.Value}"
+                    Margin="0,0,0,15"
                     Text="{CompiledBinding SettingsViewModel.WindowMargin.Value,
                                            Mode=OneWay}" />
             </StackPanel>
         </Border>
 
         <TextBlock
-            Margin="0,20,0,20"
             Classes="txt bold searchHeader"
+            Margin="0,20,0,20"
             Text="{CompiledBinding Translation.WindowManagement.Value,
                                    Mode=OneWay}" />
 
-        <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.WindowTopMostSearchTags}" Classes="searchBorder">
-            <customControls:TextToggleButton
-                x:Name="TopMostToggleButton"
-                Classes="MenuItemHover settingsToggleButton"
-                Command="{CompiledBinding MainWindows.ActiveWindow.Value.RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.SetTopMost}"
-                IsChecked="{CompiledBinding MainWindows.ActiveWindow.Value.WindowSettings.IsTopMost.Value, Mode=OneWay}"
-                Text="{CompiledBinding Translation.StayTopMost.Value,
-                                       Mode=OneWay}" />
-        </Border>
-
-        <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.WindowCenteredSearchTags}" Classes="searchBorder">
-            <customControls:TextToggleButton
-                x:Name="StayCenteredToggleButton"
-                Classes="MenuItemHover settingsToggleButton"
-                IsChecked="{CompiledBinding MainWindows.ActiveWindow.Value.WindowSettings.IsStayingCentered.Value, Mode=TwoWay}"
-                IsEnabled="{CompiledBinding MainWindows.ActiveWindow.Value.IsAutoFit.Value}"
-                Text="{CompiledBinding Translation.StayCentered.Value,
-                                       Mode=OneWay}" />
-        </Border>
-
-        <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.WindowSameWindowSearchTags}" Classes="searchBorder">
+        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.WindowSameWindowSearchTags}">
             <ComboBox
-                x:Name="OpeningModeBox"
-                Width="300"
-                Margin="0,6,0,10"
-                Padding="5,7,0,7"
-                HorizontalAlignment="Left"
                 BorderThickness="1"
                 FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
                 Foreground="{DynamicResource MainTextColor}"
+                HorizontalAlignment="Left"
+                Margin="0,6,0,10"
+                Padding="5,7,0,7"
                 SelectedIndex="{CompiledBinding GlobalSettings.OpeningModeIndex.Value,
-                                                Mode=TwoWay}">
+                                                Mode=TwoWay}"
+                Width="300"
+                x:Name="OpeningModeBox">
                 <ComboBoxItem Content="{CompiledBinding Translation.OpenInNewWindow.Value, Mode=OneWay}" Foreground="{DynamicResource MainTextColor}" />
                 <ComboBoxItem Content="{CompiledBinding Translation.OpenInSameWindow.Value, Mode=OneWay}" Foreground="{DynamicResource MainTextColor}" />
                 <ComboBoxItem Content="{CompiledBinding Translation.OpenInNewTab.Value, Mode=OneWay}" Foreground="{DynamicResource MainTextColor}" />
             </ComboBox>
         </Border>
 
-        <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.WindowEscSearchTags}" Classes="searchBorder">
+        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.WindowTopMostSearchTags}">
             <customControls:TextToggleButton
-                x:Name="ShowConfirmationEscToggleButton"
+                Classes="MenuItemHover settingsToggleButton"
+                Command="{CompiledBinding MainWindows.ActiveWindow.Value.RunActionCommand}"
+                CommandParameter="{x:Static keybindings:Actions.SetTopMost}"
+                IsChecked="{CompiledBinding MainWindows.ActiveWindow.Value.WindowSettings.IsTopMost.Value,
+                                            Mode=OneWay}"
+                Text="{CompiledBinding Translation.StayTopMost.Value,
+                                       Mode=OneWay}"
+                x:Name="TopMostToggleButton" />
+        </Border>
+
+        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.WindowCenteredSearchTags}">
+            <customControls:TextToggleButton
+                Classes="MenuItemHover settingsToggleButton"
+                IsChecked="{CompiledBinding MainWindows.ActiveWindow.Value.WindowSettings.IsStayingCentered.Value,
+                                            Mode=TwoWay}"
+                IsEnabled="{CompiledBinding MainWindows.ActiveWindow.Value.IsAutoFit.Value}"
+                Text="{CompiledBinding Translation.StayCentered.Value,
+                                       Mode=OneWay}"
+                x:Name="StayCenteredToggleButton" />
+        </Border>
+
+        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.WindowEscSearchTags}">
+            <customControls:TextToggleButton
                 Classes="MenuItemHover settingsToggleButton"
                 IsChecked="{CompiledBinding SettingsViewModel.IsShowingConfirmationOnEsc.Value}"
                 Text="{CompiledBinding Translation.ShowConfirmationOnEsc.Value,
-                                       Mode=OneWay}" />
+                                       Mode=OneWay}"
+                x:Name="ShowConfirmationEscToggleButton" />
         </Border>
 
-        <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.WindowEscFullscreenSearchTags}" Classes="searchBorder">
+        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.WindowEscFullscreenSearchTags}">
             <customControls:TextToggleButton
-                x:Name="EscLeavesFullscreenToggleButton"
                 Classes="MenuItemHover settingsToggleButton"
                 IsChecked="{CompiledBinding SettingsViewModel.IsEscLeavingFullscreen.Value}"
                 Text="{CompiledBinding Translation.EscLeavesFullscreen.Value,
-                                       Mode=OneWay}" />
+                                       Mode=OneWay}"
+                x:Name="EscLeavesFullscreenToggleButton" />
         </Border>
 
     </StackPanel>
