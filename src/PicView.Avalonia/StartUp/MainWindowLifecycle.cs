@@ -13,6 +13,7 @@ using PicView.Avalonia.Services;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.Views.UC;
 using PicView.Avalonia.WindowBehavior;
+using PicView.Core.FileHistory;
 using PicView.Core.Config;
 using PicView.Core.Navigation;
 using PicView.Core.ViewModels;
@@ -166,7 +167,7 @@ public sealed class MainWindowLifecycle
         // A window that opens a source says Loading from the start, so no menu is made for it; QuickLoad replaces the
         // ticket with its own
         var opensSource = source is not null || (launchFileArrived is null && Settings.StartUp.Behavior == StartUpBehavior.OpenLastFile &&
-                                                 !string.IsNullOrWhiteSpace(Settings.StartUp.LastFile));
+                                                 !string.IsNullOrWhiteSpace(FileHistoryManager.LastFile));
         var window = Create(null, false, opensSource);
         WindowFunctions.HandleWindowScalingMode(window, isAppStart: true,
             adjustPos: !ViewModelOf(window).WindowSettings.StartingMode.AutoFit);
@@ -206,9 +207,9 @@ public sealed class MainWindowLifecycle
 
     private void ShowStartUpMenuOrLastFile(MainWindow window)
     {
-        if (Settings.StartUp.Behavior == StartUpBehavior.OpenLastFile && !string.IsNullOrWhiteSpace(Settings.StartUp.LastFile))
+        if (Settings.StartUp.Behavior == StartUpBehavior.OpenLastFile && !string.IsNullOrWhiteSpace(FileHistoryManager.LastFile))
         {
-            OpenStartSource(window, Settings.StartUp.LastFile, continueFromLeftOff: true);
+            OpenStartSource(window, FileHistoryManager.LastFile, continueFromLeftOff: true);
             return;
         }
 

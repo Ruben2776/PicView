@@ -2,6 +2,7 @@ using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.StartUp;
 using PicView.Avalonia.UI;
+using PicView.Core.FileHistory;
 using PicView.Core.Navigation;
 using PicView.Core.Sizing;
 using PicView.Core.ViewModels;
@@ -65,7 +66,7 @@ public static class SourceOpener
 
         if (rootDirectory is not null)
         {
-            Settings.StartUp.StartUpDirectory = rootDirectory;
+            FileHistoryManager.StartUpDirectory = rootDirectory;
         }
         return result;
     }
@@ -93,7 +94,7 @@ public static class SourceOpener
             return null;
         }
 
-        var remembered = Settings.StartUp.StartUpDirectory;
+        var remembered = FileHistoryManager.StartUpDirectory;
         return !string.IsNullOrWhiteSpace(remembered) && source.Contains(remembered, StringComparison.Ordinal)
             ? remembered
             : Path.GetDirectoryName(source);

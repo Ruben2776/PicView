@@ -12,6 +12,7 @@ namespace PicView.Core.FileHistory;
 [JsonSourceGenerationOptions(AllowTrailingCommas = true, WriteIndented = true)]
 [JsonSerializable(typeof(FileHistoryEntries))]
 [JsonSerializable(typeof(List<Entry>))]
+[JsonSerializable(typeof(LastSession))]
 internal partial class FileHistoryGenerationContext : JsonSerializerContext;
 
 /// <summary>
@@ -42,6 +43,78 @@ public static class FileHistoryManager
             {
                 return _entries?.Count ?? 0;
             }
+        }
+    }
+
+    // Serializes the loads, so Initialize runs once when SharedFiles and App Start both ask for it
+    private static readonly Lock InitLock = new();
+    private static string? _lastFile;
+    private static string? _startUpDirectory;
+    private static LastSession? _lastSession;
+
+    /// <summary>
+    ///     Gets or sets the Last File. <see cref="PicView.Core.Navigation.LastFile" /> is the one writer. The setter is
+    ///     ignored while file history is off. It runs on load threads for every image shown, so it is a flag check and a
+    ///     volatile write: no lock, no allocation.
+    /// </summary>
+    public static string? LastFile
+    {
+        get => Volatile.Read(ref _lastFile);
+        set
+        {
+            if (!Settings.Navigation.IsFileHistoryEnabled)
+            {
+                return;
+            }
+
+            Volatile.Write(ref _lastFile, value);
+        }
+    }
+
+    /// <summary>
+    ///     Gets or sets the root directory that sub-directory browsing started from. Ignored while file history is off.
+    /// </summary>
+    public static string? StartUpDirectory
+    {
+        get => Volatile.Read(ref _startUpDirectory);
+        set
+        {
+            if (!Settings.Navigation.IsFileHistoryEnabled)
+            {
+                return;
+            }
+
+            Volatile.Write(ref _startUpDirectory, value);
+        }
+    }
+
+    /// <summary>
+    ///     Gets the Last Session, or null when none is recorded.
+    /// </summary>
+    public static LastSession? LastSession
+    {
+        get
+        {
+            lock (Lock)
+            {
+                return _lastSession;
+            }
+        }
+    }
+
+    /// <summary>
+    ///     Records the Last Session. Ignored while file history is off. A session without sources is stored as null.
+    /// </summary>
+    public static void RecordSession(LastSession? session)
+    {
+        if (!Settings.Navigation.IsFileHistoryEnabled)
+        {
+            return;
+        }
+
+        lock (Lock)
+        {
+            _lastSession = session is { Sources.Count: > 0 } ? session : null;
         }
     }
 
@@ -114,8 +187,31 @@ public static class FileHistoryManager
     /// </summary>
     public static void Initialize()
     {
-        _fileHistoryConfiguration = new FileHistoryConfiguration();
-        ReplaceEntries(LoadFromFile(_fileHistoryConfiguration.FilePath));
+        lock (InitLock)
+        {
+            _fileHistoryConfiguration = new FileHistoryConfiguration();
+            ReplaceEntries(LoadFromFile(_fileHistoryConfiguration.FilePath));
+        }
+    }
+
+    /// <summary>
+    ///     Initializes the file history only if nothing is loaded yet. Safe to call from several threads: the load runs
+    ///     once, and a second call does nothing.
+    /// </summary>
+    public static void EnsureInitialized()
+    {
+        lock (InitLock)
+        {
+            lock (Lock)
+            {
+                if (_entries is not null)
+                {
+                    return;
+                }
+            }
+
+            Initialize();
+        }
     }
 
     /// <summary>
@@ -123,11 +219,14 @@ public static class FileHistoryManager
     /// </summary>
     internal static void Initialize(string configPath)
     {
-        _fileHistoryConfiguration = new FileHistoryConfiguration
+        lock (InitLock)
         {
-            PathOverride = configPath
-        };
-        ReplaceEntries(LoadFromFile(configPath));
+            _fileHistoryConfiguration = new FileHistoryConfiguration
+            {
+                PathOverride = configPath
+            };
+            ReplaceEntries(LoadFromFile(configPath));
+        }
     }
 
     /// <summary>
@@ -140,15 +239,20 @@ public static class FileHistoryManager
         {
             _entries = null;
             EarlyPaths.Clear();
+            _lastSession = null;
         }
+
+        Volatile.Write(ref _lastFile, null);
+        Volatile.Write(ref _startUpDirectory, null);
     }
 
     /// <summary>
     ///     Replaces the entries with those loaded from the file, then adds the paths that were added before the load
     ///     finished. The file is read before this, so the lock is not held for it.
     /// </summary>
-    private static void ReplaceEntries(List<Entry>? loaded)
+    private static void ReplaceEntries(FileHistoryEntries? file)
     {
+        var loaded = file?.Entries;
         var entries = new List<Entry>(FileHistoryConfiguration.MaxHistoryEntries);
         if (loaded is not null)
         {
@@ -166,7 +270,14 @@ public static class FileHistoryManager
             }
 
             EarlyPaths.Clear();
+
+            // A value set before the load finished is newer than the file's, so the file only fills what is still empty
+            _lastSession ??= file?.LastSession is { Sources.Count: > 0 } ? file.LastSession : null;
         }
+
+        // Compare-exchange, so a launch file shown during the load is not overwritten
+        Interlocked.CompareExchange(ref _lastFile, file?.LastFile, null);
+        Interlocked.CompareExchange(ref _startUpDirectory, file?.StartUpDirectory, null);
 
         Changed();
     }
@@ -330,8 +441,11 @@ public static class FileHistoryManager
         lock (Lock)
         {
             _entries?.Clear();
+            _lastSession = null;
         }
 
+        Volatile.Write(ref _lastFile, null);
+        Volatile.Write(ref _startUpDirectory, null);
         Changed();
     }
 
@@ -397,6 +511,7 @@ public static class FileHistoryManager
             // Before the first load the paths added so far wait in their own list, which the load adds to the entries. If
             // they kept their old names, the load would undo the rename
             RenameEarlyPaths(newPathOf);
+            RenameSessionAndLastFile(newPathOf);
 
             if (_entries is null)
             {
@@ -428,6 +543,36 @@ public static class FileHistoryManager
 
                 // The entries after the dropped one moved down, so the loop looks at this index again
                 i--;
+            }
+        }
+    }
+
+    // Callers hold the lock. The Last File and each source of the Last Session follow a rename by the same matching as the
+    // entries
+    private static void RenameSessionAndLastFile(Func<string, string?> newPathOf)
+    {
+        if (Volatile.Read(ref _lastFile) is { } lastFile && newPathOf(lastFile) is { } newLastFile)
+        {
+            Volatile.Write(ref _lastFile, newLastFile);
+        }
+
+        if (Volatile.Read(ref _startUpDirectory) is { } startUpDirectory &&
+            newPathOf(startUpDirectory) is { } newStartUpDirectory)
+        {
+            Volatile.Write(ref _startUpDirectory, newStartUpDirectory);
+        }
+
+        if (_lastSession is null)
+        {
+            return;
+        }
+
+        var sources = _lastSession.Sources;
+        for (var i = 0; i < sources.Count; i++)
+        {
+            if (newPathOf(sources[i]) is { } newSource)
+            {
+                sources[i] = newSource;
             }
         }
     }
@@ -469,6 +614,7 @@ public static class FileHistoryManager
 
             // Create a new sorted list with pinned entries first (max 5), then unpinned entries (max MaxHistoryEntries)
             var sortedEntries = new List<Entry>();
+            LastSession? session = null;
 
             // Copy under the lock, so the file is saved without holding it
             lock (Lock)
@@ -481,12 +627,23 @@ public static class FileHistoryManager
                 // an entry at the cap is unpinned
                 sortedEntries.AddRange(entries.Where(e => !e.IsPinned)
                     .TakeLast(FileHistoryConfiguration.MaxHistoryEntries));
+
+                if (_lastSession is { } lastSession)
+                {
+                    session = new LastSession { Sources = [..lastSession.Sources], ActiveIndex = lastSession.ActiveIndex };
+                }
             }
+
+            // Turning file history off after something was recorded must not leave it in the file
+            var isHistoryOn = Settings.Navigation.IsFileHistoryEnabled;
 
             var historyEntries = new FileHistoryEntries
             {
                 Entries = sortedEntries,
-                IsSortingDescending = IsSortingDescending
+                IsSortingDescending = IsSortingDescending,
+                LastFile = isHistoryOn ? LastFile : null,
+                StartUpDirectory = isHistoryOn ? StartUpDirectory : null,
+                LastSession = isHistoryOn ? session : null
             };
             await ConfigFileManager.SaveAsync(_fileHistoryConfiguration, historyEntries, typeof(FileHistoryEntries),
                 FileHistoryGenerationContext.Default).ConfigureAwait(false);
@@ -498,40 +655,59 @@ public static class FileHistoryManager
     }
 
     /// <summary>
-    ///     Loads the history from the specified history file path.
+    ///     Loads the history from the specified history file path. The Last File and start-up directory the settings
+    ///     used to hold are migrated here: where the file has none, the record's is taken, and the record is emptied.
     /// </summary>
-    /// <returns>The entries in the file, or null when there are none to load.</returns>
-    private static List<Entry>? LoadFromFile(string? configPath)
+    /// <returns>What the file holds, or null when there is nothing to load.</returns>
+    private static FileHistoryEntries? LoadFromFile(string? configPath)
     {
         if (!Settings.Navigation.IsFileHistoryEnabled)
         {
             return null;
         }
-        
+
+        FileHistoryEntries? entries = null;
         try
         {
-            if (string.IsNullOrEmpty(configPath) || !File.Exists(configPath))
+            if (!string.IsNullOrEmpty(configPath) && File.Exists(configPath))
             {
-                return null;
+                var bytes = File.ReadAllBytes(configPath);
+
+                entries = JsonSerializer.Deserialize(bytes, typeof(FileHistoryEntries),
+                    FileHistoryGenerationContext.Default) as FileHistoryEntries;
+                if (entries is null)
+                {
+                    DebugHelper.LogDebug(nameof(FileHistoryManager), nameof(LoadFromFile), "Failed to deserialize settings");
+                }
             }
-
-            var bytes = File.ReadAllBytes(configPath);
-
-            if (JsonSerializer.Deserialize(bytes, typeof(FileHistoryEntries),
-                    FileHistoryGenerationContext.Default)
-                is not FileHistoryEntries entries)
-            {
-                DebugHelper.LogDebug(nameof(FileHistoryManager), nameof(LoadFromFile), "Failed to deserialize settings");
-                return null;
-            }
-
-            IsSortingDescending = entries.IsSortingDescending;
-            return entries.Entries;
         }
         catch (Exception ex)
         {
             DebugHelper.LogDebug(nameof(FileHistoryManager), nameof(LoadFromFile), ex);
-            return null;
         }
+
+        if (entries is not null)
+        {
+            IsSortingDescending = entries.IsSortingDescending;
+        }
+
+        // Settings 3.1 kept these in the settings record. Take them once, then leave them out of the next settings save
+        var legacyLastFile = Settings.StartUp.LastFile;
+        var legacyDirectory = Settings.StartUp.StartUpDirectory;
+        if (!string.IsNullOrWhiteSpace(legacyLastFile) && string.IsNullOrWhiteSpace(entries?.LastFile))
+        {
+            entries ??= new FileHistoryEntries();
+            entries.LastFile = legacyLastFile;
+        }
+
+        if (!string.IsNullOrWhiteSpace(legacyDirectory) && string.IsNullOrWhiteSpace(entries?.StartUpDirectory))
+        {
+            entries ??= new FileHistoryEntries();
+            entries.StartUpDirectory = legacyDirectory;
+        }
+
+        Settings.StartUp.LastFile = null;
+        Settings.StartUp.StartUpDirectory = null;
+        return entries;
     }
 }

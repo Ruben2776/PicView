@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
+using PicView.Core.FileHistory;
 using PicView.Core.DebugTools;
 using PicView.Core.Models;
 using PicView.Core.Navigation;
@@ -53,7 +54,7 @@ public static class UINavigationHelper
 
     public static async Task OpenLastFile(MainWindow mainWindow, MainWindowViewModel vm)
     {
-        await OpenPathAsync(mainWindow, vm, Settings.StartUp.LastFile).ConfigureAwait(false);
+        await OpenPathAsync(mainWindow, vm, FileHistoryManager.LastFile).ConfigureAwait(false);
     }
 
     private static async ValueTask StepAsync(MainWindow mainWindow, MainWindowViewModel vm, bool forwards)

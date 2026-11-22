@@ -4,6 +4,7 @@ using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.Navigation;
+using PicView.Core.FileHistory;
 using PicView.Core.DebugTools;
 using PicView.Core.FileSorting;
 using PicView.Core.ImageDecoding;
@@ -144,7 +145,7 @@ public static class QuickLoad
 
         if (rootDirectory is not null)
         {
-            Settings.StartUp.StartUpDirectory = rootDirectory;
+            FileHistoryManager.StartUpDirectory = rootDirectory;
         }
         return result;
     }

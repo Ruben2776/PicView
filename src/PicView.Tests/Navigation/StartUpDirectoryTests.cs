@@ -1,4 +1,5 @@
 using PicView.Avalonia.Navigation;
+using PicView.Core.FileHistory;
 
 namespace PicView.Tests.Navigation;
 
@@ -29,7 +30,7 @@ public class StartUpDirectoryTests : IDisposable
     public void GetStartUpDirectory_NotBrowsingSubdirectories_ReturnsNull()
     {
         Settings.Sorting.IncludeSubDirectories = false;
-        Settings.StartUp.StartUpDirectory = _root;
+        FileHistoryManager.StartUpDirectory = _root;
 
         Assert.Null(SourceOpener.GetStartUpDirectory(_file));
     }
@@ -38,7 +39,7 @@ public class StartUpDirectoryTests : IDisposable
     public void GetStartUpDirectory_FileInsideRemembered_ReturnsRemembered()
     {
         Settings.Sorting.IncludeSubDirectories = true;
-        Settings.StartUp.StartUpDirectory = _root;
+        FileHistoryManager.StartUpDirectory = _root;
 
         Assert.Equal(_root, SourceOpener.GetStartUpDirectory(_file));
     }
@@ -49,7 +50,7 @@ public class StartUpDirectoryTests : IDisposable
     public void GetStartUpDirectory_NothingRememberedOrFileOutside_ReturnsFilesDirectory(string remembered)
     {
         Settings.Sorting.IncludeSubDirectories = true;
-        Settings.StartUp.StartUpDirectory = remembered;
+        FileHistoryManager.StartUpDirectory = remembered;
 
         Assert.Equal(Path.GetDirectoryName(_file), SourceOpener.GetStartUpDirectory(_file));
     }

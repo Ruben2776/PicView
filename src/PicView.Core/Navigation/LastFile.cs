@@ -1,3 +1,4 @@
+using PicView.Core.FileHistory;
 using PicView.Core.ViewModels;
 
 namespace PicView.Core.Navigation;
@@ -5,7 +6,7 @@ namespace PicView.Core.Navigation;
 /// <summary>
 /// The Last File: the file, archive or URL that the active tab of the Active Main Window showed most recently. "Open last
 /// file" in the start-up menu and App Start's "open last file" open it. This is the one writer of
-/// <c>Settings.StartUp.LastFile</c>; everything else reads the setting.
+/// <c>FileHistoryManager.LastFile</c>; everything else reads it.
 /// </summary>
 public static class LastFile
 {
@@ -13,7 +14,7 @@ public static class LastFile
     /// Makes <paramref name="path"/> the Last File, when <paramref name="tab"/> is the active tab of the Active Main Window.
     /// A tab shows images on whichever thread its load finishes on, so this reads the window's active tab and the core's
     /// active window as they are now. It never waits, and costs two reference comparisons and a string assignment. It
-    /// does not check the file history setting, since the Last File is written whether or not file history is on.
+    /// leaves the check of the file history setting to <c>FileHistoryManager.LastFile</c>, which ignores the write while file history is off.
     /// </summary>
     public static void Record(TabViewModel tab, string path)
     {
@@ -26,7 +27,7 @@ public static class LastFile
         if (ReferenceEquals(window.WindowTabs.ActiveTab.CurrentValue, tab) &&
             ReferenceEquals(core.MainWindows.ActiveWindow.CurrentValue, window))
         {
-            Settings.StartUp.LastFile = path;
+            FileHistoryManager.LastFile = path;
         }
     }
 
@@ -38,7 +39,7 @@ public static class LastFile
     {
         if (tab.ViewHistory.Current?.HistoryPath is { } path)
         {
-            Settings.StartUp.LastFile = path;
+            FileHistoryManager.LastFile = path;
         }
     }
 
@@ -48,9 +49,9 @@ public static class LastFile
     /// </summary>
     public static void Rename(string oldPath, string newPath)
     {
-        if (string.Equals(Settings.StartUp.LastFile, oldPath, StringComparison.OrdinalIgnoreCase))
+        if (string.Equals(FileHistoryManager.LastFile, oldPath, StringComparison.OrdinalIgnoreCase))
         {
-            Settings.StartUp.LastFile = newPath;
+            FileHistoryManager.LastFile = newPath;
         }
     }
 
@@ -60,10 +61,10 @@ public static class LastFile
     /// </summary>
     public static void RenameFolder(string oldFolder, string newFolder)
     {
-        if (Settings.StartUp.LastFile is { } path &&
+        if (FileHistoryManager.LastFile is { } path &&
             FolderChange.PathInRenamedFolder(path, oldFolder, newFolder) is { } movedPath)
         {
-            Settings.StartUp.LastFile = movedPath;
+            FileHistoryManager.LastFile = movedPath;
         }
     }
 }

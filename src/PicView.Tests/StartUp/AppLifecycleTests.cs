@@ -1746,7 +1746,7 @@ public class AppLifecycleTests : IAsyncDisposable
         await app.ShutdownAsync();
 
         Assert.Empty(app.MainWindows.Open);
-        Assert.Equal(firstFile, Settings.StartUp.LastFile);
+        Assert.Equal(firstFile, FileHistoryManager.LastFile);
         Assert.Equal(1, _sharedFiles.Saves);
         Assert.Equal(1, _exits);
     }
@@ -1920,7 +1920,7 @@ public class AppLifecycleTests : IAsyncDisposable
         });
 
         Assert.Empty(app.MainWindows.Open);
-        Assert.Equal(firstFile, Settings.StartUp.LastFile);
+        Assert.Equal(firstFile, FileHistoryManager.LastFile);
         Assert.Equal(1, savesBeforeStart);
         Assert.False(tempFileKept);
         Assert.Equal(["before start", "start new PicView", "exit"], _steps);
@@ -2774,7 +2774,7 @@ public class AppLifecycleTests : IAsyncDisposable
         try
         {
             await SourceOpener.OpenAsync(window, _core, file);
-            Settings.StartUp.LastFile = lastFile;
+            FileHistoryManager.LastFile = lastFile;
 
             // The only entry is both the oldest and the newest
             await vm.ActionRunner!.Run(Actions.FileHistoryPrev);

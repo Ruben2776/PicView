@@ -147,7 +147,7 @@ public class ViewHistoryRecordingTests : IDisposable
             Assert.Equal([ViewHistoryEntry.ForArchivePage(zip, "a.jpg"), ViewHistoryEntry.ForArchivePage(zip, "b.jpg")],
                 tab.ViewHistory.Entries);
             Assert.Equal([zip], FileHistoryManager.AllEntries.Select(e => e.Path));
-            Assert.Equal(zip, Settings.StartUp.LastFile);
+            Assert.Equal(zip, FileHistoryManager.LastFile);
         }
         finally
         {
@@ -170,7 +170,7 @@ public class ViewHistoryRecordingTests : IDisposable
             Assert.Equal("Volume 02 - 001.jpg", Path.GetFileName(page));
             Assert.Equal(ViewHistoryEntry.ForArchivePage(zip, "Volume 02/001.jpg"), Assert.Single(tab.ViewHistory.Entries));
             Assert.Equal([zip], FileHistoryManager.AllEntries.Select(e => e.Path));
-            Assert.Equal(zip, Settings.StartUp.LastFile);
+            Assert.Equal(zip, FileHistoryManager.LastFile);
         }
         finally
         {
@@ -200,7 +200,7 @@ public class ViewHistoryRecordingTests : IDisposable
 
             Assert.Equal(ViewHistoryEntry.ForArchivePage(archive, entry), Assert.Single(tab.ViewHistory.Entries));
             Assert.Equal([archive], FileHistoryManager.AllEntries.Select(e => e.Path));
-            Assert.Equal(archive, Settings.StartUp.LastFile);
+            Assert.Equal(archive, FileHistoryManager.LastFile);
         }
         finally
         {
@@ -535,7 +535,7 @@ public class ViewHistoryRecordingTests : IDisposable
     // The active tab of the Active Main Window, which is the tab that writes the Last File
     private static TabViewModel ActiveTabOfTheActiveMainWindow()
     {
-        Settings.StartUp.LastFile = null;
+        FileHistoryManager.LastFile = null;
         var core = new CoreViewModel(null, file => new ImageModel { FileInfo = file });
         var window = new MainWindowViewModel(core, null!, null!, null!);
         core.MainWindows.MainWindows.Add(window);

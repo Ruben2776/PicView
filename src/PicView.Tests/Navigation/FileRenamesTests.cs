@@ -20,7 +20,7 @@ public class FileRenamesTests : IDisposable
         ObservableSystem.DefaultFrameProvider = new MockFrameProvider();
         SetDefaults();
         Settings.Navigation.IsFileHistoryEnabled = true;
-        Settings.StartUp.LastFile = null;
+        FileHistoryManager.LastFile = null;
         Directory.CreateDirectory(_folder);
         FileHistoryManager.Initialize(Path.Combine(_folder, "history.json"));
         _core = new CoreViewModel(null, file => new ImageModel { FileInfo = file });
@@ -47,7 +47,7 @@ public class FileRenamesTests : IDisposable
         Assert.Equal(PathOf("b.jpg"), Assert.Single(first.ViewHistory.Entries).Path);
         Assert.Equal(PathOf("b.jpg"), Assert.Single(second.ViewHistory.Entries).Path);
         Assert.Equal(PathOf("b.jpg"), Assert.Single(FileHistoryManager.AllEntries).Path);
-        Assert.Equal(PathOf("b.jpg"), Settings.StartUp.LastFile);
+        Assert.Equal(PathOf("b.jpg"), FileHistoryManager.LastFile);
     }
 
     [Fact]
@@ -72,14 +72,14 @@ public class FileRenamesTests : IDisposable
         tab.ViewHistory.Record(ViewHistoryEntry.ForArchivePage(PathOf("a.zip"), "1.jpg"));
         tab.ViewHistory.Record(ViewHistoryEntry.ForArchivePage(PathOf("a.zip"), "2.jpg"));
         FileHistoryManager.Add(PathOf("a.zip"));
-        Settings.StartUp.LastFile = PathOf("a.zip");
+        FileHistoryManager.LastFile = PathOf("a.zip");
 
         FileRenames.Follow(_core, PathOf("a.zip"), PathOf("b.zip"));
 
         Assert.Equal(["1.jpg", "2.jpg"], tab.ViewHistory.Entries.Select(e => e.ArchiveEntry));
         Assert.All(tab.ViewHistory.Entries, e => Assert.Equal(PathOf("b.zip"), e.Path));
         Assert.Equal(PathOf("b.zip"), Assert.Single(FileHistoryManager.AllEntries).Path);
-        Assert.Equal(PathOf("b.zip"), Settings.StartUp.LastFile);
+        Assert.Equal(PathOf("b.zip"), FileHistoryManager.LastFile);
     }
 
     [Fact]
@@ -99,7 +99,7 @@ public class FileRenamesTests : IDisposable
             Assert.Equal([ViewHistoryEntry.ForArchivePage(newZip, "1.jpg"), ViewHistoryEntry.ForArchivePage(newZip, "2.jpg")],
                 tab.ViewHistory.Entries);
             Assert.Equal([newZip], FileHistoryManager.AllEntries.Select(e => e.Path));
-            Assert.Equal(newZip, Settings.StartUp.LastFile);
+            Assert.Equal(newZip, FileHistoryManager.LastFile);
             Assert.Equal(newZip, tab.Archives.OpenArchive);
         }
         finally
@@ -144,7 +144,7 @@ public class FileRenamesTests : IDisposable
         var moved = Path.Combine(_folder, "y", "a.jpg");
         Assert.Equal(moved, Assert.Single(tab.ViewHistory.Entries).Path);
         Assert.Equal(moved, Assert.Single(FileHistoryManager.AllEntries).Path);
-        Assert.Equal(moved, Settings.StartUp.LastFile);
+        Assert.Equal(moved, FileHistoryManager.LastFile);
     }
 
     [Fact]
@@ -156,7 +156,7 @@ public class FileRenamesTests : IDisposable
         FileRenames.Follow(null, PathOf("a.jpg"), PathOf("b.jpg"));
 
         Assert.Equal(PathOf("b.jpg"), Assert.Single(FileHistoryManager.AllEntries).Path);
-        Assert.Equal(PathOf("b.jpg"), Settings.StartUp.LastFile);
+        Assert.Equal(PathOf("b.jpg"), FileHistoryManager.LastFile);
         Assert.Equal(PathOf("a.jpg"), Assert.Single(tab.ViewHistory.Entries).Path);
     }
 
@@ -171,7 +171,7 @@ public class FileRenamesTests : IDisposable
 
         var moved = Path.Combine(_folder, "y", "a.jpg");
         Assert.Equal(moved, Assert.Single(FileHistoryManager.AllEntries).Path);
-        Assert.Equal(moved, Settings.StartUp.LastFile);
+        Assert.Equal(moved, FileHistoryManager.LastFile);
         Assert.Equal(shown, Assert.Single(tab.ViewHistory.Entries).Path);
     }
 
@@ -188,14 +188,14 @@ public class FileRenamesTests : IDisposable
         FileRenames.Follow(_core, PathOf("b.jpg"), PathOf("c.jpg"));
         var viewHistory = (tab.ViewHistory.Entries, tab.ViewHistory.Cursor);
         var fileHistory = FileHistoryManager.AllEntries.Select(e => (e.Path, e.IsPinned)).ToArray();
-        var lastFile = Settings.StartUp.LastFile;
+        var lastFile = FileHistoryManager.LastFile;
 
         FileRenames.Follow(_core, PathOf("b.jpg"), PathOf("c.jpg"));
 
         Assert.Equal(viewHistory.Entries, tab.ViewHistory.Entries);
         Assert.Equal(viewHistory.Cursor, tab.ViewHistory.Cursor);
         Assert.Equal(fileHistory, FileHistoryManager.AllEntries.Select(e => (e.Path, e.IsPinned)));
-        Assert.Equal(lastFile, Settings.StartUp.LastFile);
+        Assert.Equal(lastFile, FileHistoryManager.LastFile);
     }
 
     [Theory]
@@ -203,22 +203,22 @@ public class FileRenamesTests : IDisposable
     [InlineData("a.jpg.bak", "a.jpg.bak")]
     public void Follow_LastFile_FollowsOnlyThePathRenamed_IgnoringCase(string lastFile, string expected)
     {
-        Settings.StartUp.LastFile = PathOf(lastFile);
+        FileHistoryManager.LastFile = PathOf(lastFile);
 
         FileRenames.Follow(_core, PathOf("a.jpg"), PathOf("b.jpg"));
 
-        Assert.Equal(PathOf(expected), Settings.StartUp.LastFile);
+        Assert.Equal(PathOf(expected), FileHistoryManager.LastFile);
     }
 
     [Fact]
     public void FollowFolder_LastFileInAFolderThatOnlyStartsWithTheOldName_LeavesIt()
     {
         var lastFile = Path.Combine(_folder, "xy", "a.jpg");
-        Settings.StartUp.LastFile = lastFile;
+        FileHistoryManager.LastFile = lastFile;
 
         FileRenames.FollowFolder(_core, Path.Combine(_folder, "x"), Path.Combine(_folder, "y"));
 
-        Assert.Equal(lastFile, Settings.StartUp.LastFile);
+        Assert.Equal(lastFile, FileHistoryManager.LastFile);
     }
 
     [Fact]
@@ -235,7 +235,7 @@ public class FileRenamesTests : IDisposable
 
         var moved = Path.Combine(_folder, "y", "a.jpg");
         Assert.Equal(moved, Assert.Single(tab.ViewHistory.Entries).Path);
-        Assert.Equal(moved, Settings.StartUp.LastFile);
+        Assert.Equal(moved, FileHistoryManager.LastFile);
     }
 
     [Fact]
@@ -249,7 +249,7 @@ public class FileRenamesTests : IDisposable
         FileRenames.Follow(_core, PathOf("a.jpg"), PathOf("b.jpg"));
 
         Assert.Equal(PathOf("b.jpg"), Assert.Single(FileHistoryManager.AllEntries).Path);
-        Assert.Equal(PathOf("b.jpg"), Settings.StartUp.LastFile);
+        Assert.Equal(PathOf("b.jpg"), FileHistoryManager.LastFile);
     }
 
     [Fact]
@@ -262,7 +262,7 @@ public class FileRenamesTests : IDisposable
 
         var moved = Path.Combine(_folder, "y", "a.jpg");
         Assert.Equal(moved, Assert.Single(FileHistoryManager.AllEntries).Path);
-        Assert.Equal(moved, Settings.StartUp.LastFile);
+        Assert.Equal(moved, FileHistoryManager.LastFile);
     }
 
     private MainWindowViewModel OpenWindow()

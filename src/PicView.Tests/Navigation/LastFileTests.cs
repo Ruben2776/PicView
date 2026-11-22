@@ -1,3 +1,4 @@
+using PicView.Core.FileHistory;
 using PicView.Core.Models;
 using PicView.Core.Navigation;
 using PicView.Core.ViewModels;
@@ -14,7 +15,7 @@ public class LastFileTests
     {
         ObservableSystem.DefaultFrameProvider = new MockFrameProvider();
         SetDefaults();
-        Settings.StartUp.LastFile = null;
+        FileHistoryManager.LastFile = null;
         _core = new CoreViewModel(null, file => new ImageModel { FileInfo = file });
     }
 
@@ -25,7 +26,7 @@ public class LastFileTests
 
         tab.Display(Model("a.jpg"));
 
-        Assert.Equal(PathOf("a.jpg"), Settings.StartUp.LastFile);
+        Assert.Equal(PathOf("a.jpg"), FileHistoryManager.LastFile);
     }
 
     [Fact]
@@ -38,7 +39,7 @@ public class LastFileTests
 
         second.Display(Model("b.jpg"));
 
-        Assert.Null(Settings.StartUp.LastFile);
+        Assert.Null(FileHistoryManager.LastFile);
     }
 
     [Fact]
@@ -49,7 +50,7 @@ public class LastFileTests
 
         background.WindowTabs.ActiveTab.Value.Display(Model("c.jpg"));
 
-        Assert.Null(Settings.StartUp.LastFile);
+        Assert.Null(FileHistoryManager.LastFile);
     }
 
     [Fact]
@@ -60,7 +61,7 @@ public class LastFileTests
 
         tab.DisplaySingleImage(new ImageModel { Image = new object() }, SingleImageType.Clipboard, "Clipboard image");
 
-        Assert.Equal(PathOf("a.jpg"), Settings.StartUp.LastFile);
+        Assert.Equal(PathOf("a.jpg"), FileHistoryManager.LastFile);
     }
 
     [Fact]
@@ -72,18 +73,18 @@ public class LastFileTests
 
         tab.DisplaySingleImage(new ImageModel { Image = new object() }, SingleImageType.Url, url);
 
-        Assert.Equal(url, Settings.StartUp.LastFile);
+        Assert.Equal(url, FileHistoryManager.LastFile);
     }
 
     [Fact]
-    public void Display_WithFileHistoryOff_StillWritesTheLastFile()
+    public void Display_WithFileHistoryOff_LeavesTheLastFile()
     {
         Settings.Navigation.IsFileHistoryEnabled = false;
         var tab = OpenWindow().WindowTabs.ActiveTab.Value;
 
         tab.Display(Model("a.jpg"));
 
-        Assert.Equal(PathOf("a.jpg"), Settings.StartUp.LastFile);
+        Assert.Null(FileHistoryManager.LastFile);
     }
 
     [Fact]
@@ -97,7 +98,7 @@ public class LastFileTests
         // As closing its Main Window does
         LastFile.Remember(tab);
 
-        Assert.Equal(PathOf("d.jpg"), Settings.StartUp.LastFile);
+        Assert.Equal(PathOf("d.jpg"), FileHistoryManager.LastFile);
     }
 
     [Fact]
@@ -109,7 +110,7 @@ public class LastFileTests
 
         LastFile.Remember(tab);
 
-        Assert.Equal(PathOf("a.jpg"), Settings.StartUp.LastFile);
+        Assert.Equal(PathOf("a.jpg"), FileHistoryManager.LastFile);
     }
 
     private MainWindowViewModel OpenWindow()
