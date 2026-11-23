@@ -26,6 +26,21 @@ public static class WindowPlacement
     }
 
     /// <summary>
+    /// The position that keeps a window of this size on its horizontal center and centers it vertically in the
+    /// screen's work area, as an AutoFit window is placed when AutoFit takes it over. It is kept inside the work area
+    /// horizontally; one wider than the work area aligns with its left edge.
+    /// </summary>
+    /// <param name="centerX">The window's horizontal center, in device-independent pixels.</param>
+    public static PixelPosition CenteredVertically(ScreenSize screen, double centerX, double width, double height)
+    {
+        var x = centerX - width / 2;
+        var maxX = screen.WorkingAreaX + screen.WorkingAreaWidth - width;
+        x = width >= screen.WorkingAreaWidth ? screen.WorkingAreaX : Math.Clamp(x, screen.WorkingAreaX, maxX);
+        var y = screen.WorkingAreaY + (screen.WorkingAreaHeight - height) / 2;
+        return ToPixels(screen, x, y);
+    }
+
+    /// <summary>
     /// The origin of the screen, where a fullscreen window sits.
     /// </summary>
     public static PixelPosition ScreenOrigin(ScreenSize screen) => ToPixels(screen, screen.X, screen.Y);
