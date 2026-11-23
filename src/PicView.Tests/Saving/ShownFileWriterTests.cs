@@ -185,6 +185,23 @@ public class ShownFileWriterTests : IDisposable
     }
 
     [Fact]
+    public async Task OverItself_TwoAtOnce_TurnsTheFileOnce()
+    {
+        var source = WriteImage("source.png", MagickColors.Red, 2, 1);
+        var tab = await LoadTabAsync(source);
+        tab.Orientation.TurnRight();
+
+        // Two writers, as the Main Window's and the file saver's are
+        var first = new ShownFileWriter(() => null).WriteAsync(tab, OverItself()).AsTask();
+        var second = new ShownFileWriter(() => null).WriteAsync(tab, OverItself()).AsTask();
+        var results = await Task.WhenAll(first, second);
+
+        Assert.All(results, result => Assert.Equal(WriteOutcome.Written, result.Outcome));
+        AssertSize(source, 1, 2);
+        Assert.Equal(Orientation.Upright, tab.Orientation.Current.CurrentValue);
+    }
+
+    [Fact]
     public async Task OverItself_NoRecycleBin_StillWrites()
     {
         _platform.HasRecycleBin = false;

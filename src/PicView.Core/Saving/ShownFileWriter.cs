@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using ImageMagick;
 using PicView.Core.DebugTools;
 using PicView.Core.FileHandling;
@@ -17,6 +18,10 @@ namespace PicView.Core.Saving;
 /// <param name="getEffects">The effects view model, if the effects window has been opened.</param>
 public sealed class ShownFileWriter(Func<EffectsViewModel?> getEffects)
 {
+    // One write at a time per tab, across writers: a second write must read the turn after the first one's reshow has
+    // reset it, or a turned file is turned twice
+    private static readonly ConditionalWeakTable<TabViewModel, SemaphoreSlim> WriteGates = new();
+
     /// <summary>
     /// Reads a Single Image's pixels, which only the UI layer can. Without it a tab with no file has nothing to write.
     /// </summary>
@@ -48,11 +53,13 @@ public sealed class ShownFileWriter(Func<EffectsViewModel?> getEffects)
     public async ValueTask<WriteResult> WriteAsync(TabViewModel tab, ShownFileWrite job)
     {
         using var busy = tab.ClaimBusy();
-        var file = tab.FileInfo.CurrentValue;
-        var isSvg = tab.ImageType.CurrentValue is ImageType.Svg;
-        var orientation = tab.Orientation.Current.CurrentValue;
+        var gate = WriteGates.GetValue(tab, static _ => new SemaphoreSlim(1, 1));
+        await gate.WaitAsync().ConfigureAwait(false);
         try
         {
+            var file = tab.FileInfo.CurrentValue;
+            var isSvg = tab.ImageType.CurrentValue is ImageType.Svg;
+            var orientation = tab.Orientation.Current.CurrentValue;
             if (job.Destination is WriteDestination.Copy copy && file is not null &&
                 string.Equals(Path.GetFullPath(copy.Path), file.FullName, StringComparison.OrdinalIgnoreCase))
             {
@@ -66,6 +73,10 @@ public sealed class ShownFileWriter(Func<EffectsViewModel?> getEffects)
         {
             DebugHelper.LogDebug(nameof(ShownFileWriter), nameof(WriteAsync), e);
             return new WriteResult(WriteOutcome.Failed, null, false, false);
+        }
+        finally
+        {
+            gate.Release();
         }
     }
 
