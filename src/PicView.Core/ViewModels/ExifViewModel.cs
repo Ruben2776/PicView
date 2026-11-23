@@ -12,7 +12,7 @@ using R3;
 
 namespace PicView.Core.ViewModels;
 
-public class ExifViewModel : IDisposable
+public partial class ExifViewModel : IDisposable
 {
     public ExifViewModel()
     {
@@ -57,6 +57,10 @@ public class ExifViewModel : IDisposable
         SetLensMakerCommand = new ReactiveCommand<string>(async (s, _) => await CommitAsync(f => ExifWriter.AddLensMaker(f, s)).ConfigureAwait(false));
         SetLensModelCommand = new ReactiveCommand<string>(async (s, _) => await CommitAsync(f => ExifWriter.AddLensModel(f, s)).ConfigureAwait(false));
         SetExifVersionCommand = new ReactiveCommand<string>(async (s, _) => await CommitAsync(f => ExifWriter.AddExifVersion(f, s)).ConfigureAwait(false));
+
+        SetSdPromptCommand = new ReactiveCommand<string>(async (s, _) => await CommitSdAsync(SdField.Prompt, s).ConfigureAwait(false));
+        SetSdNegativePromptCommand = new ReactiveCommand<string>(async (s, _) => await CommitSdAsync(SdField.NegativePrompt, s).ConfigureAwait(false));
+        SetSdSettingsCommand = new ReactiveCommand<string>(async (s, _) => await CommitSdAsync(SdField.Settings, s).ConfigureAwait(false));
     }
 
     public ReactiveCommand? OpenGoogleLinkCommand { get; }
@@ -229,6 +233,7 @@ public class ExifViewModel : IDisposable
 
     public void Dispose()
     {
+        CancelStealthScan();
         Disposable.Dispose(
             Altitude,
             AspectRatio,
@@ -287,6 +292,19 @@ public class ExifViewModel : IDisposable
             Title,
             WhiteBalance,
             ImageFormat,
+            IsSdMetadataAvailable,
+            SdGenerator,
+            SdPrompt,
+            SdNegativePrompt,
+            SdSettings,
+            SdRaw,
+            SdStorage,
+            IsSdStealthScanning,
+            IsSdEditable,
+            IsCommentShown,
+            SetSdPromptCommand,
+            SetSdNegativePromptCommand,
+            SetSdSettingsCommand,
             SetAuthorsCommand,
             SetCopyrightCommand,
             SetSoftwareCommand,
@@ -380,6 +398,12 @@ public class ExifViewModel : IDisposable
             }
 
             var profile = magick?.GetExifProfile();
+
+            // Ping does not give a WebP's profile, which is read from its EXIF chunk instead of decoding the pixels
+            if (profile is null && magick?.Format is MagickFormat.WebP && fileInfo is { Exists: true })
+            {
+                profile = WebPExifReader.ReadProfile(fileInfo);
+            }
 
             if (profile is null && magick is not null)
             {
@@ -596,6 +620,16 @@ public class ExifViewModel : IDisposable
             // profile byte order on first access, which legacy Unicode decoding needs.
             Comment.Value = ExifReader.GetUserComment(profile);
 
+            if (fileInfo is { Exists: true })
+            {
+                UpdateSdMetadataValues(fileInfo, Comment.CurrentValue, magick?.GetAttribute("comment"));
+            }
+            else
+            {
+                CancelStealthScan();
+                ClearSdMetadataValues();
+            }
+
             if (magick is null)
             {
                 DpiY.Value = DpiX.Value = 0;
@@ -740,6 +774,10 @@ public class ExifViewModel : IDisposable
         catch (Exception e)
         {
             DebugHelper.LogDebug(nameof(ExifViewModel), nameof(UpdateExifValues), e);
+
+            // The generation data of the image shown before must not stay editable against this one's file
+            CancelStealthScan();
+            ClearSdMetadataValues();
         }
         finally
         {
