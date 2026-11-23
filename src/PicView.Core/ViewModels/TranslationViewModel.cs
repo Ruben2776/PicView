@@ -123,6 +123,7 @@ public class TranslationViewModel
         EffectsTooltip.Value = t.EffectsTooltip;
         EscLeavesFullscreen.Value = t.EscLeavesFullscreen;
         ExifVersion.Value = t.ExifVersion;
+        Expand.Value = t.Expand;
         ExpandedGalleryItemSize.Value = t.ExpandedGalleryItemSize;
         ExposureBias.Value = t.ExposureBias;
         ExposureProgram.Value = t.ExposureProgram;
@@ -163,6 +164,7 @@ public class TranslationViewModel
         Green.Value = t.Green;
         GalleryThumbnailStretch.Value = t.GalleryThumbnailStretch;
         GeneralSettings.Value = t.GeneralSettings;
+        GeneratedWith.Value = t.GeneratedWith;
         GenerateThumbnails.Value = t.GenerateThumbnails;
         GithubRepo.Value = t.GithubRepo;
         GlassTheme.Value = t.GlassTheme;
@@ -229,6 +231,7 @@ public class TranslationViewModel
         NavigateForwards.Value = t.NavigateForwards;
         Navigation.Value = t.Navigation;
         NegativeColors.Value = t.NegativeColors;
+        NegativePrompt.Value = t.NegativePrompt;
         NewTab.Value = t.NewTab;
         NewWindow.Value = t.NewWindow;
         NextArchive.Value = t.NextArchive;
@@ -287,8 +290,10 @@ public class TranslationViewModel
         Printer.Value = t.Printer;
         PrintSizeCm.Value = t.PrintSizeCm;
         PrintSizeIn.Value = t.PrintSizeIn;
+        Prompt.Value = t.Prompt;
         Quality.Value = t.Quality;
         Random.Value = t.Random;
+        RawMetadata.Value = t.RawMetadata;
         ReadAbleAspectRatio.Value = t.AspectRatio;
         RecentFiles.Value = t.RecentFiles;
         Red.Value = t.Red;
@@ -320,6 +325,7 @@ public class TranslationViewModel
         SaveAs.Value = t.SaveAs;
         SaveAsPdf.Value = t.SaveAsPdf;
         Scale.Value = t.Scale;
+        ScanningHiddenMetadata.Value = t.ScanningHiddenMetadata;
         Scroll.Value = t.Scroll;
         ScrollAndRotate.Value = t.ScrollAndRotate;
         ScrollDirection.Value = t.ScrollDirection;
@@ -376,9 +382,15 @@ public class TranslationViewModel
         SortFilesBy.Value = t.SortFilesBy;
         Split.Value = t.Split;
         Square.Value = t.Square;
+        StableDiffusion.Value = t.StableDiffusion;
         Start.Value = t.Start;
         StayCentered.Value = t.StayCentered;
         StayTopMost.Value = t.StayTopMost;
+        StoredIn.Value = t.StoredIn;
+        StoredInImageComment.Value = t.StoredInImageComment;
+        StoredInPixels.Value = t.StoredInPixels;
+        StoredInPngText.Value = t.StoredInPngText;
+        StoredInUserComment.Value = t.StoredInUserComment;
         Stretch.Value = t.Stretch;
         StretchToMatch.Value = t.StretchToMatch;
         Subject.Value = t.Subject;
@@ -539,6 +551,7 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> EffectsTooltip { get; } = new();
     public BindableReactiveProperty<string?> EscLeavesFullscreen { get; } = new();
     public BindableReactiveProperty<string?> ExifVersion { get; } = new();
+    public BindableReactiveProperty<string?> Expand { get; } = new();
     public BindableReactiveProperty<string?> ExpandedGalleryItemSize { get; } = new();
     public BindableReactiveProperty<string?> ExposureBias { get; } = new();
     public BindableReactiveProperty<string?> ExposureProgram { get; } = new();
@@ -578,6 +591,7 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> GalleryThumbnailStretch { get; } = new();
     public BindableReactiveProperty<string?> Gamma { get; } = new();
     public BindableReactiveProperty<string?> GeneralSettings { get; } = new();
+    public BindableReactiveProperty<string?> GeneratedWith { get; } = new();
     public BindableReactiveProperty<string?> GenerateThumbnails { get; } = new();
     public BindableReactiveProperty<string?> GithubRepo { get; } = new();
     public BindableReactiveProperty<string?> GlassTheme { get; } = new();
@@ -645,6 +659,7 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> NavigateForwards { get; } = new();
     public BindableReactiveProperty<string?> Navigation { get; } = new();
     public BindableReactiveProperty<string?> NegativeColors { get; } = new();
+    public BindableReactiveProperty<string?> NegativePrompt { get; } = new();
     public BindableReactiveProperty<string?> NewTab { get; } = new();
     public BindableReactiveProperty<string?> NewWindow { get; } = new();
     public BindableReactiveProperty<string?> NextArchive { get; } = new();
@@ -703,8 +718,10 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> Printer { get; } = new();
     public BindableReactiveProperty<string?> PrintSizeCm { get; } = new();
     public BindableReactiveProperty<string?> PrintSizeIn { get; } = new();
+    public BindableReactiveProperty<string?> Prompt { get; } = new();
     public BindableReactiveProperty<string?> Quality { get; } = new();
     public BindableReactiveProperty<string?> Random { get; } = new();
+    public BindableReactiveProperty<string?> RawMetadata { get; } = new();
     public BindableReactiveProperty<string?> ReadAbleAspectRatio { get; } = new();
     public BindableReactiveProperty<string?> RecentFiles { get; } = new();
     public BindableReactiveProperty<string?> Red { get; } = new();
@@ -736,6 +753,7 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> SaveAs { get; } = new();
     public BindableReactiveProperty<string?> SaveAsPdf { get; } = new();
     public BindableReactiveProperty<string?> Scale { get; } = new();
+    public BindableReactiveProperty<string?> ScanningHiddenMetadata { get; } = new();
     public BindableReactiveProperty<string?> Scroll { get; } = new();
     public BindableReactiveProperty<string?> ScrollAndRotate { get; } = new();
     public BindableReactiveProperty<string?> ScrollDirection { get; } = new();
@@ -792,9 +810,15 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> SortFilesBy { get; } = new();
     public BindableReactiveProperty<string?> Split { get; } = new();
     public BindableReactiveProperty<string?> Square { get; } = new();
+    public BindableReactiveProperty<string?> StableDiffusion { get; } = new();
     public BindableReactiveProperty<string?> Start { get; } = new();
     public BindableReactiveProperty<string?> StayCentered { get; } = new();
     public BindableReactiveProperty<string?> StayTopMost { get; } = new();
+    public BindableReactiveProperty<string?> StoredIn { get; } = new();
+    public BindableReactiveProperty<string?> StoredInImageComment { get; } = new();
+    public BindableReactiveProperty<string?> StoredInPixels { get; } = new();
+    public BindableReactiveProperty<string?> StoredInPngText { get; } = new();
+    public BindableReactiveProperty<string?> StoredInUserComment { get; } = new();
     public BindableReactiveProperty<string?> Stretch { get; } = new();
     public BindableReactiveProperty<string?> StretchToMatch { get; } = new();
     public BindableReactiveProperty<string?> Subject { get; } = new();

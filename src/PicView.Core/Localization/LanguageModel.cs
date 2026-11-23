@@ -152,6 +152,7 @@ public class LanguageModel
     public string? EscCloseTooltip { get; set; }
     public string? EscLeavesFullscreen { get; set; }
     public string? ExifVersion { get; set; }
+    public string? Expand { get; set; }
     public string? ExpandedGalleryItemSize { get; set; }
     public string? ExposureBias { get; set; }
     public string? ExposureProgram { get; set; }
@@ -205,6 +206,7 @@ public class LanguageModel
     public string? GalleryThumbnailStretch { get; set; }
     public string? Gamma { get; set; }
     public string? GeneralSettings { get; set; }
+    public string? GeneratedWith { get; set; }
     public string? GenerateThumbnails { get; set; }
     public string? GithubRepo { get; set; }
     public string? GlassTheme { get; set; }
@@ -291,6 +293,7 @@ public class LanguageModel
     public string? Navigation { get; set; }
     public string? NearestNeighbor { get; set; }
     public string? NegativeColors { get; set; }
+    public string? NegativePrompt { get; set; }
     public string? NewTab { get; set; }
     public string? NewWindow { get; set; }
     public string? NextArchive { get; set; }
@@ -359,9 +362,11 @@ public class LanguageModel
     public string? Printer { get; set; }
     public string? PrintSizeCm { get; set; }
     public string? PrintSizeIn { get; set; }
+    public string? Prompt { get; set; }
     public string? Quality { get; set; }
     public string? Random { get; set; }
     public string? RawCamera { get; set; }
+    public string? RawMetadata { get; set; }
     public string? RecentFiles { get; set; }
     public string? Red { get; set; }
     public string? RedEyeReduction { get; set; }
@@ -396,6 +401,7 @@ public class LanguageModel
     public string? SaveAsPdf { get; set; }
     public string? SavingFileFailed { get; set; }
     public string? Scale { get; set; }
+    public string? ScanningHiddenMetadata { get; set; }
     public string? Scroll { get; set; }
     public string? ScrollAndRotate { get; set; }
     public string? ScrollDirection { get; set; }
@@ -466,9 +472,15 @@ public class LanguageModel
     public string? Space { get; set; }
     public string? Split { get; set; }
     public string? Square { get; set; }
+    public string? StableDiffusion { get; set; }
     public string? Start { get; set; }
     public string? StayCentered { get; set; }
     public string? StayTopMost { get; set; }
+    public string? StoredIn { get; set; }
+    public string? StoredInImageComment { get; set; }
+    public string? StoredInPixels { get; set; }
+    public string? StoredInPngText { get; set; }
+    public string? StoredInUserComment { get; set; }
     public string? Stretch { get; set; }
     public string? StretchToMatch { get; set; }
     public string? StrobeReturnLightDetected { get; set; }
