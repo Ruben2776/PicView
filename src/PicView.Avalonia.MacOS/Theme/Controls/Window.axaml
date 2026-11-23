@@ -12,7 +12,7 @@
                     <Border Background="{TemplateBinding Background}" IsHitTestVisible="False" />
                     <Panel Background="Transparent" Margin="{TemplateBinding WindowDecorationMargin}" />
                     <Panel>
-                        <ExperimentalAcrylicBorder IsHitTestVisible="False">
+                        <ExperimentalAcrylicBorder IsHitTestVisible="False" Name="PART_AcrylicBorder">
                             <ExperimentalAcrylicBorder.Material>
                                 <ExperimentalAcrylicMaterial
                                     BackgroundSource="Digger"
@@ -35,5 +35,13 @@
                 </Panel>
             </ControlTemplate>
         </Setter>
+
+        <!--  Set by ThemeManager.ApplyAcrylic when the blur is turned off. Tool windows get their background from it  -->
+        <Style Selector="^.no-acrylic">
+            <Setter Property="TransparencyLevelHint" Value="Transparent" />
+        </Style>
+        <Style Selector="^.no-acrylic /template/ ExperimentalAcrylicBorder#PART_AcrylicBorder">
+            <Setter Property="IsVisible" Value="False" />
+        </Style>
     </ControlTheme>
 </ResourceDictionary>

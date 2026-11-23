@@ -188,6 +188,7 @@ public class SettingsViewModelTests
     {
         public void SetTheme(int themeIndex) { }
         public void SetColorTheme(int colorIndex) { }
+        public void SetAcrylic(bool isEnabled) { }
         public void SetBackground(int backgroundIndex) { }
     }
 

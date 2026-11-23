@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Media;
+using Avalonia.Styling;
 using Avalonia.Threading;
 using PicView.Core.ColorHandling;
 using PicView.Core.DebugTools;
@@ -32,13 +33,10 @@ public static class BackgroundManager
     /// </summary>
     public static Brush GetBackgroundBrush(BackgroundType backgroundType) => backgroundType switch
     {
-        BackgroundType.Transparent => new SolidColorBrush(Colors.Transparent),
+        BackgroundType.Transparent => DetermineAndGetTransparentBg(),
         BackgroundType.NoiseTexture => GetNoiseTextureBrush(),
         BackgroundType.Checkerboard => CreateCheckerboardBrush(),
-        BackgroundType.CheckerboardAlternative => CreateCheckerboardBrush(
-            Color.FromRgb(235, 235, 235), 
-            Color.FromRgb(40, 40, 40), 
-            AlternativeCheckerboardSize),
+        BackgroundType.CheckerboardAlternative => CreateCheckerboardBrushAlt(),
         BackgroundType.White => new SolidColorBrush(Colors.White),
         BackgroundType.LightGray => new SolidColorBrush(Color.FromRgb(200, 200, 200)),
         BackgroundType.MediumGray => new SolidColorBrush(Color.FromRgb(155, 155, 155)),
@@ -47,8 +45,30 @@ public static class BackgroundManager
         BackgroundType.NearBlack => new SolidColorBrush(Color.FromRgb(5, 5, 5)),
         BackgroundType.DarkGray => new SolidColorBrush(Color.FromRgb(48, 48, 48)),
         BackgroundType.MainBackgroundColor => new SolidColorBrush(Color.FromRgb(43, 43, 43)),
-        _ => new SolidColorBrush(Colors.Transparent)
+        _ => DetermineAndGetTransparentBg()
     };
+
+    /// <summary>
+    /// The Transparent background: clear over the blur, or a tint in the theme's color when the blur is off.
+    /// </summary>
+    public static Brush DetermineAndGetTransparentBg()
+    {
+        if (ThemeManager.IsAcrylicEnabled)
+        {
+            return new SolidColorBrush(Colors.Transparent);
+        }
+        
+        return Settings.Theme.Dark 
+            ? new SolidColorBrush(Color.FromArgb(0xAD, 0x16, 0x16, 0x16)) 
+            : new SolidColorBrush(Color.FromArgb(0xD6, 0xFF, 0xFF, 0xFF));
+    }
+
+    /// <summary>
+    /// A tool window's background when the blur is off, in the theme's colour.
+    /// </summary>
+    public static Brush GetToolWindowBg() => Settings.Theme.Dark
+        ? new SolidColorBrush(Color.FromArgb(254, 37, 37, 37))
+        : new SolidColorBrush(Color.FromArgb(0xD6, 0xFF, 0xFF, 0xFF));
 
     /// <summary>
     /// Moves the window's background choice on to the next one in the cycle, which the B key does. Its follower paints
@@ -78,7 +98,7 @@ public static class BackgroundManager
     /// <returns>A brush containing the noise texture or a transparent brush if unavailable.</returns>
     private static Brush GetNoiseTextureBrush()
     {
-        if (Application.Current.TryGetResource("NoisyTexture", Application.Current.RequestedThemeVariant, out var texture) && 
+        if (Application.Current.TryGetResource("NoisyTexture", ThemeVariant.Dark, out var texture) && 
             texture is ImageBrush imageBrush)
         {
             return imageBrush;
@@ -94,10 +114,21 @@ public static class BackgroundManager
     /// <returns>A drawing brush representing the alternative checkerboard pattern.</returns>
     public static DrawingBrush CreateCheckerboardBrushAlt(int size = AlternativeCheckerboardSize)
     {
-        return CreateCheckerboardBrush(
-            Color.FromRgb(235, 235, 235),
-            Color.FromRgb(40, 40, 40), 
-            size);
+        var secondaryColor = ThemeManager.IsAcrylicEnabled
+            ? Color.FromRgb(40, 40, 40)
+            : Colors.Black;
+
+        return CreateCheckerboardBrush(Color.FromRgb(235, 235, 235), secondaryColor, size);
+    }
+
+    public static DrawingBrush CreateCheckerboardBrush()
+    {
+        var primaryColor = Colors.White;
+        var secondaryColor = ThemeManager.IsAcrylicEnabled
+            ? Color.Parse("#F81F1F1F")
+            : Colors.Black;
+
+        return CreateCheckerboardBrush(primaryColor, secondaryColor);
     }
 
     /// <summary>
@@ -107,7 +138,7 @@ public static class BackgroundManager
     /// <param name="secondaryColor">The secondary color for the checkerboard squares. Defaults to a dark gray.</param>
     /// <param name="size">The size of the checkerboard squares in pixels. Defaults to 30.</param>
     /// <returns>A drawing brush representing the checkerboard pattern.</returns>
-    public static DrawingBrush CreateCheckerboardBrush(Color primaryColor = default, Color secondaryColor = default,
+    public static DrawingBrush CreateCheckerboardBrush(Color primaryColor, Color secondaryColor = default,
         int size = DefaultCheckerboardSize)
     {
         // Default colors if not provided
@@ -124,8 +155,9 @@ public static class BackgroundManager
             {
                 Children =
                 {
-                    new RectangleGeometry(new Rect(0, 0, size, size)),
-                    new RectangleGeometry(new Rect(size, size, size, size))
+                    // The whole tile; the secondary squares are drawn over two of its quarters. Nothing may
+                    // reach past the tile, or Stretch.None centres the larger drawing and crops them away
+                    new RectangleGeometry(new Rect(0, 0, size, size))
                 }
             }
         };
@@ -178,6 +210,13 @@ public static class BackgroundManager
                 }
             }, DebugHelper.LogError(nameof(BackgroundManager), nameof(Follow)));
     }
+
+    /// <summary>
+    /// Paints a Main Window's two brushes again, for a change they depend on that its settings do not hold, such as
+    /// the blur being turned on or off.
+    /// </summary>
+    /// <remarks>Call on the UI thread.</remarks>
+    public static void Repaint(WindowSettings settings) => Paint(settings);
 
     /// <summary>
     /// Makes the two brushes from what the settings say now, on the UI thread.

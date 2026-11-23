@@ -35,6 +35,7 @@
 
             <Border
                 Margin="0,28,0,0"
+                x:Name="BackgroundBorder"
                 Background="{DynamicResource WindowMainBackgroundColor}"
                 Focusable="True">
                 <main:KeybindingsView x:Name="KeybindingsView" />

@@ -5,6 +5,7 @@ using Avalonia.Interactivity;
 using Avalonia.Threading;
 using PicView.Avalonia.Animations;
 using PicView.Avalonia.Clipboard;
+using PicView.Avalonia.ColorManagement;
 using PicView.Avalonia.Crop;
 using PicView.Avalonia.DragAndDrop;
 using PicView.Avalonia.Input;
@@ -88,6 +89,7 @@ public abstract class MainWindow : Window, IMainWindow
     {
         UIHelper = new UIControlHelper();
         FrameProvider = new AvaloniaRenderingFrameProvider(GetTopLevel(this));
+        ThemeManager.ApplyAcrylic(this);
         Loaded += OnLoaded;
     }
 

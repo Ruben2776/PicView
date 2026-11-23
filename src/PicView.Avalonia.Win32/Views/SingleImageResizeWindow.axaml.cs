@@ -1,6 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Interactivity;
 using Avalonia.Media;
+using PicView.Avalonia.ColorManagement;
 using PicView.Avalonia.CustomControls;
 using PicView.Core.ViewModels;
 
@@ -12,5 +13,6 @@ public partial class SingleImageResizeWindow : GenericWindow
     {
         DataContext = viewModel;
         InitializeComponent();
+        ThemeManager.ApplyAcrylic(this, ResizeView);
     }
 }

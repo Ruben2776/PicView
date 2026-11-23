@@ -4,6 +4,7 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.Threading;
+using PicView.Avalonia.ColorManagement;
 using PicView.Avalonia.UI;
 using PicView.Core.MacOS.AppLaunching;
 using PicView.Core.MacOS.FileAssociation;
@@ -26,6 +27,7 @@ public partial class OpenWithView : Window
     public void Start()
     {
         InitializeComponent();
+        ThemeManager.ApplyAcrylic(this, MainPanel);
         if (!Settings.Theme.Dark && !Settings.Theme.GlassTheme)
         {
             MainPanel.Background = UIHelper.GetMenuBackgroundColor();

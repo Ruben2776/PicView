@@ -78,6 +78,7 @@
         </DockPanel>
 
         <Border
+            x:Name="BackgroundBorder"
             Background="{DynamicResource WindowMainBackgroundColor}"
             Focusable="True"
             Margin="0,28,0,0">

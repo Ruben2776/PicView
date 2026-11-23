@@ -54,6 +54,7 @@ public class TranslationViewModel
         Blink.Value = t.Blink;
         Blue.Value = t.Blue;
         Blur.Value = t.Blur;
+        BlurWindowBackground.Value = t.BlurWindowBackground;
         Bottom.Value = t.Bottom;
         Custom.Value = t.Custom;
         Difference.Value = t.Difference;
@@ -470,6 +471,7 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> Blink { get; } = new();
     public BindableReactiveProperty<string?> Blue { get; } = new();
     public BindableReactiveProperty<string?> Blur { get; } = new();
+    public BindableReactiveProperty<string?> BlurWindowBackground { get; } = new();
     public BindableReactiveProperty<string?> Bottom { get; } = new();
     public BindableReactiveProperty<string?> Custom { get; } = new();
     public BindableReactiveProperty<string?> Difference { get; } = new();

@@ -1,4 +1,5 @@
 using Avalonia.Media;
+using PicView.Avalonia.ColorManagement;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.MacOS.PlatformUpdate;
 using PicView.Core.IPlatform;
@@ -11,6 +12,7 @@ public partial class AboutWindow : GenericWindow, IPlatformSpecificUpdate
     public AboutWindow()
     {
         InitializeComponent();
+        ThemeManager.ApplyAcrylic(this, XAboutView);
         if (!Settings.Theme.Dark || Settings.Theme.GlassTheme)
         {
             XAboutView.Background = Brushes.Transparent;

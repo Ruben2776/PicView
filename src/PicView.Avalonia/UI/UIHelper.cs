@@ -81,34 +81,6 @@ public static class UIHelper
     {
         button?.Interval = (int)TimeSpan.FromSeconds(Settings.UIProperties.NavSpeed).TotalMilliseconds;
     }
-    
-    public static T? GetResource<T>(object key)
-    {
-        if (!Application.Current.TryGetResource(key, Application.Current.RequestedThemeVariant, out var resource))
-        {
-            return default;
-        }
-
-        if (resource is T value)
-        {
-            return value;
-        }
-#if DEBUG
-        DebugHelper.LogDebug(nameof(UIHelper), nameof(GetResource), "Missing resource: " + key);
-#endif
-        return default;
-    }
-
-    public static DrawingImage? GetIcon(string resourceName)
-    {
-        if (!Application.Current.TryGetResource(resourceName,
-                Application.Current.RequestedThemeVariant, out var icon))
-        {
-            return null;
-        }
-
-        return icon as DrawingImage;
-    }
 
     public static SolidColorBrush GetBrush(string resourceName) =>
         new(GetColor(resourceName));
@@ -141,6 +113,9 @@ public static class UIHelper
         control.Classes.Add("hover");
     }
 
-    public static SolidColorBrush? GetMenuBackgroundColor() =>
+    public static SolidColorBrush GetMenuBackgroundColor() =>
         GetBrush("MenuBackgroundColor");
+    
+    public static SolidColorBrush GetWindowBackgroundColor() =>
+        GetBrush("WindowMainBackgroundColor");
 }
