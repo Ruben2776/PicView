@@ -1,8 +1,11 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Input;
-using ImageMagick;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.FileSystem;
+using PicView.Avalonia.UI;
+using PicView.Core.DebugTools;
+using PicView.Core.Localization;
+using PicView.Core.Saving;
 using PicView.Core.ViewModels;
 
 namespace PicView.Avalonia.Views.Main;
@@ -20,31 +23,54 @@ public partial class ConvertView : UserControl
                 return;
             }
         
-            SaveButton.Click += (_, _) =>
-            {
-                var source = vm.WindowTabs.ActiveTab.CurrentValue.FileInfo.CurrentValue.FullName;
-                using var magick = new MagickImage(source);
-                var destination = GetDestinationWithChangedExtension(source);
-                magick.Write(destination);
-            };
-        
-            SaveAsButton.Click += async (_, _) =>
-            {
-                var source = vm.WindowTabs.ActiveTab.CurrentValue.FileInfo.CurrentValue.FullName;
-                var suggestedFileName = GetDestinationWithChangedExtension(source);
-                var file =  await FilePicker.PickFileForSavingAsync(suggestedFileName).ConfigureAwait(false);
-                if (file is null)
-                {
-                    return;
-                }
-                using var magick = new MagickImage(source);
-                magick.Write(file);
-            };
-        
+            SaveButton.Click += async (_, _) => await ConvertAsync(vm, saveAs: false).ConfigureAwait(false);
+
+            SaveAsButton.Click += async (_, _) => await ConvertAsync(vm, saveAs: true).ConfigureAwait(false);
+
             CancelButton.Click += (_, _) => SafeClose();
         };
     }
     
+    // Reads the tab and the chosen format once, at the click, and writes it through the save module. A Single Image has
+    // no file to replace, so Save asks where to save it as Save As does
+    // The click handlers are async void, so an exception here would end the app
+    private async Task ConvertAsync(MainWindowViewModel vm, bool saveAs)
+    {
+        try
+        {
+            var tab = vm.WindowTabs.ActiveTab.CurrentValue;
+            var source = tab.FileInfo.CurrentValue?.FullName;
+            var destination = source is null ? "PicView.png" : GetDestinationWithChangedExtension(source);
+            if (saveAs || source is null)
+            {
+                saveAs = true;
+                destination = await FilePicker.PickFileForSavingAsync(destination).ConfigureAwait(false);
+                if (destination is null)
+                {
+                    return;
+                }
+            }
+
+            var result = await ConvertWriter.ConvertAsync(vm.Core.Writer, tab, destination, saveAs)
+                .ConfigureAwait(false);
+            switch (result.Outcome)
+            {
+                case WriteOutcome.Written:
+                    SafeClose();
+                    break;
+                case WriteOutcome.NameTaken:
+                    TooltipHelper.ShowTooltipMessage(vm,
+                        TranslationManager.Translation.FileAlreadyExists + Environment.NewLine +
+                        Path.GetFileName(destination), true);
+                    break;
+            }
+        }
+        catch (Exception e)
+        {
+            DebugHelper.LogDebug(nameof(ConvertView), nameof(ConvertAsync), e);
+        }
+    }
+
     private void SafeClose()
     {
         Dispatcher.Invoke(() =>

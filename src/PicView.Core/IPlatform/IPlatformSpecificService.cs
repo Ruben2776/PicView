@@ -38,7 +38,14 @@ public interface IPlatformSpecificService
     /// shares, get it deleted permanently instead.
     /// </summary>
     bool CanMoveToRecycleBin(string path);
-    
+
+    /// <summary>
+    /// Moves a file to the recycle bin without asking or showing an error. When it cannot go there, the user is not
+    /// asked whether to delete it permanently. Used for PicView's own copies, which a dialog would only interrupt.
+    /// </summary>
+    /// <returns>Whether the file is gone.</returns>
+    Task<bool> RecycleQuietlyAsync(string path) => DeleteFile(path, recycle: true);
+
     Task<bool> CutFile(string path);
 
     /// <summary>

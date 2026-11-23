@@ -1,31 +1,10 @@
 ﻿using PicView.Core.DebugTools;
-using PicView.Core.ImageDecoding;
 using PicView.Core.ViewModels;
 
 namespace PicView.Core.Conversion;
 
 public static class ConversionHelper
 {
-    public static async Task<bool> ResizeByWidth(FileInfo fileInfo, double width)
-    {
-        if (width <= 0)
-        {
-            return false;
-        }
-
-        return await SaveImageFileHelper.ResizeImageAsync(fileInfo, (uint)width, 0).ConfigureAwait(false);
-    }
-
-    public static async Task<bool> ResizeByHeight(FileInfo fileInfo, double height)
-    {
-        if (height <= 0)
-        {
-            return false;
-        }
-
-        return await SaveImageFileHelper.ResizeImageAsync(fileInfo, 0, (uint)height).ConfigureAwait(false);
-    }
-
     public static bool DetermineIfOptimizeImageShouldBeEnabled(FileInfo? fileInfo)
     {
         if (fileInfo is null || !fileInfo.Exists)

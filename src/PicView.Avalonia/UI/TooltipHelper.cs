@@ -5,6 +5,7 @@ using PicView.Avalonia.CustomControls;
 using PicView.Core.Gallery;
 using PicView.Core.DebugTools;
 using PicView.Core.ViewModels;
+using R3;
 using VerticalAlignment = Avalonia.Layout.VerticalAlignment;
 
 namespace PicView.Avalonia.UI;
@@ -44,6 +45,26 @@ public static class TooltipHelper
         toolTip.ToolTipMessageSource.Value = message.ToString();
     }
     
+    /// <summary>
+    /// Shows each message <see cref="ShowTooltipMessage"/> hands to <paramref name="toolTip"/>, on the UI thread, with
+    /// the centring and interval it was given. The message is taken out of the view model as it is handed over, so the
+    /// same message again shows again. It may be handed over on any thread.
+    /// </summary>
+    /// <param name="show">Shows a message, centred or not, for an interval; in a Main Window,
+    /// <see cref="ShowTooltipMessageAsync"/>.</param>
+    /// <returns>Stops following the messages.</returns>
+    public static IDisposable FollowMessages(ToolTipViewModel toolTip, Func<string, bool, TimeSpan, Task> show) =>
+        toolTip.ToolTipMessageSource
+            .Where(static message => message is not null)
+            .Subscribe(message =>
+            {
+                // ShowTooltipMessage sets these before the message
+                var center = toolTip.ToolTipMessageCentered.CurrentValue;
+                var interval = toolTip.ToolTipMessageInterval.CurrentValue;
+                toolTip.ToolTipMessageSource.Value = null;
+                Dispatcher.UIThread.Post(() => _ = show(message!, center, interval));
+            }, DebugHelper.LogError(nameof(TooltipHelper), nameof(FollowMessages)));
+
     public static async Task ShowTooltipMessageAsync(object message, bool center, MainWindow mainWindow, TimeSpan interval)
     {
         try

@@ -513,6 +513,9 @@ public sealed class MainWindowLifecycle
             }
 
             vm.ToolTip ??= new ToolTipViewModel();
+            // Messages handed to the view model, such as from a Tool Window, show in this window
+            window.Disposables.Add(TooltipHelper.FollowMessages(vm.ToolTip,
+                (message, center, interval) => TooltipHelper.ShowTooltipMessageAsync(message, center, window, interval)));
         }, DispatcherPriority.Background);
 
         return settingUp;

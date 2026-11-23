@@ -60,6 +60,8 @@ public class App : Application, IPlatformSpecificService
 
     public bool CanMoveToRecycleBin(string path) => WinFileHelper.HasRecycleBin(path);
 
+    public Task<bool> RecycleQuietlyAsync(string path) => Task.Run(() => WinFileHelper.RecycleQuietly(path));
+
     public void SetTaskbarProgress(ulong progress, ulong maximum)
     {
         Dispatcher.Invoke(() =>

@@ -1,7 +1,6 @@
-﻿using Avalonia;
+using Avalonia;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
-using ImageMagick;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.FileSystem;
 using PicView.Avalonia.ImageHandling;
@@ -10,6 +9,7 @@ using PicView.Core.DebugTools;
 using PicView.Core.ImageTransformations;
 using PicView.Core.IPlatform;
 using PicView.Core.Localization;
+using PicView.Core.Saving;
 using PicView.Core.ViewModels;
 using R3;
 using Orientation = PicView.Core.ImageTransformations.Orientation;
@@ -93,12 +93,6 @@ public class CropService(TabViewModel tabViewModel, MainWindow mainWindow) : ICr
         return turned;
     }
 
-    /// <summary>
-    /// A crop saved over the tab's own file leaves the file upright, so keeping the tab's turn would turn it twice.
-    /// </summary>
-    internal static bool ShouldResetOrientation(string savedPath, FileInfo? tabFile) =>
-        tabFile is not null && string.Equals(tabFile.FullName, savedPath, StringComparison.Ordinal);
-
     public void CloseCropControl()
     {
         IsCropping = false;
@@ -116,76 +110,65 @@ public class CropService(TabViewModel tabViewModel, MainWindow mainWindow) : ICr
         {
             return;
         }
-        
-        var (fileName, fileInfo, bitmap) = PrepareCropData();
-        
-        var saveFileDialogResult = await FilePicker.PickFileForSavingAsync(fileName).ConfigureAwait(false);
-        if (saveFileDialogResult is null)
+
+        // A Single Image, such as a pasted one, has no file, so its crop is saved as a new PNG
+        if (tabViewModel.FileInfo.CurrentValue is not { Exists: true } file)
+        {
+            await SaveSingleImageCropAsync().ConfigureAwait(false);
+            return;
+        }
+
+        var picked = await FilePicker.PickFileForSavingAsync(file.FullName).ConfigureAwait(false);
+        if (picked is null)
         {
             return;
         }
-        await SaveCroppedImage(saveFileDialogResult, fileInfo, bitmap).ConfigureAwait(false);
-    }
 
-    private async Task SaveCroppedImage(string fileName, FileInfo fileInfo, Bitmap bitmap)
-    {
         var vm = await Dispatcher.UIThread.InvokeAsync(() => mainWindow.DataContext as MainWindowViewModel);
         if (vm is null)
         {
             return;
         }
-        using var busy = tabViewModel.ClaimBusy();
-        await SaveImage(fileName, fileInfo, bitmap).ConfigureAwait(false);
-        if (ShouldResetOrientation(fileName, tabViewModel.FileInfo.Value))
-        {
-            var newModel = await GetImageModel.GetImageModelAsync(fileInfo, core: vm.Core).ConfigureAwait(false);
-            tabViewModel.ImageIterator.Cache.Put(tabViewModel.Id, fileInfo, newModel);
-            await Dispatcher.UIThread.InvokeAsync(tabViewModel.Orientation.Reset);
-            tabViewModel.Display(newModel, tabViewModel.SecondaryModel);
-        }
-        
-        await Dispatcher.UIThread.InvokeAsync(CloseCropControl);
+
+        await SaveCropToAsync(vm.Core.Writer, picked).ConfigureAwait(false);
     }
 
-    private (string fileName, FileInfo? fileInfo, Bitmap? bitmap) PrepareCropData()
+    /// <summary>
+    /// Writes the crop's selection of the tab's file to <paramref name="path"/> through the save module, over the file
+    /// itself when that is the path, then closes the crop. The crop stays open when nothing was written.
+    /// </summary>
+    internal async Task<bool> SaveCropToAsync(ShownFileWriter writer, string path)
     {
-        // A Single Image, such as a pasted one, has no file, so its crop is saved as a new one
-        if (tabViewModel.FileInfo.CurrentValue is not { Exists: true } file)
+        if (tabViewModel.Crop is not { } crop)
         {
-            return CreateNewCroppedImage();
+            return false;
         }
 
-        return (file.FullName, file, null);
+        var job = new ShownFileWrite(WriteSource.Unedited, new WriteEdits(Cut: crop.SourceSelection),
+            new WriteDestination.Copy(path));
+        var result = await writer.WriteAsync(tabViewModel, job).ConfigureAwait(false);
+        if (result.Outcome is not WriteOutcome.Written)
+        {
+            return false;
+        }
+
+        await Dispatcher.UIThread.InvokeAsync(CloseCropControl);
+        return true;
     }
 
-    private (string fileName, FileInfo fileInfo, Bitmap bitmap) CreateNewCroppedImage()
+    private async Task SaveSingleImageCropAsync()
     {
         var fileName = $"{TranslationManager.Translation.Crop} {new Random().Next(9999)}.png";
-        var bitmap = RenderSelection((Bitmap)tabViewModel.Image.CurrentValue!, tabViewModel.Crop!);
-        return (fileName, new FileInfo(fileName), bitmap);
-    }
-
-    private async ValueTask<Bitmap?> SaveImage(string saveFilePath, FileInfo? fileInfo, Bitmap? bitmap)
-    {
-        if (bitmap is not null)
+        var picked = await FilePicker.PickFileForSavingAsync(fileName).ConfigureAwait(false);
+        if (picked is null)
         {
-            bitmap.Save(saveFilePath, PngBitmapEncoderOptions.Default);
-            return bitmap;
+            return;
         }
 
-        if (fileInfo is not null && tabViewModel.Crop is not null)
-        {
-            return await SaveWithMagickImage(tabViewModel.Crop, saveFilePath, fileInfo).ConfigureAwait(false);
-        }
-
-        return null;
-    }
-
-    private static async ValueTask<Bitmap> SaveWithMagickImage(CropViewModel crop, string saveFilePath, FileInfo fileInfo)
-    {
-        using var image = new MagickImage(fileInfo.FullName);
-        CropRender.CutAndOrient(image, crop.SourceSelection, crop.Orientation);
-        await image.WriteAsync(saveFilePath).ConfigureAwait(false);
-        return image.ToWriteableBitmap();
+        using var busy = tabViewModel.ClaimBusy();
+        var bitmap = await Dispatcher.UIThread.InvokeAsync(() =>
+            RenderSelection((Bitmap)tabViewModel.Image.CurrentValue!, tabViewModel.Crop!));
+        bitmap.Save(picked, PngBitmapEncoderOptions.Default);
+        await Dispatcher.UIThread.InvokeAsync(CloseCropControl);
     }
 }

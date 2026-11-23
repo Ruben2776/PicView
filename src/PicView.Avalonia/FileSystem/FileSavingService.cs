@@ -1,20 +1,17 @@
-using Avalonia.Media.Imaging;
-using ImageMagick;
-using PicView.Core.DebugTools;
 using PicView.Core.FileHandling;
-using PicView.Core.ImageDecoding;
+using PicView.Core.Saving;
 using PicView.Core.ViewModels;
 using Orientation = PicView.Core.ImageTransformations.Orientation;
 
 namespace PicView.Avalonia.FileSystem;
 
 /// <summary>
-/// Saves what a tab shows, with its rotation and flip applied. It decides what the Save Source is: the Effects Render
-/// of the tab's file, the file on disk, or the in-memory bitmap of a single image (clipboard, base64).
+/// Saves what a tab shows, with its rotation and flip applied, through the save module, which decides what the Save
+/// Source is: the Effects Render of the tab's file, the file on disk, or the in-memory bitmap of a single image.
 /// </summary>
 /// <param name="pathPicker">Asks the user where to save, for Save As.</param>
-/// <param name="getEffects">The effects view model, if the effects window has been opened.</param>
-public class FileSavingService(ISavePathPicker pathPicker, Func<EffectsViewModel?> getEffects)
+/// <param name="writer">Writes the shown image.</param>
+public class FileSavingService(ISavePathPicker pathPicker, ShownFileWriter writer)
 {
     private const string PngExtension = ".png";
     private static readonly char[] InvalidFileNameChars = ['<', '>', ':', '"', '/', '\\', '|', '?', '*'];
@@ -24,12 +21,14 @@ public class FileSavingService(ISavePathPicker pathPicker, Func<EffectsViewModel
     /// </summary>
     public async ValueTask<bool> SaveAsync(TabViewModel tab)
     {
-        if (tab.FileInfo.CurrentValue is not { } file)
+        var result = await writer.WriteAsync(tab, new ShownFileWrite(WriteSource.SaveSource, default,
+            new WriteDestination.OverItself())).ConfigureAwait(false);
+        if (result.Outcome is WriteOutcome.NothingToWrite && tab.FileInfo.CurrentValue is null)
         {
             return await SaveAsAsync(tab).ConfigureAwait(false);
         }
 
-        return await SaveToAsync(tab, file.FullName).ConfigureAwait(false);
+        return result.Outcome is WriteOutcome.Written;
     }
 
     /// <summary>
@@ -52,8 +51,9 @@ public class FileSavingService(ISavePathPicker pathPicker, Func<EffectsViewModel
     /// </summary>
     public async ValueTask<bool> SaveToAsync(TabViewModel tab, string destination)
     {
-        using var effectsRender = CloneEffectsRender(tab);
-        return await SaveToAsync(tab, destination, effectsRender).ConfigureAwait(false);
+        var result = await writer.WriteAsync(tab, new ShownFileWrite(WriteSource.SaveSource, default,
+            new WriteDestination.Copy(destination))).ConfigureAwait(false);
+        return result.Outcome is WriteOutcome.Written;
     }
 
     /// <summary>
@@ -64,71 +64,14 @@ public class FileSavingService(ISavePathPicker pathPicker, Func<EffectsViewModel
     public async ValueTask<string?> ExportCommonFormatAsync(TabViewModel tab)
     {
         var file = tab.FileInfo.CurrentValue;
-        using var effectsRender = CloneEffectsRender(tab);
-        if (effectsRender is null && file is not null && file.IsCommon() &&
-            tab.Orientation.Current.CurrentValue == Orientation.Upright)
+        if (file is not null && file.IsCommon() && tab.Orientation.Current.CurrentValue == Orientation.Upright &&
+            !writer.WouldWriteEffects(tab))
         {
             return file.FullName;
         }
 
         var tempPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + PngExtension);
-        return await SaveToAsync(tab, tempPath, effectsRender).ConfigureAwait(false) ? tempPath : null;
-    }
-
-    private MagickImage? CloneEffectsRender(TabViewModel tab) =>
-        tab.FileInfo.CurrentValue is { } file && tab.ImageType.CurrentValue is not ImageType.Svg
-            ? getEffects()?.CloneRender(file)
-            : null;
-
-    /// <param name="effectsRender">A copy of the Effects Render of the tab's file, if it has one.</param>
-    private async ValueTask<bool> SaveToAsync(TabViewModel tab, string destination, MagickImage? effectsRender)
-    {
-        var orientation = tab.Orientation.Current.CurrentValue;
-        var angle = orientation.Degrees;
-        var isFlipped = orientation.IsFlipped;
-        var file = tab.FileInfo.CurrentValue;
-
-        bool isSaved;
-        try
-        {
-            if (effectsRender is not null)
-            {
-                isSaved = await SaveEffectsRenderAsync(effectsRender, destination, angle, isFlipped).ConfigureAwait(false);
-            }
-            else if (file is not null)
-            {
-                isSaved = await SaveImageFileHelper.SaveImageAsync(null, file.FullName, destination,
-                    ext: Path.GetExtension(destination), rotationAngle: angle, flipImage: isFlipped).ConfigureAwait(false);
-            }
-            else if (tab.Image.CurrentValue is Bitmap bitmap)
-            {
-                isSaved = await SaveBitmapAsync(bitmap, destination, angle, isFlipped).ConfigureAwait(false);
-            }
-            else
-            {
-                return false;
-            }
-        }
-        catch (Exception e)
-        {
-            DebugHelper.LogDebug(nameof(FileSavingService), nameof(SaveToAsync), e);
-            return false;
-        }
-
-        if (isSaved && file is not null && file.FullName.Equals(destination, StringComparison.Ordinal))
-        {
-            if (orientation == Orientation.Upright)
-            {
-                tab.ImageIterator?.Cache.Invalidate(file.FullName);
-            }
-            else
-            {
-                // The file now holds the turn, so the tab shows it again upright: else a second save turns it twice
-                await tab.ShowRewrittenUprightAsync().ConfigureAwait(false);
-            }
-        }
-
-        return isSaved;
+        return await SaveToAsync(tab, tempPath).ConfigureAwait(false) ? tempPath : null;
     }
 
     /// <summary>
@@ -150,45 +93,5 @@ public class FileSavingService(ISavePathPicker pathPicker, Func<EffectsViewModel
         }
 
         return $"{title} {now:yyyy-MM-dd HHmmss}{PngExtension}";
-    }
-
-    /// <param name="effectsRender">A copy of the Effects Render, rotated and flipped in place.</param>
-    private static async ValueTask<bool> SaveEffectsRenderAsync(MagickImage effectsRender, string destination,
-        int angle, bool isFlipped)
-    {
-        if (angle is not 0)
-        {
-            effectsRender.Rotate(angle);
-        }
-
-        if (isFlipped)
-        {
-            effectsRender.Flop();
-        }
-
-        await effectsRender.WriteAsync(destination).ConfigureAwait(false);
-        return true;
-    }
-
-    private static async ValueTask<bool> SaveBitmapAsync(Bitmap bitmap, string destination, int angle, bool isFlipped)
-    {
-        var ext = Path.GetExtension(destination);
-        if (ext.Equals(PngExtension, StringComparison.OrdinalIgnoreCase) && angle is 0 && !isFlipped)
-        {
-            var fileStream = File.Create(destination);
-            await using (fileStream.ConfigureAwait(false))
-            {
-                bitmap.Save(fileStream, PngBitmapEncoderOptions.Default);
-            }
-
-            return true;
-        }
-
-        // Convert with Magick to the destination's format, and to apply the rotation and flip
-        using var pngStream = new MemoryStream();
-        bitmap.Save(pngStream, PngBitmapEncoderOptions.Default);
-        pngStream.Position = 0;
-        return await SaveImageFileHelper.SaveImageAsync(pngStream, null, destination, ext: ext,
-            rotationAngle: angle, flipImage: isFlipped).ConfigureAwait(false);
     }
 }

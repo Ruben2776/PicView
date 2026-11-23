@@ -1,7 +1,9 @@
-﻿using PicView.Core.Config;
+﻿using System.Globalization;
+using PicView.Core.Config;
 using PicView.Core.Conversion;
 using PicView.Core.Exif;
 using PicView.Core.Models;
+using PicView.Core.Saving;
 using PicView.Core.Sizing;
 using PicView.Core.Titles;
 using R3;
@@ -16,6 +18,9 @@ public class ImageInfoWindowViewModel(MainWindowViewModel vm) : IDisposable
     public int CopyButtonWidth => 37;
     
     private const int TextMaxWidth = 135;
+
+    // The largest side a resize asks for; more is a typing slip, and most formats take no more
+    private const double MaxSide = 65535;
     
     public BindableReactiveProperty<double> TextBoxMaxWidth { get; } = new(TextMaxWidth);
     public BindableReactiveProperty<double> ExtraTextBoxMaxWidth { get; } = new(TextMaxWidth);
@@ -102,37 +107,25 @@ public class ImageInfoWindowViewModel(MainWindowViewModel vm) : IDisposable
 
     public async Task ResizeImageAsync(bool isWidth, string widthText, string heightText)
     {
+        // The tab the window resizes, kept for the whole write even if another tab becomes active meanwhile
+        var tab = vm.WindowTabs.ActiveTab.CurrentValue;
         IsLoading.Value = true;
         try
         {
-            if (!double.TryParse(widthText, out var w) && w > 0 || !double.TryParse(heightText, out var h) && h > 0)
+            var text = isWidth ? widthText : heightText;
+            // double.TryParse reads "NaN" and "Infinity" too, which are no size
+            if (!double.TryParse(text, NumberStyles.Float, CultureInfo.CurrentCulture, out var size) ||
+                !double.IsFinite(size) || size < 1 || size > MaxSide)
             {
                 return;
             }
 
-            switch (isWidth)
-            {
-                case true when w > 0:
-                {
-                    var success = await ConversionHelper.ResizeByWidth(vm.WindowTabs.ActiveTab.Value.Model.FileInfo, w).ConfigureAwait(false);
-                    if (success)
-                    {
-                        await vm.WindowTabs.ActiveTab.CurrentValue.ImageIterator.ReloadAsync().ConfigureAwait(false);
-                    }
-
-                    break;
-                }
-                case false when h > 0:
-                {
-                    var success = await ConversionHelper.ResizeByHeight(vm.WindowTabs.ActiveTab.Value.Model.FileInfo, h).ConfigureAwait(false);
-                    if (success)
-                    {
-                        await vm.WindowTabs.ActiveTab.CurrentValue.ImageIterator.ReloadAsync().ConfigureAwait(false);
-                    }
-
-                    break;
-                }
-            }
+            // The other side is 0, which keeps the aspect. A Single Image has no file to write over: nothing is written
+            var side = (uint)size;
+            var edits = new WriteEdits(Width: isWidth ? side : 0, Height: isWidth ? 0 : side);
+            await vm.Core.Writer.WriteAsync(tab,
+                new ShownFileWrite(WriteSource.SaveSource, edits, new WriteDestination.OverItself()))
+                .ConfigureAwait(false);
         }
         finally
         {

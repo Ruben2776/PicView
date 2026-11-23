@@ -6,6 +6,7 @@ using ImageMagick;
 using PicView.Avalonia.FileSystem;
 using PicView.Core.ImageDecoding;
 using PicView.Core.Models;
+using PicView.Core.Saving;
 using PicView.Core.ViewModels;
 using R3;
 
@@ -23,6 +24,15 @@ internal sealed class StubSavePathPicker(string? pickedPath) : ISavePathPicker
         SuggestedName = suggestedName;
         return Task.FromResult(pickedPath);
     }
+}
+
+/// <summary>
+/// A save module that reads Single Images through Avalonia, as the app does.
+/// </summary>
+internal static class SavingTestWriter
+{
+    public static ShownFileWriter Create(EffectsViewModel? effects) =>
+        new(() => effects) { SingleImagePixels = new AvaloniaSingleImagePixels() };
 }
 
 [Collection("Sequential")]
@@ -78,7 +88,7 @@ public class FileSavingServiceTests : IDisposable
     {
         var destination = Path.Combine(_tempDir, fileName);
         var tab = CreateClipboardTab(8, 6);
-        var service = new FileSavingService(new StubSavePathPicker(destination), () => null);
+        var service = new FileSavingService(new StubSavePathPicker(destination), SavingTestWriter.Create(null));
 
         var isSaved = RunWithDispatcher(service.SaveAsAsync(tab));
 
@@ -95,7 +105,7 @@ public class FileSavingServiceTests : IDisposable
         var destination = Path.Combine(_tempDir, "rotated.png");
         var tab = CreateClipboardTab(8, 6);
         tab.Orientation.TurnTo(1);
-        var service = new FileSavingService(new StubSavePathPicker(destination), () => null);
+        var service = new FileSavingService(new StubSavePathPicker(destination), SavingTestWriter.Create(null));
 
         var isSaved = RunWithDispatcher(service.SaveAsAsync(tab));
 
@@ -110,7 +120,7 @@ public class FileSavingServiceTests : IDisposable
     {
         var picker = new StubSavePathPicker(null);
         var tab = CreateClipboardTab(8, 6);
-        var service = new FileSavingService(picker, () => null);
+        var service = new FileSavingService(picker, SavingTestWriter.Create(null));
 
         var isSaved = RunWithDispatcher(service.SaveAsync(tab));
 
@@ -133,7 +143,7 @@ public class FileSavingServiceTests : IDisposable
         tab.FileInfo.Value = new FileInfo(path);
         tab.Orientation.TurnTo(1);
         var picker = new StubSavePathPicker(null);
-        var service = new FileSavingService(picker, () => null);
+        var service = new FileSavingService(picker, SavingTestWriter.Create(null));
 
         var isSaved = RunWithDispatcher(service.SaveAsync(tab));
 
@@ -173,7 +183,7 @@ public class FileSavingServiceTests : IDisposable
         tab.FileInfo.Value = new FileInfo(source);
         tab.Orientation.TurnTo(quarterTurns);
         tab.Orientation.Flip();
-        var service = new FileSavingService(new StubSavePathPicker(null), () => null);
+        var service = new FileSavingService(new StubSavePathPicker(null), SavingTestWriter.Create(null));
 
         var isSaved = RunWithDispatcher(service.SaveToAsync(tab, destination));
 
@@ -216,13 +226,30 @@ public class FileSavingServiceTests : IDisposable
         var tab = new TabViewModel(vm);
         tab.FileInfo.Value = new FileInfo(source);
         using var effects = CreateEffectsWithRender(new FileInfo(source));
-        var service = new FileSavingService(new StubSavePathPicker(null), () => effects);
+        var service = new FileSavingService(new StubSavePathPicker(null), SavingTestWriter.Create(effects));
 
         var isSaved = RunWithDispatcher(service.SaveToAsync(tab, destination));
 
         Assert.True(isSaved);
         using var saved = new MagickImage(destination);
         Assert.Equal(3u, saved.Width);
+    }
+
+    [AvaloniaFact]
+    public void SaveAsync_WithEffects_ResetsThem()
+    {
+        var source = WriteRedPng("source.png");
+        var vm = new MainWindowViewModel(null!, null!, null!, null!);
+        var tab = new TabViewModel(vm);
+        tab.FileInfo.Value = new FileInfo(source);
+        using var effects = CreateEffectsWithRender(new FileInfo(source));
+        Assert.Equal(5, effects.Sharpen.Value);
+        var service = new FileSavingService(new StubSavePathPicker(null), SavingTestWriter.Create(effects));
+
+        var isSaved = RunWithDispatcher(service.SaveAsync(tab));
+
+        Assert.True(isSaved);
+        Assert.Equal(0, effects.Sharpen.Value);
     }
 
     [AvaloniaFact]
@@ -234,7 +261,7 @@ public class FileSavingServiceTests : IDisposable
         var tab = new TabViewModel(vm);
         tab.FileInfo.Value = new FileInfo(source);
         using var effects = CreateEffectsWithRender(new FileInfo(Path.Combine(_tempDir, "other.png")));
-        var service = new FileSavingService(new StubSavePathPicker(null), () => effects);
+        var service = new FileSavingService(new StubSavePathPicker(null), SavingTestWriter.Create(effects));
 
         var isSaved = RunWithDispatcher(service.SaveToAsync(tab, destination));
 
@@ -251,7 +278,7 @@ public class FileSavingServiceTests : IDisposable
         var vm = new MainWindowViewModel(null!, null!, null!, null!);
         var tab = new TabViewModel(vm);
         tab.FileInfo.Value = new FileInfo(source);
-        var service = new FileSavingService(new StubSavePathPicker(null), () => null);
+        var service = new FileSavingService(new StubSavePathPicker(null), SavingTestWriter.Create(null));
 
         var exported = RunWithDispatcher(service.ExportCommonFormatAsync(tab));
 
@@ -266,7 +293,7 @@ public class FileSavingServiceTests : IDisposable
         var tab = new TabViewModel(vm);
         tab.FileInfo.Value = new FileInfo(source);
         tab.Orientation.TurnTo(1);
-        var service = new FileSavingService(new StubSavePathPicker(null), () => null);
+        var service = new FileSavingService(new StubSavePathPicker(null), SavingTestWriter.Create(null));
 
         var exported = RunWithDispatcher(service.ExportCommonFormatAsync(tab));
 

@@ -125,20 +125,7 @@ public static class SaveImageFileHelper
             var keepExt = string.IsNullOrEmpty(ext);
             if (!keepExt)
             {
-                magickImage.Format = ext.ToLowerInvariant() switch
-                {
-                    ".webp" => MagickFormat.WebP,
-                    ".jpeg" or ".jpg" => MagickFormat.Jpeg,
-                    ".png" => MagickFormat.Png,
-                    ".jxl" => MagickFormat.Jxl,
-                    ".avif" => MagickFormat.Avif,
-                    ".heic" => MagickFormat.Heic,
-                    ".heif" => MagickFormat.Heif,
-                    ".bmp" => MagickFormat.Bmp,
-                    ".gif" => MagickFormat.Gif,
-                    ".tif" or ".tiff" => MagickFormat.Tiff,
-                    _ => magickImage.Format
-                };
+                magickImage.Format = FormatFor(ext, magickImage.Format);
             }
 
             // ---> Core Fix: Never write directly onto the file you just read
@@ -206,143 +193,21 @@ public static class SaveImageFileHelper
 
 
     /// <summary>
-    /// Resizes and optionally compresses an image asynchronously, with optional format conversion.
+    /// The format a file with the extension <paramref name="ext"/> is saved in, or <paramref name="fallback"/> for an
+    /// extension with no format of its own.
     /// </summary>
-    /// <param name="fileInfo">The FileInfo object representing the image file to resize.</param>
-    /// <param name="width">The target width of the resized image. Ignored if percentage is specified.</param>
-    /// <param name="height">The target height of the resized image. Ignored if percentage is specified.</param>
-    /// <param name="quality">The quality level of the resized image, as a percentage (0-100). Defaults to 100.</param>
-    /// <param name="percentage">An optional percentage to resize the image by. If specified, width and height are ignored.</param>
-    /// <param name="destination">The path to save the resized image. If null, the original file will be overwritten.</param>
-    /// <param name="compress">Indicates whether to apply compression to the image after resizing. If null, no compression is applied.</param>
-    /// <param name="ext">The file extension of the output image (e.g., ".jpg", ".png"). If null, the original extension is kept.</param>
-    /// <returns>A task representing the asynchronous operation, with a result of <c>true</c> if the image is resized and saved successfully; otherwise, <c>false</c>.</returns>
-    /// <remarks>
-    /// If both width and height are provided, they will be used for resizing unless a percentage is specified.
-    /// Compression is only applied if the specified format supports it.
-    /// </remarks>
-    public static async Task<bool> ResizeImageAsync(FileInfo fileInfo, uint width, uint height, uint? quality = 100,
-        Percentage? percentage = null, string? destination = null, bool? compress = null, string? ext = null)
+    internal static MagickFormat FormatFor(string ext, MagickFormat fallback) => ext.ToLowerInvariant() switch
     {
-        if (fileInfo.Exists == false)
-        {
-            return false;
-        }
-
-        var magick = new MagickImage
-        {
-            ColorSpace = ColorSpace.Transparent
-        };
-
-        if (quality.HasValue) // not inputting quality results in lower file size
-        {
-            magick.Quality = quality.Value;
-        }
-
-        try
-        {
-            if (fileInfo.Length < 2147483648)
-            {
-                await magick.ReadAsync(fileInfo).ConfigureAwait(false);
-            }
-            else
-            {
-                // ReSharper disable once MethodHasAsyncOverload
-                magick.Read(fileInfo);
-            }
-        }
-        catch (MagickException e)
-        {
-            DebugHelper.LogDebug(nameof(SaveImageFileHelper), nameof(ResizeImageAsync), e);
-            return false;
-        }
-
-        try
-        {
-            if (percentage is not null)
-            {
-                magick.Resize(percentage.Value);
-            }
-            else
-            {
-                magick.Resize(width, height);
-            }
-
-            if (destination is null)
-            {
-                if (ext is not null)
-                {
-                    Path.ChangeExtension(fileInfo.Extension, ext);
-                    magick.Format = Path.GetExtension(ext).ToLowerInvariant() switch
-                    {
-                        ".jpeg" or ".jpg" => MagickFormat.Jpeg,
-                        ".png" => MagickFormat.Png,
-                        ".jxl" => MagickFormat.Jxl,
-                        ".gif" => MagickFormat.Gif,
-                        ".webp" => MagickFormat.WebP,
-                        ".heic" => MagickFormat.Heic,
-                        ".heif" => MagickFormat.Heif,
-                        _ => magick.Format
-                    };
-                }
-
-                await magick.WriteAsync(fileInfo).ConfigureAwait(false);
-            }
-            else
-            {
-                var dir = Path.GetDirectoryName(destination);
-                if (dir is null)
-                {
-                    return false;
-                }
-
-                if (Directory.Exists(dir) == false)
-                {
-                    Directory.CreateDirectory(dir);
-                }
-
-                if (ext is not null)
-                {
-                    Path.ChangeExtension(destination, ext);
-                }
-
-                await magick.WriteAsync(destination).ConfigureAwait(false);
-            }
-        }
-        catch (MagickException e)
-        {
-            DebugHelper.LogDebug(nameof(SaveImageFileHelper), nameof(ResizeImageAsync), e);
-            return false;
-        }
-
-        magick.Dispose();
-
-        if (!compress.HasValue)
-        {
-            return true;
-        }
-
-        ImageOptimizer imageOptimizer = new()
-        {
-            OptimalCompression = compress.Value
-        };
-
-        var x = destination ?? fileInfo.FullName;
-
-        if (imageOptimizer.IsSupported(x) == false)
-        {
-            return true;
-        }
-
-        try
-        {
-            imageOptimizer.Compress(x);
-        }
-        catch (Exception)
-        {
-            return true;
-        }
-
-        return true;
-    }
+        ".webp" => MagickFormat.WebP,
+        ".jpeg" or ".jpg" => MagickFormat.Jpeg,
+        ".png" => MagickFormat.Png,
+        ".jxl" => MagickFormat.Jxl,
+        ".avif" => MagickFormat.Avif,
+        ".heic" => MagickFormat.Heic,
+        ".heif" => MagickFormat.Heif,
+        ".bmp" => MagickFormat.Bmp,
+        ".gif" => MagickFormat.Gif,
+        ".tif" or ".tiff" => MagickFormat.Tiff,
+        _ => fallback
+    };
 }

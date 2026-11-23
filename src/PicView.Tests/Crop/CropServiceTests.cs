@@ -19,26 +19,6 @@ public class CropServiceTests
     public void CanCrop_OnlyAStillBitmapNotAPair(ImageType type, bool showsPair, bool expected)
         => Assert.Equal(expected, CropManager.CanCrop(type, showsPair));
 
-    [Fact]
-    public void ShouldResetOrientation_SavedOverTheTabsFile_IsTrue()
-    {
-        var file = new FileInfo(Path.Combine(Path.GetTempPath(), "tab.jpg"));
-
-        Assert.True(CropService.ShouldResetOrientation(file.FullName, file));
-    }
-
-    [Fact]
-    public void ShouldResetOrientation_SavedElsewhere_IsFalse()
-    {
-        var file = new FileInfo(Path.Combine(Path.GetTempPath(), "tab.jpg"));
-
-        Assert.False(CropService.ShouldResetOrientation(Path.Combine(Path.GetTempPath(), "other.jpg"), file));
-    }
-
-    [Fact]
-    public void ShouldResetOrientation_NoTabFile_IsFalse()
-        => Assert.False(CropService.ShouldResetOrientation(Path.Combine(Path.GetTempPath(), "tab.jpg"), null));
-
     [AvaloniaFact]
     public void RenderSelection_TurnedRight_IsTheSelectionAsShown()
     {

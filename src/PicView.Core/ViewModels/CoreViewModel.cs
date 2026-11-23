@@ -2,6 +2,7 @@ using PicView.Core.IPlatform;
 using PicView.Core.Models;
 using PicView.Core.Navigation;
 using PicView.Core.Navigation.Interfaces;
+using PicView.Core.Saving;
 using PicView.Core.Thumbnailing;
 
 namespace PicView.Core.ViewModels;
@@ -26,6 +27,7 @@ public class CoreViewModel
         SharedCache = new SharedImageCache(file => imageLoader(file, this));
         GlobalSettings = globalSettings ?? new GlobalSettingsViewModel();
         GallerySettings = new GallerySharedSettingsViewModel(saveGallerySettings);
+        Writer = new ShownFileWriter(() => Effects);
     }
 
     /// <summary>For a loader that does not need the view model, as most tests have.</summary>
@@ -41,6 +43,9 @@ public class CoreViewModel
     // Shared Services
     public IPlatformSpecificService? PlatformService { get; }
     public SharedImageCache SharedCache { get; }
+
+    /// <summary>Writes the image a tab shows; every writer of it goes through this.</summary>
+    public ShownFileWriter Writer { get; }
 
     /// <summary>
     /// The services every tab of every Main Window is created with, set once. Null until

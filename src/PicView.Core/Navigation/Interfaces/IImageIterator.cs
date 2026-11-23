@@ -8,7 +8,6 @@ namespace PicView.Core.Navigation.Interfaces;
 /// </summary>
 public interface IImageIterator : IDisposable
 {
-    public SharedImageCache Cache { get; }
     public string? CurrentDirectory { get; }
 
     /// <summary>
@@ -112,7 +111,7 @@ public interface IImageIterator : IDisposable
     ValueTask NavigateAsync(NavigateTo to, SkipAmount skipAmount, CancellationTokenSource ct);
 
     /// <summary>
-    /// Clears the cache and reloads the current image.
+    /// Shows the current image again. With <paramref name="clearCache"/>, the shown file and its Side-by-Side partner are decoded again first.
     /// </summary>
     ValueTask ReloadAsync(bool clearCache = true);
 

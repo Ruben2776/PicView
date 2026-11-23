@@ -1,5 +1,5 @@
 ﻿using PicView.Core.Conversion;
-using PicView.Core.DebugTools;
+using PicView.Core.Saving;
 using PicView.Core.ViewModels;
 
 namespace PicView.Avalonia.ImageHandling;
@@ -10,7 +10,7 @@ namespace PicView.Avalonia.ImageHandling;
 public static class ImageOptimizer
 {
     /// <summary>
-    /// Optimizes the current image in the view model
+    /// Optimizes the current image in the view model losslessly, through the save module
     /// </summary>
     /// <param name="vm">The main view model</param>
     public static async Task OptimizeImageAsync(MainWindowViewModel vm)
@@ -21,24 +21,8 @@ public static class ImageOptimizer
             return;
         }
 
-        using var busy = tab.ClaimBusy();
-        await Task.Run(() =>
-        {
-            var file = tab.FileInfo.CurrentValue;
-            try
-            {
-                var optimizer = new ImageMagick.ImageOptimizer
-                {
-                    OptimalCompression = true
-                };
-                optimizer.LosslessCompress(file.FullName);
-            }
-            catch (Exception ex)
-            {
-                DebugHelper.LogDebug(nameof(ImageOptimizer), nameof(OptimizeImageAsync), ex);
-            }
-        }).ConfigureAwait(false);
-        tab.ImageIterator.Cache.Invalidate(tab.FileInfo.CurrentValue.FullName);
-        await tab.ImageIterator.ReloadAsync(clearCache:false).ConfigureAwait(false);
+        await vm.Core.Writer.WriteAsync(tab,
+            new ShownFileWrite(WriteSource.Unedited, new WriteEdits(LosslessOptimize: true),
+                new WriteDestination.OverItself())).ConfigureAwait(false);
     }
 }

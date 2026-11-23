@@ -32,6 +32,7 @@ public partial class SingleImageResizeView : UserControl
 
         vm.CloseAction = SafeClose;
         vm.PickFileAction = SafePickAsync;
+        vm.ShowMessageAction = message => TooltipHelper.ShowTooltipMessage(mainVm, message, true);
 
         RegisterEventHandlers(mainVm);
 
