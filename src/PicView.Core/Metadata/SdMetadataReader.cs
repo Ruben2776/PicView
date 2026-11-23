@@ -257,6 +257,26 @@ public static class SdMetadataReader
         return SdMetadataParser.ParseA1111(text);
     }
 
+    /// <summary>
+    /// True when <paramref name="text"/>, read the way <paramref name="source"/> is read, comes back as
+    /// A1111 data holding exactly the given prompt, negative prompt and settings. Used to refuse edits
+    /// that would be stored as something other than what the user typed.
+    /// </summary>
+    internal static bool ReadsBackAs(SdSource source, string text, string? prompt, string? negativePrompt,
+        string? settings)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            return false;
+        }
+
+        var parsed = source == SdSource.PngText ? ParseUnknownPayload(text) : ReadFromText(text);
+        return parsed is { Format: SdFormat.A1111 } &&
+               SdMetadataParser.Normalize(parsed.Prompt) == SdMetadataParser.Normalize(prompt) &&
+               SdMetadataParser.Normalize(parsed.NegativePrompt) == SdMetadataParser.Normalize(negativePrompt) &&
+               SdMetadataParser.Normalize(parsed.Settings) == SdMetadataParser.Normalize(settings);
+    }
+
     /// <summary>Identifies the file type from its first bytes: PNG signature, FF D8 FF, or RIFF....WEBP.</summary>
     private static SdContainer SniffContainer(FileInfo? fileInfo)
     {

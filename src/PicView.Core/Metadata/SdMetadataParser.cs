@@ -73,6 +73,41 @@ internal static class SdMetadataParser
         };
     }
 
+    /// <summary>Converts line endings to <c>\n</c> and trims; null becomes an empty string.</summary>
+    internal static string Normalize(string? value) =>
+        value is null
+            ? string.Empty
+            : value.Replace("\r\n", "\n", StringComparison.Ordinal).Replace('\r', '\n').Trim();
+
+    /// <summary>
+    /// The inverse of <see cref="ParseA1111"/>: the prompt, a "Negative prompt:" line when there is one,
+    /// then the settings line, each part left out when empty.
+    /// </summary>
+    internal static string ComposeA1111(string? prompt, string? negativePrompt, string? settings)
+    {
+        var parts = new List<string>(3);
+        var normalizedPrompt = Normalize(prompt);
+        var normalizedNegative = Normalize(negativePrompt);
+        var normalizedSettings = Normalize(settings);
+
+        if (normalizedPrompt.Length > 0)
+        {
+            parts.Add(normalizedPrompt);
+        }
+
+        if (normalizedNegative.Length > 0)
+        {
+            parts.Add("Negative prompt: " + normalizedNegative);
+        }
+
+        if (normalizedSettings.Length > 0)
+        {
+            parts.Add(normalizedSettings);
+        }
+
+        return string.Join('\n', parts);
+    }
+
     /// <summary>
     /// A settings line is a comma separated run of "Key: value" pairs. Prompt lines can contain
     /// both colons and commas (prompt weighting, LoRA syntax), so at least two well-formed pairs
