@@ -186,6 +186,37 @@ public class ResizeImageViewModelSaveTests : IDisposable
         Assert.Null(other.FileInfo.CurrentValue);
     }
 
+    [Theory]
+    [InlineData("", "")]
+    [InlineData("0", "0")]
+    [InlineData("abc", "0")]
+    public async Task SaveImage_NoSize_WritesNothingAndStaysOpen(string width, string height)
+    {
+        var path = WriteImage("a.png", 4, 2);
+        var bytes = await File.ReadAllBytesAsync(path, TestContext.Current.CancellationToken);
+        var (_, resizeVm, tab) = await CreateAsync(path);
+        tab.Orientation.TurnRight();
+        var closed = false;
+        resizeVm.CloseAction = () => closed = true;
+        var asked = false;
+        resizeVm.PickFileAction = (_, _) =>
+        {
+            asked = true;
+            return ValueTask.FromResult<string?>(Path.Combine(_testDirectory, "copy.png"));
+        };
+        resizeVm.IsKeepingAspectRatio.Value = false;
+        resizeVm.DesiredPixelWidth.Value = width;
+        resizeVm.DesiredPixelHeight.Value = height;
+
+        await resizeVm.SaveImage();
+        await resizeVm.SaveImageAs();
+
+        Assert.False(closed);
+        Assert.False(asked);
+        Assert.Equal(bytes, await File.ReadAllBytesAsync(path, TestContext.Current.CancellationToken));
+        Assert.Equal(1, tab.Orientation.Current.CurrentValue.QuarterTurns);
+    }
+
     // A Main Window whose active tab loaded the file at path, or shows no file when it is null, and a resize dialog
     // for it. The cache reads each file's size, as a decode would
     private async Task<(MainWindowViewModel MainVm, ResizeImageViewModel ResizeVm, TabViewModel Tab)> CreateAsync(

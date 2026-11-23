@@ -235,11 +235,16 @@ public class ResizeImageViewModel : IDisposable
     {
         // The tab the dialog resizes, kept for the whole save even if another tab becomes active meanwhile
         var tab = _mainVm.WindowTabs.ActiveTab.CurrentValue;
+        if (!TryGetSize(out var w, out var h))
+        {
+            return;
+        }
+
         var fileInfo = tab.FileInfo.CurrentValue;
         if (fileInfo is null)
         {
             // A Single Image has no file to write over
-            await SaveImageAsCore(tab).ConfigureAwait(false);
+            await SaveImageAsCore(tab, w, h).ConfigureAwait(false);
             return;
         }
 
@@ -250,7 +255,7 @@ public class ResizeImageViewModel : IDisposable
             ? new WriteDestination.OverItself()
             : new WriteDestination.Replace(Path.ChangeExtension(original, ext));
 
-        var result = await WriteAsync(tab, ext, path, destination).ConfigureAwait(false);
+        var result = await WriteAsync(tab, w, h, ext, path, destination).ConfigureAwait(false);
         if (result.Outcome is WriteOutcome.NameTaken && destination is WriteDestination.Replace replace)
         {
             ShowMessageAction?.Invoke(TranslationManager.Translation.FileAlreadyExists + Environment.NewLine +
@@ -264,10 +269,16 @@ public class ResizeImageViewModel : IDisposable
     /// <summary>
     /// Asks where to save the resized image, then saves a copy there; the Shown File itself when it is picked.
     /// </summary>
-    public async Task SaveImageAs() =>
-        await SaveImageAsCore(_mainVm.WindowTabs.ActiveTab.CurrentValue).ConfigureAwait(false);
+    public async Task SaveImageAs()
+    {
+        var tab = _mainVm.WindowTabs.ActiveTab.CurrentValue;
+        if (TryGetSize(out var w, out var h))
+        {
+            await SaveImageAsCore(tab, w, h).ConfigureAwait(false);
+        }
+    }
 
-    private async Task SaveImageAsCore(TabViewModel tab)
+    private async Task SaveImageAsCore(TabViewModel tab, uint w, uint h)
     {
         if (PickFileAction is null)
         {
@@ -286,24 +297,26 @@ public class ResizeImageViewModel : IDisposable
 
         var destination = Path.ChangeExtension(picked, ext);
         // A copy onto the Shown File is written over itself by the save module
-        await WriteAsync(tab, ext, destination, new WriteDestination.Copy(destination)).ConfigureAwait(false);
+        await WriteAsync(tab, w, h, ext, destination, new WriteDestination.Copy(destination)).ConfigureAwait(false);
         CloseAction?.Invoke();
     }
 
-    // Writes the tab's Save Source, turned and flipped as it shows, resized to the size asked for
-    private async Task<WriteResult> WriteAsync(TabViewModel tab, string ext, string path,
+    // The size asked for; a side that is not a number is 0, which keeps the aspect from the other. False when neither
+    // side has a size, as a resize to nothing would only encode the image again
+    private bool TryGetSize(out uint w, out uint h)
+    {
+        w = uint.TryParse(DesiredPixelWidth.CurrentValue, CultureInfo.InvariantCulture, out var width) ? width : 0;
+        h = uint.TryParse(DesiredPixelHeight.CurrentValue, CultureInfo.InvariantCulture, out var height) ? height : 0;
+        return w > 0 || h > 0;
+    }
+
+    // Writes the tab's Save Source, turned and flipped as it shows, resized to w x h
+    private async Task<WriteResult> WriteAsync(TabViewModel tab, uint w, uint h, string ext, string path,
         WriteDestination destination)
     {
         IsLoading.Value = true;
         try
         {
-            // A size that is not a number is 0, which keeps the aspect from the other; both 0 is no resize
-            var w = uint.TryParse(DesiredPixelWidth.CurrentValue, CultureInfo.InvariantCulture, out var width)
-                ? width
-                : 0;
-            var h = uint.TryParse(DesiredPixelHeight.CurrentValue, CultureInfo.InvariantCulture, out var height)
-                ? height
-                : 0;
             var edits = new WriteEdits(Width: w, Height: h, Quality: GetQualityValue(ext, path));
             return await _mainVm.Core.Writer
                 .WriteAsync(tab, new ShownFileWrite(WriteSource.SaveSource, edits, destination))
