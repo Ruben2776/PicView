@@ -57,6 +57,14 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
     // pending. Read and written on the UI thread
     private Size? _sizeBeforePlacement;
 
+    // The window's horizontal center in physical pixels the last time it was settled in Normal, natively too, or null
+    // before it was. Kept here since the Window Settings' bounds miss a maximize by the operating system, as Win+Up
+    // does, which leaves Normal before the switcher could store them. Read and written on the UI thread
+    private double? _normalCenterXPixels;
+
+    // Whether a pending job will record _normalCenterXPixels. Read and written on the UI thread
+    private bool _isNormalCenterPending;
+
     // The active tab whose new image the pending Fit is for; written on the thread that showed it, taken by the Fit
     private TabViewModel? _tabWithNewImage;
 
@@ -256,6 +264,13 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
                 .Subscribe(change =>
                     PlaceAfterResizeSoon(vm, ((AvaloniaPropertyChangedEventArgs<Size>)change).OldValue
                         .GetValueOrDefault())),
+            // Where it was last settled in Normal, which AutoFit gives back as it returns to Normal
+            Observable.Merge(
+                    window.GetPropertyChangedObservable(Window.ClientSizeProperty).ToObservable()
+                        .Select(static _ => Unit.Default),
+                    Observable.FromEventHandler<PixelPointEventArgs>(h => window.PositionChanged += h,
+                        h => window.PositionChanged -= h).Select(static _ => Unit.Default))
+                .Subscribe(_ => RememberNormalCenterSoon(vm)),
             // A move within the same screen fits nothing; a drag to another monitor or a scaling change does
             (screenChanges ?? ScreenChangesOf(window)).Subscribe(_ =>
             {
@@ -285,8 +300,13 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
         double? centerX;
         if (previous.Mode is WindowMode.Fullscreen or WindowMode.Maximized)
         {
+            // Where it was last settled in Normal; else, for a window that started maximized or fullscreen, its
+            // Window Settings' bounds
+            var scaling = ScalingOf(_readScreen());
             var bounds = vm.WindowSettings.Bounds;
-            centerX = bounds.Width > 0 ? bounds.Left / ScalingOf(_readScreen()) + bounds.Width / 2 : null;
+            centerX = _normalCenterXPixels is { } pixels ? pixels / scaling
+                : bounds.Width > 0 ? bounds.Left / scaling + bounds.Width / 2
+                : null;
         }
         else if (previous is { Mode: WindowMode.Normal, AutoFit: false })
         {
@@ -315,6 +335,32 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
                 window.ClientSize.Width, window.ClientSize.Height);
             window.Position = new PixelPoint(position.X, position.Y);
         }, DispatcherPriority.Loaded);
+    }
+
+    // Records where the window is once it has settled in Normal, natively too. Decided one dispatcher turn after its
+    // size or position changed, since Windows sets the new size before the native state as it maximizes, and not
+    // while it is between Window Modes, as the operating system's restore moves it then. At Send, so the record is
+    // made before a Window Mode change the user can trigger next
+    private void RememberNormalCenterSoon(MainWindowViewModel vm)
+    {
+        if (_isNormalCenterPending)
+        {
+            return;
+        }
+
+        _isNormalCenterPending = true;
+        Dispatcher.UIThread.Post(() =>
+        {
+            _isNormalCenterPending = false;
+            if (_isDisposed || !window.IsVisible || window.WindowState is not WindowState.Normal ||
+                window.IsChangingWindowState || vm.WindowModeState.CurrentValue.Mode is not WindowMode.Normal ||
+                window.ClientSize.Width is 0)
+            {
+                return;
+            }
+
+            _normalCenterXPixels = window.Position.X + window.ClientSize.Width * ScalingOf(_readScreen()) / 2;
+        }, DispatcherPriority.Send);
     }
 
     // The window's horizontal center, in device-independent pixels

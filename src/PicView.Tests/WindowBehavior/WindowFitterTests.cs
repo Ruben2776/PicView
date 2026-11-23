@@ -1564,6 +1564,32 @@ public class WindowFitterTests
     }
 
     [AvaloniaFact]
+    public void Follow_ReturnsToNormalAfterTheOperatingSystemMaximized_KeepsItsLastHorizontalCenter()
+    {
+        var (fitter, vm, window) = CreateShownAutoFitWindow(() => Screen(1920, 1040));
+        using var following = fitter.Follow();
+        vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 400, 300));
+        Dispatcher.UIThread.RunJobs();
+        // Bounds from an earlier session, which a maximize by the operating system never updates
+        vm.WindowSettings.Bounds = new NormalBounds(1400, 50, 400, 300);
+        window.Position = new PixelPoint(100, 50);
+        Dispatcher.UIThread.RunJobs();
+        var switcher = new WindowModeSwitcher(window, new NativeStateAdapter());
+
+        // As Win+Up does: the native state changes first, and the Window Mode follows
+        window.WindowState = WindowState.Maximized;
+        switcher.OnNativeStateAsync(WindowState.Maximized);
+        Dispatcher.UIThread.RunJobs();
+        switcher.LeaveTopMode();
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Equal(WindowMode.Normal, vm.WindowModeState.Value.Mode);
+        Assert.Equal(new Size(400, 300), window.ClientSize);
+        Assert.Equal(new PixelPoint(100, 370), window.Position);
+        window.Close();
+    }
+
+    [AvaloniaFact]
     public void Follow_ReturnsToNormalWithAutoFitAndStayCentered_IsCenteredOnItsScreen()
     {
         var screen = Screen(1920, 1040);
