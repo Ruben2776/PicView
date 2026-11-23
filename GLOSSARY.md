@@ -205,6 +205,14 @@ _Avoid_: Gallery layout, view mode, Gallery Mode (that is Closed, Docked or Expa
 What a save writes out, decided by the save module rather than the caller: the Effects Render when there is one for the shown file, else the file on disk, else the in-memory bitmap of a Single Image. The tab's rotation and flip are applied to each. Setting a wallpaper or a lock screen image writes out the same Save Source, and a Print Job prints it.
 _Avoid_: Source file, input path
 
+**Save Module**:
+`ShownFileWriter`, in Core: every in-process write of a tab's shown image goes through it. A writer describes the job (what to read, what to change, where to write) and the module reads the Save Source or the file on disk, writes it off the UI thread with the tab Busy, and shows the result by where it went. Over itself, it shows the file again with its cached image and thumbnail forgotten and resets the turn and effects that were written into it; replacing the original, it shows the new file and then recycles the original, and writes nothing when the new name is taken; a copy elsewhere changes nothing in the tab. A Single Image has no file, so over itself and replace become Save As. Batch resize is outside it.
+_Avoid_: Saver, save service (for the Core module)
+
+**Recycle Bin Backup**:
+The copy the Save Module makes of a file before it writes over it. The copy is made in PicView's temp folder, not beside the original, and moved to the Recycle Bin from there, so the Recycle Bin's Restore puts it in the temp folder. A drive with no Recycle Bin gets no backup, and the write goes ahead.
+_Avoid_: Undo copy, .bak file
+
 ## Settings
 
 **Setting**:

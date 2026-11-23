@@ -12,7 +12,7 @@ namespace PicView.Core.Navigation;
 public class ImageIterator(SharedImageCache cache, Thumbnails thumbnails, TabViewModel tab,
     Action<FileListChange>? filesChanged = null) : IImageIterator
 {
-    public SharedImageCache Cache { get; } = cache ?? throw new ArgumentNullException(nameof(cache));
+    private SharedImageCache Cache { get; } = cache ?? throw new ArgumentNullException(nameof(cache));
     public string? CurrentDirectory => Files.Count > 0 ? Files[0].DirectoryName : null;
 
     private readonly Thumbnails _thumbnails = thumbnails ?? throw new ArgumentNullException(nameof(thumbnails));
