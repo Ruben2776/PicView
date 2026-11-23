@@ -270,6 +270,37 @@ public class ShownFileWriterTests : IDisposable
     }
 
     [Fact]
+    public async Task Optimize_KeepsTheTurnAndForgetsTheThumbnail()
+    {
+        var wasReset = Settings.Zoom.ResetZoomOnChange;
+        Settings.Zoom.ResetZoomOnChange = false;
+        try
+        {
+            var source = WriteImage("source.png", MagickColors.Red, 2, 1);
+            var services = TestTabServices.For(_cache, platform: _platform);
+            var tab = new TabViewModel(new MainWindowViewModel(null!, null!, null!, null!), services);
+            _disposables.Add(tab);
+            await tab.Load.LoadAsync(source);
+            tab.Orientation.TurnRight();
+            services.Thumbnails.Keep(tab.Id, source, new object(), 100);
+
+            var result = await new ShownFileWriter(() => null).WriteAsync(tab,
+                new ShownFileWrite(WriteSource.Unedited, new WriteEdits(LosslessOptimize: true),
+                    new WriteDestination.OverItself()));
+
+            Assert.Equal(WriteOutcome.Written, result.Outcome);
+            // The file was not turned, so the tab still shows it turned
+            Assert.Equal(1, tab.Orientation.Current.CurrentValue.QuarterTurns);
+            Assert.False(services.Thumbnails.TryGetKept(new FileInfo(source), out _, out _));
+            AssertSize(source, 2, 1);
+        }
+        finally
+        {
+            Settings.Zoom.ResetZoomOnChange = wasReset;
+        }
+    }
+
+    [Fact]
     public async Task OverItself_EffectsApplied_ResetsThemOnTheUiThread()
     {
         var source = WriteImage("source.png", MagickColors.Red, 2, 1);
