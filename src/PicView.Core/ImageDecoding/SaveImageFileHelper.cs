@@ -125,20 +125,7 @@ public static class SaveImageFileHelper
             var keepExt = string.IsNullOrEmpty(ext);
             if (!keepExt)
             {
-                magickImage.Format = ext.ToLowerInvariant() switch
-                {
-                    ".webp" => MagickFormat.WebP,
-                    ".jpeg" or ".jpg" => MagickFormat.Jpeg,
-                    ".png" => MagickFormat.Png,
-                    ".jxl" => MagickFormat.Jxl,
-                    ".avif" => MagickFormat.Avif,
-                    ".heic" => MagickFormat.Heic,
-                    ".heif" => MagickFormat.Heif,
-                    ".bmp" => MagickFormat.Bmp,
-                    ".gif" => MagickFormat.Gif,
-                    ".tif" or ".tiff" => MagickFormat.Tiff,
-                    _ => magickImage.Format
-                };
+                magickImage.Format = FormatFor(ext, magickImage.Format);
             }
 
             // ---> Core Fix: Never write directly onto the file you just read
@@ -204,6 +191,25 @@ public static class SaveImageFileHelper
     }
 
 
+
+    /// <summary>
+    /// The format a file with the extension <paramref name="ext"/> is saved in, or <paramref name="fallback"/> for an
+    /// extension with no format of its own.
+    /// </summary>
+    internal static MagickFormat FormatFor(string ext, MagickFormat fallback) => ext.ToLowerInvariant() switch
+    {
+        ".webp" => MagickFormat.WebP,
+        ".jpeg" or ".jpg" => MagickFormat.Jpeg,
+        ".png" => MagickFormat.Png,
+        ".jxl" => MagickFormat.Jxl,
+        ".avif" => MagickFormat.Avif,
+        ".heic" => MagickFormat.Heic,
+        ".heif" => MagickFormat.Heif,
+        ".bmp" => MagickFormat.Bmp,
+        ".gif" => MagickFormat.Gif,
+        ".tif" or ".tiff" => MagickFormat.Tiff,
+        _ => fallback
+    };
 
     /// <summary>
     /// Resizes and optionally compresses an image asynchronously, with optional format conversion.
