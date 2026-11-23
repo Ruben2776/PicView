@@ -26,7 +26,8 @@ public class ExifViewModel : IDisposable
         SetExifRating4Command = new ReactiveCommand<FileInfo>(async (s, _) => await SetRating(s, 4).ConfigureAwait(false));
         SetExifRating5Command = new ReactiveCommand<FileInfo>(async (s, _) => await SetRating(s, 5).ConfigureAwait(false));
 
-        RemoveImageMetaDataCommand = new ReactiveCommand<FileInfo>(async (f, _) => await RemoveImageMetaData(f).ConfigureAwait(false));
+        // The file whose values are shown, as for every edit, and shown again from the file afterwards
+        RemoveImageMetaDataCommand = new ReactiveCommand<FileInfo>(async (_, _) => await CommitAsync(ExifWriter.RemoveImageMetaData).ConfigureAwait(false));
         
         SetDateTakenCommand = new ReactiveCommand<FileInfo>(async (_, _) => await SetDateTaken().ConfigureAwait(false));
 
@@ -570,8 +571,9 @@ public class ExifViewModel : IDisposable
                         }
 
                         // --- Color Representation ---
-                        else if (key.Contains("colorspace", StringComparison.OrdinalIgnoreCase) 
-                                 || key.Contains("exif:colorspace", StringComparison.OrdinalIgnoreCase))
+                        // Only the Exif tag: ImageMagick's own colorspace attributes, such as jpeg:colorspace, are
+                        // how the pixels are encoded, not the Exif ColorSpace
+                        else if (key.Contains("exif:colorspace", StringComparison.OrdinalIgnoreCase))
                         {
                             if (val.Contains("srgb", StringComparison.OrdinalIgnoreCase))
                             {
@@ -806,54 +808,5 @@ public class ExifViewModel : IDisposable
         }
 
         return written;
-    }
-
-    private async Task RemoveImageMetaData(FileInfo fileInfo)
-    {
-        if (!fileInfo.Exists)
-        {
-            return;
-        }
-        await ExifWriter.RemoveImageMetaData(fileInfo).ConfigureAwait(false);
-        
-        // Remove UI displayed fields
-        ExifRating.Value = 0;
-        DateTaken.Value = null;
-        Copyright.Value = string.Empty;
-        Authors.Value = string.Empty;
-        Software.Value = string.Empty;
-        Subject.Value = string.Empty;
-        Keywords.Value = string.Empty;
-        Title.Value = string.Empty;
-        Comment.Value = string.Empty;
-        Latitude.Value = null;
-        Longitude.Value = null;
-        Altitude.Value = null;
-        CompressedBitsPixel.Value = string.Empty;
-        CameraMaker.Value = string.Empty;
-        CameraModel.Value = string.Empty;
-        FNumber.Value = string.Empty;
-        MaxAperture.Value = string.Empty;
-        ExposureBias.Value = string.Empty;
-        ExposureProgram.Clear();
-        ExposureTime.Value = string.Empty;
-        DigitalZoom.Value = string.Empty;
-        FocalLength.Value = string.Empty;
-        FocalLength35Mm.Value = string.Empty;
-        ISOSpeed.Value = string.Empty;
-        MeteringMode.Clear();
-        Contrast.Clear();
-        Saturation.Clear();
-        Sharpness.Clear();
-        WhiteBalance.Clear();
-        FlashEnergy.Value = string.Empty;
-        FlashMode.Clear();
-        LightSource.Clear();
-        Brightness.Value = string.Empty;
-        PhotometricInterpretation.Clear();
-        LensMaker.Value = string.Empty;
-        LensModel.Value = string.Empty;
-        ExifVersion.Value = string.Empty;
-        DateTaken.Value = null;
     }
 }

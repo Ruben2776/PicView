@@ -174,7 +174,7 @@ public class ExifViewModelTests
         }
     }
 
-    private static string WriteJpeg(Action<ExifProfile> fill)
+    private static string WriteJpeg(Action<ExifProfile> fill, IColorProfile? colorProfile = null)
     {
         TranslationManager.LoadLanguage("en");
         var path = Path.Combine(Path.GetTempPath(), $"picview-exif-commit-{Guid.NewGuid():N}.jpg");
@@ -184,6 +184,10 @@ public class ExifViewModelTests
         profile.SetValue(ExifTag.Software, "PicViewTest");
         fill(profile);
         image.SetProfile(profile);
+        if (colorProfile is not null)
+        {
+            image.SetProfile(colorProfile);
+        }
         image.Write(path);
         return path;
     }
@@ -389,6 +393,36 @@ public class ExifViewModelTests
             {
                 File.Delete(path);
             }
+        }
+    }
+
+    [Fact]
+    public async Task RemoveImageMetaDataCommand_KeepsTheColorProfileAndShowsTheFileAgain()
+    {
+        var path = WriteJpeg(profile =>
+        {
+            profile.SetValue(ExifTag.Artist, "Ann");
+            profile.SetValue(ExifTag.ColorSpace, (ushort)1);
+            profile.SetValue(ExifTag.MeteringMode, (ushort)3);
+        }, ColorProfiles.SRGB);
+        try
+        {
+            using var viewModel = Show(path);
+            Assert.NotEqual(0, viewModel.ColorRepresentation.SelectedIndex.Value);
+
+            var written = await viewModel.CommitAsync(ExifWriter.RemoveImageMetaData);
+
+            Assert.True(written);
+            Assert.Equal(string.Empty, viewModel.Authors.Value);
+            Assert.Equal(0, viewModel.ColorRepresentation.SelectedIndex.Value);
+            Assert.Equal(0, viewModel.MeteringMode.SelectedIndex.Value);
+            using var image = new MagickImage(path);
+            Assert.Null(image.GetExifProfile());
+            Assert.NotNull(image.GetColorProfile());
+        }
+        finally
+        {
+            File.Delete(path);
         }
     }
 

@@ -572,22 +572,21 @@ public static class ExifWriter
         }, nameof(ExifWriter), nameof(AddExifVersion));
 
     /// <summary>
-    /// Removes the EXIF metadata from the specified image file.
+    /// Removes the metadata from the specified image file: Exif, XMP, IPTC and comments. The colour profile is kept.
     /// </summary>
     /// <param name="fileInfo">The file information of the image from which the EXIF data will be removed.</param>
     /// <returns>A task representing the asynchronous operation, containing a boolean value that indicates whether the EXIF data was successfully removed.</returns>
     public static Task<bool> RemoveImageMetaData(FileInfo fileInfo) =>
         ExifFunctions.TryUpdateImageProfileAsync(fileInfo, magickImage =>
         {
+            // Strip drops the colour profile too, which would change the colours of a wide-gamut image
+            var colorProfile = magickImage.GetColorProfile();
             magickImage.Strip();
-            
-            var profile = magickImage.GetExifProfile();
-            if (profile is null)
+            if (colorProfile is not null)
             {
-                return true;
+                magickImage.SetProfile(colorProfile);
             }
 
-            magickImage.RemoveProfile(profile);
             return true;
         }, nameof(ExifWriter), nameof(RemoveImageMetaData));
 
