@@ -1325,22 +1325,32 @@ public class TabViewModel : IDisposable
     }
 
     /// <summary>
-    /// Shows the tab's file again after PicView wrote it with the tab's turn and flip applied, such as a save over it:
-    /// decoded anew, and upright, since keeping the turn would show it turned twice and the next save would turn the
-    /// file twice. The turn is undone as the rewritten file shows, so it never shows turned twice even for a moment.
+    /// Shows the tab's file again after PicView rewrote it, such as a save over it: decoded anew, with its thumbnail
+    /// forgotten. When <paramref name="turnApplied"/> the file holds the tab's turn and flip, so it shows upright, since
+    /// keeping the turn would show it turned twice and the next save would turn the file twice. The turn is undone as the
+    /// rewritten file shows, so it never shows turned twice even for a moment.
     /// </summary>
-    public async ValueTask ShowRewrittenUprightAsync()
+    public async ValueTask ShowRewrittenAsync(bool turnApplied)
     {
-        if (FileInfo.CurrentValue is not { } file || ImageIterator is not { } iterator)
+        if (FileInfo.CurrentValue is not { } file)
         {
             return;
         }
 
         var path = file.FullName;
-        Volatile.Write(ref _uprightOnShownPath, path);
+        ForgetRewritten(path);
+        if (ImageIterator is not { } iterator)
+        {
+            return;
+        }
+
+        if (turnApplied)
+        {
+            Volatile.Write(ref _uprightOnShownPath, path);
+        }
+
         try
         {
-            iterator.Cache.Invalidate(path);
             await iterator.ReloadAsync(clearCache: false).ConfigureAwait(false);
         }
         finally
@@ -1350,7 +1360,39 @@ public class TabViewModel : IDisposable
         }
     }
 
-    // The rewritten file whose next showing undoes the turn, set by ShowRewrittenUprightAsync
+    /// <summary>
+    /// Forgets the decoded image and the thumbnail of a file PicView rewrote, without showing it again, as the pixels it
+    /// wrote are what the tab shows already.
+    /// </summary>
+    public void ForgetRewritten(string path)
+    {
+        // The image first, as the file watcher does, so a thumbnail made meanwhile is not made from the old image
+        Services?.Cache.Invalidate(path);
+        Thumbnails?.Forget(path);
+    }
+
+    /// <summary>
+    /// Shows a file PicView wrote in place of the one the tab showed, such as a save under another name or format. When
+    /// <paramref name="turnApplied"/> it holds the tab's turn and flip, so it shows upright.
+    /// </summary>
+    public async ValueTask ShowReplacementAsync(string newPath, bool turnApplied)
+    {
+        if (turnApplied)
+        {
+            Volatile.Write(ref _uprightOnShownPath, newPath);
+        }
+
+        try
+        {
+            await Load.LoadAsync(newPath).ConfigureAwait(false);
+        }
+        finally
+        {
+            Interlocked.CompareExchange(ref _uprightOnShownPath, null, newPath);
+        }
+    }
+
+    // The rewritten file whose next showing undoes the turn, set by ShowRewrittenAsync and ShowReplacementAsync
     private string? _uprightOnShownPath;
 
     /// <summary>

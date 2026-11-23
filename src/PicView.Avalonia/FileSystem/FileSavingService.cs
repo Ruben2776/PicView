@@ -124,7 +124,7 @@ public class FileSavingService(ISavePathPicker pathPicker, Func<EffectsViewModel
             else
             {
                 // The file now holds the turn, so the tab shows it again upright: else a second save turns it twice
-                await tab.ShowRewrittenUprightAsync().ConfigureAwait(false);
+                await tab.ShowRewrittenAsync(turnApplied: true).ConfigureAwait(false);
             }
         }
 

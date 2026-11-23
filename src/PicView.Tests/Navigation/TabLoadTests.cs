@@ -1356,6 +1356,66 @@ public class TabLoadTests : IDisposable
     }
 
     [Fact]
+    public async Task ShowRewrittenAsync_ForgetsTheThumbnail()
+    {
+        var a = await WriteImageAsync("a.jpg");
+        var tab = CreateTab(_testDirectory, withIterator: false);
+        await tab.Load.LoadAsync(a);
+        tab.Thumbnails!.Keep(tab.Id, a, new object(), 100);
+
+        await tab.ShowRewrittenAsync(turnApplied: false);
+
+        Assert.False(tab.Thumbnails.TryGetKept(new FileInfo(a), out _, out _));
+    }
+
+    [Fact]
+    public async Task ShowRewrittenAsync_TurnNotApplied_KeepsTheTurn()
+    {
+        // ResetZoomOnChange off, else any showing resets the turn and the test proves nothing
+        var resetZoomOnChange = Settings.Zoom.ResetZoomOnChange;
+        Settings.Zoom.ResetZoomOnChange = false;
+        try
+        {
+            var a = await WriteImageAsync("a.jpg");
+            var tab = CreateTab(_testDirectory, withIterator: false);
+            await tab.Load.LoadAsync(a);
+            tab.Orientation.TurnRight();
+
+            await tab.ShowRewrittenAsync(turnApplied: false);
+
+            Assert.NotEqual(Orientation.Upright, tab.Orientation.Current.CurrentValue);
+        }
+        finally
+        {
+            Settings.Zoom.ResetZoomOnChange = resetZoomOnChange;
+        }
+    }
+
+    [Fact]
+    public async Task ShowReplacementAsync_TurnApplied_ShowsUprightWhateverResetZoomOnChange()
+    {
+        var resetZoomOnChange = Settings.Zoom.ResetZoomOnChange;
+        Settings.Zoom.ResetZoomOnChange = false;
+        try
+        {
+            var a = await WriteImageAsync("a.jpg");
+            var b = await WriteImageAsync("b.png");
+            var tab = CreateTab(_testDirectory, withIterator: false);
+            await tab.Load.LoadAsync(a);
+            tab.Orientation.TurnRight();
+
+            await tab.ShowReplacementAsync(b, turnApplied: true);
+
+            Assert.Equal(b, tab.Model.FileInfo?.FullName);
+            Assert.Equal(Orientation.Upright, tab.Orientation.Current.CurrentValue);
+        }
+        finally
+        {
+            Settings.Zoom.ResetZoomOnChange = resetZoomOnChange;
+        }
+    }
+
+    [Fact]
     public async Task SaveAsync_Upright_KeepsTheShownModel()
     {
         var path = Path.Combine(_testDirectory, "upright.png");
