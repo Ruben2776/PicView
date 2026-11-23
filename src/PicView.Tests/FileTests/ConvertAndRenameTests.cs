@@ -37,9 +37,16 @@ public class ConvertAndRenameTests : IDisposable
             disposable.Dispose();
         }
 
-        if (Directory.Exists(_testDirectory))
+        try
         {
-            Directory.Delete(_testDirectory, true);
+            if (Directory.Exists(_testDirectory))
+            {
+                Directory.Delete(_testDirectory, true);
+            }
+        }
+        catch (Exception e) when (e is IOException or UnauthorizedAccessException)
+        {
+            // Best effort: a background preload of the tab's folder can still hold a file for a moment
         }
     }
 
