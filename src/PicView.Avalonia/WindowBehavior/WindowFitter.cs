@@ -190,8 +190,9 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
     /// frame is drawn, so the window never shows them at the old size. Without AutoFit the Fit reads the laid-out
     /// view, so it is fitted once more after layout. An opened AutoFit window in Normal is also placed after each change
     /// of its size, a Fit included, and published as <see cref="Placed"/> when that moved it, which places it when
-    /// AutoFit turns on too. An AutoFit window that returns to Normal from fullscreen or maximized is centered once in
-    /// the work area of its screen.
+    /// AutoFit turns on too. When AutoFit takes the window over, as it turns on or as the window returns to Normal from
+    /// fullscreen or maximized with it, the window keeps its horizontal center and is centered vertically in the work
+    /// area of its screen, or centered in it with Stay Centered.
     /// </summary>
     /// <returns>What stops following the inputs.</returns>
     public IDisposable Follow()
@@ -214,7 +215,7 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
             vm.WindowTabs.IsTabStripShown.Skip(1).Subscribe(_ => FitSoon()),
             vm.Interface.AsObservable().Skip(1).Subscribe(_ => FitSoon()),
             vm.WindowModeState.Skip(1).Subscribe(_ => FitSoon()),
-            vm.WindowModeState.Pairwise().Subscribe(pair => CenterIfBackToNormalWithAutoFit(vm, pair.Previous,
+            vm.WindowModeState.Pairwise().Subscribe(pair => PlaceWhenAutoFitTakesOver(vm, pair.Previous,
                 pair.Current)),
             // The window's own Zoom to Fit and scrolling; another window's toggle fits nothing here
             vm.WindowSettings.IsZoomedToFit.Skip(1).Subscribe(_ => FitSoon()),
@@ -265,29 +266,61 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
             }));
     }
 
-    // An AutoFit window that returns to Normal from fullscreen or maximized is centered once in the work area of its
-    // screen; the operating system's restore moves it while it is between Window Modes, which the after-resize rule
-    // leaves alone. Posted by the change itself, not by the Fit that follows it, since a window showing the start-up
-    // menu fits no image. At Loaded, below Render, so it reads the window's size after the layout that follows that
-    // Fit: a shown AutoFit window takes the Fit's size as it is laid out, not as the Fit runs
-    private void CenterIfBackToNormalWithAutoFit(MainWindowViewModel vm, WindowModeState previous,
-        WindowModeState next)
+    // When AutoFit takes a window over, as it turns on in Normal or as the window returns to Normal from fullscreen or
+    // maximized with it, the window keeps its horizontal center and is centered vertically in the work area of its
+    // screen, so a window that grows or shrinks never hangs off its top or bottom edge; with Stay Centered it is
+    // centered. The center is read as the change happens: a returning window is still fullscreen or maximized then,
+    // so it is the center of its last Normal bounds, which the switcher stored as it left Normal. The operating
+    // system's restore moves it while it is between Window Modes, which the after-resize rule leaves alone. Posted by
+    // the change itself, not by the Fit that follows it, since a window showing the start-up menu fits no image. At
+    // Loaded, below Render, so it reads the window's size after the layout that follows that Fit, and comes after the
+    // after-resize rule, which runs at Send
+    private void PlaceWhenAutoFitTakesOver(MainWindowViewModel vm, WindowModeState previous, WindowModeState next)
     {
-        if (previous.Mode is not (WindowMode.Fullscreen or WindowMode.Maximized) ||
-            next is not { Mode: WindowMode.Normal, AutoFit: true })
+        if (next is not { Mode: WindowMode.Normal, AutoFit: true })
+        {
+            return;
+        }
+
+        double? centerX;
+        if (previous.Mode is WindowMode.Fullscreen or WindowMode.Maximized)
+        {
+            var bounds = vm.WindowSettings.Bounds;
+            centerX = bounds.Width > 0 ? bounds.Left / ScalingOf(_readScreen()) + bounds.Width / 2 : null;
+        }
+        else if (previous is { Mode: WindowMode.Normal, AutoFit: false })
+        {
+            centerX = CurrentCenterX();
+        }
+        else
         {
             return;
         }
 
         Dispatcher.UIThread.Post(() =>
         {
-            if (!_isDisposed && window.IsVisible && window.WindowState is WindowState.Normal &&
-                vm.WindowModeState.CurrentValue is { Mode: WindowMode.Normal, AutoFit: true })
+            if (_isDisposed || !window.IsVisible || window.WindowState is not WindowState.Normal ||
+                vm.WindowModeState.CurrentValue is not { Mode: WindowMode.Normal, AutoFit: true })
+            {
+                return;
+            }
+
+            if (vm.WindowSettings.IsStayingCentered.Value)
             {
                 Center();
+                return;
             }
+
+            var position = WindowPlacement.CenteredVertically(_readScreen(), centerX ?? CurrentCenterX(),
+                window.ClientSize.Width, window.ClientSize.Height);
+            window.Position = new PixelPoint(position.X, position.Y);
         }, DispatcherPriority.Loaded);
     }
+
+    // The window's horizontal center, in device-independent pixels
+    private double CurrentCenterX() => window.Position.X / ScalingOf(_readScreen()) + window.ClientSize.Width / 2;
+
+    private static double ScalingOf(ScreenSize screen) => screen.Scaling > 0 ? screen.Scaling : 1;
 
     private static Observable<Unit> ScreenChangesOf(MainWindow window) =>
         Observable.Merge(
