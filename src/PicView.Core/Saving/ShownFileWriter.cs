@@ -22,6 +22,12 @@ public sealed class ShownFileWriter(Func<EffectsViewModel?> getEffects)
     public ISingleImagePixels? SingleImagePixels { get; set; }
 
     /// <summary>
+    /// Runs an action on the UI thread, such as resetting the effects after they were written over the file. Null runs
+    /// it inline.
+    /// </summary>
+    public Func<Action, Task>? UiThread { get; set; }
+
+    /// <summary>
     /// Writes the tab's shown image as <paramref name="job"/> says, off the UI thread, with the tab Busy meanwhile.
     /// </summary>
     public async ValueTask<WriteResult> WriteAsync(TabViewModel tab, ShownFileWrite job)
@@ -30,6 +36,13 @@ public sealed class ShownFileWriter(Func<EffectsViewModel?> getEffects)
         var file = tab.FileInfo.CurrentValue;
         var isSvg = tab.ImageType.CurrentValue is ImageType.Svg;
         var orientation = tab.Orientation.Current.CurrentValue;
+        if (job.Destination is WriteDestination.Copy copy && file is not null &&
+            string.Equals(Path.GetFullPath(copy.Path), file.FullName, StringComparison.OrdinalIgnoreCase))
+        {
+            // A copy onto the shown file is a write over itself, so the tab shows it again
+            job = job with { Destination = new WriteDestination.OverItself() };
+        }
+
         try
         {
             return await Task.Run(() => WriteCoreAsync(tab, job, file, isSvg, orientation)).ConfigureAwait(false);
@@ -61,6 +74,11 @@ public sealed class ShownFileWriter(Func<EffectsViewModel?> getEffects)
         if (overItself && job.Edits.LosslessOptimize)
         {
             // Optimizes the file's own bytes; encoding it again would not be lossless
+            if (!new ImageOptimizer().IsSupported(destination))
+            {
+                return new WriteResult(WriteOutcome.NothingToWrite, null, false, false);
+            }
+
             await BackUpToRecycleBinAsync(tab.Services?.Platform, destination).ConfigureAwait(false);
             OptimizeOver(destination);
             result = new WriteResult(WriteOutcome.Written, destination, false, false);
@@ -112,9 +130,18 @@ public sealed class ShownFileWriter(Func<EffectsViewModel?> getEffects)
                 tab.ForgetRewritten(path);
             }
 
-            if (result.EffectsApplied)
+            if (result.EffectsApplied && getEffects() is { } effects)
             {
-                getEffects()?.ResetAll();
+                // The effects window binds to these values, so they change on the UI thread; discarding them does not
+                // render the file again
+                if (UiThread is { } uiThread)
+                {
+                    await uiThread(effects.DiscardEffects).ConfigureAwait(false);
+                }
+                else
+                {
+                    effects.DiscardEffects();
+                }
             }
         }
         catch (Exception e)
@@ -226,6 +253,7 @@ public sealed class ShownFileWriter(Func<EffectsViewModel?> getEffects)
         try
         {
             await EncodeAsync(image, temp, losslessOptimize).ConfigureAwait(false);
+            // Not atomic: the Recycle Bin copy is the net for a failure part-way
             File.Copy(temp, path, overwrite: true);
         }
         finally
@@ -248,6 +276,7 @@ public sealed class ShownFileWriter(Func<EffectsViewModel?> getEffects)
             }
 
             optimizer.LosslessCompress(temp);
+            // Not atomic: the Recycle Bin copy is the net for a failure part-way
             File.Copy(temp, path, overwrite: true);
         }
         finally

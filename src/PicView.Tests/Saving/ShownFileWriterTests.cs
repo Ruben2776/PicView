@@ -270,6 +270,61 @@ public class ShownFileWriterTests : IDisposable
     }
 
     [Fact]
+    public async Task OverItself_EffectsApplied_ResetsThemOnTheUiThread()
+    {
+        var source = WriteImage("source.png", MagickColors.Red, 2, 1);
+        var tab = await LoadTabAsync(source);
+        var effects = await RenderBlueAsync(tab);
+        var sharpenOnUiThread = -1.0;
+        var writer = new ShownFileWriter(() => effects)
+        {
+            UiThread = action =>
+            {
+                action();
+                sharpenOnUiThread = effects.Sharpen.Value;
+                return Task.CompletedTask;
+            }
+        };
+
+        await writer.WriteAsync(tab, OverItself());
+
+        Assert.Equal(0, sharpenOnUiThread);
+    }
+
+    [Fact]
+    public async Task OverItself_LosslessOptimizeUnsupported_NothingToWrite()
+    {
+        var source = WriteImage("source.bmp", MagickColors.Red, 2, 1);
+        var tab = await LoadTabAsync(source);
+        var before = tab.Model;
+
+        var result = await new ShownFileWriter(() => null).WriteAsync(tab,
+            new ShownFileWrite(WriteSource.Unedited, new WriteEdits(LosslessOptimize: true),
+                new WriteDestination.OverItself()));
+
+        Assert.Equal(WriteOutcome.NothingToWrite, result.Outcome);
+        Assert.Empty(_platform.Deleted);
+        Assert.Same(before, tab.Model);
+    }
+
+    [Fact]
+    public async Task Copy_OntoTheShownFile_ShowsItAgain()
+    {
+        var source = WriteImage("source.png", MagickColors.Red, 4, 2);
+        var tab = await LoadTabAsync(source);
+        var before = tab.Model;
+
+        var result = await new ShownFileWriter(() => null).WriteAsync(tab,
+            new ShownFileWrite(WriteSource.SaveSource, new WriteEdits(Width: 2),
+                new WriteDestination.Copy(source.ToUpperInvariant())));
+
+        Assert.Equal(WriteOutcome.Written, result.Outcome);
+        Assert.NotSame(before, tab.Model);
+        Assert.Single(_platform.Deleted);
+        AssertSize(source, 2, 1);
+    }
+
+    [Fact]
     public async Task OverItself_NoFile_NothingToWrite()
     {
         var tab = CreateTab(null);

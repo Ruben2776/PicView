@@ -22,7 +22,7 @@ public enum WriteSource
 /// <param name="Width">The width to resize to; 0 keeps the aspect from <paramref name="Height"/>.</param>
 /// <param name="Height">The height to resize to; 0 keeps the aspect from <paramref name="Width"/>. Both 0 is no resize.</param>
 /// <param name="Quality">The encoder quality, or null for the format's default.</param>
-/// <param name="LosslessOptimize">Optimize the written file losslessly; applies no turn.</param>
+/// <param name="LosslessOptimize">Optimize the written file losslessly; applies no turn. Over itself it ignores the other edits.</param>
 public readonly record struct WriteEdits(
     PixelArea? Cut = null,
     uint Width = 0,
