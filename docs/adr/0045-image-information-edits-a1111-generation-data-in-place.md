@@ -1,0 +1,22 @@
+# Image Information Edits A1111 Generation Data in Place
+
+Image Information shows the Stable Diffusion generation data of an AI-generated image in a section of its own, above the file information: the generator, where the data is stored, the prompt, the negative prompt, the settings and the raw text. Prompt, Negative prompt and Settings are editable only when the data is Automatic1111-style (Automatic1111, Forge, SD.Next) and stored in a PNG's `parameters` text chunk or in the Exif UserComment of a JPEG or WebP. Everything else shows read-only: ComfyUI, NovelAI and InvokeAI data, data hidden in the pixels, the JPEG comment segment, a UserComment in any other format, and the Generator, Stored in and Raw boxes. An edit follows ADR-0044: it writes to the file the window shows, through `CommitAsync`, and the window then reads that file again.
+
+- **Three boxes, composed again.** A commit composes the A1111 text from the box edited and the other two fields as the file holds them: the prompt, a `Negative prompt:` line when there is one, then the settings line, with `\n` line endings, as A1111 writes. A box is multi-line: Enter adds a new line, and the edit commits when the box loses focus, on Ctrl+Enter or Tab, or when the expand overlay closes. A value equal to what the file holds writes nothing.
+- **An edit that would not read back is refused.** The composed text is parsed again with the reader's rules before it is written. If that does not give back the same three fields, such as for a prompt line starting with `Negative prompt:`, Settings that are not `Key: value` pairs, or all three boxes cleared, nothing is written and the box goes back to the file's value. So an edit can never make the section vanish or move text to another field. Removing the data stays with Remove metadata.
+- **A PNG keeps every other byte.** `PngTextChunkWriter` replaces the first text chunk whose keyword is `parameters` in its own position, with a new CRC, and copies every other chunk byte for byte. Text that fits Latin-1 is written as `tEXt`, anything else as uncompressed UTF-8 `iTXt`, as PIL and therefore A1111 does; a `zTXt` source is written back as one of those two. A PNG it cannot parse (bad signature, a bad CRC on the chunk it replaces, no `IEND`) is refused. A PNG is never encoded again.
+- **The UserComment carries its character code.** The comment is written as the 8-byte code `ASCII\0\0\0` with ASCII text when the text is all ASCII, and otherwise `UNICODE\0` with UTF-16 text, or UTF-8 for an Exif 3.0 profile, which is what `ExifReader` decodes. The old writer wrote ASCII bytes with no code, which turned a non-ASCII prompt into `?`.
+- **A JPEG never falls back to encoding; a WebP is encoded.** A JPEG UserComment edit goes only through `JpegMetadataWriter`'s in-place rewrite. A JPEG it cannot parse, or Exif larger than one 64 KB segment, which a long non-ASCII prompt in UTF-16 can reach, is refused and left byte for byte as it was. A WebP has no segments to rewrite, so it is encoded again, as every other WebP tag edit is (ADR-0044).
+- **One tag, one box.** When the UserComment holds the generation data, the general Comment box is hidden, so two boxes do not edit one tag. The photo-only fields (megapixels, resolution, print sizes, Date taken, Authors, Copyright, and the GPS, colour and camera sections) are hidden while generation data is shown.
+
+## Considered Options
+
+- **One raw box holding the stored `parameters` text.** Simple and exact, but a typo fix could break the `Negative prompt:` marker or the settings line, and other tools would then read the data wrongly.
+- **Merging the fork's `sd-metadata` branch.** It brought the bottom bar Image info button, a shell thumbnail change and Save As conflicts that would each have had to be undone, and it was written before ADR-0044's `CommitAsync` and the Image Information layout. Its reading and display were ported by hand instead.
+
+## Consequences
+
+- An edit of ComfyUI, NovelAI or InvokeAI data, or of data hidden in the pixels, needs a writer of its own; none of these formats is composed again.
+- An image with no generation data cannot get any from Image Information. The section stays hidden for it.
+- A lossy WebP loses a little quality on each generation-data edit, as on every other WebP tag edit.
+- The expand overlay edits the same field as its box. An edit in the overlay is dropped, not written, when another image is shown before it closes, so it never lands on the wrong file.
