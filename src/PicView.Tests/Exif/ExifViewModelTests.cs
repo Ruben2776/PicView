@@ -1,5 +1,6 @@
 using System.Text;
 using ImageMagick;
+using PicView.Core.Exif;
 using PicView.Core.Localization;
 using PicView.Core.Models;
 using PicView.Core.Titles;
@@ -84,6 +85,114 @@ public class ExifViewModelTests
 
         await Assert.ThrowsAsync<TimeoutException>(async () => await rated);
         Assert.Equal((uint)0, viewModel.ExifRating.Value);
+    }
+
+    [Fact]
+    public async Task CommitAsync_MalformedFNumber_ShowsTheFilesValueAgain()
+    {
+        var path = WriteJpeg(profile => profile.SetValue(ExifTag.FNumber, new Rational(28, 10)));
+        try
+        {
+            using var viewModel = Show(path);
+            var fileValue = viewModel.FNumber.Value;
+            Assert.False(string.IsNullOrEmpty(fileValue));
+
+            // The box's two-way binding has already put the typed text in the property
+            viewModel.FNumber.Value = "not a number";
+            var written = await viewModel.CommitAsync(f => ExifWriter.AddFNumber(f, "not a number"));
+
+            Assert.False(written);
+            Assert.Equal(fileValue, viewModel.FNumber.Value);
+        }
+        finally
+        {
+            File.Delete(path);
+        }
+    }
+
+    [Fact]
+    public async Task CommitAsync_Written_ShowsWhatTheFileHolds()
+    {
+        var path = WriteJpeg(_ => { });
+        try
+        {
+            using var viewModel = Show(path);
+
+            viewModel.Authors.Value = "Ann";
+            var written = await viewModel.CommitAsync(f => ExifWriter.AddAuthors(f, "Ann"));
+
+            Assert.True(written);
+            Assert.Equal("Ann", viewModel.Authors.Value);
+            using var image = new MagickImage(path);
+            Assert.Equal("Ann", image.GetExifProfile()?.GetValue(ExifTag.Artist)?.Value);
+        }
+        finally
+        {
+            File.Delete(path);
+        }
+    }
+
+    [Fact]
+    public async Task CommitAsync_FileGone_DoesNotKeepTheTypedText()
+    {
+        var path = WriteJpeg(_ => { });
+        using var viewModel = Show(path);
+        File.Delete(path);
+
+        viewModel.MaxAperture.Value = "4";
+        var written = await viewModel.CommitAsync(f => ExifWriter.AddMaxAperture(f, "4"));
+
+        Assert.False(written);
+        Assert.Equal(string.Empty, viewModel.MaxAperture.Value);
+    }
+
+    [Fact]
+    public async Task CommitAsync_ShowingAnotherImageMeanwhile_KeepsItsValues()
+    {
+        var first = WriteJpeg(_ => { });
+        var second = WriteJpeg(profile => profile.SetValue(ExifTag.Artist, "Bob"));
+        try
+        {
+            using var viewModel = Show(first);
+
+            var written = await viewModel.CommitAsync(async f =>
+            {
+                // The tab moves on to another image while the write runs
+                viewModel.UpdateExifValues(new ImageModel { FileInfo = new FileInfo(second), PixelWidth = 4, PixelHeight = 4 });
+                return await ExifWriter.AddAuthors(f, "Ann");
+            });
+
+            Assert.True(written);
+            Assert.Equal("Bob", viewModel.Authors.Value);
+            using var image = new MagickImage(first);
+            Assert.Equal("Ann", image.GetExifProfile()?.GetValue(ExifTag.Artist)?.Value);
+        }
+        finally
+        {
+            File.Delete(first);
+            File.Delete(second);
+        }
+    }
+
+    private static string WriteJpeg(Action<ExifProfile> fill)
+    {
+        TranslationManager.LoadLanguage("en");
+        var path = Path.Combine(Path.GetTempPath(), $"picview-exif-commit-{Guid.NewGuid():N}.jpg");
+        using var image = new MagickImage(MagickColors.White, 4, 4);
+        image.Format = MagickFormat.Jpeg;
+        var profile = new ExifProfile();
+        profile.SetValue(ExifTag.Software, "PicViewTest");
+        fill(profile);
+        image.SetProfile(profile);
+        image.Write(path);
+        return path;
+    }
+
+    private static ExifViewModel Show(string path)
+    {
+        var viewModel = new ExifViewModel();
+        viewModel.UpdateExifValues(new ImageModel { FileInfo = new FileInfo(path), PixelWidth = 4, PixelHeight = 4 });
+        return viewModel;
     }
 
     private static Task<uint> WaitForRating(ExifViewModel viewModel, uint rating, TimeSpan? timeout = null)

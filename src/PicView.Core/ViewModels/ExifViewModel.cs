@@ -28,34 +28,34 @@ public class ExifViewModel : IDisposable
 
         RemoveImageMetaDataCommand = new ReactiveCommand<FileInfo>(async (f, _) => await RemoveImageMetaData(f).ConfigureAwait(false));
         
-        SetDateTakenCommand = new ReactiveCommand<FileInfo>(async (f, _) => await SetDateTaken(f).ConfigureAwait(false));
+        SetDateTakenCommand = new ReactiveCommand<FileInfo>(async (_, _) => await SetDateTaken().ConfigureAwait(false));
 
-        SetAuthorsCommand = new ReactiveCommand<string>(async (s, _) => { Authors.Value = s; await AddExifPropertyAsync(ExifWriter.AddAuthors, s).ConfigureAwait(false); });
-        SetCopyrightCommand = new ReactiveCommand<string>(async (s, _) => { Copyright.Value = s; await AddExifPropertyAsync(ExifWriter.AddCopyright, s).ConfigureAwait(false); });
-        SetSoftwareCommand = new ReactiveCommand<string>(async (s, _) => { Software.Value = s; await AddExifPropertyAsync(ExifWriter.AddSoftware, s).ConfigureAwait(false); });
-        SetSubjectCommand = new ReactiveCommand<string>(async (s, _) => { Subject.Value = s; await AddExifPropertyAsync(ExifWriter.AddSubject, s).ConfigureAwait(false); });
-        SetKeywordsCommand = new ReactiveCommand<string>(async (s, _) => { Keywords.Value = s; await AddExifPropertyAsync(ExifWriter.AddKeywords, s).ConfigureAwait(false); });
-        SetTitleCommand = new ReactiveCommand<string>(async (s, _) => { Title.Value = s; await AddExifPropertyAsync(ExifWriter.AddTitle, s).ConfigureAwait(false); });
-        SetCommentCommand = new ReactiveCommand<string>(async (s, _) => { Comment.Value = s; await AddExifPropertyAsync(ExifWriter.AddComment, s).ConfigureAwait(false); });
-        SetLatitudeCommand = new ReactiveCommand<string>(async (s, _) => { Latitude.Value = s; await AddExifPropertyAsync(GpsHelper.AddLatitude, s).ConfigureAwait(false); });
-        SetLongitudeCommand = new ReactiveCommand<string>(async (s, _) => { Longitude.Value = s; await AddExifPropertyAsync(GpsHelper.AddLongitude, s).ConfigureAwait(false); });
-        SetAltitudeCommand = new ReactiveCommand<string>(async (s, _) => { Altitude.Value = s; await AddExifPropertyAsync(GpsHelper.AddAltitude, s).ConfigureAwait(false); });
-        SetCompressedBitsPixelCommand = new ReactiveCommand<string>(async (s, _) => { CompressedBitsPixel.Value = s; await AddExifPropertyAsync(ExifWriter.AddCompressedBitsPerPixel, s).ConfigureAwait(false); });
-        SetCameraMakerCommand = new ReactiveCommand<string>(async (s, _) => { CameraMaker.Value = s; await AddExifPropertyAsync(ExifWriter.AddCameraMaker, s).ConfigureAwait(false); });
-        SetCameraModelCommand = new ReactiveCommand<string>(async (s, _) => { CameraModel.Value = s; await AddExifPropertyAsync(ExifWriter.AddCameraModel, s).ConfigureAwait(false); });
-        SetFNumberCommand = new ReactiveCommand<string>(async (s, _) => { FNumber.Value = s; await AddExifPropertyAsync(ExifWriter.AddFNumber, s).ConfigureAwait(false); });
-        SetMaxApertureCommand = new ReactiveCommand<string>(async (s, _) => { MaxAperture.Value = s; await AddExifPropertyAsync(ExifWriter.AddMaxAperture, s).ConfigureAwait(false); });
-        SetExposureBiasCommand = new ReactiveCommand<string>(async (s, _) => { ExposureBias.Value = s; await AddExifPropertyAsync(ExifWriter.AddExposureBias, s).ConfigureAwait(false); });
-        SetExposureTimeCommand = new ReactiveCommand<string>(async (s, _) => { ExposureTime.Value = s; await AddExifPropertyAsync(ExifWriter.AddExposureTime, s).ConfigureAwait(false); });
-        SetDigitalZoomCommand = new ReactiveCommand<string>(async (s, _) => { DigitalZoom.Value = s; await AddExifPropertyAsync(ExifWriter.AddDigitalZoom, s).ConfigureAwait(false); });
-        SetFocalLengthCommand = new ReactiveCommand<string>(async (s, _) => { FocalLength.Value = s; await AddExifPropertyAsync(ExifWriter.AddFocalLength, s).ConfigureAwait(false); });
-        SetFocalLength35MmCommand = new ReactiveCommand<string>(async (s, _) => { FocalLength35Mm.Value = s; await AddExifPropertyAsync(ExifWriter.AddFocalLength35mm, s).ConfigureAwait(false); });
-        SetISOSpeedCommand = new ReactiveCommand<string>(async (s, _) => { ISOSpeed.Value = s; await AddExifPropertyAsync(ExifWriter.AddIsoSpeed, s).ConfigureAwait(false); });
-        SetFlashEnergyCommand = new ReactiveCommand<string>(async (s, _) => { FlashEnergy.Value = s; await AddExifPropertyAsync(ExifWriter.AddFlashEnergy, s).ConfigureAwait(false); });
-        SetBrightnessCommand = new ReactiveCommand<string>(async (s, _) => { Brightness.Value = s; await AddExifPropertyAsync(ExifWriter.AddBrightness, s).ConfigureAwait(false); });
-        SetLensMakerCommand = new ReactiveCommand<string>(async (s, _) => { LensMaker.Value = s; await AddExifPropertyAsync(ExifWriter.AddLensMaker, s).ConfigureAwait(false); });
-        SetLensModelCommand = new ReactiveCommand<string>(async (s, _) => { LensModel.Value = s; await AddExifPropertyAsync(ExifWriter.AddLensModel, s).ConfigureAwait(false); });
-        SetExifVersionCommand = new ReactiveCommand<string>(async (s, _) => { ExifVersion.Value = s; await AddExifPropertyAsync(ExifWriter.AddExifVersion, s).ConfigureAwait(false); });
+        SetAuthorsCommand = new ReactiveCommand<string>(async (s, _) => await CommitAsync(f => ExifWriter.AddAuthors(f, s)).ConfigureAwait(false));
+        SetCopyrightCommand = new ReactiveCommand<string>(async (s, _) => await CommitAsync(f => ExifWriter.AddCopyright(f, s)).ConfigureAwait(false));
+        SetSoftwareCommand = new ReactiveCommand<string>(async (s, _) => await CommitAsync(f => ExifWriter.AddSoftware(f, s)).ConfigureAwait(false));
+        SetSubjectCommand = new ReactiveCommand<string>(async (s, _) => await CommitAsync(f => ExifWriter.AddSubject(f, s)).ConfigureAwait(false));
+        SetKeywordsCommand = new ReactiveCommand<string>(async (s, _) => await CommitAsync(f => ExifWriter.AddKeywords(f, s)).ConfigureAwait(false));
+        SetTitleCommand = new ReactiveCommand<string>(async (s, _) => await CommitAsync(f => ExifWriter.AddTitle(f, s)).ConfigureAwait(false));
+        SetCommentCommand = new ReactiveCommand<string>(async (s, _) => await CommitAsync(f => ExifWriter.AddComment(f, s)).ConfigureAwait(false));
+        SetLatitudeCommand = new ReactiveCommand<string>(async (s, _) => await CommitAsync(f => GpsHelper.AddLatitude(f, s)).ConfigureAwait(false));
+        SetLongitudeCommand = new ReactiveCommand<string>(async (s, _) => await CommitAsync(f => GpsHelper.AddLongitude(f, s)).ConfigureAwait(false));
+        SetAltitudeCommand = new ReactiveCommand<string>(async (s, _) => await CommitAsync(f => GpsHelper.AddAltitude(f, s)).ConfigureAwait(false));
+        SetCompressedBitsPixelCommand = new ReactiveCommand<string>(async (s, _) => await CommitAsync(f => ExifWriter.AddCompressedBitsPerPixel(f, s)).ConfigureAwait(false));
+        SetCameraMakerCommand = new ReactiveCommand<string>(async (s, _) => await CommitAsync(f => ExifWriter.AddCameraMaker(f, s)).ConfigureAwait(false));
+        SetCameraModelCommand = new ReactiveCommand<string>(async (s, _) => await CommitAsync(f => ExifWriter.AddCameraModel(f, s)).ConfigureAwait(false));
+        SetFNumberCommand = new ReactiveCommand<string>(async (s, _) => await CommitAsync(f => ExifWriter.AddFNumber(f, s)).ConfigureAwait(false));
+        SetMaxApertureCommand = new ReactiveCommand<string>(async (s, _) => await CommitAsync(f => ExifWriter.AddMaxAperture(f, s)).ConfigureAwait(false));
+        SetExposureBiasCommand = new ReactiveCommand<string>(async (s, _) => await CommitAsync(f => ExifWriter.AddExposureBias(f, s)).ConfigureAwait(false));
+        SetExposureTimeCommand = new ReactiveCommand<string>(async (s, _) => await CommitAsync(f => ExifWriter.AddExposureTime(f, s)).ConfigureAwait(false));
+        SetDigitalZoomCommand = new ReactiveCommand<string>(async (s, _) => await CommitAsync(f => ExifWriter.AddDigitalZoom(f, s)).ConfigureAwait(false));
+        SetFocalLengthCommand = new ReactiveCommand<string>(async (s, _) => await CommitAsync(f => ExifWriter.AddFocalLength(f, s)).ConfigureAwait(false));
+        SetFocalLength35MmCommand = new ReactiveCommand<string>(async (s, _) => await CommitAsync(f => ExifWriter.AddFocalLength35mm(f, s)).ConfigureAwait(false));
+        SetISOSpeedCommand = new ReactiveCommand<string>(async (s, _) => await CommitAsync(f => ExifWriter.AddIsoSpeed(f, s)).ConfigureAwait(false));
+        SetFlashEnergyCommand = new ReactiveCommand<string>(async (s, _) => await CommitAsync(f => ExifWriter.AddFlashEnergy(f, s)).ConfigureAwait(false));
+        SetBrightnessCommand = new ReactiveCommand<string>(async (s, _) => await CommitAsync(f => ExifWriter.AddBrightness(f, s)).ConfigureAwait(false));
+        SetLensMakerCommand = new ReactiveCommand<string>(async (s, _) => await CommitAsync(f => ExifWriter.AddLensMaker(f, s)).ConfigureAwait(false));
+        SetLensModelCommand = new ReactiveCommand<string>(async (s, _) => await CommitAsync(f => ExifWriter.AddLensModel(f, s)).ConfigureAwait(false));
+        SetExifVersionCommand = new ReactiveCommand<string>(async (s, _) => await CommitAsync(f => ExifWriter.AddExifVersion(f, s)).ConfigureAwait(false));
     }
 
     public ReactiveCommand? OpenGoogleLinkCommand { get; }
@@ -316,7 +316,8 @@ public class ExifViewModel : IDisposable
         GC.SuppressFinalize(this);
     }
 
-    private FileInfo? _fileInfo;
+    // The image whose values are shown, which every write goes to
+    private ImageModel? _model;
 
     /// <summary>
     /// Rebuilds <see cref="ImageFormatDisplay"/> from the current format, appending the
@@ -359,7 +360,7 @@ public class ExifViewModel : IDisposable
 
     public void UpdateExifValues(ImageModel model, MagickImage? magick = null)
     {
-        _fileInfo = model.FileInfo;
+        _model = model;
         var shouldDispose = magick != null;
 
         var fileInfo = model.FileInfo;
@@ -762,28 +763,51 @@ public class ExifViewModel : IDisposable
         return true;
     }
 
-    private async Task SetDateTaken(FileInfo fileInfo)
-    {
-        if (DateTaken.Value != null)
-        {
-            await ExifWriter.SetDateTaken(fileInfo, DateTaken.Value.Value).ConfigureAwait(false);
-        }
-    }
+    private Task<bool> SetDateTaken() =>
+        DateTaken.Value is { } date
+            ? CommitAsync(f => ExifWriter.SetDateTaken(f, date))
+            : Task.FromResult(false);
 
     /// <summary>
     /// Writes what the user picked in the dropdown of <paramref name="field"/> to the file shown, when it differs from
     /// what the file holds.
     /// </summary>
-    public Task<bool> CommitChoiceAsync(ExifChoiceField field) => field.CommitAsync(_fileInfo);
+    public Task<bool> CommitChoiceAsync(ExifChoiceField field) => field.CommitAsync(_model?.FileInfo);
 
-    private async Task AddExifPropertyAsync<T>(Func<FileInfo?, T, Task<bool>> addAction, T value)
+    /// <summary>
+    /// Writes a tag the user typed to the file shown, with <paramref name="write"/>, then shows what the file holds,
+    /// so a box never shows a value that was not written: a malformed value, or one the write failed for, goes back to
+    /// the file's. Nothing is shown again when another image was shown meanwhile.
+    /// </summary>
+    /// <returns>True if the file was written.</returns>
+    internal async Task<bool> CommitAsync(Func<FileInfo, Task<bool>> write)
     {
-        if (_fileInfo is not null)
+        var model = _model;
+        if (model is null)
         {
-            await addAction(_fileInfo, value).ConfigureAwait(false);
+            return false;
         }
+
+        var written = false;
+        try
+        {
+            if (model.FileInfo is { } file)
+            {
+                written = await write(file).ConfigureAwait(false);
+            }
+        }
+        finally
+        {
+            if (ReferenceEquals(_model, model))
+            {
+                model.FileInfo?.Refresh();
+                UpdateExifValues(model);
+            }
+        }
+
+        return written;
     }
-    
+
     private async Task RemoveImageMetaData(FileInfo fileInfo)
     {
         if (!fileInfo.Exists)
