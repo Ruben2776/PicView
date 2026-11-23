@@ -1,7 +1,9 @@
 using ImageMagick;
 using PicView.Core.DebugTools;
+using PicView.Core.FileHandling;
 using PicView.Core.ImageDecoding;
 using PicView.Core.ImageTransformations;
+using PicView.Core.IPlatform;
 using PicView.Core.ViewModels;
 using Orientation = PicView.Core.ImageTransformations.Orientation;
 
@@ -42,22 +44,110 @@ public sealed class ShownFileWriter(Func<EffectsViewModel?> getEffects)
     private async Task<WriteResult> WriteCoreAsync(TabViewModel tab, ShownFileWrite job, FileInfo? file, bool isSvg,
         Orientation orientation)
     {
+        var overItself = job.Destination is WriteDestination.OverItself;
         var destination = job.Destination switch
         {
             WriteDestination.Copy copy => copy.Path,
+            WriteDestination.OverItself => file?.FullName,
             _ => throw new NotSupportedException($"{job.Destination.GetType().Name} is not written yet")
         };
-
-        using var image = Read(tab, job.Source, file, isSvg, out var effectsApplied);
-        if (image is null)
+        if (destination is null)
         {
+            // Over itself with no file; the caller saves it as a new file instead
             return new WriteResult(WriteOutcome.NothingToWrite, null, false, false);
         }
 
-        var turned = ApplyEdits(image, job.Edits, orientation);
-        await EncodeAsync(image, destination, job.Edits.LosslessOptimize).ConfigureAwait(false);
-        return new WriteResult(WriteOutcome.Written, destination, turned && orientation != Orientation.Upright,
-            effectsApplied);
+        WriteResult result;
+        if (overItself && job.Edits.LosslessOptimize)
+        {
+            // Optimizes the file's own bytes; encoding it again would not be lossless
+            await BackUpToRecycleBinAsync(tab.Services?.Platform, destination).ConfigureAwait(false);
+            OptimizeOver(destination);
+            result = new WriteResult(WriteOutcome.Written, destination, false, false);
+        }
+        else
+        {
+            using var image = Read(tab, job.Source, file, isSvg, out var effectsApplied);
+            if (image is null)
+            {
+                return new WriteResult(WriteOutcome.NothingToWrite, null, false, false);
+            }
+
+            var turned = ApplyEdits(image, job.Edits, orientation);
+            if (File.Exists(destination))
+            {
+                await BackUpToRecycleBinAsync(tab.Services?.Platform, destination).ConfigureAwait(false);
+                await EncodeOverAsync(image, destination, job.Edits.LosslessOptimize).ConfigureAwait(false);
+            }
+            else
+            {
+                await EncodeAsync(image, destination, job.Edits.LosslessOptimize).ConfigureAwait(false);
+            }
+
+            result = new WriteResult(WriteOutcome.Written, destination, turned && orientation != Orientation.Upright,
+                effectsApplied);
+        }
+
+        if (overItself)
+        {
+            await FollowUpOverItselfAsync(tab, job.Edits, result, destination).ConfigureAwait(false);
+        }
+
+        return result;
+    }
+
+    // Shows the rewritten file again unless it holds the pixels the tab shows already, then resets the effects written
+    private async ValueTask FollowUpOverItselfAsync(TabViewModel tab, WriteEdits edits, WriteResult result,
+        string path)
+    {
+        try
+        {
+            if (result.TurnApplied || result.EffectsApplied || edits.Cut is not null || edits.Width > 0 ||
+                edits.Height > 0 || edits.LosslessOptimize || edits.Quality is not null)
+            {
+                await tab.ShowRewrittenAsync(result.TurnApplied).ConfigureAwait(false);
+            }
+            else
+            {
+                tab.ForgetRewritten(path);
+            }
+
+            if (result.EffectsApplied)
+            {
+                getEffects()?.ResetAll();
+            }
+        }
+        catch (Exception e)
+        {
+            // The file is written; only showing it again failed
+            DebugHelper.LogDebug(nameof(ShownFileWriter), nameof(FollowUpOverItselfAsync), e);
+        }
+    }
+
+    // TODO: a future Undo/Redo (Ctrl+Z, Ctrl+Y) should restore the overwritten file from this recycled copy.
+    // Sends a copy of the file at path to the Recycle Bin before it is written over. A failure is logged and the write
+    // goes on
+    private static async ValueTask BackUpToRecycleBinAsync(IPlatformSpecificService? platform, string path)
+    {
+        if (platform is null || !platform.CanMoveToRecycleBin(path))
+        {
+            return;
+        }
+
+        try
+        {
+            var copy = TempFileManager.GetNewTempFilePath(Path.GetFileName(path));
+            File.Copy(path, copy);
+            if (!await platform.DeleteFile(copy, recycle: true).ConfigureAwait(false))
+            {
+                DebugHelper.LogDebug(nameof(ShownFileWriter), nameof(BackUpToRecycleBinAsync),
+                    $"{copy} was not recycled");
+            }
+        }
+        catch (Exception e)
+        {
+            DebugHelper.LogDebug(nameof(ShownFileWriter), nameof(BackUpToRecycleBinAsync), e);
+        }
     }
 
     // The Effects Render of the file (Save Source only, and not for SVG), else the file as the viewer shows it, else
@@ -78,9 +168,17 @@ public sealed class ShownFileWriter(Func<EffectsViewModel?> getEffects)
         }
 
         var image = new MagickImage(file);
-        // The viewer shows the file with its EXIF orientation applied
-        image.AutoOrient();
-        return image;
+        try
+        {
+            // The viewer shows the file with its EXIF orientation applied
+            image.AutoOrient();
+            return image;
+        }
+        catch
+        {
+            image.Dispose();
+            throw;
+        }
     }
 
     // Cut, or turn then mirror as the view does; then resize and quality. Whether the turn and flip were applied
@@ -118,6 +216,57 @@ public sealed class ShownFileWriter(Func<EffectsViewModel?> getEffects)
         }
 
         return turned;
+    }
+
+    // Encodes the image to a temp file, then copies it over path. A failed encode leaves the file as it was, and the
+    // folder watcher sees only the file change: a temp file in path's folder would join the tab's file list
+    private static async Task EncodeOverAsync(MagickImage image, string path, bool losslessOptimize)
+    {
+        var temp = TempFileManager.GetNewTempFilePath(Path.GetFileName(path));
+        try
+        {
+            await EncodeAsync(image, temp, losslessOptimize).ConfigureAwait(false);
+            File.Copy(temp, path, overwrite: true);
+        }
+        finally
+        {
+            DeleteTemp(temp);
+        }
+    }
+
+    // Optimizes the file at path losslessly through a temp copy, as EncodeOverAsync writes
+    private static void OptimizeOver(string path)
+    {
+        var temp = TempFileManager.GetNewTempFilePath(Path.GetFileName(path));
+        try
+        {
+            File.Copy(path, temp);
+            var optimizer = new ImageOptimizer { OptimalCompression = true };
+            if (!optimizer.IsSupported(temp))
+            {
+                return;
+            }
+
+            optimizer.LosslessCompress(temp);
+            File.Copy(temp, path, overwrite: true);
+        }
+        finally
+        {
+            DeleteTemp(temp);
+        }
+    }
+
+    // Deletes a temp file with the folder GetNewTempFilePath made for it
+    private static void DeleteTemp(string temp)
+    {
+        try
+        {
+            Directory.Delete(Path.GetDirectoryName(temp)!, recursive: true);
+        }
+        catch (Exception e)
+        {
+            DebugHelper.LogDebug(nameof(ShownFileWriter), nameof(DeleteTemp), e);
+        }
     }
 
     // Encodes the image to path, in the format of its extension

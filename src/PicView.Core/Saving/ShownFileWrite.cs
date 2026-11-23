@@ -17,7 +17,8 @@ public enum WriteSource
 /// <summary>
 /// The edits a write applies on top of the tab's turn and flip.
 /// </summary>
-/// <param name="Cut">The area to cut out, in the image as the viewer shows it before its turn; null keeps it whole.</param>
+/// <param name="Cut">The area to cut out, in the image as the viewer shows it before its turn; null keeps it whole.
+/// A cut is meant with <see cref="WriteSource.Unedited"/>, as the crop ignores effects (ADR-0028).</param>
 /// <param name="Width">The width to resize to; 0 keeps the aspect from <paramref name="Height"/>.</param>
 /// <param name="Height">The height to resize to; 0 keeps the aspect from <paramref name="Width"/>. Both 0 is no resize.</param>
 /// <param name="Quality">The encoder quality, or null for the format's default.</param>

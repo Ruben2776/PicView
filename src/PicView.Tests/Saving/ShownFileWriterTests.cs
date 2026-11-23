@@ -1,4 +1,5 @@
 using ImageMagick;
+using PicView.Core.FileHandling;
 using PicView.Core.ImageTransformations;
 using PicView.Core.Models;
 using PicView.Core.Navigation;
@@ -6,6 +7,7 @@ using PicView.Core.Saving;
 using PicView.Core.ViewModels;
 using PicView.Tests.Navigation;
 using R3;
+using Orientation = PicView.Core.ImageTransformations.Orientation;
 
 namespace PicView.Tests.Saving;
 
@@ -15,11 +17,20 @@ public class ShownFileWriterTests : IDisposable
     private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(5);
 
     private readonly string _testDirectory = Path.Combine(Path.GetTempPath(), "PicViewTests_" + Guid.NewGuid());
-    private readonly SharedImageCache _cache = new(file => new ImageModel { FileInfo = file });
+    private readonly SharedImageCache _cache;
     private readonly List<IDisposable> _disposables = [];
+    private readonly RecordingPlatform _platform = new();
+
+    // How many times the cache decoded a model
+    private int _decodes;
 
     public ShownFileWriterTests()
     {
+        _cache = new SharedImageCache(file =>
+        {
+            Interlocked.Increment(ref _decodes);
+            return new ImageModel { FileInfo = file };
+        });
         SetDefaults();
         Directory.CreateDirectory(_testDirectory);
     }
@@ -144,13 +155,175 @@ public class ShownFileWriterTests : IDisposable
         AssertSize(destination, 2, 1);
     }
 
+    [Fact]
+    public async Task OverItself_RecyclesACopyBeforeWriting()
+    {
+        var source = WriteImage("source.png", MagickColors.Red, 2, 1);
+        var tab = await LoadTabAsync(source);
+        tab.Orientation.TurnRight();
+
+        var result = await new ShownFileWriter(() => null).WriteAsync(tab, OverItself());
+
+        Assert.Equal(WriteOutcome.Written, result.Outcome);
+        Assert.Equal(source, result.WrittenPath);
+        var recycled = Assert.Single(_platform.Deleted);
+        Assert.NotEqual(source, recycled.Path);
+        using (var old = new MagickImage(recycled.Bytes))
+        {
+            Assert.Equal((2u, 1u), (old.Width, old.Height));
+        }
+
+        AssertSize(source, 1, 2);
+        Assert.Equal(Orientation.Upright, tab.Orientation.Current.CurrentValue);
+    }
+
+    [Fact]
+    public async Task OverItself_NoRecycleBin_StillWrites()
+    {
+        _platform.HasRecycleBin = false;
+        var source = WriteImage("source.png", MagickColors.Red, 2, 1);
+        var tab = await LoadTabAsync(source);
+        tab.Orientation.TurnRight();
+
+        var result = await new ShownFileWriter(() => null).WriteAsync(tab, OverItself());
+
+        Assert.Equal(WriteOutcome.Written, result.Outcome);
+        Assert.Empty(_platform.Deleted);
+        AssertSize(source, 1, 2);
+    }
+
+    [Fact]
+    public async Task OverItself_EffectsApplied_ResetsEffects()
+    {
+        var source = WriteImage("source.png", MagickColors.Red, 2, 1);
+        var tab = await LoadTabAsync(source);
+        var effects = await RenderBlueAsync(tab);
+
+        var result = await new ShownFileWriter(() => effects).WriteAsync(tab, OverItself());
+
+        Assert.Equal(WriteOutcome.Written, result.Outcome);
+        Assert.True(result.EffectsApplied);
+        Assert.Equal(0, effects.Sharpen.Value);
+        Assert.Equal(Rgb(MagickColors.Blue), PixelAt(source));
+    }
+
+    [Fact]
+    public async Task OverItself_Unchanged_KeepsTheShownModel()
+    {
+        var source = WriteImage("source.png", MagickColors.Red, 2, 1);
+        var tab = await LoadTabAsync(source);
+        var before = tab.Model;
+        var decodes = _decodes;
+
+        var result = await new ShownFileWriter(() => null).WriteAsync(tab, OverItself());
+
+        Assert.Equal(WriteOutcome.Written, result.Outcome);
+        Assert.Same(before, tab.Model);
+        Assert.Equal(decodes, _decodes);
+    }
+
+    [Fact]
+    public async Task OverItself_ArchivePage_ShowsItAgain()
+    {
+        var page = TempFileManager.GetNewTempFilePath("page.png");
+        try
+        {
+            using (var image = new MagickImage(MagickColors.Red, 4, 2))
+            {
+                image.Write(page);
+            }
+
+            var tab = await LoadTabAsync(page);
+            var before = tab.Model;
+
+            var result = await new ShownFileWriter(() => null).WriteAsync(tab,
+                new ShownFileWrite(WriteSource.SaveSource, new WriteEdits(Width: 2),
+                    new WriteDestination.OverItself()));
+
+            Assert.Equal(WriteOutcome.Written, result.Outcome);
+            Assert.NotSame(before, tab.Model);
+            Assert.Equal(page, tab.Model.FileInfo?.FullName);
+            AssertSize(page, 2, 1);
+        }
+        finally
+        {
+            Directory.Delete(Path.GetDirectoryName(page)!, true);
+        }
+    }
+
+    [Fact]
+    public async Task OverItself_LosslessOptimize_KeepsThePixelsAndRecyclesACopy()
+    {
+        var source = WriteImage("source.png", MagickColors.Red, 2, 1);
+        var tab = await LoadTabAsync(source);
+        tab.Orientation.TurnRight();
+
+        var result = await new ShownFileWriter(() => null).WriteAsync(tab,
+            new ShownFileWrite(WriteSource.Unedited, new WriteEdits(LosslessOptimize: true),
+                new WriteDestination.OverItself()));
+
+        Assert.Equal(WriteOutcome.Written, result.Outcome);
+        Assert.False(result.TurnApplied);
+        Assert.Single(_platform.Deleted);
+        AssertSize(source, 2, 1);
+        Assert.Equal(Rgb(MagickColors.Red), PixelAt(source));
+    }
+
+    [Fact]
+    public async Task OverItself_NoFile_NothingToWrite()
+    {
+        var tab = CreateTab(null);
+
+        var result = await new ShownFileWriter(() => null).WriteAsync(tab, OverItself());
+
+        Assert.Equal(WriteOutcome.NothingToWrite, result.Outcome);
+    }
+
+    [Fact]
+    public async Task Copy_OntoExistingFile_RecyclesItFirst()
+    {
+        var source = WriteImage("source.png", MagickColors.Red, 2, 1);
+        var destination = WriteImage("other.png", MagickColors.Green, 3, 3);
+        var old = await File.ReadAllBytesAsync(destination, TestContext.Current.CancellationToken);
+        var tab = CreateTab(source);
+
+        var result = await new ShownFileWriter(() => null).WriteAsync(tab, CopyTo(destination));
+
+        Assert.Equal(WriteOutcome.Written, result.Outcome);
+        var recycled = Assert.Single(_platform.Deleted);
+        Assert.Equal(old, recycled.Bytes);
+        AssertSize(destination, 2, 1);
+    }
+
+    [Fact]
+    public async Task Copy_ToNewPath_RecyclesNothing()
+    {
+        var source = WriteImage("source.png", MagickColors.Red, 2, 1);
+        var tab = CreateTab(source);
+
+        await new ShownFileWriter(() => null).WriteAsync(tab, CopyTo(Path.Combine(_testDirectory, "other.png")));
+
+        Assert.Empty(_platform.Deleted);
+    }
+
+    private static ShownFileWrite OverItself() =>
+        new(WriteSource.SaveSource, default, new WriteDestination.OverItself());
+
+    // A tab that loaded the file at path, so it shows it with an iterator over its folder
+    private async Task<TabViewModel> LoadTabAsync(string path)
+    {
+        var tab = CreateTab(null);
+        await tab.Load.LoadAsync(path);
+        return tab;
+    }
+
     private static ShownFileWrite CopyTo(string destination) =>
         new(WriteSource.SaveSource, default, new WriteDestination.Copy(destination));
 
     // A tab showing the file at path, or no file when it is null
     private TabViewModel CreateTab(string? path)
     {
-        var services = TestTabServices.For(_cache, platform: new RecordingPlatform());
+        var services = TestTabServices.For(_cache, platform: _platform);
         var tab = new TabViewModel(new MainWindowViewModel(null!, null!, null!, null!), services);
         _disposables.Add(tab);
         if (path is not null)
