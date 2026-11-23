@@ -3,6 +3,7 @@ using Avalonia.Input;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.FileSystem;
 using PicView.Avalonia.UI;
+using PicView.Core.DebugTools;
 using PicView.Core.Localization;
 using PicView.Core.Saving;
 using PicView.Core.ViewModels;
@@ -32,32 +33,41 @@ public partial class ConvertView : UserControl
     
     // Reads the tab and the chosen format once, at the click, and writes it through the save module. A Single Image has
     // no file to replace, so Save asks where to save it as Save As does
+    // The click handlers are async void, so an exception here would end the app
     private async Task ConvertAsync(MainWindowViewModel vm, bool saveAs)
     {
-        var tab = vm.WindowTabs.ActiveTab.CurrentValue;
-        var source = tab.FileInfo.CurrentValue?.FullName;
-        var destination = source is null ? "PicView.png" : GetDestinationWithChangedExtension(source);
-        if (saveAs || source is null)
+        try
         {
-            saveAs = true;
-            destination = await FilePicker.PickFileForSavingAsync(destination).ConfigureAwait(false);
-            if (destination is null)
+            var tab = vm.WindowTabs.ActiveTab.CurrentValue;
+            var source = tab.FileInfo.CurrentValue?.FullName;
+            var destination = source is null ? "PicView.png" : GetDestinationWithChangedExtension(source);
+            if (saveAs || source is null)
             {
-                return;
+                saveAs = true;
+                destination = await FilePicker.PickFileForSavingAsync(destination).ConfigureAwait(false);
+                if (destination is null)
+                {
+                    return;
+                }
+            }
+
+            var result = await ConvertWriter.ConvertAsync(vm.Core.Writer, tab, destination, saveAs)
+                .ConfigureAwait(false);
+            switch (result.Outcome)
+            {
+                case WriteOutcome.Written:
+                    SafeClose();
+                    break;
+                case WriteOutcome.NameTaken:
+                    TooltipHelper.ShowTooltipMessage(vm,
+                        TranslationManager.Translation.FileAlreadyExists + Environment.NewLine +
+                        Path.GetFileName(destination), true);
+                    break;
             }
         }
-
-        var result = await ConvertWriter.ConvertAsync(vm.Core.Writer, tab, destination, saveAs).ConfigureAwait(false);
-        switch (result.Outcome)
+        catch (Exception e)
         {
-            case WriteOutcome.Written:
-                SafeClose();
-                break;
-            case WriteOutcome.NameTaken:
-                TooltipHelper.ShowTooltipMessage(vm,
-                    TranslationManager.Translation.FileAlreadyExists + Environment.NewLine +
-                    Path.GetFileName(destination), true);
-                break;
+            DebugHelper.LogDebug(nameof(ConvertView), nameof(ConvertAsync), e);
         }
     }
 

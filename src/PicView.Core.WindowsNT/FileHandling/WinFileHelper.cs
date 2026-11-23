@@ -10,6 +10,7 @@ public static partial class WinFileHelper
     private const ushort FOF_SILENT = 0x0004;
     private const ushort FOF_NOCONFIRMATION = 0x0010;
     private const ushort FOF_ALLOWUNDO = 0x0040;
+    private const ushort FOF_NOERRORUI = 0x0400;
     private const ushort FOF_WANTNUKEWARNING = 0x4000;
 
     [StructLayout(LayoutKind.Sequential)]
@@ -34,7 +35,21 @@ public static partial class WinFileHelper
     /// before deleting it permanently.
     /// </summary>
     /// <returns>True if the file was deleted.</returns>
-    public static bool DeleteFile(string filePath, bool moveToRecycleBin)
+    public static bool DeleteFile(string filePath, bool moveToRecycleBin) =>
+        Delete(filePath, moveToRecycleBin
+            ? FOF_SILENT | FOF_NOCONFIRMATION | FOF_ALLOWUNDO | FOF_WANTNUKEWARNING
+            : FOF_SILENT | FOF_NOCONFIRMATION);
+
+    /// <summary>
+    /// Moves a file to the recycle bin with no dialog at all: no confirmation, no error, and no "delete permanently?"
+    /// warning. Without that warning, the shell deletes a file the bin cannot take, too large for it, without asking.
+    /// Only for PicView's own copies, which are not worth a question.
+    /// </summary>
+    /// <returns>True if the file is gone.</returns>
+    public static bool RecycleQuietly(string filePath) =>
+        Delete(filePath, FOF_SILENT | FOF_NOCONFIRMATION | FOF_ALLOWUNDO | FOF_NOERRORUI);
+
+    private static bool Delete(string filePath, int flags)
     {
         var from = IntPtr.Zero;
         try
@@ -47,16 +62,14 @@ public static partial class WinFileHelper
                 hwnd = process.MainWindowHandle,
                 wFunc = FO_DELETE,
                 pFrom = from,
-                fFlags = (ushort)(moveToRecycleBin
-                    ? FOF_SILENT | FOF_NOCONFIRMATION | FOF_ALLOWUNDO | FOF_WANTNUKEWARNING
-                    : FOF_SILENT | FOF_NOCONFIRMATION)
+                fFlags = (ushort)flags
             };
             _ = SHFileOperationW(ref operation);
             return !File.Exists(filePath);
         }
         catch (Exception e)
         {
-            DebugHelper.LogDebug(nameof(WinFileHelper), nameof(DeleteFile), e);
+            DebugHelper.LogDebug(nameof(WinFileHelper), nameof(Delete), e);
             return false;
         }
         finally

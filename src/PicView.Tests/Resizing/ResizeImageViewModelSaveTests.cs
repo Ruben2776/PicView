@@ -155,11 +155,14 @@ public class ResizeImageViewModelSaveTests : IDisposable
         AskFor(resizeVm, 2, 1);
         // WebP
         resizeVm.SelectedConversionIndex.Value = 3;
+        // Read before the save: a test elsewhere may load another language while this one runs
+        var fileAlreadyExists = TranslationManager.Translation.FileAlreadyExists;
 
         await resizeVm.SaveImage();
 
         var message = Assert.Single(messages);
-        Assert.Equal(TranslationManager.Translation.FileAlreadyExists + Environment.NewLine + "a.webp", message);
+        Assert.EndsWith(Environment.NewLine + "a.webp", message, StringComparison.Ordinal);
+        Assert.Equal(fileAlreadyExists + Environment.NewLine + "a.webp", message);
         Assert.False(closed);
         AssertSize(path, 4, 2);
         Assert.Equal(takenBytes, await File.ReadAllBytesAsync(taken, TestContext.Current.CancellationToken));
@@ -230,6 +233,7 @@ public class ResizeImageViewModelSaveTests : IDisposable
         core.InitializeNavigation(TestTabServices.For(core.SharedCache), new NavigationService());
         var mainVm = new MainWindowViewModel(core, new TranslationViewModel(), StartedSettings.New(),
             new GallerySharedSettingsViewModel());
+        _disposables.Add(mainVm);
         var tab = mainVm.WindowTabs.ActiveTab.CurrentValue;
         _disposables.Add(tab);
         if (path is not null)

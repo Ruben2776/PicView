@@ -51,15 +51,15 @@ public sealed class ShownFileWriter(Func<EffectsViewModel?> getEffects)
         var file = tab.FileInfo.CurrentValue;
         var isSvg = tab.ImageType.CurrentValue is ImageType.Svg;
         var orientation = tab.Orientation.Current.CurrentValue;
-        if (job.Destination is WriteDestination.Copy copy && file is not null &&
-            string.Equals(Path.GetFullPath(copy.Path), file.FullName, StringComparison.OrdinalIgnoreCase))
-        {
-            // A copy onto the shown file is a write over itself, so the tab shows it again
-            job = job with { Destination = new WriteDestination.OverItself() };
-        }
-
         try
         {
+            if (job.Destination is WriteDestination.Copy copy && file is not null &&
+                string.Equals(Path.GetFullPath(copy.Path), file.FullName, StringComparison.OrdinalIgnoreCase))
+            {
+                // A copy onto the shown file is a write over itself, so the tab shows it again
+                job = job with { Destination = new WriteDestination.OverItself() };
+            }
+
             return await Task.Run(() => WriteCoreAsync(tab, job, file, isSvg, orientation)).ConfigureAwait(false);
         }
         catch (Exception e)
@@ -117,12 +117,9 @@ public sealed class ShownFileWriter(Func<EffectsViewModel?> getEffects)
             if (File.Exists(destination))
             {
                 await BackUpToRecycleBinAsync(tab.Services?.Platform, destination).ConfigureAwait(false);
-                await EncodeOverAsync(image, destination, job.Edits.LosslessOptimize).ConfigureAwait(false);
             }
-            else
-            {
-                await EncodeAsync(image, destination, job.Edits.LosslessOptimize).ConfigureAwait(false);
-            }
+
+            await EncodeThroughTempAsync(image, destination, job.Edits.LosslessOptimize).ConfigureAwait(false);
 
             result = new WriteResult(WriteOutcome.Written, destination, turned && orientation != Orientation.Upright,
                 effectsApplied);
@@ -169,15 +166,21 @@ public sealed class ShownFileWriter(Func<EffectsViewModel?> getEffects)
         await ResetEffectsAsync(result).ConfigureAwait(false);
     }
 
-    // Sends the original to the Recycle Bin when it can go there, else deletes it. A failure is logged: the new file is
-    // written and shown
+    // Sends the original to the Recycle Bin when its drive has one, and deletes it only on a drive with none. When the
+    // recycle fails it is kept: the user may have refused the shell's "delete permanently?" for a file too large for
+    // the bin. A failure is logged: the new file is written and shown
     private static async ValueTask RemoveOriginalAsync(IPlatformSpecificService? platform, string original)
     {
         try
         {
-            if (platform is not null && platform.CanMoveToRecycleBin(original) &&
-                await platform.DeleteFile(original, recycle: true).ConfigureAwait(false))
+            if (platform is not null && platform.CanMoveToRecycleBin(original))
             {
+                if (!await platform.DeleteFile(original, recycle: true).ConfigureAwait(false))
+                {
+                    DebugHelper.LogDebug(nameof(ShownFileWriter), nameof(RemoveOriginalAsync),
+                        $"{original} was not recycled and is kept");
+                }
+
                 return;
             }
 
@@ -242,11 +245,12 @@ public sealed class ShownFileWriter(Func<EffectsViewModel?> getEffects)
     }
 
     // TODO: a future Undo/Redo (Ctrl+Z, Ctrl+Y) should restore the overwritten file from this recycled copy.
-    // Sends a copy of the file at path to the Recycle Bin before it is written over. A failure is logged and the write
-    // goes on
+    // Sends a copy of the file at path to the Recycle Bin before it is written over. The copy is made in the temp
+    // folder, so it is the temp folder's drive that needs a bin, and it is recycled quietly: a plain Save asks nothing.
+    // A failure is logged, the copy is left for TempFileManager.Cleanup and the write goes on
     private static async ValueTask BackUpToRecycleBinAsync(IPlatformSpecificService? platform, string path)
     {
-        if (platform is null || !platform.CanMoveToRecycleBin(path))
+        if (platform is null)
         {
             return;
         }
@@ -254,8 +258,14 @@ public sealed class ShownFileWriter(Func<EffectsViewModel?> getEffects)
         try
         {
             var copy = TempFileManager.GetNewTempFilePath(Path.GetFileName(path));
+            if (!platform.CanMoveToRecycleBin(copy))
+            {
+                DeleteTemp(copy);
+                return;
+            }
+
             File.Copy(path, copy);
-            if (!await platform.DeleteFile(copy, recycle: true).ConfigureAwait(false))
+            if (!await platform.RecycleQuietlyAsync(copy).ConfigureAwait(false))
             {
                 DebugHelper.LogDebug(nameof(ShownFileWriter), nameof(BackUpToRecycleBinAsync),
                     $"{copy} was not recycled");
@@ -335,9 +345,10 @@ public sealed class ShownFileWriter(Func<EffectsViewModel?> getEffects)
         return turned;
     }
 
-    // Encodes the image to a temp file, then copies it over path. A failed encode leaves the file as it was, and the
-    // folder watcher sees only the file change: a temp file in path's folder would join the tab's file list
-    private static async Task EncodeOverAsync(MagickImage image, string path, bool losslessOptimize)
+    // Encodes the image to a temp file, then copies it to path. A failed encode leaves path as it was, or absent, rather
+    // than a partial file in a watched folder; and the folder watcher sees only the file change: a temp file in path's
+    // folder would join the tab's file list
+    private static async Task EncodeThroughTempAsync(MagickImage image, string path, bool losslessOptimize)
     {
         var temp = TempFileManager.GetNewTempFilePath(Path.GetFileName(path));
         try
@@ -352,7 +363,7 @@ public sealed class ShownFileWriter(Func<EffectsViewModel?> getEffects)
         }
     }
 
-    // Optimizes the file at path losslessly through a temp copy, as EncodeOverAsync writes
+    // Optimizes the file at path losslessly through a temp copy, as EncodeThroughTempAsync writes
     private static void OptimizeOver(string path)
     {
         var temp = TempFileManager.GetNewTempFilePath(Path.GetFileName(path));

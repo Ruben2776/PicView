@@ -40,6 +40,12 @@ public static class FileSaver
         var core = Dispatcher.UIThread.CheckAccess()
             ? Application.Current?.DataContext as CoreViewModel
             : await Dispatcher.UIThread.InvokeAsync(() => Application.Current?.DataContext as CoreViewModel);
-        return _fileSaverService = new FileSavingService(new FilePickerService(), core?.Writer ?? new ShownFileWriter(() => null));
+        if (core is null)
+        {
+            // Not cached: a writer without the app's effects and Single Image pixels would stay after the app has them
+            return new FileSavingService(new FilePickerService(), new ShownFileWriter(() => null));
+        }
+
+        return _fileSaverService = new FileSavingService(new FilePickerService(), core.Writer);
     }
 }

@@ -1,3 +1,4 @@
+using System.Globalization;
 using ImageMagick;
 using PicView.Core.Models;
 using PicView.Core.Navigation;
@@ -76,6 +77,33 @@ public class ImageInfoResizeTests : IDisposable
 
         Assert.Null(tab.FileInfo.CurrentValue);
         Assert.False(mainVm.InfoWindow.IsLoading.Value);
+    }
+
+    // Text double.TryParse reads as NaN, infinity or a side too large, each once
+    public static TheoryData<string> NotASize() => new(new[]
+    {
+        "NaN", "Infinity", CultureInfo.CurrentCulture.NumberFormat.NaNSymbol,
+        CultureInfo.CurrentCulture.NumberFormat.PositiveInfinitySymbol, "65536"
+    }.Distinct());
+
+    [Theory]
+    [MemberData(nameof(NotASize))]
+    public async Task InfoResize_NotASize_WritesNothing(string text)
+    {
+        var path = Path.Combine(_testDirectory, "a.png");
+        using (var image = new MagickImage(MagickColors.Red, 4, 2))
+        {
+            image.Write(path);
+        }
+
+        var before = await File.ReadAllBytesAsync(path, TestContext.Current.CancellationToken);
+        var written = File.GetLastWriteTimeUtc(path);
+        var (mainVm, _) = await CreateAsync(path);
+
+        await mainVm.InfoWindow!.ResizeImageAsync(true, text, "0");
+
+        Assert.Equal(written, File.GetLastWriteTimeUtc(path));
+        Assert.Equal(before, await File.ReadAllBytesAsync(path, TestContext.Current.CancellationToken));
     }
 
     // A Main Window whose active tab loaded the file at path, or shows no file when it is null

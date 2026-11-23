@@ -449,6 +449,123 @@ public class ShownFileWriterTests : IDisposable
         Assert.Single(_platform.Deleted);
     }
 
+    [Fact]
+    public async Task Replace_RecycleRefused_KeepsTheOriginal()
+    {
+        // As when the user answers No to the shell's "delete permanently?" for a file too large for the Recycle Bin
+        _platform.RecycleSucceeds = false;
+        var source = WriteImage("a.png", MagickColors.Red, 2, 1);
+        var tab = await LoadTabAsync(source);
+        var newPath = Path.Combine(_testDirectory, "a.jpg");
+
+        var result = await new ShownFileWriter(() => null).WriteAsync(tab, ReplaceWith(newPath));
+
+        Assert.Equal(WriteOutcome.Written, result.Outcome);
+        Assert.True(File.Exists(source));
+        Assert.True(File.Exists(newPath));
+        Assert.Equal(newPath, tab.Model.FileInfo?.FullName);
+    }
+
+    [Fact]
+    public async Task Replace_NoRecycleBin_DeletesTheOriginal()
+    {
+        _platform.HasRecycleBin = false;
+        var source = WriteImage("a.png", MagickColors.Red, 2, 1);
+        var tab = await LoadTabAsync(source);
+        var newPath = Path.Combine(_testDirectory, "a.jpg");
+
+        var result = await new ShownFileWriter(() => null).WriteAsync(tab, ReplaceWith(newPath));
+
+        Assert.Equal(WriteOutcome.Written, result.Outcome);
+        Assert.False(File.Exists(source));
+        Assert.Empty(_platform.Deleted);
+        Assert.Equal(newPath, tab.Model.FileInfo?.FullName);
+    }
+
+    [Fact]
+    public async Task OverItself_RecyclesTheBackupQuietly()
+    {
+        var source = WriteImage("source.png", MagickColors.Red, 2, 1);
+        var tab = await LoadTabAsync(source);
+        tab.Orientation.TurnRight();
+
+        await new ShownFileWriter(() => null).WriteAsync(tab, OverItself());
+
+        var recycled = Assert.Single(_platform.RecycledQuietly);
+        Assert.True(TempFileManager.IsInTempFolder(recycled));
+    }
+
+    [Fact]
+    public async Task OverItself_BackupAsksTheBinOfTheTempCopy()
+    {
+        var source = WriteImage("source.png", MagickColors.Red, 2, 1);
+        // The original's drive has no Recycle Bin; the temp folder's drive has one
+        _platform.HasRecycleBinAt = path => !string.Equals(path, source, StringComparison.OrdinalIgnoreCase);
+        var tab = await LoadTabAsync(source);
+        tab.Orientation.TurnRight();
+
+        var result = await new ShownFileWriter(() => null).WriteAsync(tab, OverItself());
+
+        Assert.Equal(WriteOutcome.Written, result.Outcome);
+        Assert.Single(_platform.RecycledQuietly);
+    }
+
+    [Fact]
+    public async Task OverItself_BackupNotRecycled_StillWrites()
+    {
+        _platform.RecycleSucceeds = false;
+        var source = WriteImage("source.png", MagickColors.Red, 2, 1);
+        var tab = await LoadTabAsync(source);
+        tab.Orientation.TurnRight();
+
+        var result = await new ShownFileWriter(() => null).WriteAsync(tab, OverItself());
+
+        Assert.Equal(WriteOutcome.Written, result.Outcome);
+        AssertSize(source, 1, 2);
+    }
+
+    [Fact]
+    public async Task Copy_MalformedPath_Fails()
+    {
+        var source = WriteImage("source.png", MagickColors.Red, 2, 1);
+        var tab = CreateTab(source);
+
+        var result = await new ShownFileWriter(() => null).WriteAsync(tab,
+            CopyTo(Path.Combine(_testDirectory, "bad\0name.png")));
+
+        Assert.Equal(WriteOutcome.Failed, result.Outcome);
+    }
+
+    [Fact]
+    public async Task Copy_ToNewPathEncodeFails_LeavesNoFile()
+    {
+        // JPEG takes no side over 65500 pixels, so the encode fails
+        var source = WriteImage("source.png", MagickColors.Red, 70000, 1);
+        var tab = CreateTab(source);
+        var destination = Path.Combine(_testDirectory, "other.jpg");
+
+        var result = await new ShownFileWriter(() => null).WriteAsync(tab, CopyTo(destination));
+
+        Assert.Equal(WriteOutcome.Failed, result.Outcome);
+        Assert.False(File.Exists(destination));
+    }
+
+    [Theory]
+    [InlineData("other.ico", new byte[] { 0, 0, 1, 0 })]
+    [InlineData("other.qoi", new byte[] { (byte)'q', (byte)'o', (byte)'i', (byte)'f' })]
+    public async Task Copy_ExtensionWithNoListedFormat_WritesThatFormat(string name, byte[] header)
+    {
+        var source = WriteImage("source.png", MagickColors.Red, 2, 1);
+        var tab = CreateTab(source);
+        var destination = Path.Combine(_testDirectory, name);
+
+        var result = await new ShownFileWriter(() => null).WriteAsync(tab, CopyTo(destination));
+
+        Assert.Equal(WriteOutcome.Written, result.Outcome);
+        var bytes = await File.ReadAllBytesAsync(destination, TestContext.Current.CancellationToken);
+        Assert.Equal(header, bytes[..header.Length]);
+    }
+
     private static ShownFileWrite ReplaceWith(string newPath) =>
         new(WriteSource.SaveSource, default, new WriteDestination.Replace(newPath));
 
