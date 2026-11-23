@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using ImageMagick;
 using PicView.Core.DebugTools;
 using PicView.Core.FileHandling;
@@ -17,6 +18,10 @@ namespace PicView.Core.Saving;
 /// <param name="getEffects">The effects view model, if the effects window has been opened.</param>
 public sealed class ShownFileWriter(Func<EffectsViewModel?> getEffects)
 {
+    // One write at a time per tab, across writers: a second write must read the turn after the first one's reshow has
+    // reset it, or a turned file is turned twice
+    private static readonly ConditionalWeakTable<TabViewModel, SemaphoreSlim> WriteGates = new();
+
     /// <summary>
     /// Reads a Single Image's pixels, which only the UI layer can. Without it a tab with no file has nothing to write.
     /// </summary>
@@ -48,11 +53,13 @@ public sealed class ShownFileWriter(Func<EffectsViewModel?> getEffects)
     public async ValueTask<WriteResult> WriteAsync(TabViewModel tab, ShownFileWrite job)
     {
         using var busy = tab.ClaimBusy();
-        var file = tab.FileInfo.CurrentValue;
-        var isSvg = tab.ImageType.CurrentValue is ImageType.Svg;
-        var orientation = tab.Orientation.Current.CurrentValue;
+        var gate = WriteGates.GetValue(tab, static _ => new SemaphoreSlim(1, 1));
+        await gate.WaitAsync().ConfigureAwait(false);
         try
         {
+            var file = tab.FileInfo.CurrentValue;
+            var isSvg = tab.ImageType.CurrentValue is ImageType.Svg;
+            var orientation = tab.Orientation.Current.CurrentValue;
             if (job.Destination is WriteDestination.Copy copy && file is not null &&
                 string.Equals(Path.GetFullPath(copy.Path), file.FullName, StringComparison.OrdinalIgnoreCase))
             {
@@ -66,6 +73,10 @@ public sealed class ShownFileWriter(Func<EffectsViewModel?> getEffects)
         {
             DebugHelper.LogDebug(nameof(ShownFileWriter), nameof(WriteAsync), e);
             return new WriteResult(WriteOutcome.Failed, null, false, false);
+        }
+        finally
+        {
+            gate.Release();
         }
     }
 
@@ -93,7 +104,13 @@ public sealed class ShownFileWriter(Func<EffectsViewModel?> getEffects)
         }
 
         WriteResult result;
-        if (overItself && job.Edits.LosslessOptimize)
+        if (overItself && IsUnchanged(job, file!, isSvg, orientation))
+        {
+            // Encoding the file again would only lose quality and add a Recycle Bin copy; the follow-up forgets the
+            // cached image and thumbnail
+            result = new WriteResult(WriteOutcome.Written, destination, false, false);
+        }
+        else if (overItself && job.Edits.LosslessOptimize)
         {
             // Optimizes the file's own bytes; encoding it again would not be lossless
             if (!new ImageOptimizer().IsSupported(destination))
@@ -135,6 +152,24 @@ public sealed class ShownFileWriter(Func<EffectsViewModel?> getEffects)
         }
 
         return result;
+    }
+
+    // Whether a write over the file itself would write the file as it is: no turn or flip, no edits and no Effects
+    // Render. The format is the file's own, as the path is
+    private bool IsUnchanged(ShownFileWrite job, FileInfo file, bool isSvg, Orientation orientation)
+    {
+        if (job.Edits != default || orientation != Orientation.Upright)
+        {
+            return false;
+        }
+
+        if (job.Source is not WriteSource.SaveSource || isSvg)
+        {
+            return true;
+        }
+
+        using var render = getEffects()?.CloneRender(file);
+        return render is null;
     }
 
     // Moves the tab's histories to the new file and shows it, then removes the original, unless the new file is the
@@ -260,6 +295,8 @@ public sealed class ShownFileWriter(Func<EffectsViewModel?> getEffects)
             var copy = TempFileManager.GetNewTempFilePath(Path.GetFileName(path));
             if (!platform.CanMoveToRecycleBin(copy))
             {
+                DebugHelper.LogDebug(nameof(ShownFileWriter), nameof(BackUpToRecycleBinAsync),
+                    $"The temp folder's drive has no Recycle Bin; {path} is written over with no backup");
                 DeleteTemp(copy);
                 return;
             }

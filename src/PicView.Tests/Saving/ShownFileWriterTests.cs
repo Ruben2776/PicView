@@ -185,6 +185,23 @@ public class ShownFileWriterTests : IDisposable
     }
 
     [Fact]
+    public async Task OverItself_TwoAtOnce_TurnsTheFileOnce()
+    {
+        var source = WriteImage("source.png", MagickColors.Red, 2, 1);
+        var tab = await LoadTabAsync(source);
+        tab.Orientation.TurnRight();
+
+        // Two writers, as the Main Window's and the file saver's are
+        var first = new ShownFileWriter(() => null).WriteAsync(tab, OverItself()).AsTask();
+        var second = new ShownFileWriter(() => null).WriteAsync(tab, OverItself()).AsTask();
+        var results = await Task.WhenAll(first, second);
+
+        Assert.All(results, result => Assert.Equal(WriteOutcome.Written, result.Outcome));
+        AssertSize(source, 1, 2);
+        Assert.Equal(Orientation.Upright, tab.Orientation.Current.CurrentValue);
+    }
+
+    [Fact]
     public async Task OverItself_NoRecycleBin_StillWrites()
     {
         _platform.HasRecycleBin = false;
@@ -227,6 +244,37 @@ public class ShownFileWriterTests : IDisposable
         Assert.Equal(WriteOutcome.Written, result.Outcome);
         Assert.Same(before, tab.Model);
         Assert.Equal(decodes, _decodes);
+    }
+
+    [Fact]
+    public async Task OverItself_Unchanged_WritesAndRecyclesNothing()
+    {
+        var source = WriteImage("source.png", MagickColors.Red, 2, 1);
+        var tab = await LoadTabAsync(source);
+        var old = await File.ReadAllBytesAsync(source, TestContext.Current.CancellationToken);
+        var written = File.GetLastWriteTimeUtc(source);
+
+        var result = await new ShownFileWriter(() => null).WriteAsync(tab, OverItself());
+
+        Assert.Equal(WriteOutcome.Written, result.Outcome);
+        Assert.Equal(source, result.WrittenPath);
+        Assert.Empty(_platform.Deleted);
+        Assert.Equal(old, await File.ReadAllBytesAsync(source, TestContext.Current.CancellationToken));
+        Assert.Equal(written, File.GetLastWriteTimeUtc(source));
+    }
+
+    [Fact]
+    public async Task OverItself_UnchangedButEffects_WritesTheRender()
+    {
+        var source = WriteImage("source.png", MagickColors.Red, 2, 1);
+        var tab = await LoadTabAsync(source);
+        var effects = await RenderBlueAsync(tab);
+
+        var result = await new ShownFileWriter(() => effects).WriteAsync(tab, OverItself());
+
+        Assert.True(result.EffectsApplied);
+        Assert.Single(_platform.Deleted);
+        Assert.Equal(Rgb(MagickColors.Blue), PixelAt(source));
     }
 
     [Fact]

@@ -111,6 +111,20 @@ public class ConvertAndRenameTests : IDisposable
     }
 
     [Fact]
+    public async Task Convert_NoConversionUnchanged_WritesNothing()
+    {
+        var source = WriteImage("a.png", MagickColors.Red, 2, 1);
+        var tab = await LoadTabAsync(source);
+        var old = await File.ReadAllBytesAsync(source, TestContext.Current.CancellationToken);
+
+        var result = await ConvertWriter.ConvertAsync(new ShownFileWriter(() => null), tab, source, false);
+
+        Assert.Equal(WriteOutcome.Written, result.Outcome);
+        Assert.Empty(_platform.Deleted);
+        Assert.Equal(old, await File.ReadAllBytesAsync(source, TestContext.Current.CancellationToken));
+    }
+
+    [Fact]
     public async Task Convert_SingleImage_DoesNotThrow()
     {
         var tab = CreateTab();
