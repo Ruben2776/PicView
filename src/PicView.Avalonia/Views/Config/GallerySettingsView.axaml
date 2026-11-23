@@ -352,7 +352,7 @@
         </Border>
 
         <!--  Gallery Mouse wheel  -->
-        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.GalleryDockSearchTags}">
+        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.GalleryMouseWheelSearchTags}">
             <StackPanel>
                 <TextBlock
                     Classes="txt"

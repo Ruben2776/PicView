@@ -318,6 +318,30 @@ public class GlobalSettingsViewModelTests
         Assert.Equal(GalleryMouseWheel.Navigate, Settings.Gallery.GalleryMouseWheelBehavior);
     }
 
+    [Fact]
+    public void InitializeExtraSettings_GalleryWheelChanged_SavesOnce()
+    {
+        var settings = New();
+        settings.InitializeExtraSettings();
+        var before = _saves;
+
+        settings.GalleryMouseWheelBehavior.Value = (int)GalleryMouseWheel.Navigate;
+
+        Assert.Equal(before + 1, _saves);
+    }
+
+    [Fact]
+    public void InitializeExtraSettings_GalleryWheelOutOfRange_StoresScroll()
+    {
+        var settings = New();
+        settings.InitializeExtraSettings();
+        settings.GalleryMouseWheelBehavior.Value = (int)GalleryMouseWheel.Navigate;
+
+        settings.GalleryMouseWheelBehavior.Value = 7;
+
+        Assert.Equal(GalleryMouseWheel.Scroll, Settings.Gallery.GalleryMouseWheelBehavior);
+    }
+
     private sealed class MockFrameProvider : FrameProvider
     {
         public override long GetFrameCount() => 0;

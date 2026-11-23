@@ -160,10 +160,9 @@ public class GlobalSettingsViewModel
 
             Follow(ShowFadeButtons, value => Settings.UIProperties.ShowAltInterfaceButtons = value);
             Follow(WindowMargin, value => Settings.WindowProperties.Margin = value);
-            GalleryMouseWheelBehavior
-                .Subscribe(x => {
-                    Settings.Gallery.GalleryMouseWheelBehavior = (GalleryMouseWheel)x;
-                }, DebugHelper.LogError(nameof(GlobalSettingsViewModel), nameof(GalleryMouseWheelBehavior)));
+            // Through Follow like the others, so a change is saved; an index outside the enum falls back to Scroll
+            Follow(GalleryMouseWheelBehavior, value => Settings.Gallery.GalleryMouseWheelBehavior =
+                Enum.IsDefined((GalleryMouseWheel)value) ? (GalleryMouseWheel)value : GalleryMouseWheel.Scroll);
             _isExtraSettingsInitialized = true;
         }
     }

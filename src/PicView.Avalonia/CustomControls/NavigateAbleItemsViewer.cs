@@ -683,70 +683,28 @@ public class NavigateAbleItemsViewer : ItemsControl
             startIndex = items[^1].Index;
         }
 
-        var currentItemPos = items.FirstOrDefault(x => x.Index == startIndex);
+        var currentItemPos = items.Find(x => x.Index == startIndex);
 
+        // Each rule answers null when there is no such item, so item 0 is a target like any other
         var targetItem = direction switch
         {
             // If there's no item directly above, wrap to the bottom of the previous column
             NavigationDirection.Up => GetClosestItemAbove(currentItemPos, items) ?? GetBottomItemInPreviousColumn(currentItemPos, items),
-        
+
             // If there's no item directly below, wrap to the top of the next column
             NavigationDirection.Down => GetClosestItemBelow(currentItemPos, items) ?? GetTopItemInNextColumn(currentItemPos, items),
-        
+
             NavigationDirection.Left => GetClosestItemLeft(currentItemPos, items),
             NavigationDirection.Right => GetClosestItemRight(currentItemPos, items),
             _ => null
         };
 
-        // FIX: Check against the total ItemCount, and prevent redundant navigation
         if (targetItem is not { } validItem || validItem.Index >= ItemCount || validItem.Index == startIndex)
         {
             return;
         }
-        
-        switch (direction)
-        {                
-            case NavigationDirection.Left:
-            case NavigationDirection.Right:
-                if (validItem.Index is 0) return; // Don't loop or jump
-                UpdateSelectionIndex(validItem.Index);
-                break;
-                    
-            case NavigationDirection.Down:
-                if (validItem.Index is 0)
-                {
-                    // If at bottom of column, go to top of next column
-                    var nextColumnItem = GetTopItemInNextColumn(currentItemPos, items);
-                    UpdateSelectionIndex(nextColumnItem?.Index ?? startIndex);
-                }
-                else
-                {
-                    UpdateSelectionIndex(validItem.Index);
-                }
-                break;
-                    
-            case NavigationDirection.Up:
-                if (validItem.Index is 0)
-                {
-                    // If at top of column, go to bottom of previous column
-                    var prevColumnItem = GetBottomItemInPreviousColumn(currentItemPos, items);
-                    if (currentItemPos.Index is 1)
-                    {
-                        UpdateSelectionIndex(0);
-                    }
-                    else
-                    {
-                        UpdateSelectionIndex(prevColumnItem?.Index ?? startIndex);
-                    }
-                }
-                else
-                {
-                    UpdateSelectionIndex(validItem.Index);
-                }
-                break;
-            default: return;
-        }
-        
+
+        UpdateSelectionIndex(validItem.Index);
         ScrollItemIntoView(SelectedItemIndex);
     }
 
@@ -771,65 +729,122 @@ public class NavigateAbleItemsViewer : ItemsControl
         return list;
     }
 
-    private static ItemPosition? GetClosestItemAbove(ItemPosition currentItem, IEnumerable<ItemPosition> items)
-    {
-        var candidates = items.Where(item => item.Position.Y + item.Size.Height <= currentItem.Position.Y);
-        return candidates.OrderByDescending(item => item.Position.Y).ThenBy(item => Math.Abs(item.Position.X - currentItem.Position.X)).FirstOrDefault();
-    }
+    // In the same column: an item counts as above or below only when it starts where the current one starts
+    private static bool InSameColumn(ItemPosition item, ItemPosition current) =>
+        Math.Abs(item.Position.X - current.Position.X) < 1.0;
 
-    private static ItemPosition? GetClosestItemBelow(ItemPosition currentItem, IEnumerable<ItemPosition> items)
+    private static ItemPosition? GetClosestItemAbove(ItemPosition currentItem, List<ItemPosition> items)
     {
-        var candidates = items.Where(item => item.Position.Y >= currentItem.Position.Y + currentItem.Size.Height);
-        return candidates.OrderBy(item => item.Position.Y).ThenBy(item => Math.Abs(item.Position.X - currentItem.Position.X)).FirstOrDefault();
-    }
-
-    private static ItemPosition? GetClosestItemLeft(ItemPosition currentItem, IEnumerable<ItemPosition> items)
-    {
-        var candidates = items.Where(item => item.Position.X + item.Size.Width <= currentItem.Position.X);
-        return candidates.OrderByDescending(item => item.Position.X).ThenBy(item => Math.Abs(item.Position.Y - currentItem.Position.Y)).FirstOrDefault();
-    }
-
-    private static ItemPosition? GetClosestItemRight(ItemPosition currentItem, IEnumerable<ItemPosition> items)
-    {
-        var candidates = items.Where(item => item.Position.X >= currentItem.Position.X + currentItem.Size.Width);
-        return candidates.OrderBy(item => item.Position.X).ThenBy(item => Math.Abs(item.Position.Y - currentItem.Position.Y)).FirstOrDefault();
-    }
-
-    private static ItemPosition? GetTopItemInNextColumn(ItemPosition currentItem, IEnumerable<ItemPosition> items)
-    {
-        var nextColumnItems = items
-            .Where(item => item.Position.X >= currentItem.Position.X + currentItem.Size.Width)
-            .OrderBy(item => item.Position.X)
-            .ToList();
-
-        if (nextColumnItems.Count is 0)
+        ItemPosition? best = null;
+        foreach (var item in items)
         {
-            return null;
+            if (InSameColumn(item, currentItem) && item.Position.Y + item.Size.Height <= currentItem.Position.Y
+                && (best is null || item.Position.Y > best.Value.Position.Y))
+            {
+                best = item;
+            }
         }
 
-        var nextColumnX = nextColumnItems[0].Position.X;
-
-        return nextColumnItems
-            .Where(item => Math.Abs(item.Position.X - nextColumnX) < 1.0)
-            .OrderBy(item => item.Position.Y)
-            .FirstOrDefault();
+        return best;
     }
 
-    private static ItemPosition? GetBottomItemInPreviousColumn(ItemPosition currentItem, IEnumerable<ItemPosition> items)
+    private static ItemPosition? GetClosestItemBelow(ItemPosition currentItem, List<ItemPosition> items)
     {
-        var prevColumnItems = items
-            .Where(item => item.Position.X + item.Size.Width <= currentItem.Position.X)
-            .OrderByDescending(item => item.Position.X)
-            .ToList();
+        ItemPosition? best = null;
+        foreach (var item in items)
+        {
+            if (InSameColumn(item, currentItem) && item.Position.Y >= currentItem.Position.Y + currentItem.Size.Height
+                && (best is null || item.Position.Y < best.Value.Position.Y))
+            {
+                best = item;
+            }
+        }
 
-        if (prevColumnItems.Count == 0) return null;
+        return best;
+    }
 
-        var prevColumnX = prevColumnItems[0].Position.X;
+    // The nearest column to the left, and in it the item nearest in height
+    private static ItemPosition? GetClosestItemLeft(ItemPosition currentItem, List<ItemPosition> items)
+    {
+        ItemPosition? best = null;
+        foreach (var item in items)
+        {
+            if (item.Position.X + item.Size.Width > currentItem.Position.X)
+            {
+                continue;
+            }
 
-        return prevColumnItems
-            .Where(item => Math.Abs(item.Position.X - prevColumnX) < 1.0)
-            .OrderByDescending(item => item.Position.Y)
-            .FirstOrDefault();
+            if (best is null || item.Position.X > best.Value.Position.X
+                || (Math.Abs(item.Position.X - best.Value.Position.X) < 1.0
+                    && Math.Abs(item.Position.Y - currentItem.Position.Y) < Math.Abs(best.Value.Position.Y - currentItem.Position.Y)))
+            {
+                best = item;
+            }
+        }
+
+        return best;
+    }
+
+    // The nearest column to the right, and in it the item nearest in height
+    private static ItemPosition? GetClosestItemRight(ItemPosition currentItem, List<ItemPosition> items)
+    {
+        ItemPosition? best = null;
+        foreach (var item in items)
+        {
+            if (item.Position.X < currentItem.Position.X + currentItem.Size.Width)
+            {
+                continue;
+            }
+
+            if (best is null || item.Position.X < best.Value.Position.X
+                || (Math.Abs(item.Position.X - best.Value.Position.X) < 1.0
+                    && Math.Abs(item.Position.Y - currentItem.Position.Y) < Math.Abs(best.Value.Position.Y - currentItem.Position.Y)))
+            {
+                best = item;
+            }
+        }
+
+        return best;
+    }
+
+    private static ItemPosition? GetTopItemInNextColumn(ItemPosition currentItem, List<ItemPosition> items)
+    {
+        ItemPosition? best = null;
+        foreach (var item in items)
+        {
+            if (item.Position.X < currentItem.Position.X + currentItem.Size.Width)
+            {
+                continue;
+            }
+
+            if (best is null || item.Position.X < best.Value.Position.X - 1.0
+                || (Math.Abs(item.Position.X - best.Value.Position.X) < 1.0 && item.Position.Y < best.Value.Position.Y))
+            {
+                best = item;
+            }
+        }
+
+        return best;
+    }
+
+    private static ItemPosition? GetBottomItemInPreviousColumn(ItemPosition currentItem, List<ItemPosition> items)
+    {
+        ItemPosition? best = null;
+        foreach (var item in items)
+        {
+            if (item.Position.X + item.Size.Width > currentItem.Position.X)
+            {
+                continue;
+            }
+
+            if (best is null || item.Position.X > best.Value.Position.X + 1.0
+                || (Math.Abs(item.Position.X - best.Value.Position.X) < 1.0 && item.Position.Y > best.Value.Position.Y))
+            {
+                best = item;
+            }
+        }
+
+        return best;
     }
 
     #endregion

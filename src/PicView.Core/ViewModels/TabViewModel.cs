@@ -1396,7 +1396,15 @@ public class TabViewModel : IDisposable
 
     public CancellationTokenSource GetTabCancellation()
     {
-        if ( !NavigationCts.IsCancellationRequested)
+        if (IsDisposed)
+        {
+            // A closed tab's source is cancelled and disposed; a late caller gets a cancelled one, never a live one
+            var cancelled = new CancellationTokenSource();
+            cancelled.Cancel();
+            return cancelled;
+        }
+
+        if (!NavigationCts.IsCancellationRequested)
         {
             return NavigationCts;
         }
@@ -1441,6 +1449,8 @@ public class TabViewModel : IDisposable
         Archives.Cleanup();
         GalleryCoordinator?.Dispose();
 
+        // Cancel first: a URL download or a preload still holding the token would otherwise run on after the close
+        NavigationCts.Cancel();
         NavigationCts.Dispose();
         Orientation.Dispose();
         Zoom.Dispose();

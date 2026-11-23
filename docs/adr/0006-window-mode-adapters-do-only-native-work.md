@@ -12,3 +12,4 @@ Each window has its own **Window Mode**, and every change to it (from PicView, f
 - A new platform quirk goes into that platform's adapter, not into `WindowModeSwitcher`. If a quirk seems to need a different rule, change the Core rule for every platform.
 - The settings only remember the mode a new window starts in; they are not read as a window's current mode.
 - Superseded in part by ADR-0038: the settings remember the Window Mode of the last Main Window closed, and App Start, or a window opened with no opener, reads it; a window opened while PicView runs copies its opener.
+- The slideshow was removed (`720437c99`), and with it its Input Mode, its Window Mode changes and its centering. Where this record mentions the slideshow, that describes the code at the time it was written.

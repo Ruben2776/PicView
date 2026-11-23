@@ -199,6 +199,45 @@ public class NavigateAbleItemsViewerTests
         }
     }
 
+    [AvaloniaFact]
+    public void Navigate_ColumnsLeftFromTheSecondColumn_ReachesTheFirstItem()
+    {
+        var shown = ShowExpanded(GalleryDisplayMode.Columns, Unsized(200), currentIndex: 3);
+        try
+        {
+            Assert.Equal(new Rect(100, 0, 100, 100), shown.Gallery.ItemBounds[3]);
+
+            shown.Viewer.Navigate(NavigationDirection.Left);
+            Assert.Equal(0, shown.Viewer.SelectedItemIndex);
+        }
+        finally
+        {
+            shown.Window.Close();
+        }
+    }
+
+    [AvaloniaFact]
+    public void Navigate_ColumnsDownFromTheEndOfAShortLastColumn_StaysPut()
+    {
+        var shown = ShowExpanded(GalleryDisplayMode.Columns, Unsized(200), currentIndex: 199);
+        try
+        {
+            // Two items in the last column: 198 on top, 199 below it
+            Assert.Equal(new Rect(6600, 100, 100, 100), shown.Gallery.ItemBounds[199]);
+
+            shown.Viewer.Navigate(NavigationDirection.Down);
+            Assert.NotEqual(197, shown.Viewer.SelectedItemIndex);
+            Assert.True(shown.Viewer.SelectedItemIndex is -1 or 199);
+
+            shown.Viewer.Navigate(NavigationDirection.Up);
+            Assert.Equal(198, shown.Viewer.SelectedItemIndex);
+        }
+        finally
+        {
+            shown.Window.Close();
+        }
+    }
+
     // Pins today's Columns scroll for a target without a container: the panel's coordinates, without its margin
     [AvaloniaFact]
     public void Navigate_ColumnsToAnItemWithoutAContainer_ScrollsToItsPanelCoordinates()

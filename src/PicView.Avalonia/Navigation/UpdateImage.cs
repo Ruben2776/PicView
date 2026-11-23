@@ -72,11 +72,14 @@ public static class UpdateImage
         // A slow load of a file that was still running would replace this image once it ends
         tabViewModel.SupersedeLoads();
 
-        // The window's fitter follows the new image, and its viewer follows that Fit (ADR-0026)
-        tabViewModel.DisplaySingleImage(model, type, title);
+        // Stop browsing before showing, as a URL Load does: dropping the iterator clears FileInfo and ends the playback,
+        // so done afterwards it would undo what showing a kept URL image sets (its temp file, its animation).
+        // SourceOpener creates a new iterator when browsing files again.
+        tabViewModel.DisposeImageIterator();
 
+        // The window's fitter follows the new image, and its viewer follows that Fit (ADR-0026).
         // The title follows from the tab's Titles, which derive it once the Single Image shows (ADR-0015)
-        tabViewModel.DisposeImageIterator(); // SourceOpener creates a new one when browsing files again
+        tabViewModel.DisplaySingleImage(model, type, title);
     }
 
     /// <param name="tab">The tab to show it in; the active one when null.</param>

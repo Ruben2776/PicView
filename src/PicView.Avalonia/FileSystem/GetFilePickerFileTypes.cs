@@ -6,7 +6,8 @@ namespace PicView.Avalonia.FileSystem;
 
 public static class GetFilePickerFileTypes
 {
-    public static FilePickerFileType AllFileType { get; } = new(TranslationManager.Translation.Image)
+    // Built per picker, so its name follows a language change
+    public static FilePickerFileType AllFileType => new(TranslationManager.Translation.Image)
     {
         Patterns = SupportedFiles.ConvertFilesToGlobFormat(),
         AppleUniformTypeIdentifiers = ["public.image"],
@@ -48,7 +49,8 @@ public static class GetFilePickerFileTypes
         MimeTypes = ["image/jpeg"]
     };
 
-    public static FilePickerFileType ArchiveFileType { get; } = new(TranslationManager.Translation.Archives)
+    // Built per picker, so its name follows a language change
+    public static FilePickerFileType ArchiveFileType => new(TranslationManager.Translation.Archives)
     {
         Patterns = SupportedFiles.ConvertArchivesToGlobFormat(),
         AppleUniformTypeIdentifiers = ["public.archive"],

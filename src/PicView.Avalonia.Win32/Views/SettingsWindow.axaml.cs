@@ -55,31 +55,22 @@ public partial class SettingsWindow : GenericWindow
                 settingsIcon.BorderThickness = new Thickness(0);
             }
 
-            if (!Application.Current.TryGetResource("SecondaryTextColor",
-                    Application.Current.RequestedThemeVariant, out var textColor))
+            // A missing key only skips the recolour; it must not skip the wiring below.
+            if (Application.Current.TryGetResource("SecondaryTextColor",
+                    Application.Current.RequestedThemeVariant, out var textColor)
+                && textColor is Color color)
             {
-                return;
+                TitleText.Foreground = new SolidColorBrush(color);
+                MinimizeButton.Foreground = new SolidColorBrush(color);
+                CloseButton.Foreground = new SolidColorBrush(color);
             }
-
-            if (textColor is not Color color)
-            {
-                return;
-            }
-
-            TitleText.Foreground = new SolidColorBrush(color);
-            MinimizeButton.Foreground = new SolidColorBrush(color);
-            CloseButton.Foreground = new SolidColorBrush(color);
         }
         else if (!Settings.Theme.Dark)
         {
             SettingsButton.Background = Brushes.White;
-            if (!Application.Current.TryGetResource("MainBorderColor",
-                    Application.Current.RequestedThemeVariant, out var mbColor))
-            {
-                return;
-            }
-
-            if (mbColor is Color color)
+            if (Application.Current.TryGetResource("TitleBarBorderColor",
+                    Application.Current.RequestedThemeVariant, out var borderColor)
+                && borderColor is Color color)
             {
                 SettingsButton.BorderThickness = new Thickness(1, 0, 0, 0);
                 SettingsButton.BorderBrush = new SolidColorBrush(color);

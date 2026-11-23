@@ -218,6 +218,10 @@ public static class SettingsSearchIndex
         {
             list.Add(new SettingsSearchItem(t.DockedGalleryThumbnailStretch, data.GalleryStretchSearchTags));
         }
+        if (t.GalleryMouseWheel != null)
+        {
+            list.Add(new SettingsSearchItem(t.GalleryMouseWheel, data.GalleryMouseWheelSearchTags));
+        }
 
         // Window
         if (t.WindowScaling != null)
