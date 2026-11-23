@@ -317,6 +317,71 @@ public class ImageInfoViewTests : IDisposable
         }
     }
 
+    // PicView's own write, or any other change on disk, fires a File change for the same image: the edit is kept
+    [AvaloniaFact]
+    public void SdExpandOverlay_ShownFileRewritten_StaysOpenWithTheEdit()
+    {
+        var vm = CreateViewModel();
+        var path = SdTestFiles.WriteJpegWithUserComment(SdTestFiles.AsciiUserComment(SdPayload));
+        var tab = vm.WindowTabs.ActiveTab.CurrentValue;
+        tab.Display(new ImageModel { FileInfo = new FileInfo(path), PixelWidth = 8, PixelHeight = 8 });
+
+        var view = new ImageInfoView { DataContext = vm };
+        var window = new Window { Content = view };
+        try
+        {
+            window.Show();
+            Dispatcher.UIThread.RunJobs();
+            Assert.True(WaitFor(() => view.SdPromptBox.Text == "a catt"));
+            view.SdPromptExpandButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            view.SdExpandText.Text = "a cat, typing";
+
+            Assert.True(tab.UpdateShownFile(path, new FileInfo(path)));
+
+            Assert.False(WaitFor(() => !view.SdExpandOverlay.IsVisible, TimeSpan.FromMilliseconds(500)),
+                "A change of the shown image's file should keep the overlay open");
+            Assert.Equal("a cat, typing", view.SdExpandText.Text);
+        }
+        finally
+        {
+            Close(window, vm);
+            File.Delete(path);
+        }
+    }
+
+    [AvaloniaFact]
+    public void SdExpandOverlay_AnotherImageShown_ClosesWithoutWriting()
+    {
+        var vm = CreateViewModel();
+        var path = SdTestFiles.WriteJpegWithUserComment(SdTestFiles.AsciiUserComment(SdPayload));
+        var tab = vm.WindowTabs.ActiveTab.CurrentValue;
+        tab.Display(new ImageModel { FileInfo = new FileInfo(path), PixelWidth = 8, PixelHeight = 8 });
+        var bytes = File.ReadAllBytes(path);
+
+        var view = new ImageInfoView { DataContext = vm };
+        var window = new Window { Content = view };
+        try
+        {
+            window.Show();
+            Dispatcher.UIThread.RunJobs();
+            Assert.True(WaitFor(() => view.SdPromptBox.Text == "a catt"));
+            view.SdPromptExpandButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            view.SdExpandText.Text = "a cat";
+
+            tab.Display(Image("other.jpg", 640, 480));
+
+            Assert.True(WaitFor(() => !view.SdExpandOverlay.IsVisible),
+                "Showing another image should close the overlay");
+            Assert.True(WaitFor(() => vm.Exif!.PixelWidth.Value == 640));
+            Assert.Equal(bytes, File.ReadAllBytes(path));
+        }
+        finally
+        {
+            Close(window, vm);
+            File.Delete(path);
+        }
+    }
+
     // Set up as the window opener does it, with the Exif and Info Window view models the view reads
     private static MainWindowViewModel CreateViewModel()
     {

@@ -9,6 +9,7 @@ using PicView.Avalonia.UI;
 using PicView.Avalonia.Views.Main;
 using PicView.Core.DebugTools;
 using PicView.Core.Extensions;
+using PicView.Core.Models;
 using PicView.Core.ViewModels;
 using R3;
 
@@ -26,6 +27,9 @@ public class ImageInfoViewController(ImageInfoView view) : IDisposable
 
     // The Tag of the field the expand overlay shows
     private string? _expandedSdField;
+
+    // The image the expand overlay was opened for. A rewrite of its file keeps the same model
+    private ImageModel? _expandedSdModel;
 
     public void Initialize()
     {
@@ -78,8 +82,15 @@ public class ImageInfoViewController(ImageInfoView view) : IDisposable
                 .Switch()
                 .SubscribeAwait(async (_, ct) =>
                 {
-                    // An overlay edit belongs to the image it was opened for, so it is dropped, not written to this one
-                    await Dispatcher.UIThread.InvokeAsync(() => CloseSdExpandOverlay(commit: false));
+                    // An overlay edit belongs to the image it was opened for: when another one is shown, it is dropped,
+                    // not written to that one. A change of the same image's file, such as PicView's own write, keeps it
+                    await Dispatcher.UIThread.InvokeAsync(() =>
+                    {
+                        if (!ReferenceEquals(vm.WindowTabs.ActiveTab.CurrentValue.Model, _expandedSdModel))
+                        {
+                            CloseSdExpandOverlay(commit: false);
+                        }
+                    });
                     var model = vm.WindowTabs.ActiveTab.CurrentValue.Model;
                     await vm.InfoWindow.UpdateValuesAsync(model, ct).ConfigureAwait(false);
                     await Dispatcher.UIThread.InvokeAsync(() =>
@@ -257,6 +268,7 @@ public class ImageInfoViewController(ImageInfoView view) : IDisposable
         };
 
         _expandedSdField = field;
+        _expandedSdModel = vm.WindowTabs.ActiveTab.CurrentValue.Model;
         view.SdExpandTitle.Text = title;
         view.SdExpandText.Text = text;
         view.SdExpandText.IsReadOnly = GetSdCommand(exif, field) is null || !exif.IsSdEditable.CurrentValue;
@@ -308,6 +320,7 @@ public class ImageInfoViewController(ImageInfoView view) : IDisposable
             : null;
 
         _expandedSdField = null;
+        _expandedSdModel = null;
         view.SdExpandOverlay.IsVisible = false;
         view.SdExpandText.Text = null;
         view.ScrollViewer.Focus();

@@ -19,4 +19,4 @@ Image Information shows the Stable Diffusion generation data of an AI-generated 
 - An edit of ComfyUI, NovelAI or InvokeAI data, or of data hidden in the pixels, needs a writer of its own; none of these formats is composed again.
 - An image with no generation data cannot get any from Image Information. The section stays hidden for it.
 - A lossy WebP loses a little quality on each generation-data edit, as on every other WebP tag edit.
-- The expand overlay edits the same field as its box. An edit in the overlay is dropped, not written, when another image is shown before it closes, so it never lands on the wrong file.
+- The expand overlay edits the same field as its box. An edit in the overlay is dropped, not written, when another image is shown before it closes, so it never lands on the wrong file. A change of the shown image's own file, such as PicView's write of the box committed when the overlay opened, keeps the overlay and its edit.
