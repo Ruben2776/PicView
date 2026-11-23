@@ -412,6 +412,9 @@
                                                        Mode=OneWay}" />
                             <customControls:FuncTextBox
                                 x:Name="FileNameTextBox"
+                                IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value,
+                                                            Converter={x:Static ObjectConverters.IsNotNull},
+                                                            FallbackValue=False}"
                                 Width="{CompiledBinding InfoWindow.TextBoxXlWidth.Value,
                                                         FallbackValue=0}"
                                 Classes="TStyle x"
@@ -438,6 +441,9 @@
                                                        Mode=OneWay}" />
                             <customControls:FuncTextBox
                                 x:Name="DirectoryNameTextBox"
+                                IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value,
+                                                            Converter={x:Static ObjectConverters.IsNotNull},
+                                                            FallbackValue=False}"
                                 Width="{CompiledBinding InfoWindow.TextBoxXlWidth.Value,
                                                         FallbackValue=0}"
                                 Classes="TStyle x"
@@ -466,6 +472,9 @@
                                                        Mode=OneWay}" />
                             <customControls:FuncTextBox
                                 x:Name="FullPathTextBox"
+                                IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value,
+                                                            Converter={x:Static ObjectConverters.IsNotNull},
+                                                            FallbackValue=False}"
                                 Width="{CompiledBinding InfoWindow.TextBoxXlWidth.Value}"
                                 Classes="TStyle x"
                                 Text="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value.FullName,

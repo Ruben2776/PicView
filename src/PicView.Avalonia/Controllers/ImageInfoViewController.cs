@@ -155,12 +155,14 @@ public class ImageInfoViewController(ImageInfoView view) : IDisposable
 
     private void OnFileNameKeyDown(object? sender, KeyEventArgs e)
     {
-        if (e.Key is not Key.Enter || view.DataContext is not MainWindowViewModel vm)
+        // A Single Image, such as a pasted one, has no file to rename
+        if (e.Key is not Key.Enter || view.DataContext is not MainWindowViewModel vm ||
+            vm.WindowTabs.ActiveTab.Value.Model.FileInfo?.DirectoryName is not { } directory)
         {
             return;
         }
 
-        var newPath = Path.Combine(vm.WindowTabs.ActiveTab.Value.Model.FileInfo.DirectoryName!, view.FileNameTextBox.Text);
+        var newPath = Path.Combine(directory, view.FileNameTextBox.Text ?? string.Empty);
         _ = Task.Run(() => HandleRename(vm, newPath));
     }
 
@@ -174,12 +176,13 @@ public class ImageInfoViewController(ImageInfoView view) : IDisposable
 
     private void OnDirectoryNameKeyDown(object? sender, KeyEventArgs e)
     {
-        if (e.Key is not Key.Enter || view.DataContext is not MainWindowViewModel vm)
+        if (e.Key is not Key.Enter || view.DataContext is not MainWindowViewModel vm ||
+            vm.WindowTabs.ActiveTab.Value.Model.FileInfo is not { } file)
         {
             return;
         }
 
-        var newPath = Path.Combine(view.DirectoryNameTextBox.Text, vm.WindowTabs.ActiveTab.Value.Model.FileInfo.Name);
+        var newPath = Path.Combine(view.DirectoryNameTextBox.Text ?? string.Empty, file.Name);
         _ = Task.Run(() => HandleRename(vm, newPath));
     }
 
@@ -217,8 +220,11 @@ public class ImageInfoViewController(ImageInfoView view) : IDisposable
         }
 
         var tab = vm.WindowTabs.ActiveTab.Value;
-        var oldPath = tab.FileInfo.CurrentValue.FullName;
-        if (oldPath.Equals(newPath, StringComparison.OrdinalIgnoreCase)) return;
+        if (tab.FileInfo.CurrentValue is not { } oldFile ||
+            oldFile.FullName.Equals(newPath, StringComparison.OrdinalIgnoreCase))
+        {
+            return;
+        }
 
         using var busy = tab.ClaimBusy();
         await Dispatcher.UIThread.InvokeAsync(() => SetLoadingState(true));

@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Threading;
 using ImageMagick;
 using PicView.Avalonia.Views.Main;
@@ -161,6 +162,74 @@ public class ImageInfoViewTests : IDisposable
 
             Assert.True(WaitFor(() => vm.Exif!.PixelWidth.Value == 0),
                 "The Image Info view should show nothing for a blank tab");
+        }
+        finally
+        {
+            Close(window, vm);
+        }
+    }
+
+    [AvaloniaFact]
+    public void EnterInTheRenameBoxes_ForAClipboardImage_DoesNothing()
+    {
+        var vm = CreateViewModel();
+        vm.WindowTabs.ActiveTab.CurrentValue.DisplaySingleImage(
+            new ImageModel { PixelWidth = 300, PixelHeight = 200, ImageType = ImageType.Bitmap },
+            SingleImageType.Clipboard, "Clipboard");
+
+        var view = new ImageInfoView { DataContext = vm };
+        var window = new Window { Content = view };
+        try
+        {
+            window.Show();
+            Dispatcher.UIThread.RunJobs();
+            Assert.True(WaitFor(() => vm.Exif!.PixelWidth.Value == 300));
+
+            Assert.False(view.FileNameTextBox.IsEnabled);
+            Assert.False(view.DirectoryNameTextBox.IsEnabled);
+            Assert.False(view.FullPathTextBox.IsEnabled);
+
+            // A key reaching the handlers anyway must not throw on the missing file
+            view.FileNameTextBox.RaiseEvent(new KeyEventArgs { RoutedEvent = InputElement.KeyDownEvent, Key = Key.Enter });
+            view.DirectoryNameTextBox.RaiseEvent(new KeyEventArgs { RoutedEvent = InputElement.KeyDownEvent, Key = Key.Enter });
+            Dispatcher.UIThread.RunJobs();
+        }
+        finally
+        {
+            Close(window, vm);
+        }
+    }
+
+    [AvaloniaFact]
+    public void PickingAnotherOrientation_GoesBackToTheFilesOrientation()
+    {
+        var vm = CreateViewModel();
+        var path = Path.Combine(_directory, "turned.jpg");
+        using (var image = new MagickImage(MagickColors.White, 1, 1))
+        {
+            image.Format = MagickFormat.Jpeg;
+            var profile = new ExifProfile();
+            profile.SetValue(ExifTag.Orientation, (ushort)6);
+            image.SetProfile(profile);
+            image.Orientation = Orientation.RightTop;
+            image.Write(path);
+        }
+        vm.WindowTabs.ActiveTab.CurrentValue.Display(new ImageModel { FileInfo = new FileInfo(path), PixelWidth = 1, PixelHeight = 1 });
+
+        var view = new ImageInfoView { DataContext = vm };
+        var window = new Window { Content = view };
+        try
+        {
+            window.Show();
+            Dispatcher.UIThread.RunJobs();
+            Assert.True(WaitFor(() => view.OrientationBox.SelectedIndex > 0));
+            var fileIndex = view.OrientationBox.SelectedIndex;
+
+            view.OrientationBox.SelectedIndex = fileIndex == 1 ? 2 : 1;
+
+            Assert.True(WaitFor(() => view.OrientationBox.SelectedIndex == fileIndex),
+                "A read-only dropdown should go back to the file's value");
+            Assert.Equal(fileIndex, vm.Exif!.Orientation.SelectedIndex.Value);
         }
         finally
         {

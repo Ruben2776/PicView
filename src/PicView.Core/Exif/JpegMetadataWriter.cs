@@ -41,11 +41,12 @@ internal static class JpegMetadataWriter
         file.Length > 3 && file[0] == Marker && file[1] == StartOfImage && file[2] == Marker;
 
     /// <summary>
-    /// Builds the file again with <paramref name="exif"/> as its Exif segment, in place of the old one, or with none
-    /// when it is null, and without the kinds in <paramref name="drop"/>.
+    /// Builds the file again with <paramref name="exif"/> as its Exif segment, in place of the old one, and without the
+    /// kinds in <paramref name="drop"/>.
     /// </summary>
     /// <param name="jpeg">The whole file.</param>
-    /// <param name="exif">The Exif data, with or without its "Exif\0\0" header, or null for none.</param>
+    /// <param name="exif">The Exif data, with or without its "Exif\0\0" header.</param>
+    /// <param name="hasExif">Whether the file gets an Exif segment: false leaves every Exif segment out.</param>
     /// <param name="drop">The other metadata to leave out.</param>
     /// <returns>The new file, or null when <paramref name="jpeg"/> is not a JPEG this can read or the Exif data does
     /// not fit one segment: the caller then encodes the image instead.</returns>
