@@ -13,7 +13,7 @@ A writer (Save, Save As, Crop, the Resize dialog, rename to another extension, t
 - **Writes encode to the system temp folder and then copy to the destination**, never to a temp file in the watched folder, which the folder watcher would see, and a failed encode leaves no partial file there. The copy over an existing file is not atomic, and the Recycle Bin copy is the net.
 - View-model tooltip messages (`TooltipHelper.ShowTooltipMessage(vm, ...)`) show in the Main Window: each follows its `ToolTipMessageSource`. They were silently dropped before, rename's included.
 - With "reset zoom on change" on, any showing of the file resets the turn, as before, so an Optimize or another write that did not write the turn still loses it then.
-- The crop of a Single Image keeps its own bitmap path (a copy to a new PNG), outside the module.
+- The crop of a Single Image goes through the module too, as a copy: its pixels come through the Single Image seam, the picker suggests a new PNG, and a picked file that exists gets the Recycle Bin Backup.
 
 ## Considered Options
 

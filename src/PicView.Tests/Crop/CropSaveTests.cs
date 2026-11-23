@@ -76,4 +76,41 @@ public class CropSaveTests : IDisposable
         Assert.False(services.Thumbnails.TryGetKept(new FileInfo(path), out _, out _));
         Assert.Null(tab.Crop);
     }
+
+    [AvaloniaFact]
+    public async Task CropSave_SingleImageOverExistingFile_RecyclesItFirst()
+    {
+        var destination = Path.Combine(_testDirectory, "existing.png");
+        using (var image = new MagickImage(MagickColors.Green, 3, 3))
+        {
+            image.Write(destination);
+        }
+
+        var old = await File.ReadAllBytesAsync(destination, TestContext.Current.CancellationToken);
+        var platform = new RecordingPlatform();
+        var tab = new TabViewModel(new MainWindowViewModel(null!, null!, null!, null!),
+            TestTabServices.For(_cache, platform: platform));
+        _disposables.Add(tab);
+        using var zoom = new TabZoom();
+        zoom.SetFitScale(1);
+        var crop = new CropViewModel(zoom, 4, 2, tab.Orientation);
+        crop.SetSelection(0, 0, 2, 1);
+        tab.Crop = crop;
+        var service = new CropService(tab, null!);
+        var writer = new ShownFileWriter(() => null) { SingleImagePixels = new RedPixels(4, 2) };
+
+        var saved = await service.SaveCropToAsync(writer, destination);
+
+        Assert.True(saved);
+        var recycled = Assert.Single(platform.Deleted);
+        Assert.Equal(old, recycled.Bytes);
+        using var written = new MagickImage(destination);
+        Assert.Equal((2u, 1u), (written.Width, written.Height));
+        Assert.Null(tab.Crop);
+    }
+
+    private sealed class RedPixels(uint width, uint height) : ISingleImagePixels
+    {
+        public MagickImage? Read(TabViewModel tab) => new(MagickColors.Red, width, height);
+    }
 }

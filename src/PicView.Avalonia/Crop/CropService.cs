@@ -111,14 +111,11 @@ public class CropService(TabViewModel tabViewModel, MainWindow mainWindow) : ICr
             return;
         }
 
-        // A Single Image, such as a pasted one, has no file, so its crop is saved as a new PNG
-        if (tabViewModel.FileInfo.CurrentValue is not { Exists: true } file)
-        {
-            await SaveSingleImageCropAsync().ConfigureAwait(false);
-            return;
-        }
-
-        var picked = await FilePicker.PickFileForSavingAsync(file.FullName).ConfigureAwait(false);
+        // A Single Image, such as a pasted one, has no file, so its crop is offered as a new PNG
+        var suggested = tabViewModel.FileInfo.CurrentValue is { Exists: true } file
+            ? file.FullName
+            : $"{TranslationManager.Translation.Crop} {Random.Shared.Next(9999)}.png";
+        var picked = await FilePicker.PickFileForSavingAsync(suggested).ConfigureAwait(false);
         if (picked is null)
         {
             return;
@@ -134,8 +131,9 @@ public class CropService(TabViewModel tabViewModel, MainWindow mainWindow) : ICr
     }
 
     /// <summary>
-    /// Writes the crop's selection of the tab's file to <paramref name="path"/> through the save module, over the file
-    /// itself when that is the path, then closes the crop. The crop stays open when nothing was written.
+    /// Writes the crop's selection of the tab's file, or of its Single Image, to <paramref name="path"/> through the save
+    /// module, over the file itself when that is the path, then closes the crop. A file already at the path gets the
+    /// module's Recycle Bin Backup. The crop stays open when nothing was written.
     /// </summary>
     internal async Task<bool> SaveCropToAsync(ShownFileWriter writer, string path)
     {
@@ -154,21 +152,5 @@ public class CropService(TabViewModel tabViewModel, MainWindow mainWindow) : ICr
 
         await Dispatcher.UIThread.InvokeAsync(CloseCropControl);
         return true;
-    }
-
-    private async Task SaveSingleImageCropAsync()
-    {
-        var fileName = $"{TranslationManager.Translation.Crop} {new Random().Next(9999)}.png";
-        var picked = await FilePicker.PickFileForSavingAsync(fileName).ConfigureAwait(false);
-        if (picked is null)
-        {
-            return;
-        }
-
-        using var busy = tabViewModel.ClaimBusy();
-        var bitmap = await Dispatcher.UIThread.InvokeAsync(() =>
-            RenderSelection((Bitmap)tabViewModel.Image.CurrentValue!, tabViewModel.Crop!));
-        bitmap.Save(picked, PngBitmapEncoderOptions.Default);
-        await Dispatcher.UIThread.InvokeAsync(CloseCropControl);
     }
 }
