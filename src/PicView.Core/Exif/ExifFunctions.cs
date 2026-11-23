@@ -54,19 +54,28 @@ public static class ExifFunctions
     /// </summary>
     private static readonly SemaphoreSlim UpdateGate = new(1, 1);
 
+    /// <param name="allowEncode">
+    /// Whether a file that cannot have its segments rewritten may be decoded and encoded again. When false, such a
+    /// file, a non-JPEG or a JPEG the rewrite cannot do, is left untouched and false is returned.
+    /// </param>
     public static Task<bool> TryUpdateImageProfileAsync(FileInfo fileInfo, Func<MagickImage, bool> updateAction,
-        string callingClassName, string callingMethodName) =>
+        string callingClassName, string callingMethodName, bool allowEncode = true) =>
         RewriteFileAsync(fileInfo, original =>
         {
             // A JPEG gets its metadata segments written and keeps its image data as it is, so an edit loses no
             // quality. Any other file, or a JPEG the rewrite cannot read, is encoded again
             if (!JpegMetadataWriter.IsJpeg(original))
             {
-                return Encode(original, updateAction);
+                return allowEncode ? Encode(original, updateAction) : null;
             }
 
             var rewrite = RewriteJpegMetadata(original, updateAction);
-            return rewrite.IsUnchanged ? null : rewrite.Bytes ?? Encode(original, updateAction);
+            if (rewrite.IsUnchanged)
+            {
+                return null;
+            }
+
+            return rewrite.Bytes ?? (allowEncode ? Encode(original, updateAction) : null);
         }, callingClassName, callingMethodName);
 
     /// <summary>

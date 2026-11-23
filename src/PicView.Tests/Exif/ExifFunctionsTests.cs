@@ -320,7 +320,7 @@ public class ExifFunctionsTests : IDisposable
         var profile = ReadProfile(fileInfo);
         Assert.NotNull(profile);
         
-        var expectedBytes = Encoding.ASCII.GetBytes(comment);
+        var expectedBytes = Encoding.ASCII.GetBytes("ASCII\0\0\0" + comment);
         Assert.Equal(expectedBytes, profile.GetValue(ExifTag.UserComment)?.Value);
     }
 

@@ -111,6 +111,28 @@ public class ExifViewModelTests
     }
 
     [Fact]
+    public async Task SetCommentCommand_NonAscii_ShowsTheTextAgain()
+    {
+        var path = WriteJpeg(_ => { });
+        try
+        {
+            using var viewModel = Show(path);
+
+            viewModel.Comment.Value = "中文";
+            var written = await viewModel.CommitAsync(f => ExifWriter.AddComment(f, "中文"));
+
+            Assert.True(written);
+            Assert.Equal("中文", viewModel.Comment.Value);
+            using var image = new MagickImage(path);
+            Assert.Equal("中文", ExifReader.GetUserComment(image.GetExifProfile()));
+        }
+        finally
+        {
+            File.Delete(path);
+        }
+    }
+
+    [Fact]
     public async Task CommitAsync_Written_ShowsWhatTheFileHolds()
     {
         var path = WriteJpeg(_ => { });
