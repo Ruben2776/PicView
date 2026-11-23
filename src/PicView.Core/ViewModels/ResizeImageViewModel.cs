@@ -4,8 +4,9 @@ using PicView.Core.DebugTools;
 using PicView.Core.Extensions;
 using PicView.Core.FileHandling;
 using PicView.Core.ImageDecoding;
+using PicView.Core.Localization;
 using PicView.Core.Models;
-using PicView.Core.Navigation;
+using PicView.Core.Saving;
 using R3;
 
 namespace PicView.Core.ViewModels;
@@ -32,6 +33,9 @@ public class ResizeImageViewModel : IDisposable
 
     public Action? CloseAction { get; set; }
     public Func<string, string, ValueTask<string?>>? PickFileAction { get; set; }
+
+    /// <summary>Shows the user a message, such as that the name a conversion needs is taken.</summary>
+    public Action<string>? ShowMessageAction { get; set; }
 
     private MainWindowViewModel? _mainVm;
 
@@ -223,111 +227,87 @@ public class ResizeImageViewModel : IDisposable
            || ext.Equals(".jpeg", StringComparison.OrdinalIgnoreCase)
            || ext.Equals(".png", StringComparison.OrdinalIgnoreCase);
 
+    /// <summary>
+    /// Saves the resized image over the tab's file, or in its place when another format is chosen; asks where to save
+    /// an image that is not a file. A name the conversion needs that is taken is shown, and the dialog stays open.
+    /// </summary>
     public async Task SaveImage()
     {
+        // The tab the dialog resizes, kept for the whole save even if another tab becomes active meanwhile
         var tab = _mainVm.WindowTabs.ActiveTab.CurrentValue;
-
         var fileInfo = tab.FileInfo.CurrentValue;
         if (fileInfo is null)
         {
+            // A Single Image has no file to write over
+            await SaveImageAsCore(tab).ConfigureAwait(false);
             return;
         }
 
-        var originalPath = fileInfo.FullName;
-        var orientation = tab.Orientation.Current.CurrentValue;
-        var isFlipped = orientation.IsFlipped;
-        var rotationAngle = orientation.Degrees;
+        var original = fileInfo.FullName;
+        var path = original;
+        var ext = GetSelectedFileExtension(fileInfo.Extension, ref path);
+        WriteDestination destination = string.Equals(ext, fileInfo.Extension, StringComparison.OrdinalIgnoreCase)
+            ? new WriteDestination.OverItself()
+            : new WriteDestination.Replace(Path.ChangeExtension(original, ext));
 
-        var savedPath = await SaveImageInternal(fileInfo, originalPath, isFlipped, rotationAngle).ConfigureAwait(false);
-        if (savedPath is not null && !string.Equals(savedPath, originalPath, StringComparison.OrdinalIgnoreCase))
+        var result = await WriteAsync(tab, ext, path, destination).ConfigureAwait(false);
+        if (result.Outcome is WriteOutcome.NameTaken && destination is WriteDestination.Replace replace)
         {
-            // Converted to another format: the converted file takes the place of the original
-            await ReplaceOriginalAsync(tab, originalPath, savedPath).ConfigureAwait(false);
+            ShowMessageAction?.Invoke(TranslationManager.Translation.FileAlreadyExists + Environment.NewLine +
+                                      Path.GetFileName(replace.NewPath));
+            return;
         }
+
         CloseAction?.Invoke();
     }
 
-    private async Task ReplaceOriginalAsync(TabViewModel tab, string originalPath, string convertedPath)
-    {
-        try
-        {
-            // The histories follow before the tab shows the converted file, or it would record it as a new view
-            FileRenames.Follow(_mainVm?.Core, originalPath, convertedPath);
+    /// <summary>
+    /// Asks where to save the resized image, then saves a copy there; the Shown File itself when it is picked.
+    /// </summary>
+    public async Task SaveImageAs() =>
+        await SaveImageAsCore(_mainVm.WindowTabs.ActiveTab.CurrentValue).ConfigureAwait(false);
 
-            // Show the converted file before deleting the original, so the folder watcher removes a file that is no
-            // longer shown instead of navigating away from it
-            await tab.Load.LoadAsync(convertedPath).ConfigureAwait(false);
-            File.Delete(originalPath);
-        }
-        catch (Exception e)
-        {
-            DebugHelper.LogDebug(nameof(ResizeImageViewModel), nameof(ReplaceOriginalAsync), e);
-        }
-    }
-
-    public async Task SaveImageAs()
+    private async Task SaveImageAsCore(TabViewModel tab)
     {
-        var tab = _mainVm.WindowTabs.ActiveTab.CurrentValue;
+        if (PickFileAction is null)
+        {
+            return;
+        }
 
         var fileInfo = tab.FileInfo.CurrentValue;
-        if (fileInfo is null || PickFileAction is null)
+        var suggested = fileInfo?.FullName ?? "PicView" + PngExtension;
+        var ext = GetSelectedFileExtension(fileInfo?.Extension ?? PngExtension, ref suggested);
+
+        var picked = await PickFileAction(suggested, ext).ConfigureAwait(false);
+        if (string.IsNullOrWhiteSpace(picked))
         {
             return;
         }
 
-        var fileInfoFullName = fileInfo.FullName;
-        var ext = GetSelectedFileExtension(fileInfo, ref fileInfoFullName);
-
-        var destination = await PickFileAction(fileInfo.FullName, ext).ConfigureAwait(false);
-        if (destination == null) return;
-
-        var orientation = tab.Orientation.Current.CurrentValue;
-        var isFlipped = orientation.IsFlipped;
-        var rotationAngle = orientation.Degrees;
-
-        await SaveImageInternal(fileInfo, destination, isFlipped, rotationAngle).ConfigureAwait(false);
+        var destination = Path.ChangeExtension(picked, ext);
+        // A copy onto the Shown File is written over itself by the save module
+        await WriteAsync(tab, ext, destination, new WriteDestination.Copy(destination)).ConfigureAwait(false);
         CloseAction?.Invoke();
     }
 
-    /// <returns>The path the image was written to, with the selected format's extension; <c>null</c> when it failed.</returns>
-    private async Task<string?> SaveImageInternal(FileInfo fileInfo, string destination, bool isFlipped, int rotationAngle)
+    // Writes the tab's Save Source, turned and flipped as it shows, resized to the size asked for
+    private async Task<WriteResult> WriteAsync(TabViewModel tab, string ext, string path,
+        WriteDestination destination)
     {
         IsLoading.Value = true;
-
         try
         {
-            var ext = GetSelectedFileExtension(fileInfo, ref destination);
-            destination = Path.ChangeExtension(destination, ext);
-            var quality = GetQualityValue(ext, destination);
-
-            using var magickImage = new MagickImage(fileInfo);
-            if (quality != null)
-            {
-                magickImage.Quality = quality.Value;
-            }
-
-            // Turn, then mirror, as the view does
-            if (rotationAngle != 0)
-            {
-                magickImage.Rotate(rotationAngle);
-            }
-
-            if (isFlipped)
-            {
-                magickImage.Flop();
-            }
-
-            var w = Convert.ToUInt32(DesiredPixelWidth.CurrentValue, CultureInfo.InvariantCulture);
-            var h = Convert.ToUInt32(DesiredPixelHeight.CurrentValue, CultureInfo.InvariantCulture);
-
-            magickImage.Resize(w, h);
-            await magickImage.WriteAsync(destination).ConfigureAwait(false);
-            return destination;
-        }
-        catch (Exception e)
-        {
-            DebugHelper.LogDebug(nameof(ResizeImageViewModel), nameof(SaveImageInternal), e);
-            return null;
+            // A size that is not a number is 0, which keeps the aspect from the other; both 0 is no resize
+            var w = uint.TryParse(DesiredPixelWidth.CurrentValue, CultureInfo.InvariantCulture, out var width)
+                ? width
+                : 0;
+            var h = uint.TryParse(DesiredPixelHeight.CurrentValue, CultureInfo.InvariantCulture, out var height)
+                ? height
+                : 0;
+            var edits = new WriteEdits(Width: w, Height: h, Quality: GetQualityValue(ext, path));
+            return await _mainVm.Core.Writer
+                .WriteAsync(tab, new ShownFileWrite(WriteSource.SaveSource, edits, destination))
+                .ConfigureAwait(false);
         }
         finally
         {
@@ -335,9 +315,14 @@ public class ResizeImageViewModel : IDisposable
         }
     }
 
-    private string GetSelectedFileExtension(FileInfo fileInfo, ref string destination)
+    private const string PngExtension = ".png";
+
+    private string GetSelectedFileExtension(FileInfo fileInfo, ref string destination) =>
+        GetSelectedFileExtension(fileInfo.Extension, ref destination);
+
+    private string GetSelectedFileExtension(string originalExtension, ref string destination)
     {
-        var ext = fileInfo.Extension;
+        var ext = originalExtension;
         if (SelectedConversionIndex.Value == 0)
         {
             return ext;
