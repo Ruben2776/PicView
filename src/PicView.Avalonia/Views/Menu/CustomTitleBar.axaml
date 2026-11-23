@@ -263,7 +263,7 @@
                         <MenuItem.Icon>
                             <Image
                                 Height="12"
-                                Source="{StaticResource PaletteImage}"
+                                Source="{StaticResource ContrastImage}"
                                 Width="12" />
                         </MenuItem.Icon>
                     </customControls:StyledMenuItem>

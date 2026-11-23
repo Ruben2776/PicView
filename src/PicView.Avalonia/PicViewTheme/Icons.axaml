@@ -1006,7 +1006,7 @@
                 <GeometryDrawing Geometry="F1 M2,12 A10,10,0,1,0,22,12 A10,10,0,1,0,2,12 Z">
                     <GeometryDrawing.Pen>
                         <Pen
-                            Brush="#FF000000"
+                            Brush="{DynamicResource MainTextColor}"
                             LineCap="Round"
                             LineJoin="Round"
                             Thickness="2" />
@@ -1015,7 +1015,7 @@
                 <GeometryDrawing Geometry="F1 M12,18 a6,6,0,0,0,0,-12 v12 z">
                     <GeometryDrawing.Pen>
                         <Pen
-                            Brush="#FF000000"
+                            Brush="{DynamicResource MainTextColor}"
                             LineCap="Round"
                             LineJoin="Round"
                             Thickness="2" />
