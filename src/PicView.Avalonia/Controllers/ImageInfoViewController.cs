@@ -1,4 +1,5 @@
-﻿using Avalonia;
+﻿using System.Windows.Input;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
@@ -15,8 +16,16 @@ namespace PicView.Avalonia.Controllers;
 
 public class ImageInfoViewController(ImageInfoView view) : IDisposable
 {
+    // The Tags of the Stable Diffusion expand buttons
+    private const string SdPromptTag = "Prompt";
+    private const string SdNegativePromptTag = "NegativePrompt";
+    private const string SdSettingsTag = "Settings";
+
     private DisposableBag _disposables;
     private bool _isDisposed;
+
+    // The Tag of the field the expand overlay shows
+    private string? _expandedSdField;
 
     public void Initialize()
     {
@@ -53,6 +62,14 @@ public class ImageInfoViewController(ImageInfoView view) : IDisposable
             view.FlashModeBox.DropDownClosed += OnExifChoiceBoxDropDownClosed;
             view.LightSourceBox.DropDownClosed += OnExifChoiceBoxDropDownClosed;
             view.PhotometricInterpretationBox.DropDownClosed += OnExifChoiceBoxDropDownClosed;
+            view.SdPromptExpandButton.Click += OnExpandSdTextClick;
+            view.SdNegativePromptExpandButton.Click += OnExpandSdTextClick;
+            view.SdSettingsExpandButton.Click += OnExpandSdTextClick;
+            view.SdRawExpandButton.Click += OnExpandSdTextClick;
+            view.SdExpandCloseButton.Click += OnSdExpandCloseClick;
+            view.SdExpandOverlay.PointerPressed += OnSdExpandOverlayPointerPressed;
+            // Tunneled, so Esc closes the overlay before it reaches the window, which closes on Esc
+            view.AddHandler(InputElement.KeyDownEvent, OnSdExpandKeyDown, RoutingStrategies.Tunnel);
 
             // Whatever the active tab shows: a file, a clipboard, base64 or URL image, a renamed file, and the tab
             // switched to, also when the window was opened from a blank tab, whose empty model clears the values
@@ -61,6 +78,8 @@ public class ImageInfoViewController(ImageInfoView view) : IDisposable
                 .Switch()
                 .SubscribeAwait(async (_, ct) =>
                 {
+                    // An overlay edit belongs to the image it was opened for, so it is dropped, not written to this one
+                    await Dispatcher.UIThread.InvokeAsync(() => CloseSdExpandOverlay(commit: false));
                     var model = vm.WindowTabs.ActiveTab.CurrentValue.Model;
                     await vm.InfoWindow.UpdateValuesAsync(model, ct).ConfigureAwait(false);
                     await Dispatcher.UIThread.InvokeAsync(() =>
@@ -83,6 +102,12 @@ public class ImageInfoViewController(ImageInfoView view) : IDisposable
 
     private void OnKeyDown(object? sender, KeyEventArgs e)
     {
+        // The overlay covers the list, which should not scroll behind it
+        if (view.SdExpandOverlay.IsVisible)
+        {
+            return;
+        }
+
         switch (e.Key)
         {
             case Key.Down:
@@ -204,6 +229,102 @@ public class ImageInfoViewController(ImageInfoView view) : IDisposable
             _ = Task.Run(() => exif.CommitChoiceAsync(field));
         }
     }
+
+    /// <summary>
+    /// Shows a Stable Diffusion field in an overlay covering the view, for text too long to read inline. The button's
+    /// Tag names the field. The overlay edits Prompt, Negative prompt and Settings when the data is editable.
+    /// </summary>
+    private void OnExpandSdTextClick(object? sender, RoutedEventArgs e)
+    {
+        if (sender is not Control { Tag: string field } || view.DataContext is not MainWindowViewModel { Exif: { } exif } vm)
+        {
+            return;
+        }
+
+        if (view.SdExpandOverlay.IsVisible)
+        {
+            CloseSdExpandOverlay(commit: true);
+            return;
+        }
+
+        var translation = vm.Translation;
+        var (title, text) = field switch
+        {
+            SdPromptTag => (translation.Prompt.CurrentValue, exif.SdPrompt.CurrentValue),
+            SdNegativePromptTag => (translation.NegativePrompt.CurrentValue, exif.SdNegativePrompt.CurrentValue),
+            SdSettingsTag => (translation.Settings.CurrentValue, exif.SdSettings.CurrentValue),
+            _ => (translation.RawMetadata.CurrentValue, exif.SdRaw.CurrentValue)
+        };
+
+        _expandedSdField = field;
+        view.SdExpandTitle.Text = title;
+        view.SdExpandText.Text = text;
+        view.SdExpandText.IsReadOnly = GetSdCommand(exif, field) is null || !exif.IsSdEditable.CurrentValue;
+        view.SdExpandOverlay.IsVisible = true;
+        view.SdExpandText.CaretIndex = 0;
+        view.SdExpandText.Focus();
+    }
+
+    private void OnSdExpandCloseClick(object? sender, RoutedEventArgs e) => CloseSdExpandOverlay(commit: true);
+
+    private void OnSdExpandOverlayPointerPressed(object? sender, PointerPressedEventArgs e)
+    {
+        // Only a click on the dimmed backdrop closes it, not one inside the card
+        if (!ReferenceEquals(e.Source, view.SdExpandOverlay))
+        {
+            return;
+        }
+
+        CloseSdExpandOverlay(commit: true);
+        e.Handled = true;
+    }
+
+    private void OnSdExpandKeyDown(object? sender, KeyEventArgs e)
+    {
+        if (e.Key is not Key.Escape || !view.SdExpandOverlay.IsVisible)
+        {
+            return;
+        }
+
+        e.Handled = true;
+        CloseSdExpandOverlay(commit: true);
+    }
+
+    /// <summary>
+    /// Hides the overlay. With <paramref name="commit"/>, an editable field's text is written as its box writes it; an
+    /// unchanged text writes nothing.
+    /// </summary>
+    private void CloseSdExpandOverlay(bool commit)
+    {
+        if (!view.SdExpandOverlay.IsVisible)
+        {
+            return;
+        }
+
+        var text = view.SdExpandText.Text;
+        var command = commit && !view.SdExpandText.IsReadOnly &&
+                      view.DataContext is MainWindowViewModel { Exif: { } exif }
+            ? GetSdCommand(exif, _expandedSdField)
+            : null;
+
+        _expandedSdField = null;
+        view.SdExpandOverlay.IsVisible = false;
+        view.SdExpandText.Text = null;
+        view.ScrollViewer.Focus();
+
+        if (command?.CanExecute(text) == true)
+        {
+            command.Execute(text);
+        }
+    }
+
+    private static ICommand? GetSdCommand(ExifViewModel exif, string? field) => field switch
+    {
+        SdPromptTag => exif.SetSdPromptCommand,
+        SdNegativePromptTag => exif.SetSdNegativePromptCommand,
+        SdSettingsTag => exif.SetSdSettingsCommand,
+        _ => null
+    };
 
     private void SetLoadingState(bool isLoading)
     {
@@ -329,6 +450,13 @@ public class ImageInfoViewController(ImageInfoView view) : IDisposable
         view.FlashModeBox.DropDownClosed -= OnExifChoiceBoxDropDownClosed;
         view.LightSourceBox.DropDownClosed -= OnExifChoiceBoxDropDownClosed;
         view.PhotometricInterpretationBox.DropDownClosed -= OnExifChoiceBoxDropDownClosed;
+        view.SdPromptExpandButton.Click -= OnExpandSdTextClick;
+        view.SdNegativePromptExpandButton.Click -= OnExpandSdTextClick;
+        view.SdSettingsExpandButton.Click -= OnExpandSdTextClick;
+        view.SdRawExpandButton.Click -= OnExpandSdTextClick;
+        view.SdExpandCloseButton.Click -= OnSdExpandCloseClick;
+        view.SdExpandOverlay.PointerPressed -= OnSdExpandOverlayPointerPressed;
+        view.RemoveHandler(InputElement.KeyDownEvent, OnSdExpandKeyDown);
 
         _disposables.Dispose();
         GC.SuppressFinalize(this);

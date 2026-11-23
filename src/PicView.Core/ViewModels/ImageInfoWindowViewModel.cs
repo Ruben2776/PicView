@@ -30,6 +30,9 @@ public class ImageInfoWindowViewModel(MainWindowViewModel vm) : IDisposable
     public BindableReactiveProperty<double> TextBoxXxlWidth { get; } = new(630);
     public BindableReactiveProperty<double> HalfLineWidth { get; } = new(395);
 
+    // A Stable Diffusion row: its label and buttons over a text box as wide as the window
+    public BindableReactiveProperty<double> SdRowWidth { get; } = new(760);
+
     public BindableReactiveProperty<bool> IsCopyButtonEnabled { get; } = new();
     public BindableReactiveProperty<bool> IsExtraButtonsEnabled { get; } = new();
     
@@ -80,6 +83,8 @@ public class ImageInfoWindowViewModel(MainWindowViewModel vm) : IDisposable
                 TextBoxXxlWidth.Value = aboveThirdWidthL - padding;
                 break;
         }
+
+        SdRowWidth.Value = Math.Max(150, width - (scrollBarThickness + 40));
 
         if (width >= thirdBreakPoint)
         {
@@ -156,6 +161,7 @@ public class ImageInfoWindowViewModel(MainWindowViewModel vm) : IDisposable
             TextBoxXlWidth,
             TextBoxXxlWidth,
             HalfLineWidth,
+            SdRowWidth,
             IsCopyButtonEnabled,
             IsExtraButtonsEnabled,
             IsLoading);

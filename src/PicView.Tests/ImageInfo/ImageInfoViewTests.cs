@@ -1,5 +1,6 @@
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Threading;
 using ImageMagick;
 using PicView.Avalonia.Views.Main;
@@ -7,6 +8,7 @@ using PicView.Core.ImageDecoding;
 using PicView.Core.Localization;
 using PicView.Core.Models;
 using PicView.Core.ViewModels;
+using PicView.Tests.Metadata;
 
 namespace PicView.Tests.ImageInfo;
 
@@ -17,6 +19,9 @@ namespace PicView.Tests.ImageInfo;
 public class ImageInfoViewTests : IDisposable
 {
     private readonly string _directory = Path.Combine(Path.GetTempPath(), $"picview-image-info-{Guid.NewGuid():N}");
+
+    // An A1111 prompt with a typo, a negative prompt and settings
+    private const string SdPayload = "a catt\nNegative prompt: blurry\nSteps: 20, Sampler: Euler, CFG scale: 7, Seed: 1, Size: 8x8";
 
     public ImageInfoViewTests()
     {
@@ -234,6 +239,81 @@ public class ImageInfoViewTests : IDisposable
         finally
         {
             Close(window, vm);
+        }
+    }
+
+    // An A1111 JPEG, whose UserComment holds the data: the Prompt box edits it, and the Comment box, which would show the
+    // same tag, is hidden
+    [AvaloniaFact]
+    public void ImageInfoView_A1111Image_ShowsEditablePromptBox()
+    {
+        var vm = CreateViewModel();
+        var path = SdTestFiles.WriteJpegWithUserComment(SdTestFiles.AsciiUserComment(SdPayload));
+        vm.WindowTabs.ActiveTab.CurrentValue.Display(new ImageModel { FileInfo = new FileInfo(path), PixelWidth = 8, PixelHeight = 8 });
+
+        var view = new ImageInfoView { DataContext = vm };
+        var window = new Window { Content = view };
+        try
+        {
+            window.Show();
+            Dispatcher.UIThread.RunJobs();
+            Assert.True(WaitFor(() => view.SdPromptBox.Text == "a catt"),
+                "The Prompt box should show the image's prompt");
+
+            Assert.False(view.SdPromptBox.IsReadOnly);
+            Assert.True(view.SdPromptBox.IsEffectivelyVisible);
+            Assert.False(view.CommentBox.IsEffectivelyVisible);
+        }
+        finally
+        {
+            Close(window, vm);
+            File.Delete(path);
+        }
+    }
+
+    [AvaloniaFact]
+    public void SdExpandOverlay_EditedAndClosedOnEscape_WritesThePromptAndKeepsTheWindowOpen()
+    {
+        var vm = CreateViewModel();
+        var path = SdTestFiles.WriteJpegWithUserComment(SdTestFiles.AsciiUserComment(SdPayload));
+        vm.WindowTabs.ActiveTab.CurrentValue.Display(new ImageModel { FileInfo = new FileInfo(path), PixelWidth = 8, PixelHeight = 8 });
+
+        var view = new ImageInfoView { DataContext = vm };
+        var window = new Window { Content = view };
+        var isWindowClosed = false;
+        window.Closed += (_, _) => isWindowClosed = true;
+        // As the window opener does: Esc that reaches the window closes it
+        window.KeyDown += (_, e) =>
+        {
+            if (e.Key is Key.Escape)
+            {
+                window.Close();
+            }
+        };
+        try
+        {
+            window.Show();
+            Dispatcher.UIThread.RunJobs();
+            Assert.True(WaitFor(() => view.SdPromptBox.Text == "a catt"));
+
+            view.SdPromptExpandButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Assert.True(view.SdExpandOverlay.IsVisible);
+            Assert.False(view.SdExpandText.IsReadOnly);
+            Assert.Equal("a catt", view.SdExpandText.Text);
+
+            view.SdExpandText.Text = "a cat\non a mat";
+            view.SdExpandText.RaiseEvent(new KeyEventArgs { RoutedEvent = InputElement.KeyDownEvent, Key = Key.Escape });
+
+            Assert.False(view.SdExpandOverlay.IsVisible);
+            Assert.False(isWindowClosed, "Esc should close the overlay, not the window");
+            Assert.True(WaitFor(() => vm.Exif!.SdPrompt.Value == "a cat\non a mat"),
+                "Closing the overlay should write its text and show what the file holds");
+            Assert.Equal("blurry", vm.Exif!.SdNegativePrompt.Value);
+        }
+        finally
+        {
+            Close(window, vm);
+            File.Delete(path);
         }
     }
 
