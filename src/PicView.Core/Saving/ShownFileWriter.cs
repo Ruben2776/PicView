@@ -271,6 +271,8 @@ public sealed class ShownFileWriter(Func<EffectsViewModel?> getEffects)
             var copy = TempFileManager.GetNewTempFilePath(Path.GetFileName(path));
             if (!platform.CanMoveToRecycleBin(copy))
             {
+                DebugHelper.LogDebug(nameof(ShownFileWriter), nameof(BackUpToRecycleBinAsync),
+                    $"The temp folder's drive has no Recycle Bin; {path} is written over with no backup");
                 DeleteTemp(copy);
                 return;
             }
