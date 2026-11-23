@@ -206,11 +206,11 @@ What a save writes out, decided by the save module rather than the caller: the E
 _Avoid_: Source file, input path
 
 **Save Module**:
-`ShownFileWriter`, in Core: every in-process write of a tab's shown image goes through it. A writer describes the job (what to read, what to change, where to write) and the module reads the Save Source or the file on disk, writes it off the UI thread with the tab Busy, and shows the result by where it went. Over itself, it shows the file again with its cached image and thumbnail forgotten and resets the turn and effects that were written into it; replacing the original, it shows the new file and then recycles the original, and writes nothing when the new name is taken; a copy elsewhere changes nothing in the tab. A Single Image has no file, so over itself and replace become Save As. Batch resize is outside it.
+`ShownFileWriter`, in Core: every in-process write of a tab's shown image goes through it. A writer describes the job (what to read, what to change, where to write) and the module reads the Save Source or the file on disk, writes it off the UI thread with the tab Busy, and shows the result by where it went. Over itself, it shows the file again with its cached image and thumbnail forgotten and resets the turn and effects that were written into it; replacing the original, it shows the new file and then recycles the original (keeping it when the recycle fails, deleting it only on a drive with no Recycle Bin), and writes nothing when the new name is taken; a copy elsewhere changes nothing in the tab, and a copy onto the Shown File counts as over itself. A Single Image has no file, so over itself and replace become Save As; the Info-window resize does nothing for one. Batch resize is outside it.
 _Avoid_: Saver, save service (for the Core module)
 
 **Recycle Bin Backup**:
-The copy the Save Module makes of a file before it writes over it. The copy is made in PicView's temp folder, not beside the original, and moved to the Recycle Bin from there, so the Recycle Bin's Restore puts it in the temp folder. A drive with no Recycle Bin gets no backup, and the write goes ahead.
+The copy the Save Module makes of a file before it writes over it. The copy is made in PicView's temp folder, not beside the original, and recycled quietly from there, with no question asked, so the Recycle Bin's Restore puts it in the temp folder. When the temp folder's drive has no Recycle Bin or the recycle fails, there is no backup: the failure is logged and the write goes ahead.
 _Avoid_: Undo copy, .bak file
 
 ## Settings
