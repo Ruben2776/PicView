@@ -1,3 +1,4 @@
+using PicView.Avalonia.ColorManagement;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Win32.PlatformUpdate;
 using PicView.Core.IPlatform;
@@ -10,6 +11,7 @@ public partial class AboutWindow : GenericWindow, IPlatformSpecificUpdate
     public AboutWindow()
     {
         InitializeComponent();
+        ThemeManager.ApplyAcrylic(this, AboutView);
     }
 
     public async Task HandlePlatformUpdate(UpdateInfo updateInfo, string tempPath)

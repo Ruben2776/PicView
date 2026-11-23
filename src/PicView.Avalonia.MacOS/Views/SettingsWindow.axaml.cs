@@ -1,5 +1,6 @@
 using Avalonia.Controls;
 using Avalonia.Input;
+using PicView.Avalonia.ColorManagement;
 using PicView.Avalonia.CustomControls;
 using PicView.Core.Config;
 using PicView.Core.ViewModels;
@@ -12,6 +13,7 @@ public partial class SettingsWindow : GenericWindow
     public SettingsWindow(SettingsWindowConfig config)
     {
         InitializeComponent();
+        ThemeManager.ApplyAcrylic(this, SettingsView);
 
         Loaded += delegate
         {

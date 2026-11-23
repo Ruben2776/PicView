@@ -81,7 +81,7 @@
             Height="1"
             x:Name="BorderRectangle" />
 
-        <Panel Background="{DynamicResource WindowMainBackgroundColor}">
+        <Panel Background="{DynamicResource WindowMainBackgroundColor}" x:Name="BackgroundPanel">
 
             <uc:SpinWaiter
                 HorizontalAlignment="Center"

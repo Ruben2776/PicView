@@ -24,7 +24,7 @@
                                            Mode=OneWay}"
                     TextAlignment="Center" />
             </DockPanel>
-            <main:BatchResizeView Background="{DynamicResource WindowMainBackgroundColor}" />
+            <main:BatchResizeView Background="{DynamicResource WindowMainBackgroundColor}" x:Name="XBatchResizeView" />
         </DockPanel>
     </Border>
 </Window>

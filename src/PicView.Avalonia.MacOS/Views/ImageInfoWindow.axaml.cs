@@ -1,4 +1,5 @@
 using Avalonia.Media;
+using PicView.Avalonia.ColorManagement;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.UI;
 using PicView.Core.ViewModels;
@@ -11,6 +12,7 @@ public partial class ImageInfoWindow : GenericWindow
     {
         DataContext = viewModel;
         InitializeComponent();
+        ThemeManager.ApplyAcrylic(this, XExifView);
         if (Settings.Theme.GlassTheme)
         {
             WindowBorder.Background = Brushes.Transparent;

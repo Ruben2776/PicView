@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
+using PicView.Avalonia.ColorManagement;
 using PicView.Avalonia.CustomControls;
 using PicView.Core.Config;
 using PicView.Core.FileAssociations;
@@ -27,7 +28,7 @@ public partial class SettingsWindow : GenericWindow
                 SettingsButton.BorderBrush = new SolidColorBrush(color);
             }
         }
-
+        ThemeManager.ApplyAcrylic(this, SettingsView);
         Loaded += delegate
         {
             SettingsView.Focus();

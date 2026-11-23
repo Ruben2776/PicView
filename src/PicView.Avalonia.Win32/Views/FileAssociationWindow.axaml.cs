@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
+using PicView.Avalonia.ColorManagement;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.UI;
 using PicView.Core.FileAssociations;
@@ -19,6 +20,7 @@ public partial class FileAssociationWindow : GenericWindow
     public FileAssociationWindow()
     {
         InitializeComponent();
+        ThemeManager.ApplyAcrylic(this, BackgroundPanel);
 
         Loaded += delegate
         {

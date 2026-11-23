@@ -1,4 +1,5 @@
-﻿using PicView.Avalonia.CustomControls;
+﻿using PicView.Avalonia.ColorManagement;
+using PicView.Avalonia.CustomControls;
 using PicView.Core.DebugTools;
 using PicView.Core.ViewModels;
 using PicView.Core.WindowsNT.Taskbar;
@@ -12,6 +13,7 @@ public partial class BatchResizeWindow : GenericWindow, IDisposable
     public BatchResizeWindow()
     {
         InitializeComponent();
+        ThemeManager.ApplyAcrylic(this, ResizeView);
         StartUp();
     }
 

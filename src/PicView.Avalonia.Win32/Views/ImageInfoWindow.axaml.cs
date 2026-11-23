@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.LogicalTree;
 using Avalonia.Media;
 using Avalonia.VisualTree;
+using PicView.Avalonia.ColorManagement;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.UI;
 using PicView.Core.ViewModels;
@@ -17,6 +18,7 @@ public partial class ImageInfoWindow: GenericWindow, IDisposable
     {
         DataContext = viewModel;
         InitializeComponent();
+        ThemeManager.ApplyAcrylic(this, ExifView);
         
         if (Settings.Theme.GlassTheme)
         {

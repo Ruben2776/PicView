@@ -247,6 +247,11 @@ public class Theme
     /// Indicates whether the glass theme is enabled. When it is, light/dark theme is ignored.
     /// </summary>
     public bool GlassTheme { get; set; } = false;
+
+    /// <summary>
+    /// Whether windows blur what is behind them. The glass theme blurs regardless.
+    /// </summary>
+    public bool UseAcrylic { get; set; } = true;
 }
 
 public class Gallery

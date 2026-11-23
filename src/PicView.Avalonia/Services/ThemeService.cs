@@ -20,6 +20,11 @@ public class ThemeService(MainWindowOverviewViewModel? mainWindows) : IThemeServ
         ThemeManager.SetColorTheme(colorIndex);
     }
 
+    public void SetAcrylic(bool isEnabled)
+    {
+        ThemeManager.SetAcrylic(isEnabled);
+    }
+
     /// <inheritdoc cref="BackgroundManager.SetBackground(MainWindowOverviewViewModel, int)"/>
     public void SetBackground(int backgroundIndex)
     {

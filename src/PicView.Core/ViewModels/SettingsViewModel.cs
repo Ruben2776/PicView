@@ -192,6 +192,7 @@ public class SettingsViewModel : IDisposable
     // Appearance
     public BindableReactiveProperty<int> ThemeIndex { get; } = new(Settings.Theme.GlassTheme ? 2 : Settings.Theme.Dark ? 0 : 1);
     public BindableReactiveProperty<int> ColorThemeIndex { get; } = new(Settings.Theme.ColorTheme);
+    public BindableReactiveProperty<bool> IsUsingAcrylic { get; } = new(Settings.Theme.UseAcrylic);
     
     // Image
     public BindableReactiveProperty<bool> IsScalingSetToNearestNeighbor { get; } = new(Settings.ImageScaling.IsScalingSetToNearestNeighbor);
@@ -290,6 +291,7 @@ public class SettingsViewModel : IDisposable
             DeletionIndex,
             ThemeIndex,
             ColorThemeIndex,
+            IsUsingAcrylic,
             IsScalingSetToNearestNeighbor,
             ImageScalingIndex,
             IsAutoPlayingMotionPhotos,
@@ -413,6 +415,16 @@ public class SettingsViewModel : IDisposable
             }, DebugHelper.LogError(nameof(SettingsViewModel), nameof(SubscriptionSettingsUpdate)))
             .AddTo(ref _disposables);
             
+        Observable.EveryValueChanged(this, x => x.IsUsingAcrylic.CurrentValue)
+            .Skip(1)
+            .SubscribeAwait(async (x, _) =>
+            {
+                Settings.Theme.UseAcrylic = x;
+                _themeService?.SetAcrylic(x);
+                await SaveSettingsAsync().ConfigureAwait(false);
+            }, DebugHelper.LogError(nameof(SettingsViewModel), nameof(SubscriptionSettingsUpdate)))
+            .AddTo(ref _disposables);
+
         SetColorThemeCommand
             .Subscribe(x => {
             ColorThemeIndex.Value = (int)x;

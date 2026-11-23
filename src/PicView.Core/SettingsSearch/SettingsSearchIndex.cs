@@ -99,6 +99,10 @@ public static class SettingsSearchIndex
         {
             list.Add(new SettingsSearchItem(t.GlassTheme, data.ThemeSearchTags));
         }
+        if (t.BlurWindowBackground != null)
+        {
+            list.Add(new SettingsSearchItem(t.BlurWindowBackground, data.WindowBlurSearchTags));
+        }
 
         // Background
         if (t.ChangeBackground != null)

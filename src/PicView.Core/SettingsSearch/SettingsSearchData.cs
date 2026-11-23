@@ -13,6 +13,7 @@ public class SettingsSearchData
     public string FullPathInTitleBarySearchTags { get; }
     public string WhenDeletingFileSearchTags { get; }
     public string ThemeSearchTags { get; }
+    public string WindowBlurSearchTags { get; }
     public string ColorSearchTags { get; }
     public string BackgroundSearchTags { get; }
     public string BackgroundConstrainSearchTags { get; }
@@ -142,6 +143,10 @@ public class SettingsSearchData
         sb.Append(space);
         sb.Append(TranslationManager.Translation.Theme);
         ThemeSearchTags = sb.ToString();
+
+        WindowBlurSearchTags = string.Join(space, TranslationManager.Translation.BlurWindowBackground,
+            TranslationManager.Translation.Blur, TranslationManager.Translation.Theme,
+            "Acrylic Transparency Translucent");
         
         sb.Append(TranslationManager.Translation.ChangeBackground);
         sb.Append(space);

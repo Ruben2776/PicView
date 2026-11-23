@@ -52,6 +52,7 @@ public class LanguageModel
     public string? Blink { get; set; }
     public string? Blue { get; set; }
     public string? Blur { get; set; }
+    public string? BlurWindowBackground { get; set; }
     public string? Bottom { get; set; }
     public string? Brightness { get; set; }
     public string? CameraMaker { get; set; }

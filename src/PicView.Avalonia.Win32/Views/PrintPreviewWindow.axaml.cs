@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Media;
+using PicView.Avalonia.ColorManagement;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.UI;
 
@@ -10,6 +11,7 @@ public partial class PrintPreviewWindow : GenericWindow
     public PrintPreviewWindow()
     {
         InitializeComponent();
+        ThemeManager.ApplyAcrylic(this, PrintPreviewView);
 
         ThemeUpdates();
     }
