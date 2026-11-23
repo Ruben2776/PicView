@@ -29,6 +29,20 @@ public sealed class ShownFileWriter(Func<EffectsViewModel?> getEffects)
     public Func<Action, Task>? UiThread { get; set; }
 
     /// <summary>
+    /// Whether a Save Source write of the tab would write an Effects Render rather than its file as it is.
+    /// </summary>
+    public bool WouldWriteEffects(TabViewModel tab)
+    {
+        if (tab.FileInfo.CurrentValue is not { } file || tab.ImageType.CurrentValue is ImageType.Svg)
+        {
+            return false;
+        }
+
+        using var render = getEffects()?.CloneRender(file);
+        return render is not null;
+    }
+
+    /// <summary>
     /// Writes the tab's shown image as <paramref name="job"/> says, off the UI thread, with the tab Busy meanwhile.
     /// </summary>
     public async ValueTask<WriteResult> WriteAsync(TabViewModel tab, ShownFileWrite job)

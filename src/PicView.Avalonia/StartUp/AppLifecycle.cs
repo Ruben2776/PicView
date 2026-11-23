@@ -6,6 +6,7 @@ using Avalonia.Threading;
 using ImageMagick;
 using PicView.Avalonia.ColorManagement;
 using PicView.Avalonia.CustomControls;
+using PicView.Avalonia.FileSystem;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.Interfaces;
 using PicView.Avalonia.Navigation;
@@ -71,6 +72,8 @@ public sealed class AppLifecycle
         Action<string?, bool> startNewProcess, HandOverListener? handOvers = null)
     {
         _core = core;
+        core.Writer.SingleImagePixels = new AvaloniaSingleImagePixels();
+        core.Writer.UiThread = action => Dispatcher.UIThread.InvokeAsync(action).GetTask();
         _sharedFiles = sharedFiles;
         _exit = exit;
         _startNewProcess = startNewProcess;

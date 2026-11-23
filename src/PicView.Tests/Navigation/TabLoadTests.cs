@@ -1344,7 +1344,7 @@ public class TabLoadTests : IDisposable
         var tab = CreateTab(_testDirectory, withIterator: false);
         await tab.Load.LoadAsync(path);
         tab.Orientation.TurnRight();
-        var saving = new FileSavingService(new StubSavePathPicker(null), () => null);
+        var saving = new FileSavingService(new StubSavePathPicker(null), SavingTestWriter.Create(null));
 
         Assert.True(await saving.SaveAsync(tab));
         // The file is upright now, so the tab no longer turns it, and shows the saved file
@@ -1428,7 +1428,7 @@ public class TabLoadTests : IDisposable
         await tab.Load.LoadAsync(path);
         var before = tab.Model;
         _decoded.Clear();
-        var saving = new FileSavingService(new StubSavePathPicker(null), () => null);
+        var saving = new FileSavingService(new StubSavePathPicker(null), SavingTestWriter.Create(null));
 
         Assert.True(await saving.SaveAsync(tab));
 

@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Threading;
+using PicView.Core.Saving;
 using PicView.Core.ViewModels;
 
 namespace PicView.Avalonia.FileSystem;
@@ -39,6 +40,6 @@ public static class FileSaver
         var core = Dispatcher.UIThread.CheckAccess()
             ? Application.Current?.DataContext as CoreViewModel
             : await Dispatcher.UIThread.InvokeAsync(() => Application.Current?.DataContext as CoreViewModel);
-        return _fileSaverService = new FileSavingService(new FilePickerService(), () => core?.Effects);
+        return _fileSaverService = new FileSavingService(new FilePickerService(), core?.Writer ?? new ShownFileWriter(() => null));
     }
 }

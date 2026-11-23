@@ -72,7 +72,7 @@ public class AvaloniaHeadlessSavingTests
             var vm = CreateDummyVm();
             var tab = new TabViewModel(vm);
             tab.FileInfo.Value = new FileInfo(sourceJpg);
-            var savingService = new FileSavingService(new StubSavePathPicker(null), () => null);
+            var savingService = new FileSavingService(new StubSavePathPicker(null), SavingTestWriter.Create(null));
 
             // 3. Save file again as test.webp
             var result = RunWithDispatcher(savingService.SaveToAsync(tab, destWebp));
