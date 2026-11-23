@@ -66,17 +66,34 @@ public static class ExifFunctions
         try
         {
             var startTime = Environment.TickCount64;
-            using var magickImage = await RetryWhileBusyAsync(() => new MagickImage(fileInfo), startTime)
+            var original = await RetryWhileBusyAsync(() => File.ReadAllBytes(fileInfo.FullName), startTime)
                 .ConfigureAwait(false);
 
+            // A JPEG gets its metadata segments written and keeps its image data as it is, so an edit loses no
+            // quality. Any other file, or a JPEG the rewrite cannot read, is encoded again
+            byte[]? bytes;
+            if (JpegMetadataWriter.IsJpeg(original))
+            {
+                var rewrite = RewriteJpegMetadata(original, updateAction);
+                if (rewrite.IsUnchanged)
+                {
+                    return false;
+                }
+
+                bytes = rewrite.Bytes ?? Encode(original, updateAction);
+            }
+            else
+            {
+                bytes = Encode(original, updateAction);
+            }
+
             // If the update action returns false, it means no changes were made that require saving.
-            if (!updateAction(magickImage))
+            if (bytes is null)
             {
                 return false;
             }
 
-            // Encode before opening the file, so the file is truncated for as short a time as possible
-            var bytes = magickImage.ToByteArray();
+            // Build the file before opening it, so it is truncated for as short a time as possible
             await RetryWhileBusyAsync(() =>
             {
                 using var stream = new FileStream(fileInfo.FullName, FileMode.Create, FileAccess.Write, FileShare.None);
@@ -95,6 +112,63 @@ public static class ExifFunctions
         {
             UpdateGate.Release();
         }
+    }
+
+    private readonly record struct JpegRewrite(byte[]? Bytes, bool IsUnchanged);
+
+    /// <summary>
+    /// Runs <paramref name="updateAction"/> on the metadata of <paramref name="jpeg"/>, read without its pixels, and
+    /// writes the result into the file's segments. Bytes is null when the file must be encoded instead.
+    /// </summary>
+    private static JpegRewrite RewriteJpegMetadata(byte[] jpeg, Func<MagickImage, bool> updateAction)
+    {
+        using var metadata = new MagickImage();
+        metadata.Ping(jpeg);
+        var before = PresentMetadata(metadata);
+        if (!updateAction(metadata))
+        {
+            return new JpegRewrite(null, IsUnchanged: true);
+        }
+
+        // Only what the update removed is left out: what Ping does not see is kept
+        var removed = before & ~PresentMetadata(metadata);
+        var exif = metadata.GetExifProfile()?.ToByteArray();
+        var hasExif = exif is { Length: > 0 };
+        return new JpegRewrite(JpegMetadataWriter.Rewrite(jpeg, exif, hasExif, removed), IsUnchanged: false);
+    }
+
+    private static JpegMetadataWriter.Drop PresentMetadata(MagickImage image)
+    {
+        var present = JpegMetadataWriter.Drop.None;
+        if (image.GetXmpProfile() is not null)
+        {
+            present |= JpegMetadataWriter.Drop.Xmp;
+        }
+
+        if (image.GetIptcProfile() is not null || image.GetProfile("8bim") is not null)
+        {
+            present |= JpegMetadataWriter.Drop.Iptc;
+        }
+
+        if (image.GetColorProfile() is not null)
+        {
+            present |= JpegMetadataWriter.Drop.ColorProfile;
+        }
+
+        if (!string.IsNullOrEmpty(image.Comment))
+        {
+            present |= JpegMetadataWriter.Drop.Comment;
+        }
+
+        return present;
+    }
+
+    /// <summary>Decodes <paramref name="file"/>, runs <paramref name="updateAction"/> and encodes it again.</summary>
+    /// <returns>The new file, or null when the update changed nothing.</returns>
+    private static byte[]? Encode(byte[] file, Func<MagickImage, bool> updateAction)
+    {
+        using var magickImage = new MagickImage(file);
+        return updateAction(magickImage) ? magickImage.ToByteArray() : null;
     }
 
     /// <summary>
