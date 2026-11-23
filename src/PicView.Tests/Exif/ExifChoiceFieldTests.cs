@@ -254,6 +254,24 @@ public class ExifChoiceFieldTests : IDisposable
         Assert.Equal((ushort)6, viewModel.Orientation.Choices[viewModel.Orientation.SelectedIndex.Value].Code);
     }
 
+    [Fact]
+    public void Choices_ReadOnlyFields_HaveNoBlankChoice()
+    {
+        using var viewModel = new ExifViewModel();
+
+        Assert.All(viewModel.Orientation.Choices, c => Assert.NotNull(c.Code));
+        Assert.All(viewModel.Compression.Choices, c => Assert.NotNull(c.Code));
+    }
+
+    [Fact]
+    public void UpdateExifValues_FileWithoutCompression_SelectsNothing()
+    {
+        using var viewModel = ShowFile(ExifTag.Contrast, 2);
+
+        Assert.Equal(-1, viewModel.Compression.SelectedIndex.Value);
+        Assert.Equal(string.Empty, viewModel.Compression.Text.Value);
+    }
+
     private static int IndexOf(ExifChoiceField field, string? label) =>
         Array.FindIndex(field.Choices, c => string.Equals(c.Label, label, StringComparison.Ordinal));
 

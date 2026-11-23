@@ -17,7 +17,8 @@ public sealed record ExifChoice(ushort? Code, string Label)
 /// An enumerated Exif tag, such as Contrast, as Image Information's dropdown edits it: the user picks one of its words
 /// instead of typing a code, or the blank first choice, which removes the tag. Codes that share a word, such as the
 /// flash codes that all mean "Flash did not fire", are one choice, which writes the first of them. A read-only field,
-/// such as Compression, only shows the file's choice: it describes the image and writing it would change nothing.
+/// such as Compression, only shows the file's choice: it describes the image and writing it would change nothing, so it
+/// has no blank choice, and shows none when the file has no such tag.
 /// </summary>
 public sealed class ExifChoiceField : IDisposable
 {
@@ -38,7 +39,12 @@ public sealed class ExifChoiceField : IDisposable
         _label = label;
         IsReadOnly = isReadOnly;
 
-        var choices = new List<ExifChoice>(codes.Length + 1) { new(null, string.Empty) };
+        var choices = new List<ExifChoice>(codes.Length + 1);
+        if (!isReadOnly)
+        {
+            choices.Add(new ExifChoice(null, string.Empty));
+        }
+
         foreach (var code in codes)
         {
             var word = label(code);
@@ -58,7 +64,8 @@ public sealed class ExifChoiceField : IDisposable
 
     /// <summary>
     /// The choice the dropdown shows: the file's, until the user picks another. 0, the blank choice, when the file
-    /// has no such tag, and -1 when it holds a code that has no word.
+    /// has no such tag (-1 for a read-only field, which has no blank choice), and -1 when it holds a code that has no
+    /// word.
     /// </summary>
     public BindableReactiveProperty<int> SelectedIndex { get; } = new(-1);
 
@@ -73,7 +80,7 @@ public sealed class ExifChoiceField : IDisposable
     {
         if (fileCode is not { } code)
         {
-            _fileIndex = 0;
+            _fileIndex = NoTagIndex;
             Text.Value = string.Empty;
         }
         else
@@ -92,12 +99,15 @@ public sealed class ExifChoiceField : IDisposable
     /// <summary>Shows the file's choice again, as a read-only dropdown does when another is picked.</summary>
     public void ShowFileChoice() => SelectedIndex.Value = _fileIndex;
 
+    // The blank choice, or none for a read-only field
+    private int NoTagIndex => IsReadOnly ? -1 : 0;
+
     /// <summary>Shows the blank choice, as for a file whose metadata was removed.</summary>
     internal void Clear()
     {
-        _fileIndex = 0;
+        _fileIndex = NoTagIndex;
         Text.Value = string.Empty;
-        SelectedIndex.Value = 0;
+        SelectedIndex.Value = NoTagIndex;
     }
 
     /// <summary>
