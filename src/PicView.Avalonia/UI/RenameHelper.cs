@@ -1,11 +1,10 @@
 ﻿using Avalonia.Threading;
-using ImageMagick;
 using PicView.Avalonia.CustomControls;
-using PicView.Avalonia.Navigation;
 using PicView.Core.DebugTools;
 using PicView.Core.FileHandling;
 using PicView.Core.Localization;
 using PicView.Core.Navigation;
+using PicView.Core.Saving;
 using PicView.Core.ViewModels;
 
 namespace PicView.Avalonia.UI;
@@ -37,7 +36,7 @@ public static class RenameHelper
         {
             try
             {
-                isRenamed = await Task.Run(() => RenameFileAsync(vm, tab, oldPath, newPath, mainWindow)).ConfigureAwait(false);
+                isRenamed = await Task.Run(() => RenameFileAsync(vm, tab, oldPath, newPath)).ConfigureAwait(false);
             }
             catch (Exception e)
             {
@@ -78,12 +77,11 @@ public static class RenameHelper
     /// <summary>
     /// Renames the file, or converts it when the extension changes. The folder watcher moves it to its sorted place in
     /// the tab's files and gallery. Every history follows the new name before the tab shows the file under it, or the
-    /// tab would record it as a new view.
+    /// tab would record it as a new view. A conversion is written, shown and has its original recycled by the save
+    /// module.
     /// </summary>
-    /// <param name="mainWindow">The Main Window the tab is in, which opens the converted file; without one, such as
-    /// from the image info window, the tab loads it.</param>
     private static async Task<bool> RenameFileAsync(MainWindowViewModel vm, TabViewModel tab, string oldPath,
-        string newPath, MainWindow? mainWindow)
+        string newPath)
     {
         var currentExtension = Path.GetExtension(oldPath);
         var newExtension = Path.GetExtension(newPath);
@@ -100,24 +98,9 @@ public static class RenameHelper
             return true;
         }
 
-        using (var magick = new MagickImage(oldPath))
-        {
-            await magick.WriteAsync(newPath).ConfigureAwait(false);
-        }
-
-        FileRenames.Follow(vm.Core, oldPath, newPath);
-
-        // Show the converted file before deleting the original, so the watcher removes a file that is no longer shown
-        // instead of navigating away from it
-        if (mainWindow is null)
-        {
-            await tab.Load.LoadAsync(newPath).ConfigureAwait(false);
-        }
-        else
-        {
-            await SourceOpener.OpenAsync(mainWindow, vm.Core, newPath, tab: tab).ConfigureAwait(false);
-        }
-        File.Delete(oldPath);
-        return true;
+        var result = await vm.Core.Writer.WriteAsync(tab,
+            new ShownFileWrite(WriteSource.SaveSource, default, new WriteDestination.Replace(newPath)))
+            .ConfigureAwait(false);
+        return result.Outcome is WriteOutcome.Written;
     }
 }
