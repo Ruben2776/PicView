@@ -187,7 +187,7 @@ public class ExifViewModelTests
 
             Assert.Equal(72.0, viewModel.DpiX.Value);
             Assert.Equal(72.0, viewModel.DpiY.Value);
-            Assert.Equal(0, viewModel.Orientation.Value);
+            Assert.Equal(0, viewModel.Orientation.SelectedIndex.Value);
             Assert.Equal(MagickFormat.Jpeg, viewModel.ImageFormat.Value);
         }
         finally

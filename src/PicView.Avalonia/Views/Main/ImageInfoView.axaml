@@ -25,6 +25,10 @@
             <Style Selector="ComboBox.x ComboBoxItem /template/ ContentPresenter#PART_ContentPresenter">
                 <Setter Property="TextWrapping" Value="Wrap" />
             </Style>
+            <!--  A tag that describes the image, such as Compression, shows the file's value and cannot be picked  -->
+            <Style Selector="ComboBox.ReadOnly ComboBoxItem">
+                <Setter Property="Cursor" Value="No" />
+            </Style>
         </Styles>
     </UserControl.Styles>
     <UserControl.ContextMenu>
@@ -717,18 +721,15 @@
                                                         FallbackValue=0}"
                                 MinWidth="180"
                                 Margin="5,0,0,0"
-                                Classes="CStyle x"
-                                ItemsSource="{CompiledBinding Exif.Orientations.Value,
-                                                              Mode=OneWay,
-                                                              FallbackValue=''}"
-                                SelectedIndex="{CompiledBinding Exif.Orientation.Value,
-                                                                Mode=OneWay,
-                                                                FallbackValue=0}" />
+                                Classes="CStyle x ReadOnly"
+                                ItemsSource="{CompiledBinding Exif.Orientation.Choices}"
+                                SelectedIndex="{CompiledBinding Exif.Orientation.SelectedIndex.Value,
+                                                                Mode=TwoWay}"
+                                Tag="{CompiledBinding Exif.Orientation}" />
                             <customControls:CopyButton
                                 Classes="ToolButtonHover ToolWindowBorderStyle"
-                                CopyText="{CompiledBinding Exif.Orientation.Value,
-                                                           Mode=OneWay,
-                                                           FallbackValue=''}"
+                                CopyText="{CompiledBinding Exif.Orientation.Text.Value,
+                                                           Mode=OneWay}"
                                 IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value,
                                                             FallbackValue=False}"
                                 ToolTip.Tip="{CompiledBinding Translation.Copy.Value,
@@ -1317,13 +1318,17 @@
                                     Width="{CompiledBinding InfoWindow.TextBoxWidth.Value}"
                                     MinWidth="180"
                                     Margin="5,0,0,0"
-                                    Classes="x"
-                                    ItemsSource="{CompiledBinding Exif.ColorRepresentations.Value}"
-                                    SelectedIndex="{CompiledBinding Exif.ColorRepresentation.Value,
-                                                                    Mode=TwoWay}" />
+                                    Padding="5,7,1,7"
+                                    Background="{DynamicResource DisabledBackgroundColor}"
+                                    Classes="CStyle x"
+                                    CornerRadius="2"
+                                    ItemsSource="{CompiledBinding Exif.ColorRepresentation.Choices}"
+                                    SelectedIndex="{CompiledBinding Exif.ColorRepresentation.SelectedIndex.Value,
+                                                                    Mode=TwoWay}"
+                                    Tag="{CompiledBinding Exif.ColorRepresentation}" />
                                 <customControls:CopyButton
                                     Classes="ToolButtonHover ToolWindowBorderStyle"
-                                    CopyText="{CompiledBinding Exif.ColorRepresentation.Value,
+                                    CopyText="{CompiledBinding Exif.ColorRepresentation.Text.Value,
                                                                Mode=OneWay}"
                                     IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
                                     ToolTip.Tip="{CompiledBinding Translation.Copy.Value,
@@ -1349,12 +1354,14 @@
                                     Background="{DynamicResource DisabledBackgroundColor}"
                                     Classes="CStyle x"
                                     CornerRadius="2"
-                                    ItemsSource="{CompiledBinding Exif.ResolutionUnits.Value}"
-                                    SelectedIndex="{CompiledBinding Exif.ResolutionUnit.Value,
-                                                                    Mode=OneWay}" />
+                                    ItemsSource="{CompiledBinding Exif.ResolutionUnit.Choices}"
+                                    SelectedIndex="{CompiledBinding Exif.ResolutionUnit.SelectedIndex.Value,
+                                                                    Mode=TwoWay}"
+                                    Tag="{CompiledBinding Exif.ResolutionUnit}" />
                                 <customControls:CopyButton
                                     Classes="ToolButtonHover ToolWindowBorderStyle"
-                                    CopyText="{Binding #ResolutionUnitBox.SelectedItem}"
+                                    CopyText="{CompiledBinding Exif.ResolutionUnit.Text.Value,
+                                                               Mode=OneWay}"
                                     IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
                                     ToolTip.Tip="{CompiledBinding Translation.Copy.Value,
                                                                   Mode=OneWay}">
@@ -1377,14 +1384,15 @@
                                     MinWidth="180"
                                     Margin="5,0,0,0"
                                     Padding="5,7,1,7"
-                                    Classes="CStyle x"
+                                    Classes="CStyle x ReadOnly"
                                     CornerRadius="2"
-                                    ItemsSource="{CompiledBinding Exif.Compressions.Value}"
-                                    SelectedIndex="{CompiledBinding Exif.Compression.Value,
-                                                                    Mode=OneWay}" />
+                                    ItemsSource="{CompiledBinding Exif.Compression.Choices}"
+                                    SelectedIndex="{CompiledBinding Exif.Compression.SelectedIndex.Value,
+                                                                    Mode=TwoWay}"
+                                    Tag="{CompiledBinding Exif.Compression}" />
                                 <customControls:CopyButton
                                     Classes="ToolButtonHover ToolWindowBorderStyle"
-                                    CopyText="{CompiledBinding Exif.Compression.Value,
+                                    CopyText="{CompiledBinding Exif.Compression.Text.Value,
                                                                Mode=OneWay}"
                                     IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
                                     ToolTip.Tip="{CompiledBinding Translation.Copy.Value,
@@ -1764,17 +1772,22 @@
                                     Classes="txt"
                                     Text="{CompiledBinding Translation.MeteringMode.Value,
                                                            Mode=OneWay}" />
-                                <customControls:FuncTextBox
+                                <ComboBox
                                     x:Name="MeteringModeBox"
                                     Width="{CompiledBinding InfoWindow.TextBoxWidth.Value}"
-                                    Classes=" TStyle x"
-                                    Command="{CompiledBinding Exif.SetMeteringModeCommand}"
-                                    CommandParameter="{Binding $self.Text}"
-                                    Text="{CompiledBinding Exif.MeteringMode.Value,
-                                                           Mode=TwoWay}" />
+                                    MinWidth="180"
+                                    Margin="5,0,0,0"
+                                    Padding="5,7,1,7"
+                                    Background="{DynamicResource DisabledBackgroundColor}"
+                                    Classes="CStyle x"
+                                    CornerRadius="2"
+                                    ItemsSource="{CompiledBinding Exif.MeteringMode.Choices}"
+                                    SelectedIndex="{CompiledBinding Exif.MeteringMode.SelectedIndex.Value,
+                                                                    Mode=TwoWay}"
+                                    Tag="{CompiledBinding Exif.MeteringMode}" />
                                 <customControls:CopyButton
                                     Classes="ToolButtonHover ToolWindowBorderStyle"
-                                    CopyText="{CompiledBinding Exif.MeteringMode.Value,
+                                    CopyText="{CompiledBinding Exif.MeteringMode.Text.Value,
                                                                Mode=OneWay}"
                                     IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
                                     ToolTip.Tip="{CompiledBinding Translation.Copy.Value,

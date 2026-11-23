@@ -151,67 +151,6 @@ public static class ExifWriter
         }, nameof(ExifWriter), nameof(AddComment));
 
     /// <summary>
-    /// Adds the resolution unit to the EXIF metadata of an image file.
-    /// </summary>
-    /// <param name="fileInfo">The image file to update.</param>
-    /// <param name="value">The resolution unit to set (e.g., 2 for inches, 3 for centimeters).</param>
-    /// <returns>A task that represents the asynchronous operation. The task result contains true if the operation succeeded; otherwise, false.</returns>
-    public static Task<bool> AddResolutionUnit(FileInfo? fileInfo, ushort? value) =>
-        ExifFunctions.TryUpdateImageProfileAsync(fileInfo, magickImage =>
-        {
-            if (value is null)
-            {
-                return false;
-            }
-
-            var profile = magickImage.GetExifProfile() ?? new ExifProfile();
-            profile.SetValue(ExifTag.ResolutionUnit, value.Value);
-            magickImage.SetProfile(profile);
-            return true;
-        }, nameof(ExifWriter), nameof(AddResolutionUnit));
-
-    /// <summary>
-    /// Adds the color space information to the EXIF metadata of an image file.
-    /// </summary>
-    /// <param name="fileInfo">The image file to update.</param>
-    /// <param name="value">The color space value to set (e.g., 1 for sRGB).</param>
-    /// <returns>A task that represents the asynchronous operation. The task result contains true if the operation succeeded; otherwise, false.</returns>
-    public static Task<bool> AddColorSpace(FileInfo? fileInfo, ushort? value) =>
-        ExifFunctions.TryUpdateImageProfileAsync(fileInfo, magickImage =>
-        {
-            if (value is null)
-            {
-                return false;
-            }
-
-            var profile = magickImage.GetExifProfile() ?? new ExifProfile();
-            profile.SetValue(ExifTag.ColorSpace, value.Value);
-            magickImage.SetProfile(profile);
-            return true;
-        }, nameof(ExifWriter), nameof(AddResolutionUnit));
-
-    /// <summary>
-    /// Adds the compression type to the EXIF metadata of an image file.
-    /// </summary>
-    /// <param name="fileInfo">The image file to update.</param>
-    /// <param name="value">The compression value to set.</param>
-    /// <returns>A task that represents the asynchronous operation. The task result contains true if the operation succeeded; otherwise, false.</returns>
-    public static Task<bool> AddCompression(FileInfo? fileInfo, ushort? value) =>
-        ExifFunctions.TryUpdateImageProfileAsync(fileInfo, magickImage =>
-        {
-            if (value is null)
-            {
-                return false;
-            }
-
-            var profile = magickImage.GetExifProfile() ?? new ExifProfile();
-            profile.SetValue(ExifTag.Compression, value.Value);
-            magickImage.SetProfile(profile);
-            return true;
-        }, nameof(ExifWriter), nameof(AddCompression));
-
-
-    /// <summary>
     /// Adds the compressed bits per pixel to the EXIF metadata of an image file.
     /// </summary>
     /// <param name="fileInfo">The image file to update.</param>
@@ -507,29 +446,21 @@ public static class ExifWriter
                 profile.SetValue(tag, code.Value);
             }
 
+            // The encoder writes the resolution unit from the image's density, over the profile's
+            if (tag == ExifTag.ResolutionUnit)
+            {
+                var density = magickImage.Density;
+                magickImage.Density = new Density(density.X, density.Y, code switch
+                {
+                    2 => DensityUnit.PixelsPerInch,
+                    3 => DensityUnit.PixelsPerCentimeter,
+                    _ => DensityUnit.Undefined
+                });
+            }
+
             magickImage.SetProfile(profile);
             return true;
         }, nameof(ExifWriter), nameof(SetChoiceAsync));
-
-    /// <summary>
-    /// Adds the metering mode to the EXIF metadata of an image file.
-    /// </summary>
-    /// <param name="fileInfo">The image file to update.</param>
-    /// <param name="value">The metering mode to add.</param>
-    /// <returns>A task that represents the asynchronous operation. The task result contains true if the operation succeeded; otherwise, false.</returns>
-    public static Task<bool> AddMeteringMode(FileInfo? fileInfo, string? value) =>
-        ExifFunctions.TryUpdateImageProfileAsync(fileInfo, magickImage =>
-        {
-            if (!ushort.TryParse(value, out var mode))
-            {
-                return false;
-            }
-
-            var profile = magickImage.GetExifProfile() ?? new ExifProfile();
-            profile.SetValue(ExifTag.MeteringMode, mode);
-            magickImage.SetProfile(profile);
-            return true;
-        }, nameof(ExifWriter), nameof(AddMeteringMode));
 
     /// <summary>
     /// Adds the flash energy to the EXIF metadata of an image file.

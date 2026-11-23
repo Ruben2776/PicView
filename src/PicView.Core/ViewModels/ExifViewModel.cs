@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using System.Globalization;
 using System.Text;
 using ImageMagick;
@@ -52,97 +51,11 @@ public class ExifViewModel : IDisposable
         SetFocalLengthCommand = new ReactiveCommand<string>(async (s, _) => { FocalLength.Value = s; await AddExifPropertyAsync(ExifWriter.AddFocalLength, s).ConfigureAwait(false); });
         SetFocalLength35MmCommand = new ReactiveCommand<string>(async (s, _) => { FocalLength35Mm.Value = s; await AddExifPropertyAsync(ExifWriter.AddFocalLength35mm, s).ConfigureAwait(false); });
         SetISOSpeedCommand = new ReactiveCommand<string>(async (s, _) => { ISOSpeed.Value = s; await AddExifPropertyAsync(ExifWriter.AddIsoSpeed, s).ConfigureAwait(false); });
-        SetMeteringModeCommand = new ReactiveCommand<string>(async (s, _) => { MeteringMode.Value = s; await AddExifPropertyAsync(ExifWriter.AddMeteringMode, s).ConfigureAwait(false); });
         SetFlashEnergyCommand = new ReactiveCommand<string>(async (s, _) => { FlashEnergy.Value = s; await AddExifPropertyAsync(ExifWriter.AddFlashEnergy, s).ConfigureAwait(false); });
         SetBrightnessCommand = new ReactiveCommand<string>(async (s, _) => { Brightness.Value = s; await AddExifPropertyAsync(ExifWriter.AddBrightness, s).ConfigureAwait(false); });
         SetLensMakerCommand = new ReactiveCommand<string>(async (s, _) => { LensMaker.Value = s; await AddExifPropertyAsync(ExifWriter.AddLensMaker, s).ConfigureAwait(false); });
         SetLensModelCommand = new ReactiveCommand<string>(async (s, _) => { LensModel.Value = s; await AddExifPropertyAsync(ExifWriter.AddLensModel, s).ConfigureAwait(false); });
         SetExifVersionCommand = new ReactiveCommand<string>(async (s, _) => { ExifVersion.Value = s; await AddExifPropertyAsync(ExifWriter.AddExifVersion, s).ConfigureAwait(false); });
-
-        ResolutionUnits = new BindableReactiveProperty<string[]>([
-            string.Empty,
-            TranslationManager.Translation.None ?? string.Empty,
-            TranslationManager.Translation.Inches ?? string.Empty,
-            TranslationManager.Translation.Centimeters ?? string.Empty
-        ]);
-
-        ColorRepresentations = new BindableReactiveProperty<string[]>([
-            string.Empty,
-            "sRGB",
-            "Adobe RGB",
-            TranslationManager.Translation.Uncalibrated ?? "Uncalibrated"
-        ]);
-
-        Compressions = new BindableReactiveProperty<string[]>([
-            string.Empty,
-            TranslationManager.Translation.None ?? string.Empty,
-            "CCITT 1D",
-            "T4/Group 3 Fax",
-            "T6/Group 4 Fax",
-            "LZW",
-            "JPEG (old-style)",
-            "JPEG",
-            "Adobe Deflate",
-            "JBIG B&W",
-            "JBIG Color",
-            "JPEG",
-            "Kodak 262",
-            "Next",
-            "Sony ARW Compressed",
-            "Packed RAW",
-            "Samsung SRW Compressed",
-            "CCIRLEW",
-            "Samsung SRW Compressed 2",
-            "PackBits",
-            "Thunderscan",
-            "Kodak KDC Compressed",
-            "IT8CTPAD",
-            "IT8LW",
-            "IT8MP",
-            "IT8BL",
-            "PixarFilm",
-            "PixarLog",
-            "Deflate",
-            "DCS",
-            "Aperio JPEG 2000 YCbCr",
-            "Aperio JPEG 2000 RGB",
-            "JBIG",
-            "SGILog",
-            "SGILog24",
-            "JPEG 2000",
-            "Nikon NEF Compressed",
-            "JBIG2 TIFF FX",
-            "Microsoft Document Imaging (MDI)\n Binary Level Codec",
-            "Microsoft Document Imaging (MDI)\n Progressive Transform Codec",
-            "Microsoft Document Imaging (MDI) Vector",
-            "ESRI Lerc",
-            "Lossy JPEG",
-            "LZMA2",
-            "Zstd (old)",
-            "WebP (old)",
-            "PNG",
-            "JPEG XR",
-            "Zstd",
-            "WebP",
-            "JPEG XL (old)",
-            "JPEG XL",
-            "Kodak DCR Compressed",
-            "Pentax PEF Compressed"
-        ]);
-
-        Debug.Assert(TranslationManager.Translation.Flipped != null);
-        Debug.Assert(TranslationManager.Translation.Normal != null);
-        Orientations = new BindableReactiveProperty<string[]>([
-            string.Empty,
-            TranslationManager.Translation.Normal,
-            TranslationManager.Translation.Flipped,
-            $"{TranslationManager.Translation.Rotated} 180\u00b0",
-            $"{TranslationManager.Translation.Rotated} 180\u00b0, {TranslationManager.Translation.Flipped}",
-            $"{TranslationManager.Translation.Rotated} 270\u00b0, {TranslationManager.Translation.Flipped}",
-            $"{TranslationManager.Translation.Rotated} 90\u00b0",
-            $"{TranslationManager.Translation.Rotated} 90\u00b0, {TranslationManager.Translation.Flipped}",
-            $"{TranslationManager.Translation.Rotated} 270\u00b0"
-        ]);
     }
 
     public ReactiveCommand? OpenGoogleLinkCommand { get; }
@@ -177,7 +90,6 @@ public class ExifViewModel : IDisposable
     public ReactiveCommand<string> SetFocalLengthCommand { get; set; }
     public ReactiveCommand<string> SetFocalLength35MmCommand { get; set; }
     public ReactiveCommand<string> SetISOSpeedCommand { get; set; }
-    public ReactiveCommand<string> SetMeteringModeCommand { get; set; }
     public ReactiveCommand<string> SetFlashEnergyCommand { get; set; }
     public ReactiveCommand<string> SetBrightnessCommand { get; set; }
     public ReactiveCommand<string> SetLensMakerCommand { get; set; }
@@ -226,18 +138,18 @@ public class ExifViewModel : IDisposable
 
     public BindableReactiveProperty<string?> Software { get; } = new();
 
-    public BindableReactiveProperty<string[]> Orientations { get; }
-    public BindableReactiveProperty<int> Orientation { get; } = new();
-    public BindableReactiveProperty<ushort?> ResolutionUnit { get; } = new();
+    // Orientation and Compression describe the image, so writing them would change nothing but the tag
+    public ExifChoiceField Orientation { get; } =
+        new(ExifTag.Orientation, [1, 2, 3, 4, 5, 6, 7, 8], ExifReader.OrientationLabel, isReadOnly: true);
 
-    public BindableReactiveProperty<string[]> ResolutionUnits { get; }
+    public ExifChoiceField ResolutionUnit { get; } =
+        new(ExifTag.ResolutionUnit, [1, 2, 3], ExifReader.ResolutionUnitLabel);
 
+    public ExifChoiceField ColorRepresentation { get; } =
+        new(ExifTag.ColorSpace, [1, 2, 65535], ExifReader.ColorSpaceLabel);
 
-    public BindableReactiveProperty<string[]> ColorRepresentations { get; }
-    public BindableReactiveProperty<ushort?> ColorRepresentation { get; } = new();
-
-    public BindableReactiveProperty<ushort?> Compression { get; } = new();
-    public BindableReactiveProperty<string[]> Compressions { get; }
+    public ExifChoiceField Compression { get; } =
+        new(ExifTag.Compression, ExifReader.CompressionCodes, ExifReader.CompressionLabel, isReadOnly: true);
 
     public BindableReactiveProperty<string?> Comment { get; } = new();
 
@@ -267,7 +179,8 @@ public class ExifViewModel : IDisposable
     // ReSharper disable once InconsistentNaming
     public BindableReactiveProperty<string?> ISOSpeed { get; } = new();
 
-    public BindableReactiveProperty<string?> MeteringMode { get; } = new();
+    public ExifChoiceField MeteringMode { get; } =
+        new(ExifTag.MeteringMode, [0, 1, 2, 3, 4, 5, 6, 255], ExifReader.MeteringModeLabel);
 
     public ExifChoiceField Contrast { get; } =
         new(ExifTag.Contrast, [0, 1, 2], ExifReader.SoftHardLabel);
@@ -325,11 +238,9 @@ public class ExifViewModel : IDisposable
             CameraMaker,
             CameraModel,
             ColorRepresentation,
-            ColorRepresentations,
             Comment,
             CompressedBitsPixel,
             Compression,
-            Compressions,
             Contrast,
             Copyright,
             DateTaken,
@@ -359,7 +270,6 @@ public class ExifViewModel : IDisposable
             MaxAperture,
             MeteringMode,
             Orientation,
-            Orientations,
             PhotometricInterpretation,
             PixelHeight,
             PixelWidth,
@@ -367,7 +277,6 @@ public class ExifViewModel : IDisposable
             PrintSizeInch,
             Resolution,
             ResolutionUnit,
-            ResolutionUnits,
             Saturation,
             Sharpness,
             SizeMp,
@@ -398,7 +307,6 @@ public class ExifViewModel : IDisposable
             SetFocalLengthCommand,
             SetFocalLength35MmCommand,
             SetISOSpeedCommand,
-            SetMeteringModeCommand,
             SetFlashEnergyCommand,
             SetBrightnessCommand,
             SetLensMakerCommand,
@@ -719,19 +627,10 @@ public class ExifViewModel : IDisposable
                 BitDepth.Value = (magick.Depth * 3).ToString();
             }
 
+            // The image's orientation, not the tag, since some formats keep it outside the Exif profile. The codes of
+            // ExifOrientation are the Exif codes
             var orientation = magick is null ? ExifOrientation.None : ExifOrientationHelper.GetImageOrientation(magick);
-            Orientation.Value = orientation switch
-            {
-                ExifOrientation.Horizontal => 1,
-                ExifOrientation.MirrorHorizontal => 2,
-                ExifOrientation.Rotate180 => 3,
-                ExifOrientation.MirrorVertical => 4,
-                ExifOrientation.MirrorHorizontalRotate270Cw => 5,
-                ExifOrientation.Rotate90Cw => 6,
-                ExifOrientation.MirrorHorizontalRotate90Cw => 7,
-                ExifOrientation.Rotated270Cw => 8,
-                _ => 0
-            };
+            Orientation.Read(orientation is ExifOrientation.None ? null : (ushort)orientation);
 
             ImageFormat.Value = magick?.Format;
             UpdateImageFormatDisplay();
@@ -804,9 +703,9 @@ public class ExifViewModel : IDisposable
             Subject.Value = ExifReader.GetSubject(profile);
             Keywords.Value = ExifReader.GetKeywords(profile);
             Software.Value = profile?.GetValue(ExifTag.Software)?.Value ?? string.Empty;
-            ResolutionUnit.Value = ExifReader.GetResolutionUnit(profile);
-            ColorRepresentation.Value = profile?.GetValue(ExifTag.ColorSpace)?.Value ?? 0;
-            Compression.Value = profile?.GetValue(ExifTag.Compression)?.Value ?? 0;
+            ResolutionUnit.Read(profile);
+            ColorRepresentation.Read(profile);
+            Compression.Read(profile);
             CompressedBitsPixel.Value =
                 profile?.GetValue(ExifTag.CompressedBitsPerPixel)?.Value.ToString(CultureInfo.InvariantCulture) ?? string.Empty;
             CameraMaker.Value = profile?.GetValue(ExifTag.Make)?.Value ?? string.Empty;
@@ -820,7 +719,7 @@ public class ExifViewModel : IDisposable
             FocalLength35Mm.Value = profile?.GetValue(ExifTag.FocalLengthIn35mmFilm)?.Value.ToString() ?? string.Empty;
             FocalLength.Value = profile?.GetValue(ExifTag.FocalLength)?.Value.ToString(CultureInfo.InvariantCulture) ?? string.Empty;
             ISOSpeed.Value = ExifReader.GetISOSpeed(profile);
-            MeteringMode.Value = profile?.GetValue(ExifTag.MeteringMode)?.Value.ToString() ?? string.Empty;
+            MeteringMode.Read(profile);
             Contrast.Read(profile);
             Saturation.Read(profile);
             Sharpness.Read(profile);
@@ -918,7 +817,7 @@ public class ExifViewModel : IDisposable
         FocalLength.Value = string.Empty;
         FocalLength35Mm.Value = string.Empty;
         ISOSpeed.Value = string.Empty;
-        MeteringMode.Value = string.Empty;
+        MeteringMode.Clear();
         Contrast.Clear();
         Saturation.Clear();
         Sharpness.Clear();

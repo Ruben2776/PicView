@@ -147,11 +147,6 @@ public class ImageInfoWindowViewModel(MainWindowViewModel vm) : IDisposable
                 vm.WindowTabs.ActiveTab.Value.Model.PixelHeight);
     }
 
-    public async Task AddExifPropertyAsync<T>(Func<FileInfo?, T, Task<bool>> addAction, T value)
-    {
-        await addAction(vm.WindowTabs.ActiveTab.Value.Model.FileInfo, value).ConfigureAwait(false);
-    }
-    
     public void Dispose()
     {
         Disposable.Dispose(

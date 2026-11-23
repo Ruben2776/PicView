@@ -153,6 +153,110 @@ public class ExifChoiceFieldTests : IDisposable
         Assert.Equal(string.Empty, viewModel.Contrast.Text.Value);
     }
 
+    [Fact]
+    public async Task CommitChoiceAsync_ResolutionUnitPicked_WritesIt()
+    {
+        using var viewModel = ShowFile(ExifTag.ResolutionUnit, 2);
+        viewModel.ResolutionUnit.SelectedIndex.Value = IndexOf(viewModel.ResolutionUnit, TranslationManager.Translation.Centimeters);
+
+        var written = await viewModel.CommitChoiceAsync(viewModel.ResolutionUnit);
+
+        Assert.True(written);
+        Assert.Equal((ushort)3, ReadTag(ExifTag.ResolutionUnit));
+    }
+
+    [Fact]
+    public async Task CommitChoiceAsync_ColorSpaceUnchanged_WritesNothing()
+    {
+        // A file without the tag must not get ColorSpace=0 from a dropdown opened and closed
+        using var viewModel = ShowFile(ExifTag.Contrast, 2);
+        var before = File.GetLastWriteTimeUtc(_path);
+
+        var written = await viewModel.CommitChoiceAsync(viewModel.ColorRepresentation);
+
+        Assert.False(written);
+        Assert.Null(ReadTag(ExifTag.ColorSpace));
+        Assert.Equal(before, File.GetLastWriteTimeUtc(_path));
+    }
+
+    [Fact]
+    public void UpdateExifValues_UncalibratedColorSpace_SelectsUncalibrated()
+    {
+        using var viewModel = ShowFile(ExifTag.ColorSpace, 65535);
+
+        Assert.Equal(TranslationManager.Translation.Uncalibrated,
+            viewModel.ColorRepresentation.Choices[viewModel.ColorRepresentation.SelectedIndex.Value].Label);
+    }
+
+    [Fact]
+    public async Task CommitChoiceAsync_UncalibratedPicked_Writes65535()
+    {
+        using var viewModel = ShowFile(ExifTag.ColorSpace, 1);
+        viewModel.ColorRepresentation.SelectedIndex.Value = IndexOf(viewModel.ColorRepresentation, TranslationManager.Translation.Uncalibrated);
+
+        await viewModel.CommitChoiceAsync(viewModel.ColorRepresentation);
+
+        Assert.Equal((ushort)65535, ReadTag(ExifTag.ColorSpace));
+    }
+
+    [Fact]
+    public void UpdateExifValues_PackBitsCompression_ShowsPackBits()
+    {
+        using var viewModel = ShowFile(ExifTag.Compression, 32773);
+
+        Assert.Equal("PackBits", viewModel.Compression.Choices[viewModel.Compression.SelectedIndex.Value].Label);
+        Assert.Equal("PackBits", viewModel.Compression.Text.Value);
+    }
+
+    [Fact]
+    public async Task CommitChoiceAsync_MeteringModePicked_WritesItsCode()
+    {
+        using var viewModel = ShowFile(ExifTag.MeteringMode, 2);
+        viewModel.MeteringMode.SelectedIndex.Value = IndexOf(viewModel.MeteringMode, "Spot");
+
+        var written = await viewModel.CommitChoiceAsync(viewModel.MeteringMode);
+
+        Assert.True(written);
+        Assert.Equal((ushort)3, ReadTag(ExifTag.MeteringMode));
+    }
+
+    [Fact]
+    public async Task CommitChoiceAsync_ReadOnlyCompression_WritesNothing()
+    {
+        using var viewModel = ShowFile(ExifTag.Compression, 6);
+        viewModel.Compression.SelectedIndex.Value = IndexOf(viewModel.Compression, "LZW");
+
+        var written = await viewModel.CommitChoiceAsync(viewModel.Compression);
+
+        Assert.False(written);
+        Assert.True(viewModel.Compression.IsReadOnly);
+        Assert.Equal((ushort)6, ReadTag(ExifTag.Compression));
+    }
+
+    [Fact]
+    public void UpdateExifValues_Rotated90_SelectsThatOrientation()
+    {
+        // Magick.NET writes the Orientation tag from the image's orientation, not from the profile
+        using (var image = new MagickImage(MagickColors.White, 1, 1))
+        {
+            image.Format = MagickFormat.Jpeg;
+            var profile = new ExifProfile();
+            profile.SetValue(ExifTag.Orientation, (ushort)6);
+            image.SetProfile(profile);
+            image.Orientation = Orientation.RightTop;
+            image.Write(_path);
+        }
+
+        using var viewModel = new ExifViewModel();
+        viewModel.UpdateExifValues(new ImageModel { FileInfo = new FileInfo(_path), PixelWidth = 1, PixelHeight = 1 });
+
+        Assert.True(viewModel.Orientation.IsReadOnly);
+        Assert.Equal((ushort)6, viewModel.Orientation.Choices[viewModel.Orientation.SelectedIndex.Value].Code);
+    }
+
+    private static int IndexOf(ExifChoiceField field, string? label) =>
+        Array.FindIndex(field.Choices, c => string.Equals(c.Label, label, StringComparison.Ordinal));
+
     private ExifViewModel ShowFile(ExifTag<ushort> tag, ushort code, ExifTag<ushort>? otherTag = null)
     {
         using (var image = new MagickImage(MagickColors.White, 1, 1))

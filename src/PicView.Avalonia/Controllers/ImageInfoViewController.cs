@@ -7,7 +7,6 @@ using PicView.Avalonia.Resizing;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.Views.Main;
 using PicView.Core.DebugTools;
-using PicView.Core.Exif;
 using PicView.Core.Extensions;
 using PicView.Core.ViewModels;
 using R3;
@@ -41,10 +40,11 @@ public class ImageInfoViewController(ImageInfoView view) : IDisposable
             view.FileNameTextBox.KeyDown += OnFileNameKeyDown;
             view.FullPathTextBox.KeyDown += OnFullPathKeyDown;
             view.DirectoryNameTextBox.KeyDown += OnDirectoryNameKeyDown;
-            view.OrientationBox.DropDownClosed += OnOrientationBoxDropDownClosed;
-            view.ResolutionUnitBox.DropDownClosed += OnResolutionUnitBoxDropDownClosed;
-            view.ColorRepresentationBox.DropDownClosed += OnColorRepresentationBoxDropDownClosed;
-            view.CompressionBox.DropDownClosed += OnCompressionBoxDropDownClosed;
+            view.OrientationBox.SelectionChanged += OnReadOnlyChoiceBoxSelectionChanged;
+            view.CompressionBox.SelectionChanged += OnReadOnlyChoiceBoxSelectionChanged;
+            view.ResolutionUnitBox.DropDownClosed += OnExifChoiceBoxDropDownClosed;
+            view.ColorRepresentationBox.DropDownClosed += OnExifChoiceBoxDropDownClosed;
+            view.MeteringModeBox.DropDownClosed += OnExifChoiceBoxDropDownClosed;
             view.ExposureProgramBox.DropDownClosed += OnExifChoiceBoxDropDownClosed;
             view.ContrastBox.DropDownClosed += OnExifChoiceBoxDropDownClosed;
             view.SaturationBox.DropDownClosed += OnExifChoiceBoxDropDownClosed;
@@ -183,35 +183,13 @@ public class ImageInfoViewController(ImageInfoView view) : IDisposable
         _ = Task.Run(() => HandleRename(vm, newPath));
     }
 
-    private void OnOrientationBoxDropDownClosed(object? sender, EventArgs e)
+    // Orientation and Compression only show the file's choice: one picked, with the mouse or the arrow keys, goes back
+    // to it at once. Posted, so the box has finished its own selection change first
+    private void OnReadOnlyChoiceBoxSelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
-        if (view.DataContext is MainWindowViewModel vm && vm.Exif?.Orientation.Value != null)
+        if (sender is ComboBox { Tag: ExifChoiceField { IsReadOnly: true } field })
         {
-            view.OrientationBox.SelectedIndex = vm.Exif.Orientation.Value;
-        }
-    }
-
-    private void OnResolutionUnitBoxDropDownClosed(object? sender, EventArgs e)
-    {
-        if (view.DataContext is MainWindowViewModel vm && vm.Exif?.ResolutionUnit.Value != null)
-        {
-            view.ResolutionUnitBox.SelectedIndex = (int)vm.Exif.ResolutionUnit.Value;
-        }
-    }
-
-    private void OnColorRepresentationBoxDropDownClosed(object? sender, EventArgs e)
-    {
-        if (view.DataContext is MainWindowViewModel { InfoWindow: not null } vm)
-        {
-            _ = Task.Run(() => vm.InfoWindow.AddExifPropertyAsync(ExifWriter.AddColorSpace, vm.Exif.ColorRepresentation.CurrentValue));
-        }
-    }
-
-    private void OnCompressionBoxDropDownClosed(object? sender, EventArgs e)
-    {
-        if (view.DataContext is MainWindowViewModel { InfoWindow: not null } vm)
-        {
-            _ = Task.Run(() => vm.InfoWindow.AddExifPropertyAsync(ExifWriter.AddCompression, vm.Exif.Compression.CurrentValue));
+            Dispatcher.UIThread.Post(field.ShowFileChoice);
         }
     }
 
@@ -332,10 +310,11 @@ public class ImageInfoViewController(ImageInfoView view) : IDisposable
         view.FileNameTextBox.KeyDown -= OnFileNameKeyDown;
         view.FullPathTextBox.KeyDown -= OnFullPathKeyDown;
         view.DirectoryNameTextBox.KeyDown -= OnDirectoryNameKeyDown;
-        view.OrientationBox.DropDownClosed -= OnOrientationBoxDropDownClosed;
-        view.ResolutionUnitBox.DropDownClosed -= OnResolutionUnitBoxDropDownClosed;
-        view.ColorRepresentationBox.DropDownClosed -= OnColorRepresentationBoxDropDownClosed;
-        view.CompressionBox.DropDownClosed -= OnCompressionBoxDropDownClosed;
+        view.OrientationBox.SelectionChanged -= OnReadOnlyChoiceBoxSelectionChanged;
+        view.CompressionBox.SelectionChanged -= OnReadOnlyChoiceBoxSelectionChanged;
+        view.ResolutionUnitBox.DropDownClosed -= OnExifChoiceBoxDropDownClosed;
+        view.ColorRepresentationBox.DropDownClosed -= OnExifChoiceBoxDropDownClosed;
+        view.MeteringModeBox.DropDownClosed -= OnExifChoiceBoxDropDownClosed;
         view.ExposureProgramBox.DropDownClosed -= OnExifChoiceBoxDropDownClosed;
         view.ContrastBox.DropDownClosed -= OnExifChoiceBoxDropDownClosed;
         view.SaturationBox.DropDownClosed -= OnExifChoiceBoxDropDownClosed;

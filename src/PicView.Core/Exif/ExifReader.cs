@@ -120,24 +120,6 @@ public static class ExifReader
         _ => null
     }) ?? string.Empty;
 
-    public static ushort GetResolutionUnit(IExifProfile? profile)
-    {
-        var resolutionUnit = profile?.GetValue(ExifTag.ResolutionUnit)?.Value;
-        if (resolutionUnit is null)
-        {
-            return 0;
-        }
-
-        return resolutionUnit switch
-        {
-            1 => 1,
-            2 => 2,
-            3 => 3,
-            _ => 0
-        };
-    }
-
-
     /// <summary>
     /// Retrieves the flash mode information from the specified Exif profile.
     /// </summary>
@@ -212,6 +194,117 @@ public static class ExifReader
         65535 => "Undefined",
         _ => string.Empty
     };
+
+    internal static string ResolutionUnitLabel(ushort code) => (code switch
+    {
+        1 => TranslationManager.Translation.None,
+        2 => TranslationManager.Translation.Inches,
+        3 => TranslationManager.Translation.Centimeters,
+        _ => null
+    }) ?? string.Empty;
+
+    internal static string ColorSpaceLabel(ushort code) => (code switch
+    {
+        1 => "sRGB",
+        2 => "Adobe RGB",
+        65535 => TranslationManager.Translation.Uncalibrated ?? "Uncalibrated",
+        _ => null
+    }) ?? string.Empty;
+
+    internal static string MeteringModeLabel(ushort code) => (code switch
+    {
+        0 => TranslationManager.Translation.Unknown,
+        1 => "Average",
+        2 => "Center-weighted average",
+        3 => "Spot",
+        4 => "Multi-spot",
+        5 => "Pattern",
+        6 => "Partial",
+        255 => "Other",
+        _ => null
+    }) ?? string.Empty;
+
+    internal static string OrientationLabel(ushort code)
+    {
+        var t = TranslationManager.Translation;
+        return code switch
+        {
+            1 => t.Normal ?? string.Empty,
+            2 => t.Flipped ?? string.Empty,
+            3 => $"{t.Rotated} 180°",
+            4 => $"{t.Rotated} 180°, {t.Flipped}",
+            5 => $"{t.Rotated} 270°, {t.Flipped}",
+            6 => $"{t.Rotated} 90°",
+            7 => $"{t.Rotated} 90°, {t.Flipped}",
+            8 => $"{t.Rotated} 270°",
+            _ => string.Empty
+        };
+    }
+
+    /// <summary>The codes of <see cref="CompressionLabel"/>, in the order Image Information lists them.</summary>
+    internal static ReadOnlySpan<ushort> CompressionCodes =>
+    [
+        1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 99, 262, 32766, 32767, 32769, 32770, 32771, 32772, 32773, 32809, 32867, 32895,
+        32896, 32897, 32898, 32908, 32909, 32946, 32947, 33003, 33005, 34661, 34676, 34677, 34712, 34713, 34715, 34718,
+        34719, 34720, 34887, 34892, 34925, 34926, 34927, 34933, 34934, 50000, 50001, 50002, 52546, 65000, 65535
+    ];
+
+    internal static string CompressionLabel(ushort code) => (code switch
+    {
+        1 => TranslationManager.Translation.None,
+        2 => "CCITT 1D",
+        3 => "T4/Group 3 Fax",
+        4 => "T6/Group 4 Fax",
+        5 => "LZW",
+        6 => "JPEG (old-style)",
+        7 or 99 => "JPEG",
+        8 => "Adobe Deflate",
+        9 => "JBIG B&W",
+        10 => "JBIG Color",
+        262 => "Kodak 262",
+        32766 => "Next",
+        32767 => "Sony ARW Compressed",
+        32769 => "Packed RAW",
+        32770 => "Samsung SRW Compressed",
+        32771 => "CCIRLEW",
+        32772 => "Samsung SRW Compressed 2",
+        32773 => "PackBits",
+        32809 => "Thunderscan",
+        32867 => "Kodak KDC Compressed",
+        32895 => "IT8CTPAD",
+        32896 => "IT8LW",
+        32897 => "IT8MP",
+        32898 => "IT8BL",
+        32908 => "PixarFilm",
+        32909 => "PixarLog",
+        32946 => "Deflate",
+        32947 => "DCS",
+        33003 => "Aperio JPEG 2000 YCbCr",
+        33005 => "Aperio JPEG 2000 RGB",
+        34661 => "JBIG",
+        34676 => "SGILog",
+        34677 => "SGILog24",
+        34712 => "JPEG 2000",
+        34713 => "Nikon NEF Compressed",
+        34715 => "JBIG2 TIFF FX",
+        34718 => "Microsoft Document Imaging (MDI) Binary Level Codec",
+        34719 => "Microsoft Document Imaging (MDI) Progressive Transform Codec",
+        34720 => "Microsoft Document Imaging (MDI) Vector",
+        34887 => "ESRI Lerc",
+        34892 => "Lossy JPEG",
+        34925 => "LZMA2",
+        34926 => "Zstd (old)",
+        34927 => "WebP (old)",
+        34933 => "PNG",
+        34934 => "JPEG XR",
+        50000 => "Zstd",
+        50001 => "WebP",
+        50002 => "JPEG XL (old)",
+        52546 => "JPEG XL",
+        65000 => "Kodak DCR Compressed",
+        65535 => "Pentax PEF Compressed",
+        _ => null
+    }) ?? string.Empty;
 
     private static string Label(ushort? code, Func<ushort, string> label) =>
         code is { } value ? label(value) : string.Empty;
