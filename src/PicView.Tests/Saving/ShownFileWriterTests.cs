@@ -361,6 +361,66 @@ public class ShownFileWriterTests : IDisposable
         Assert.Empty(_platform.Deleted);
     }
 
+    [Fact]
+    public async Task Replace_NameTaken_WritesAndDeletesNothing()
+    {
+        var source = WriteImage("a.png", MagickColors.Red, 2, 1);
+        var taken = WriteImage("a.jpg", MagickColors.Green, 3, 3);
+        var old = await File.ReadAllBytesAsync(taken, TestContext.Current.CancellationToken);
+        var tab = await LoadTabAsync(source);
+
+        var result = await new ShownFileWriter(() => null).WriteAsync(tab, ReplaceWith(taken));
+
+        Assert.Equal(WriteOutcome.NameTaken, result.Outcome);
+        Assert.Equal(old, await File.ReadAllBytesAsync(taken, TestContext.Current.CancellationToken));
+        Assert.True(File.Exists(source));
+        Assert.Empty(_platform.Deleted);
+    }
+
+    [Fact]
+    public async Task Replace_ShowsTheNewFileAndRecyclesTheOriginal()
+    {
+        var wasReset = Settings.Zoom.ResetZoomOnChange;
+        Settings.Zoom.ResetZoomOnChange = false;
+        try
+        {
+            var source = WriteImage("a.png", MagickColors.Red, 2, 1);
+            var tab = await LoadTabAsync(source);
+            tab.Orientation.TurnRight();
+            var newPath = Path.Combine(_testDirectory, "a.jpg");
+
+            var result = await new ShownFileWriter(() => null).WriteAsync(tab, ReplaceWith(newPath));
+
+            Assert.Equal(WriteOutcome.Written, result.Outcome);
+            Assert.Equal(newPath, tab.Model.FileInfo?.FullName);
+            Assert.Equal(Orientation.Upright, tab.Orientation.Current.CurrentValue);
+            Assert.False(File.Exists(source));
+            Assert.Contains(_platform.Deleted, d => d.Path.EndsWith("a.png", StringComparison.Ordinal));
+            AssertSize(newPath, 1, 2);
+        }
+        finally
+        {
+            Settings.Zoom.ResetZoomOnChange = wasReset;
+        }
+    }
+
+    [Fact]
+    public async Task Replace_SamePathOtherCase_DoesNotDeleteTheNewFile()
+    {
+        var source = WriteImage("a.png", MagickColors.Red, 2, 1);
+        var tab = await LoadTabAsync(source);
+        var newPath = Path.Combine(_testDirectory, "a.PNG");
+
+        var result = await new ShownFileWriter(() => null).WriteAsync(tab, ReplaceWith(newPath));
+
+        Assert.Equal(WriteOutcome.Written, result.Outcome);
+        Assert.True(File.Exists(newPath));
+        Assert.Single(_platform.Deleted);
+    }
+
+    private static ShownFileWrite ReplaceWith(string newPath) =>
+        new(WriteSource.SaveSource, default, new WriteDestination.Replace(newPath));
+
     private static ShownFileWrite OverItself() =>
         new(WriteSource.SaveSource, default, new WriteDestination.OverItself());
 

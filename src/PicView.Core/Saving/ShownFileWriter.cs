@@ -4,6 +4,7 @@ using PicView.Core.FileHandling;
 using PicView.Core.ImageDecoding;
 using PicView.Core.ImageTransformations;
 using PicView.Core.IPlatform;
+using PicView.Core.Navigation;
 using PicView.Core.ViewModels;
 using Orientation = PicView.Core.ImageTransformations.Orientation;
 
@@ -62,12 +63,19 @@ public sealed class ShownFileWriter(Func<EffectsViewModel?> getEffects)
         {
             WriteDestination.Copy copy => copy.Path,
             WriteDestination.OverItself => file?.FullName,
+            WriteDestination.Replace replace when file is not null => Path.GetFullPath(replace.NewPath),
+            WriteDestination.Replace => null,
             _ => throw new NotSupportedException($"{job.Destination.GetType().Name} is not written yet")
         };
         if (destination is null)
         {
-            // Over itself with no file; the caller saves it as a new file instead
+            // Over itself or replacing with no file; the caller saves it as a new file instead
             return new WriteResult(WriteOutcome.NothingToWrite, null, false, false);
+        }
+
+        if (job.Destination is WriteDestination.Replace && FileHelper.IsNameTaken(file!.FullName, destination))
+        {
+            return new WriteResult(WriteOutcome.NameTaken, null, false, false);
         }
 
         WriteResult result;
@@ -110,8 +118,61 @@ public sealed class ShownFileWriter(Func<EffectsViewModel?> getEffects)
         {
             await FollowUpOverItselfAsync(tab, job.Edits, result, destination).ConfigureAwait(false);
         }
+        else if (job.Destination is WriteDestination.Replace)
+        {
+            await FollowUpReplaceAsync(tab, result, file!.FullName, destination).ConfigureAwait(false);
+        }
 
         return result;
+    }
+
+    // Moves the tab's histories to the new file and shows it, then removes the original, unless the new file is the
+    // original apart from letter case: it is the file itself
+    private async ValueTask FollowUpReplaceAsync(TabViewModel tab, WriteResult result, string original,
+        string newPath)
+    {
+        var sameFile = string.Equals(original, newPath, StringComparison.OrdinalIgnoreCase);
+        try
+        {
+            if (!string.Equals(original, newPath, StringComparison.Ordinal))
+            {
+                FileRenames.Follow(tab.ParentWindowContext?.Core, original, newPath);
+            }
+
+            await tab.ShowReplacementAsync(newPath, result.TurnApplied).ConfigureAwait(false);
+        }
+        catch (Exception e)
+        {
+            // The file is written; only showing it failed
+            DebugHelper.LogDebug(nameof(ShownFileWriter), nameof(FollowUpReplaceAsync), e);
+        }
+
+        if (!sameFile)
+        {
+            await RemoveOriginalAsync(tab.Services?.Platform, original).ConfigureAwait(false);
+        }
+
+        await ResetEffectsAsync(result).ConfigureAwait(false);
+    }
+
+    // Sends the original to the Recycle Bin when it can go there, else deletes it. A failure is logged: the new file is
+    // written and shown
+    private static async ValueTask RemoveOriginalAsync(IPlatformSpecificService? platform, string original)
+    {
+        try
+        {
+            if (platform is not null && platform.CanMoveToRecycleBin(original) &&
+                await platform.DeleteFile(original, recycle: true).ConfigureAwait(false))
+            {
+                return;
+            }
+
+            File.Delete(original);
+        }
+        catch (Exception e)
+        {
+            DebugHelper.LogDebug(nameof(ShownFileWriter), nameof(RemoveOriginalAsync), e);
+        }
     }
 
     // Shows the rewritten file again unless it holds the pixels the tab shows already, then resets the effects written
@@ -130,24 +191,39 @@ public sealed class ShownFileWriter(Func<EffectsViewModel?> getEffects)
                 tab.ForgetRewritten(path);
             }
 
-            if (result.EffectsApplied && getEffects() is { } effects)
-            {
-                // The effects window binds to these values, so they change on the UI thread; discarding them does not
-                // render the file again
-                if (UiThread is { } uiThread)
-                {
-                    await uiThread(effects.DiscardEffects).ConfigureAwait(false);
-                }
-                else
-                {
-                    effects.DiscardEffects();
-                }
-            }
+            await ResetEffectsAsync(result).ConfigureAwait(false);
         }
         catch (Exception e)
         {
             // The file is written; only showing it again failed
             DebugHelper.LogDebug(nameof(ShownFileWriter), nameof(FollowUpOverItselfAsync), e);
+        }
+    }
+
+    // Resets the effects that were written into the file
+    private async ValueTask ResetEffectsAsync(WriteResult result)
+    {
+        if (!result.EffectsApplied || getEffects() is not { } effects)
+        {
+            return;
+        }
+
+        try
+        {
+            // The effects window binds to these values, so they change on the UI thread; discarding them does not
+            // render the file again
+            if (UiThread is { } uiThread)
+            {
+                await uiThread(effects.DiscardEffects).ConfigureAwait(false);
+            }
+            else
+            {
+                effects.DiscardEffects();
+            }
+        }
+        catch (Exception e)
+        {
+            DebugHelper.LogDebug(nameof(ShownFileWriter), nameof(ResetEffectsAsync), e);
         }
     }
 
