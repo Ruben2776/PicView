@@ -104,7 +104,13 @@ public sealed class ShownFileWriter(Func<EffectsViewModel?> getEffects)
         }
 
         WriteResult result;
-        if (overItself && job.Edits.LosslessOptimize)
+        if (overItself && IsUnchanged(job, file!, isSvg, orientation))
+        {
+            // Encoding the file again would only lose quality and add a Recycle Bin copy; the follow-up forgets the
+            // cached image and thumbnail
+            result = new WriteResult(WriteOutcome.Written, destination, false, false);
+        }
+        else if (overItself && job.Edits.LosslessOptimize)
         {
             // Optimizes the file's own bytes; encoding it again would not be lossless
             if (!new ImageOptimizer().IsSupported(destination))
@@ -146,6 +152,24 @@ public sealed class ShownFileWriter(Func<EffectsViewModel?> getEffects)
         }
 
         return result;
+    }
+
+    // Whether a write over the file itself would write the file as it is: no turn or flip, no edits and no Effects
+    // Render. The format is the file's own, as the path is
+    private bool IsUnchanged(ShownFileWrite job, FileInfo file, bool isSvg, Orientation orientation)
+    {
+        if (job.Edits != default || orientation != Orientation.Upright)
+        {
+            return false;
+        }
+
+        if (job.Source is not WriteSource.SaveSource || isSvg)
+        {
+            return true;
+        }
+
+        using var render = getEffects()?.CloneRender(file);
+        return render is null;
     }
 
     // Moves the tab's histories to the new file and shows it, then removes the original, unless the new file is the

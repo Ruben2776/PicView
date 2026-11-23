@@ -247,6 +247,37 @@ public class ShownFileWriterTests : IDisposable
     }
 
     [Fact]
+    public async Task OverItself_Unchanged_WritesAndRecyclesNothing()
+    {
+        var source = WriteImage("source.png", MagickColors.Red, 2, 1);
+        var tab = await LoadTabAsync(source);
+        var old = await File.ReadAllBytesAsync(source, TestContext.Current.CancellationToken);
+        var written = File.GetLastWriteTimeUtc(source);
+
+        var result = await new ShownFileWriter(() => null).WriteAsync(tab, OverItself());
+
+        Assert.Equal(WriteOutcome.Written, result.Outcome);
+        Assert.Equal(source, result.WrittenPath);
+        Assert.Empty(_platform.Deleted);
+        Assert.Equal(old, await File.ReadAllBytesAsync(source, TestContext.Current.CancellationToken));
+        Assert.Equal(written, File.GetLastWriteTimeUtc(source));
+    }
+
+    [Fact]
+    public async Task OverItself_UnchangedButEffects_WritesTheRender()
+    {
+        var source = WriteImage("source.png", MagickColors.Red, 2, 1);
+        var tab = await LoadTabAsync(source);
+        var effects = await RenderBlueAsync(tab);
+
+        var result = await new ShownFileWriter(() => effects).WriteAsync(tab, OverItself());
+
+        Assert.True(result.EffectsApplied);
+        Assert.Single(_platform.Deleted);
+        Assert.Equal(Rgb(MagickColors.Blue), PixelAt(source));
+    }
+
+    [Fact]
     public async Task OverItself_ArchivePage_ShowsItAgain()
     {
         var page = TempFileManager.GetNewTempFilePath("page.png");
