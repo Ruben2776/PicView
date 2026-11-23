@@ -68,6 +68,7 @@ public class ContextualActionHandlerTests
     [InlineData(ContextualActionHandler.Confirm, nameof(ICropService.SaveCropAsAsync))]
     [InlineData(ContextualActionHandler.Cancel, nameof(ICropService.CloseCropControl))]
     [InlineData(ContextualActionHandler.Copy, nameof(ICropService.CopyCroppedImageAsync))]
+    [InlineData(ContextualActionHandler.Save, nameof(ICropService.SaveCropAsAsync))]
     public async Task Crop_ContextualAction_RunsItsCropOperation(string action, string expectedCall)
     {
         var (handler, crop) = CreateHandler();

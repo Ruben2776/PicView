@@ -26,19 +26,32 @@ public static class InputDispatch
         new(Key.C, OperatingSystem.IsMacOS() ? KeyModifiers.Meta : KeyModifiers.Control);
 
     /// <summary>
+    /// The platform's save chord: Cmd+S on macOS, Ctrl+S elsewhere. It is not bindable; it acts as the fixed
+    /// <see cref="ContextualActionHandler.Save"/> that a mode may claim, such as saving the crop, and otherwise
+    /// falls through to its ordinary Action.
+    /// </summary>
+    public static Keybind SaveKeybind { get; } =
+        new(Key.S, OperatingSystem.IsMacOS() ? KeyModifiers.Meta : KeyModifiers.Control);
+
+    /// <summary>
     /// Escape without modifiers. It is not bindable; it acts as the fixed <see cref="ContextualActionHandler.Cancel"/>.
     /// </summary>
     public static Keybind CancelKeybind { get; } = new(Key.Escape);
 
     /// <summary>
-    /// Returns the Contextual Action <paramref name="keybind"/> stands for: the fixed one of the copy or cancel
-    /// chord, else the one it is bound to in <paramref name="keymap"/>.
+    /// Returns the Contextual Action <paramref name="keybind"/> stands for: the fixed one of the copy, save or
+    /// cancel chord, else the one it is bound to in <paramref name="keymap"/>.
     /// </summary>
     private static string? ContextualActionOf(Keybind keybind, Keymap keymap)
     {
         if (keybind == CancelKeybind)
         {
             return ContextualActionHandler.Cancel;
+        }
+
+        if (keybind == SaveKeybind)
+        {
+            return ContextualActionHandler.Save;
         }
 
         return keybind == CopyKeybind ? ContextualActionHandler.Copy : keymap.ResolveContextual(keybind);

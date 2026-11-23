@@ -116,6 +116,30 @@ public class InputDispatchTests
         Assert.Equal(KeymapResolution.Action("CopyImage"), ordinary);
     }
 
+    private static readonly Keymap SaveKeymap = Keymap.FromJson(null,
+        $$"""{ "{{InputDispatch.SaveKeybind.GetFormattedForJSON()}}": "Save" }""");
+
+    [Fact]
+    public async Task SaveChord_InCrop_IsTheFixedSaveAction()
+    {
+        var handler = new FakeHandler((InputMode.Crop, ContextualActionHandler.Save));
+
+        var ordinary = await InputDispatch.DispatchAsync(InputDispatch.SaveKeybind, Crop, SaveKeymap, handler);
+
+        Assert.Equal([(InputMode.Crop, ContextualActionHandler.Save)], handler.Asked);
+        Assert.Equal(KeymapResolution.None, ordinary);
+    }
+
+    [Fact]
+    public async Task SaveChord_InNormal_FallsThroughToItsOrdinaryAction()
+    {
+        var handler = new FakeHandler();
+
+        var ordinary = await InputDispatch.DispatchAsync(InputDispatch.SaveKeybind, Normal, SaveKeymap, handler);
+
+        Assert.Equal(KeymapResolution.Action("Save"), ordinary);
+    }
+
     [Theory]
     [InlineData(false, false, false, false, false, new[] { InputMode.Normal })]
     [InlineData(true, false, true, false, false, new[] { InputMode.Dialog })]

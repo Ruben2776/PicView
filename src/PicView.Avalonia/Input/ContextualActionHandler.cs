@@ -25,6 +25,11 @@ public sealed class ContextualActionHandler(MainWindow window, MainWindowViewMod
     /// </summary>
     public const string Copy = "Copy";
 
+    /// <summary>
+    /// Not a bindable Contextual Action: dispatch gives it to the fixed <see cref="InputDispatch.SaveKeybind"/>.
+    /// </summary>
+    public const string Save = "Save";
+
     // Move through the expanded gallery; Up and Down also scroll an image taller than the viewer
     public const string Up = "Up";
     public const string Down = "Down";
@@ -51,7 +56,9 @@ public sealed class ContextualActionHandler(MainWindow window, MainWindowViewMod
                 await CloseTopDialogAsync().ConfigureAwait(false);
                 return true;
 
+            // Save asks where to save, as Confirm does, instead of overwriting the image with its crop
             case (InputMode.Crop, Confirm):
+            case (InputMode.Crop, Save):
                 await activeTab.CropService.SaveCropAsAsync().ConfigureAwait(false);
                 return true;
             case (InputMode.Crop, Cancel):
