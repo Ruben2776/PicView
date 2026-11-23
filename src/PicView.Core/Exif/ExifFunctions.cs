@@ -54,7 +54,36 @@ public static class ExifFunctions
     /// </summary>
     private static readonly SemaphoreSlim UpdateGate = new(1, 1);
 
-    public static async Task<bool> TryUpdateImageProfileAsync(FileInfo fileInfo, Func<MagickImage, bool> updateAction,
+    public static Task<bool> TryUpdateImageProfileAsync(FileInfo fileInfo, Func<MagickImage, bool> updateAction,
+        string callingClassName, string callingMethodName) =>
+        RewriteFileAsync(fileInfo, original =>
+        {
+            // A JPEG gets its metadata segments written and keeps its image data as it is, so an edit loses no
+            // quality. Any other file, or a JPEG the rewrite cannot read, is encoded again
+            if (!JpegMetadataWriter.IsJpeg(original))
+            {
+                return Encode(original, updateAction);
+            }
+
+            var rewrite = RewriteJpegMetadata(original, updateAction);
+            return rewrite.IsUnchanged ? null : rewrite.Bytes ?? Encode(original, updateAction);
+        }, callingClassName, callingMethodName);
+
+    /// <summary>
+    /// Rewrites the bytes of <paramref name="fileInfo"/> without decoding it, under the same gate and busy retry as
+    /// <see cref="TryUpdateImageProfileAsync"/>.
+    /// </summary>
+    /// <param name="rewrite">Gets the file's bytes and returns the new ones, or null to leave the file alone.</param>
+    /// <returns>False when nothing was written: no file, null or unchanged bytes, or a failure.</returns>
+    internal static Task<bool> TryRewriteFileAsync(FileInfo fileInfo, Func<byte[], byte[]?> rewrite,
+        string callingClassName, string callingMethodName) =>
+        RewriteFileAsync(fileInfo, original =>
+        {
+            var bytes = rewrite(original);
+            return bytes is null || bytes.AsSpan().SequenceEqual(original) ? null : bytes;
+        }, callingClassName, callingMethodName);
+
+    private static async Task<bool> RewriteFileAsync(FileInfo fileInfo, Func<byte[], byte[]?> rewrite,
         string callingClassName, string callingMethodName)
     {
         if (fileInfo is null || !File.Exists(fileInfo.FullName))
@@ -69,25 +98,8 @@ public static class ExifFunctions
             var original = await RetryWhileBusyAsync(() => File.ReadAllBytes(fileInfo.FullName), startTime)
                 .ConfigureAwait(false);
 
-            // A JPEG gets its metadata segments written and keeps its image data as it is, so an edit loses no
-            // quality. Any other file, or a JPEG the rewrite cannot read, is encoded again
-            byte[]? bytes;
-            if (JpegMetadataWriter.IsJpeg(original))
-            {
-                var rewrite = RewriteJpegMetadata(original, updateAction);
-                if (rewrite.IsUnchanged)
-                {
-                    return false;
-                }
-
-                bytes = rewrite.Bytes ?? Encode(original, updateAction);
-            }
-            else
-            {
-                bytes = Encode(original, updateAction);
-            }
-
-            // If the update action returns false, it means no changes were made that require saving.
+            // No bytes means the rewrite made no changes that require saving
+            var bytes = rewrite(original);
             if (bytes is null)
             {
                 return false;

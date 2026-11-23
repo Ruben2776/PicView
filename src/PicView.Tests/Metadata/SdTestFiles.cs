@@ -52,7 +52,31 @@ internal static class SdTestFiles
         stream.Write(length);
         stream.Write(Encoding.ASCII.GetBytes(type));
         stream.Write(data);
-        stream.Write(new byte[4]); // CRC, not verified by the reader
+
+        // The CRC covers type and data. The reader ignores it, the writer checks it
+        var crc = 0xFFFFFFFFu;
+        foreach (var b in Encoding.ASCII.GetBytes(type).Concat(data))
+        {
+            crc ^= b;
+            for (var k = 0; k < 8; k++)
+            {
+                crc = (crc & 1) != 0 ? 0xEDB88320u ^ (crc >> 1) : crc >> 1;
+            }
+        }
+
+        BinaryPrimitives.WriteUInt32BigEndian(length, ~crc);
+        stream.Write(length);
+    }
+
+    /// <summary>Returns <paramref name="png"/> with a tEXt chunk added in front of its IEND.</summary>
+    internal static byte[] InsertTextChunk(byte[] png, string keyword, string text)
+    {
+        var iend = png.Length - 12;
+        using var stream = new MemoryStream();
+        stream.Write(png, 0, iend);
+        WriteChunk(stream, "tEXt", [.. Encoding.Latin1.GetBytes(keyword), 0, .. Encoding.Latin1.GetBytes(text)]);
+        stream.Write(png, iend, 12);
+        return stream.ToArray();
     }
 
     /// <summary>
