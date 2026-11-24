@@ -1,5 +1,4 @@
-﻿using System.Runtime.InteropServices;
-using Avalonia;
+﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.LogicalTree;
@@ -26,12 +25,14 @@ public partial class SettingsMenuButton : UserControl
 
     private void OnLoaded(object? sender, RoutedEventArgs e)
     {
-        if (!Settings.Theme.Dark || Settings.Theme.GlassTheme)
+        if (Settings.Theme.Dark)
         {
-            SettingsButton.Background = Brushes.Transparent;
-            SettingsButton.Classes.Remove("noBorderHover");
-            SettingsButton.Classes.Add("hover");
+            return;
         }
+
+        SettingsButton.Background = Brushes.Transparent;
+        SettingsButton.Classes.Remove("WindowToolButtonHover");
+        SettingsButton.Classes.Add("hover");
     }
 
     protected override void OnDetachedFromLogicalTree(LogicalTreeAttachmentEventArgs e)

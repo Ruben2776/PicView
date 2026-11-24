@@ -143,8 +143,6 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
 
     public void Redo() => Apply(_draft.Redo());
 
-    public bool HasUnsavedChanges() => _draft.IsDirty;
-
     public void UpdateButtonStates()
     {
         if (!Dispatcher.UIThread.CheckAccess())

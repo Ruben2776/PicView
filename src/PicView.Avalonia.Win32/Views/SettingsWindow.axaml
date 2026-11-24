@@ -107,6 +107,10 @@
                     Width="30"
                     x:Name="MinimizeButton" />
 
+                <Rectangle
+                    DockPanel.Dock="Right"
+                    Fill="{DynamicResource ToolWindowButtonBorderColor}"
+                    Width="1" />
                 <buttons:SettingsMenuButton DockPanel.Dock="Right" x:Name="SettingsButton" />
 
                 <TextBlock

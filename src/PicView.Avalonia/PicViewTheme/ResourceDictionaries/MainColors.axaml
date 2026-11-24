@@ -312,9 +312,9 @@
             <Color x:Key="ToolWindowButtonBorderHover">#CC909090</Color>
 
             <!--  TextBox  -->
-            <Color x:Key="TextBoxBackgroundColor">#CC2b2b2b</Color>
-            <Color x:Key="TextBoxBorderColor">#373535</Color>
-            <Color x:Key="TextBoxHoverBorderColor">#CC3F3F54</Color>
+            <Color x:Key="TextBoxBackgroundColor">#fff</Color>
+            <Color x:Key="TextBoxBorderColor">#CCD2D2D2</Color>
+            <Color x:Key="TextBoxHoverBorderColor">#A8858585</Color>
 
             <Color x:Key="TextBoxDisabledBackgroundColor">#CCD0D0D0</Color>
 

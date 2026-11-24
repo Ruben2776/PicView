@@ -110,7 +110,6 @@
                 <TextBlock
                     Classes="txt"
                     DockPanel.Dock="Top"
-                    Foreground="{StaticResource SecondaryTextColor}"
                     HorizontalAlignment="Left"
                     Margin="10,01"
                     Padding="0,5,10,15"
@@ -167,11 +166,7 @@
                         Classes="AltHover"
                         Command="{CompiledBinding AssociationsViewModel.SelectAllCommand}"
                         Padding="10,2,10,2">
-                        <TextBlock
-                            Classes="txt"
-                            Foreground="{StaticResource SecondaryTextColor}"
-                            Text="{CompiledBinding Translation.SelectAll.Value,
-                                                   Mode=OneWay}" />
+                        <TextBlock Classes="txt" Text="{CompiledBinding Translation.SelectAll.Value, Mode=OneWay}" />
                     </Button>
 
                     <Rectangle
@@ -185,11 +180,7 @@
                         Command="{CompiledBinding AssociationsViewModel.UnselectAllCommand}"
                         Padding="10,2,10,2"
                         x:Name="UnSelectAllButton">
-                        <TextBlock
-                            Classes="txt"
-                            Foreground="{StaticResource SecondaryTextColor}"
-                            Text="{CompiledBinding Translation.UnselectAll.Value,
-                                                   Mode=OneWay}" />
+                        <TextBlock Classes="txt" Text="{CompiledBinding Translation.UnselectAll.Value, Mode=OneWay}" />
                     </Button>
                 </StackPanel>
 
@@ -224,62 +215,43 @@
                         DockPanel.Dock="Left"
                         HorizontalAlignment="Left"
                         Padding="20,10">
-                        <TextBlock
-                            Classes="txt"
-                            Foreground="{StaticResource SecondaryTextColor}"
-                            Text="{CompiledBinding Translation.Reset.Value,
-                                                   Mode=OneWay}" />
+                        <TextBlock Classes="txt" Text="{CompiledBinding Translation.Reset.Value, Mode=OneWay}" />
                     </Button>
 
-                    <Button
+                    <customControls:TextIconButton
                         Background="{DynamicResource AccentColor}"
                         BorderThickness="0"
                         Classes="accentHover PrimaryBtnHover"
                         Command="{CompiledBinding AssociationsViewModel.ApplyCommand}"
-                        CornerRadius="3"
                         DockPanel.Dock="Right"
+                        Foreground="{StaticResource SecondaryTextColor}"
                         HorizontalAlignment="Right"
-                        Padding="20,10">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock
-                                Classes="txt"
-                                Foreground="{StaticResource SecondaryTextColor}"
-                                Margin="10,0,0,0"
-                                Text="{CompiledBinding Translation.Apply.Value,
-                                                       Mode=OneWay}" />
-                            <Image
-                                Height="18"
-                                Margin="10,0,0,0"
-                                Source="{StaticResource UserShieldImage}"
-                                Width="18" />
-                        </StackPanel>
-                    </Button>
+                        Icon="{StaticResource UserShieldImage}"
+                        IconHeight="18"
+                        IconMargin="10,0,0,0"
+                        IconWidth="18"
+                        Padding="20,10"
+                        Text="{CompiledBinding Translation.Apply.Value,
+                                               Mode=OneWay}"
+                        TextMargin="10,0,0,0" />
 
-                    <Button
+                    <customControls:TextIconButton
                         Background="Transparent"
                         BorderThickness="0"
                         Classes="errorHover"
                         Command="{CompiledBinding AssociationsViewModel.UnassociateCommand}"
-                        CornerRadius="3"
                         DockPanel.Dock="Right"
+                        Foreground="{DynamicResource MainTextColor}"
                         HorizontalAlignment="Right"
+                        Icon="{StaticResource UserShieldImage}"
+                        IconHeight="18"
+                        IconMargin="10,0,10,0"
+                        IconWidth="18"
                         Padding="5,0"
-                        x:Name="UnassociateButton">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock
-                                Classes="txt"
-                                Foreground="{StaticResource SecondaryTextColor}"
-                                Margin="10,0,0,0"
-                                Text="{CompiledBinding Translation.Unassociate.Value,
-                                                       Mode=OneWay}" />
-                            <Image
-                                Height="18"
-                                Margin="10,0,10,0"
-                                Source="{StaticResource UserShieldImage}"
-                                Width="18" />
-                        </StackPanel>
-                    </Button>
-
+                        Text="{CompiledBinding Translation.Unassociate.Value,
+                                               Mode=OneWay}"
+                        TextMargin="10,0,0,0"
+                        x:Name="UnassociateButton" />
                 </DockPanel>
             </DockPanel>
         </Panel>

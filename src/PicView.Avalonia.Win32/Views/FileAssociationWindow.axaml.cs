@@ -98,14 +98,13 @@ public partial class FileAssociationWindow : GenericWindow
                 }
             }
 
-            var brush = UIHelper.GetBrush("SecondaryTextColor");
+            var brush = UIHelper.GetBrush("MainTextColor");
 
             // Create group header checkbox
             var groupCheckBox = new FileTypeCheckBox
             {
                 Classes = { "altHover", "y", "changeColor" },
                 Tag = fileTypeGroup,
-                Foreground = brush,
                 IsChecked = fileTypeGroup.IsSelected.CurrentValue
             };
 
@@ -113,7 +112,6 @@ public partial class FileAssociationWindow : GenericWindow
             {
                 Classes = { "txt" },
                 Text = fileTypeGroup.Name,
-                Foreground = brush,
                 FontFamily = new FontFamily("avares://PicView.Avalonia/Assets/Fonts/Roboto-Bold.ttf#Roboto")
             };
 
