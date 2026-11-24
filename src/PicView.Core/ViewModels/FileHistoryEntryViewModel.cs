@@ -21,12 +21,10 @@ public class FileHistoryEntryViewModel : IDisposable
     /// <summary>The height of the thumbnail an entry shows.</summary>
     private const uint ThumbnailHeight = 150;
 
-    private Task<object?>? _thumbnail;
-
     /// <summary>
     /// The entry's thumbnail, started the first time it is read and kept for the app, since the entry belongs to no tab.
     /// </summary>
-    public Task<object?> GetThumbnail => _thumbnail ??= LoadThumbnailAsync();
+    public Task<object?> GetThumbnail => field ??= LoadThumbnailAsync();
 
     private async Task<object?> LoadThumbnailAsync()
     {

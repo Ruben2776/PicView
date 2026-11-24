@@ -1,0 +1,29 @@
+<UserControl
+    x:Class="PicView.Avalonia.Views.UC.FileThumbnailToolTip"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="clr-namespace:PicView.Avalonia.Converters"
+    xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
+    xmlns:uc="clr-namespace:PicView.Avalonia.Views.UC"
+    x:DataType="uc:FileThumbnailToolTip">
+    <UserControl.Resources>
+        <converters:DisplayableConverter x:Key="DisplayableConverter" />
+    </UserControl.Resources>
+    <StackPanel
+        x:Name="Root"
+        MaxWidth="300"
+        MaxHeight="700">
+        <customControls:ThumbImage
+            x:Name="Thumb"
+            Height="150"
+            MaxWidth="250"
+            HorizontalAlignment="Center"
+            Source="{CompiledBinding Thumbnail^,
+                                     Converter={StaticResource DisplayableConverter},
+                                     TargetNullValue={StaticResource LogoImage}}" />
+        <TextBlock
+            Classes="txt"
+            Foreground="{DynamicResource ContextMenuForegroundColor}"
+            Text="{CompiledBinding FilePath}" />
+    </StackPanel>
+</UserControl>

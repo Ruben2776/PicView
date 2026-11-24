@@ -49,11 +49,11 @@ public class FileHistoryItemTests : IDisposable
             var made = await entry.GetThumbnail;
 
             // The tooltip's content takes its DataContext when it opens
-            var tip = Assert.IsType<StackPanel>(ToolTip.GetTip(item.FindControl<Button>("MainButton")!));
+            var tip = Assert.IsType<FileThumbnailToolTip>(ToolTip.GetTip(item.FindControl<Button>("MainButton")!));
             tip.DataContext = entry;
             Dispatcher.UIThread.RunJobs();
 
-            var thumb = Assert.IsType<ThumbImage>(tip.Children[0]);
+            var thumb = tip.FindControl<ThumbImage>("Thumb")!;
             Assert.IsAssignableFrom<Bitmap>(made);
             Assert.Same(made, thumb.Source);
         }, cache => new Thumbnails(new AvaloniaThumbnailDecoder(null), cache));

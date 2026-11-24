@@ -21,7 +21,7 @@ public partial class FileSearchDialog : AnimatedPopUp
     /// <summary>
     /// The files matching the search, in the active tab of this dialog's Main Window.
     /// </summary>
-    public BindableReactiveProperty<ObservableCollection<FileSearchResult>?> FilteredFileInfos { get; } = new();
+    public BindableReactiveProperty<ObservableCollection<FileSearchItem>?> FilteredFileInfos { get; } = new();
 
     /// <summary>
     /// Opens the picked file in this dialog's Main Window.
@@ -69,11 +69,6 @@ public partial class FileSearchDialog : AnimatedPopUp
         SetupSearchSubscription();
         SearchBox.Focus();
         AddHandler(KeyDownEvent, KeysDownAsync, RoutingStrategies.Tunnel);
-
-        if (Application.Current.DataContext is not CoreViewModel core)
-        {
-            return;
-        }
 
         LoadFromStringCommand.Subscribe(_ => CloseMenu(sender, e)).AddTo(ref _disposables);
         
@@ -172,19 +167,21 @@ public partial class FileSearchDialog : AnimatedPopUp
                     const int batchSize = 25;
 
                     // A tab showing a single image has no files to search
-                    if (tabs.ActiveTab.CurrentValue.ImageIterator is not { } iterator)
+                    var tab = tabs.ActiveTab.CurrentValue;
+                    if (tab.ImageIterator is not { } iterator)
                     {
                         FilteredFileInfos.Value?.Clear();
                         return;
                     }
 
-                    IEnumerable<FileSearchResult>? results = null;
-                    await Task.Run(
-                        () => { results = FileSearcher.GetFileSearchResults(iterator.Files, text); }, ct).ConfigureAwait(false);
+                    var thumbnails = tabs.SharedThumbnails;
+                    var fileSearchResults = await Task.Run(
+                        () => FileSearcher.GetFileSearchResults(iterator.Files, text)
+                            .Select(result => new FileSearchItem(result, thumbnails, tab.Id))
+                            .ToArray(), ct).ConfigureAwait(false);
 
-                    var fileSearchResults = results as FileSearchResult[] ?? results.ToArray();
                     FilteredFileInfos.Value =
-                        new ObservableCollection<FileSearchResult>(fileSearchResults.Take(batchSize));
+                        new ObservableCollection<FileSearchItem>(fileSearchResults.Take(batchSize));
                     if (fileSearchResults.Length < batchSize)
                     {
                         return;
