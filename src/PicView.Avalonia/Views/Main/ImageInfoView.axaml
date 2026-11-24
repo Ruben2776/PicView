@@ -1122,7 +1122,7 @@
                                     Width="{CompiledBinding InfoWindow.TextWidth}"
                                     Margin="0,8,2,0"
                                     Classes="txt"
-                                    Text="{CompiledBinding Translation.Comment.Value,
+                                    Text="{CompiledBinding Exif.CommentLabel.Value,
                                                            Mode=OneWay}" />
                                 <customControls:FuncTextBox
                                     x:Name="CommentBox"

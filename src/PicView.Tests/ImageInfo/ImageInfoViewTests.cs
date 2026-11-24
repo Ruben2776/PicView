@@ -243,7 +243,7 @@ public class ImageInfoViewTests : IDisposable
 
     // An A1111 JPEG, whose UserComment holds the AI Metadata: the Prompt box and the Comment box both edit that tag
     [AvaloniaFact]
-    public void ImageInfoView_A1111Jpeg_EnablesTheAiMetadataAndShowsTheComment()
+    public void ImageInfoView_A1111Jpeg_EnablesTheAiMetadataAndLabelsTheCommentAsPrompt()
     {
         var vm = CreateViewModel();
         var path = SdTestFiles.WriteJpegWithUserComment(SdTestFiles.AsciiUserComment(SdPayload));
@@ -264,6 +264,7 @@ public class ImageInfoViewTests : IDisposable
             Assert.True(view.SdPromptBox.IsEffectivelyVisible);
 
             Assert.True(view.CommentBox.IsEffectivelyVisible);
+            Assert.Equal("Comment/Prompt", CommentLabel(view).Text);
         }
         finally
         {
@@ -301,6 +302,8 @@ public class ImageInfoViewTests : IDisposable
                 Assert.True(row.IsEffectivelyVisible, $"{row.Name} should be visible");
             }
 
+            Assert.Equal("Comment", CommentLabel(view).Text);
+
             var sections = view.MainContainer.Children;
             var color = sections.IndexOf(SectionOf(view, view.ColorRepresentationBox));
             var ai = sections.IndexOf(view.SdMetadataPanel);
@@ -313,6 +316,10 @@ public class ImageInfoViewTests : IDisposable
             Close(window, vm);
         }
     }
+
+    // The label in front of the Comment box
+    private static TextBlock CommentLabel(ImageInfoView view) =>
+        ((StackPanel)view.CommentBox.Parent!).Children.OfType<TextBlock>().First();
 
     // The child of MainContainer that holds control
     private static Control SectionOf(ImageInfoView view, Control control)

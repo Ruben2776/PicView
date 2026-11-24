@@ -15,8 +15,14 @@ namespace PicView.Core.ViewModels;
 
 public class ExifViewModel : IDisposable
 {
-    public ExifViewModel()
+    /// <param name="languageChanged">
+    /// <see cref="TranslationViewModel.LanguageChanged"/>, so the translated text this keeps follows a language change.
+    /// </param>
+    public ExifViewModel(Observable<Unit>? languageChanged = null)
     {
+        _languageSubscription = languageChanged?.Subscribe(_ => Rephrase(),
+            DebugHelper.LogError(nameof(ExifViewModel), nameof(Rephrase)));
+
         OpenGoogleLinkCommand = new ReactiveCommand(OpenGoogleMaps);
         OpenBingLinkCommand = new ReactiveCommand(OpenBingMaps);
 
@@ -235,6 +241,7 @@ public class ExifViewModel : IDisposable
 
     public void Dispose()
     {
+        _languageSubscription?.Dispose();
         CancelStealthScan();
         Disposable.Dispose(
             Altitude,
@@ -302,7 +309,7 @@ public class ExifViewModel : IDisposable
             SdRaw,
             SdStorage,
             IsSdEditable,
-            IsCommentShown,
+            CommentLabel,
             SetSdPromptCommand,
             SetSdNegativePromptCommand,
             SetSdSettingsCommand,
@@ -890,9 +897,10 @@ public class ExifViewModel : IDisposable
     public BindableReactiveProperty<bool> IsSdEditable { get; } = new();
 
     /// <summary>
-    /// False when the UserComment holds the AI Metadata, which the AI Metadata fields already show and edit.
+    /// The label of the Comment row: "Comment/Prompt" when the UserComment holds the AI Metadata, which both the
+    /// Comment box and the AI Metadata boxes edit, and "Comment" otherwise.
     /// </summary>
-    public BindableReactiveProperty<bool> IsCommentShown { get; } = new(true);
+    public BindableReactiveProperty<string?> CommentLabel { get; } = new(GetCommentLabel(isPrompt: false));
 
     public ReactiveCommand<string> SetSdPromptCommand { get; }
     public ReactiveCommand<string> SetSdNegativePromptCommand { get; }
@@ -905,6 +913,9 @@ public class ExifViewModel : IDisposable
     private ImageModel? _sdModel;
 
     private CancellationTokenSource? _stealthCts;
+
+    // Rewrites CommentLabel on a language change
+    private readonly IDisposable? _languageSubscription;
 
     // Runs SD commits one at a time, from reading _sd to reading the file again, so none composes from stale data
     private readonly SemaphoreSlim _sdCommitGate = new(1, 1);
@@ -1044,7 +1055,7 @@ public class ExifViewModel : IDisposable
         SdRaw.Value = sdMetadata.Raw;
         SdStorage.Value = GetStorageLabel(sdMetadata);
         IsSdEditable.Value = sdMetadata.IsEditable;
-        IsCommentShown.Value = sdMetadata.Source != SdSource.ExifUserComment;
+        CommentLabel.Value = GetCommentLabel(sdMetadata.Source == SdSource.ExifUserComment);
         IsSdMetadataAvailable.Value = true;
     }
 
@@ -1056,6 +1067,15 @@ public class ExifViewModel : IDisposable
             box.Value = value ?? string.Empty;
         }
     }
+
+    private static string GetCommentLabel(bool isPrompt)
+    {
+        var translation = TranslationManager.Translation;
+        return isPrompt ? $"{translation.Comment}/{translation.Prompt}" : translation.Comment ?? string.Empty;
+    }
+
+    /// <summary>Writes <see cref="CommentLabel"/> again, in the language just loaded.</summary>
+    private void Rephrase() => CommentLabel.Value = GetCommentLabel(_sd?.Source == SdSource.ExifUserComment);
 
     private static string GetStorageLabel(SdMetadata sdMetadata)
     {
@@ -1181,7 +1201,7 @@ public class ExifViewModel : IDisposable
         _sdModel = null;
         IsSdMetadataAvailable.Value = false;
         IsSdEditable.Value = false;
-        IsCommentShown.Value = true;
+        CommentLabel.Value = GetCommentLabel(isPrompt: false);
         SdGenerator.Value =
             SdPrompt.Value =
                 SdNegativePrompt.Value =

@@ -36,7 +36,7 @@ public class ExifViewModelSdTests
             Assert.Equal(Payload, viewModel.SdRaw.Value);
             Assert.Equal(TranslationManager.Translation.StoredInPngText, viewModel.SdStorage.Value);
             Assert.True(viewModel.IsSdEditable.Value);
-            Assert.True(viewModel.IsCommentShown.Value);
+            Assert.Equal("Comment", viewModel.CommentLabel.Value);
         }
         finally
         {
@@ -63,7 +63,7 @@ public class ExifViewModelSdTests
     }
 
     [Fact]
-    public void UpdateExifValues_UserCommentSource_HidesCommentBox()
+    public void UpdateExifValues_UserCommentSource_LabelsTheCommentAsPrompt()
     {
         var path = SdTestFiles.WriteJpegWithUserComment(SdTestFiles.AsciiUserComment(Payload));
         try
@@ -73,7 +73,7 @@ public class ExifViewModelSdTests
             Assert.True(viewModel.IsSdMetadataAvailable.Value);
             Assert.Equal(TranslationManager.Translation.StoredInUserComment, viewModel.SdStorage.Value);
             Assert.True(viewModel.IsSdEditable.Value);
-            Assert.False(viewModel.IsCommentShown.Value);
+            Assert.Equal("Comment/Prompt", viewModel.CommentLabel.Value);
         }
         finally
         {
@@ -82,7 +82,7 @@ public class ExifViewModelSdTests
     }
 
     [Fact]
-    public void UpdateExifValues_OrdinaryJpegComment_ShowsCommentBox()
+    public void UpdateExifValues_OrdinaryJpegComment_LabelsItComment()
     {
         var path = SdTestFiles.WriteJpegWithUserComment(SdTestFiles.AsciiUserComment("Holiday photo, taken at the beach"));
         try
@@ -91,11 +91,59 @@ public class ExifViewModelSdTests
 
             Assert.False(viewModel.IsSdMetadataAvailable.Value);
             Assert.False(viewModel.IsSdEditable.Value);
-            Assert.True(viewModel.IsCommentShown.Value);
+            Assert.Equal("Comment", viewModel.CommentLabel.Value);
             Assert.Equal("Holiday photo, taken at the beach", viewModel.Comment.Value);
         }
         finally
         {
+            File.Delete(path);
+        }
+    }
+
+    [Fact]
+    public void UpdateExifValues_PhotoAfterUserCommentSource_LabelsItComment()
+    {
+        var sd = SdTestFiles.WriteJpegWithUserComment(SdTestFiles.AsciiUserComment(Payload));
+        var photo = SdTestFiles.WriteJpegWithUserComment(SdTestFiles.AsciiUserComment("Holiday photo"));
+        try
+        {
+            using var viewModel = Show(sd);
+            Assert.Equal("Comment/Prompt", viewModel.CommentLabel.Value);
+
+            viewModel.UpdateExifValues(new ImageModel { FileInfo = new FileInfo(photo), PixelWidth = 8, PixelHeight = 8 });
+
+            Assert.False(viewModel.IsSdMetadataAvailable.Value);
+            Assert.Equal("Comment", viewModel.CommentLabel.Value);
+        }
+        finally
+        {
+            File.Delete(sd);
+            File.Delete(photo);
+        }
+    }
+
+    [Fact]
+    public void CommentLabel_LanguageChanged_FollowsTheNewLanguage()
+    {
+        var path = SdTestFiles.WriteJpegWithUserComment(SdTestFiles.AsciiUserComment(Payload));
+        var languageChanged = new Subject<Unit>();
+        try
+        {
+            using var viewModel = new ExifViewModel(languageChanged);
+            viewModel.UpdateExifValues(new ImageModel { FileInfo = new FileInfo(path), PixelWidth = 8, PixelHeight = 8 });
+            Assert.Equal("Comment/Prompt", viewModel.CommentLabel.Value);
+
+            TranslationManager.LoadLanguage("de");
+            languageChanged.OnNext(Unit.Default);
+
+            Assert.Equal($"{TranslationManager.Translation.Comment}/{TranslationManager.Translation.Prompt}",
+                viewModel.CommentLabel.Value);
+            Assert.NotEqual("Comment/Prompt", viewModel.CommentLabel.Value);
+        }
+        finally
+        {
+            TranslationManager.LoadLanguage("en");
+            languageChanged.Dispose();
             File.Delete(path);
         }
     }
