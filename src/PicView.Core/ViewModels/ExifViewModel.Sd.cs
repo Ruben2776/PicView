@@ -93,7 +93,8 @@ public partial class ExifViewModel
             }
 
             if (!sd.IsEditable ||
-                SdMetadataParser.Normalize(value) == SdMetadataParser.Normalize(GetField(sd, field)) ||
+                string.Equals(SdMetadataParser.Normalize(value), SdMetadataParser.Normalize(GetField(sd, field)),
+                    StringComparison.Ordinal) ||
                 (field == SdField.Settings && !IsSettingsValue(value)))
             {
                 ShowFileValue(model, field);
