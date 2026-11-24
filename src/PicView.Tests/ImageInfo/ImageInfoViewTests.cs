@@ -1,7 +1,10 @@
+using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Headless;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
+using Avalonia.VisualTree;
 using ImageMagick;
 using PicView.Avalonia.Views.Main;
 using PicView.Core.ImageDecoding;
@@ -376,6 +379,43 @@ public class ImageInfoViewTests : IDisposable
                 "The overlay's edit should be written after the box's commit");
             var stored = Core.Metadata.SdMetadataReader.Read(new FileInfo(path), ReadUserComment(path));
             Assert.Equal("a cat\non a mat", stored?.Prompt);
+        }
+        finally
+        {
+            Close(window, vm);
+            File.Delete(path);
+        }
+    }
+
+    // Tab must not reach the boxes behind the overlay, where stray typing would be written on focus-leave
+    [AvaloniaFact]
+    public void SdExpandOverlay_Tab_KeepsFocusInTheOverlay()
+    {
+        var vm = CreateViewModel();
+        var path = SdTestFiles.WriteJpegWithUserComment(SdTestFiles.AsciiUserComment(SdPayload));
+        vm.WindowTabs.ActiveTab.CurrentValue.Display(new ImageModel { FileInfo = new FileInfo(path), PixelWidth = 8, PixelHeight = 8 });
+
+        var view = new ImageInfoView { DataContext = vm };
+        var window = new Window { Content = view };
+        try
+        {
+            window.Show();
+            Dispatcher.UIThread.RunJobs();
+            Assert.True(WaitFor(() => view.SdPromptBox.Text == "a catt"));
+            view.SdPromptExpandButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Dispatcher.UIThread.RunJobs();
+            Assert.True(view.SdExpandText.IsFocused);
+
+            for (var i = 0; i < 6; i++)
+            {
+                window.KeyPress(Key.Tab, RawInputModifiers.None, PhysicalKey.Tab, null);
+                window.KeyRelease(Key.Tab, RawInputModifiers.None, PhysicalKey.Tab, null);
+                Dispatcher.UIThread.RunJobs();
+
+                var focused = window.FocusManager?.GetFocusedElement() as Visual;
+                Assert.True(focused is not null && view.SdExpandOverlay.IsVisualAncestorOf(focused),
+                    $"Tab {i + 1} moved focus out of the overlay, to {focused}");
+            }
         }
         finally
         {

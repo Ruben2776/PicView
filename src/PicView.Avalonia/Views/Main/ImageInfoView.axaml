@@ -2499,13 +2499,15 @@
             x:Name="SdExpandOverlay"
             Background="#99000000"
             IsVisible="False">
+            <!--  Tab cycles inside the card, so it never reaches the boxes behind the overlay  -->
             <Border
                 Margin="12"
                 Padding="8"
                 Background="{DynamicResource ToolWindowButtonBackground}"
                 BorderBrush="{DynamicResource ImageInfoSeparatorColor}"
                 BorderThickness="1"
-                CornerRadius="4">
+                CornerRadius="4"
+                KeyboardNavigation.TabNavigation="Cycle">
                 <DockPanel>
                     <DockPanel Margin="0,0,0,6" DockPanel.Dock="Top">
                         <Button
