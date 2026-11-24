@@ -1,3 +1,4 @@
+using System.Text.Json;
 using ImageMagick;
 using PicView.Core.DebugTools;
 
@@ -198,9 +199,9 @@ public static class SdMetadataReader
     {
         try
         {
-            using var document = System.Text.Json.JsonDocument.Parse(payload);
+            using var document = JsonDocument.Parse(payload);
             var root = document.RootElement;
-            if (root.ValueKind != System.Text.Json.JsonValueKind.Object)
+            if (root.ValueKind != JsonValueKind.Object)
             {
                 return null;
             }
@@ -208,7 +209,7 @@ public static class SdMetadataReader
             var chunks = new Dictionary<string, string>(StringComparer.Ordinal);
             foreach (var property in root.EnumerateObject())
             {
-                if (property.Value.ValueKind == System.Text.Json.JsonValueKind.String)
+                if (property.Value.ValueKind == JsonValueKind.String)
                 {
                     chunks[property.Name] = property.Value.GetString() ?? string.Empty;
                 }
@@ -224,7 +225,7 @@ public static class SdMetadataReader
             chunks.TryGetValue("Comment", out var comment);
             return SdMetadataParser.ParseNovelAi(description, comment);
         }
-        catch (System.Text.Json.JsonException)
+        catch (JsonException)
         {
             return null;
         }
@@ -273,9 +274,12 @@ public static class SdMetadataReader
 
         var parsed = source == SdSource.PngText ? ParseUnknownPayload(text) : ReadFromText(text);
         return parsed is { Format: SdFormat.A1111 } &&
-               SdMetadataParser.Normalize(parsed.Prompt) == SdMetadataParser.Normalize(prompt) &&
-               SdMetadataParser.Normalize(parsed.NegativePrompt) == SdMetadataParser.Normalize(negativePrompt) &&
-               SdMetadataParser.Normalize(parsed.Settings) == SdMetadataParser.Normalize(settings);
+            string.Equals(SdMetadataParser.Normalize(parsed.Prompt), SdMetadataParser.Normalize(prompt),
+                StringComparison.Ordinal) &&
+            string.Equals(SdMetadataParser.Normalize(parsed.NegativePrompt), SdMetadataParser.Normalize(negativePrompt),
+                StringComparison.Ordinal) &&
+            string.Equals(SdMetadataParser.Normalize(parsed.Settings), SdMetadataParser.Normalize(settings),
+                StringComparison.Ordinal);
     }
 
     /// <summary>Identifies the file type from its first bytes: PNG signature, FF D8 FF, or RIFF....WEBP.</summary>

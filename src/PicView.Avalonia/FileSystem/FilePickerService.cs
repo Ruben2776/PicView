@@ -1,9 +1,9 @@
-using PicView.Avalonia.Navigation;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
+using PicView.Avalonia.Navigation;
 using PicView.Avalonia.UI;
 using PicView.Core.DebugTools;
 using PicView.Core.Extensions;
@@ -26,7 +26,7 @@ public class FilePickerService(IStorageProvider? storageProvider = null) : ISave
         {
             return;
         }
-        var core = await Dispatcher.UIThread.InvokeAsync(() => Application.Current?.DataContext as CoreViewModel);
+        var core = await Dispatcher.UIThread.InvokeAsync(() => Application.Current.DataContext as CoreViewModel);
         if (core is null)
         {
             return;
@@ -154,15 +154,12 @@ public class FilePickerService(IStorageProvider? storageProvider = null) : ISave
             return storageProvider;
         }
 
-        if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime { MainWindow.StorageProvider: { } provider })
+        if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime { MainWindow.StorageProvider: { } provider })
         {
             return provider;
         }
-#if DEBUG
         DebugHelper.LogDebug(nameof(FilePickerService), nameof(GetStorageProvider), "Missing StorageProvider instance.");
-#endif
         return null;
-
     }
     
     private static string GetSuggestedFileName(string? fileName, string? ext)

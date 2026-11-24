@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices;
 using PicView.Core.Thumbnailing;
 
 namespace PicView.Core.Gallery;
@@ -8,6 +9,7 @@ namespace PicView.Core.Gallery;
 /// its Gallery Appearance from the look of the window it is in, so a tab that enters a window that differs in several
 /// of these takes them all in one change.
 /// </summary>
+[StructLayout(LayoutKind.Auto)]
 public readonly record struct GalleryLook(
     double DockedItemSize,
     double ExpandedItemSize,

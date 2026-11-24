@@ -59,14 +59,15 @@ public static class SideBySidePair
                 var isReversed = navigation == NavigateTo.Previous;
                 var stepped = index + (isReversed ? -jump : jump);
 
-                if (looping)
+                if (!looping)
                 {
-                    var looped = stepped % count;
-                    return (looped < 0 ? looped + count : looped, isReversed);
+                    return (Math.Clamp(stepped, 0, count - 2), isReversed);
                 }
 
+                var looped = stepped % count;
+                return (looped < 0 ? looped + count : looped, isReversed);
+
                 // Clamped, so the step ends on a full pair at either end of the list
-                return (Math.Clamp(stepped, 0, count - 2), isReversed);
 
             case NavigateTo.First:
                 return (0, true);
@@ -75,9 +76,7 @@ public static class SideBySidePair
                 return (count - 2, false);
 
             default:
-#if DEBUG
                 DebugHelper.LogDebug(nameof(SideBySidePair), nameof(Navigate), $"{navigation} is not a valid NavigateTo value.");
-#endif
                 return (-1, false);
         }
     }

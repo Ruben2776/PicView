@@ -9,18 +9,6 @@ public class NavigationService : INavigationService
 {
     private FileAndDirectoryNavigator? _navigator;
 
-    public async ValueTask NavigateAsync(TabViewModel tab, NavigateTo to, CancellationTokenSource ct)
-    {
-        // A tab that never browsed files, such as a New Tab, has nothing to step through
-        var iterator = tab.ImageIterator;
-        if (iterator is null)
-        {
-            return;
-        }
-
-        await iterator.NavigateAsync(to, SkipAmount.One, ct).ConfigureAwait(false);
-    }
-
     public async ValueTask NavigateByIncrementsAsync(TabViewModel tab, SkipAmount skipAmount, bool forwards, CancellationTokenSource ct)
     {
         var iterator = tab.ImageIterator;

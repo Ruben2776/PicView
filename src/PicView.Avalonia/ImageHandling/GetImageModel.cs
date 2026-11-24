@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using System.Text;
 using Avalonia;
 using Avalonia.Media.Imaging;
@@ -407,6 +406,7 @@ public static class GetImageModel
                 LoadTiffPages(fileInfo, imageModel);
                 break;
 
+            default:
             case Decoder.Tga:
                 magickImage.Read(fileInfo);
                 SetBitmapProperties(magickImage.ToWriteableBitmap(), imageModel);
@@ -415,9 +415,6 @@ public static class GetImageModel
             case Decoder.Svg:
                 SetSvgProperties(SvgImageLoader.Load(fileInfo, magickImage.Width, magickImage.Height), imageModel, magickImage);
                 break;
-
-            default:
-                throw new UnreachableException($"Unknown {nameof(Decoder)}: {decoder}");
         }
     }
 
@@ -510,10 +507,10 @@ public static class GetImageModel
     }
 
     private static CoreViewModel? GetCoreViewModel() =>
-        Dispatcher.UIThread.Invoke(static () => Application.Current?.DataContext as CoreViewModel);
+        Dispatcher.UIThread.Invoke(static () => Application.Current.DataContext as CoreViewModel);
 
     private static DispatcherOperation<CoreViewModel?> GetCoreViewModelAsync() =>
-        Dispatcher.UIThread.InvokeAsync(static () => Application.Current?.DataContext as CoreViewModel);
+        Dispatcher.UIThread.InvokeAsync(static () => Application.Current.DataContext as CoreViewModel);
 
     /// <summary>
     /// Decodes the cover image of an Apple .livp container, extracted to <paramref name="coverPath"/>, through the

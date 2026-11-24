@@ -22,7 +22,7 @@ public static class FileManager
     /// <param name="path">The fully qualified path to the file to be deleted.</param>
     /// <param name="platformService">The platform-specific service responsible for performing the file deletion operation.</param>
     /// <param name="mainWindow">The main window of the application.</param>
-    public static async ValueTask DeleteFileWithOptionalDialog(bool recycle, string path,
+    public static async Task DeleteFileWithOptionalDialog(bool recycle, string path,
         IPlatformSpecificService platformService, MainWindow mainWindow)
     {
         if (string.IsNullOrWhiteSpace(path))

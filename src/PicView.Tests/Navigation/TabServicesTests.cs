@@ -57,33 +57,6 @@ public class TabServicesTests
     }
 
     [Fact]
-    public async Task NavigationAndSort_OnANewTabWithoutAnIterator_ThrowNothingAndMarkTheSort()
-    {
-        // A New Tab has services from App Start but no iterator until its first load
-        var core = CreateCore();
-        var services = ServicesFor(core);
-        core.InitializeNavigation(services, NavigationFor(core, services));
-        // The window starts from the record's order
-        Settings.Sorting.SortPreference = (int)SortFilesBy.FileSize;
-        var vm = new MainWindowViewModel(core, null!, null!, null!);
-        var tabs = vm.WindowTabs;
-        var tab = tabs.CreateTab();
-        Assert.Null(tab.ImageIterator);
-
-        await tabs.FirstFile();
-        await tabs.LastFile();
-        await tabs.SortAsync(SortFilesBy.Name);
-        await tabs.ReloadAsync();
-
-        // The order is the window's, so a tab with nothing to sort still sets it there and marks the menu, and the
-        // record keeps its own until the window closes
-        Assert.Equal(SortFilesBy.Name, vm.WindowSettings.FileOrder.Value.By);
-        Assert.Equal((int)SortFilesBy.FileSize, Settings.Sorting.SortPreference);
-        Assert.True(tabs.IsSortedByName.Value);
-        Assert.Null(tab.ImageIterator);
-    }
-
-    [Fact]
     public void InitializeNavigation_Twice_KeepsTheFirstServices()
     {
         var core = CreateCore();

@@ -145,7 +145,7 @@ public partial class GalleryItemContextMenu : ContextMenu
 
     private void CopyImage_OnClick(object? sender, RoutedEventArgs e)
     {
-        if (Application.Current?.DataContext is not CoreViewModel core || ItemViewModel is not { } item ||
+        if (Application.Current.DataContext is not CoreViewModel core || ItemViewModel is not { } item ||
             MainWindow is not { DataContext: MainWindowViewModel vm } mainWindow)
         {
             return;
@@ -200,7 +200,7 @@ public partial class GalleryItemContextMenu : ContextMenu
 
     private void DeleteFile_OnClick(object? sender, RoutedEventArgs e)
     {
-        if (Application.Current?.DataContext is not CoreViewModel core || ItemViewModel is not { } item ||
+        if (Application.Current.DataContext is not CoreViewModel core || ItemViewModel is not { } item ||
             MainWindow is not { } mainWindow)
         {
             return;

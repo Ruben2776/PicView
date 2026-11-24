@@ -1,8 +1,8 @@
-using PicView.Core.Thumbnailing;
 using PicView.Core.ArchiveHandling;
 using PicView.Core.FileSorting;
 using PicView.Core.Models;
 using PicView.Core.Navigation.Interfaces;
+using PicView.Core.Thumbnailing;
 using PicView.Core.ViewModels;
 
 namespace PicView.Core.Navigation;
@@ -404,8 +404,15 @@ public class ImageIterator(SharedImageCache cache, Thumbnails thumbnails, TabVie
         {
             return;
         }
-
-        await ShowAtAsync(from.Files, iteration, ct).ConfigureAwait(false);
+        var (primary, partner) = SideBySidePair.PairAt(iteration, from.Files.Length, showsPair, looping);
+        if (partner is { } secondary)
+        {
+            await ShowPairAsync(from.Files, primary, secondary, ct).ConfigureAwait(false);
+        }
+        else
+        {
+            await ShowAloneAsync(from.Files, primary, ct).ConfigureAwait(false);
+        }
     }
 
     public ValueTask IterateToIndexAsync(int index, CancellationTokenSource ct) =>
@@ -431,50 +438,45 @@ public class ImageIterator(SharedImageCache cache, Thumbnails thumbnails, TabVie
     /// list now, as an archive's extraction inserts pages before it meanwhile.</param>
     private async ValueTask ShowAloneAsync(FileInfo[] files, int index, CancellationTokenSource ct)
     {
-        if (index < 0 || index >= files.Length)
-        {
-            return;
-        }
-
-        var targetFile = files[index];
         // A single image has no secondary, and a pair that is still loading is no longer the current one
         if (MakeCurrent(files, index, -1) is null)
         {
             return;
         }
+        var targetFile = files[index];
 
         var request = Cache.GetAsync(_tab.Id, targetFile, ct.Token);
-        if (!request.IsCompleted)
+        if (request.IsCompleted)
         {
-            // Still loading, show thumbnail while waiting
-            var ticket = _tab.SetLoading();
-            try
-            {
-                await Task.Run(async () =>
-                {
-                    var thumb = await _thumbnails.GetQuickAsync(targetFile,
-                            _tab.Gallery.Look.CurrentValue.ThumbnailHeight)
-                        .ConfigureAwait(false);
-                    if (IsTargetActive(targetFile))
-                    {
-                        _tab.ShowStandIn(thumb);
-                    }
-                    var model = await request.ConfigureAwait(false);
-                    if (model is not null && IsTargetActive(targetFile))
-                    {
-                        UpdateModel(model);
-                    }
-                }, ct.Token).ConfigureAwait(false);
-            }
-            finally
-            {
-                // A step that showed nothing, as when it was cancelled or overtaken, leaves its Loading; one that showed
-                // an image already ended every phase, and a newer load's phase has a newer ticket
-                _tab.EndLoading(ticket);
-            }
+            UpdateModel(await request.ConfigureAwait(false));
             return;
         }
-        UpdateModel(await request.ConfigureAwait(false));
+        // Still loading, show thumbnail while waiting
+        var ticket = _tab.SetLoading();
+        try
+        {
+            await Task.Run(async () =>
+            {
+                var thumb = await _thumbnails.GetQuickAsync(targetFile,
+                        _tab.Gallery.Look.CurrentValue.ThumbnailHeight, ct.Token)
+                    .ConfigureAwait(false);
+                if (IsTargetActive(targetFile))
+                {
+                    _tab.ShowStandIn(thumb);
+                }
+                var model = await request.ConfigureAwait(false);
+                if (model is not null && IsTargetActive(targetFile))
+                {
+                    UpdateModel(model);
+                }
+            }, ct.Token).ConfigureAwait(false);
+        }
+        finally
+        {
+            // A step that showed nothing, as when it was cancelled or overtaken, leaves its Loading; one that showed
+            // an image already ended every phase, and a newer load's phase has a newer ticket
+            _tab.EndLoading(ticket);
+        }
     }
     
     /// <param name="files">The list the indices count in, as <see cref="ShowAloneAsync"/>

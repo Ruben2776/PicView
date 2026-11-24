@@ -18,7 +18,7 @@ public partial class MacMainWindow : MainWindow
     /// <param name="firstTab">A tab moved out of another Main Window, for a window that opens with it.</param>
     public MacMainWindow(CoreViewModel? core, TabViewModel? firstTab = null, WindowSettings? windowSettings = null)
     {
-        core ??= Application.Current?.DataContext as CoreViewModel;
+        core ??= Application.Current.DataContext as CoreViewModel;
         if (core is null)
         {
             return;

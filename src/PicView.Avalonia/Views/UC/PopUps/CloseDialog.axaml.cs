@@ -34,7 +34,7 @@ public partial class CloseDialog : AnimatedPopUp
             return;
         }
 
-        if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+        if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             desktop.MainWindow?.Close();
         }

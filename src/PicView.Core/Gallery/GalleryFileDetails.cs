@@ -53,9 +53,7 @@ public sealed record GalleryFileDetails(uint PixelWidth, uint PixelHeight)
         }
         catch (Exception ex)
         {
-#if DEBUG
             DebugHelper.LogDebug(nameof(GalleryFileDetails), nameof(Read), ex);
-#endif
             return null;
         }
     }

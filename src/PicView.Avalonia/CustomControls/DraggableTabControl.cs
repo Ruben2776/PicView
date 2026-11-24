@@ -610,7 +610,7 @@ public class DraggableTabControl : TabControl
 
         var screenPosPixel = _pressedTab.PointToScreen(e.GetPosition(_pressedTab));
 
-        if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+        if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             foreach (var window in desktop.Windows)
             {
@@ -631,35 +631,37 @@ public class DraggableTabControl : TabControl
                 var tabPoint = tabControl.PointToClient(screenPosPixel);
                 var tabStripBounds = new Rect(0, 0, tabControl.Bounds.Width, DetachThreshold);
 
-                if (tabStripBounds.Contains(tabPoint))
+                if (!tabStripBounds.Contains(tabPoint))
                 {
-                    if (tabControl != TabDragContext.CurrentTarget)
-                    {
-                        if (TabDragContext.CurrentTarget != null && TabDragContext.CurrentTarget != this)
-                        {
-                            TabDragContext.CurrentTarget.ExternalDragLeave();
-                        }
+                    continue;
+                }
 
-                        TabDragContext.CurrentTarget = tabControl;
-                        if (tabControl != this)
-                        {
-                            tabControl.ExternalDragEnter(_draggedTabSnapshot, _draggedTabWidth);
-                        }
+                if (tabControl != TabDragContext.CurrentTarget)
+                {
+                    if (TabDragContext.CurrentTarget != null && TabDragContext.CurrentTarget != this)
+                    {
+                        TabDragContext.CurrentTarget.ExternalDragLeave();
                     }
 
+                    TabDragContext.CurrentTarget = tabControl;
                     if (tabControl != this)
                     {
-                        tabControl.ExternalDragOver(screenPosPixel);
-                        _ghostWindow?.Hide();
+                        tabControl.ExternalDragEnter(_draggedTabSnapshot, _draggedTabWidth);
                     }
-                    else
-                    {
-                        UpdateGhostWindowPosition(e);
-                        _ghostWindow?.Show();
-                    }
-
-                    return;
                 }
+
+                if (tabControl != this)
+                {
+                    tabControl.ExternalDragOver(screenPosPixel);
+                    _ghostWindow?.Hide();
+                }
+                else
+                {
+                    UpdateGhostWindowPosition(e);
+                    _ghostWindow?.Show();
+                }
+
+                return;
             }
         }
 

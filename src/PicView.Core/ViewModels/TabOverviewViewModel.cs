@@ -66,6 +66,7 @@ public class TabOverviewViewModel
         }
         else
         {
+            Debug.Assert(parentVm != null);
             firstTab.ParentWindowContext = parentVm;
             Tabs.Value.Add(firstTab);
             // Published once the tab is in this window's tabs, so what follows its window finds it there. Its views and
@@ -481,8 +482,7 @@ public class TabOverviewViewModel
     {
         var tab = ActiveTab.Value;
         var ct = tab.GetTabCancellation();
-        Debug.Assert(SharedNavigation != null, nameof(SharedNavigation) + " != null");
-        await SharedNavigation.NavigateAsync(tab, navigateTo, ct).ConfigureAwait(false);
+        await tab.ImageIterator.NavigateAsync(navigateTo, SkipAmount.One, ct).ConfigureAwait(false);
     }
     
     private async ValueTask IncrementsCore(SkipAmount skipAmount, bool forwards)

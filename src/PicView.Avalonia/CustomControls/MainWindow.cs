@@ -233,7 +233,7 @@ public abstract class MainWindow : Window, IMainWindow
 
     private void SetClipboardServices(IPlatformSpecificService? platformService = null, CoreViewModel? core = null)
     {
-        core ??= Application.Current?.DataContext as CoreViewModel;
+        core ??= Application.Current.DataContext as CoreViewModel;
         platformService ??= core?.PlatformService;
 
         ClipboardCopyService = new ClipboardCopyService(

@@ -85,11 +85,11 @@ internal static class StealthPngInfoReader
 
         var signature = reader.ReadAscii(SignatureBits);
         bool compressed;
-        if (signature == plainSignature)
+        if (string.Equals(signature, plainSignature, StringComparison.Ordinal))
         {
             compressed = false;
         }
-        else if (signature == compressedSignature)
+        else if (string.Equals(signature, compressedSignature, StringComparison.Ordinal))
         {
             compressed = true;
         }

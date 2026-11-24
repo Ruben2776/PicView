@@ -13,9 +13,8 @@ using PicView.Avalonia.Services;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.Views.UC;
 using PicView.Avalonia.WindowBehavior;
-using PicView.Core.FileHistory;
-using PicView.Core.Config;
 using PicView.Core.DebugTools;
+using PicView.Core.FileHistory;
 using PicView.Core.Navigation;
 using PicView.Core.ViewModels;
 using R3;
@@ -250,7 +249,7 @@ public sealed class MainWindowLifecycle
                 window.WindowFitter.FitStartUpMenu(menu);
             }
             window.Show();
-            if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
                 desktop.MainWindow = window;
             }

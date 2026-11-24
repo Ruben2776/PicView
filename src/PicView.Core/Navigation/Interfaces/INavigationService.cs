@@ -1,14 +1,9 @@
-﻿using System.Collections.ObjectModel;
-using PicView.Core.FileSearch;
-using PicView.Core.ViewModels;
-using R3;
+﻿using PicView.Core.ViewModels;
 
 namespace PicView.Core.Navigation.Interfaces;
 
 public interface INavigationService
 {
-    ValueTask NavigateAsync(TabViewModel tab, NavigateTo to, CancellationTokenSource ct);
-
     ValueTask NavigateByIncrementsAsync(TabViewModel tab, SkipAmount skipAmount, bool forwards, CancellationTokenSource ct);
 
     /// <summary>

@@ -74,7 +74,7 @@ public static class MacUpdateHelper
             DebugHelper.LogDebug(nameof(MacUpdateHelper), nameof(DownloadAndOpenDmg), ex);
             // Updating is not done from a Main Window, so tell the user in the active one
             var vm = await Dispatcher.UIThread.InvokeAsync(() =>
-                (Application.Current?.DataContext as CoreViewModel)?.MainWindows.ActiveWindow.CurrentValue);
+                (Application.Current.DataContext as CoreViewModel)?.MainWindows.ActiveWindow.CurrentValue);
             if (vm is not null)
             {
                 TooltipHelper.ShowTooltipMessage(vm, $"Failed to download or open update: {ex.Message}");

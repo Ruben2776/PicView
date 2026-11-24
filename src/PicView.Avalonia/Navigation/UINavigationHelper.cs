@@ -1,8 +1,8 @@
 using Avalonia;
 using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
-using PicView.Core.FileHistory;
 using PicView.Core.DebugTools;
+using PicView.Core.FileHistory;
 using PicView.Core.Models;
 using PicView.Core.Navigation;
 using PicView.Core.ViewModels;
@@ -22,7 +22,7 @@ public static class UINavigationHelper
 
         vm.TopTitlebarViewModel.DropDownMenu.IsDropDownMenuVisible.Value = false;
 
-        var core = await Dispatcher.UIThread.InvokeAsync(() => Application.Current?.DataContext as CoreViewModel);
+        var core = await Dispatcher.UIThread.InvokeAsync(() => Application.Current.DataContext as CoreViewModel);
         if (core is null)
         {
             return;

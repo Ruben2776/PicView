@@ -1,3 +1,5 @@
+using System.Runtime.InteropServices;
+
 namespace PicView.Core.Comparison;
 
 /// <summary>
@@ -9,6 +11,7 @@ namespace PicView.Core.Comparison;
 /// <param name="M22">Scale * cos(theta).</param>
 /// <param name="OffsetX">Horizontal translation.</param>
 /// <param name="OffsetY">Vertical translation.</param>
+[StructLayout(LayoutKind.Auto)]
 public readonly record struct SimilarityMatrix(
     double M11,
     double M12,

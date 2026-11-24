@@ -38,8 +38,8 @@ public static class FileSaver
         }
 
         var core = Dispatcher.UIThread.CheckAccess()
-            ? Application.Current?.DataContext as CoreViewModel
-            : await Dispatcher.UIThread.InvokeAsync(() => Application.Current?.DataContext as CoreViewModel);
+            ? Application.Current.DataContext as CoreViewModel
+            : await Dispatcher.UIThread.InvokeAsync(() => Application.Current.DataContext as CoreViewModel);
         if (core is null)
         {
             // Not cached: a writer without the app's effects and Single Image pixels would stay after the app has them
