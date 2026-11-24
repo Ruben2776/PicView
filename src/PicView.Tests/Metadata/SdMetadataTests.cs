@@ -1,3 +1,5 @@
+using System.IO.Compression;
+using System.Text;
 using PicView.Core.Metadata;
 
 namespace PicView.Tests.Metadata;
@@ -189,6 +191,42 @@ public class SdMetadataTests
         {
             File.Delete(path);
         }
+    }
+
+    // A few KB of zTXt that inflates past 16 MB is skipped rather than allocated, and the chunks after it still read
+    [Fact]
+    public void PngTextChunkReader_ZTxtInflatingPastTheCap_IsSkipped()
+    {
+        using var png = new MemoryStream();
+        png.Write([0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A]);
+        SdTestFiles.WriteChunk(png, "IHDR", new byte[13]);
+
+        using (var payload = new MemoryStream())
+        {
+            payload.Write("parameters\0\0"u8);
+            using (var zlib = new ZLibStream(payload, CompressionLevel.Optimal, leaveOpen: true))
+            {
+                var block = new byte[1024 * 1024];
+                Array.Fill(block, (byte)'a');
+                for (var i = 0; i < 17; i++)
+                {
+                    zlib.Write(block);
+                }
+            }
+
+            Assert.True(payload.Length < 1024 * 1024);
+            SdTestFiles.WriteChunk(png, "zTXt", payload.ToArray());
+        }
+
+        SdTestFiles.WriteChunk(png, "tEXt", [.. Encoding.Latin1.GetBytes("Software"), 0, .. "PicView"u8]);
+        SdTestFiles.WriteChunk(png, "IEND", []);
+        png.Position = 0;
+
+        var chunks = PngTextChunkReader.Read(png);
+
+        Assert.NotNull(chunks);
+        Assert.False(chunks.ContainsKey("parameters"));
+        Assert.Equal("PicView", chunks["Software"]);
     }
 
     [Fact]

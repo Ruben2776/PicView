@@ -20,6 +20,12 @@ internal static class PngTextChunkReader
     /// </summary>
     private const int MaxChunkLength = 16 * 1024 * 1024;
 
+    /// <summary>
+    /// Largest text that compressed data may inflate to, the same as <see cref="MaxChunkLength"/>. A few KB of
+    /// crafted data can otherwise inflate to gigabytes.
+    /// </summary>
+    internal const int MaxInflatedLength = MaxChunkLength;
+
     public static bool IsPng(Stream stream)
     {
         if (!stream.CanSeek || stream.Length < 8)
@@ -186,14 +192,35 @@ internal static class PngTextChunkReader
         {
             using var input = new MemoryStream(compressed.ToArray());
             using var zlib = new ZLibStream(input, CompressionMode.Decompress);
-            using var output = new MemoryStream();
-            zlib.CopyTo(output, 81920);
-            return encoding.GetString(output.ToArray());
+            var inflated = ReadAtMost(zlib, MaxInflatedLength);
+            return inflated is null ? null : encoding.GetString(inflated);
         }
         catch (Exception e)
         {
             DebugHelper.LogDebug(nameof(PngTextChunkReader), nameof(Inflate), e);
             return null;
         }
+    }
+
+    /// <summary>
+    /// Reads <paramref name="source"/> to its end, or returns null as soon as it gives more than
+    /// <paramref name="maxLength"/> bytes.
+    /// </summary>
+    internal static byte[]? ReadAtMost(Stream source, int maxLength)
+    {
+        using var output = new MemoryStream();
+        var buffer = new byte[81920];
+        int read;
+        while ((read = source.Read(buffer, 0, buffer.Length)) > 0)
+        {
+            if (output.Length + read > maxLength)
+            {
+                return null;
+            }
+
+            output.Write(buffer, 0, read);
+        }
+
+        return output.ToArray();
     }
 }

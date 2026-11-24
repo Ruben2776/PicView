@@ -59,6 +59,23 @@ public class StealthPngInfoTests
         }
     }
 
+    // About 17 KB of gzip in the pixels that inflates to 17 MB is refused rather than allocated
+    [Fact]
+    public void ReadStealth_PayloadInflatingPastTheCap_ReturnsNull()
+    {
+        var text = new byte[17 * 1024 * 1024];
+        Array.Fill(text, (byte)'a');
+        var path = WriteStealthPng("stealth_rgbcomp", compressed: true, useAlpha: false, text);
+        try
+        {
+            Assert.Null(SdMetadataReader.ReadStealth(new FileInfo(path)));
+        }
+        finally
+        {
+            File.Delete(path);
+        }
+    }
+
     [Fact]
     public void ReadStealth_OrdinaryImage_ReturnsNull()
     {
@@ -109,9 +126,9 @@ public class StealthPngInfoTests
     /// signature, then a 32-bit big-endian bit count, then the payload, written into the low bit
     /// of the chosen channels and walked in column-major order.
     /// </summary>
-    private static string WriteStealthPng(string signature, bool compressed, bool useAlpha)
+    private static string WriteStealthPng(string signature, bool compressed, bool useAlpha, byte[]? text = null)
     {
-        var payload = Encoding.UTF8.GetBytes(Payload);
+        var payload = text ?? Encoding.UTF8.GetBytes(Payload);
         if (compressed)
         {
             using var buffer = new MemoryStream();

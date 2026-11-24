@@ -131,9 +131,7 @@ internal static class StealthPngInfoReader
         {
             using var input = new MemoryStream(compressed);
             using var gzip = new GZipStream(input, CompressionMode.Decompress);
-            using var output = new MemoryStream();
-            gzip.CopyTo(output, 81920);
-            return output.ToArray();
+            return PngTextChunkReader.ReadAtMost(gzip, PngTextChunkReader.MaxInflatedLength);
         }
         catch (Exception e)
         {
