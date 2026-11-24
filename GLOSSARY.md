@@ -159,6 +159,10 @@ _Avoid_: Sharp thumbnail, full-size thumbnail, HQ thumbnail
 The paused state, speed and position of one animated file a Tab shows. A Tab has one for the shown image and one for the image beside it when viewing side by side. Each shown file gets a new one, which starts playing from its first frame; a Stand-in ends them. It always loops.
 _Avoid_: Animation instance, GIF instance, animation state
 
+**AI Metadata**:
+What an AI image generator stored in the image about how it made it: the prompt, the negative prompt, the generation settings and the raw text or JSON they came from. Automatic1111 and its forks, ComfyUI, NovelAI and InvokeAI write it, in a PNG text chunk, the Exif UserComment, the JPEG comment, or hidden in the pixels. Only the Automatic1111 kind in a PNG's `parameters` chunk or a JPEG's or WebP's UserComment can be edited.
+_Avoid_: Stable Diffusion metadata, SD data, generation data, PNG info
+
 ## Archives
 
 **Archive Opening**:
