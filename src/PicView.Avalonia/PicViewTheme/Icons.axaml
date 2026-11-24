@@ -3682,6 +3682,67 @@
         </DrawingGroup>
     </DrawingImage>
 
+    <DrawingImage x:Key="BotImage">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Geometry="F1 M12,8 V4 H8">
+                    <GeometryDrawing.Pen>
+                        <Pen
+                            Brush="{DynamicResource MainTextColor}"
+                            LineCap="Round"
+                            LineJoin="Round"
+                            Thickness="2" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+                <GeometryDrawing Geometry="F1 M6,8 H18 A2,2,0,0,1,20,10 V18 A2,2,0,0,1,18,20 H6 A2,2,0,0,1,4,18 V10 A2,2,0,0,1,6,8 Z">
+                    <GeometryDrawing.Pen>
+                        <Pen
+                            Brush="{DynamicResource MainTextColor}"
+                            LineCap="Round"
+                            LineJoin="Round"
+                            Thickness="2" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+                <GeometryDrawing Geometry="F1 M2,14 h2">
+                    <GeometryDrawing.Pen>
+                        <Pen
+                            Brush="{DynamicResource MainTextColor}"
+                            LineCap="Round"
+                            LineJoin="Round"
+                            Thickness="2" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+                <GeometryDrawing Geometry="F1 M20,14 h2">
+                    <GeometryDrawing.Pen>
+                        <Pen
+                            Brush="{DynamicResource MainTextColor}"
+                            LineCap="Round"
+                            LineJoin="Round"
+                            Thickness="2" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+                <GeometryDrawing Geometry="F1 M15,13 v2">
+                    <GeometryDrawing.Pen>
+                        <Pen
+                            Brush="{DynamicResource MainTextColor}"
+                            LineCap="Round"
+                            LineJoin="Round"
+                            Thickness="2" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+                <GeometryDrawing Geometry="F1 M9,13 v2">
+                    <GeometryDrawing.Pen>
+                        <Pen
+                            Brush="{DynamicResource MainTextColor}"
+                            LineCap="Round"
+                            LineJoin="Round"
+                            Thickness="2" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
     <DrawingImage x:Key="BrushImage">
         <DrawingGroup>
             <GeometryDrawing Geometry="F1 M16 22L15 18">
