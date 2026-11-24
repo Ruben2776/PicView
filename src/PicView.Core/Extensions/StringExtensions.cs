@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text.RegularExpressions;
 
 namespace PicView.Core.Extensions;
@@ -126,6 +127,39 @@ public static partial class StringExtensions
     }
 
     /// <summary>
+    /// Combines two values and a suffix into a "{x} x {y} {suffix}" string, e.g. "300 x 300 dpi",
+    /// with exactly one string allocation. The values are formatted with the current culture.
+    /// </summary>
+    /// <param name="x">The first value.</param>
+    /// <param name="y">The second value.</param>
+    /// <param name="suffix">The text after the values. When null or empty, the trailing space is left out.</param>
+    /// <returns>A string in the format "{x} x {y} {suffix}".</returns>
+    public static string CombineSizeWithSuffix(double x, double y, string? suffix)
+    {
+        // A double formats to at most 24 chars ("-1.7976931348623157E+308"), so this fits both values and " x "
+        Span<char> buffer = stackalloc char[64];
+
+        if (!x.TryFormat(buffer, out var written, provider: CultureInfo.CurrentCulture))
+        {
+            return string.Empty;
+        }
+
+        " x ".CopyTo(buffer[written..]);
+        written += 3;
+
+        if (!y.TryFormat(buffer[written..], out var yLength, provider: CultureInfo.CurrentCulture))
+        {
+            return string.Empty;
+        }
+
+        written += yLength;
+
+        return string.IsNullOrEmpty(suffix)
+            ? new string(buffer[..written])
+            : string.Concat(buffer[..written], " ", suffix);
+    }
+
+    /// <summary>
     /// Combines current progress and total value into a "current/total" string efficiently with only one allocation.
     /// </summary>
     /// <param name="current">The current progress value.</param>
@@ -166,7 +200,7 @@ public static partial class StringExtensions
                 continue;
             }
 
-            if (double.TryParse(match.Groups[1].Value, System.Globalization.CultureInfo.CurrentCulture, out var percentage))
+            if (double.TryParse(match.Groups[1].Value, CultureInfo.CurrentCulture, out var percentage))
             {
                 return percentage;
             }

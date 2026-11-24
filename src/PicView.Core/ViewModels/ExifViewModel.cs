@@ -3,6 +3,7 @@ using System.Text;
 using ImageMagick;
 using PicView.Core.DebugTools;
 using PicView.Core.Exif;
+using PicView.Core.Extensions;
 using PicView.Core.Localization;
 using PicView.Core.Metadata;
 using PicView.Core.Models;
@@ -703,7 +704,8 @@ public class ExifViewModel : IDisposable
                 PrintSizeInch.Value = printSizes.PrintSizeInch;
                 SizeMp.Value = printSizes.SizeMp;
 
-                Resolution.Value = $"{DpiX} x {DpiY} {TranslationManager.Translation.Dpi}";
+                Resolution.Value = StringExtensions.CombineSizeWithSuffix(DpiX.CurrentValue, DpiY.CurrentValue,
+                    TranslationManager.Translation.Dpi);
             }
 
             var gcd = AspectRatioFormatter.GCD(pixelWidth, pixelHeight);
@@ -799,16 +801,15 @@ public class ExifViewModel : IDisposable
     public void OpenGoogleMaps(Unit unit) => ProcessHelper.OpenLink(GoogleLink.CurrentValue);
     public void OpenBingMaps(Unit unit) => ProcessHelper.OpenLink(BingLink.CurrentValue);
 
-    private async Task<bool> SetRating(FileInfo fileInfo, ushort rating)
+    private async Task SetRating(FileInfo fileInfo, ushort rating)
     {
         var isRated = await ExifWriter.SetExifRatingAsync(fileInfo, rating).ConfigureAwait(false);
         if (!isRated)
         {
-            return false;
+            return;
         }
 
         ExifRating.Value = rating;
-        return true;
     }
 
     private Task<bool> SetDateTaken() =>

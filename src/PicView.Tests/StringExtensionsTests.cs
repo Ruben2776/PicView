@@ -28,6 +28,42 @@ public class StringExtensionsTests
     }
 
     [Theory]
+    [InlineData(300.0, 300.0, "dpi")]
+    [InlineData(72.5, 96.0, "DPI")]
+    [InlineData(0.0, 0.0, "dpi")]
+    [InlineData(-1.7976931348623157E+308, double.MaxValue, "dpi")]
+    public void CombineSizeWithSuffix_ValidInputs_MatchesInterpolation(double x, double y, string suffix)
+    {
+        var expected = $"{x} x {y} {suffix}";
+        var result = StringExtensions.CombineSizeWithSuffix(x, y, suffix);
+        Assert.Equal(expected, result);
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    public void CombineSizeWithSuffix_NoSuffix_LeavesOutTrailingSpace(string? suffix)
+    {
+        var expected = $"{300.0} x {150.0}";
+        var result = StringExtensions.CombineSizeWithSuffix(300.0, 150.0, suffix);
+        Assert.Equal(expected, result);
+    }
+
+    [Fact]
+    public void CombineSizeWithSuffix_AllocatesOnlyTheResult()
+    {
+        StringExtensions.CombineSizeWithSuffix(300.0, 300.0, "dpi"); // warm up
+
+        var before = GC.GetAllocatedBytesForCurrentThread();
+        var result = StringExtensions.CombineSizeWithSuffix(300.0, 300.0, "dpi");
+        var allocated = GC.GetAllocatedBytesForCurrentThread() - before;
+
+        // A string object is a 20-byte header (on 64-bit) plus 2 bytes per char, rounded up to 8 bytes
+        var stringSize = (20 + result.Length * 2 + 7) & ~7;
+        Assert.Equal(stringSize, allocated);
+    }
+
+    [Theory]
     [InlineData(100.0)]
     [InlineData(50.5)]
     public void CombineWithPercentage_ValidInputs_ReturnsExpectedString(double zoom)
