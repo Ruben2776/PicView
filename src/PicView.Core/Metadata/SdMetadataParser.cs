@@ -113,7 +113,7 @@ internal static class SdMetadataParser
     /// both colons and commas (prompt weighting, LoRA syntax), so at least two well-formed pairs
     /// are required before a line is taken for settings rather than prompt text.
     /// </summary>
-    private static bool IsSettingsLine(string line)
+    internal static bool IsSettingsLine(string line)
     {
         var trimmed = line.Trim();
         if (trimmed.Length == 0 || !char.IsLetter(trimmed[0]))

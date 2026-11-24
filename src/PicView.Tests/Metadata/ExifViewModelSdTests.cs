@@ -228,6 +228,49 @@ public class ExifViewModelSdTests
         }
     }
 
+    // Clearing the Settings box would compose a text that still reads back, without its settings line
+    [Fact]
+    public async Task CommitSdAsync_SettingsCleared_Png_RefusesAndKeepsTheSettings()
+    {
+        var path = WritePng("parameters", Payload);
+        try
+        {
+            using var viewModel = Show(path);
+            var before = File.ReadAllBytes(path);
+
+            viewModel.SdSettings.Value = string.Empty;
+            Assert.False(await viewModel.CommitSdAsync(ExifViewModel.SdField.Settings, string.Empty));
+
+            Assert.Equal(before, File.ReadAllBytes(path));
+            Assert.Equal(Settings, viewModel.SdSettings.Value);
+        }
+        finally
+        {
+            File.Delete(path);
+        }
+    }
+
+    [Fact]
+    public async Task CommitSdAsync_SettingsCleared_JpegWithNegativePrompt_RefusesAndKeepsTheSettings()
+    {
+        var path = SdTestFiles.WriteJpegWithUserComment(SdTestFiles.AsciiUserComment(Payload));
+        try
+        {
+            using var viewModel = Show(path);
+            var before = File.ReadAllBytes(path);
+
+            viewModel.SdSettings.Value = string.Empty;
+            Assert.False(await viewModel.CommitSdAsync(ExifViewModel.SdField.Settings, "  "));
+
+            Assert.Equal(before, File.ReadAllBytes(path));
+            Assert.Equal(Settings, viewModel.SdSettings.Value);
+        }
+        finally
+        {
+            File.Delete(path);
+        }
+    }
+
     [Fact]
     public async Task CommitSdAsync_NotEditable_DoesNothing()
     {

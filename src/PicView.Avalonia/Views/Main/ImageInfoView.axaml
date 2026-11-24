@@ -606,12 +606,14 @@
                                     TextWrapping="Wrap" />
                             </StackPanel>
 
-                            <!--  Generation settings  -->
-                            <StackPanel
-                                Width="{CompiledBinding InfoWindow.SdRowWidth.Value}"
-                                Margin="10"
-                                IsVisible="{CompiledBinding Exif.SdSettings.Value,
-                                                            Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+                            <!--  Generation settings, shown while editable too, so a cleared box does not hide its row  -->
+                            <StackPanel Width="{CompiledBinding InfoWindow.SdRowWidth.Value}" Margin="10">
+                                <StackPanel.IsVisible>
+                                    <MultiBinding Converter="{x:Static BoolConverters.Or}">
+                                        <Binding Path="Exif.IsSdEditable.Value" />
+                                        <Binding Converter="{x:Static StringConverters.IsNotNullOrEmpty}" Path="Exif.SdSettings.Value" />
+                                    </MultiBinding>
+                                </StackPanel.IsVisible>
                                 <DockPanel Margin="0,0,0,4">
                                     <Button
                                         x:Name="SdSettingsExpandButton"

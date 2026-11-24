@@ -271,6 +271,34 @@ public class ImageInfoViewTests : IDisposable
         }
     }
 
+    // Select all and Delete empties the box, which is bound to the same value as the row's visibility
+    [AvaloniaFact]
+    public void SdSettingsBox_ClearedWhileEditable_StaysVisible()
+    {
+        var vm = CreateViewModel();
+        var path = SdTestFiles.WriteJpegWithUserComment(SdTestFiles.AsciiUserComment(SdPayload));
+        vm.WindowTabs.ActiveTab.CurrentValue.Display(new ImageModel { FileInfo = new FileInfo(path), PixelWidth = 8, PixelHeight = 8 });
+
+        var view = new ImageInfoView { DataContext = vm };
+        var window = new Window { Content = view };
+        try
+        {
+            window.Show();
+            Dispatcher.UIThread.RunJobs();
+            Assert.True(WaitFor(() => view.SdSettingsBox.IsEffectivelyVisible));
+
+            view.SdSettingsBox.Text = string.Empty;
+            Dispatcher.UIThread.RunJobs();
+
+            Assert.True(view.SdSettingsBox.IsEffectivelyVisible, "A cleared Settings box should stay visible while editable");
+        }
+        finally
+        {
+            Close(window, vm);
+            File.Delete(path);
+        }
+    }
+
     [AvaloniaFact]
     public void SdExpandOverlay_EditedAndClosedOnEscape_WritesThePromptAndKeepsTheWindowOpen()
     {

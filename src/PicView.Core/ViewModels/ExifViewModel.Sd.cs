@@ -68,7 +68,8 @@ public partial class ExifViewModel
         var sd = _sd;
         var current = sd is null ? null : GetField(sd, field);
         if (sd is not { IsEditable: true } ||
-            SdMetadataParser.Normalize(value) == SdMetadataParser.Normalize(current))
+            SdMetadataParser.Normalize(value) == SdMetadataParser.Normalize(current) ||
+            (field == SdField.Settings && !IsSettingsValue(value)))
         {
             GetBindable(field).Value = current ?? string.Empty;
             return Task.FromResult(false);
@@ -82,6 +83,17 @@ public partial class ExifViewModel
         return CommitAsync(f => SdMetadataReader.ReadsBackAs(sd.Source, text, prompt, negativePrompt, settings)
             ? SdMetadataWriter.WriteAsync(f, sd, text)
             : Task.FromResult(false));
+    }
+
+    /// <summary>
+    /// True when <paramref name="value"/> starts with a settings line. A cleared or free-text Settings box would compose
+    /// a text that can still read back, only without its settings line, so the seed, sampler and model would be lost.
+    /// </summary>
+    private static bool IsSettingsValue(string? value)
+    {
+        var normalized = SdMetadataParser.Normalize(value);
+        var lineEnd = normalized.IndexOf('\n');
+        return SdMetadataParser.IsSettingsLine(lineEnd < 0 ? normalized : normalized[..lineEnd]);
     }
 
     private static string? GetField(SdMetadata sd, SdField field) => field switch
