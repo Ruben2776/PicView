@@ -155,6 +155,34 @@ public class ExifViewModelSdTests
         }
     }
 
+    // piexif, which A1111 uses for JPEG, writes big-endian Exif with a UTF-16BE UNICODE UserComment
+    [Fact]
+    public async Task CommitSdAsync_BigEndianUnicodeJpeg_ReadsAndWritesBack()
+    {
+        var path = SdTestFiles.WriteJpegWithBigEndianUnicodeUserComment(Payload);
+        try
+        {
+            Assert.True(File.ReadAllBytes(path).AsSpan().IndexOf("Exif\0\0MM"u8) > 0);
+            using var viewModel = Show(path);
+            Assert.True(viewModel.IsSdMetadataAvailable.Value);
+            Assert.True(viewModel.IsSdEditable.Value);
+            Assert.Equal("a catt", viewModel.SdPrompt.Value);
+            Assert.Equal("blurry", viewModel.SdNegativePrompt.Value);
+            Assert.Equal(Settings, viewModel.SdSettings.Value);
+
+            Assert.True(await viewModel.CommitSdAsync(ExifViewModel.SdField.Prompt, "a cat"));
+            AssertShowsFixedPrompt(viewModel, path, ReadUserComment(path));
+
+            Assert.True(await viewModel.CommitSdAsync(ExifViewModel.SdField.Prompt, "a cät"));
+            Assert.Equal("a cät", viewModel.SdPrompt.Value);
+            Assert.Equal("a cät", SdMetadataReader.Read(new FileInfo(path), ReadUserComment(path), null)?.Prompt);
+        }
+        finally
+        {
+            File.Delete(path);
+        }
+    }
+
     [Fact]
     public async Task CommitSdAsync_WebP_WritesAndShowsTheFile()
     {

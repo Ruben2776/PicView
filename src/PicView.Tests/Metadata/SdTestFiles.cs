@@ -95,6 +95,76 @@ internal static class SdTestFiles
         return path;
     }
 
+    /// <summary>
+    /// Writes a small JPEG whose Exif is big-endian (MM), as piexif writes it, with a <c>UNICODE\0</c> UserComment in
+    /// UTF-16BE. Magick.NET only writes little-endian Exif, so the APP1 segment is built by hand.
+    /// </summary>
+    internal static string WriteJpegWithBigEndianUnicodeUserComment(string text)
+    {
+        byte[] comment = [.. "UNICODE\0"u8, .. Encoding.BigEndianUnicode.GetBytes(text)];
+
+        using var tiff = new MemoryStream();
+        var word = new byte[4];
+
+        void WriteUInt16(ushort value)
+        {
+            BinaryPrimitives.WriteUInt16BigEndian(word, value);
+            tiff.Write(word, 0, 2);
+        }
+
+        void WriteUInt32(uint value)
+        {
+            BinaryPrimitives.WriteUInt32BigEndian(word, value);
+            tiff.Write(word, 0, 4);
+        }
+
+        tiff.Write("MM"u8);
+        WriteUInt16(42);
+        WriteUInt32(8);
+
+        // IFD0, at 8: the Exif IFD pointer only
+        const uint exifIfdOffset = 8 + 2 + 12 + 4;
+        WriteUInt16(1);
+        WriteUInt16(0x8769);
+        WriteUInt16(4); // LONG
+        WriteUInt32(1);
+        WriteUInt32(exifIfdOffset);
+        WriteUInt32(0);
+
+        // The Exif IFD: ExifVersion 0230, inline, then the UserComment after the IFD
+        const uint commentOffset = exifIfdOffset + 2 + 2 * 12 + 4;
+        WriteUInt16(2);
+        WriteUInt16(0x9000);
+        WriteUInt16(7); // UNDEFINED
+        WriteUInt32(4);
+        tiff.Write("0230"u8);
+        WriteUInt16(0x9286);
+        WriteUInt16(7);
+        WriteUInt32((uint)comment.Length);
+        WriteUInt32(commentOffset);
+        WriteUInt32(0);
+        tiff.Write(comment);
+
+        byte[] app1 = [.. "Exif\0\0"u8, .. tiff.ToArray()];
+
+        byte[] jpeg;
+        using (var image = new MagickImage(MagickColors.Gray, 8, 8))
+        {
+            image.Format = MagickFormat.Jpeg;
+            jpeg = image.ToByteArray();
+        }
+
+        var path = Path.Combine(Path.GetTempPath(), $"picview_sd_{Guid.NewGuid():N}.jpg");
+        using var stream = new FileStream(path, FileMode.CreateNew, FileAccess.Write);
+        stream.Write(jpeg, 0, 2); // SOI
+        stream.Write([0xFF, 0xE1]);
+        BinaryPrimitives.WriteUInt16BigEndian(word, (ushort)(app1.Length + 2));
+        stream.Write(word, 0, 2);
+        stream.Write(app1);
+        stream.Write(jpeg, 2, jpeg.Length - 2);
+        return path;
+    }
+
     /// <summary>Same as <see cref="WriteJpegWithUserComment"/>, for WebP.</summary>
     internal static string WriteWebPWithUserComment(byte[] userCommentBytes)
     {
