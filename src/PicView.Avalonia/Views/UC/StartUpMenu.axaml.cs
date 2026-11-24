@@ -5,13 +5,11 @@ using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Threading;
-using PicView.Avalonia.Clipboard;
 using PicView.Avalonia.ColorManagement;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.FileSystem;
 using PicView.Avalonia.Navigation;
 using PicView.Core.DebugTools;
-using PicView.Core.Extensions;
 using PicView.Core.Localization;
 using PicView.Core.Sizing;
 using PicView.Core.ViewModels;
@@ -49,6 +47,13 @@ public partial class StartUpMenu : UserControl
         // The last file is part of File History, so the button follows it
         if (TopLevel.GetTopLevel(this) is MainWindow { ViewModel: { } viewModel })
         {
+            // A tab that has not opened a source yet still takes the dock commands, so docking from the menu sets how
+            // the gallery shows once the ImageViewer opens; the tab's first open calls it again, which does nothing
+            if (DataContext is TabViewModel tab)
+            {
+                tab.Gallery.Initialize(viewModel.GallerySettings);
+            }
+
             _fileHistorySubscription?.Dispose();
             _fileHistorySubscription = viewModel.GlobalSettings.IsFileHistoryEnabled.Subscribe(isEnabled =>
                 {

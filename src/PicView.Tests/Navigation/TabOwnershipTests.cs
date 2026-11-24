@@ -1621,6 +1621,45 @@ public class TabOwnershipTests : IDisposable
         Assert.False(Settings.Gallery.IsGalleryDocked);
     }
 
+    // A tab that has not opened a source yet shows the start-up menu, which initializes its gallery: its dock commands
+    // then set what the tab starts with when the ImageViewer opens
+    [Fact]
+    public void DockAtCommand_BeforeTheTabOpensASource_DocksAtThatEdgeWhenItOpens()
+    {
+        var window = CreateStartedWindow();
+        var tab = window.WindowTabs.CreateTab();
+        // As the start-up menu does when it loads
+        tab.Gallery.Initialize(window.GallerySettings);
+
+        tab.Gallery.DockAtCommand.Execute(GalleryDockPosition.Right);
+
+        Assert.Equal(GalleryDockPosition.Right, window.WindowSettings.Gallery.DockPosition.Value);
+        Assert.True(window.WindowSettings.Gallery.StartsDocked.Value);
+
+        TabNavigationInitializer.Initialize(_core, window, tab);
+
+        Assert.Equal(GalleryMode.Docked, tab.Gallery.Mode.Value);
+        Assert.Equal(GalleryDockPosition.Right, tab.Gallery.Appearance.Value.Dock);
+    }
+
+    [Fact]
+    public void ToggleDockedCommand_BeforeTheTabOpensASource_TogglesWhatItStartsWith()
+    {
+        var window = CreateStartedWindow();
+        var tab = window.WindowTabs.CreateTab();
+        // As the start-up menu does when it loads
+        tab.Gallery.Initialize(window.GallerySettings);
+        var startedDocked = window.WindowSettings.Gallery.StartsDocked.Value;
+
+        tab.Gallery.ToggleDockedCommand.Execute(Unit.Default);
+
+        Assert.Equal(!startedDocked, window.WindowSettings.Gallery.StartsDocked.Value);
+
+        TabNavigationInitializer.Initialize(_core, window, tab);
+
+        Assert.Equal(!startedDocked ? GalleryMode.Docked : GalleryMode.Closed, tab.Gallery.Mode.Value);
+    }
+
     [Fact]
     public async Task MoveTab_ThenTheSourceWindowCloses_ADockByHandThrowsNothing()
     {
