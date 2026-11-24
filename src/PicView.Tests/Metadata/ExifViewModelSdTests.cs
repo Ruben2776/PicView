@@ -123,6 +123,32 @@ public class ExifViewModelSdTests
     }
 
     [Fact]
+    public void SdStorage_LanguageChanged_FollowsTheNewLanguage()
+    {
+        var path = WritePng("parameters", Payload);
+        var languageChanged = new Subject<Unit>();
+        try
+        {
+            using var viewModel = new ExifViewModel(languageChanged);
+            viewModel.UpdateExifValues(new ImageModel { FileInfo = new FileInfo(path), PixelWidth = 8, PixelHeight = 8 });
+            var english = TranslationManager.Translation.StoredInPngText;
+            Assert.Equal(english, viewModel.SdStorage.Value);
+
+            TranslationManager.LoadLanguage("de");
+            languageChanged.OnNext(Unit.Default);
+
+            Assert.Equal(TranslationManager.Translation.StoredInPngText, viewModel.SdStorage.Value);
+            Assert.NotEqual(english, viewModel.SdStorage.Value);
+        }
+        finally
+        {
+            TranslationManager.LoadLanguage("en");
+            languageChanged.Dispose();
+            File.Delete(path);
+        }
+    }
+
+    [Fact]
     public void CommentLabel_LanguageChanged_FollowsTheNewLanguage()
     {
         var path = SdTestFiles.WriteJpegWithUserComment(SdTestFiles.AsciiUserComment(Payload));
@@ -211,7 +237,7 @@ public class ExifViewModelSdTests
         }
     }
 
-    // GIMP, and many other editors, write a Comment chunk that is not generation data
+    // GIMP, and many other editors, write a Comment chunk that is not AI Metadata
     [Fact]
     public void UpdateExifValues_OrdinaryPngComment_IsNotGenerationData()
     {

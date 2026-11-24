@@ -324,7 +324,6 @@ public class TranslationViewModel
         SaveAs.Value = t.SaveAs;
         SaveAsPdf.Value = t.SaveAsPdf;
         Scale.Value = t.Scale;
-        ScanningHiddenMetadata.Value = t.ScanningHiddenMetadata;
         Scroll.Value = t.Scroll;
         ScrollAndRotate.Value = t.ScrollAndRotate;
         ScrollDirection.Value = t.ScrollDirection;
@@ -385,10 +384,6 @@ public class TranslationViewModel
         StayCentered.Value = t.StayCentered;
         StayTopMost.Value = t.StayTopMost;
         StoredIn.Value = t.StoredIn;
-        StoredInImageComment.Value = t.StoredInImageComment;
-        StoredInPixels.Value = t.StoredInPixels;
-        StoredInPngText.Value = t.StoredInPngText;
-        StoredInUserComment.Value = t.StoredInUserComment;
         Stretch.Value = t.Stretch;
         StretchToMatch.Value = t.StretchToMatch;
         Subject.Value = t.Subject;
@@ -750,7 +745,6 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> SaveAs { get; } = new();
     public BindableReactiveProperty<string?> SaveAsPdf { get; } = new();
     public BindableReactiveProperty<string?> Scale { get; } = new();
-    public BindableReactiveProperty<string?> ScanningHiddenMetadata { get; } = new();
     public BindableReactiveProperty<string?> Scroll { get; } = new();
     public BindableReactiveProperty<string?> ScrollAndRotate { get; } = new();
     public BindableReactiveProperty<string?> ScrollDirection { get; } = new();
@@ -811,10 +805,6 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> StayCentered { get; } = new();
     public BindableReactiveProperty<string?> StayTopMost { get; } = new();
     public BindableReactiveProperty<string?> StoredIn { get; } = new();
-    public BindableReactiveProperty<string?> StoredInImageComment { get; } = new();
-    public BindableReactiveProperty<string?> StoredInPixels { get; } = new();
-    public BindableReactiveProperty<string?> StoredInPngText { get; } = new();
-    public BindableReactiveProperty<string?> StoredInUserComment { get; } = new();
     public BindableReactiveProperty<string?> Stretch { get; } = new();
     public BindableReactiveProperty<string?> StretchToMatch { get; } = new();
     public BindableReactiveProperty<string?> Subject { get; } = new();

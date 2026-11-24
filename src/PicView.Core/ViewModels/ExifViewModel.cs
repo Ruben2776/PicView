@@ -862,7 +862,7 @@ public class ExifViewModel : IDisposable
         return written;
     }
 
-    // AI Metadata: the generation data of the image shown, and its edits
+    // AI Metadata of the image shown, and its edits
 
     /// <summary>The part of the AI Metadata an edit replaces.</summary>
     public enum SdField
@@ -1015,7 +1015,7 @@ public class ExifViewModel : IDisposable
     };
 
     /// <summary>
-    /// Fills the AI Metadata fields from the image's generation parameters, and clears
+    /// Fills the AI Metadata fields from what the image carries, and clears
     /// them when it has none.
     /// <para>
     /// When no parameters are stored in metadata, a scan for stealth pnginfo is started in the
@@ -1074,8 +1074,28 @@ public class ExifViewModel : IDisposable
         return isPrompt ? $"{translation.Comment}/{translation.Prompt}" : translation.Comment ?? string.Empty;
     }
 
-    /// <summary>Writes <see cref="CommentLabel"/> again, in the language just loaded.</summary>
-    private void Rephrase() => CommentLabel.Value = GetCommentLabel(_sd?.Source == SdSource.ExifUserComment);
+    /// <summary>
+    /// Writes <see cref="CommentLabel"/> and <see cref="SdStorage"/> again, in the language just loaded.
+    /// Under <c>_stealthLock</c>, so it cannot land between a scan's apply and its cleanup.
+    /// </summary>
+    private void Rephrase()
+    {
+        CommentLabel.Value = GetCommentLabel(_sd?.Source == SdSource.ExifUserComment);
+
+        lock (_stealthLock)
+        {
+            if (_stealthCts is not null)
+            {
+                SdStorage.Value = GetScanningLabel();
+            }
+            else if (_sd is { } sd)
+            {
+                SdStorage.Value = GetStorageLabel(sd);
+            }
+        }
+    }
+
+    private static string GetScanningLabel() => TranslationManager.Translation.ScanningHiddenMetadata ?? string.Empty;
 
     private static string GetStorageLabel(SdMetadata sdMetadata)
     {
@@ -1109,7 +1129,7 @@ public class ExifViewModel : IDisposable
         var token = cts.Token;
 
         // The Stored in box says so until the scan ends
-        SdStorage.Value = TranslationManager.Translation.ScanningHiddenMetadata ?? string.Empty;
+        SdStorage.Value = GetScanningLabel();
 
         _ = Task.Run(() =>
         {
