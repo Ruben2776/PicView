@@ -301,7 +301,6 @@ public class ExifViewModel : IDisposable
             SdSettings,
             SdRaw,
             SdStorage,
-            IsSdStealthScanning,
             IsSdEditable,
             IsCommentShown,
             SetSdPromptCommand,
@@ -881,17 +880,17 @@ public class ExifViewModel : IDisposable
     /// <summary>The unparsed payload, shown so nothing is lost when parsing falls short.</summary>
     public BindableReactiveProperty<string?> SdRaw { get; } = new();
 
-    /// <summary>Where the parameters came from, e.g. a PNG text chunk or hidden in the pixels.</summary>
+    /// <summary>
+    /// Where the AI Metadata came from, e.g. a PNG text chunk or hidden in the pixels, or that the pixels are being
+    /// scanned for it.
+    /// </summary>
     public BindableReactiveProperty<string?> SdStorage { get; } = new();
-
-    /// <summary>True while the pixel data is being scanned for hidden parameters.</summary>
-    public BindableReactiveProperty<bool> IsSdStealthScanning { get; } = new();
 
     /// <summary>True when the prompt, negative prompt and settings can be written back to the file.</summary>
     public BindableReactiveProperty<bool> IsSdEditable { get; } = new();
 
     /// <summary>
-    /// False when the UserComment holds the AI Metadata, which the generation fields already show and edit.
+    /// False when the UserComment holds the AI Metadata, which the AI Metadata fields already show and edit.
     /// </summary>
     public BindableReactiveProperty<bool> IsCommentShown { get; } = new(true);
 
@@ -1089,10 +1088,12 @@ public class ExifViewModel : IDisposable
         _stealthCts = cts;
         var token = cts.Token;
 
-        IsSdStealthScanning.Value = true;
+        // The Stored in box says so until the scan ends
+        SdStorage.Value = TranslationManager.Translation.ScanningHiddenMetadata ?? string.Empty;
 
         _ = Task.Run(() =>
         {
+            var isApplied = false;
             try
             {
                 var hidden = SdMetadataReader.ReadStealth(fileInfo, token);
@@ -1108,6 +1109,7 @@ public class ExifViewModel : IDisposable
                     if (!token.IsCancellationRequested)
                     {
                         ApplySdMetadata(hidden, model);
+                        isApplied = true;
                     }
                 }
             }
@@ -1123,9 +1125,15 @@ public class ExifViewModel : IDisposable
             {
                 lock (_stealthLock)
                 {
-                    if (!token.IsCancellationRequested)
+                    if (ReferenceEquals(_stealthCts, cts))
                     {
-                        IsSdStealthScanning.Value = false;
+                        _stealthCts = null;
+                    }
+
+                    // Nothing was found, or the scan failed: the box no longer says it is scanning
+                    if (!token.IsCancellationRequested && !isApplied)
+                    {
+                        SdStorage.Value = string.Empty;
                     }
                 }
 
@@ -1161,9 +1169,10 @@ public class ExifViewModel : IDisposable
             {
                 // The scan finished and disposed it first
             }
-        }
 
-        IsSdStealthScanning.Value = false;
+            // The box no longer says it is scanning; the image read next shows its own value
+            SdStorage.Value = string.Empty;
+        }
     }
 
     private void ClearSdMetadataValues()

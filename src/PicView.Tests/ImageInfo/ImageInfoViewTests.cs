@@ -1,10 +1,6 @@
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Headless;
 using Avalonia.Input;
-using Avalonia.Interactivity;
 using Avalonia.Threading;
-using Avalonia.VisualTree;
 using ImageMagick;
 using PicView.Avalonia.Views.Main;
 using PicView.Core.ImageDecoding;
@@ -245,10 +241,9 @@ public class ImageInfoViewTests : IDisposable
         }
     }
 
-    // An A1111 JPEG, whose UserComment holds the data: the Prompt box edits it, and the Comment box, which would show the
-    // same tag, is hidden
+    // An A1111 JPEG, whose UserComment holds the AI Metadata: the Prompt box and the Comment box both edit that tag
     [AvaloniaFact]
-    public void ImageInfoView_A1111Image_ShowsEditablePromptBox()
+    public void ImageInfoView_A1111Jpeg_EnablesTheAiMetadataAndShowsTheComment()
     {
         var vm = CreateViewModel();
         var path = SdTestFiles.WriteJpegWithUserComment(SdTestFiles.AsciiUserComment(SdPayload));
@@ -263,9 +258,12 @@ public class ImageInfoViewTests : IDisposable
             Assert.True(WaitFor(() => view.SdPromptBox.Text == "a catt"),
                 "The Prompt box should show the image's prompt");
 
+            Assert.True(view.SdMetadataPanel.IsEffectivelyVisible);
+            Assert.True(view.SdMetadataPanel.IsEffectivelyEnabled);
             Assert.False(view.SdPromptBox.IsReadOnly);
             Assert.True(view.SdPromptBox.IsEffectivelyVisible);
-            Assert.False(view.CommentBox.IsEffectivelyVisible);
+
+            Assert.True(view.CommentBox.IsEffectivelyVisible);
         }
         finally
         {
@@ -274,13 +272,12 @@ public class ImageInfoViewTests : IDisposable
         }
     }
 
-    // Select all and Delete empties the box, which is bound to the same value as the row's visibility
+    // An ordinary photo hides nothing: the AI Metadata section shows, disabled, between the Color and Camera sections
     [AvaloniaFact]
-    public void SdSettingsBox_ClearedWhileEditable_StaysVisible()
+    public void ImageInfoView_OrdinaryPhoto_ShowsEveryRowAndDisablesTheAiMetadata()
     {
         var vm = CreateViewModel();
-        var path = SdTestFiles.WriteJpegWithUserComment(SdTestFiles.AsciiUserComment(SdPayload));
-        vm.WindowTabs.ActiveTab.CurrentValue.Display(new ImageModel { FileInfo = new FileInfo(path), PixelWidth = 8, PixelHeight = 8 });
+        vm.WindowTabs.ActiveTab.CurrentValue.Display(Image("photo.jpg", 640, 480));
 
         var view = new ImageInfoView { DataContext = vm };
         var window = new Window { Content = view };
@@ -288,257 +285,45 @@ public class ImageInfoViewTests : IDisposable
         {
             window.Show();
             Dispatcher.UIThread.RunJobs();
-            Assert.True(WaitFor(() => view.SdSettingsBox.IsEffectivelyVisible));
-
-            view.SdSettingsBox.Text = string.Empty;
-            Dispatcher.UIThread.RunJobs();
-
-            Assert.True(view.SdSettingsBox.IsEffectivelyVisible, "A cleared Settings box should stay visible while editable");
-        }
-        finally
-        {
-            Close(window, vm);
-            File.Delete(path);
-        }
-    }
-
-    [AvaloniaFact]
-    public void SdExpandOverlay_EditedAndClosedOnEscape_WritesThePromptAndKeepsTheWindowOpen()
-    {
-        var vm = CreateViewModel();
-        var path = SdTestFiles.WriteJpegWithUserComment(SdTestFiles.AsciiUserComment(SdPayload));
-        vm.WindowTabs.ActiveTab.CurrentValue.Display(new ImageModel { FileInfo = new FileInfo(path), PixelWidth = 8, PixelHeight = 8 });
-
-        var view = new ImageInfoView { DataContext = vm };
-        var window = new Window { Content = view };
-        var isWindowClosed = false;
-        window.Closed += (_, _) => isWindowClosed = true;
-        // As the window opener does: Esc that reaches the window closes it
-        window.KeyDown += (_, e) =>
-        {
-            if (e.Key is Key.Escape)
-            {
-                window.Close();
-            }
-        };
-        try
-        {
-            window.Show();
-            Dispatcher.UIThread.RunJobs();
-            Assert.True(WaitFor(() => view.SdPromptBox.Text == "a catt"));
-
-            view.SdPromptExpandButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-            Assert.True(view.SdExpandOverlay.IsVisible);
-            Assert.False(view.SdExpandText.IsReadOnly);
-            Assert.Equal("a catt", view.SdExpandText.Text);
-
-            view.SdExpandText.Text = "a cat\non a mat";
-            view.SdExpandText.RaiseEvent(new KeyEventArgs { RoutedEvent = InputElement.KeyDownEvent, Key = Key.Escape });
-
-            Assert.False(view.SdExpandOverlay.IsVisible);
-            Assert.False(isWindowClosed, "Esc should close the overlay, not the window");
-            Assert.True(WaitFor(() => vm.Exif!.SdPrompt.Value == "a cat\non a mat"),
-                "Closing the overlay should write its text and show what the file holds");
-            Assert.Equal("blurry", vm.Exif!.SdNegativePrompt.Value);
-        }
-        finally
-        {
-            Close(window, vm);
-            File.Delete(path);
-        }
-    }
-
-    // The Prompt box's own commit, still writing when the overlay closes, must not make the overlay's edit get lost
-    [AvaloniaFact]
-    public void SdExpandOverlay_ClosedWhileThePromptBoxCommits_WritesTheOverlayText()
-    {
-        var vm = CreateViewModel();
-        var path = SdTestFiles.WriteJpegWithUserComment(SdTestFiles.AsciiUserComment(SdPayload));
-        vm.WindowTabs.ActiveTab.CurrentValue.Display(new ImageModel { FileInfo = new FileInfo(path), PixelWidth = 8, PixelHeight = 8 });
-
-        var view = new ImageInfoView { DataContext = vm };
-        var window = new Window { Content = view };
-        try
-        {
-            window.Show();
-            Dispatcher.UIThread.RunJobs();
-            Assert.True(WaitFor(() => view.SdPromptBox.Text == "a catt"));
-
-            // Holding the file open keeps the box's write retrying while the overlay is edited and closed
-            using (new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.None))
-            {
-                vm.Exif!.SetSdPromptCommand.Execute("a cat");
-
-                view.SdPromptExpandButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-                view.SdExpandText.Text = "a cat\non a mat";
-                view.SdExpandCloseButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-                Assert.False(view.SdExpandOverlay.IsVisible);
-            }
-
-            Assert.True(WaitFor(() => vm.Exif.SdPrompt.Value == "a cat\non a mat"),
-                "The overlay's edit should be written after the box's commit");
-            var stored = Core.Metadata.SdMetadataReader.Read(new FileInfo(path), ReadUserComment(path));
-            Assert.Equal("a cat\non a mat", stored?.Prompt);
-        }
-        finally
-        {
-            Close(window, vm);
-            File.Delete(path);
-        }
-    }
-
-    // Tab must not reach the boxes behind the overlay, where stray typing would be written on focus-leave
-    [AvaloniaFact]
-    public void SdExpandOverlay_Tab_KeepsFocusInTheOverlay()
-    {
-        var vm = CreateViewModel();
-        var path = SdTestFiles.WriteJpegWithUserComment(SdTestFiles.AsciiUserComment(SdPayload));
-        vm.WindowTabs.ActiveTab.CurrentValue.Display(new ImageModel { FileInfo = new FileInfo(path), PixelWidth = 8, PixelHeight = 8 });
-
-        var view = new ImageInfoView { DataContext = vm };
-        var window = new Window { Content = view };
-        try
-        {
-            window.Show();
-            Dispatcher.UIThread.RunJobs();
-            Assert.True(WaitFor(() => view.SdPromptBox.Text == "a catt"));
-            view.SdPromptExpandButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-            Dispatcher.UIThread.RunJobs();
-            Assert.True(view.SdExpandText.IsFocused);
-
-            for (var i = 0; i < 6; i++)
-            {
-                window.KeyPress(Key.Tab, RawInputModifiers.None, PhysicalKey.Tab, null);
-                window.KeyRelease(Key.Tab, RawInputModifiers.None, PhysicalKey.Tab, null);
-                Dispatcher.UIThread.RunJobs();
-
-                var focused = window.FocusManager?.GetFocusedElement() as Visual;
-                Assert.True(focused is not null && view.SdExpandOverlay.IsVisualAncestorOf(focused),
-                    $"Tab {i + 1} moved focus out of the overlay, to {focused}");
-            }
-        }
-        finally
-        {
-            Close(window, vm);
-            File.Delete(path);
-        }
-    }
-
-    // The overlay's commit waits for the box's; when another image is shown meanwhile, it is dropped, not written there
-    [AvaloniaFact]
-    public void SdExpandOverlay_CommitWaitingWhileAnotherImageIsShown_IsNotWrittenToThatImage()
-    {
-        var vm = CreateViewModel();
-        var first = SdTestFiles.WriteJpegWithUserComment(SdTestFiles.AsciiUserComment(SdPayload));
-        var second = SdTestFiles.WriteJpegWithUserComment(SdTestFiles.AsciiUserComment(
-            "a bird\nSteps: 20, Sampler: Euler, CFG scale: 7, Seed: 1, Size: 8x8"));
-        var tab = vm.WindowTabs.ActiveTab.CurrentValue;
-        tab.Display(new ImageModel { FileInfo = new FileInfo(first), PixelWidth = 8, PixelHeight = 8 });
-        var secondBytes = File.ReadAllBytes(second);
-
-        var view = new ImageInfoView { DataContext = vm };
-        var window = new Window { Content = view };
-        try
-        {
-            window.Show();
-            Dispatcher.UIThread.RunJobs();
-            Assert.True(WaitFor(() => view.SdPromptBox.Text == "a catt"));
-
-            using (new FileStream(first, FileMode.Open, FileAccess.Read, FileShare.None))
-            {
-                vm.Exif!.SetSdPromptCommand.Execute("a cat");
-
-                view.SdPromptExpandButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-                view.SdExpandText.Text = "a cat\non a mat";
-                view.SdExpandCloseButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-
-                tab.Display(new ImageModel { FileInfo = new FileInfo(second), PixelWidth = 8, PixelHeight = 8 });
-                Assert.True(WaitFor(() => vm.Exif.SdPrompt.Value == "a bird"));
-            }
-
-            Assert.True(WaitFor(() => Core.Metadata.SdMetadataReader.Read(new FileInfo(first), ReadUserComment(first))?.Prompt == "a cat"),
-                "The box's commit should still be written to the first image");
-            Assert.False(WaitFor(() => !File.ReadAllBytes(second).AsSpan().SequenceEqual(secondBytes), TimeSpan.FromSeconds(1)),
-                "The overlay's edit must not be written to the image shown since");
-            Assert.Equal("a bird", vm.Exif.SdPrompt.Value);
-        }
-        finally
-        {
-            Close(window, vm);
-            File.Delete(first);
-            File.Delete(second);
-        }
-    }
-
-    private static string ReadUserComment(string path)
-    {
-        using var image = new MagickImage(path);
-        return Core.Exif.ExifReader.GetUserComment(image.GetExifProfile());
-    }
-
-    // PicView's own write, or any other change on disk, fires a File change for the same image: the edit is kept
-    [AvaloniaFact]
-    public void SdExpandOverlay_ShownFileRewritten_StaysOpenWithTheEdit()
-    {
-        var vm = CreateViewModel();
-        var path = SdTestFiles.WriteJpegWithUserComment(SdTestFiles.AsciiUserComment(SdPayload));
-        var tab = vm.WindowTabs.ActiveTab.CurrentValue;
-        tab.Display(new ImageModel { FileInfo = new FileInfo(path), PixelWidth = 8, PixelHeight = 8 });
-
-        var view = new ImageInfoView { DataContext = vm };
-        var window = new Window { Content = view };
-        try
-        {
-            window.Show();
-            Dispatcher.UIThread.RunJobs();
-            Assert.True(WaitFor(() => view.SdPromptBox.Text == "a catt"));
-            view.SdPromptExpandButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-            view.SdExpandText.Text = "a cat, typing";
-
-            Assert.True(tab.UpdateShownFile(path, new FileInfo(path)));
-
-            Assert.False(WaitFor(() => !view.SdExpandOverlay.IsVisible, TimeSpan.FromMilliseconds(500)),
-                "A change of the shown image's file should keep the overlay open");
-            Assert.Equal("a cat, typing", view.SdExpandText.Text);
-        }
-        finally
-        {
-            Close(window, vm);
-            File.Delete(path);
-        }
-    }
-
-    [AvaloniaFact]
-    public void SdExpandOverlay_AnotherImageShown_ClosesWithoutWriting()
-    {
-        var vm = CreateViewModel();
-        var path = SdTestFiles.WriteJpegWithUserComment(SdTestFiles.AsciiUserComment(SdPayload));
-        var tab = vm.WindowTabs.ActiveTab.CurrentValue;
-        tab.Display(new ImageModel { FileInfo = new FileInfo(path), PixelWidth = 8, PixelHeight = 8 });
-        var bytes = File.ReadAllBytes(path);
-
-        var view = new ImageInfoView { DataContext = vm };
-        var window = new Window { Content = view };
-        try
-        {
-            window.Show();
-            Dispatcher.UIThread.RunJobs();
-            Assert.True(WaitFor(() => view.SdPromptBox.Text == "a catt"));
-            view.SdPromptExpandButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-            view.SdExpandText.Text = "a cat";
-
-            tab.Display(Image("other.jpg", 640, 480));
-
-            Assert.True(WaitFor(() => !view.SdExpandOverlay.IsVisible),
-                "Showing another image should close the overlay");
             Assert.True(WaitFor(() => vm.Exif!.PixelWidth.Value == 640));
-            Assert.Equal(bytes, File.ReadAllBytes(path));
+
+            Assert.True(view.SdMetadataPanel.IsEffectivelyVisible);
+            Assert.False(view.SdMetadataPanel.IsEffectivelyEnabled);
+            Assert.False(vm.Exif!.IsSdMetadataAvailable.Value);
+
+            Control[] photoRows =
+            [
+                view.SizeMpTextBox, view.ResolutionTextBlock, view.PrintSizeCmTextBox, view.PrintSizeInchTextBox,
+                view.DateTakenBox, view.AuthorsBox, view.CopyRightBox, view.SoftwareBox, view.CommentBox
+            ];
+            foreach (var row in photoRows)
+            {
+                Assert.True(row.IsEffectivelyVisible, $"{row.Name} should be visible");
+            }
+
+            var sections = view.MainContainer.Children;
+            var color = sections.IndexOf(SectionOf(view, view.ColorRepresentationBox));
+            var ai = sections.IndexOf(view.SdMetadataPanel);
+            var camera = sections.IndexOf(SectionOf(view, view.CameraMakerBox));
+            Assert.Equal(color + 1, ai);
+            Assert.Equal(ai + 1, camera);
         }
         finally
         {
             Close(window, vm);
-            File.Delete(path);
         }
+    }
+
+    // The child of MainContainer that holds control
+    private static Control SectionOf(ImageInfoView view, Control control)
+    {
+        var current = control;
+        while (current.Parent is Control parent && !ReferenceEquals(parent, view.MainContainer))
+        {
+            current = parent;
+        }
+
+        return current;
     }
 
     // Set up as the window opener does it, with the Exif and Info Window view models the view reads

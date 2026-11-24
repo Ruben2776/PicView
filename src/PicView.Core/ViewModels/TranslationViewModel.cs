@@ -123,7 +123,6 @@ public class TranslationViewModel
         EffectsTooltip.Value = t.EffectsTooltip;
         EscLeavesFullscreen.Value = t.EscLeavesFullscreen;
         ExifVersion.Value = t.ExifVersion;
-        Expand.Value = t.Expand;
         ExpandedGalleryItemSize.Value = t.ExpandedGalleryItemSize;
         ExposureBias.Value = t.ExposureBias;
         ExposureProgram.Value = t.ExposureProgram;
@@ -382,7 +381,6 @@ public class TranslationViewModel
         SortFilesBy.Value = t.SortFilesBy;
         Split.Value = t.Split;
         Square.Value = t.Square;
-        StableDiffusion.Value = t.StableDiffusion;
         Start.Value = t.Start;
         StayCentered.Value = t.StayCentered;
         StayTopMost.Value = t.StayTopMost;
@@ -551,7 +549,6 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> EffectsTooltip { get; } = new();
     public BindableReactiveProperty<string?> EscLeavesFullscreen { get; } = new();
     public BindableReactiveProperty<string?> ExifVersion { get; } = new();
-    public BindableReactiveProperty<string?> Expand { get; } = new();
     public BindableReactiveProperty<string?> ExpandedGalleryItemSize { get; } = new();
     public BindableReactiveProperty<string?> ExposureBias { get; } = new();
     public BindableReactiveProperty<string?> ExposureProgram { get; } = new();
@@ -810,7 +807,6 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> SortFilesBy { get; } = new();
     public BindableReactiveProperty<string?> Split { get; } = new();
     public BindableReactiveProperty<string?> Square { get; } = new();
-    public BindableReactiveProperty<string?> StableDiffusion { get; } = new();
     public BindableReactiveProperty<string?> Start { get; } = new();
     public BindableReactiveProperty<string?> StayCentered { get; } = new();
     public BindableReactiveProperty<string?> StayTopMost { get; } = new();

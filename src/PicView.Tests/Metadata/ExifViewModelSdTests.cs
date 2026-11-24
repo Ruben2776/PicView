@@ -4,6 +4,7 @@ using PicView.Core.Localization;
 using PicView.Core.Metadata;
 using PicView.Core.Models;
 using PicView.Core.ViewModels;
+using R3;
 
 namespace PicView.Tests.Metadata;
 
@@ -96,6 +97,69 @@ public class ExifViewModelSdTests
         finally
         {
             File.Delete(path);
+        }
+    }
+
+    // The scan decodes the pixels off the calling thread; every value the box takes is recorded, so no timing is assumed
+    [Fact]
+    public void UpdateExifValues_PngWithoutAiMetadata_StoredInSaysScanningUntilTheScanEnds()
+    {
+        var path = WritePng(null, null);
+        try
+        {
+            using var viewModel = new ExifViewModel();
+            var shown = new List<string?>();
+            using var subscription = viewModel.SdStorage.Subscribe(value =>
+            {
+                lock (shown)
+                {
+                    shown.Add(value);
+                }
+            });
+
+            viewModel.UpdateExifValues(new ImageModel { FileInfo = new FileInfo(path), PixelWidth = 8, PixelHeight = 8 });
+
+            var scanning = TranslationManager.Translation.ScanningHiddenMetadata;
+            Assert.False(string.IsNullOrEmpty(scanning));
+            lock (shown)
+            {
+                Assert.Contains(scanning, shown);
+            }
+
+            var deadline = DateTime.UtcNow + TimeSpan.FromSeconds(5);
+            while (viewModel.SdStorage.Value == scanning && DateTime.UtcNow < deadline)
+            {
+                Thread.Sleep(10);
+            }
+
+            Assert.Equal(string.Empty, viewModel.SdStorage.Value);
+            Assert.False(viewModel.IsSdMetadataAvailable.Value);
+        }
+        finally
+        {
+            File.Delete(path);
+        }
+    }
+
+    // Showing another image cancels the scan, and that image's own value is kept
+    [Fact]
+    public void UpdateExifValues_AnotherImageShownDuringTheScan_ShowsItsOwnStoredIn()
+    {
+        var png = WritePng(null, null);
+        var jpeg = SdTestFiles.WriteJpegWithUserComment(SdTestFiles.AsciiUserComment(Payload));
+        try
+        {
+            using var viewModel = Show(png);
+
+            viewModel.UpdateExifValues(new ImageModel { FileInfo = new FileInfo(jpeg), PixelWidth = 8, PixelHeight = 8 });
+            Thread.Sleep(300);
+
+            Assert.Equal(TranslationManager.Translation.StoredInUserComment, viewModel.SdStorage.Value);
+        }
+        finally
+        {
+            File.Delete(png);
+            File.Delete(jpeg);
         }
     }
 

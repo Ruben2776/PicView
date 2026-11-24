@@ -152,7 +152,6 @@ public class LanguageModel
     public string? EscCloseTooltip { get; set; }
     public string? EscLeavesFullscreen { get; set; }
     public string? ExifVersion { get; set; }
-    public string? Expand { get; set; }
     public string? ExpandedGalleryItemSize { get; set; }
     public string? ExposureBias { get; set; }
     public string? ExposureProgram { get; set; }
@@ -472,7 +471,6 @@ public class LanguageModel
     public string? Space { get; set; }
     public string? Split { get; set; }
     public string? Square { get; set; }
-    public string? StableDiffusion { get; set; }
     public string? Start { get; set; }
     public string? StayCentered { get; set; }
     public string? StayTopMost { get; set; }
