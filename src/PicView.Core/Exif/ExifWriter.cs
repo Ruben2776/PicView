@@ -137,18 +137,27 @@ public static class ExifWriter
     /// <param name="value">The comment text to add.</param>
     /// <returns>A task that represents the asynchronous operation. The task result contains true if the operation succeeded; otherwise, false.</returns>
     public static Task<bool> AddComment(FileInfo? fileInfo, string? value) =>
+        value is null ? Task.FromResult(false) : SetUserCommentAsync(fileInfo, value, allowEncode: true);
+
+    /// <summary>
+    /// Sets the user comment of an image file, with the Exif character code that fits the text.
+    /// </summary>
+    /// <param name="fileInfo">The image file to update.</param>
+    /// <param name="text">The comment text.</param>
+    /// <param name="allowEncode">
+    /// Whether a file whose metadata cannot be rewritten in place may be encoded again. A JPEG that does not fit
+    /// its segments is then left untouched.
+    /// </param>
+    /// <returns>A task that represents the asynchronous operation. The task result contains true if the operation succeeded; otherwise, false.</returns>
+    public static Task<bool> SetUserCommentAsync(FileInfo? fileInfo, string text, bool allowEncode) =>
         ExifFunctions.TryUpdateImageProfileAsync(fileInfo, magickImage =>
         {
-            if (value is null)
-            {
-                return false;
-            }
-
             var profile = magickImage.GetExifProfile() ?? new ExifProfile();
-            profile.SetValue(ExifTag.UserComment, Encoding.ASCII.GetBytes(value));
+            var useUtf8 = string.CompareOrdinal(ExifReader.GetExifVersion(profile), "0300") >= 0;
+            profile.SetValue(ExifTag.UserComment, UserCommentEncoder.Encode(text, useUtf8));
             magickImage.SetProfile(profile);
             return true;
-        }, nameof(ExifWriter), nameof(AddComment));
+        }, nameof(ExifWriter), nameof(SetUserCommentAsync), allowEncode);
 
     /// <summary>
     /// Adds the compressed bits per pixel to the EXIF metadata of an image file.

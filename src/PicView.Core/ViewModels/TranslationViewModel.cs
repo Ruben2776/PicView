@@ -163,6 +163,7 @@ public class TranslationViewModel
         Green.Value = t.Green;
         GalleryThumbnailStretch.Value = t.GalleryThumbnailStretch;
         GeneralSettings.Value = t.GeneralSettings;
+        GeneratedWith.Value = t.GeneratedWith;
         GenerateThumbnails.Value = t.GenerateThumbnails;
         GithubRepo.Value = t.GithubRepo;
         GlassTheme.Value = t.GlassTheme;
@@ -229,6 +230,7 @@ public class TranslationViewModel
         NavigateForwards.Value = t.NavigateForwards;
         Navigation.Value = t.Navigation;
         NegativeColors.Value = t.NegativeColors;
+        NegativePrompt.Value = t.NegativePrompt;
         NewTab.Value = t.NewTab;
         NewWindow.Value = t.NewWindow;
         NextArchive.Value = t.NextArchive;
@@ -287,8 +289,10 @@ public class TranslationViewModel
         Printer.Value = t.Printer;
         PrintSizeCm.Value = t.PrintSizeCm;
         PrintSizeIn.Value = t.PrintSizeIn;
+        Prompt.Value = t.Prompt;
         Quality.Value = t.Quality;
         Random.Value = t.Random;
+        RawMetadata.Value = t.RawMetadata;
         ReadAbleAspectRatio.Value = t.AspectRatio;
         RecentFiles.Value = t.RecentFiles;
         Red.Value = t.Red;
@@ -379,6 +383,7 @@ public class TranslationViewModel
         Start.Value = t.Start;
         StayCentered.Value = t.StayCentered;
         StayTopMost.Value = t.StayTopMost;
+        StoredIn.Value = t.StoredIn;
         Stretch.Value = t.Stretch;
         StretchToMatch.Value = t.StretchToMatch;
         Subject.Value = t.Subject;
@@ -578,6 +583,7 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> GalleryThumbnailStretch { get; } = new();
     public BindableReactiveProperty<string?> Gamma { get; } = new();
     public BindableReactiveProperty<string?> GeneralSettings { get; } = new();
+    public BindableReactiveProperty<string?> GeneratedWith { get; } = new();
     public BindableReactiveProperty<string?> GenerateThumbnails { get; } = new();
     public BindableReactiveProperty<string?> GithubRepo { get; } = new();
     public BindableReactiveProperty<string?> GlassTheme { get; } = new();
@@ -645,6 +651,7 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> NavigateForwards { get; } = new();
     public BindableReactiveProperty<string?> Navigation { get; } = new();
     public BindableReactiveProperty<string?> NegativeColors { get; } = new();
+    public BindableReactiveProperty<string?> NegativePrompt { get; } = new();
     public BindableReactiveProperty<string?> NewTab { get; } = new();
     public BindableReactiveProperty<string?> NewWindow { get; } = new();
     public BindableReactiveProperty<string?> NextArchive { get; } = new();
@@ -703,8 +710,10 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> Printer { get; } = new();
     public BindableReactiveProperty<string?> PrintSizeCm { get; } = new();
     public BindableReactiveProperty<string?> PrintSizeIn { get; } = new();
+    public BindableReactiveProperty<string?> Prompt { get; } = new();
     public BindableReactiveProperty<string?> Quality { get; } = new();
     public BindableReactiveProperty<string?> Random { get; } = new();
+    public BindableReactiveProperty<string?> RawMetadata { get; } = new();
     public BindableReactiveProperty<string?> ReadAbleAspectRatio { get; } = new();
     public BindableReactiveProperty<string?> RecentFiles { get; } = new();
     public BindableReactiveProperty<string?> Red { get; } = new();
@@ -795,6 +804,7 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> Start { get; } = new();
     public BindableReactiveProperty<string?> StayCentered { get; } = new();
     public BindableReactiveProperty<string?> StayTopMost { get; } = new();
+    public BindableReactiveProperty<string?> StoredIn { get; } = new();
     public BindableReactiveProperty<string?> Stretch { get; } = new();
     public BindableReactiveProperty<string?> StretchToMatch { get; } = new();
     public BindableReactiveProperty<string?> Subject { get; } = new();

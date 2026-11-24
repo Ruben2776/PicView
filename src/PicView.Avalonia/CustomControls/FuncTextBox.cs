@@ -27,6 +27,18 @@ public class FuncTextBox : TextBox
     public static readonly StyledProperty<object?> CommandParameterProperty =
         AvaloniaProperty.Register<FuncTextBox, object?>(nameof(CommandParameter));
 
+    public static readonly StyledProperty<bool> CommitOnLostFocusProperty =
+        AvaloniaProperty.Register<FuncTextBox, bool>(nameof(CommitOnLostFocus));
+
+    /// <summary>
+    /// When true, <see cref="Command"/> also executes when the box loses focus.
+    /// </summary>
+    public bool CommitOnLostFocus
+    {
+        get => GetValue(CommitOnLostFocusProperty);
+        set => SetValue(CommitOnLostFocusProperty, value);
+    }
+
     public ICommand? Command
     {
         get => GetValue(CommandProperty);
@@ -64,6 +76,10 @@ public class FuncTextBox : TextBox
     private void OnLostFocus(object? sender, FocusChangedEventArgs e)
     {
         _initialFocus = false;
+        if (CommitOnLostFocus)
+        {
+            ExecuteCommand();
+        }
     }
 
     private void OnGotFocus(object? sender, FocusChangedEventArgs e)
@@ -86,6 +102,30 @@ public class FuncTextBox : TextBox
             return;
         }
 
+        // A multi-line box inserts a new line on Enter; only Ctrl+Enter (see OnKeyDown) and Tab commit.
+        if (e.Key is Key.Enter && AcceptsReturn)
+        {
+            return;
+        }
+
+        ExecuteCommand();
+    }
+
+    protected override void OnKeyDown(KeyEventArgs e)
+    {
+        // TextBox handles Enter itself when AcceptsReturn is true, so the KeyDown event never reaches OnKeyDown above.
+        if (e.Key is Key.Enter && AcceptsReturn && e.KeyModifiers.HasFlag(KeyModifiers.Control))
+        {
+            ExecuteCommand();
+            e.Handled = true;
+            return;
+        }
+
+        base.OnKeyDown(e);
+    }
+
+    private void ExecuteCommand()
+    {
         if (Command?.CanExecute(CommandParameter) == true)
         {
             Command.Execute(CommandParameter);
@@ -95,6 +135,13 @@ public class FuncTextBox : TextBox
     protected override void OnPointerPressed(PointerPressedEventArgs e)
     {
         base.OnPointerPressed(e);
+        // A multi-line box, such as a prompt, places the caret where it is clicked, so a typo can be fixed in place
+        if (IsReadOnly || AcceptsReturn)
+        {
+            _initialFocus = false;
+            return;
+        }
+
         if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed || !_initialFocus)
         {
             return;

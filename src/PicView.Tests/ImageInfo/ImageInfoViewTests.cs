@@ -7,6 +7,7 @@ using PicView.Core.ImageDecoding;
 using PicView.Core.Localization;
 using PicView.Core.Models;
 using PicView.Core.ViewModels;
+using PicView.Tests.Metadata;
 
 namespace PicView.Tests.ImageInfo;
 
@@ -17,6 +18,9 @@ namespace PicView.Tests.ImageInfo;
 public class ImageInfoViewTests : IDisposable
 {
     private readonly string _directory = Path.Combine(Path.GetTempPath(), $"picview-image-info-{Guid.NewGuid():N}");
+
+    // An A1111 prompt with a typo, a negative prompt and settings
+    private const string SdPayload = "a catt\nNegative prompt: blurry\nSteps: 20, Sampler: Euler, CFG scale: 7, Seed: 1, Size: 8x8";
 
     public ImageInfoViewTests()
     {
@@ -235,6 +239,98 @@ public class ImageInfoViewTests : IDisposable
         {
             Close(window, vm);
         }
+    }
+
+    // An A1111 JPEG, whose UserComment holds the AI Metadata: the Prompt box and the Comment box both edit that tag
+    [AvaloniaFact]
+    public void ImageInfoView_A1111Jpeg_EnablesTheAiMetadataAndLabelsTheCommentAsPrompt()
+    {
+        var vm = CreateViewModel();
+        var path = SdTestFiles.WriteJpegWithUserComment(SdTestFiles.AsciiUserComment(SdPayload));
+        vm.WindowTabs.ActiveTab.CurrentValue.Display(new ImageModel { FileInfo = new FileInfo(path), PixelWidth = 8, PixelHeight = 8 });
+
+        var view = new ImageInfoView { DataContext = vm };
+        var window = new Window { Content = view };
+        try
+        {
+            window.Show();
+            Dispatcher.UIThread.RunJobs();
+            Assert.True(WaitFor(() => view.SdPromptBox.Text == "a catt"),
+                "The Prompt box should show the image's prompt");
+
+            Assert.True(view.SdMetadataPanel.IsEffectivelyVisible);
+            Assert.True(view.SdMetadataPanel.IsEffectivelyEnabled);
+            Assert.False(view.SdPromptBox.IsReadOnly);
+            Assert.True(view.SdPromptBox.IsEffectivelyVisible);
+
+            Assert.True(view.CommentBox.IsEffectivelyVisible);
+            Assert.Equal("Comment/Prompt", CommentLabel(view).Text);
+        }
+        finally
+        {
+            Close(window, vm);
+            File.Delete(path);
+        }
+    }
+
+    // An ordinary photo hides nothing: the AI Metadata section shows, disabled, between the Color and Camera sections
+    [AvaloniaFact]
+    public void ImageInfoView_OrdinaryPhoto_ShowsEveryRowAndDisablesTheAiMetadata()
+    {
+        var vm = CreateViewModel();
+        vm.WindowTabs.ActiveTab.CurrentValue.Display(Image("photo.jpg", 640, 480));
+
+        var view = new ImageInfoView { DataContext = vm };
+        var window = new Window { Content = view };
+        try
+        {
+            window.Show();
+            Dispatcher.UIThread.RunJobs();
+            Assert.True(WaitFor(() => vm.Exif!.PixelWidth.Value == 640));
+
+            Assert.True(view.SdMetadataPanel.IsEffectivelyVisible);
+            Assert.False(view.SdMetadataPanel.IsEffectivelyEnabled);
+            Assert.False(vm.Exif!.IsSdMetadataAvailable.Value);
+
+            Control[] photoRows =
+            [
+                view.SizeMpTextBox, view.ResolutionTextBlock, view.PrintSizeCmTextBox, view.PrintSizeInchTextBox,
+                view.DateTakenBox, view.AuthorsBox, view.CopyRightBox, view.SoftwareBox, view.CommentBox
+            ];
+            foreach (var row in photoRows)
+            {
+                Assert.True(row.IsEffectivelyVisible, $"{row.Name} should be visible");
+            }
+
+            Assert.Equal("Comment", CommentLabel(view).Text);
+
+            var sections = view.MainContainer.Children;
+            var color = sections.IndexOf(SectionOf(view, view.ColorRepresentationBox));
+            var ai = sections.IndexOf(view.SdMetadataPanel);
+            var camera = sections.IndexOf(SectionOf(view, view.CameraMakerBox));
+            Assert.Equal(color + 1, ai);
+            Assert.Equal(ai + 1, camera);
+        }
+        finally
+        {
+            Close(window, vm);
+        }
+    }
+
+    // The label in front of the Comment box
+    private static TextBlock CommentLabel(ImageInfoView view) =>
+        ((StackPanel)view.CommentBox.Parent!).Children.OfType<TextBlock>().First();
+
+    // The child of MainContainer that holds control
+    private static Control SectionOf(ImageInfoView view, Control control)
+    {
+        var current = control;
+        while (current.Parent is Control parent && !ReferenceEquals(parent, view.MainContainer))
+        {
+            current = parent;
+        }
+
+        return current;
     }
 
     // Set up as the window opener does it, with the Exif and Info Window view models the view reads

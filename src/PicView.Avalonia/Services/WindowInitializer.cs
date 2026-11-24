@@ -95,7 +95,7 @@ public class WindowInitializer(IWindowProvider provider, MainWindow mainWindow) 
             vm.InfoWindow.ImageInfoWindowConfig.Load();
         }
 
-        vm.Exif ??= new ExifViewModel();
+        vm.Exif ??= new ExifViewModel(vm.Translation.LanguageChanged);
         var config = vm.InfoWindow.ImageInfoWindowConfig;
         _ = _toolWindows.OpenAsync(SecondaryWindowKind.ImageInfo, new SecondaryWindowSpec(
             factory => factory.CreateImageInfoWindow(vm))
