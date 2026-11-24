@@ -3,11 +3,11 @@ using PicView.Core.Exif;
 namespace PicView.Core.Metadata;
 
 /// <summary>
-/// Writes edited generation data back to the place it was read from.
+/// Writes edited AI Metadata back to the place it was read from.
 /// </summary>
 public static class SdMetadataWriter
 {
-    /// <summary>Writes <paramref name="text"/> over the generation data of <paramref name="file"/>.</summary>
+    /// <summary>Writes <paramref name="text"/> over the AI Metadata of <paramref name="file"/>.</summary>
     /// <param name="current">What was read from the file. Only editable data is written.</param>
     /// <returns>False when the data is not editable, or nothing was written.</returns>
     public static Task<bool> WriteAsync(FileInfo file, SdMetadata current, string text)

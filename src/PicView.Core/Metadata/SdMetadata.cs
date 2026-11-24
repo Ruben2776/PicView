@@ -1,7 +1,7 @@
 namespace PicView.Core.Metadata;
 
 /// <summary>
-/// Generation parameters recovered from an AI-generated image.
+/// AI Metadata recovered from an AI-generated image.
 /// </summary>
 public sealed class SdMetadata
 {

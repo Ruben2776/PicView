@@ -4,7 +4,7 @@ using PicView.Core.DebugTools;
 namespace PicView.Core.Metadata;
 
 /// <summary>
-/// Finds Stable Diffusion generation parameters in an image and decodes them.
+/// Finds the AI Metadata of an image (Stable Diffusion and others) and decodes it.
 /// <para>
 /// PNG keeps them in text chunks, which are read straight from the file. JPEG and WebP keep
 /// them in the EXIF UserComment, which the caller has already decoded, or in the JPEG comment
@@ -14,7 +14,7 @@ namespace PicView.Core.Metadata;
 public static class SdMetadataReader
 {
     /// <summary>
-    /// Reads whatever generation parameters the image carries, or null when it has none.
+    /// Reads whatever AI Metadata the image carries, or null when it has none.
     /// </summary>
     /// <param name="fileInfo">The image file. PNG text chunks are read from it directly.</param>
     /// <param name="exifUserComment">Decoded EXIF UserComment, where JPEG and WebP output lands.</param>
@@ -68,7 +68,7 @@ public static class SdMetadataReader
     }
 
     /// <summary>
-    /// Looks for generation parameters hidden in the pixel data. This decodes the image, so it
+    /// Looks for AI Metadata hidden in the pixel data. This decodes the image, so it
     /// is far more expensive than <see cref="Read"/> and is meant to run only after that has
     /// come up empty. Returns null when the image carries no hidden payload.
     /// </summary>
@@ -156,7 +156,7 @@ public static class SdMetadataReader
         }
 
         // Older InvokeAI, and anything else that dropped a payload in a comment chunk. Editors such as GIMP write a
-        // Comment chunk too, so these count only when they look like generation data, as a UserComment does
+        // Comment chunk too, so these count only when they look like AI Metadata, as a UserComment does
         if (TryGet(chunks, "sd-metadata", out var sdMetadata) && ReadFromText(sdMetadata) is { } legacy)
         {
             return (legacy, "sd-metadata");
@@ -232,7 +232,7 @@ public static class SdMetadataReader
 
     /// <summary>
     /// Decodes an EXIF or JPEG comment. Unlike a PNG chunk these are not SD-specific, so a
-    /// payload only counts when it actually looks like generation parameters — otherwise every
+    /// payload only counts when it actually looks like AI Metadata — otherwise every
     /// camera comment would show up as a prompt.
     /// </summary>
     internal static SdMetadata? ReadFromText(string? text)

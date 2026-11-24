@@ -1,4 +1,4 @@
-# Image Information Edits A1111 Generation Data in Place
+# Image Information Edits A1111 AI Metadata in Place
 
 Image Information shows the AI Metadata of an image in an ordinary section of its own, between the Color and Camera sections: the generator, where the data is stored, the prompt, the negative prompt, the settings and the raw text. The section is always shown, laid out like the other sections, and is disabled when the image has no AI Metadata, as the Exif sections are without Exif; no other row is hidden for it. Prompt, Negative prompt and Settings are editable only when the AI Metadata is Automatic1111-style (Automatic1111, Forge, SD.Next) and stored in a PNG's `parameters` text chunk or in the Exif UserComment of a JPEG or WebP. Everything else shows read-only: ComfyUI, NovelAI and InvokeAI data, data hidden in the pixels, the JPEG comment segment, a UserComment in any other format, and the Generated with, Stored in and Raw boxes. An edit follows ADR-0044: it writes to the file the window shows, through `CommitAsync`, and the window then reads that file again.
 

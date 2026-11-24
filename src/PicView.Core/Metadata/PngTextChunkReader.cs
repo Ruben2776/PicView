@@ -7,7 +7,7 @@ namespace PicView.Core.Metadata;
 
 /// <summary>
 /// Minimal PNG chunk walker that extracts the textual chunks (tEXt, zTXt, iTXt).
-/// Stable Diffusion tooling stores its generation parameters there, and ImageMagick's
+/// Stable Diffusion tooling stores its AI Metadata there, and ImageMagick's
 /// ping mode does not reliably surface them, so they are read straight from the file.
 /// </summary>
 internal static class PngTextChunkReader

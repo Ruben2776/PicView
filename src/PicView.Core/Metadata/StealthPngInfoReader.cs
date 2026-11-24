@@ -6,7 +6,7 @@ using PicView.Core.DebugTools;
 namespace PicView.Core.Metadata;
 
 /// <summary>
-/// Reads "stealth pnginfo": generation parameters hidden in the least significant bits of the
+/// Reads "stealth pnginfo": AI Metadata hidden in the least significant bits of the
 /// pixels rather than in a metadata block, as written by the A1111 stealth_pnginfo extension.
 /// It exists so the parameters survive sites that strip PNG text chunks, which is why an image
 /// can look metadata-free and still carry a full prompt.
