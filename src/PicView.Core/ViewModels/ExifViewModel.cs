@@ -900,7 +900,7 @@ public class ExifViewModel : IDisposable
     /// The label of the Comment row: "Comment/Prompt" when the UserComment holds the AI Metadata, which both the
     /// Comment box and the AI Metadata boxes edit, and "Comment" otherwise.
     /// </summary>
-    public BindableReactiveProperty<string?> CommentLabel { get; } = new(GetCommentLabel(isPrompt: false));
+    public BindableReactiveProperty<string?> CommentLabel { get; } = new(GetCommentLabel(isPrompt: false), StringComparer.Ordinal);
 
     public ReactiveCommand<string> SetSdPromptCommand { get; }
     public ReactiveCommand<string> SetSdNegativePromptCommand { get; }
@@ -1055,7 +1055,7 @@ public class ExifViewModel : IDisposable
         SdRaw.Value = sdMetadata.Raw;
         SdStorage.Value = GetStorageLabel(sdMetadata);
         IsSdEditable.Value = sdMetadata.IsEditable;
-        CommentLabel.Value = GetCommentLabel(sdMetadata.Source == SdSource.ExifUserComment);
+        CommentLabel.Value = GetCommentLabel(sdMetadata.Source is SdSource.ExifUserComment);
         IsSdMetadataAvailable.Value = true;
     }
 
@@ -1071,7 +1071,7 @@ public class ExifViewModel : IDisposable
     private static string GetCommentLabel(bool isPrompt)
     {
         var translation = TranslationManager.Translation;
-        return isPrompt ? $"{translation.Comment}/{translation.Prompt}" : translation.Comment ?? string.Empty;
+        return isPrompt ? string.Format("{0}/{1}", translation.Comment, translation.Prompt) : translation.Comment ?? string.Empty;
     }
 
     /// <summary>
