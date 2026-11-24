@@ -99,6 +99,26 @@ public class ExifViewModelSdTests
         }
     }
 
+    // GIMP, and many other editors, write a Comment chunk that is not generation data
+    [Fact]
+    public void UpdateExifValues_OrdinaryPngComment_IsNotGenerationData()
+    {
+        var path = WritePng("Comment", "Created with GIMP");
+        try
+        {
+            Assert.Null(SdMetadataReader.Read(new FileInfo(path)));
+
+            using var viewModel = Show(path);
+
+            Assert.False(viewModel.IsSdMetadataAvailable.Value);
+            Assert.False(viewModel.IsSdEditable.Value);
+        }
+        finally
+        {
+            File.Delete(path);
+        }
+    }
+
     [Fact]
     public async Task CommitSdAsync_Png_WritesAndShowsTheFile()
     {

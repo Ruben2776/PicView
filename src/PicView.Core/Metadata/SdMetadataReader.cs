@@ -155,13 +155,14 @@ public static class SdMetadataReader
             }
         }
 
-        // Older InvokeAI, and anything else that dropped a payload in a comment chunk.
-        if (TryGet(chunks, "sd-metadata", out var sdMetadata) && ParseUnknownPayload(sdMetadata) is { } legacy)
+        // Older InvokeAI, and anything else that dropped a payload in a comment chunk. Editors such as GIMP write a
+        // Comment chunk too, so these count only when they look like generation data, as a UserComment does
+        if (TryGet(chunks, "sd-metadata", out var sdMetadata) && ReadFromText(sdMetadata) is { } legacy)
         {
             return (legacy, "sd-metadata");
         }
 
-        if (TryGet(chunks, "Comment", out var comment) && ParseUnknownPayload(comment) is { } fromComment)
+        if (TryGet(chunks, "Comment", out var comment) && ReadFromText(comment) is { } fromComment)
         {
             return (fromComment, "Comment");
         }
