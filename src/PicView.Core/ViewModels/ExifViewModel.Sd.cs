@@ -1,6 +1,7 @@
 using PicView.Core.DebugTools;
 using PicView.Core.Localization;
 using PicView.Core.Metadata;
+using PicView.Core.Models;
 using R3;
 
 namespace PicView.Core.ViewModels;
@@ -9,7 +10,7 @@ namespace PicView.Core.ViewModels;
 public partial class ExifViewModel
 {
     /// <summary>The part of the generation data an edit replaces.</summary>
-    internal enum SdField
+    public enum SdField
     {
         Prompt,
         NegativePrompt,
@@ -52,37 +53,80 @@ public partial class ExifViewModel
     // The generation data last shown, which an edit composes the other two fields from
     private SdMetadata? _sd;
 
+    // The image _sd was read from, which can differ from _model while another image is being read
+    private ImageModel? _sdModel;
+
     private CancellationTokenSource? _stealthCts;
+
+    // Runs SD commits one at a time, from reading _sd to reading the file again, so none composes from stale data
+    private readonly SemaphoreSlim _sdCommitGate = new(1, 1);
 
     // Makes a scan's check that it is still current and its apply one step, so a cancelled scan never shows its result
     private readonly Lock _stealthLock = new();
 
     /// <summary>
-    /// Writes <paramref name="value"/> over one part of the generation data shown, keeping the other two parts as
-    /// the file holds them, then shows what the file holds. Data that is not editable, a value equal to what is
-    /// shown, or one that would not read back as typed, writes nothing.
+    /// Writes <paramref name="value"/> over one part of the generation data of the image shown, keeping the other two
+    /// parts as its file holds them, then shows what the file holds.
     /// </summary>
     /// <returns>True if the file was written.</returns>
-    internal Task<bool> CommitSdAsync(SdField field, string? value)
+    public Task<bool> CommitSdAsync(SdField field, string? value) => CommitSdAsync(_model, field, value);
+
+    /// <summary>
+    /// Writes <paramref name="value"/> over one part of the generation data of <paramref name="model"/>, keeping the
+    /// other two parts as its file holds them, then shows what the file holds. Commits run one at a time, so each one
+    /// composes from what the one before it wrote. Nothing is written when <paramref name="model"/> is no longer the
+    /// image shown, or the data shown is not yet its own; nor for data that is not editable, a value equal to what is
+    /// shown, a Settings value that is not a settings line, or one that would not read back as typed. The box then
+    /// goes back to the file's value.
+    /// </summary>
+    /// <returns>True if the file was written.</returns>
+    public async Task<bool> CommitSdAsync(ImageModel? model, SdField field, string? value)
     {
-        var sd = _sd;
-        var current = sd is null ? null : GetField(sd, field);
-        if (sd is not { IsEditable: true } ||
-            SdMetadataParser.Normalize(value) == SdMetadataParser.Normalize(current) ||
-            (field == SdField.Settings && !IsSettingsValue(value)))
+        await _sdCommitGate.WaitAsync().ConfigureAwait(false);
+        try
         {
-            GetBindable(field).Value = current ?? string.Empty;
-            return Task.FromResult(false);
+            // Another image is shown, or is being read: the edit is dropped, and that image's values are left alone
+            if (model is null || !ReferenceEquals(_model, model) || !ReferenceEquals(_sdModel, model) ||
+                _sd is not { } sd)
+            {
+                return false;
+            }
+
+            if (!sd.IsEditable ||
+                SdMetadataParser.Normalize(value) == SdMetadataParser.Normalize(GetField(sd, field)) ||
+                (field == SdField.Settings && !IsSettingsValue(value)))
+            {
+                ShowFileValue(model, field);
+                return false;
+            }
+
+            var prompt = field == SdField.Prompt ? value : sd.Prompt;
+            var negativePrompt = field == SdField.NegativePrompt ? value : sd.NegativePrompt;
+            var settings = field == SdField.Settings ? value : sd.Settings;
+            var text = SdMetadataParser.ComposeA1111(prompt, negativePrompt, settings);
+
+            var written = await CommitAsync(model, f =>
+                SdMetadataReader.ReadsBackAs(sd.Source, text, prompt, negativePrompt, settings)
+                    ? SdMetadataWriter.WriteAsync(f, sd, text)
+                    : Task.FromResult(false)).ConfigureAwait(false);
+
+            // Reading the file again leaves a box whose field did not change alone, so a refused edit is undone here
+            ShowFileValue(model, field);
+            return written;
         }
+        finally
+        {
+            _sdCommitGate.Release();
+        }
+    }
 
-        var prompt = field == SdField.Prompt ? value : sd.Prompt;
-        var negativePrompt = field == SdField.NegativePrompt ? value : sd.NegativePrompt;
-        var settings = field == SdField.Settings ? value : sd.Settings;
-        var text = SdMetadataParser.ComposeA1111(prompt, negativePrompt, settings);
-
-        return CommitAsync(f => SdMetadataReader.ReadsBackAs(sd.Source, text, prompt, negativePrompt, settings)
-            ? SdMetadataWriter.WriteAsync(f, sd, text)
-            : Task.FromResult(false));
+    /// <summary>Puts the box of <paramref name="field"/> back to what the file of <paramref name="model"/> holds.</summary>
+    private void ShowFileValue(ImageModel model, SdField field)
+    {
+        if (ReferenceEquals(_sdModel, model) && _sd is { } sd)
+        {
+            GetBindable(field).Value = GetField(sd, field) ?? string.Empty;
+        }
     }
 
     /// <summary>
@@ -119,33 +163,49 @@ public partial class ExifViewModel
     /// it is cancelled as soon as another image is shown.
     /// </para>
     /// </summary>
-    private void UpdateSdMetadataValues(FileInfo fileInfo, string? userComment, string? imageComment)
+    private void UpdateSdMetadataValues(ImageModel model, FileInfo fileInfo, string? userComment, string? imageComment)
     {
         CancelStealthScan();
 
         var sdMetadata = SdMetadataReader.Read(fileInfo, userComment, imageComment);
         if (sdMetadata is not null)
         {
-            ApplySdMetadata(sdMetadata);
+            ApplySdMetadata(sdMetadata, model);
             return;
         }
 
         ClearSdMetadataValues();
-        StartStealthScan(fileInfo);
+        StartStealthScan(model, fileInfo);
     }
 
-    internal void ApplySdMetadata(SdMetadata sdMetadata)
+    /// <summary>
+    /// Shows <paramref name="sdMetadata"/>, read from the file of <paramref name="model"/>. When the same image is read
+    /// again, such as after PicView's own write, a box is set only when its field changed in the file, so text being
+    /// typed in another box is kept.
+    /// </summary>
+    internal void ApplySdMetadata(SdMetadata sdMetadata, ImageModel? model)
     {
+        var previous = model is not null && ReferenceEquals(_sdModel, model) ? _sd : null;
         _sd = sdMetadata;
+        _sdModel = model;
         SdGenerator.Value = sdMetadata.Generator;
-        SdPrompt.Value = sdMetadata.Prompt ?? string.Empty;
-        SdNegativePrompt.Value = sdMetadata.NegativePrompt ?? string.Empty;
-        SdSettings.Value = sdMetadata.Settings ?? string.Empty;
+        ShowField(SdPrompt, previous, previous?.Prompt, sdMetadata.Prompt);
+        ShowField(SdNegativePrompt, previous, previous?.NegativePrompt, sdMetadata.NegativePrompt);
+        ShowField(SdSettings, previous, previous?.Settings, sdMetadata.Settings);
         SdRaw.Value = sdMetadata.Raw;
         SdStorage.Value = GetStorageLabel(sdMetadata);
         IsSdEditable.Value = sdMetadata.IsEditable;
         IsCommentShown.Value = sdMetadata.Source != SdSource.ExifUserComment;
         IsSdMetadataAvailable.Value = true;
+    }
+
+    private static void ShowField(BindableReactiveProperty<string?> box, SdMetadata? previous, string? previousValue,
+        string? value)
+    {
+        if (previous is null || !string.Equals(previousValue, value, StringComparison.Ordinal))
+        {
+            box.Value = value ?? string.Empty;
+        }
     }
 
     private static string GetStorageLabel(SdMetadata sdMetadata)
@@ -168,7 +228,7 @@ public partial class ExifViewModel
     /// could plausibly carry them are scanned, and only while the info window is showing this
     /// image -- <see cref="UpdateSdMetadataValues"/> is reached only from the info window.
     /// </summary>
-    private void StartStealthScan(FileInfo fileInfo)
+    private void StartStealthScan(ImageModel model, FileInfo fileInfo)
     {
         if (!IsStealthCandidate(fileInfo))
         {
@@ -193,9 +253,11 @@ public partial class ExifViewModel
 
                 lock (_stealthLock)
                 {
+                    // The bindables fire while _stealthLock is held. That is safe only because Avalonia marshals a
+                    // binding update from another thread with Post, so no subscriber may block on the UI thread here
                     if (!token.IsCancellationRequested)
                     {
-                        ApplySdMetadata(hidden);
+                        ApplySdMetadata(hidden, model);
                     }
                 }
             }
@@ -257,6 +319,7 @@ public partial class ExifViewModel
     private void ClearSdMetadataValues()
     {
         _sd = null;
+        _sdModel = null;
         IsSdMetadataAvailable.Value = false;
         IsSdEditable.Value = false;
         IsCommentShown.Value = true;

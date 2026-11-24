@@ -345,6 +345,97 @@ public class ImageInfoViewTests : IDisposable
         }
     }
 
+    // The Prompt box's own commit, still writing when the overlay closes, must not make the overlay's edit get lost
+    [AvaloniaFact]
+    public void SdExpandOverlay_ClosedWhileThePromptBoxCommits_WritesTheOverlayText()
+    {
+        var vm = CreateViewModel();
+        var path = SdTestFiles.WriteJpegWithUserComment(SdTestFiles.AsciiUserComment(SdPayload));
+        vm.WindowTabs.ActiveTab.CurrentValue.Display(new ImageModel { FileInfo = new FileInfo(path), PixelWidth = 8, PixelHeight = 8 });
+
+        var view = new ImageInfoView { DataContext = vm };
+        var window = new Window { Content = view };
+        try
+        {
+            window.Show();
+            Dispatcher.UIThread.RunJobs();
+            Assert.True(WaitFor(() => view.SdPromptBox.Text == "a catt"));
+
+            // Holding the file open keeps the box's write retrying while the overlay is edited and closed
+            using (new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.None))
+            {
+                vm.Exif!.SetSdPromptCommand.Execute("a cat");
+
+                view.SdPromptExpandButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                view.SdExpandText.Text = "a cat\non a mat";
+                view.SdExpandCloseButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                Assert.False(view.SdExpandOverlay.IsVisible);
+            }
+
+            Assert.True(WaitFor(() => vm.Exif.SdPrompt.Value == "a cat\non a mat"),
+                "The overlay's edit should be written after the box's commit");
+            var stored = Core.Metadata.SdMetadataReader.Read(new FileInfo(path), ReadUserComment(path));
+            Assert.Equal("a cat\non a mat", stored?.Prompt);
+        }
+        finally
+        {
+            Close(window, vm);
+            File.Delete(path);
+        }
+    }
+
+    // The overlay's commit waits for the box's; when another image is shown meanwhile, it is dropped, not written there
+    [AvaloniaFact]
+    public void SdExpandOverlay_CommitWaitingWhileAnotherImageIsShown_IsNotWrittenToThatImage()
+    {
+        var vm = CreateViewModel();
+        var first = SdTestFiles.WriteJpegWithUserComment(SdTestFiles.AsciiUserComment(SdPayload));
+        var second = SdTestFiles.WriteJpegWithUserComment(SdTestFiles.AsciiUserComment(
+            "a bird\nSteps: 20, Sampler: Euler, CFG scale: 7, Seed: 1, Size: 8x8"));
+        var tab = vm.WindowTabs.ActiveTab.CurrentValue;
+        tab.Display(new ImageModel { FileInfo = new FileInfo(first), PixelWidth = 8, PixelHeight = 8 });
+        var secondBytes = File.ReadAllBytes(second);
+
+        var view = new ImageInfoView { DataContext = vm };
+        var window = new Window { Content = view };
+        try
+        {
+            window.Show();
+            Dispatcher.UIThread.RunJobs();
+            Assert.True(WaitFor(() => view.SdPromptBox.Text == "a catt"));
+
+            using (new FileStream(first, FileMode.Open, FileAccess.Read, FileShare.None))
+            {
+                vm.Exif!.SetSdPromptCommand.Execute("a cat");
+
+                view.SdPromptExpandButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                view.SdExpandText.Text = "a cat\non a mat";
+                view.SdExpandCloseButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+
+                tab.Display(new ImageModel { FileInfo = new FileInfo(second), PixelWidth = 8, PixelHeight = 8 });
+                Assert.True(WaitFor(() => vm.Exif.SdPrompt.Value == "a bird"));
+            }
+
+            Assert.True(WaitFor(() => Core.Metadata.SdMetadataReader.Read(new FileInfo(first), ReadUserComment(first))?.Prompt == "a cat"),
+                "The box's commit should still be written to the first image");
+            Assert.False(WaitFor(() => !File.ReadAllBytes(second).AsSpan().SequenceEqual(secondBytes), TimeSpan.FromSeconds(1)),
+                "The overlay's edit must not be written to the image shown since");
+            Assert.Equal("a bird", vm.Exif.SdPrompt.Value);
+        }
+        finally
+        {
+            Close(window, vm);
+            File.Delete(first);
+            File.Delete(second);
+        }
+    }
+
+    private static string ReadUserComment(string path)
+    {
+        using var image = new MagickImage(path);
+        return Core.Exif.ExifReader.GetUserComment(image.GetExifProfile());
+    }
+
     // PicView's own write, or any other change on disk, fires a File change for the same image: the edit is kept
     [AvaloniaFact]
     public void SdExpandOverlay_ShownFileRewritten_StaysOpenWithTheEdit()

@@ -58,9 +58,10 @@ public partial class ExifViewModel : IDisposable
         SetLensModelCommand = new ReactiveCommand<string>(async (s, _) => await CommitAsync(f => ExifWriter.AddLensModel(f, s)).ConfigureAwait(false));
         SetExifVersionCommand = new ReactiveCommand<string>(async (s, _) => await CommitAsync(f => ExifWriter.AddExifVersion(f, s)).ConfigureAwait(false));
 
-        SetSdPromptCommand = new ReactiveCommand<string>(async (s, _) => await CommitSdAsync(SdField.Prompt, s).ConfigureAwait(false));
-        SetSdNegativePromptCommand = new ReactiveCommand<string>(async (s, _) => await CommitSdAsync(SdField.NegativePrompt, s).ConfigureAwait(false));
-        SetSdSettingsCommand = new ReactiveCommand<string>(async (s, _) => await CommitSdAsync(SdField.Settings, s).ConfigureAwait(false));
+        // Parallel, so each commit takes the image shown when its box commits; CommitSdAsync runs them one at a time
+        SetSdPromptCommand = new ReactiveCommand<string>(async (s, _) => await CommitSdAsync(SdField.Prompt, s).ConfigureAwait(false), AwaitOperation.Parallel);
+        SetSdNegativePromptCommand = new ReactiveCommand<string>(async (s, _) => await CommitSdAsync(SdField.NegativePrompt, s).ConfigureAwait(false), AwaitOperation.Parallel);
+        SetSdSettingsCommand = new ReactiveCommand<string>(async (s, _) => await CommitSdAsync(SdField.Settings, s).ConfigureAwait(false), AwaitOperation.Parallel);
     }
 
     public ReactiveCommand? OpenGoogleLinkCommand { get; }
@@ -622,7 +623,7 @@ public partial class ExifViewModel : IDisposable
 
             if (fileInfo is { Exists: true })
             {
-                UpdateSdMetadataValues(fileInfo, Comment.CurrentValue, magick?.GetAttribute("comment"));
+                UpdateSdMetadataValues(model, fileInfo, Comment.CurrentValue, magick?.GetAttribute("comment"));
             }
             else
             {
@@ -820,9 +821,15 @@ public partial class ExifViewModel : IDisposable
     /// the file's. Nothing is shown again when another image was shown meanwhile.
     /// </summary>
     /// <returns>True if the file was written.</returns>
-    internal async Task<bool> CommitAsync(Func<FileInfo, Task<bool>> write)
+    internal Task<bool> CommitAsync(Func<FileInfo, Task<bool>> write) => CommitAsync(_model, write);
+
+    /// <summary>
+    /// Writes to the file of <paramref name="model"/> with <paramref name="write"/>, then shows what the file holds
+    /// when <paramref name="model"/> is still the image shown.
+    /// </summary>
+    /// <returns>True if the file was written.</returns>
+    private async Task<bool> CommitAsync(ImageModel? model, Func<FileInfo, Task<bool>> write)
     {
-        var model = _model;
         if (model is null)
         {
             return false;

@@ -1,5 +1,4 @@
-﻿using System.Windows.Input;
-using Avalonia;
+﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
@@ -271,7 +270,7 @@ public class ImageInfoViewController(ImageInfoView view) : IDisposable
         _expandedSdModel = vm.WindowTabs.ActiveTab.CurrentValue.Model;
         view.SdExpandTitle.Text = title;
         view.SdExpandText.Text = text;
-        view.SdExpandText.IsReadOnly = GetSdCommand(exif, field) is null || !exif.IsSdEditable.CurrentValue;
+        view.SdExpandText.IsReadOnly = GetSdField(field) is null || !exif.IsSdEditable.CurrentValue;
         view.SdExpandOverlay.IsVisible = true;
         view.SdExpandText.CaretIndex = 0;
         view.SdExpandText.Focus();
@@ -303,8 +302,9 @@ public class ImageInfoViewController(ImageInfoView view) : IDisposable
     }
 
     /// <summary>
-    /// Hides the overlay. With <paramref name="commit"/>, an editable field's text is written as its box writes it; an
-    /// unchanged text writes nothing.
+    /// Hides the overlay. With <paramref name="commit"/>, an editable field's text is written to the image the overlay
+    /// was opened for, after any commit still running; an unchanged text writes nothing, and nothing is written once
+    /// another image is shown.
     /// </summary>
     private void CloseSdExpandOverlay(bool commit)
     {
@@ -314,9 +314,10 @@ public class ImageInfoViewController(ImageInfoView view) : IDisposable
         }
 
         var text = view.SdExpandText.Text;
-        var command = commit && !view.SdExpandText.IsReadOnly &&
-                      view.DataContext is MainWindowViewModel { Exif: { } exif }
-            ? GetSdCommand(exif, _expandedSdField)
+        var field = GetSdField(_expandedSdField);
+        var model = _expandedSdModel;
+        var exif = commit && !view.SdExpandText.IsReadOnly && view.DataContext is MainWindowViewModel { Exif: { } e }
+            ? e
             : null;
 
         _expandedSdField = null;
@@ -325,17 +326,17 @@ public class ImageInfoViewController(ImageInfoView view) : IDisposable
         view.SdExpandText.Text = null;
         view.ScrollViewer.Focus();
 
-        if (command?.CanExecute(text) == true)
+        if (exif is not null && field is { } sdField)
         {
-            command.Execute(text);
+            _ = Task.Run(() => exif.CommitSdAsync(model, sdField, text));
         }
     }
 
-    private static ICommand? GetSdCommand(ExifViewModel exif, string? field) => field switch
+    private static ExifViewModel.SdField? GetSdField(string? tag) => tag switch
     {
-        SdPromptTag => exif.SetSdPromptCommand,
-        SdNegativePromptTag => exif.SetSdNegativePromptCommand,
-        SdSettingsTag => exif.SetSdSettingsCommand,
+        SdPromptTag => ExifViewModel.SdField.Prompt,
+        SdNegativePromptTag => ExifViewModel.SdField.NegativePrompt,
+        SdSettingsTag => ExifViewModel.SdField.Settings,
         _ => null
     };
 
