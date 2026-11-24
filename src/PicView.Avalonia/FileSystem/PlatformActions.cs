@@ -53,6 +53,30 @@ public static class PlatformActions
         }
     }
 
+    /// <summary>
+    /// Sets the file at <paramref name="path"/>, such as a gallery item's, as the lock screen image: as it is when it is
+    /// in a common format, else as a temporary PNG. Says so when it could not be converted or the platform refuses it.
+    /// </summary>
+    public static async ValueTask SetAsLockScreen(string path, MainWindowViewModel vm, MainWindow window)
+    {
+        using var busy = vm.WindowTabs.ActiveTab.CurrentValue.ClaimBusy();
+        try
+        {
+            var file = await FileSaver.ExportCommonFormat(path).ConfigureAwait(false);
+            if (file is null || !await SetAsLockScreen(vm.Core.PlatformService, file).ConfigureAwait(false))
+            {
+                await TooltipHelper.ShowTooltipMessageAsync(TranslationManager.Translation.UnexpectedError, false, window,
+                    TimeSpan.FromSeconds(.5)).ConfigureAwait(false);
+            }
+        }
+        catch (Exception e)
+        {
+            await TooltipHelper.ShowTooltipMessageAsync(e.Message, false, window,
+                TimeSpan.FromSeconds(.5)).ConfigureAwait(false);
+            DebugHelper.LogDebug(nameof(PlatformActions), nameof(SetAsLockScreen), e);
+        }
+    }
+
     public static ValueTask ShowFileProperties(MainWindowViewModel vm)
     {
         var path = ShownPath(vm);
@@ -103,6 +127,11 @@ public static class PlatformActions
     internal static async ValueTask<bool> SetAsLockScreen(IPlatformSpecificService? platform, string? path)
     {
         if (platform is null || path is null)
+        {
+            return false;
+        }
+        var file = await FileSaver.ExportCommonFormat(path).ConfigureAwait(false);
+        if (string.IsNullOrEmpty(file))
         {
             return false;
         }

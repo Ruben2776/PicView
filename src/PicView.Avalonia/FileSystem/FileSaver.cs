@@ -1,5 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Threading;
+using PicView.Core.FileHandling;
+using PicView.Core.ImageDecoding;
 using PicView.Core.Saving;
 using PicView.Core.ViewModels;
 
@@ -28,6 +30,24 @@ public static class FileSaver
     {
         var service = await GetServiceAsync().ConfigureAwait(false);
         return await service.ExportCommonFormatAsync(vm.WindowTabs.ActiveTab.CurrentValue).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// A file in a common format that shows the file at <paramref name="path"/>, such as a gallery item's, for a
+    /// wallpaper or lock screen: the file itself when it is already common, else a temporary PNG, since the OS cannot
+    /// show the others. <see langword="null"/> when it could not be written.
+    /// </summary>
+    public static async ValueTask<string?> ExportCommonFormat(string path)
+    {
+        if (path.IsCommon())
+        {
+            return path;
+        }
+
+        var tempPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + ".png");
+        return await SaveImageFileHelper.SaveImageAsync(null, path, tempPath, ext: ".png").ConfigureAwait(false)
+            ? tempPath
+            : null;
     }
 
     private static async ValueTask<FileSavingService> GetServiceAsync()

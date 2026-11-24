@@ -98,11 +98,7 @@
 
         <!--  Set as lockscreen  -->
         <Separator x:Name="LockscreenSeparator" />
-        <customControls:StyledMenuItem
-            Click="Lockscreen_OnClick"
-            Header="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.SetAsLockScreenImage.Value,
-                                     Mode=OneWay}"
-            x:Name="LockscreenItem">
+        <customControls:StyledMenuItem Header="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.SetAsLockScreenImage.Value, Mode=OneWay}" x:Name="LockscreenItem">
             <MenuItem.Icon>
                 <Image Classes="WallpaperImage" />
             </MenuItem.Icon>

@@ -1,10 +1,7 @@
-﻿using System.Runtime.InteropServices;
-using Avalonia;
+﻿using Avalonia;
 using Avalonia.Threading;
 using PicView.Avalonia.FileSystem;
 using PicView.Avalonia.UI;
-using PicView.Core.FileHandling;
-using PicView.Core.ImageDecoding;
 using PicView.Core.Localization;
 using PicView.Core.ViewModels;
 
@@ -57,15 +54,11 @@ public static class WallpaperManager
         using var busy = vm.WindowTabs.ActiveTab.CurrentValue.ClaimBusy();
         try
         {
-            var file = path;
-            if (!path.IsCommon())
+            var file = await FileSaver.ExportCommonFormat(path).ConfigureAwait(false);
+            if (file is null)
             {
-                file = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + ".png");
-                if (!await SaveImageFileHelper.SaveImageAsync(null, path, file, ext: ".png").ConfigureAwait(false))
-                {
-                    TooltipHelper.ShowTooltipMessage(vm, TranslationManager.Translation.UnexpectedError ?? "Error", true);
-                    return;
-                }
+                TooltipHelper.ShowTooltipMessage(vm, TranslationManager.Translation.UnexpectedError ?? "Error", true);
+                return;
             }
 
             var core = await Dispatcher.UIThread.InvokeAsync(() => Application.Current.DataContext as CoreViewModel);

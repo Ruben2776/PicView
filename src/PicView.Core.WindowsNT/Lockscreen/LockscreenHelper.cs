@@ -17,7 +17,7 @@ public static class LockscreenHelper
     /// </remarks>
     /// <returns><see langword="false"/> when Windows refused the image, such as a format it cannot decode or a
     /// lock screen that a policy manages.</returns>
-    public static async Task<bool>  SetLockScreenImageAsync(string path)
+    public static async Task<bool> SetLockScreenImageAsync(string path)
     {
         try
         {

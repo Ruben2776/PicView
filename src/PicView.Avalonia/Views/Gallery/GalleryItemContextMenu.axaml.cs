@@ -31,6 +31,7 @@ public partial class GalleryItemContextMenu : ContextMenu
             LockscreenSeparator.IsVisible = false;
             LockscreenItem.IsVisible = false;
         }
+        LockscreenItem.AddHandler(Button.ClickEvent, SetAsLockScreenImageAsync);
     }
 
     protected override Type StyleKeyOverride => typeof(ContextMenu);
@@ -112,14 +113,15 @@ public partial class GalleryItemContextMenu : ContextMenu
         _ = WallpaperManager.SetAsWallpaper(item.FileLocation, style, vm);
     }
 
-    private void SetAsLockScreenImage()
+    // Through Platform Actions, which converts a file the OS cannot show, shows the busy indicator and reports a failure
+    private async Task SetAsLockScreenImageAsync()
     {
-        if (ItemViewModel is not { } item || Application.Current.DataContext is not CoreViewModel core)
+        if (ItemViewModel is not { } item || MainWindow is not { DataContext: MainWindowViewModel vm })
         {
             return;
         }
 
-        _ = core.PlatformService.SetAsLockScreen(item.FileLocation);
+        await PlatformActions.SetAsLockScreen(vm.Core.PlatformService, item.FileLocation).ConfigureAwait(false);
     }
 
     private void WallpaperFilled_OnClick(object? sender, RoutedEventArgs e) => SetAsWallpaper(WallpaperStyle.Fill);
@@ -131,7 +133,6 @@ public partial class GalleryItemContextMenu : ContextMenu
     private void WallpaperCentered_OnClick(object? sender, RoutedEventArgs e) => SetAsWallpaper(WallpaperStyle.Center);
 
     private void WallpaperTiled_OnClick(object? sender, RoutedEventArgs e) => SetAsWallpaper(WallpaperStyle.Tile);
-    private void Lockscreen_OnClick(object? sender, RoutedEventArgs e) => SetAsLockScreenImage();
 
     private void CopyFile_OnClick(object? sender, RoutedEventArgs e)
     {
