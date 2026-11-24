@@ -135,7 +135,8 @@ public class FuncTextBox : TextBox
     protected override void OnPointerPressed(PointerPressedEventArgs e)
     {
         base.OnPointerPressed(e);
-        if (IsReadOnly)
+        // A multi-line box, such as a prompt, places the caret where it is clicked, so a typo can be fixed in place
+        if (IsReadOnly || AcceptsReturn)
         {
             _initialFocus = false;
             return;

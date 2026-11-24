@@ -1,5 +1,7 @@
 using System.Windows.Input;
+using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Headless;
 using Avalonia.Input;
 using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
@@ -95,6 +97,44 @@ public class FuncTextBoxTests
         Assert.True(other.IsFocused);
         Assert.False(box.IsFocused);
         Assert.Equal(1, command.Count);
+    }
+
+    // A click on a typo in a long prompt places the caret there, as in any text box. A single-line box keeps its own
+    // first click, which puts the caret at the end
+    [AvaloniaTheory]
+    [InlineData(true, false)]
+    [InlineData(false, true)]
+    public void FirstClick_MultiLine_PlacesTheCaretWhereClicked(bool acceptsReturn, bool caretAtEnd)
+    {
+        var box = new FuncTextBox { AcceptsReturn = acceptsReturn, Text = "a cat wearing a hat", Width = 300 };
+        var other = new TextBox();
+        var panel = new StackPanel();
+        panel.Children.Add(other);
+        panel.Children.Add(box);
+        var window = new Window { Content = panel, Width = 400, Height = 300 };
+        window.Show();
+        Dispatcher.UIThread.RunJobs();
+        other.Focus();
+        Dispatcher.UIThread.RunJobs();
+        Assert.False(box.IsFocused);
+
+        var point = box.TranslatePoint(new Point(20, box.Bounds.Height / 2), window)!.Value;
+        window.MouseDown(point, MouseButton.Left);
+        window.MouseUp(point, MouseButton.Left);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.True(box.IsFocused);
+        Assert.Equal(box.SelectionStart, box.SelectionEnd);
+        if (caretAtEnd)
+        {
+            Assert.Equal(box.Text!.Length, box.CaretIndex);
+        }
+        else
+        {
+            Assert.InRange(box.CaretIndex, 1, box.Text!.Length - 1);
+        }
+
+        window.Close();
     }
 
     [AvaloniaFact]
