@@ -901,17 +901,23 @@ public class FunctionsMapper : IActionRunner
     private async ValueTask SetAsWallpaper() =>
         await SetAsWallpaperFilled().ConfigureAwait(false);
 
-    private ValueTask SetAsWallpaperTiled() => PlatformActions.SetAsWallpaper(_vm, WallpaperStyle.Tile);
+    private async ValueTask SetAsWallpaperTiled() =>
+        await PlatformActions.SetAsWallpaper(_vm, WallpaperStyle.Tile).ConfigureAwait(false);
 
-    private ValueTask SetAsWallpaperCentered() => PlatformActions.SetAsWallpaper(_vm, WallpaperStyle.Center);
+    private async ValueTask SetAsWallpaperCentered() =>
+        await PlatformActions.SetAsWallpaper(_vm, WallpaperStyle.Center).ConfigureAwait(false);
 
-    private ValueTask SetAsWallpaperStretched() => PlatformActions.SetAsWallpaper(_vm, WallpaperStyle.Stretch);
+    private async ValueTask SetAsWallpaperStretched() =>
+        await PlatformActions.SetAsWallpaper(_vm, WallpaperStyle.Stretch).ConfigureAwait(false);
 
-    private ValueTask SetAsWallpaperFitted() => PlatformActions.SetAsWallpaper(_vm, WallpaperStyle.Fit);
+    private async ValueTask SetAsWallpaperFitted() =>
+        await PlatformActions.SetAsWallpaper(_vm, WallpaperStyle.Fit).ConfigureAwait(false);
 
-    private ValueTask SetAsWallpaperFilled() => PlatformActions.SetAsWallpaper(_vm, WallpaperStyle.Fill);
+    private async ValueTask SetAsWallpaperFilled() =>
+        await PlatformActions.SetAsWallpaper(_vm, WallpaperStyle.Fill).ConfigureAwait(false);
 
-    private ValueTask SetAsLockScreen() => PlatformActions.SetAsLockScreen(_vm);
+    private async ValueTask SetAsLockScreen() =>
+        await PlatformActions.SetAsLockScreen(_vm).ConfigureAwait(false);
 
     #endregion
 

@@ -31,6 +31,15 @@ public partial class GalleryItemContextMenu : ContextMenu
             LockscreenSeparator.IsVisible = false;
             LockscreenItem.IsVisible = false;
         }
+        else
+        {
+            LockscreenItem.AddHandler(PointerPressedEvent, SetLockscreenAsync);
+        }
+        WallpaperFilled.AddHandler(PointerPressedEvent, SetAsWallpaperFilledAsync);
+        WallpaperFitted.AddHandler(PointerPressedEvent, WallpaperFitted_OnClick);
+        WallpaperStretched.AddHandler(PointerPressedEvent, WallpaperStretched_OnClick);
+        WallpaperCentered.AddHandler(PointerPressedEvent, WallpaperCentered_OnClick);
+        WallpaperTiled.AddHandler(PointerPressedEvent, WallpaperTiled_OnClick);
     }
 
     protected override Type StyleKeyOverride => typeof(ContextMenu);
@@ -102,35 +111,40 @@ public partial class GalleryItemContextMenu : ContextMenu
     }
 
     // Through Platform Actions, which converts a file the OS cannot show, claims Busy and reports a failure
-    private void SetAsWallpaper(WallpaperStyle style)
+    private async ValueTask SetAsWallpaperAsync(WallpaperStyle style)
     {
         if (ItemViewModel is not { } item || MainWindow is not { DataContext: MainWindowViewModel vm })
         {
             return;
         }
 
-        _ = PlatformActions.SetAsWallpaper(vm, item.FileLocation, style);
+        await PlatformActions.SetAsWallpaper(vm, item.FileLocation, style).ConfigureAwait(false);
     }
 
-    private void Lockscreen_OnClick(object? sender, RoutedEventArgs e)
+    private async ValueTask SetLockscreenAsync(object? sender, RoutedEventArgs e)
     {
         if (ItemViewModel is not { } item || MainWindow is not { DataContext: MainWindowViewModel vm })
         {
             return;
         }
 
-        _ = PlatformActions.SetAsLockScreen(vm, item.FileLocation);
+        await PlatformActions.SetAsLockScreen(vm, item.FileLocation).ConfigureAwait(false);
     }
 
-    private void WallpaperFilled_OnClick(object? sender, RoutedEventArgs e) => SetAsWallpaper(WallpaperStyle.Fill);
+    private async ValueTask SetAsWallpaperFilledAsync(object? sender, RoutedEventArgs e) =>
+        await SetAsWallpaperAsync(WallpaperStyle.Fill).ConfigureAwait(false);
 
-    private void WallpaperFitted_OnClick(object? sender, RoutedEventArgs e) => SetAsWallpaper(WallpaperStyle.Fit);
+    private async ValueTask WallpaperFitted_OnClick(object? sender, RoutedEventArgs e) =>
+        await SetAsWallpaperAsync(WallpaperStyle.Fit).ConfigureAwait(false);
 
-    private void WallpaperStretched_OnClick(object? sender, RoutedEventArgs e) => SetAsWallpaper(WallpaperStyle.Stretch);
+    private async ValueTask WallpaperStretched_OnClick(object? sender, RoutedEventArgs e) =>
+        await SetAsWallpaperAsync(WallpaperStyle.Stretch).ConfigureAwait(false);
 
-    private void WallpaperCentered_OnClick(object? sender, RoutedEventArgs e) => SetAsWallpaper(WallpaperStyle.Center);
+    private async ValueTask WallpaperCentered_OnClick(object? sender, RoutedEventArgs e) =>
+        await SetAsWallpaperAsync(WallpaperStyle.Center).ConfigureAwait(false);
 
-    private void WallpaperTiled_OnClick(object? sender, RoutedEventArgs e) => SetAsWallpaper(WallpaperStyle.Tile);
+    private async ValueTask WallpaperTiled_OnClick(object? sender, RoutedEventArgs e) =>
+        await SetAsWallpaperAsync(WallpaperStyle.Tile).ConfigureAwait(false);
 
     private void CopyFile_OnClick(object? sender, RoutedEventArgs e)
     {

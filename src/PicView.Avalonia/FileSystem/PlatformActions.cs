@@ -37,19 +37,19 @@ public static class PlatformActions
     /// Sets the file at <paramref name="path"/>, such as a Gallery Item's, as the wallpaper: as shown when it is the
     /// Shown File, else as it is on disk when it is in a common format, else as a temporary PNG.
     /// </summary>
-    public static ValueTask SetAsWallpaper(MainWindowViewModel vm, string path, WallpaperStyle style) =>
-        SetExportedImage(vm, ExportFor(vm, path), Wallpaper(style));
+    public static async ValueTask SetAsWallpaper(MainWindowViewModel vm, string path, WallpaperStyle style) =>
+        await SetExportedImage(vm, ExportFor(vm, path), Wallpaper(style)).ConfigureAwait(false);
 
     /// <summary>
     /// Sets the Shown File as the lock screen image, as a save would write it. Says so when it could not be set.
     /// </summary>
-    public static ValueTask SetAsLockScreen(MainWindowViewModel vm) =>
-        SetExportedImage(vm, () => FileSaver.ExportCommonFormat(vm), LockScreen);
+    public static async ValueTask SetAsLockScreen(MainWindowViewModel vm) =>
+        await SetExportedImage(vm, () => FileSaver.ExportCommonFormat(vm), LockScreen).ConfigureAwait(false);
 
     /// <inheritdoc cref="SetAsWallpaper(MainWindowViewModel, string, WallpaperStyle)" path="/summary"/>
     /// <remarks>Here for the lock screen image.</remarks>
-    public static ValueTask SetAsLockScreen(MainWindowViewModel vm, string path) =>
-        SetExportedImage(vm, ExportFor(vm, path), LockScreen);
+    public static async ValueTask SetAsLockScreen(MainWindowViewModel vm, string path) =>
+        await SetExportedImage(vm, ExportFor(vm, path), LockScreen).ConfigureAwait(false);
 
     public static ValueTask ShowFileProperties(MainWindowViewModel vm)
     {
@@ -147,17 +147,17 @@ public static class PlatformActions
             return true;
         };
 
-    private static Task<bool> LockScreen(IPlatformSpecificService platform, string file) =>
-        platform.SetAsLockScreen(file);
+    private static async Task<bool> LockScreen(IPlatformSpecificService platform, string file) =>
+        await platform.SetAsLockScreen(file).ConfigureAwait(false);
 
     private static Func<ValueTask<string?>> ExportFor(MainWindowViewModel vm, string path) =>
         ExportFor(vm.WindowTabs.ActiveTab.CurrentValue, path, () => FileSaver.ExportCommonFormat(vm),
             FileSaver.ExportCommonFormat);
 
-    private static ValueTask SetExportedImage(MainWindowViewModel vm, Func<ValueTask<string?>> export,
-        Func<IPlatformSpecificService, string, Task<bool>> set) =>
-        SetExportedImage(vm.WindowTabs.ActiveTab.CurrentValue, vm.Core.PlatformService, export, set,
-            message => TooltipHelper.ShowTooltipMessage(vm, message));
+    private static async ValueTask SetExportedImage(MainWindowViewModel vm, Func<ValueTask<string?>> export,
+        Func<IPlatformSpecificService, string, Task<bool>> set) => 
+        await SetExportedImage(vm.WindowTabs.ActiveTab.CurrentValue, vm.Core.PlatformService, export, set,
+            message => TooltipHelper.ShowTooltipMessage(vm, message)).ConfigureAwait(false);
 
     private static string? ShownPath(MainWindowViewModel vm) =>
         vm.WindowTabs.ActiveTab.CurrentValue.Model.FileInfo?.FullName;

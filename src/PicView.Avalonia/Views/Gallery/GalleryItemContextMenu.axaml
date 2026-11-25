@@ -41,33 +41,21 @@
         </MenuItem.Icon>
 
         <!--  Set as wallpaper filled  -->
-        <customControls:StyledMenuItem
-            Click="WallpaperFilled_OnClick"
-            Header="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.Fill.Value,
-                                     Mode=OneWay}"
-            x:Name="WallpaperFilled">
+        <customControls:StyledMenuItem Header="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.Fill.Value, Mode=OneWay}" x:Name="WallpaperFilled">
             <MenuItem.Icon>
                 <Image Classes="WallpaperImage" />
             </MenuItem.Icon>
         </customControls:StyledMenuItem>
 
         <!--  Set as wallpaper fit  -->
-        <customControls:StyledMenuItem
-            Click="WallpaperFitted_OnClick"
-            Header="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.Fit.Value,
-                                     Mode=OneWay}"
-            x:Name="WallpaperFitted">
+        <customControls:StyledMenuItem Header="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.Fit.Value, Mode=OneWay}" x:Name="WallpaperFitted">
             <MenuItem.Icon>
                 <Image Classes="WallpaperImage" />
             </MenuItem.Icon>
         </customControls:StyledMenuItem>
 
         <!--  Set as wallpaper stretched  -->
-        <customControls:StyledMenuItem
-            Click="WallpaperStretched_OnClick"
-            Header="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.Stretch.Value,
-                                     Mode=OneWay}"
-            x:Name="WallpaperStretched">
+        <customControls:StyledMenuItem Header="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.Stretch.Value, Mode=OneWay}" x:Name="WallpaperStretched">
             <MenuItem.Icon>
                 <Image Classes="WallpaperImage" />
             </MenuItem.Icon>
@@ -75,22 +63,14 @@
 
 
         <!--  Set as wallpaper centered  -->
-        <customControls:StyledMenuItem
-            Click="WallpaperCentered_OnClick"
-            Header="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.Center.Value,
-                                     Mode=OneWay}"
-            x:Name="WallpaperCentered">
+        <customControls:StyledMenuItem Header="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.Center.Value, Mode=OneWay}" x:Name="WallpaperCentered">
             <MenuItem.Icon>
                 <Image Classes="WallpaperImage" />
             </MenuItem.Icon>
         </customControls:StyledMenuItem>
 
         <!--  Set as wallpaper tiled  -->
-        <customControls:StyledMenuItem
-            Click="WallpaperTiled_OnClick"
-            Header="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.Tile.Value,
-                                     Mode=OneWay}"
-            x:Name="WallpaperTiled">
+        <customControls:StyledMenuItem Header="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.Tile.Value, Mode=OneWay}" x:Name="WallpaperTiled">
             <MenuItem.Icon>
                 <Image Classes="WallpaperImage" />
             </MenuItem.Icon>
@@ -98,7 +78,7 @@
 
         <!--  Set as lockscreen  -->
         <Separator x:Name="LockscreenSeparator" />
-        <customControls:StyledMenuItem Header="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.SetAsLockScreenImage.Value, Mode=OneWay}" Click="Lockscreen_OnClick" x:Name="LockscreenItem">
+        <customControls:StyledMenuItem Header="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.SetAsLockScreenImage.Value, Mode=OneWay}" x:Name="LockscreenItem">
             <MenuItem.Icon>
                 <Image Classes="WallpaperImage" />
             </MenuItem.Icon>
