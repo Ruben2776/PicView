@@ -115,13 +115,12 @@
                             <Separator />
                             <MenuItem
                                 Command="{Binding MainWindows.ActiveWindow.Value.RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.SetAsWallpaperFilled}"
-                                Header="{Binding Translation.SetAsWallpaper.Value, Mode=OneWay}"
-                                IsVisible="{Binding GlobalSettings.ShowSetAsWallpaper.Value}">
+                                Header="{Binding Translation.SetAsWallpaper.Value, Mode=OneWay}">
                                 <MenuItem.Icon>
                                     <Image Classes="WallpaperImage" />
                                 </MenuItem.Icon>
                             </MenuItem>
-                            <Separator IsVisible="{Binding GlobalSettings.ShowSetAsWallpaper.Value}" />
+                            <Separator />
                             <MenuItem x:Name="ClearEffectsItem" Header="{Binding Translation.ClearEffects.Value, Mode=OneWay}">
                                 <MenuItem.Icon>
                                     <Image

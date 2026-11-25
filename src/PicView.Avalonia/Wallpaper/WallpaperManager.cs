@@ -16,11 +16,6 @@ public static class WallpaperManager
     /// </summary>
     public static async Task SetAsWallpaper(WallpaperStyle style, MainWindowViewModel vm)
     {
-        if (!vm.GlobalSettings.ShowSetAsWallpaper.Value)
-        {
-            return;
-        }
-        
         using var busy = vm.WindowTabs.ActiveTab.CurrentValue.ClaimBusy();
         try
         {

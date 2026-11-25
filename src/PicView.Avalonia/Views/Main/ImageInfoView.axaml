@@ -132,7 +132,6 @@
                 IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.Image.Value,
                                             Converter={x:Static ObjectConverters.IsNotNull},
                                             FallbackValue=False}"
-                IsVisible="{CompiledBinding GlobalSettings.ShowSetAsWallpaper.Value}"
                 x:Name="WallpaperMenuItem">
                 <MenuItem.Icon>
                     <Image Classes="WallpaperImage" />
@@ -146,8 +145,7 @@
                                              Mode=OneWay}"
                     IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.Image.Value,
                                                 Converter={x:Static ObjectConverters.IsNotNull},
-                                                FallbackValue=False}"
-                    IsVisible="{CompiledBinding GlobalSettings.ShowSetAsWallpaper.Value}">
+                                                FallbackValue=False}">
                     <MenuItem.Icon>
                         <Image Classes="WallpaperImage" />
                     </MenuItem.Icon>
@@ -161,8 +159,7 @@
                                              Mode=OneWay}"
                     IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.Image.Value,
                                                 Converter={x:Static ObjectConverters.IsNotNull},
-                                                FallbackValue=False}"
-                    IsVisible="{CompiledBinding GlobalSettings.ShowSetAsWallpaper.Value}">
+                                                FallbackValue=False}">
                     <MenuItem.Icon>
                         <Image Classes="WallpaperImage" />
                     </MenuItem.Icon>
@@ -176,8 +173,7 @@
                                              Mode=OneWay}"
                     IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.Image.Value,
                                                 Converter={x:Static ObjectConverters.IsNotNull},
-                                                FallbackValue=False}"
-                    IsVisible="{CompiledBinding GlobalSettings.ShowSetAsWallpaper.Value}">
+                                                FallbackValue=False}">
                     <MenuItem.Icon>
                         <Image Classes="WallpaperImage" />
                     </MenuItem.Icon>
@@ -192,8 +188,7 @@
                                              Mode=OneWay}"
                     IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.Image.Value,
                                                 Converter={x:Static ObjectConverters.IsNotNull},
-                                                FallbackValue=False}"
-                    IsVisible="{CompiledBinding GlobalSettings.ShowSetAsWallpaper.Value}">
+                                                FallbackValue=False}">
                     <MenuItem.Icon>
                         <Image Classes="WallpaperImage" />
                     </MenuItem.Icon>
@@ -207,8 +202,7 @@
                                              Mode=OneWay}"
                     IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.Image.Value,
                                                 Converter={x:Static ObjectConverters.IsNotNull},
-                                                FallbackValue=False}"
-                    IsVisible="{CompiledBinding GlobalSettings.ShowSetAsWallpaper.Value}">
+                                                FallbackValue=False}">
                     <MenuItem.Icon>
                         <Image Classes="WallpaperImage" />
                     </MenuItem.Icon>

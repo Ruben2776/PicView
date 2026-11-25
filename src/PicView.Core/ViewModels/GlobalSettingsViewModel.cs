@@ -51,8 +51,6 @@ public class GlobalSettingsViewModel
 
     public IReadOnlyBindableReactiveProperty<string?> FileHistoryText => _fileHistoryText;
 
-    public BindableReactiveProperty<bool> ShowSetAsWallpaper { get; } = new(Settings.UIProperties.ShowSetAsWallpaper);
-
     public BindableReactiveProperty<int> GalleryMouseWheelBehavior { get; } = new((int)Settings.Gallery.GalleryMouseWheelBehavior);
 
     // Set by hand, not through a converter (macOS NativeMenu cannot bind a converted radio state)
