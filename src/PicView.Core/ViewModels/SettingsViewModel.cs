@@ -16,6 +16,8 @@ public class SettingsViewModel : IDisposable
     private readonly Stack<NavigationState> _backStack = new();
     private DisposableBag _disposables;
     private List<SettingsSearchItem> _allSuggestions;
+    private IReadOnlySet<SettingKey>? _settingsOnPage;
+    private IReadOnlySet<SettingsCategory>? _categoriesOnPage;
     private readonly Stack<NavigationState> _forwardStack = new();
     private NavigationState _currentState;
     private bool _isNavigatingHistory;
@@ -98,63 +100,69 @@ public class SettingsViewModel : IDisposable
         }).AddTo(ref _disposables);
 
         // Search Initialization
-        var searchData = new SettingsSearchData();
-        SearchData = new BindableReactiveProperty<SettingsSearchData>(searchData);
-        _allSuggestions = SettingsSearchIndex.Build(searchData);
+        _allSuggestions = SettingsSearchIndex.Build();
 
         ClearSearchCommand = new ReactiveCommand(_ => SearchQuery.Value = string.Empty).AddTo(ref _disposables);
 
         SearchQuery.Subscribe(Search, DebugHelper.LogError(nameof(SettingsViewModel), nameof(SearchQuery)))
         .AddTo(ref _disposables);
 
-        // The tags and suggestions are text this window keeps, so they are rebuilt when the language changes
+        // The suggestions are text this window keeps, so they are rebuilt when the language changes
         translation.LanguageChanged.Subscribe(_ => Retranslate(),
                 DebugHelper.LogError(nameof(SettingsViewModel), nameof(Retranslate)))
             .AddTo(ref _disposables);
 
-        SelectedSuggestion.Subscribe(item =>
-        {
-            if (item == null)
-            {
-                return;
-            }
-
-            SearchQuery.Value = item.Name;
-            Suggestions.Value = [];
-        }, DebugHelper.LogError(nameof(SettingsViewModel), nameof(SelectedSuggestion)))
-        .AddTo(ref _disposables);
-
         UpdateNavigationProperties();
     }
-    
+
     private void Search(string query)
     {
         var hasText = !string.IsNullOrEmpty(query);
         IsSearchVisible.Value = hasText;
 
-        if (hasText)
-        {
-            IsOverviewVisible.Value = false;
-            Suggestions.Value = _allSuggestions
-                .Where(x => x.Name.Contains(query, StringComparison.InvariantCultureIgnoreCase) ||
-                            x.Tags.Contains(query, StringComparison.InvariantCultureIgnoreCase))
-                .ToList();
-        }
-        else
+        if (!hasText)
         {
             Suggestions.Value = [];
+            return;
+        }
+
+        var found = SettingsSearchIndex.Search(_allSuggestions, query);
+        found.RemoveAll(item => !IsOnPage(item));
+        Suggestions.Value = found;
+    }
+
+    private bool IsOnPage(SettingsSearchItem item)
+    {
+        if (item.Key is { } key)
+        {
+            return _settingsOnPage is null || _settingsOnPage.Contains(key);
+        }
+
+        return _categoriesOnPage is null || _categoriesOnPage.Contains(item.Category);
+    }
+
+    /// <summary>
+    /// Tells the search which settings and categories the Settings window shows on this system, so nothing it
+    /// cannot lead to is suggested. Until it is called, everything is suggested.
+    /// </summary>
+    public void SetSettingsOnPage(IReadOnlySet<SettingKey> settings, IReadOnlySet<SettingsCategory> categories)
+    {
+        _settingsOnPage = settings;
+        _categoriesOnPage = categories;
+
+        if (Suggestions.Value is { Count: > 0 })
+        {
+            Search(SearchQuery.Value);
         }
     }
 
     /// <summary>
-    /// Rebuilds the search tags and suggestions from the current language. A query that is showing suggestions is
-    /// run again, so they are in the new language; a closed suggestion list stays closed.
+    /// Rebuilds the suggestions from the current language. A query that is showing suggestions is run again, so
+    /// they are in the new language; a closed suggestion list stays closed.
     /// </summary>
     private void Retranslate()
     {
-        var searchData = new SettingsSearchData();
-        _allSuggestions = SettingsSearchIndex.Build(searchData);
-        SearchData.Value = searchData;
+        _allSuggestions = SettingsSearchIndex.Build();
 
         if (Suggestions.Value is { Count: > 0 })
         {
@@ -256,10 +264,7 @@ public class SettingsViewModel : IDisposable
     public BindableReactiveProperty<string> SearchQuery { get; } = new(string.Empty, StringComparer.OrdinalIgnoreCase);
     public ReactiveCommand ClearSearchCommand { get; }
 
-    // Search properties (Tags and Visibility)
-    public BindableReactiveProperty<SettingsSearchData> SearchData { get; }
-    public BindableReactiveProperty<List<SettingsSearchItem>> Suggestions { get; } = new();
-    public BindableReactiveProperty<SettingsSearchItem?> SelectedSuggestion { get; } = new();
+    public BindableReactiveProperty<List<SettingsSearchItem>> Suggestions { get; } = new([]);
 
     public BindableReactiveProperty<bool> IsOverviewVisible { get; } = new(false);
     public BindableReactiveProperty<SettingsCategory> SelectedCategory { get; } = new(SettingsCategory.General);

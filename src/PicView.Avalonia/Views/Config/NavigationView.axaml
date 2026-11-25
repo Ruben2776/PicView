@@ -23,7 +23,7 @@
         </StackPanel>
 
         <!--  Subdirectories  -->
-        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{Binding SettingsViewModel.SearchData.Value.NavigationSubdirectorySearchTags}">
+        <Border Classes="searchBorder" ui:SearchProperties.Key="SearchSubdirectory">
             <customControls:TextToggleButton
                 Classes="MenuItemHover settingsToggleButton"
                 Command="{Binding MainWindows.ActiveWindow.Value.RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ToggleSubdirectories}"
@@ -33,7 +33,7 @@
         </Border>
 
         <!--  Looping  -->
-        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.NavigationLoopSearchTags}">
+        <Border Classes="searchBorder" ui:SearchProperties.Key="Looping">
             <customControls:TextToggleButton
                 Classes="MenuItemHover settingsToggleButton"
                 Command="{Binding MainWindows.ActiveWindow.Value.RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ToggleLooping}"
@@ -46,7 +46,7 @@
         </Border>
 
         <!--  Taskbar  -->
-        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.NavigationTaskbarSearchTags}">
+        <Border Classes="searchBorder" ui:SearchProperties.Key="TaskbarProgress">
             <customControls:TextToggleButton
                 Classes="MenuItemHover settingsToggleButton"
                 Command="{Binding MainWindows.ActiveWindow.CurrentValue.RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ToggleTaskbarProgress}"
@@ -58,7 +58,7 @@
         </Border>
 
         <!--  Respect folder structure inside archives  -->
-        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.NavigationArchiveSearchTags}">
+        <Border Classes="searchBorder" ui:SearchProperties.Key="ArchiveFolderStructure">
             <customControls:TextToggleButton
                 Classes="MenuItemHover settingsToggleButton"
                 IsChecked="{CompiledBinding SettingsViewModel.IsRespectingArchiveStructure.Value,
@@ -69,7 +69,7 @@
         </Border>
 
         <!--  Is navigating by clicking  -->
-        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.IsNavigatingByClickingSearchTags}">
+        <Border Classes="searchBorder" ui:SearchProperties.Key="NavigateByClicking">
             <customControls:TextToggleButton
                 Classes="MenuItemHover settingsToggleButton"
                 IsChecked="{CompiledBinding SettingsViewModel.IsNavigatingByClicking.Value,
@@ -80,7 +80,7 @@
         </Border>
 
         <!--  Nav speed  -->
-        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.NavigationSpeedSearchTags}">
+        <Border Classes="searchBorder" ui:SearchProperties.Key="NavigationSpeed">
             <StackPanel>
                 <TextBlock
                     Classes="txt bold"

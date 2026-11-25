@@ -276,19 +276,16 @@ public class GalleryDisplayModeSwitchingTests
     }
 
     [Fact]
-    public void SettingsSearch_GalleryDisplayMode_IsSuggestedAndTaggedWithItsModes()
+    public void SettingsSearch_GalleryDisplayMode_IsSuggestedAndFoundByItsModes()
     {
         Assert.True(TranslationManager.LoadLanguage("en"));
-        var data = new SettingsSearchData();
 
-        var item = Assert.Single(SettingsSearchIndex.Build(data), x => x.Name == "Gallery display mode");
+        var item = Assert.Single(SettingsSearchIndex.Build(), x => x.Key == SettingKey.GalleryDisplayMode);
 
-        // Picking the suggestion searches for its name, so the tags must hold the name too
-        Assert.Equal(data.GalleryDisplayModeSearchTags, item.Tags);
-        Assert.Contains("Gallery display mode", item.Tags);
-        Assert.Contains("Columns", item.Tags);
-        Assert.Contains("Masonry", item.Tags);
-        Assert.Contains("Rows", item.Tags);
+        Assert.Equal("Gallery display mode", item.Name);
+        Assert.Contains("Columns", item.Keywords);
+        Assert.Contains("Masonry", item.Keywords);
+        Assert.Contains("Rows", item.Keywords);
     }
 
     // The shared gallery settings save through the delegate, so no test here writes the settings file

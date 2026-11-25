@@ -22,7 +22,7 @@
                                        Mode=OneWay}" />
         </StackPanel>
 
-        <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.ShowBottomToolbarSearchTags}" Classes="searchBorder">
+        <Border ui:SearchProperties.Key="BottomToolbar" Classes="searchBorder">
             <customControls:TextIconButton
                 x:Name="ShowBottomToolbarButton"
                 Classes="MenuItemHover settingsTextIconButton"
@@ -36,7 +36,7 @@
         </Border>
 
 
-        <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.ShowUISearchTags}" Classes="searchBorder">
+        <Border ui:SearchProperties.Key="ShowInterface" Classes="searchBorder">
             <StackPanel>
                 <customControls:TextIconButton
                     x:Name="HideUIButton"
@@ -64,7 +64,7 @@
         </Border>
 
         <!--  Fade buttons toggle  -->
-        <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.ShowFadeInButtonsSearchTags}" Classes="searchBorder">
+        <Border ui:SearchProperties.Key="FadeInButtons" Classes="searchBorder">
             <customControls:TextIconButton
                 x:Name="ToggleFadeUIButton"
                 Classes="MenuItemHover settingsTextIconButton"
@@ -78,7 +78,7 @@
         </Border>
 
         <!--  Show hover bar  -->
-        <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.ShowHoverNavigationBarSearchTags}" Classes="searchBorder">
+        <Border ui:SearchProperties.Key="HoverNavigationBar" Classes="searchBorder">
             <customControls:TextIconButton
                 x:Name="ToggleHoverButton"
                 Classes="MenuItemHover settingsTextIconButton"

@@ -1,45 +1,45 @@
 ﻿<UserControl
     x:Class="PicView.Avalonia.Views.Config.KeybindingsView"
+    x:DataType="viewModels:CoreViewModel"
     xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:keybindings="using:PicView.Core.Keybindings"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
-    xmlns:ui="clr-namespace:PicView.Avalonia.UI"
+    xmlns:keybindings="using:PicView.Core.Keybindings"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
-    x:DataType="viewModels:CoreViewModel">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <StackPanel HorizontalAlignment="Center">
 
-        <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.KeybindingsSearchTags}" Classes="searchBorder">
+        <Border Classes="searchBorder">
             <StackPanel>
                 <StackPanel Orientation="Horizontal" Spacing="12">
                     <Image
-                        Width="18"
                         Height="18"
-                        Source="{StaticResource KeyImage}" />
+                        Source="{StaticResource KeyImage}"
+                        Width="18" />
                     <TextBlock
-                        Margin="0,20,0,20"
                         Classes="txt bold searchHeader"
+                        Margin="0,20,0,20"
                         Text="{CompiledBinding Translation.ApplicationShortcuts.Value,
                                                Mode=OneWay}" />
                 </StackPanel>
                 <customControls:TextIconButton
-                    x:Name="KeyBindingsButton"
-                    Width="300"
-                    Padding="6"
-                    HorizontalAlignment="Center"
                     Background="{DynamicResource MenuBackgroundColor}"
                     BorderBrush="{DynamicResource MenuBorderColor}"
                     BorderThickness="1"
                     Classes="MenuItemHover"
-                    Command="{Binding MainWindows.ActiveWindow.Value.RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.KeybindingsWindow}"
+                    Command="{Binding MainWindows.ActiveWindow.Value.RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.KeybindingsWindow}"
                     CornerRadius="4"
                     Foreground="{DynamicResource MainTextColor}"
+                    HorizontalAlignment="Center"
                     Icon="{StaticResource KeyImage}"
                     IconHeight="18"
                     IconMargin="5,5,10,5"
                     IconWidth="18"
-                    Text="{Binding Translation.ApplicationShortcuts.Value}" />
+                    Padding="6"
+                    Text="{Binding Translation.ApplicationShortcuts.Value}"
+                    Width="300"
+                    x:Name="KeyBindingsButton" />
             </StackPanel>
         </Border>
     </StackPanel>

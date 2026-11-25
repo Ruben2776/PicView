@@ -4,7 +4,6 @@
     xmlns="https://github.com/avaloniaui"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
     xmlns:gallery="clr-namespace:PicView.Core.Gallery;assembly=PicView.Core"
-    xmlns:keybindings="using:PicView.Core.Keybindings"
     xmlns:ui="clr-namespace:PicView.Avalonia.UI"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
@@ -23,7 +22,7 @@
                                        Mode=OneWay}" />
         </StackPanel>
 
-        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.GalleryDockSearchTags}">
+        <Border Classes="searchBorder" ui:SearchProperties.Key="GalleryDockPosition">
             <StackPanel>
                 <customControls:TextIconButton
                     Classes="MenuItemHover settingsTextIconButton"
@@ -91,7 +90,7 @@
             </StackPanel>
         </Border>
 
-        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.GalleryVisibilitySearchTags}">
+        <Border Classes="searchBorder" ui:SearchProperties.Key="ShowDockedGallery">
             <StackPanel>
                 <customControls:TextIconButton
                     Classes="MenuItemHover settingsTextIconButton"
@@ -106,7 +105,11 @@
                     TextMargin="5,0,5,0"
                     TextMaxWidth="240"
                     x:Name="ToggleDockedGalleryButton" />
+            </StackPanel>
+        </Border>
 
+        <Border Classes="searchBorder" ui:SearchProperties.Key="MotionPhotoBadges">
+            <StackPanel>
                 <customControls:TextToggleButton
                     Classes="MenuItemHover settingsToggleButton"
                     IsChecked="{CompiledBinding GallerySettings.ShowMotionPhotoBadges.Value,
@@ -117,7 +120,7 @@
             </StackPanel>
         </Border>
 
-        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.GallerySizeSearchTags}">
+        <Border Classes="searchBorder" ui:SearchProperties.Key="DockedGalleryItemSize">
             <StackPanel>
 
                 <TextBlock
@@ -144,7 +147,11 @@
                     Margin="0,0,0,15"
                     Text="{CompiledBinding MainWindows.ActiveWindow.Value.WindowSettings.Gallery.DockedGalleryItemSize.Value,
                                            Mode=OneWay}" />
+            </StackPanel>
+        </Border>
 
+        <Border Classes="searchBorder" ui:SearchProperties.Key="ExpandedGalleryItemSize">
+            <StackPanel>
                 <TextBlock
                     Classes="txt"
                     FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
@@ -170,7 +177,11 @@
                     Margin="0,0,0,15"
                     Text="{CompiledBinding MainWindows.ActiveWindow.Value.WindowSettings.Gallery.ExpandedGalleryItemSize.Value,
                                            Mode=OneWay}" />
+            </StackPanel>
+        </Border>
 
+        <Border Classes="searchBorder" ui:SearchProperties.Key="GalleryItemSpacing">
+            <StackPanel>
                 <TextBlock
                     Classes="txt"
                     Margin="0,10,0,10"
@@ -195,7 +206,11 @@
                     Margin="0,0,0,15"
                     Text="{CompiledBinding GallerySettings.GalleryItemSpacing.Value,
                                            Mode=OneWay}" />
+            </StackPanel>
+        </Border>
 
+        <Border Classes="searchBorder" ui:SearchProperties.Key="GalleryLineSpacing">
+            <StackPanel>
                 <TextBlock
                     Classes="txt"
                     Margin="0,10,0,10"
@@ -223,7 +238,7 @@
             </StackPanel>
         </Border>
 
-        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.GalleryDisplayModeSearchTags}">
+        <Border Classes="searchBorder" ui:SearchProperties.Key="GalleryDisplayMode">
             <StackPanel>
                 <TextBlock
                     Classes="txt"
@@ -263,7 +278,7 @@
             </StackPanel>
         </Border>
 
-        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.GalleryStretchSearchTags}">
+        <Border Classes="searchBorder" ui:SearchProperties.Key="GalleryThumbnailStretch">
             <StackPanel>
                 <TextBlock
                     Classes="txt"
@@ -306,7 +321,11 @@
                         Tag="{x:Static gallery:GalleryStretchMode.FillSquare}"
                         x:Name="FullGalleryFillSquareItem" />
                 </ComboBox>
+            </StackPanel>
+        </Border>
 
+        <Border Classes="searchBorder" ui:SearchProperties.Key="DockedGalleryThumbnailStretch">
+            <StackPanel>
                 <TextBlock
                     Classes="txt"
                     FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
@@ -352,7 +371,7 @@
         </Border>
 
         <!--  Gallery Mouse wheel  -->
-        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.GalleryMouseWheelSearchTags}">
+        <Border Classes="searchBorder" ui:SearchProperties.Key="GalleryMouseWheel">
             <StackPanel>
                 <TextBlock
                     Classes="txt"

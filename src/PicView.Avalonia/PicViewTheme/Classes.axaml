@@ -118,33 +118,25 @@
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="CornerRadius" Value="4" />
         <Setter Property="Margin" Value="0" />
+        <!--  Transparent rather than unset, so the pulse fades in from something  -->
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="Background" Value="Transparent" />
         <Setter Property="Transitions">
             <Transitions>
                 <BrushTransition Duration="0:0:0.4" Property="BorderBrush" />
+                <BrushTransition Duration="0:0:0.4" Property="Background" />
             </Transitions>
         </Setter>
     </Style>
 
-    <Style Selector="StackPanel.searchHeader">
-        <Setter Property="Opacity" Value="1.0" />
-        <Setter Property="Orientation" Value="Horizontal" />
-        <Setter Property="Spacing" Value="12" />
-    </Style>
-
-    <Style Selector="StackPanel.searchHeaderDim">
-        <Setter Property="Opacity" Value="0.2" />
-        <Setter Property="Orientation" Value="Horizontal" />
-        <Setter Property="Spacing" Value="12" />
-    </Style>
-
-    <Style Selector="Border.searchMatch">
-        <Setter Property="Opacity" Value="1.0" />
+    <!--  A setting row a search suggestion led to. SettingsSearchController adds the tinted background and takes both away again  -->
+    <Style Selector="Border.searchBorder.searchPulse">
         <Setter Property="BorderBrush" Value="{DynamicResource AccentColor}" />
     </Style>
 
-    <Style Selector="Border.searchDim">
-        <Setter Property="Opacity" Value="0.2" />
-        <Setter Property="BorderBrush" Value="Transparent" />
+    <Style Selector="StackPanel.searchHeader">
+        <Setter Property="Orientation" Value="Horizontal" />
+        <Setter Property="Spacing" Value="12" />
     </Style>
 
 

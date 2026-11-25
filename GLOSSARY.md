@@ -239,6 +239,22 @@ _Avoid_: Global setting, shared setting
 The App Setting that decides where a Source opens when it is pasted, dropped, or handed to the running PicView, as by double-clicking a file: New Window, Same Window or New Tab. New Tab opens it in a new tab at the end of the strip, which becomes active, or in the active tab when that is a Fresh Tab. Same Window and New Window replace what the active tab shows, except that a hand-over in New Window opens a new Main Window. Pasting or dropping several files opens the first as the mode says and makes it active; each other file opens in the background, in a new tab under New Tab, and in a new Main Window under Same Window and New Window. Opening from inside PicView, as from File History, Favorites or the open dialog, always replaces what the active tab shows.
 _Avoid_: Open in same window, open in new tab (for the setting)
 
+**Settings Search**:
+The search box of the Settings window. Typing fills a list of Suggestions and changes nothing else: the page is not filtered, dimmed or scrolled, and the category list stays whole. Every word typed must be found, in any order and ignoring case. Picking a Suggestion, by clicking it or with Enter on the selected one (the first, until the arrow keys choose another), ends the search: the box is cleared, the list closes, and the page goes where the Suggestion leads, so nothing is left to dismiss.
+_Avoid_: Filter, settings filter, highlight (for what a pick does)
+
+**Suggestion**:
+One entry of the Settings Search list. There is one for each Setting Row, shown with its category beside it, and one for each category. A Setting Row's Suggestion scrolls the row to the middle of the page, pulses it once and moves focus into it; a category's scrolls to the top of that category and pulses nothing. Categories are listed first, then rows whose name has every word typed, then rows found by their Search Keywords. A row or category the Settings window does not show on this system is not suggested.
+_Avoid_: Search result, match, hit
+
+**Setting Row**:
+One labelled control of the Settings window, or the few controls that set one thing, such as the four buttons for the edge a Docked Gallery sits at. Each has a key that its Suggestion names, so the two are tied by the key and not by matching text. A category that is a single row, as Language, Application shortcuts and File associations are, has no Setting Row: its category Suggestion leads to it.
+_Avoid_: Search block, search border, setting block
+
+**Search Keyword**:
+A word that finds a Suggestion without being its name: the choices of a Setting Row, such as "Navigate backwards" for "When deleting a file", the name of its group, and English synonyms. A choice is never a Suggestion of its own.
+_Avoid_: Tag, search tag
+
 ## Sizing
 
 **AutoFit**:

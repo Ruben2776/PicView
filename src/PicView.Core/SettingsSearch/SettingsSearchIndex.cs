@@ -1,322 +1,246 @@
 using PicView.Core.Localization;
+using PicView.Core.ViewModels;
 
 namespace PicView.Core.SettingsSearch;
 
 public static class SettingsSearchIndex
 {
-    public static List<SettingsSearchItem> Build(SettingsSearchData data)
+    /// <summary>
+    /// Builds the suggestions in the current language: one for each category and one for each
+    /// <see cref="SettingKey"/>. The options of a setting are its keywords, not suggestions of their own.
+    /// A text the language lacks leaves its suggestion out.
+    /// </summary>
+    public static List<SettingsSearchItem> Build()
     {
-        var list = new List<SettingsSearchItem>();
         var t = TranslationManager.Translation;
+        var list = new List<SettingsSearchItem>(80);
+        string? categoryName = null;
+        var category = SettingsCategory.General;
 
-        // Startup
-        if (t.OpenLastFile != null)
-        {
-            list.Add(new SettingsSearchItem(t.OpenLastFile, data.StartUpSearchTags));
-        }
-        if (t.ContinueWhereYouLeftOff != null)
-        {
-            list.Add(new SettingsSearchItem(t.ContinueWhereYouLeftOff, data.StartUpSearchTags));
-        }
-        if (t.ApplicationStartup != null)
-        {
-            list.Add(new SettingsSearchItem(t.ApplicationStartup, data.StartUpSearchTags));
-        }
+        // General
+        StartCategory(SettingsCategory.General, t.GeneralSettings);
+        Add(SettingKey.ApplicationStartup, t.ApplicationStartup,
+            t.Start, t.Open, t.OpenLastFile, t.ContinueWhereYouLeftOff, t.None, "Boot Launch Session");
+        Add(SettingKey.ConfirmPermanentDelete, t.ShowConfirmationDialogWhenPermanentlyDeletingFile,
+            t.FileManagement, t.PermanentlyDelete, t.DeleteFile, "Delete Confirm Dialog");
+        Add(SettingKey.ConfirmRecycle, t.ShowConfirmationDialogWhenMovingFileToRecycleBin,
+            t.FileManagement, t.MoveToRecycleBin, t.DeleteFile, "Delete Trash Confirm Dialog");
+        Add(SettingKey.FileHistory, t.OpenFileHistory,
+            t.FileManagement, t.FileHistoryEnabled, t.FileHistoryDisabled, "Recent History");
+        Add(SettingKey.FullPathInTitleBar, t.ShowFullPathInTitleBar,
+            t.FileManagement, t.File, "Title Path");
+        Add(SettingKey.WhenDeletingFile, t.WhenDeletingAFile,
+            t.FileManagement, t.NavigateForwards, t.NavigateBackwards, t.DeletedFile, "Delete Next Previous");
 
-        // Delete File Dialog
-        if (t.ShowConfirmationDialogWhenPermanentlyDeletingFile != null)
-        {
-            list.Add(new SettingsSearchItem(t.ShowConfirmationDialogWhenPermanentlyDeletingFile,
-                data.DeleteFileDialogSearchTags));
-        }
-        if (t.ShowConfirmationDialogWhenMovingFileToRecycleBin != null)
-        {
-            list.Add(new SettingsSearchItem(t.ShowConfirmationDialogWhenMovingFileToRecycleBin,
-                data.DeleteFileDialogSearchTags));
-        }
-        if (t.PermanentlyDelete != null)
-        {
-            list.Add(new SettingsSearchItem(t.PermanentlyDelete, data.DeleteFileDialogSearchTags));
-        }
-        if (t.DeletedFile != null)
-        {
-            list.Add(new SettingsSearchItem(t.DeletedFile, data.DeleteFileDialogSearchTags));
-        }
+        // Appearance
+        StartCategory(SettingsCategory.Appearance, t.Appearance);
+        Add(SettingKey.Theme, t.Theme,
+            t.DarkTheme, t.LightTheme, t.GlassTheme, "Dark Light Glass Mode");
+        Add(SettingKey.HighlightColor, t.HighlightColor,
+            t.Color, "Accent Colour");
+        Add(SettingKey.Background, t.ChangeBackground,
+            "Background Texture Wallpaper Checkerboard Transparent");
+        Add(SettingKey.ConstrainBackground, t.ConstrainBackgroundToImage,
+            "Background Constrain");
+        Add(SettingKey.WindowBlur, t.BlurWindowBackground,
+            t.Blur, "Acrylic Transparency Translucent");
 
-        // SubDirectory
-        if (t.SearchSubdirectory != null)
-        {
-            list.Add(new SettingsSearchItem(t.SearchSubdirectory, data.SubDirectorySearchTags));
-        }
+        // Interface
+        StartCategory(SettingsCategory.Interface, t.InterfaceConfiguration);
+        Add(SettingKey.BottomToolbar, t.ShowBottomToolbar,
+            "Interface UI Toolbar");
+        Add(SettingKey.ShowInterface, t.ShowUI,
+            t.HideUI, "Interface UI Hidden");
+        Add(SettingKey.FadeInButtons, t.ShowFadeInButtonsOnHover,
+            t.DisableFadeInButtonsOnHover, "Interface UI Buttons Fade");
+        Add(SettingKey.HoverNavigationBar, t.ShowHoverNavigationBar,
+            "Interface UI Hover Navigation");
 
-        // File History
-        if (t.OpenFileHistory != null)
-        {
-            list.Add(new SettingsSearchItem(t.OpenFileHistory, data.FileHistorySearchTags));
-        }
-        
-        if (t.ShowFullPathInTitleBar != null)
-        {
-            list.Add(new SettingsSearchItem(t.ShowFullPathInTitleBar, data.FullPathInTitleBarySearchTags));
-        }
-
-        // When Deleting File (Navigation)
-        if (t.WhenDeletingAFile != null)
-        {
-            list.Add(new SettingsSearchItem(t.WhenDeletingAFile, data.WhenDeletingFileSearchTags));
-        }
-        if (t.NavigateForwards != null)
-        {
-            list.Add(new SettingsSearchItem(t.NavigateForwards, data.WhenDeletingFileSearchTags));
-        }
-        if (t.NavigateBackwards != null)
-        {
-            list.Add(new SettingsSearchItem(t.NavigateBackwards, data.WhenDeletingFileSearchTags));
-        }
-
-        // Theme / Appearance
-        if (t.InterfaceConfiguration != null)
-        {
-            list.Add(new SettingsSearchItem(t.InterfaceConfiguration, data.ColorSearchTags));
-        }
-        if (t.Color != null)
-        {
-            list.Add(new SettingsSearchItem(t.Color, data.ColorSearchTags));
-        }
-        if (t.Theme != null)
-        {
-            list.Add(new SettingsSearchItem(t.Theme, data.ThemeSearchTags));
-        }
-        if (t.DarkTheme != null)
-        {
-            list.Add(new SettingsSearchItem(t.DarkTheme, data.ThemeSearchTags));
-        }
-        if (t.LightTheme != null)
-        {
-            list.Add(new SettingsSearchItem(t.LightTheme, data.ThemeSearchTags));
-        }
-        if (t.GlassTheme != null)
-        {
-            list.Add(new SettingsSearchItem(t.GlassTheme, data.ThemeSearchTags));
-        }
-        if (t.BlurWindowBackground != null)
-        {
-            list.Add(new SettingsSearchItem(t.BlurWindowBackground, data.WindowBlurSearchTags));
-        }
-
-        // Background
-        if (t.ChangeBackground != null)
-        {
-            list.Add(new SettingsSearchItem(t.ChangeBackground, data.BackgroundSearchTags));
-        }
-        if (t.ConstrainBackgroundToImage != null)
-        {
-            list.Add(new SettingsSearchItem(t.ConstrainBackgroundToImage, data.BackgroundConstrainSearchTags));
-        }
-
-        // UI Configuration
-        if (t.ShowBottomToolbar != null)
-        {
-            list.Add(new SettingsSearchItem(t.ShowBottomToolbar, data.ShowBottomToolbarSearchTags));
-        }
-        if (t.ShowUI != null)
-        {
-            list.Add(new SettingsSearchItem(t.ShowUI, data.ShowUISearchTags));
-        }
-        if (t.HideUI != null)
-        {
-            list.Add(new SettingsSearchItem(t.HideUI, data.ShowUISearchTags));
-        }
-        if (t.ShowFadeInButtonsOnHover != null)
-        {
-            list.Add(new SettingsSearchItem(t.ShowFadeInButtonsOnHover, data.ShowFadeInButtonsSearchTags));
-        }
-        if (t.ShowHoverNavigationBar != null)
-        {
-            list.Add(new SettingsSearchItem(t.ShowHoverNavigationBar, data.ShowHoverNavigationBarSearchTags));
-        }
-
-        // Image Settings
-        if (t.Stretch != null)
-        {
-            list.Add(new SettingsSearchItem(t.Stretch, data.ImageZoomToFitSearchTags));
-        }
-        if (t.Scrolling != null)
-        {
-            list.Add(new SettingsSearchItem(t.Scrolling, data.ImageScrollingSearchTags));
-        }
-        if (t.SideBySide != null)
-        {
-            list.Add(new SettingsSearchItem(t.SideBySide, data.ImageSideBySideSearchTags));
-        }
-        if (t.ImageAliasing != null)
-        {
-            list.Add(new SettingsSearchItem(t.ImageAliasing, data.ImageScalingSearchTags));
-        }
-        if (t.HighQuality != null)
-        {
-            list.Add(new SettingsSearchItem(t.HighQuality, data.ImageScalingSearchTags));
-        }
-        if (t.NearestNeighbor != null)
-        {
-            list.Add(new SettingsSearchItem(t.NearestNeighbor, data.ImageScalingSearchTags));
-        }
-        if (t.AutoPlayMotionPhotos != null)
-        {
-            list.Add(new SettingsSearchItem(t.AutoPlayMotionPhotos, data.MotionPhotoSearchTags));
-        }
-        if (t.MotionPhoto != null)
-        {
-            list.Add(new SettingsSearchItem(t.MotionPhoto, data.MotionPhotoSearchTags));
-        }
-
-        // Navigation
-        if (t is { Navigation: not null, SearchSubdirectory: not null })
-        {
-            list.Add(new SettingsSearchItem(t.Navigation + " " + t.SearchSubdirectory,
-                data.NavigationSubdirectorySearchTags));
-        }
-        if (t.ToggleLooping != null)
-        {
-            list.Add(new SettingsSearchItem(t.ToggleLooping, data.NavigationLoopSearchTags));
-        }
-        if (t.ToggleTaskbarProgress != null)
-        {
-            list.Add(new SettingsSearchItem(t.ToggleTaskbarProgress, data.NavigationTaskbarSearchTags));
-        }
-        if (t.AdjustNavSpeed != null)
-        {
-            list.Add(new SettingsSearchItem(t.AdjustNavSpeed, data.NavigationSpeedSearchTags));
-        }
-        if (t.RespectArchiveFolderStructure != null)
-        {
-            list.Add(new SettingsSearchItem(t.RespectArchiveFolderStructure, data.NavigationArchiveSearchTags));
-        }
-
-        // Gallery
-        if (t.ShowDockedGallery != null)
-        {
-            list.Add(new SettingsSearchItem(t.ShowDockedGallery, data.GalleryVisibilitySearchTags));
-        }
-        if (t.ShowDockedGalleryWhenUiIsHidden != null)
-        {
-            list.Add(new SettingsSearchItem(t.ShowDockedGalleryWhenUiIsHidden, data.GalleryVisibilitySearchTags));
-        }
-        if (t.ExpandedGalleryItemSize != null)
-        {
-            list.Add(new SettingsSearchItem(t.ExpandedGalleryItemSize, data.GallerySizeSearchTags));
-        }
-        if (t.DockedGalleryItemSize != null)
-        {
-            list.Add(new SettingsSearchItem(t.DockedGalleryItemSize, data.GallerySizeSearchTags));
-        }
-        if (t.GalleryDisplayMode != null)
-        {
-            list.Add(new SettingsSearchItem(t.GalleryDisplayMode, data.GalleryDisplayModeSearchTags));
-        }
-        if (t.GalleryThumbnailStretch != null)
-        {
-            list.Add(new SettingsSearchItem(t.GalleryThumbnailStretch, data.GalleryStretchSearchTags));
-        }
-        if (t.DockedGalleryThumbnailStretch != null)
-        {
-            list.Add(new SettingsSearchItem(t.DockedGalleryThumbnailStretch, data.GalleryStretchSearchTags));
-        }
-        if (t.GalleryMouseWheel != null)
-        {
-            list.Add(new SettingsSearchItem(t.GalleryMouseWheel, data.GalleryMouseWheelSearchTags));
-        }
+        // Image
+        StartCategory(SettingsCategory.Image, t.Image);
+        Add(SettingKey.Scrolling, t.Scrolling,
+            t.ScrollingEnabled, t.ScrollingDisabled, "Scroll");
+        Add(SettingKey.SideBySide, t.SideBySide,
+            "SideBySide Two Pages Spread");
+        Add(SettingKey.AutoPlayMotionPhotos, t.AutoPlayMotionPhotos,
+            t.MotionPhoto, "Motion Photo Live Photo Video Autoplay");
+        Add(SettingKey.ImageAliasing, t.ImageAliasing,
+            t.HighQuality, t.NearestNeighbor, "Scaling Pixelated Nearest Neighbor");
 
         // Window
-        if (t.WindowScaling != null)
-        {
-            list.Add(new SettingsSearchItem(t.WindowScaling, data.WindowScalingSearchTags));
-        }
-        if (t.AutoFitWindow != null)
-        {
-            list.Add(new SettingsSearchItem(t.AutoFitWindow, data.WindowScalingSearchTags));
-        }
-        if (t.WindowMargin != null)
-        {
-            list.Add(new SettingsSearchItem(t.WindowMargin, data.WindowScalingSearchTags));
-        }
-        if (t.StayTopMost != null)
-        {
-            list.Add(new SettingsSearchItem(t.StayTopMost, data.WindowTopMostSearchTags));
-        }
-        if (t.StayCentered != null)
-        {
-            list.Add(new SettingsSearchItem(t.StayCentered, data.WindowCenteredSearchTags));
-        }
-        if (t.OpenInSameWindow != null)
-        {
-            list.Add(new SettingsSearchItem(t.OpenInSameWindow, data.WindowSameWindowSearchTags));
-        }
-        if (t.OpenInNewWindow != null)
-        {
-            list.Add(new SettingsSearchItem(t.OpenInNewWindow, data.WindowSameWindowSearchTags));
-        }
-        if (t.OpenInNewTab != null)
-        {
-            list.Add(new SettingsSearchItem(t.OpenInNewTab, data.WindowSameWindowSearchTags));
-        }
-        if (t.ShowConfirmationOnEsc != null)
-        {
-            list.Add(new SettingsSearchItem(t.ShowConfirmationOnEsc, data.WindowEscSearchTags));
-        }
-        if (t.EscLeavesFullscreen != null)
-        {
-            list.Add(new SettingsSearchItem(t.EscLeavesFullscreen, data.WindowEscFullscreenSearchTags));
-        }
+        StartCategory(SettingsCategory.Window, t.Window);
+        Add(SettingKey.AutoFitWindow, t.AutoFitWindow,
+            t.WindowScaling, "Fit Resize");
+        Add(SettingKey.WindowMargin, t.WindowMargin,
+            t.WindowScaling, "Margin");
+        Add(SettingKey.OpeningMode, t.OpenInSameWindow,
+            t.WindowManagement, t.OpenInNewWindow, t.OpenInNewTab, t.NewWindow, t.NewTab);
+        Add(SettingKey.StayTopMost, t.StayTopMost,
+            t.WindowManagement, "Topmost Always");
+        Add(SettingKey.StayCentered, t.StayCentered,
+            t.WindowManagement, "Center");
+        Add(SettingKey.ConfirmOnEsc, t.ShowConfirmationOnEsc,
+            t.WindowManagement, "Escape Exit Close");
+        Add(SettingKey.EscLeavesFullscreen, t.EscLeavesFullscreen,
+            t.WindowManagement, t.Fullscreen, "Escape Exit Restore");
+
+        // Gallery
+        StartCategory(SettingsCategory.Gallery, t.GallerySettings);
+        Add(SettingKey.GalleryDockPosition, t.Orientation,
+            t.ShowDockedGalleryAtBottom, t.ShowDockedGalleryAtTop, t.ShowDockedGalleryToTheLeft,
+            t.ShowDockedGalleryToTheRight, t.Bottom, t.Top, t.Left, t.Right, "Position Dock");
+        Add(SettingKey.ShowDockedGallery, t.ShowDockedGallery,
+            t.HideDockedGallery, t.ShowDockedGalleryWhenUiIsHidden, "Hide Docked");
+        Add(SettingKey.MotionPhotoBadges, t.ShowMotionPhotoBadges,
+            t.MotionPhoto, "Badge Live Photo");
+        Add(SettingKey.DockedGalleryItemSize, t.DockedGalleryItemSize,
+            "Size Height Thumbnail");
+        Add(SettingKey.ExpandedGalleryItemSize, t.ExpandedGalleryItemSize,
+            "Size Height Thumbnail");
+        Add(SettingKey.GalleryItemSpacing, t.ItemSpacing,
+            "Margin Padding Gap");
+        Add(SettingKey.GalleryLineSpacing, t.LineSpacing,
+            "Margin Padding Gap");
+        Add(SettingKey.GalleryDisplayMode, t.GalleryDisplayMode,
+            t.Columns, t.Masonry, t.Rows, "Justified Waterfall Mosaic Tiles Layout");
+        Add(SettingKey.GalleryThumbnailStretch, t.GalleryThumbnailStretch,
+            t.Uniform, t.UniformToFill, t.Square, t.FillSquare, "Crop");
+        Add(SettingKey.DockedGalleryThumbnailStretch, t.DockedGalleryThumbnailStretch,
+            t.Uniform, t.UniformToFill, t.Square, t.FillSquare, "Crop");
+        Add(SettingKey.GalleryMouseWheel, t.GalleryMouseWheel,
+            t.Mouse, t.MouseWheel, "Scroll");
+
+        // Navigation
+        StartCategory(SettingsCategory.Navigation, t.Navigation);
+        Add(SettingKey.SearchSubdirectory, t.SearchSubdirectory,
+            t.Folder, "Subfolder Recursive");
+        Add(SettingKey.Looping, t.Looping,
+            t.ToggleLooping, t.LoopingEnabled, t.LoopingDisabled, "Loop Wrap");
+        Add(SettingKey.TaskbarProgress, t.ToggleTaskbarProgress,
+            "Taskbar Progress");
+        Add(SettingKey.ArchiveFolderStructure, t.RespectArchiveFolderStructure,
+            "Archive Extract Zip Uncompress Order");
+        Add(SettingKey.NavigateByClicking, t.NavigateByClicking,
+            "Clicking Mouse");
+        Add(SettingKey.NavigationSpeed, t.AdjustNavSpeed,
+            "Time Delay Repeat");
 
         // Zoom
-        if (t.ResetZoomOnChange != null)
-        {
-            list.Add(new SettingsSearchItem(t.ResetZoomOnChange, data.ZoomResetSearchTags));
-        }
-        if (t.AllowZoomOut != null)
-            list.Add(new SettingsSearchItem(t.AllowZoomOut, data.ZoomOutSearchTags));
-        if (t.UseAnimatedZoom != null)
-        {
-            list.Add(new SettingsSearchItem(t.UseAnimatedZoom, data.ZoomAnimationSearchTags));
-        }
-        if (t.ShowZoomPercentagePopup != null)
-        {
-            list.Add(new SettingsSearchItem(t.ShowZoomPercentagePopup, data.ZoomPopupSearchTags));
-        }
-        if (t.AdjustTimingForZoom != null)
-        {
-            list.Add(new SettingsSearchItem(t.AdjustTimingForZoom, data.ZoomSpeedSearchTags));
-        }
+        StartCategory(SettingsCategory.Zoom, t.Zoom);
+        Add(SettingKey.ZoomToFit, t.ZoomToFit,
+            t.Stretch, t.Scale, "Enlarge Upscale");
+        Add(SettingKey.ResetZoom, t.ResetZoomOnChange,
+            "Reset");
+        Add(SettingKey.AllowZoomOut, t.AllowZoomOut,
+            "Out Minimum");
+        Add(SettingKey.AnimatedZoom, t.UseAnimatedZoom,
+            "Animation Smooth");
+        Add(SettingKey.ZoomPercentagePopup, t.ShowZoomPercentagePopup,
+            "Percentage Popup");
+        Add(SettingKey.ZoomPreviewer, t.ShowZoomPreviewer,
+            "Preview Minimap Popup pop-up");
+        Add(SettingKey.ZoomSpeed, t.AdjustTimingForZoom,
+            "Time Duration");
 
         // Mouse
-        if (t.DoubleClick != null)
-        {
-            list.Add(new SettingsSearchItem(t.DoubleClick, data.MouseDoubleClickSearchTags));
-        }
-        if (t.UsingTouchpad != null)
-        {
-            list.Add(new SettingsSearchItem(t.UsingTouchpad, data.MouseTouchpadSearchTags));
-        }
+        StartCategory(SettingsCategory.Mouse, t.Mouse);
+        Add(SettingKey.DoubleClick, t.DoubleClick,
+            t.ResetZoom, t.ToggleFullscreen, t.None, "Click");
+        Add(SettingKey.Touchpad, t.UsingTouchpad,
+            t.UsingMouse, "Trackpad");
 
-        // Language
-        if (t.Language != null)
-        {
-            list.Add(new SettingsSearchItem(t.Language, data.LanguageSearchTags));
-        }
-        
-        // Keybindings
-        if (t.ApplicationShortcuts != null)
-        {
-            list.Add(new SettingsSearchItem(t.ApplicationShortcuts, data.KeybindingsSearchTags));
-        }
-
-        // File associations
-        if (t.FileAssociations != null)
-        {
-            list.Add(new SettingsSearchItem(t.FileAssociations, data.FileAssociationSearchTags));
-        }
+        // A category that is one row has no setting of its own: the category leads to it
+        StartCategory(SettingsCategory.Language, t.Language, "Translate Translation Locale");
+        StartCategory(SettingsCategory.Keybindings, t.ApplicationShortcuts, "Key Keybindings Hotkeys Keyboard");
+        StartCategory(SettingsCategory.FileAssociations, t.FileAssociations, "Extension Default Program");
 
         return list;
+
+        void StartCategory(SettingsCategory next, string? name, string keywords = "")
+        {
+            category = next;
+            categoryName = name;
+            if (name is not null)
+            {
+                list.Add(new SettingsSearchItem(next, null, name, string.Empty, keywords));
+            }
+        }
+
+        void Add(SettingKey key, string? name, params ReadOnlySpan<string?> keywords)
+        {
+            if (name is null)
+            {
+                return;
+            }
+
+            // Some labels end in a colon, which reads oddly in a list
+            list.Add(new SettingsSearchItem(category, key, name.TrimEnd(':', ' '), categoryName ?? string.Empty,
+                string.Join(' ', keywords)));
+        }
+    }
+
+    /// <summary>
+    /// The suggestions that have every word of <paramref name="query"/>, in any order and ignoring case. A category
+    /// is found by its name and keywords; a setting by its name, its keywords and its category's name. Categories
+    /// come first, then settings whose name has every word, then the rest, each in the order they were built.
+    /// </summary>
+    public static List<SettingsSearchItem> Search(IReadOnlyList<SettingsSearchItem> items, string? query)
+    {
+        var found = new List<SettingsSearchItem>();
+        if (string.IsNullOrWhiteSpace(query))
+        {
+            return found;
+        }
+
+        var words = query.Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        var nameMatches = new List<SettingsSearchItem>();
+        var keywordMatches = new List<SettingsSearchItem>();
+
+        foreach (var item in items)
+        {
+            var inName = true;
+            var inAny = true;
+            foreach (var word in words)
+            {
+                if (Has(item.Name, word))
+                {
+                    continue;
+                }
+
+                inName = false;
+                if (!Has(item.Keywords, word) && !Has(item.CategoryName, word))
+                {
+                    inAny = false;
+                    break;
+                }
+            }
+
+            if (!inAny)
+            {
+                continue;
+            }
+
+            if (item.IsCategory)
+            {
+                found.Add(item);
+            }
+            else if (inName)
+            {
+                nameMatches.Add(item);
+            }
+            else
+            {
+                keywordMatches.Add(item);
+            }
+        }
+
+        found.AddRange(nameMatches);
+        found.AddRange(keywordMatches);
+        return found;
+    }
+
+    private static bool Has(string text, string word)
+    {
+        return text.Contains(word, StringComparison.InvariantCultureIgnoreCase);
     }
 }

@@ -1,8 +1,10 @@
-using PicView.Tests.Config;
-using PicView.Core.ViewModels;
+using System.Windows.Input;
 using PicView.Core.Config;
+using PicView.Core.ISettings;
 using PicView.Core.Localization;
-using Xunit;
+using PicView.Core.SettingsSearch;
+using PicView.Core.ViewModels;
+using PicView.Tests.Config;
 using R3;
 
 namespace PicView.Tests;
@@ -53,7 +55,7 @@ public class SettingsViewModelTests
         
         // Go Back
         // Assert.True(vm.GoBackCommand.CanExecute(Unit.Default)); // CanExecute might take different args or ICommand interface
-        Assert.True(((System.Windows.Input.ICommand)vm.GoBackCommand).CanExecute(null));
+        Assert.True(((ICommand)vm.GoBackCommand).CanExecute(null));
         vm.GoBackCommand.Execute(Unit.Default);
         
         Assert.True(vm.IsOverviewVisible.Value, "Should be back at Overview");
@@ -184,7 +186,7 @@ public class SettingsViewModelTests
         return vm;
     }
 
-    private sealed class NoThemeService : PicView.Core.ISettings.IThemeService
+    private sealed class NoThemeService : IThemeService
     {
         public void SetTheme(int themeIndex) { }
         public void SetColorTheme(int colorIndex) { }
@@ -198,7 +200,7 @@ public class SettingsViewModelTests
         public IEnumerable<(string Code, string DisplayName)> GetAvailableLanguages() => [];
     }
 
-    private sealed class NoImageSettingsService : PicView.Core.ISettings.IImageSettingsService
+    private sealed class NoImageSettingsService : IImageSettingsService
     {
         public void TriggerScalingModeUpdate(bool nearestNeighbor) { }
     }
@@ -219,20 +221,22 @@ public class SettingsViewModelTests
     }
 
     [Fact]
-    public void LanguageChanges_SearchTags_AreInTheNewLanguage()
+    public void LanguageChanges_SearchKeywords_AreInTheNewLanguage()
     {
         var previous = TranslationManager.Swap(Language("a"));
         try
         {
             var translation = new TranslationViewModel();
             using var vm = new SettingsViewModel(translation, NewSettings());
-            Assert.Contains("ApplicationStartup-a", vm.SearchData.Value.StartUpSearchTags, StringComparison.Ordinal);
+            vm.SearchQuery.Value = "ContinueWhereYouLeftOff-a";
+            Assert.Equal(SettingKey.ApplicationStartup, Assert.Single(vm.Suggestions.Value).Key);
 
             TranslationManager.Swap(Language("b"));
             translation.UpdateLanguage();
 
-            Assert.Contains("ApplicationStartup-b", vm.SearchData.Value.StartUpSearchTags, StringComparison.Ordinal);
-            Assert.DoesNotContain("-a", vm.SearchData.Value.StartUpSearchTags, StringComparison.Ordinal);
+            Assert.Empty(vm.Suggestions.Value);
+            vm.SearchQuery.Value = "ContinueWhereYouLeftOff-b";
+            Assert.Equal(SettingKey.ApplicationStartup, Assert.Single(vm.Suggestions.Value).Key);
         }
         finally
         {
@@ -241,15 +245,40 @@ public class SettingsViewModelTests
     }
 
     [Fact]
-    public void StartUpSearchTags_HoldContinueWhereYouLeftOff()
+    public void SetSettingsOnPage_ASettingNotOnThePage_IsNotSuggested()
     {
         var previous = TranslationManager.Swap(Language("a"));
         try
         {
             using var vm = new SettingsViewModel(new TranslationViewModel(), NewSettings());
+            vm.SetSettingsOnPage(new HashSet<SettingKey> { SettingKey.Theme },
+                new HashSet<SettingsCategory> { SettingsCategory.Appearance });
 
-            Assert.Contains("ContinueWhereYouLeftOff-a", vm.SearchData.Value.StartUpSearchTags,
-                StringComparison.Ordinal);
+            vm.SearchQuery.Value = "Theme-a";
+            Assert.Equal(SettingKey.Theme, Assert.Single(vm.Suggestions.Value).Key);
+
+            vm.SearchQuery.Value = "BlurWindowBackground-a";
+            Assert.Empty(vm.Suggestions.Value);
+        }
+        finally
+        {
+            TranslationManager.Swap(previous);
+        }
+    }
+
+    [Fact]
+    public void SetSettingsOnPage_ACategoryNotOnThePage_IsNotSuggested()
+    {
+        var previous = TranslationManager.Swap(Language("a"));
+        try
+        {
+            using var vm = new SettingsViewModel(new TranslationViewModel(), NewSettings());
+            vm.SearchQuery.Value = "FileAssociations-a";
+            Assert.Contains(vm.Suggestions.Value, item => item.IsCategory);
+
+            vm.SetSettingsOnPage(new HashSet<SettingKey>(), new HashSet<SettingsCategory>());
+
+            Assert.Empty(vm.Suggestions.Value);
         }
         finally
         {
@@ -310,13 +339,14 @@ public class SettingsViewModelTests
         {
             var translation = new TranslationViewModel();
             using var vm = new SettingsViewModel(translation, NewSettings());
-            var before = vm.SearchData.Value;
+            vm.SearchQuery.Value = "OpenLastFile";
 
             // A language file that has only the two texts UpdateLanguage cannot do without
             TranslationManager.Swap(new LanguageModel { File = "file", Files = "files" });
-            translation.UpdateLanguage();
+            var exception = Record.Exception(translation.UpdateLanguage);
 
-            Assert.NotSame(before, vm.SearchData.Value);
+            Assert.Null(exception);
+            Assert.Empty(vm.Suggestions.Value);
         }
         finally
         {
@@ -332,13 +362,14 @@ public class SettingsViewModelTests
         {
             var translation = new TranslationViewModel();
             var vm = new SettingsViewModel(translation, NewSettings());
-            var before = vm.SearchData.Value;
+            vm.SearchQuery.Value = "OpenLastFile";
+            var before = vm.Suggestions.Value;
             vm.Dispose();
 
             TranslationManager.Swap(Language("b"));
             translation.UpdateLanguage();
 
-            Assert.Same(before, vm.SearchData.Value);
+            Assert.Same(before, vm.Suggestions.Value);
         }
         finally
         {

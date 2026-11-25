@@ -21,7 +21,7 @@
                                        Mode=OneWay}" />
         </StackPanel>
 
-        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.MouseDoubleClickSearchTags}">
+        <Border Classes="searchBorder" ui:SearchProperties.Key="DoubleClick">
             <StackPanel>
                 <TextBlock
                     Classes="txt bold"
@@ -46,7 +46,7 @@
             </StackPanel>
         </Border>
 
-        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.MouseTouchpadSearchTags}">
+        <Border Classes="searchBorder" ui:SearchProperties.Key="Touchpad">
             <StackPanel>
                 <customControls:TextIconButton
                     Classes="MenuItemHover settingsTextIconButton"

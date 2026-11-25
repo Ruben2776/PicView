@@ -1,50 +1,50 @@
 ﻿<UserControl
-    x:Class="PicView.Avalonia.Views.Config.FileAssociationsView"
-    xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:keybindings="using:PicView.Core.Keybindings"
-    xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:ui="clr-namespace:PicView.Avalonia.UI"
-    xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
+    Focusable="True"
     d:DesignHeight="450"
     d:DesignWidth="800"
+    mc:Ignorable="d"
+    x:Class="PicView.Avalonia.Views.Config.FileAssociationsView"
     x:DataType="viewModels:CoreViewModel"
-    Focusable="True"
-    mc:Ignorable="d">
+    xmlns="https://github.com/avaloniaui"
+    xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:keybindings="using:PicView.Core.Keybindings"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <StackPanel HorizontalAlignment="Center">
 
-        <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.FileAssociationSearchTags}" Classes="searchBorder">
+        <Border Classes="searchBorder">
             <StackPanel>
                 <StackPanel Orientation="Horizontal" Spacing="12">
                     <Image
-                        Width="18"
                         Height="18"
-                        Source="{StaticResource FileAssociationImage}" />
+                        Source="{StaticResource FileAssociationImage}"
+                        Width="18" />
                     <TextBlock
-                        Margin="0,20,0,20"
                         Classes="txt bold searchHeader"
+                        Margin="0,20,0,20"
                         Text="{CompiledBinding Translation.FileAssociations.Value,
                                                Mode=OneWay}" />
                 </StackPanel>
                 <customControls:TextIconButton
-                    x:Name="KeyBindingsButton"
-                    Width="300"
-                    Padding="6"
-                    HorizontalAlignment="Center"
                     Background="{DynamicResource MenuBackgroundColor}"
                     BorderBrush="{DynamicResource MenuBorderColor}"
                     BorderThickness="1"
                     Classes="MenuItemHover"
-                    Command="{Binding MainWindows.ActiveWindow.Value.RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.FileAssociationsWindow}"
+                    Command="{Binding MainWindows.ActiveWindow.Value.RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.FileAssociationsWindow}"
                     CornerRadius="4"
                     Foreground="{DynamicResource MainTextColor}"
+                    HorizontalAlignment="Center"
                     Icon="{StaticResource FileAssociationImage}"
                     IconHeight="18"
                     IconMargin="5,5,10,5"
                     IconWidth="18"
-                    Text="{Binding Translation.FileAssociations.Value}" />
+                    Padding="6"
+                    Text="{Binding Translation.FileAssociations.Value}"
+                    Width="300"
+                    x:Name="KeyBindingsButton" />
             </StackPanel>
         </Border>
     </StackPanel>

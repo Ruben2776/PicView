@@ -28,7 +28,7 @@
                                        Mode=OneWay}" />
         </StackPanel>
 
-        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.ThemeSearchTags}">
+        <Border Classes="searchBorder" ui:SearchProperties.Key="Theme">
             <StackPanel>
                 <TextBlock
                     Classes="txt bold"
@@ -86,7 +86,7 @@
             </StackPanel>
         </Border>
 
-        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.ColorSearchTags}">
+        <Border Classes="searchBorder" ui:SearchProperties.Key="HighlightColor">
             <StackPanel>
                 <TextBlock
                     Classes="txt bold"
@@ -242,7 +242,7 @@
             </StackPanel>
         </Border>
 
-        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.BackgroundSearchTags}">
+        <Border Classes="searchBorder" ui:SearchProperties.Key="Background">
             <StackPanel>
                 <TextBlock
                     Classes="txt bold"
@@ -430,7 +430,7 @@
             </StackPanel>
         </Border>
 
-        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.BackgroundConstrainSearchTags}">
+        <Border Classes="searchBorder" ui:SearchProperties.Key="ConstrainBackground">
             <customControls:TextToggleButton
                 Classes="MenuItemHover settingsToggleButton"
                 Command="{CompiledBinding MainWindows.ActiveWindow.Value.RunActionCommand}"
@@ -443,7 +443,7 @@
         </Border>
 
         <!--  Blur window background  -->
-        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.WindowBlurSearchTags}">
+        <Border Classes="searchBorder" ui:SearchProperties.Key="WindowBlur">
             <customControls:TextToggleButton
                 Classes="MenuItemHover settingsToggleButton"
                 IsChecked="{CompiledBinding SettingsViewModel.IsUsingAcrylic.Value,

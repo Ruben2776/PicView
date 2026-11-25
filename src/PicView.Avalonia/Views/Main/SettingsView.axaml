@@ -6,6 +6,7 @@
     xmlns:converters="clr-namespace:PicView.Avalonia.Converters"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
     xmlns:keybindings="using:PicView.Core.Keybindings"
+    xmlns:settingsSearch="clr-namespace:PicView.Core.SettingsSearch;assembly=PicView.Core"
     xmlns:viewModels1="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
@@ -145,15 +146,25 @@
                         Background="Transparent"
                         ItemsSource="{CompiledBinding SettingsViewModel.Suggestions.Value}"
                         Margin="0,5"
-                        SelectedItem="{CompiledBinding SettingsViewModel.SelectedSuggestion.Value,
-                                                       Mode=OneWay}"
                         x:Name="SuggestionsListBox">
                         <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock
-                                    Classes="txt"
-                                    Padding="8"
-                                    Text="{Binding Name}" />
+                            <DataTemplate x:DataType="settingsSearch:SettingsSearchItem">
+                                <Grid ColumnDefinitions="*,Auto" Margin="8">
+                                    <TextBlock
+                                        Classes="txt"
+                                        HorizontalAlignment="Left"
+                                        Text="{CompiledBinding Name}"
+                                        TextTrimming="CharacterEllipsis" />
+                                    <!--  Where the setting is; empty for a category  -->
+                                    <TextBlock
+                                        Classes="txt"
+                                        Foreground="{DynamicResource MainTextColorFaded}"
+                                        Grid.Column="1"
+                                        HorizontalAlignment="Right"
+                                        Margin="5,0,0,0"
+                                        Opacity="0.7"
+                                        Text="{CompiledBinding CategoryName}" />
+                                </Grid>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                         <ListBox.ItemsPanel>

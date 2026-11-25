@@ -22,7 +22,7 @@
                                        Mode=OneWay}" />
         </StackPanel>
 
-        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.WindowScalingSearchTags}">
+        <Border Classes="searchBorder" ui:SearchProperties.Key="AutoFitWindow">
             <StackPanel>
                 <TextBlock
                     Classes="txt bold"
@@ -40,7 +40,11 @@
                     Text="{CompiledBinding Translation.AutoFitWindow.Value,
                                            Mode=OneWay}"
                     x:Name="AutoFitToggleButton" />
+            </StackPanel>
+        </Border>
 
+        <Border Classes="searchBorder" ui:SearchProperties.Key="WindowMargin">
+            <StackPanel>
                 <!--  Window spacing  -->
                 <TextBlock
                     Classes="txt bold"
@@ -78,7 +82,7 @@
             Text="{CompiledBinding Translation.WindowManagement.Value,
                                    Mode=OneWay}" />
 
-        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.WindowSameWindowSearchTags}">
+        <Border Classes="searchBorder" ui:SearchProperties.Key="OpeningMode">
             <ComboBox
                 BorderThickness="1"
                 FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
@@ -96,7 +100,7 @@
             </ComboBox>
         </Border>
 
-        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.WindowTopMostSearchTags}">
+        <Border Classes="searchBorder" ui:SearchProperties.Key="StayTopMost">
             <customControls:TextToggleButton
                 Classes="MenuItemHover settingsToggleButton"
                 Command="{CompiledBinding MainWindows.ActiveWindow.Value.RunActionCommand}"
@@ -108,7 +112,7 @@
                 x:Name="TopMostToggleButton" />
         </Border>
 
-        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.WindowCenteredSearchTags}">
+        <Border Classes="searchBorder" ui:SearchProperties.Key="StayCentered">
             <customControls:TextToggleButton
                 Classes="MenuItemHover settingsToggleButton"
                 IsChecked="{CompiledBinding MainWindows.ActiveWindow.Value.WindowSettings.IsStayingCentered.Value,
@@ -119,7 +123,7 @@
                 x:Name="StayCenteredToggleButton" />
         </Border>
 
-        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.WindowEscSearchTags}">
+        <Border Classes="searchBorder" ui:SearchProperties.Key="ConfirmOnEsc">
             <customControls:TextToggleButton
                 Classes="MenuItemHover settingsToggleButton"
                 IsChecked="{CompiledBinding SettingsViewModel.IsShowingConfirmationOnEsc.Value}"
@@ -128,7 +132,7 @@
                 x:Name="ShowConfirmationEscToggleButton" />
         </Border>
 
-        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.WindowEscFullscreenSearchTags}">
+        <Border Classes="searchBorder" ui:SearchProperties.Key="EscLeavesFullscreen">
             <customControls:TextToggleButton
                 Classes="MenuItemHover settingsToggleButton"
                 IsChecked="{CompiledBinding SettingsViewModel.IsEscLeavingFullscreen.Value}"

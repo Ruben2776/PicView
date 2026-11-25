@@ -23,7 +23,7 @@
         </StackPanel>
 
         <!--  Scroll  -->
-        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.ImageScrollingSearchTags}">
+        <Border Classes="searchBorder" ui:SearchProperties.Key="Scrolling">
             <customControls:TextToggleButton
                 Classes="MenuItemHover settingsToggleButton"
                 Command="{CompiledBinding MainWindows.ActiveWindow.Value.RunActionCommand}"
@@ -34,7 +34,7 @@
         </Border>
 
         <!--  Side by side  -->
-        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.ImageSideBySideSearchTags}">
+        <Border Classes="searchBorder" ui:SearchProperties.Key="SideBySide">
             <customControls:TextToggleButton
                 Classes="MenuItemHover settingsToggleButton"
                 Command="{CompiledBinding MainWindows.ActiveWindow.Value.RunActionCommand}"
@@ -47,7 +47,7 @@
         </Border>
 
         <!--  Autoplay motion photos  -->
-        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.MotionPhotoSearchTags}">
+        <Border Classes="searchBorder" ui:SearchProperties.Key="AutoPlayMotionPhotos">
             <customControls:TextToggleButton
                 Classes="MenuItemHover settingsToggleButton"
                 IsChecked="{CompiledBinding SettingsViewModel.IsAutoPlayingMotionPhotos.Value,
@@ -58,7 +58,7 @@
         </Border>
 
         <!--  Aliasing  -->
-        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.Value.ImageScalingSearchTags}">
+        <Border Classes="searchBorder" ui:SearchProperties.Key="ImageAliasing">
             <StackPanel>
                 <TextBlock
                     Classes="txt bold"

@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Media;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using PicView.Avalonia.UI;
@@ -11,34 +12,37 @@ using R3;
 
 namespace PicView.Avalonia.Controllers;
 
+/// <summary>
+/// Runs the Settings window's search and its category list. Typing only fills the suggestion list; the page is
+/// never filtered. Picking a suggestion scrolls to its setting row, pulses the row once, moves focus into it and
+/// clears the search, so nothing is left to dismiss.
+/// </summary>
 public class SettingsSearchController(SettingsView view) : IDisposable
 {
-    private const string ClassSearchDim = "searchDim";
-    private const string ClassSearchMatch = "searchMatch";
-    private const string ClassSearchHeader = "searchHeader";
-    private const string ClassSearchHeaderDim = "searchHeaderDim";
+    private const string ClassSearchPulse = "searchPulse";
+    private const string AccentColorKey = "AccentColor";
+    private const double PulseBackgroundOpacity = 0.14;
 
-    private readonly List<Control> _searchMatches = [];
-    private List<(Control Control, SettingsCategory Category)>? _allSearchableControls;
+    // The row's brush transitions take 0.4 s each way, so the pulse is over after about 1.5 s
+    private static readonly TimeSpan PulseHold = TimeSpan.FromMilliseconds(1100);
 
-    private int _currentMatchIndex = -1;
+    private readonly Dictionary<SettingKey, Control> _rows = [];
+
     private bool _isScrollingProgrammatically;
-    private bool _areCategoriesFiltered;
-    private bool _suppressSidebarFilter;
     private bool _isUpdatingFromSpy;
-    private bool _isNavigatingSuggestionsViaKeys;
     private List<KeyValuePair<SettingsCategory, Control>>? _orderedSections;
     private Dictionary<SettingsCategory, Control>? _sectionsMap;
-    
-    private IDisposable? _subscription;
+
+    private Control? _pulsedRow;
+    private IDisposable? _pulseTimer;
+    private IDisposable? _categorySubscription;
+    private IDisposable? _suggestionsSubscription;
 
     public void Initialize()
     {
         InitializeSections();
-        IndexSearchableControls();
+        IndexRows();
 
-        view.FilterBox.TextChanged += OnSearchTextChanged;
-        
         if (OperatingSystem.IsMacOS())
         {
             // Keydown events are interrupted on macOS because of the Accent Menu
@@ -48,23 +52,23 @@ public class SettingsSearchController(SettingsView view) : IDisposable
         {
             view.FilterBox.KeyDown += OnFilterBoxKeyDown;
         }
-        
-        view.SuggestionsListBox.SelectionChanged += OnSuggestionsSelectionChanged;
-        view.CategoriesListBox.SelectionChanged += OnListBoxSelectionChanged;
-        view.SuggestionsPopup.Closed += OnPopupClosed;
 
-        if (view.DataContext is not CoreViewModel core)
+        view.SuggestionsListBox.Tapped += OnSuggestionTapped;
+        view.CategoriesListBox.SelectionChanged += OnListBoxSelectionChanged;
+
+        if (view.DataContext is not CoreViewModel { SettingsViewModel: { } settings } core)
         {
             return;
         }
 
-        _subscription = core.SettingsViewModel.SelectedCategory.Subscribe(OnViewModelCategoryChanged);
+        settings.SetSettingsOnPage(_rows.Keys.ToHashSet(), _sectionsMap!.Keys.ToHashSet());
+        _categorySubscription = settings.SelectedCategory.Subscribe(OnViewModelCategoryChanged);
+        _suggestionsSubscription = settings.Suggestions.Subscribe(OnSuggestionsChanged);
         core.GlobalSettings.InitializeExtraSettings();
     }
 
     public void Dispose()
     {
-        view.FilterBox.TextChanged -= OnSearchTextChanged;
         if (OperatingSystem.IsMacOS())
         {
             view.FilterBox.KeyUp -= OnFilterBoxKeyDown;
@@ -74,29 +78,15 @@ public class SettingsSearchController(SettingsView view) : IDisposable
             view.FilterBox.KeyDown -= OnFilterBoxKeyDown;
         }
 
-        view.SuggestionsListBox.SelectionChanged -= OnSuggestionsSelectionChanged;
+        view.SuggestionsListBox.Tapped -= OnSuggestionTapped;
         view.CategoriesListBox.SelectionChanged -= OnListBoxSelectionChanged;
-        view.SuggestionsPopup.Closed -= OnPopupClosed;
-        
-        _subscription?.Dispose();
-        _allSearchableControls = null;
-        _searchMatches.Clear();
-        
-        GC.SuppressFinalize(this);
-    }
-    
-    public void ResetFilters()
-    {
-        if (!_areCategoriesFiltered)
-        {
-            return;
-        }
 
-        _areCategoriesFiltered = false;
-        foreach (var item in view.CategoriesListBox.Items.OfType<ListBoxItem>())
-        {
-            item.IsVisible = true;
-        }
+        _categorySubscription?.Dispose();
+        _suggestionsSubscription?.Dispose();
+        EndPulse();
+        _rows.Clear();
+
+        GC.SuppressFinalize(this);
     }
 
     public void ClosePopup()
@@ -129,11 +119,6 @@ public class SettingsSearchController(SettingsView view) : IDisposable
         if (_isScrollingProgrammatically || _orderedSections == null || view.DataContext is not CoreViewModel core)
         {
             return;
-        }
-
-        if (_areCategoriesFiltered)
-        {
-            ResetFilters();
         }
 
         SettingsCategory? bestMatch = null;
@@ -181,15 +166,7 @@ public class SettingsSearchController(SettingsView view) : IDisposable
             return;
         }
 
-        _isUpdatingFromSpy = true;
-        try
-        {
-            core.SettingsViewModel.SelectedCategory.Value = bestMatch.Value;
-        }
-        finally
-        {
-            _isUpdatingFromSpy = false;
-        }
+        SelectCategoryWithoutScrolling(core, bestMatch.Value);
     }
 
     public void HandleKeyDown(KeyEventArgs e)
@@ -249,6 +226,99 @@ public class SettingsSearchController(SettingsView view) : IDisposable
         }
     }
 
+    /// <summary>
+    /// Leads to what <paramref name="item"/> names and ends the search: a setting is scrolled to the middle of the
+    /// page, pulsed and given focus; a category is scrolled to its top.
+    /// </summary>
+    public void Pick(SettingsSearchItem item)
+    {
+        if (view.DataContext is not CoreViewModel core)
+        {
+            return;
+        }
+
+        var settings = core.SettingsViewModel;
+        view.SuggestionsPopup.IsOpen = false;
+        settings.SearchQuery.Value = string.Empty;
+
+        if (!settings.IsOverviewVisible.Value)
+        {
+            GoTo(core, item);
+            return;
+        }
+
+        // The page has no layout while the overview covers it, so go there once it has been shown
+        settings.IsOverviewVisible.Value = false;
+        Dispatcher.UIThread.Post(() => GoTo(core, item), DispatcherPriority.Loaded);
+    }
+
+    private void GoTo(CoreViewModel core, SettingsSearchItem item)
+    {
+        if (item.Key is not { } key)
+        {
+            SelectCategoryWithoutScrolling(core, item.Category);
+            ScrollToCategory(item.Category);
+            view.ContentScrollViewer.Focus();
+            return;
+        }
+
+        if (!_rows.TryGetValue(key, out var row))
+        {
+            return;
+        }
+
+        ScrollToControl(row);
+        Pulse(row);
+        FocusSetting(row);
+    }
+
+    private void FocusSetting(Control row)
+    {
+        var target = row.GetVisualDescendants()
+            .OfType<InputElement>()
+            .FirstOrDefault(x => x is { Focusable: true, IsEffectivelyVisible: true, IsEffectivelyEnabled: true });
+
+        if (target is null)
+        {
+            view.ContentScrollViewer.Focus();
+            return;
+        }
+
+        target.Focus(NavigationMethod.Tab);
+    }
+
+    private void Pulse(Control row)
+    {
+        EndPulse();
+
+        _pulsedRow = row;
+        row.Classes.Add(ClassSearchPulse);
+
+        if (row is Border border &&
+            row.TryFindResource(AccentColorKey, row.ActualThemeVariant, out var resource) &&
+            resource is Color accent)
+        {
+            border.Background = new SolidColorBrush(accent, PulseBackgroundOpacity);
+        }
+
+        _pulseTimer = DispatcherTimer.RunOnce(EndPulse, PulseHold);
+    }
+
+    private void EndPulse()
+    {
+        _pulseTimer?.Dispose();
+        _pulseTimer = null;
+
+        if (_pulsedRow is null)
+        {
+            return;
+        }
+
+        _pulsedRow.Classes.Remove(ClassSearchPulse);
+        _pulsedRow.ClearValue(Border.BackgroundProperty);
+        _pulsedRow = null;
+    }
+
     private void InitializeSections()
     {
         _sectionsMap = new Dictionary<SettingsCategory, Control>();
@@ -258,7 +328,7 @@ public class SettingsSearchController(SettingsView view) : IDisposable
         {
             var sectionName = $"{category}Section";
             var control = view.FindControl<Control>(sectionName);
-            if (control == null)
+            if (control is not { IsVisible: true })
             {
                 continue;
             }
@@ -270,31 +340,39 @@ public class SettingsSearchController(SettingsView view) : IDisposable
         _orderedSections = tempOrdered.OrderBy(x => x.Value.Bounds.Y).ToList();
     }
 
-    private void IndexSearchableControls()
+    private void IndexRows()
     {
-        _allSearchableControls = [];
+        _rows.Clear();
 
         if (_orderedSections == null)
         {
             return;
         }
 
-        foreach (var (category, sectionControl) in _orderedSections)
+        foreach (var (_, section) in _orderedSections)
         {
-            var children = sectionControl.GetVisualDescendants().OfType<Control>();
-            foreach (var child in children)
+            foreach (var child in section.GetVisualDescendants().OfType<Control>())
             {
-                if (child.Tag != null || !string.IsNullOrEmpty(SearchProperties.GetKeywords(child)))
+                if (SearchProperties.GetKey(child) is { } key && IsShownWithin(child, section))
                 {
-                    _allSearchableControls.Add((child, category));
+                    _rows[key] = child;
                 }
             }
         }
     }
-    
-    private void OnPopupClosed(object? sender, EventArgs e)
+
+    // Not IsEffectivelyVisible: the whole page is hidden while the overview shows, and its rows are still there
+    private static bool IsShownWithin(Control row, Control section)
     {
-        ResetFilters();
+        for (Visual? visual = row; visual is not null && visual != section; visual = visual.GetVisualParent())
+        {
+            if (!visual.IsVisible)
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private void OnListBoxSelectionChanged(object? sender, SelectionChangedEventArgs e)
@@ -307,360 +385,78 @@ public class SettingsSearchController(SettingsView view) : IDisposable
         }
     }
 
-    private void OnFilterBoxKeyDown(object? sender, KeyEventArgs e)
+    private void OnSuggestionsChanged(List<SettingsSearchItem> suggestions)
     {
-        if (view.FilterBox.Text?.Length > 0 && view.SuggestionsListBox.ItemCount > 0)
-        {
-            view.SuggestionsPopup.IsOpen = true;
-        }
-        
-        if (view.SuggestionsListBox.ItemCount > 0 && (e.Key == Key.Down || e.Key == Key.Up))
-        {
-            _isNavigatingSuggestionsViaKeys = true;
-            try
-            {
-                var current = view.SuggestionsListBox.SelectedIndex;
-                var count = view.SuggestionsListBox.ItemCount;
-
-                if (e.Key == Key.Down)
-                {
-                    if (current < count - 1)
-                        view.SuggestionsListBox.SelectedIndex++;
-                    else
-                        view.SuggestionsListBox.SelectedIndex = 0;
-                }
-                else // Key.Up
-                {
-                    if (current > 0)
-                        view.SuggestionsListBox.SelectedIndex--;
-                    else
-                        view.SuggestionsListBox.SelectedIndex = count - 1;
-                }
-                
-                view.SuggestionsListBox.ScrollIntoView(view.SuggestionsListBox.SelectedItem);
-            }
-            finally
-            {
-                _isNavigatingSuggestionsViaKeys = false;
-            }
-
-            e.Handled = true;
-            return;
-        }
-        
-        if (e.Key == Key.Enter)
-        {
-            e.Handled = true;
-            
-            if (view.SuggestionsPopup.IsOpen && view.SuggestionsListBox.SelectedItem != null)
-            {
-                CommitSuggestion();
-            }
-            else
-            {
-                CycleToNextMatch();
-            }
-        }
-    }
-
-    private void OnSuggestionsSelectionChanged(object? sender, SelectionChangedEventArgs e)
-    {
-        if (_isNavigatingSuggestionsViaKeys)
-        {
-            return;
-        }
-        
-        CommitSuggestion();
-    }
-
-    private void CommitSuggestion()
-    {
-        if (view.SuggestionsListBox.SelectedItem is not SettingsSearchItem item ||
-            view.DataContext is not CoreViewModel { SettingsViewModel: not null } core)
-        {
-            return;
-        }
-
-        _suppressSidebarFilter = true;
-            
-        core.SettingsViewModel.SelectedSuggestion.Value = item;
-        view.SuggestionsPopup.IsOpen = false;
-            
+        // A language change sets the suggestions off the UI thread, and the list box has yet to take them
         Dispatcher.UIThread.Post(() =>
         {
-            if (view.FilterBox.Text != null)
+            var hasSuggestions = suggestions.Count > 0;
+            view.SuggestionsPopup.IsOpen = hasSuggestions;
+            if (hasSuggestions)
             {
-                view.FilterBox.CaretIndex = view.FilterBox.Text.Length;
+                // The first suggestion is the one Enter picks
+                view.SuggestionsListBox.SelectedIndex = 0;
             }
         }, DispatcherPriority.Input);
     }
-    
-    private void OnSearchTextChanged(object? sender, TextChangedEventArgs e)
+
+    private void OnSuggestionTapped(object? sender, TappedEventArgs e)
     {
-        var searchText = view.FilterBox.Text;
-
-        if (string.IsNullOrWhiteSpace(searchText))
+        if (e.Source is Visual source &&
+            source.FindAncestorOfType<ListBoxItem>(true) is { DataContext: SettingsSearchItem item })
         {
-            view.SuggestionsPopup.IsOpen = false;
-        }
-
-        if (view.DataContext is CoreViewModel core &&
-            !string.IsNullOrWhiteSpace(searchText) &&
-            core.SettingsViewModel.IsOverviewVisible.Value)
-        {
-            core.SettingsViewModel.IsOverviewVisible.Value = false;
-        }
-
-        PerformSearch(searchText);
-
-        if (!string.IsNullOrWhiteSpace(searchText))
-        {
-            Dispatcher.UIThread.Post(ScrollToNearestMatch, DispatcherPriority.Input);
+            Pick(item);
         }
     }
 
-    private void PerformSearch(string? query)
+    private void OnFilterBoxKeyDown(object? sender, KeyEventArgs e)
     {
-        if (_sectionsMap == null)
+        var count = view.SuggestionsListBox.ItemCount;
+        if (count == 0 || !view.SuggestionsPopup.IsOpen)
         {
             return;
         }
 
-        _searchMatches.Clear();
-        _currentMatchIndex = -1;
-
-        if (_allSearchableControls == null)
+        switch (e.Key)
         {
-            IndexSearchableControls();
-        }
+            case Key.Down:
+                view.SuggestionsListBox.SelectedIndex = (view.SuggestionsListBox.SelectedIndex + 1) % count;
+                break;
+            case Key.Up:
+                view.SuggestionsListBox.SelectedIndex = (view.SuggestionsListBox.SelectedIndex - 1 + count) % count;
+                break;
+            case Key.Enter:
+                if (view.SuggestionsListBox.SelectedItem is SettingsSearchItem item)
+                {
+                    Pick(item);
+                }
 
-        var isQueryEmpty = string.IsNullOrWhiteSpace(query);
-
-        if (isQueryEmpty)
-        {
-            if (_allSearchableControls == null)
-            {
+                e.Handled = true;
                 return;
-            }
-
-            foreach (var (child, _) in _allSearchableControls)
-            {
-                child.Classes.Remove(ClassSearchMatch);
-                child.Classes.Remove(ClassSearchDim);
-            }
-
-            UpdateSectionHeaders(false);
-
-            foreach (var item in view.CategoriesListBox.Items.OfType<ListBoxItem>())
-            {
-                item.IsVisible = true;
-            }
-
-            _areCategoriesFiltered = false;
-            return;
+            default:
+                return;
         }
 
-        var matchingCategories = new HashSet<SettingsCategory>();
-
-        foreach (var (child, category) in _allSearchableControls!)
-        {
-            var isMatch = IsControlMatch(child, query!);
-
-            if (isMatch)
-            {
-                child.Classes.Remove(ClassSearchDim);
-                child.Classes.Add(ClassSearchMatch);
-                _searchMatches.Add(child);
-                matchingCategories.Add(category);
-            }
-            else
-            {
-                child.Classes.Remove(ClassSearchMatch);
-                child.Classes.Add(ClassSearchDim);
-            }
-        }
-
-        UpdateSectionHeaders(true);
-        
-        var shouldShowAll = _suppressSidebarFilter;
-        if (shouldShowAll)
-        {
-            _suppressSidebarFilter = false;
-            _areCategoriesFiltered = false;
-        }
-        else
-        {
-            _areCategoriesFiltered = true;
-        }
-
-        foreach (var item in view.CategoriesListBox.Items.OfType<ListBoxItem>())
-        {
-            if (shouldShowAll)
-            {
-                item.IsVisible = true;
-            }
-            else if (item.Tag is SettingsCategory category)
-            {
-                item.IsVisible = matchingCategories.Contains(category);
-            }
-        }
+        view.SuggestionsListBox.ScrollIntoView(view.SuggestionsListBox.SelectedIndex);
+        e.Handled = true;
     }
 
-    private static bool IsControlMatch(Control child, string query)
+    private void SelectCategoryWithoutScrolling(CoreViewModel core, SettingsCategory category)
     {
-        var keywordsString = SearchProperties.GetKeywords(child);
-
-        if (string.IsNullOrEmpty(keywordsString) && child.Tag is string tag)
-        {
-            keywordsString = tag;
-        }
-
-        if (string.IsNullOrEmpty(keywordsString))
-        {
-            return false;
-        }
-
-        return keywordsString.Contains(query, StringComparison.OrdinalIgnoreCase);
-    }
-
-    private void UpdateSectionHeaders(bool isSearchActive)
-    {
-        if (_orderedSections == null)
+        if (core.SettingsViewModel.SelectedCategory.Value == category)
         {
             return;
         }
 
-        foreach (var section in _orderedSections.Select(kvp => kvp.Value))
+        _isUpdatingFromSpy = true;
+        try
         {
-            if (section is UserControl { Content: Panel panel })
-            {
-                ProcessSectionPanel(panel, isSearchActive);
-            }
+            core.SettingsViewModel.SelectedCategory.Value = category;
         }
-    }
-
-    private void ProcessSectionPanel(Panel panel, bool isSearchActive)
-    {
-        if (!isSearchActive)
+        finally
         {
-            foreach (var child in panel.Children.Where(IsHeader))
-            {
-                child.Classes.Remove(ClassSearchHeaderDim);
-                if (!child.Classes.Contains(ClassSearchHeader))
-                {
-                    child.Classes.Add(ClassSearchHeader);
-                }
-            }
-
-            return;
+            _isUpdatingFromSpy = false;
         }
-
-        Control? currentHeader = null;
-        var currentHeaderHasMatches = false;
-
-        foreach (var child in panel.Children)
-        {
-            if (IsHeader(child))
-            {
-                if (currentHeader != null)
-                {
-                    ApplyHeaderState(currentHeader, currentHeaderHasMatches);
-                }
-
-                currentHeader = child;
-                currentHeaderHasMatches = false;
-            }
-            else
-            {
-                if (HasMatch(child))
-                {
-                    currentHeaderHasMatches = true;
-                }
-            }
-        }
-
-        if (currentHeader != null)
-        {
-            ApplyHeaderState(currentHeader, currentHeaderHasMatches);
-        }
-    }
-
-    private static bool IsHeader(Control control)
-    {
-        return control.Classes.Contains(ClassSearchHeader) || control.Classes.Contains(ClassSearchHeaderDim);
-    }
-
-    private static void ApplyHeaderState(Control header, bool hasMatches)
-    {
-        if (hasMatches)
-        {
-            header.Classes.Remove(ClassSearchHeaderDim);
-            if (!header.Classes.Contains(ClassSearchHeader))
-            {
-                header.Classes.Add(ClassSearchHeader);
-            }
-        }
-        else
-        {
-            header.Classes.Remove(ClassSearchHeader);
-            if (!header.Classes.Contains(ClassSearchHeaderDim))
-            {
-                header.Classes.Add(ClassSearchHeaderDim);
-            }
-        }
-    }
-
-    private static bool HasMatch(Control control)
-    {
-        if (control.Classes.Contains(ClassSearchMatch))
-        {
-            return true;
-        }
-
-        return control.GetVisualDescendants()
-            .OfType<Control>()
-            .Any(c => c.Classes.Contains(ClassSearchMatch));
-    }
-
-    private void CycleToNextMatch()
-    {
-        if (_searchMatches.Count == 0)
-        {
-            return;
-        }
-
-        _currentMatchIndex = (_currentMatchIndex + 1) % _searchMatches.Count;
-        ScrollToControl(_searchMatches[_currentMatchIndex]);
-    }
-
-    private void ScrollToNearestMatch()
-    {
-        if (_searchMatches.Count == 0)
-        {
-            return;
-        }
-
-        var viewportCenter = view.ContentScrollViewer.Viewport.Height / 2;
-
-        var bestMatch = _searchMatches.MinBy(match =>
-        {
-            var relativePoint = match.TranslatePoint(new Point(0, 0), view.ContentScrollViewer);
-            if (!relativePoint.HasValue)
-            {
-                return double.MaxValue;
-            }
-
-            var elementCenter = relativePoint.Value.Y + match.Bounds.Height / 2;
-            return Math.Abs(elementCenter - viewportCenter);
-        });
-
-        if (bestMatch == null)
-        {
-            return;
-        }
-
-        _currentMatchIndex = _searchMatches.IndexOf(bestMatch);
-        ScrollToControl(bestMatch);
     }
 
     private void ScrollToCategory(SettingsCategory category)
@@ -720,21 +516,7 @@ public class SettingsSearchController(SettingsView view) : IDisposable
                 continue;
             }
 
-            if (core.SettingsViewModel.SelectedCategory.Value == category)
-            {
-                return;
-            }
-
-            _isUpdatingFromSpy = true;
-            try
-            {
-                core.SettingsViewModel.SelectedCategory.Value = category;
-            }
-            finally
-            {
-                _isUpdatingFromSpy = false;
-            }
-
+            SelectCategoryWithoutScrolling(core, category);
             return;
         }
     }

@@ -1,4 +1,3 @@
-using System.Runtime.InteropServices;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
@@ -48,7 +47,6 @@ public partial class SettingsView : UserControl
     
     private void MainPanelOnPointerPressed(object? sender, PointerPressedEventArgs e)
     {
-        _controller?.ResetFilters();
         _controller?.ClosePopup();
 
         if (!e.Properties.IsRightButtonPressed)
