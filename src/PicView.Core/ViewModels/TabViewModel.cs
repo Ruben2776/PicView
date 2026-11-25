@@ -527,6 +527,33 @@ public class TabViewModel : IDisposable
         ImageType.Value = primary.ImageType;
 
         UpdateComparison(pairChanged: true);
+        HoldShown(primary, secondary);
+    }
+
+    // The cache references an image for the tab only while it is in the tab's preload window, and a preload that ends
+    // after the tab turned round can evict the shown image from it. So the tab holds what it shows itself
+    private IDisposable? _shownLease;
+    private IDisposable? _shownSecondaryLease;
+
+    private void HoldShown(ImageModel? primary, ImageModel? secondary)
+    {
+        var cache = IsDisposed ? null : Services?.Cache;
+        // The new ones first, as showing the same image again must not let go of it in between
+        var lease = primary is null ? null : cache?.Hold(primary);
+        var secondaryLease = secondary is null ? null : cache?.Hold(secondary);
+        Interlocked.Exchange(ref _shownLease, lease)?.Dispose();
+        Interlocked.Exchange(ref _shownSecondaryLease, secondaryLease)?.Dispose();
+        if (IsDisposed)
+        {
+            // Closed meanwhile, so the close did not see these
+            ReleaseShown();
+        }
+    }
+
+    private void ReleaseShown()
+    {
+        Interlocked.Exchange(ref _shownLease, null)?.Dispose();
+        Interlocked.Exchange(ref _shownSecondaryLease, null)?.Dispose();
     }
 
     /// <summary>
@@ -1473,6 +1500,7 @@ public class TabViewModel : IDisposable
         FileInfo.Value = null;
         SecondaryFileInfo.Value = null;
         SecondaryModel = null;
+        Interlocked.Exchange(ref _shownSecondaryLease, null)?.Dispose();
         Animation.End();
         // No files, so the position goes too: a new iterator must not light the buttons from the old list's place
         SetPosition(-1, 0);
@@ -1485,6 +1513,7 @@ public class TabViewModel : IDisposable
         _fileWatcherService?.Unwatch(this);
         Thumbnails?.Release(Id);
 
+        ReleaseShown();
         ImageIterator?.Dispose();
         _archiveStateSubscription?.Dispose();
         _settingsSubscription?.Dispose();

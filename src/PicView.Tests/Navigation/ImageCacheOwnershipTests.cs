@@ -75,6 +75,64 @@ public class ImageCacheOwnershipTests
         Assert.Equal(_fileB.FullName, image.File.FullName);
     }
 
+    [Fact]
+    public async Task ShownImage_OwnerNoLongerReferencesIt_IsNotDisposed()
+    {
+        var tab = _tabs.ActiveTab.Value;
+        var image = await ShowAsync(tab, 0);
+
+        // As when the cache evicts the shown image from the tab's preload window, or a jump releases the window while
+        // the next image loads. Losing focus then disposes every image nothing references
+        _cache.ReleaseImages(tab.Id);
+        _cache.ForceDisposalQueue();
+
+        Assert.False(image.IsDisposed, "The image a tab shows must stay alive whatever its preload window holds");
+    }
+
+    [Fact]
+    public async Task ShownImage_AnotherImageShownInItsPlace_IsReleased()
+    {
+        var tab = _tabs.ActiveTab.Value;
+        var image = await ShowAsync(tab, 0);
+
+        // Far enough that the preload around it does not reach the first image again
+        await ShowAsync(tab, ManyFiles.Length / 2);
+        _cache.ReleaseImages(tab.Id);
+        _cache.ForceDisposalQueue();
+
+        Assert.True(image.IsDisposed, "An image the tab no longer shows should not be kept alive by it");
+    }
+
+    [Fact]
+    public async Task CloseTab_TabShowsCachedImage_ImageIsDisposed()
+    {
+        var tab = _tabs.CreateTab();
+        tab.Initialize();
+        var image = await ShowAsync(tab, 0);
+
+        _tabs.CloseTab(tab);
+        _cache.ForceDisposalQueue();
+
+        Assert.True(image.IsDisposed, "Closing the tab that showed the image should release it for disposal");
+    }
+
+    // More files than the preload reaches around an index, so a preload never wraps round to the shown image
+    private static readonly FileInfo[] ManyFiles = Enumerable.Range(0, 40)
+        .Select(i => new FileInfo(Path.Combine(TestDirectory, $"{i:00}.jpg")))
+        .ToArray();
+
+    private static async Task<ProbeImage> ShowAsync(TabViewModel tab, int index)
+    {
+        if (tab.ImageIterator!.Files.Count is 0)
+        {
+            tab.ImageIterator.Initialize(ManyFiles);
+        }
+
+        await tab.ImageIterator.IterateToIndexAsync(index, new CancellationTokenSource());
+        Assert.Equal(ManyFiles[index].FullName, tab.Model.FileInfo!.FullName);
+        return Assert.IsType<ProbeImage>(tab.Model.Image);
+    }
+
     private static ImageModel LoadProbe(FileInfo file) =>
         new ImageModel { FileInfo = file, Image = new ProbeImage(file) };
 
