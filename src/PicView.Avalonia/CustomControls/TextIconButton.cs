@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.Media;
+using Avalonia.Media.TextFormatting;
 using Avalonia.Threading;
 using PicView.Avalonia.UI;
 
@@ -179,6 +180,26 @@ public class TextIconButton : Button
         {
             StopTimer();
         }
+    }
+
+    /// <summary>
+    /// The width the text takes on one line in its font, even while <see cref="TextMaxWidth"/> clips it. Rounded up
+    /// as layout rounds the text's size, so it adds up to the width the text takes in the row
+    /// </summary>
+    public double MeasureTextWidth()
+    {
+        if (string.IsNullOrEmpty(_textBlock.Text))
+        {
+            return 0;
+        }
+
+        using var layout = new TextLayout(_textBlock.Text,
+            new Typeface(_textBlock.FontFamily, _textBlock.FontStyle, _textBlock.FontWeight), _textBlock.FontSize,
+            foreground: null);
+        var width = layout.WidthIncludingTrailingWhitespace;
+        return _textBlock.UseLayoutRounding
+            ? LayoutHelper.RoundLayoutSizeUp(new Size(width, 0), LayoutHelper.GetLayoutScale(_textBlock)).Width
+            : width;
     }
 
     // --- Icon Clone & Visibility Logic ---

@@ -3,7 +3,9 @@ using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Layout;
 using Avalonia.VisualTree;
+using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.UI;
 using PicView.Core.Config;
 using PicView.Core.DebugTools;
@@ -30,6 +32,24 @@ public partial class CompareBar : UserControl, IDisposable
         ZoomInButton.Classes.Add(HoverClass);
         ResetAlignButton.Classes.Add(HoverClass);
         CloseButton.Classes.Add(HoverClass);
+        _labelledButtons =
+        [
+            OverlayModeButton, SplitModeButton, SyncedModeButton, BlinkModeButton, DifferenceModeButton,
+            BarPositionButton
+        ];
+        // The row's width or the bar's changed, or a label's text did
+        BarScroll.ScrollChanged += (_, _) => UpdateLabels();
+        foreach (var button in _labelledButtons)
+        {
+            button.PropertyChanged += (_, e) =>
+            {
+                if (e.Property == TextIconButton.TextProperty)
+                {
+                    UpdateLabels();
+                }
+            };
+        }
+
         DataContextChanged += (_, _) => SubscribeToTab();
         AttachedToVisualTree += (_, _) => SubscribeToTab();
         DetachedFromVisualTree += (_, _) => Dispose();
@@ -116,9 +136,7 @@ public partial class CompareBar : UserControl, IDisposable
                     };
                 }
 
-                BarPositionButton.IconMargin = position is ComparisonBarPosition.Left or ComparisonBarPosition.Right
-                    ? new Thickness(5, 0, 5, 0)
-                    : new Thickness(0, 0, 5, 0);
+                UpdateLabels(force: true);
 
                 var tr = tab.ParentWindowContext.Translation;
                 BarPositionButton.Text = position switch
@@ -128,6 +146,8 @@ public partial class CompareBar : UserControl, IDisposable
                     ComparisonBarPosition.Right => tr.Right.Value,
                     _ => tr.Bottom.Value
                 };
+                // Names the side while the bar is too narrow for the label
+                ToolTip.SetTip(BarPositionButton, BarPositionButton.Text);
             }, DebugHelper.LogError(nameof(CompareBar), nameof(ComparisonViewModel.BarPosition)))
             .AddTo(ref _subscriptions);
 
@@ -148,6 +168,70 @@ public partial class CompareBar : UserControl, IDisposable
             .SubscribeOnUIThread(() => button.Classes.Set(HoverClass, state.Value != activeWhen),
                 DebugHelper.LogError(nameof(CompareBar), nameof(HoverUnlessActive)))
             .AddTo(ref _subscriptions);
+
+    private readonly TextIconButton[] _labelledButtons;
+
+    // The gap between an icon and its label, which goes with the label
+    private const double IconGap = 5;
+
+    internal bool LabelsShown { get; private set; } = true;
+
+    // The icon's gap as layout rounds its margin to whole device pixels: 5.33 at 150%, so a share counting 5 would
+    // fall short of the labels' real width and flicker between them and the icons
+    internal static double IconGapAt(double scale) =>
+        LayoutHelper.RoundLayoutThickness(new Thickness(0, 0, IconGap, 0), scale).Right;
+
+    // Decides on the row's width with its labels, whether they are shown or not, so showing or hiding them never
+    // changes the answer
+    internal static bool LabelsFit(double available, double rowWidth, double labelShare, bool labelsShown) =>
+        (labelsShown ? rowWidth : rowWidth + labelShare) <= available + 0.5;
+
+    // At the sides the labels always show; at the top and bottom only while the row with them fits the bar
+    private void UpdateLabels(bool force = false)
+    {
+        var vertical = Classes.Contains("vertical");
+        bool show;
+        if (vertical)
+        {
+            show = true;
+        }
+        else
+        {
+            // Before layout, or while hidden, there is no width to go on
+            if (BarScroll.Viewport.Width <= 0)
+            {
+                return;
+            }
+
+            var gap = UseLayoutRounding ? IconGapAt(LayoutHelper.GetLayoutScale(this)) : IconGap;
+            var labelShare = 0d;
+            foreach (var button in _labelledButtons)
+            {
+                if (!string.IsNullOrEmpty(button.Text))
+                {
+                    labelShare += button.MeasureTextWidth() + gap;
+                }
+            }
+
+            show = LabelsFit(BarScroll.Viewport.Width, BarRow.DesiredSize.Width, labelShare, LabelsShown);
+        }
+
+        if (show == LabelsShown && !force)
+        {
+            return;
+        }
+
+        LabelsShown = show;
+        foreach (var button in _labelledButtons)
+        {
+            button.TextMaxWidth = show ? double.PositiveInfinity : 0;
+            button.IconMargin = !show
+                ? default
+                : vertical && ReferenceEquals(button, BarPositionButton)
+                    ? new Thickness(IconGap, 0, IconGap, 0)
+                    : new Thickness(0, 0, IconGap, 0);
+        }
+    }
 
     private void ReportExtent(ComparisonViewModel comparison)
     {

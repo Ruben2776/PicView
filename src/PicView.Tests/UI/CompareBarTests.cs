@@ -67,6 +67,9 @@ public class CompareBarTests
     {
         Settings.Comparison!.BarPosition = position;
         var bar = Compare(window, tab);
+        // Wide enough for the labels at the top and bottom, where a narrow bar takes the icon's gap away
+        window.Width = 1600;
+        Settle(window);
         var button = Assert.IsType<TextIconButton>(bar.FindControl<TextIconButton>("BarPositionButton"));
 
         Assert.Equal(placement, Assert.IsAssignableFrom<PopupFlyoutBase>(button.Flyout).Placement);
@@ -662,6 +665,205 @@ public class CompareBarTests
 
             Assert.True((vertical ? scroll.Offset.Y : scroll.Offset.X) > 0);
         });
+
+    [Theory]
+    [InlineData(100, 100, 40, true, true)]
+    [InlineData(99, 100, 40, true, false)]
+    [InlineData(140, 100, 40, false, true)]
+    [InlineData(139, 100, 40, false, false)]
+    public void LabelsFit_DecidesOnTheLabelledWidth(double available, double rowWidth, double labelShare,
+        bool labelsShown, bool fits) =>
+        Assert.Equal(fits, CompareBar.LabelsFit(available, rowWidth, labelShare, labelsShown));
+
+    // Layout rounds the icon's margin to whole device pixels, so its gap is wider than 5 at 150% and 175%
+    [Theory]
+    [InlineData(1.0, 5.0)]
+    [InlineData(1.25, 4.8)]
+    [InlineData(1.5, 8 / 1.5)]
+    [InlineData(1.75, 9 / 1.75)]
+    [InlineData(2.0, 5.0)]
+    public void IconGapAt_IsTheGapAsLayoutRoundsIt(double scale, double gap) =>
+        Assert.Equal(gap, CompareBar.IconGapAt(scale), precision: 6);
+
+    [AvaloniaFact]
+    public void CompareBar_AtTheBottomWide_ShowsLabels() => WithWindow((window, _, tab) =>
+    {
+        LoadEnglish(tab);
+        var bar = Compare(window, tab);
+        window.Width = 1600;
+        Settle(window);
+
+        Assert.True(bar.LabelsShown);
+        Assert.All(Six(bar), b =>
+        {
+            Assert.Equal(double.PositiveInfinity, b.TextMaxWidth);
+            Assert.Equal(new Thickness(0, 0, 5, 0), b.IconMargin);
+        });
+    });
+
+    [AvaloniaTheory]
+    [InlineData(ComparisonBarPosition.Bottom)]
+    [InlineData(ComparisonBarPosition.Top)]
+    public void CompareBar_AtTheBottomNarrow_ShowsIconsOnly(ComparisonBarPosition position) =>
+        WithWindow((window, _, tab) =>
+        {
+            LoadEnglish(tab);
+            Settings.Comparison!.BarPosition = position;
+            var bar = Compare(window, tab);
+            window.Width = 600;
+            Settle(window);
+
+            Assert.False(bar.LabelsShown);
+            Assert.All(Six(bar), b =>
+            {
+                Assert.Equal(0, b.TextMaxWidth);
+                Assert.Equal(default, b.IconMargin);
+            });
+        });
+
+    [AvaloniaFact]
+    public void CompareBar_NarrowThenWide_ShowsLabelsAgain() => WithWindow((window, _, tab) =>
+    {
+        LoadEnglish(tab);
+        var bar = Compare(window, tab);
+        window.Width = 600;
+        Settle(window);
+        Assert.False(bar.LabelsShown);
+
+        window.Width = 1600;
+        Settle(window);
+
+        Assert.True(bar.LabelsShown);
+    });
+
+    [AvaloniaFact]
+    public void CompareBar_AtTheEdge_DecidesByOnePixelAndHolds() => WithWindow((window, _, tab) =>
+    {
+        LoadEnglish(tab);
+        var bar = Compare(window, tab);
+        window.Width = 1600;
+        Settle(window);
+        var slack = Slack(bar);
+
+        window.Width = 1600 - slack + 1;
+        Settle(window);
+        Settle(window);
+        Assert.True(bar.LabelsShown);
+
+        window.Width = 1600 - slack - 1;
+        Settle(window);
+        Settle(window);
+        Assert.False(bar.LabelsShown);
+    });
+
+    [AvaloniaFact]
+    public void CompareBar_ModeChangeMakesRoom_ShowsLabelsAgain() => WithWindow((window, _, tab) =>
+    {
+        LoadEnglish(tab);
+        var bar = Compare(window, tab, ComparisonMode.Synced);
+        window.Width = 1600;
+        Settle(window);
+        var syncedSlack = Slack(bar);
+
+        tab.Comparison!.SetMode(ComparisonMode.Blink);
+        tab.Comparison.IsBlinkFast.Value = false;
+        window.Width = 1600 - syncedSlack + 2;
+        Settle(window);
+        Assert.False(bar.LabelsShown);
+
+        tab.Comparison.SetMode(ComparisonMode.Synced);
+        Settle(window);
+
+        Assert.True(bar.LabelsShown);
+    });
+
+    [AvaloniaFact]
+    public void CompareBar_NarrowThenDockedLeft_ShowsLabelsWithSideMargins() => WithWindow((window, _, tab) =>
+    {
+        LoadEnglish(tab);
+        Settings.Comparison!.BarPosition = ComparisonBarPosition.Bottom;
+        var bar = Compare(window, tab);
+        window.Width = 600;
+        Settle(window);
+        Assert.False(bar.LabelsShown);
+
+        tab.Comparison!.BarPosition.Value = ComparisonBarPosition.Left;
+        Settle(window);
+
+        Assert.True(bar.LabelsShown);
+        Assert.All(Six(bar), b =>
+        {
+            Assert.Equal(double.PositiveInfinity, b.TextMaxWidth);
+            Assert.Equal(string.Equals(b.Name, "BarPositionButton", StringComparison.Ordinal)
+                ? new Thickness(5, 0, 5, 0)
+                : new Thickness(0, 0, 5, 0), b.IconMargin);
+        });
+    });
+
+    [AvaloniaTheory]
+    [InlineData("OverlayModeButton")]
+    [InlineData("SplitModeButton")]
+    [InlineData("SyncedModeButton")]
+    [InlineData("BlinkModeButton")]
+    [InlineData("DifferenceModeButton")]
+    public void CompareBar_ModeButtons_HaveTheirNameAsTooltip(string name) => WithWindow((window, _, tab) =>
+    {
+        LoadEnglish(tab);
+        var bar = Compare(window, tab);
+        var button = Assert.IsType<TextIconButton>(bar.FindControl<TextIconButton>(name));
+
+        Assert.False(string.IsNullOrEmpty(button.Text));
+        Assert.Equal(button.Text, ToolTip.GetTip(button));
+    });
+
+    [AvaloniaTheory]
+    [InlineData(ComparisonBarPosition.Bottom)]
+    [InlineData(ComparisonBarPosition.Top)]
+    [InlineData(ComparisonBarPosition.Left)]
+    [InlineData(ComparisonBarPosition.Right)]
+    public void CompareBar_PositionButton_HasItsSideAsTooltip(ComparisonBarPosition position) =>
+        WithWindow((window, _, tab) =>
+        {
+            LoadEnglish(tab);
+            Settings.Comparison!.BarPosition = position;
+            var bar = Compare(window, tab);
+            var button = Assert.IsType<TextIconButton>(bar.FindControl<TextIconButton>("BarPositionButton"));
+            var tr = tab.ParentWindowContext.Translation;
+            var side = position switch
+            {
+                ComparisonBarPosition.Top => tr.Top.Value,
+                ComparisonBarPosition.Left => tr.Left.Value,
+                ComparisonBarPosition.Right => tr.Right.Value,
+                _ => tr.Bottom.Value
+            };
+
+            Assert.False(string.IsNullOrEmpty(side));
+            Assert.Equal(side, ToolTip.GetTip(button));
+        });
+
+    // The labels have text only once there is a translation, here the English one
+    private static void LoadEnglish(TabViewModel tab)
+    {
+        Assert.True(TranslationManager.LoadLanguage("en"));
+        tab.ParentWindowContext.Translation.UpdateLanguage();
+    }
+
+    private static readonly string[] LabelledButtonNames =
+    [
+        "OverlayModeButton", "SplitModeButton", "SyncedModeButton", "BlinkModeButton", "DifferenceModeButton",
+        "BarPositionButton"
+    ];
+
+    private static IEnumerable<TextIconButton> Six(CompareBar bar) =>
+        LabelledButtonNames.Select(n => Assert.IsType<TextIconButton>(bar.FindControl<TextIconButton>(n)));
+
+    // How much wider the bar's row could be before it overflows
+    private static double Slack(CompareBar bar)
+    {
+        var scroll = bar.GetVisualDescendants().OfType<AutoScrollViewer>().First();
+        var row = bar.GetVisualDescendants().OfType<ContextualStackPanel>().First();
+        return scroll.Viewport.Width - row.DesiredSize.Width;
+    }
 
     // Every group panel and the opacity slider run in the orientation
     private static void AssertGroupsAndSlider(CompareBar bar, Orientation orientation)

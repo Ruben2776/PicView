@@ -92,6 +92,10 @@
             <Setter Property="HorizontalScrollBarVisibility" Value="Auto" />
             <Setter Property="VerticalScrollBarVisibility" Value="Disabled" />
         </Style>
+        <!--  At the top and bottom the row is only as wide as its content, so the scroll viewer's extent follows it  -->
+        <Style Selector="uc|CompareBar:not(.vertical) customControls|ContextualStackPanel#BarRow">
+            <Setter Property="HorizontalAlignment" Value="Left" />
+        </Style>
         <Style Selector="uc|CompareBar.vertical StackPanel.barGroup">
             <Setter Property="Orientation" Value="Vertical" />
         </Style>
@@ -167,7 +171,10 @@
                 Theme="{StaticResource ClickableMenuScrollButtons}"
                 x:Name="BarScroll">
                 <!--  Contextual rows are left out of its thickness at the sides, so they never resize it  -->
-                <customControls:ContextualStackPanel Classes="barGroup" Spacing="6">
+                <customControls:ContextualStackPanel
+                    Classes="barGroup"
+                    Spacing="6"
+                    x:Name="BarRow">
 
                     <StackPanel Classes="barGroup" Spacing="2">
                         <customControls:TextIconButton
@@ -180,6 +187,7 @@
                             IconMargin="0,0,5,0"
                             IconWidth="12"
                             Text="{CompiledBinding ParentWindowContext.Translation.Overlay.Value}"
+                            ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.Overlay.Value}"
                             x:Name="OverlayModeButton" />
                         <customControls:TextIconButton
                             Classes="compareBtn textIconBtn"
@@ -191,6 +199,7 @@
                             IconMargin="0,0,5,0"
                             IconWidth="12"
                             Text="{CompiledBinding ParentWindowContext.Translation.Split.Value}"
+                            ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.Split.Value}"
                             x:Name="SplitModeButton" />
                         <customControls:TextIconButton
                             Classes="compareBtn textIconBtn"
@@ -202,6 +211,7 @@
                             IconMargin="0,0,5,0"
                             IconWidth="12"
                             Text="{CompiledBinding ParentWindowContext.Translation.Synced.Value}"
+                            ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.Synced.Value}"
                             x:Name="SyncedModeButton" />
                         <customControls:TextIconButton
                             Classes="compareBtn textIconBtn"
@@ -213,6 +223,7 @@
                             IconMargin="0,0,5,0"
                             IconWidth="12"
                             Text="{CompiledBinding ParentWindowContext.Translation.Blink.Value}"
+                            ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.Blink.Value}"
                             x:Name="BlinkModeButton" />
                         <customControls:TextIconButton
                             Classes="compareBtn textIconBtn"
@@ -224,6 +235,7 @@
                             IconMargin="0,0,5,0"
                             IconWidth="12"
                             Text="{CompiledBinding ParentWindowContext.Translation.Difference.Value}"
+                            ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.Difference.Value}"
                             x:Name="DifferenceModeButton" />
                     </StackPanel>
 
