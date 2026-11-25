@@ -92,7 +92,7 @@ public class App : Application, IPlatformSpecificService
         throw new NotImplementedException();
     }
 
-    public async Task SetAsWallpaper(string path, int wallpaperStyle)
+    public async Task SetAsWallpaper(string path, WallpaperStyle style)
     {
         throw new NotImplementedException();
     }

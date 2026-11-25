@@ -148,7 +148,7 @@ public class App : Application, IPlatformSpecificService
         // TODO: make interface async
     }
 
-    public async Task SetAsWallpaper(string path, int wallpaperStyle)
+    public async Task SetAsWallpaper(string path, WallpaperStyle style)
     {
          await WallpaperHelper.SetWallpaper(path).ConfigureAwait(false);
     }

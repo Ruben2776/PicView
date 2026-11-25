@@ -1,20 +1,12 @@
 ﻿using System.ComponentModel;
 using System.Runtime.InteropServices;
 using Microsoft.Win32;
+using PicView.Core.IPlatform;
 
 namespace PicView.Core.WindowsNT.Wallpaper;
 
 public static class WallpaperHelper
 {
-    public enum WallpaperStyle
-    {
-        Tile,
-        Center,
-        Stretch,
-        Fit,
-        Fill
-    }
-
     // Used to check for wallpaper support
     [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]

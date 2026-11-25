@@ -176,7 +176,7 @@ public class GalleryLoadBenchmarks
         public void OpenWith(string path) { }
         public void LocateOnDisk(string path) { }
         public void ShowFileProperties(string path) { }
-        public Task SetAsWallpaper(string path, int wallpaperStyle) => Task.CompletedTask;
+        public Task SetAsWallpaper(string path, WallpaperStyle style) => Task.CompletedTask;
         public Task<bool> SetAsLockScreen(string path) => Task.FromResult(false);
         public Task<bool> ExtractWithLocalSoftwareAsync(string path, string tempDirectory) => Task.FromResult(false);
         public string DefaultJsonKeyMap() => "{}";

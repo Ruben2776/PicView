@@ -42,7 +42,7 @@ public class ClipboardCopyServiceTests
         public void OpenWith(string path) { }
         public void LocateOnDisk(string path) { }
         public void ShowFileProperties(string path) { }
-        public Task SetAsWallpaper(string path, int wallpaperStyle) => Task.CompletedTask;
+        public Task SetAsWallpaper(string path, WallpaperStyle style) => Task.CompletedTask;
         public Task<bool> SetAsLockScreen(string path) => Task.FromResult(false);
         public bool CopyFile(string path) => false;
         public Task CopyImageToClipboard(object bitmap) => Task.CompletedTask;

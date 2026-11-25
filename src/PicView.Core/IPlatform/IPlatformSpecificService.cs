@@ -21,7 +21,7 @@ public interface IPlatformSpecificService
     
     void ShowFileProperties(string path);
     
-    Task SetAsWallpaper(string path, int wallpaperStyle);
+    Task SetAsWallpaper(string path, WallpaperStyle style);
     
     Task<bool> SetAsLockScreen(string path);
     

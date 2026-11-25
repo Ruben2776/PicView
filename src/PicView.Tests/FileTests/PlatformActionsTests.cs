@@ -104,7 +104,7 @@ public class PlatformActionsTests
         public List<FileInfo> GetFiles(FileInfo fileInfo, FileOrder order) => [];
         public int CompareStrings(string str1, string str2) => string.CompareOrdinal(str1, str2);
         public void ShowFileProperties(string path) { }
-        public Task SetAsWallpaper(string path, int wallpaperStyle) => Task.CompletedTask;
+        public Task SetAsWallpaper(string path, WallpaperStyle style) => Task.CompletedTask;
         public Task<bool> ExtractWithLocalSoftwareAsync(string path, string tempDirectory) => Task.FromResult(false);
         public string DefaultJsonKeyMap() => "{}";
         public void InitiateFileAssociationService() { }

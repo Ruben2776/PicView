@@ -2,6 +2,7 @@
 using Avalonia.Threading;
 using PicView.Avalonia.FileSystem;
 using PicView.Avalonia.UI;
+using PicView.Core.IPlatform;
 using PicView.Core.Localization;
 using PicView.Core.ViewModels;
 
@@ -28,7 +29,7 @@ public static class WallpaperManager
             var core = await Dispatcher.UIThread.InvokeAsync(() => Application.Current.DataContext as CoreViewModel);
             if (core?.PlatformService is { } platform)
             {
-                await platform.SetAsWallpaper(file, GetWallpaperStyle(style)).ConfigureAwait(false);
+                await platform.SetAsWallpaper(file, style).ConfigureAwait(false);
             }
         }
         catch (Exception e)
@@ -59,7 +60,7 @@ public static class WallpaperManager
             var core = await Dispatcher.UIThread.InvokeAsync(() => Application.Current.DataContext as CoreViewModel);
             if (core?.PlatformService is { } platform)
             {
-                await platform.SetAsWallpaper(file, GetWallpaperStyle(style)).ConfigureAwait(false);
+                await platform.SetAsWallpaper(file, style).ConfigureAwait(false);
             }
         }
         catch (Exception e)
@@ -69,65 +70,5 @@ public static class WallpaperManager
             Console.WriteLine(e);
 #endif
         }
-    }
-
-    public static int GetWallpaperStyle(WallpaperStyle style)
-    {
-        switch (style)
-        {
-            case WallpaperStyle.Tile:
-                if (OperatingSystem.IsMacOS())
-                {
-                    return 5; 
-                }
-                if (OperatingSystem.IsWindows())
-                {
-                    return 0;
-                }
-                break;
-            case WallpaperStyle.Center:
-                if (OperatingSystem.IsMacOS())
-                {
-                    return 4; 
-                }
-                if (OperatingSystem.IsWindows())
-                {
-                    return 1;
-                }
-                break;
-            case WallpaperStyle.Stretch:
-                if (OperatingSystem.IsMacOS())
-                {
-                    return 3; 
-                }
-                if (OperatingSystem.IsWindows())
-                {
-                    return 2;
-                }
-                break;
-            case WallpaperStyle.Fit:
-                if (OperatingSystem.IsMacOS())
-                {
-                    return 2; 
-                }
-                if (OperatingSystem.IsWindows())
-                {
-                    return 3;
-                }
-                break;
-            case WallpaperStyle.Fill:
-                if (OperatingSystem.IsMacOS())
-                {
-                    return 1;
-                }
-                if (OperatingSystem.IsWindows())
-                {
-                    return 4;
-                }
-                break;
-            default:
-                return OperatingSystem.IsMacOS() ? 1 : 3;
-        }
-        return 0;
     }
 }

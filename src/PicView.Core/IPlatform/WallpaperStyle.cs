@@ -1,4 +1,4 @@
-﻿namespace PicView.Avalonia.Wallpaper;
+﻿namespace PicView.Core.IPlatform;
 
 public enum WallpaperStyle
 {

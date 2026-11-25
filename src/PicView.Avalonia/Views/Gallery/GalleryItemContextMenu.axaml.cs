@@ -7,6 +7,7 @@ using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.FileSystem;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.Wallpaper;
+using PicView.Core.IPlatform;
 using PicView.Core.Navigation;
 using PicView.Core.ViewModels;
 

@@ -128,13 +128,9 @@ public class App : Application, IPlatformSpecificService
         FileExplorer.ShowFileProperties(path);
     }
 
-    public async Task SetAsWallpaper(string path, int wallpaperStyle)
+    public async Task SetAsWallpaper(string path, WallpaperStyle style)
     {
-        await Task.Run(() =>
-        {
-            var style = (WallpaperHelper.WallpaperStyle)wallpaperStyle;
-            WallpaperHelper.SetDesktopWallpaper(path, style);
-        }).ConfigureAwait(false);
+        await Task.Run(() => WallpaperHelper.SetDesktopWallpaper(path, style)).ConfigureAwait(false);
     }
 
     public async Task<bool> SetAsLockScreen(string path)
