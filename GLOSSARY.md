@@ -206,7 +206,7 @@ _Avoid_: Gallery layout, view mode, Gallery Mode (that is Closed, Docked or Expa
 ## Saving
 
 **Save Source**:
-What a save writes out, decided by the save module rather than the caller: the Effects Render when there is one for the shown file, else the file on disk, else the in-memory bitmap of a Single Image. The tab's rotation and flip are applied to each. Setting a wallpaper or a lock screen image writes out the same Save Source, and a Print Job prints it.
+What a save writes out, decided by the save module rather than the caller: the Effects Render when there is one for the shown file, else the file on disk, else the in-memory bitmap of a Single Image. The tab's rotation and flip are applied to each. Setting a wallpaper or a lock screen image writes out the same Save Source, and a Print Job prints it. A Gallery Item that is the Shown File is set as wallpaper or lock screen image from the Save Source too; any other Gallery Item is set from its file on disk.
 _Avoid_: Source file, input path
 
 **Save Module**:

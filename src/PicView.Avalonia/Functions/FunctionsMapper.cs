@@ -14,7 +14,6 @@ using PicView.Avalonia.Printing;
 using PicView.Avalonia.SettingsManagement;
 using PicView.Avalonia.StartUp;
 using PicView.Avalonia.UI;
-using PicView.Avalonia.Wallpaper;
 using PicView.Avalonia.WindowBehavior;
 using PicView.Core.Config;
 using PicView.Core.DebugTools;
@@ -902,20 +901,15 @@ public class FunctionsMapper : IActionRunner
     private async ValueTask SetAsWallpaper() =>
         await SetAsWallpaperFilled().ConfigureAwait(false);
 
-    private async ValueTask SetAsWallpaperTiled() =>
-        await WallpaperManager.SetAsWallpaper(WallpaperStyle.Tile, _vm).ConfigureAwait(false);
+    private ValueTask SetAsWallpaperTiled() => PlatformActions.SetAsWallpaper(_vm, WallpaperStyle.Tile);
 
-    private async ValueTask SetAsWallpaperCentered() =>
-        await WallpaperManager.SetAsWallpaper(WallpaperStyle.Center, _vm).ConfigureAwait(false);
+    private ValueTask SetAsWallpaperCentered() => PlatformActions.SetAsWallpaper(_vm, WallpaperStyle.Center);
 
-    private async ValueTask SetAsWallpaperStretched() =>
-        await WallpaperManager.SetAsWallpaper(WallpaperStyle.Stretch, _vm).ConfigureAwait(false);
+    private ValueTask SetAsWallpaperStretched() => PlatformActions.SetAsWallpaper(_vm, WallpaperStyle.Stretch);
 
-    private async ValueTask SetAsWallpaperFitted() =>
-        await WallpaperManager.SetAsWallpaper(WallpaperStyle.Fit, _vm).ConfigureAwait(false);
+    private ValueTask SetAsWallpaperFitted() => PlatformActions.SetAsWallpaper(_vm, WallpaperStyle.Fit);
 
-    private async ValueTask SetAsWallpaperFilled() =>
-        await WallpaperManager.SetAsWallpaper(WallpaperStyle.Fill, _vm).ConfigureAwait(false);
+    private ValueTask SetAsWallpaperFilled() => PlatformActions.SetAsWallpaper(_vm, WallpaperStyle.Fill);
 
     private ValueTask SetAsLockScreen() => PlatformActions.SetAsLockScreen(_vm);
 

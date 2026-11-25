@@ -6,7 +6,6 @@ using PicView.Avalonia.Clipboard;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.FileSystem;
 using PicView.Avalonia.ImageHandling;
-using PicView.Avalonia.Wallpaper;
 using PicView.Core.IPlatform;
 using PicView.Core.Navigation;
 using PicView.Core.ViewModels;
@@ -32,7 +31,6 @@ public partial class GalleryItemContextMenu : ContextMenu
             LockscreenSeparator.IsVisible = false;
             LockscreenItem.IsVisible = false;
         }
-        LockscreenItem.AddHandler(Button.ClickEvent, SetAsLockScreenImageAsync);
     }
 
     protected override Type StyleKeyOverride => typeof(ContextMenu);
@@ -103,7 +101,7 @@ public partial class GalleryItemContextMenu : ContextMenu
         _ = FileManager.LocateOnDisk(item.FileLocation).ConfigureAwait(false);
     }
 
-    // Through the Wallpaper Manager, which converts a file the OS cannot show, shows the busy indicator and reports a failure
+    // Through Platform Actions, which converts a file the OS cannot show, claims Busy and reports a failure
     private void SetAsWallpaper(WallpaperStyle style)
     {
         if (ItemViewModel is not { } item || MainWindow is not { DataContext: MainWindowViewModel vm })
@@ -111,18 +109,17 @@ public partial class GalleryItemContextMenu : ContextMenu
             return;
         }
 
-        _ = WallpaperManager.SetAsWallpaper(item.FileLocation, style, vm);
+        _ = PlatformActions.SetAsWallpaper(vm, item.FileLocation, style);
     }
 
-    // Through Platform Actions, which converts a file the OS cannot show, shows the busy indicator and reports a failure
-    private async Task SetAsLockScreenImageAsync()
+    private void Lockscreen_OnClick(object? sender, RoutedEventArgs e)
     {
         if (ItemViewModel is not { } item || MainWindow is not { DataContext: MainWindowViewModel vm })
         {
             return;
         }
 
-        await PlatformActions.SetAsLockScreen(vm.Core.PlatformService, item.FileLocation).ConfigureAwait(false);
+        _ = PlatformActions.SetAsLockScreen(vm, item.FileLocation);
     }
 
     private void WallpaperFilled_OnClick(object? sender, RoutedEventArgs e) => SetAsWallpaper(WallpaperStyle.Fill);

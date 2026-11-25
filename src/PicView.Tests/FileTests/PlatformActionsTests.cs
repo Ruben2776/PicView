@@ -1,12 +1,21 @@
 using PicView.Avalonia.FileSystem;
 using PicView.Core.FileSorting;
 using PicView.Core.IPlatform;
+using PicView.Core.ViewModels;
 
 namespace PicView.Tests.FileTests;
 
 public class PlatformActionsTests
 {
     private readonly RecordingPlatform _platform = new();
+    private readonly List<string> _reports = [];
+    private readonly TabViewModel _tab;
+
+    public PlatformActionsTests()
+    {
+        SetDefaults();
+        _tab = new TabViewModel(new MainWindowViewModel(null!, null!, null!, null!));
+    }
 
     [Fact]
     public async Task OpenWith_Path_PassesPathToPlatform()
@@ -49,38 +58,134 @@ public class PlatformActionsTests
     }
 
     [Fact]
-    public async Task SetAsLockScreen_PlatformSetsIt_PassesPathAndReturnsTrue()
+    public async Task SetExportedImage_ConvertedFile_ReachesThePlatformAsTheExportedFile()
     {
         _platform.LockScreenResult = true;
 
-        var isSet = await PlatformActions.SetAsLockScreen(_platform, "C:\\a.jpg");
+        await PlatformActions.SetExportedImage(_tab, _platform, () => new ValueTask<string?>("C:\\temp\\a.png"),
+            LockScreen, _reports.Add);
 
-        Assert.True(isSet);
-        Assert.Equal(["SetAsLockScreen C:\\a.jpg"], _platform.Calls);
+        Assert.Equal(["SetAsLockScreen C:\\temp\\a.png"], _platform.Calls);
+        Assert.Empty(_reports);
     }
 
     [Fact]
-    public async Task SetAsLockScreen_PlatformRefuses_ReturnsFalse()
+    public async Task SetExportedImage_Wallpaper_PassesTheStyle()
+    {
+        await PlatformActions.SetExportedImage(_tab, _platform, () => new ValueTask<string?>("C:\\a.jpg"),
+            PlatformActions.Wallpaper(WallpaperStyle.Fit), _reports.Add);
+
+        Assert.Equal(["SetAsWallpaper C:\\a.jpg Fit"], _platform.Calls);
+        Assert.Empty(_reports);
+    }
+
+    [Fact]
+    public async Task SetExportedImage_PlatformRefuses_ReportsOnce()
     {
         _platform.LockScreenResult = false;
 
-        Assert.False(await PlatformActions.SetAsLockScreen(_platform, "C:\\a.jpg"));
+        await PlatformActions.SetExportedImage(_tab, _platform, () => new ValueTask<string?>("C:\\a.jpg"),
+            LockScreen, _reports.Add);
+
+        Assert.Single(_reports);
     }
 
-    [Fact]
-    public async Task SetAsLockScreen_NoFile_DoesNotAskThePlatform()
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    public async Task SetExportedImage_ExportYieldsNoFile_ReportsWithoutAskingThePlatform(string? exported)
     {
-        _platform.LockScreenResult = true;
+        await PlatformActions.SetExportedImage(_tab, _platform, () => new ValueTask<string?>(exported),
+            LockScreen, _reports.Add);
 
-        Assert.False(await PlatformActions.SetAsLockScreen(_platform, null));
         Assert.Empty(_platform.Calls);
+        Assert.Single(_reports);
     }
 
     [Fact]
-    public async Task SetAsLockScreen_NoPlatform_ReturnsFalse()
+    public async Task SetExportedImage_ExportThrows_ReportsTheMessage()
     {
-        Assert.False(await PlatformActions.SetAsLockScreen(null, "C:\\a.jpg"));
+        await PlatformActions.SetExportedImage(_tab, _platform,
+            () => throw new InvalidOperationException("cannot read"), LockScreen, _reports.Add);
+
+        Assert.Equal(["cannot read"], _reports);
+        Assert.False(_tab.IsBusy.Value);
     }
+
+    [Fact]
+    public async Task SetExportedImage_PlatformThrows_ReportsTheMessage()
+    {
+        _platform.WallpaperError = new NotImplementedException("no wallpaper here");
+
+        await PlatformActions.SetExportedImage(_tab, _platform, () => new ValueTask<string?>("C:\\a.jpg"),
+            PlatformActions.Wallpaper(WallpaperStyle.Fill), _reports.Add);
+
+        Assert.Equal(["no wallpaper here"], _reports);
+    }
+
+    [Fact]
+    public async Task SetExportedImage_NoPlatform_DoesNotExportOrReport()
+    {
+        var isExported = false;
+
+        await PlatformActions.SetExportedImage(_tab, null, () =>
+        {
+            isExported = true;
+            return new ValueTask<string?>("C:\\a.jpg");
+        }, LockScreen, _reports.Add);
+
+        Assert.False(isExported);
+        Assert.Empty(_reports);
+    }
+
+    [Fact]
+    public async Task SetExportedImage_TabIsBusyWhileExportingAndFreeAfter()
+    {
+        var wasBusy = false;
+
+        await PlatformActions.SetExportedImage(_tab, _platform, () =>
+        {
+            wasBusy = _tab.IsBusy.Value;
+            return new ValueTask<string?>("C:\\a.jpg");
+        }, LockScreen, _reports.Add);
+
+        Assert.True(wasBusy);
+        Assert.False(_tab.IsBusy.Value);
+    }
+
+    [Fact]
+    public async Task ExportFor_PathOfTheShownFile_ExportsItAsShown()
+    {
+        _tab.FileInfo.Value = new FileInfo("C:\\pictures\\a.heic");
+
+        var export = PlatformActions.ExportFor(_tab, "C:\\pictures\\a.heic",
+            () => new ValueTask<string?>("shown"), path => new ValueTask<string?>("disk " + path));
+
+        Assert.Equal("shown", await export());
+    }
+
+    [Fact]
+    public async Task ExportFor_PathOfAnotherFile_ExportsTheFileOnDisk()
+    {
+        _tab.FileInfo.Value = new FileInfo("C:\\pictures\\a.heic");
+
+        var export = PlatformActions.ExportFor(_tab, "C:\\pictures\\b.heic",
+            () => new ValueTask<string?>("shown"), path => new ValueTask<string?>("disk " + path));
+
+        Assert.Equal("disk C:\\pictures\\b.heic", await export());
+    }
+
+    [Fact]
+    public async Task ExportFor_NoShownFile_ExportsTheFileOnDisk()
+    {
+        var export = PlatformActions.ExportFor(_tab, "C:\\pictures\\b.heic",
+            () => new ValueTask<string?>("shown"), path => new ValueTask<string?>("disk " + path));
+
+        Assert.Equal("disk C:\\pictures\\b.heic", await export());
+    }
+
+    private static Task<bool> LockScreen(IPlatformSpecificService platform, string file) =>
+        platform.SetAsLockScreen(file);
 
     private sealed class RecordingPlatform : IPlatformSpecificService
     {
@@ -98,13 +203,20 @@ public class PlatformActionsTests
             return LockScreenResult;
         }
 
+        public Exception? WallpaperError { get; set; }
+
+        public Task SetAsWallpaper(string path, WallpaperStyle style)
+        {
+            Calls.Add($"SetAsWallpaper {path} {style}");
+            return WallpaperError is null ? Task.CompletedTask : Task.FromException(WallpaperError);
+        }
+
         public void SetTaskbarProgress(ulong progress, ulong maximum) { }
         public void StopTaskbarProgress() { }
         public void SetCursorPos(int x, int y) { }
         public List<FileInfo> GetFiles(FileInfo fileInfo, FileOrder order) => [];
         public int CompareStrings(string str1, string str2) => string.CompareOrdinal(str1, str2);
         public void ShowFileProperties(string path) { }
-        public Task SetAsWallpaper(string path, WallpaperStyle style) => Task.CompletedTask;
         public Task<bool> ExtractWithLocalSoftwareAsync(string path, string tempDirectory) => Task.FromResult(false);
         public string DefaultJsonKeyMap() => "{}";
         public void InitiateFileAssociationService() { }
