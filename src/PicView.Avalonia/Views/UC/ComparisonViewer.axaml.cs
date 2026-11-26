@@ -10,9 +10,11 @@ using Avalonia.Threading;
 using Avalonia.VisualTree;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.CustomControls.Zoom;
+using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.ImageTransformations;
 using PicView.Avalonia.Input;
 using PicView.Avalonia.UI;
+using PicView.Core.Comparison;
 using PicView.Core.Config;
 using PicView.Core.DebugTools;
 using PicView.Core.Extensions;
@@ -24,7 +26,8 @@ namespace PicView.Avalonia.Views.UC;
 
 /// <summary>
 /// Shows a tab's <see cref="ComparisonViewModel"/>: B stacked over A in the overlay, split, blink and difference
-/// modes, or A and B side by side, zoomed and panned together, in the synced mode. Its zoom is the tab's Zoom Factor.
+/// modes, A and B side by side, zoomed and panned together, in the synced mode, or A alone in Pixel Info, which
+/// reads the pixel under the pointer. Its zoom is the tab's Zoom Factor.
 /// </summary>
 public partial class ComparisonViewer : UserControl, INavigableContent, IDisposable
 {
@@ -126,6 +129,12 @@ public partial class ComparisonViewer : UserControl, INavigableContent, IDisposa
         c.IsAligning.AsObservable().SubscribeOnUIThread(ShowAligning, LogError(nameof(ShowAligning)))
             .AddTo(ref _disposables);
 
+        // Pixel Info reads the pixel again in the image A now shows, so a swap reads the same place in the other
+        c.IsPixelInfo.AsObservable().SubscribeOnUIThread(ShowPixel, LogError(nameof(ShowPixel)))
+            .AddTo(ref _disposables);
+        c.ImageA.AsObservable().SubscribeOnUIThread(ShowPixel, LogError(nameof(ShowPixel)))
+            .AddTo(ref _disposables);
+
         // Entering or leaving the synced layout in a shown viewer: the factor follows the layout now shown
         c.IsSynced.AsObservable().Skip(1).SubscribeOnUIThread(ShowSyncedFactor, LogError(nameof(ShowSyncedFactor)))
             .AddTo(ref _disposables);
@@ -144,6 +153,7 @@ public partial class ComparisonViewer : UserControl, INavigableContent, IDisposa
         MainPanel.SizeChanged += OnStackHostSizeChanged;
         StackScrollViewer.ScrollChanged += OnStackScrollChanged;
         StackHost.PointerPressed += OnStackHostPointerPressed;
+        StackHost.PointerMoved += OnStackHostPointerMoved;
         SplitOverlay.PointerPressed += OnSplitPointerPressed;
         SplitOverlay.PointerMoved += OnSplitPointerMoved;
         SplitOverlay.PointerReleased += OnSplitPointerReleased;
@@ -457,8 +467,15 @@ public partial class ComparisonViewer : UserControl, INavigableContent, IDisposa
     {
         var c = Comparison;
         ImageB.Stretch = c.IsStretchFill.Value ? Stretch.Fill : Stretch.Uniform;
+        // Pixel Info shows A alone
+        ImageB.IsVisible = c.Mode.Value is not ComparisonMode.PixelInfo;
         switch (c.Mode.Value)
         {
+            case ComparisonMode.PixelInfo:
+                StopBlinkTimer();
+                ImageB.Clip = null;
+                break;
+
             case ComparisonMode.Overlay:
                 StopBlinkTimer();
                 ImageB.BlendMode = BitmapBlendingMode.Unspecified;
@@ -787,6 +804,58 @@ public partial class ComparisonViewer : UserControl, INavigableContent, IDisposa
 
     #endregion
 
+    #region Pixel Info
+
+    // The pixel last read, in A's own pixels: 0, 0 until the pointer has been over the image
+    private PixelPoint _pixel;
+
+    private void OnStackHostPointerMoved(object? sender, PointerEventArgs e)
+    {
+        if (!Comparison.IsPixelInfo.Value || ImageA.Source is not IImage shown)
+        {
+            return;
+        }
+
+        var size = shown is Bitmap bitmap
+            ? bitmap.PixelSize
+            : new PixelSize((int)Math.Round(shown.Size.Width), (int)Math.Round(shown.Size.Height));
+        // Measured on the image itself, below the rotation and the flip, so the pixel is the file's however it is
+        // turned. Off the image the last reading stays
+        var point = e.GetPosition(ImageA);
+        if (!PixelReading.TryLocate(point.X, point.Y, ImageA.Bounds.Width, ImageA.Bounds.Height, size.Width,
+                size.Height, out var x, out var y) || _pixel == new PixelPoint(x, y))
+        {
+            return;
+        }
+
+        _pixel = new PixelPoint(x, y);
+        ShowPixel();
+    }
+
+    // Writes the reading at the pixel last read. A drawing, such as an SVG, has a place and no color
+    private void ShowPixel()
+    {
+        if (!Comparison.IsPixelInfo.Value)
+        {
+            return;
+        }
+
+        if (Comparison.ImageA.Value is not Bitmap bitmap)
+        {
+            Comparison.ShowPixel(new PixelReading(_pixel.X, _pixel.Y, null));
+            return;
+        }
+
+        // Another image may be smaller than the one the pixel was read in
+        var size = bitmap.PixelSize;
+        _pixel = new PixelPoint(Math.Clamp(_pixel.X, 0, Math.Max(0, size.Width - 1)),
+            Math.Clamp(_pixel.Y, 0, Math.Max(0, size.Height - 1)));
+        Comparison.ShowPixel(new PixelReading(_pixel.X, _pixel.Y,
+            BitmapPixelReader.ReadArgb(bitmap, _pixel.X, _pixel.Y)));
+    }
+
+    #endregion
+
     #region Synced badges and crosshairs
 
     private void UpdateComparisonBadges()
@@ -939,6 +1008,7 @@ public partial class ComparisonViewer : UserControl, INavigableContent, IDisposa
         MainPanel.SizeChanged -= OnStackHostSizeChanged;
         StackScrollViewer.ScrollChanged -= OnStackScrollChanged;
         StackHost.PointerPressed -= OnStackHostPointerPressed;
+        StackHost.PointerMoved -= OnStackHostPointerMoved;
         SplitOverlay.PointerPressed -= OnSplitPointerPressed;
         SplitOverlay.PointerMoved -= OnSplitPointerMoved;
         SplitOverlay.PointerReleased -= OnSplitPointerReleased;

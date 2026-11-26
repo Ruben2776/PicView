@@ -347,6 +347,7 @@ public class LanguageModel
     public string? Pin { get; set; }
     public string? PinA { get; set; }
     public string? Pinned { get; set; }
+    public string? PixelInfo { get; set; }
     public string? Pixels { get; set; }
     public string? PlayPause { get; set; }
     public string? Portrait { get; set; }

@@ -335,7 +335,8 @@ public enum ComparisonMode
     Split = 1,
     Blink = 2,
     Difference = 3,
-    Synced = 4
+    Synced = 4,
+    PixelInfo = 5
 }
 
 public enum ComparisonBarPosition

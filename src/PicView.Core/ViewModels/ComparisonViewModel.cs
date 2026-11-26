@@ -31,6 +31,9 @@ public sealed class ComparisonViewModel : IDisposable
 
     private (double X, double Y) _alignA1, _alignB1, _alignA2;
 
+    // The mode Pixel Info was turned on from, which turning it off goes back to
+    private ComparisonMode _modeBeforePixelInfo = ComparisonMode.Difference;
+
     private bool _isDisposed;
 
     private readonly BindableReactiveProperty<bool> _isSwapped = new();
@@ -46,6 +49,7 @@ public sealed class ComparisonViewModel : IDisposable
     private readonly BindableReactiveProperty<ImageType?> _imageTypeB = new();
     private readonly BindableReactiveProperty<FileInfo?> _fileInfoA = new();
     private readonly BindableReactiveProperty<FileInfo?> _fileInfoB = new();
+    private readonly BindableReactiveProperty<string> _pixelInfoText = new(default(PixelReading).Text);
 
     public BindableReactiveProperty<ComparisonMode> Mode { get; }
     public BindableReactiveProperty<double> OverlayOpacity { get; }
@@ -64,6 +68,15 @@ public sealed class ComparisonViewModel : IDisposable
     public IReadOnlyBindableReactiveProperty<bool> IsBlink { get; }
     public IReadOnlyBindableReactiveProperty<bool> IsDifference { get; }
     public IReadOnlyBindableReactiveProperty<bool> IsSynced { get; }
+
+    /// <summary>Whether the mode is Pixel Info, which shows A alone and reads the pixel under the pointer.</summary>
+    public IReadOnlyBindableReactiveProperty<bool> IsPixelInfo { get; }
+
+    /// <summary>Whether B shows over A: in the overlay, split, blink and difference modes.</summary>
+    public IReadOnlyBindableReactiveProperty<bool> IsStacked { get; }
+
+    /// <summary>The last pixel read in Pixel Info, as the compare bar writes it.</summary>
+    public IReadOnlyBindableReactiveProperty<string> PixelInfoText => _pixelInfoText;
 
     public IReadOnlyBindableReactiveProperty<bool> IsSwapped => _isSwapped;
     public IReadOnlyBindableReactiveProperty<bool> IsPinned => _isPinned;
@@ -122,25 +135,44 @@ public sealed class ComparisonViewModel : IDisposable
         IsBlink = Is(ComparisonMode.Blink);
         IsDifference = Is(ComparisonMode.Difference);
         IsSynced = Is(ComparisonMode.Synced);
+        IsPixelInfo = Is(ComparisonMode.PixelInfo);
+        IsStacked = Mode.Select(static mode => mode is not (ComparisonMode.Synced or ComparisonMode.PixelInfo))
+            .DistinctUntilChanged()
+            .ToReadOnlyBindableReactiveProperty();
 
         _isAligning = _alignmentStep.Select(static step => step != 0)
             .DistinctUntilChanged()
             .ToReadOnlyBindableReactiveProperty();
 
-        // The synced layout hides the stacked pair the points are picked on and the button that stops picking them,
-        // so entering it stops picking; an alignment already made is kept
-        IsSynced.AsObservable().Where(static synced => synced).Subscribe(_ => _alignmentStep.Value = 0,
-            DebugHelper.LogError(nameof(ComparisonViewModel), nameof(IsSynced)));
+        // The synced layout and Pixel Info hide the stacked pair the points are picked on and the button that stops
+        // picking them, so entering either stops picking; an alignment already made is kept
+        IsStacked.AsObservable().Where(static stacked => !stacked).Subscribe(_ => _alignmentStep.Value = 0,
+            DebugHelper.LogError(nameof(ComparisonViewModel), nameof(IsStacked)));
+
+        Mode.Where(static mode => mode is not ComparisonMode.PixelInfo).Subscribe(
+            mode => _modeBeforePixelInfo = mode,
+            DebugHelper.LogError(nameof(ComparisonViewModel), nameof(TogglePixelInfo)));
 
         UpdateShown();
     }
 
-    /// <summary>The mode after <paramref name="mode"/>, wrapping from the last to the first.</summary>
-    public static ComparisonMode Next(ComparisonMode mode) => (ComparisonMode)(((int)mode + 1) % 5);
+    /// <summary>
+    /// The mode after <paramref name="mode"/>, wrapping from the synced mode to the first. Pixel Info is not in the
+    /// cycle: it has its own button, and the mode after it is the first.
+    /// </summary>
+    public static ComparisonMode Next(ComparisonMode mode) =>
+        mode is ComparisonMode.PixelInfo ? ComparisonMode.Overlay : (ComparisonMode)(((int)mode + 1) % 5);
 
     public void SetMode(ComparisonMode mode) => Mode.Value = mode;
 
     public void NextMode() => Mode.Value = Next(Mode.Value);
+
+    /// <summary>Turns Pixel Info on, or off again to the mode it was turned on from.</summary>
+    public void TogglePixelInfo() =>
+        Mode.Value = Mode.Value is ComparisonMode.PixelInfo ? _modeBeforePixelInfo : ComparisonMode.PixelInfo;
+
+    /// <summary>Shows <paramref name="reading"/> as the pixel read in Pixel Info.</summary>
+    public void ShowPixel(PixelReading reading) => _pixelInfoText.Value = reading.Text;
 
     /// <summary>Exchanges A and B, unless neither shows an image.</summary>
     public void Swap()
@@ -297,6 +329,9 @@ public sealed class ComparisonViewModel : IDisposable
         IsBlink.Dispose();
         IsDifference.Dispose();
         IsSynced.Dispose();
+        IsPixelInfo.Dispose();
+        IsStacked.Dispose();
+        _pixelInfoText.Dispose();
         _isSwapped.Dispose();
         _isPinned.Dispose();
         _isAligning.Dispose();

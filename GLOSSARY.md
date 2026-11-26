@@ -321,6 +321,10 @@ _Avoid_: Scale, user zoom, zoom amount
 The percent of its pixel size an image is shown at: its Fit Scale times its Zoom Factor, times 100, rounded. 100 means one screen pixel per image pixel. The title shows it. The tab derives it; nothing sets it.
 _Avoid_: Zoom percentage, zoom value
 
+**Pixel Info**:
+A comparison mode that shows A alone and reads the pixel under the pointer: its place in the image's own pixels, counted from 0 at the top left however the image is rotated or flipped, and its color as hex, with the alpha only when the pixel is not opaque. The compare bar writes the reading and keeps the last one while the pointer is off the image. Its own button turns it on, and off again to the mode it was turned on from; it is not in the cycle of the other five modes. An image without pixels, such as an SVG, gives a place and no color.
+_Avoid_: Color picker, pointer position, coordinates mode
+
 **Quarter Turn**:
 A rotation by a multiple of 90°, the only rotation a tab has. One or three quarter turns swap the image's width and height for fitting.
 _Avoid_: Rotation angle, arbitrary rotation

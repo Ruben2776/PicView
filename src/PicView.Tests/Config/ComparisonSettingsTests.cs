@@ -45,6 +45,16 @@ public class ComparisonSettingsTests
     public void ComparisonMode_Synced_IsFour() => Assert.Equal(4, (int)ComparisonMode.Synced);
 
     [Fact]
+    public void ComparisonMode_PixelInfo_IsFiveAndRoundTripsThroughJson()
+    {
+        Assert.Equal(5, (int)ComparisonMode.PixelInfo);
+        Settings.Comparison!.Mode = ComparisonMode.PixelInfo;
+        var json = JsonSerializer.Serialize(Settings, SettingsGenerationContext.Default.AppSettings);
+        var loaded = JsonSerializer.Deserialize(json, SettingsGenerationContext.Default.AppSettings)!;
+        Assert.Equal(ComparisonMode.PixelInfo, SettingsManager.EnsureSettings(loaded).Comparison!.Mode);
+    }
+
+    [Fact]
     public void EnsureSettings_WithoutComparisonSection_AddsOne()
     {
         var loaded = JsonSerializer.Deserialize("{\"Version\":1}", SettingsGenerationContext.Default.AppSettings)!;

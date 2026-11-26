@@ -197,13 +197,13 @@ public class CompareBarTests
             Settings.Comparison!.BarPosition = position;
             var bar = Compare(window, tab);
             var button = Assert.IsType<TextIconButton>(bar.FindControl<TextIconButton>("BarPositionButton"));
-            var row = Assert.IsType<ContextualStackPanel>(button.Parent);
+            var panel = Assert.IsType<DockPanel>(button.Parent);
             var vertical = position is ComparisonBarPosition.Left or ComparisonBarPosition.Right;
 
             Assert.Equal(new Thickness(5), button.Padding);
             Assert.Equal(default, button.Margin);
-            // Across the bar it is as thick as the row, so its hover covers the bar's whole thickness
-            Assert.Equal(vertical ? row.Bounds.Width : row.Bounds.Height,
+            // Across the bar it is as thick as the bar, so its hover covers the bar's whole thickness
+            Assert.Equal(vertical ? panel.Bounds.Width : panel.Bounds.Height,
                 vertical ? button.Bounds.Width : button.Bounds.Height, precision: 1);
             if (vertical)
             {
@@ -276,6 +276,118 @@ public class CompareBarTests
                 Assert.Equal(panel.Bounds.Height, close.Bounds.Bottom, precision: 1);
             }
         });
+
+    [AvaloniaTheory]
+    [InlineData(ComparisonBarPosition.Bottom)]
+    [InlineData(ComparisonBarPosition.Top)]
+    [InlineData(ComparisonBarPosition.Left)]
+    [InlineData(ComparisonBarPosition.Right)]
+    public void CompareBar_PositionButton_SitsRightBeforeTheCloseButton(ComparisonBarPosition position)
+        => WithWindow((window, _, tab) =>
+        {
+            Settings.Comparison!.BarPosition = position;
+            var bar = Compare(window, tab);
+            var button = Assert.IsType<TextIconButton>(bar.FindControl<TextIconButton>("BarPositionButton"));
+            var close = Assert.IsAssignableFrom<Button>(bar.FindControl<Button>("CloseButton"));
+
+            // Outside the scrolling row, so it stays in view when the row overflows
+            Assert.Same(close.Parent, button.Parent);
+            if (position is ComparisonBarPosition.Left or ComparisonBarPosition.Right)
+            {
+                Assert.Equal(close.Bounds.Top, button.Bounds.Bottom, precision: 1);
+            }
+            else
+            {
+                Assert.Equal(close.Bounds.Left, button.Bounds.Right, precision: 1);
+            }
+        });
+
+    [AvaloniaFact]
+    public void CompareBar_PixelInfoButton_IsLastInTheRowRightAfterResetZoom() => WithWindow((window, _, tab) =>
+    {
+        var bar = Compare(window, tab);
+        var row = bar.GetVisualDescendants().OfType<ContextualStackPanel>().First();
+        var names = row.Children.Select(c => c.Name).ToList();
+
+        Assert.Equal(names.IndexOf("ResetZoomButton") + 1, names.IndexOf("PixelInfoButton"));
+        Assert.Equal(names.IndexOf("PixelInfoButton") + 1, names.IndexOf("PixelInfoText"));
+        Assert.Equal(names.Count - 1, names.IndexOf("PixelInfoText"));
+    });
+
+    [AvaloniaFact]
+    public void CompareBar_PixelInfoClicked_TurnsTheModeOnAndShowsTheReading() => WithWindow((window, _, tab) =>
+    {
+        var bar = Compare(window, tab, ComparisonMode.Split);
+        var button = Assert.IsAssignableFrom<Button>(bar.FindControl<Button>("PixelInfoButton"));
+        var text = Assert.IsType<TextBlock>(bar.FindControl<TextBlock>("PixelInfoText"));
+        Assert.False(text.IsVisible);
+        Assert.Contains("txt", text.Classes, StringComparer.Ordinal);
+
+        button.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+        Settle(window);
+
+        Assert.True(tab.Comparison!.IsPixelInfo.Value);
+        Assert.True(text.IsVisible);
+        Assert.StartsWith("X: 0 Y: 0", text.Text, StringComparison.Ordinal);
+        Assert.Contains("active", button.Classes, StringComparer.Ordinal);
+        Assert.DoesNotContain("MenuItemHover", button.Classes, StringComparer.Ordinal);
+        // None of the five mode buttons is the current mode
+        Assert.DoesNotContain("active",
+            Assert.IsAssignableFrom<Button>(bar.FindControl<Button>("SplitModeButton")).Classes, StringComparer.Ordinal);
+
+        button.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+        Settle(window);
+
+        Assert.True(tab.Comparison.IsSplit.Value);
+        Assert.False(text.IsVisible);
+    });
+
+    [AvaloniaFact]
+    public void CompareBar_PixelInfoMode_HidesStretchAndAlign() => WithWindow((window, _, tab) =>
+    {
+        var bar = Compare(window, tab, ComparisonMode.PixelInfo);
+
+        Assert.False(Assert.IsAssignableFrom<Button>(bar.FindControl<Button>("StretchButton")).IsVisible);
+        Assert.False(Assert.IsAssignableFrom<Button>(bar.FindControl<Button>("AlignButton")).IsVisible);
+    });
+
+    [AvaloniaFact]
+    public void CompareBar_PixelInfoMode_HidesPickSwapAndPinOnlyWhileItIsOn() => WithWindow((window, _, tab) =>
+    {
+        var bar = Compare(window, tab, ComparisonMode.Overlay);
+        Control[] hidden =
+        [
+            Assert.IsType<Border>(bar.FindControl<Border>("PickGroup")),
+            Assert.IsAssignableFrom<Button>(bar.FindControl<Button>("SwapButton")),
+            Assert.IsAssignableFrom<Button>(bar.FindControl<Button>("PinButton"))
+        ];
+        Assert.All(hidden, c => Assert.True(c.IsEffectivelyVisible));
+
+        tab.Comparison!.TogglePixelInfo();
+        Settle(window);
+        Assert.All(hidden, c => Assert.False(c.IsVisible));
+        Assert.False(Assert.IsAssignableFrom<Button>(bar.FindControl<Button>("PickAButton")).IsEffectivelyVisible);
+
+        tab.Comparison.TogglePixelInfo();
+        Settle(window);
+        Assert.All(hidden, c => Assert.True(c.IsEffectivelyVisible));
+    });
+
+    [AvaloniaFact]
+    public void CompareBar_AtTheSidePixelInfo_KeepsItsThickness() => WithWindow((window, _, tab) =>
+    {
+        Settings.Comparison!.BarPosition = ComparisonBarPosition.Left;
+        var bar = Compare(window, tab, ComparisonMode.Overlay);
+        TallEnoughNotToScroll(window);
+        var comparison = tab.Comparison!;
+        var before = comparison.BarExtent.Value;
+
+        comparison.TogglePixelInfo();
+        Settle(window);
+
+        AssertDoesNotScroll(bar);
+        Assert.InRange(comparison.BarExtent.Value, before - 0.5, before + 0.5);
+    });
 
     [AvaloniaFact]
     public void CompareBar_SideBySideOnly_IsNotShown() => WithWindow((window, vm, tab) =>

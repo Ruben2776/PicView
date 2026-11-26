@@ -275,6 +275,7 @@ public class TranslationViewModel
         Pin.Value = t.Pin;
         PinA.Value = t.PinA;
         Pinned.Value = t.Pinned;
+        PixelInfo.Value = t.PixelInfo;
         Pixels.Value = t.Pixels;
         PlayPause.Value = t.PlayPause;
         PresetDescription.Value = t.PresetDescription;
@@ -706,6 +707,7 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> Pin { get; } = new();
     public BindableReactiveProperty<string?> PinA { get; } = new();
     public BindableReactiveProperty<string?> Pinned { get; } = new();
+    public BindableReactiveProperty<string?> PixelInfo { get; } = new();
     public BindableReactiveProperty<string?> Pixels { get; } = new();
     public BindableReactiveProperty<string?> PlayPause { get; } = new();
     public BindableReactiveProperty<string?> Posterize { get; } = new();

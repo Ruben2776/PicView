@@ -60,6 +60,72 @@ public class ComparisonViewerTests
     });
 
     [AvaloniaFact]
+    public void PixelInfoMode_ShowsAAlone() => WithWindow((window, _, tab) =>
+    {
+        var viewer = Host(window, tab, configure: static comparison => comparison.SetMode(ComparisonMode.PixelInfo));
+        var b = Part<PicBox>(viewer, "ImageB");
+
+        Assert.True(Part<PicBox>(viewer, "ImageA").IsEffectivelyVisible);
+        Assert.False(b.IsVisible);
+
+        viewer.Comparison.TogglePixelInfo();
+        Settle(window);
+
+        Assert.True(b.IsVisible);
+    });
+
+    [AvaloniaFact]
+    public void PixelInfoMode_PointerOverA_ReadsThePixelUnderIt() => WithWindow((window, vm, tab) =>
+    {
+        vm.ImageWidth.Value = 400;
+        vm.ImageHeight.Value = 200;
+        var viewer = Host(window, tab, a: Painted("a.png", 4, 2, (0, 0, 0xFF102030), (3, 1, 0xFF3A7BD5)),
+            configure: static comparison => comparison.SetMode(ComparisonMode.PixelInfo));
+        // Starts at the first pixel
+        Assert.Equal("X: 0 Y: 0  #102030", viewer.Comparison.PixelInfoText.Value);
+
+        window.MouseMove(OverPixel(viewer, window, 3, 1, 4, 2));
+        Settle(window);
+        Assert.Equal("X: 3 Y: 1  #3A7BD5", viewer.Comparison.PixelInfoText.Value);
+
+        // Off the image the last reading stays
+        window.MouseMove(new Point(1, 1));
+        Settle(window);
+        Assert.Equal("X: 3 Y: 1  #3A7BD5", viewer.Comparison.PixelInfoText.Value);
+    });
+
+    [AvaloniaFact]
+    public void PixelInfoMode_Swapped_ReadsTheSamePlaceInTheOtherImage() => WithWindow((window, vm, tab) =>
+    {
+        vm.ImageWidth.Value = 400;
+        vm.ImageHeight.Value = 200;
+        var viewer = Host(window, tab, a: Painted("a.png", 4, 2, (3, 1, 0xFF3A7BD5)),
+            b: Painted("b.png", 4, 2, (3, 1, 0xFFAABBCC)),
+            configure: static comparison => comparison.SetMode(ComparisonMode.PixelInfo));
+        window.MouseMove(OverPixel(viewer, window, 3, 1, 4, 2));
+        Settle(window);
+
+        viewer.Comparison.Swap();
+        Settle(window);
+
+        Assert.Equal("X: 3 Y: 1  #AABBCC", viewer.Comparison.PixelInfoText.Value);
+    });
+
+    [AvaloniaFact]
+    public void OtherModes_PointerOverA_ReadNothing() => WithWindow((window, vm, tab) =>
+    {
+        vm.ImageWidth.Value = 400;
+        vm.ImageHeight.Value = 200;
+        var viewer = Host(window, tab, a: Painted("a.png", 4, 2, (3, 1, 0xFF3A7BD5)),
+            configure: static comparison => comparison.SetMode(ComparisonMode.Overlay));
+
+        window.MouseMove(OverPixel(viewer, window, 3, 1, 4, 2));
+        Settle(window);
+
+        Assert.Equal("X: 0 Y: 0", viewer.Comparison.PixelInfoText.Value);
+    });
+
+    [AvaloniaFact]
     public void OverlayMode_AppliesNormalBlendAndOpacity() => WithWindow((window, _, tab) =>
     {
         var viewer = Host(window, tab, configure: comparison =>
@@ -691,6 +757,50 @@ public class ComparisonViewerTests
         PixelWidth = (uint)width,
         PixelHeight = (uint)height,
     };
+
+    // The middle of a pixel of A as shown, in the window
+    private static Point OverPixel(ComparisonViewer viewer, Window window, int x, int y, int width, int height)
+    {
+        var a = Part<PicBox>(viewer, "ImageA");
+        Assert.True(a.Bounds.Width > 0 && a.Bounds.Height > 0);
+        return a.TranslatePoint(
+            new Point(a.Bounds.Width * (x + 0.5) / width, a.Bounds.Height * (y + 0.5) / height), window)!.Value;
+    }
+
+    // An opaque bitmap, black but for the pixels given as 0xAARRGGBB
+    private static ImageModel Painted(string name, int width, int height,
+        params (int X, int Y, uint Argb)[] pixels)
+    {
+        var bitmap = new WriteableBitmap(new PixelSize(width, height), new Vector(96, 96),
+            global::Avalonia.Platform.PixelFormat.Bgra8888, global::Avalonia.Platform.AlphaFormat.Premul);
+        using (var buffer = bitmap.Lock())
+        {
+            // Bgra in memory is the little-endian 0xAARRGGBB
+            for (var y = 0; y < height; y++)
+            {
+                for (var x = 0; x < width; x++)
+                {
+                    System.Runtime.InteropServices.Marshal.WriteInt32(buffer.Address, y * buffer.RowBytes + x * 4,
+                        unchecked((int)0xFF000000));
+                }
+            }
+
+            foreach (var (x, y, argb) in pixels)
+            {
+                System.Runtime.InteropServices.Marshal.WriteInt32(buffer.Address, y * buffer.RowBytes + x * 4,
+                    unchecked((int)argb));
+            }
+        }
+
+        return new ImageModel
+        {
+            FileInfo = new FileInfo(name),
+            Image = bitmap,
+            PixelWidth = (uint)width,
+            PixelHeight = (uint)height,
+            ImageType = ImageType.Bitmap
+        };
+    }
 
     private static Point CenterOf(Control control, Window window) =>
         control.TranslatePoint(new Point(control.Bounds.Width / 2, control.Bounds.Height / 2), window)!.Value;

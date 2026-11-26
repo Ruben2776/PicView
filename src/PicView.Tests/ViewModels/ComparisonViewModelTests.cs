@@ -356,6 +356,86 @@ public class ComparisonViewModelTests
         => Assert.Equal(to, ComparisonViewModel.Next(from));
 
     [Fact]
+    public void Next_FromPixelInfo_IsTheFirstMode()
+        => Assert.Equal(ComparisonMode.Overlay, ComparisonViewModel.Next(ComparisonMode.PixelInfo));
+
+    [Fact]
+    public void TogglePixelInfo_TurnsItOnThenBackToTheModeBefore()
+    {
+        using var vm = New(Model("a.jpg"), Model("b.jpg"));
+        vm.SetMode(ComparisonMode.Split);
+
+        vm.TogglePixelInfo();
+        Assert.True(vm.IsPixelInfo.Value);
+        Assert.False(vm.IsSplit.Value);
+        Assert.False(vm.IsStacked.Value);
+        Assert.Equal(ComparisonMode.PixelInfo, Settings.Comparison!.Mode);
+
+        vm.TogglePixelInfo();
+        Assert.False(vm.IsPixelInfo.Value);
+        Assert.True(vm.IsSplit.Value);
+        Assert.True(vm.IsStacked.Value);
+    }
+
+    [Fact]
+    public void TogglePixelInfo_StartedInPixelInfo_GoesToTheDefaultMode()
+    {
+        Settings.Comparison!.Mode = ComparisonMode.PixelInfo;
+        using var vm = New(Model("a.jpg"), Model("b.jpg"));
+        Assert.True(vm.IsPixelInfo.Value);
+
+        vm.TogglePixelInfo();
+
+        Assert.True(vm.IsDifference.Value);
+    }
+
+    [Fact]
+    public void SetMode_FromPixelInfo_LeavesIt()
+    {
+        using var vm = New(Model("a.jpg"), Model("b.jpg"));
+        vm.TogglePixelInfo();
+
+        vm.SetMode(ComparisonMode.Overlay);
+
+        Assert.False(vm.IsPixelInfo.Value);
+        Assert.True(vm.IsOverlay.Value);
+    }
+
+    [Fact]
+    public void TogglePixelInfo_WhileAligning_StopsAligning()
+    {
+        // Pixel Info shows A alone, and hides the button that stops picking points
+        using var vm = New(Model("a.jpg"), Model("b.jpg"));
+        vm.ToggleAligning();
+
+        vm.TogglePixelInfo();
+
+        Assert.False(vm.IsAligning.Value);
+    }
+
+    [Fact]
+    public void IsStacked_SyncedMode_IsFalse()
+    {
+        using var vm = New(Model("a.jpg"), Model("b.jpg"));
+        Assert.True(vm.IsStacked.Value);
+
+        vm.SetMode(ComparisonMode.Synced);
+
+        Assert.False(vm.IsStacked.Value);
+    }
+
+    [Fact]
+    public void PixelInfoText_StartsAtTheFirstPixelAndShowsThePixelRead()
+    {
+        using var vm = New(Model("a.jpg"), Model("b.jpg"));
+        Assert.Equal("X: 0 Y: 0", vm.PixelInfoText.Value);
+
+        vm.ShowPixel(new PicView.Core.Comparison.PixelReading(12, 34, 0xFF102030));
+
+        Assert.Equal("X: 12 Y: 34  #102030", vm.PixelInfoText.Value);
+    }
+
+    [Fact]
     public void SetMode_SyncedWhileAligning_StopsAligning()
     {
         // The synced layout hides the stacked pair the points are picked on, and the button that stops picking them

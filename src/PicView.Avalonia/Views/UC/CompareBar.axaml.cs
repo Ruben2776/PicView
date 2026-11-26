@@ -98,6 +98,7 @@ public partial class CompareBar : UserControl, IDisposable
         HoverUnlessActive(PinButton, comparison.IsPinned);
         HoverUnlessActive(StretchButton, comparison.IsStretchFill);
         HoverUnlessActive(AlignButton, comparison.IsAligning);
+        HoverUnlessActive(PixelInfoButton, comparison.IsPixelInfo);
 
         comparison.AlignmentStep.AsObservable()
             .SubscribeOnUIThread(() =>
@@ -294,6 +295,8 @@ public partial class CompareBar : UserControl, IDisposable
     private void OnAlignClick(object? sender, RoutedEventArgs e) => Comparison?.ToggleAligning();
 
     private void OnResetAlignClick(object? sender, RoutedEventArgs e) => Comparison?.ResetAlignment();
+
+    private void OnPixelInfoClick(object? sender, RoutedEventArgs e) => Comparison?.TogglePixelInfo();
 
     private void OnBarPositionBottomClick(object? sender, RoutedEventArgs e) =>
         Comparison?.BarPosition.Value = ComparisonBarPosition.Bottom;
