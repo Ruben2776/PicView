@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Media.Imaging;
 using PicView.Avalonia.Clipboard;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.FileSystem;
@@ -184,8 +185,11 @@ public partial class GalleryItemContextMenu : ContextMenu
             return;
         }
 
+        // A cached bitmap is held while it is copied, as nothing else may reference it by now
+        using var held = cache.HoldReady(fileInfo, out var cached);
         // A decoded bitmap is never disposed here, since pasting in PicView can show that same bitmap in a tab
-        var bitmap = await GetOriginalImage.GetBitmapAsync(fileInfo, cache).ConfigureAwait(false);
+        var bitmap = cached?.Image as Bitmap ??
+                     await GetOriginalImage.GetBitmapAsync(fileInfo, cache).ConfigureAwait(false);
         await clipboardCopyService.CopyImageAsync(bitmap).ConfigureAwait(false);
     }
 

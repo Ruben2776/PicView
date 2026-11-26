@@ -17,16 +17,17 @@ namespace PicView.Core.Navigation;
 /// <item>A failed decode yields the loader's error model; <see cref="GetAsync"/> returns <see langword="null"/> only
 /// when cancelled.</item>
 /// <item>Cancelling a request only abandons that wait: the load completes and stays cached for other owners.</item>
-/// <item>Images no owner references are disposed after <see cref="DisposalDelayInSeconds"/>, so a file that is
+/// <item>Images no owner references are disposed after <see cref="DisposalDelay"/>, so a file that is
 /// asked for again shortly after is served from memory.</item>
 /// </list>
 /// </remarks>
 public sealed class SharedImageCache
 {
     /// <summary>
-    /// Time delay in seconds before an image no owner references is disposed.
+    /// How long an image no owner references waits before it is disposed. No more of them than
+    /// <see cref="PreLoaderConfig.MaxCount"/> wait at once: one more disposes the one that waited longest.
     /// </summary>
-    private const int DisposalDelayInSeconds = 15;
+    private static readonly TimeSpan DisposalDelay = TimeSpan.FromSeconds(15);
 
     private readonly Func<FileInfo, ImageModel> _imageLoader;
 
@@ -38,17 +39,40 @@ public sealed class SharedImageCache
     private readonly ConcurrentDictionary<uint, Owner> _owners = new();
 
     /// <summary>
-    /// Images whose last reference was released, ordered by when they may be disposed.
+    /// Images whose last reference was released, in the order they were released, which is also the order they may be
+    /// disposed in. An entry counts only while its ticket is the value's latest, so a value released again is disposed
+    /// by its last release alone.
     /// </summary>
-    private readonly PriorityQueue<PreLoadValue, DateTime> _disposalQueue = new();
+    private readonly Queue<(PreLoadValue Value, long Ticket, long Expiration)> _disposalQueue = new();
 
     private readonly Lock _disposalLock = new();
+
+    // Read as timestamps, which only go forwards, so setting the system clock back holds no disposal up
+    private readonly TimeProvider _clock;
+
+    // The disposal delay in the clock's timestamp ticks
+    private readonly long _disposalDelayTicks;
+
+    // Wakes the sweep when the image that waited longest may be disposed, so none waits for another release
+    private readonly ITimer _sweepTimer;
+
+    private long _lastDisposalTicket;
 
     private readonly Preloader _preloader;
 
     /// <param name="imageLoader">Loads an <see cref="ImageModel"/> from disk; returns an error model on failure.</param>
-    public SharedImageCache(Func<FileInfo, ImageModel> imageLoader)
+    public SharedImageCache(Func<FileInfo, ImageModel> imageLoader) : this(imageLoader, TimeProvider.System)
     {
+    }
+
+    /// <param name="imageLoader">Loads an <see cref="ImageModel"/> from disk; returns an error model on failure.</param>
+    /// <param name="clock">Times the disposal delay. A test seam: everything else uses the system clock.</param>
+    internal SharedImageCache(Func<FileInfo, ImageModel> imageLoader, TimeProvider clock)
+    {
+        _clock = clock;
+        _disposalDelayTicks = (long)(DisposalDelay.TotalSeconds * clock.TimestampFrequency);
+        _sweepTimer = clock.CreateTimer(static state => ((SharedImageCache)state!).SweepDisposals(), this,
+            Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
         _imageLoader = imageLoader;
         _pathLookup = new ConcurrentDictionary<string, PreLoadValue>(StringComparer.Ordinal);
         // Waiting without a token keeps the preloader's degree of parallelism honest; the load is not cancelled anyway.
@@ -175,6 +199,31 @@ public sealed class SharedImageCache
     }
 
     /// <summary>
+    /// Holds a reference to the model of <paramref name="file"/> if it is in memory and finished loading, so it is not
+    /// disposed until the returned lease is disposed. For a reader that keeps the image past the call, where
+    /// <see cref="TryGetReady"/> gives no such promise.
+    /// </summary>
+    /// <returns>The lease, or <see langword="null"/> when the file is not in memory or still loading.</returns>
+    public IDisposable? HoldReady(FileInfo file, [NotNullWhen(true)] out ImageModel? model)
+    {
+        PreLoadValue? value;
+        // Disposal runs under this lock, so a value that is not disposed here stays undisposed while it is referenced
+        lock (_disposalLock)
+        {
+            if (!_pathLookup.TryGetValue(file.FullName, out value) || value.IsLoading || value.IsDisposed)
+            {
+                model = null;
+                return null;
+            }
+
+            value.AddReference();
+        }
+
+        model = value.ImageModel;
+        return new Lease(this, value);
+    }
+
+    /// <summary>
     /// Stores an already loaded <paramref name="model"/> for <paramref name="file"/>, replacing any cached image of
     /// the file, and gives <paramref name="ownerId"/> a reference to it.
     /// </summary>
@@ -288,7 +337,7 @@ public sealed class SharedImageCache
     {
         if (_owners.TryRemove(ownerId, out var owner))
         {
-            ReleaseImages(owner);
+            ReleaseImages(owner, forget: true);
         }
     }
 
@@ -308,8 +357,34 @@ public sealed class SharedImageCache
     #region Preloading
 
     /// <summary>
-    /// Loads the images around <paramref name="file"/> in the background, ahead in the direction of travel first.
-    /// Does nothing while a preload for the same owner is still running.
+    /// Tells the cache that <paramref name="ownerId"/> stepped to another image, backwards when
+    /// <paramref name="reversed"/>. The owner's direction of travel, which <see cref="Preload"/> loads deepest, turns
+    /// on the second step in a row the other way, so a single step back is a look back.
+    /// </summary>
+    public void NoteStep(uint ownerId, bool reversed)
+    {
+        if (_owners.TryGetValue(ownerId, out var owner))
+        {
+            owner.NoteStep(reversed);
+        }
+    }
+
+    /// <summary>
+    /// Forgets which way <paramref name="ownerId"/> travels, so it travels forwards again. Call when the owner opens
+    /// other files than the ones it stepped through.
+    /// </summary>
+    public void ResetTravel(uint ownerId)
+    {
+        if (_owners.TryGetValue(ownerId, out var owner))
+        {
+            owner.ResetTravel();
+        }
+    }
+
+    /// <summary>
+    /// Loads the images around <paramref name="file"/> in the background: the side <paramref name="reversed"/> names
+    /// first, and the side the owner travels to deepest (see <see cref="NoteStep"/>). A preload asked for while one
+    /// runs for the same owner follows it.
     /// </summary>
     public void Preload(uint ownerId, FileInfo file, bool reversed, CancellationToken ct)
     {
@@ -322,7 +397,7 @@ public sealed class SharedImageCache
         var list = owner.Files;
         if (list.Positions.TryGetValue(file.FullName, out var index))
         {
-            _preloader.Preload(ownerId, list.Files, index, reversed, ct);
+            _preloader.Preload(ownerId, new PreloadRequest(list.Files, index, reversed, owner.TravelsReversed, ct));
         }
     }
 
@@ -340,28 +415,39 @@ public sealed class SharedImageCache
     private PreLoadValue Acquire(uint ownerId, FileInfo file, bool startLoadOnThreadPool)
     {
         var path = file.FullName;
-        if (!_pathLookup.TryGetValue(path, out var value))
+        while (true)
         {
-            var pending = new PreLoadValue(new ImageModel { FileInfo = file }, isLoading: true);
-            value = _pathLookup.GetOrAdd(path, pending);
-            if (ReferenceEquals(value, pending))
+            if (!_pathLookup.TryGetValue(path, out var value))
             {
-                if (startLoadOnThreadPool)
+                var pending = new PreLoadValue(new ImageModel { FileInfo = file }, isLoading: true);
+                value = _pathLookup.GetOrAdd(path, pending);
+                if (ReferenceEquals(value, pending))
                 {
-                    _ = Task.Run(() => Load(file, pending));
-                }
-                else
-                {
-                    Load(file, pending);
+                    if (startLoadOnThreadPool)
+                    {
+                        _ = Task.Run(() => Load(file, pending, queueWhenUnreferenced: true));
+                    }
+                    else
+                    {
+                        // Its reference comes right below, which also queues it when the owner does not take it.
+                        // Queued here first, it would count as waiting and push out an image that does wait
+                        Load(file, pending, queueWhenUnreferenced: false);
+                    }
                 }
             }
-        }
 
-        AddReference(ownerId, path, value);
-        return value;
+            if (TryAddReference(ownerId, path, value))
+            {
+                return value;
+            }
+
+            // Disposed between the lookup and the reference, so it is no use: load the file again. The disposal took
+            // it out of the lookup; a value kept under another path than its file's is taken out here
+            _pathLookup.TryRemove(new KeyValuePair<string, PreLoadValue>(path, value));
+        }
     }
-    
-    private void Load(FileInfo file, PreLoadValue pending)
+
+    private void Load(FileInfo file, PreLoadValue pending, bool queueWhenUnreferenced)
     {
         ImageModel model;
         try
@@ -378,7 +464,7 @@ public sealed class SharedImageCache
         pending.IsLoading = false;
 
         // A load nobody holds (or one invalidated while loading) was not queued while loading; queue it now.
-        if (pending.ReferenceCount is 0)
+        if (queueWhenUnreferenced && pending.ReferenceCount is 0)
         {
             ScheduleDisposal(pending);
         }
@@ -388,21 +474,31 @@ public sealed class SharedImageCache
     /// Gives <paramref name="ownerId"/> a reference to <paramref name="value"/> at the file's position in its list.
     /// A file outside the owner's list stays unreferenced and is queued for disposal.
     /// </summary>
-    private void AddReference(uint ownerId, string path, PreLoadValue value)
+    private void AddReference(uint ownerId, string path, PreLoadValue value) =>
+        TryAddReference(ownerId, path, value);
+
+    /// <summary>
+    /// As <see cref="AddReference"/>, unless <paramref name="value"/> was disposed meanwhile, which a value taken from
+    /// the lookup may be: it waits for disposal while nothing references it.
+    /// </summary>
+    /// <returns><see langword="false"/> when the value is disposed, and so got no reference.</returns>
+    private bool TryAddReference(uint ownerId, string path, PreLoadValue value)
     {
         if (_owners.TryGetValue(ownerId, out var owner))
         {
             PreLoadValue? evicted = null;
             var added = false;
+            var isDisposed = false;
             lock (owner.Gate)
             {
                 var list = owner.Files;
-                if (list.Positions.TryGetValue(path, out var index))
+                if (!owner.IsForgotten && list.Positions.TryGetValue(path, out var index))
                 {
                     owner.Images.TryAdd(index, value, list.Files.Length, owner.IsReversed, out evicted, out var isNewReference);
-                    if (isNewReference)
+                    if (isNewReference && !TryReference(value))
                     {
-                        value.AddReference();
+                        owner.Images.Remove(index);
+                        isDisposed = true;
                     }
                     added = true;
                 }
@@ -412,15 +508,41 @@ public sealed class SharedImageCache
             {
                 Release(evicted);
             }
+            if (isDisposed)
+            {
+                return false;
+            }
             if (added)
             {
-                return;
+                return true;
             }
+        }
+
+        if (value.IsDisposed)
+        {
+            return false;
         }
 
         if (value.ReferenceCount is 0 && !value.IsLoading)
         {
             ScheduleDisposal(value);
+        }
+
+        return true;
+    }
+
+    // Disposal runs under this lock, so a value that is not disposed here stays undisposed while it is referenced
+    private bool TryReference(PreLoadValue value)
+    {
+        lock (_disposalLock)
+        {
+            if (value.IsDisposed)
+            {
+                return false;
+            }
+
+            value.AddReference();
+            return true;
         }
     }
 
@@ -455,11 +577,14 @@ public sealed class SharedImageCache
         }
     }
 
-    private void ReleaseImages(Owner owner)
+    /// <param name="forget">The owner is gone, so a request still under way gives it no reference anymore, which
+    /// nothing would release.</param>
+    private void ReleaseImages(Owner owner, bool forget = false)
     {
         PreLoadValue[] values;
         lock (owner.Gate)
         {
+            owner.IsForgotten |= forget;
             values = owner.Images.Values.ToArray();
             owner.Images.Clear();
         }
@@ -486,26 +611,66 @@ public sealed class SharedImageCache
 
     private void ScheduleDisposal(PreLoadValue value)
     {
-        lock (_disposalLock)
+        // A load is not disposed and waits for nothing: its end queues it, if nothing references it by then
+        if (value.IsLoading)
         {
-            _disposalQueue.Enqueue(value, DateTime.UtcNow.AddSeconds(DisposalDelayInSeconds));
+            return;
         }
 
-        SweepExpiredDisposals();
-    }
-
-    private void SweepExpiredDisposals()
-    {
-        var now = DateTime.UtcNow;
         lock (_disposalLock)
         {
-            while (_disposalQueue.TryPeek(out var value, out var expiration) && expiration <= now)
+            value.DisposalTicket = ++_lastDisposalTicket;
+            _disposalQueue.Enqueue((value, value.DisposalTicket, _clock.GetTimestamp() + _disposalDelayTicks));
+            SweepDisposalsLocked();
+        }
+    }
+
+    private void SweepDisposals()
+    {
+        lock (_disposalLock)
+        {
+            SweepDisposalsLocked();
+        }
+    }
+
+    /// <summary>
+    /// Disposes the images whose delay ended and, beyond <see cref="PreLoaderConfig.MaxCount"/> waiting ones, those
+    /// that waited longest, then sets the timer for the next. Callers hold <see cref="_disposalLock"/>.
+    /// </summary>
+    private void SweepDisposalsLocked()
+    {
+        var limit = PreLoaderConfig.MaxCount;
+        if (_disposalQueue.Count > limit)
+        {
+            // Only images that still wait count towards the limit: one taken or released again since left its entry
+            for (var i = _disposalQueue.Count; i > 0; i--)
             {
-                _disposalQueue.Dequeue();
-                TryDispose(value);
+                var entry = _disposalQueue.Dequeue();
+                if (IsWaiting(entry.Value, entry.Ticket))
+                {
+                    _disposalQueue.Enqueue(entry);
+                }
             }
         }
+
+        var now = _clock.GetTimestamp();
+        while (_disposalQueue.TryPeek(out var entry) && (entry.Expiration <= now || _disposalQueue.Count > limit))
+        {
+            _disposalQueue.Dequeue();
+            if (IsWaiting(entry.Value, entry.Ticket))
+            {
+                TryDispose(entry.Value);
+            }
+        }
+
+        var wait = _disposalQueue.TryPeek(out var next)
+            ? _clock.GetElapsedTime(now, next.Expiration)
+            : Timeout.InfiniteTimeSpan;
+        _sweepTimer.Change(wait, Timeout.InfiniteTimeSpan);
     }
+
+    private static bool IsWaiting(PreLoadValue value, long ticket) =>
+        value.DisposalTicket == ticket && value.ReferenceCount is 0;
 
     /// <summary>
     /// Disposes <paramref name="value"/> if nothing references it anymore, removing it from the lookup unless a newer
@@ -519,16 +684,19 @@ public sealed class SharedImageCache
         }
 
         var path = value.ImageModel.FileInfo?.FullName;
+        PreLoadValue? current = null;
         if (path is not null)
         {
             _pathLookup.TryRemove(new KeyValuePair<string, PreLoadValue>(path, value));
-            if (_pathLookup.TryGetValue(path, out var current) && ReferenceEquals(current, value))
+            if (_pathLookup.TryGetValue(path, out current) && ReferenceEquals(current, value))
             {
                 return;
             }
         }
 
-        if (value.TryMarkDisposed())
+        // A model put again after its file was invalidated is the newer value's too, which keeps it alive
+        var isKeptByNewerValue = current is not null && ReferenceEquals(current.ImageModel, value.ImageModel);
+        if (value.TryMarkDisposed() && !isKeptByNewerValue)
         {
             value.ImageModel.Dispose();
         }
@@ -546,10 +714,12 @@ public sealed class SharedImageCache
                 return;
             }
 
-            while (_disposalQueue.TryDequeue(out var value, out _))
+            while (_disposalQueue.TryDequeue(out var entry))
             {
-                TryDispose(value);
+                TryDispose(entry.Value);
             }
+
+            _sweepTimer.Change(Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
         }
         GC.Collect();
     }
@@ -576,6 +746,62 @@ public sealed class SharedImageCache
         public EvictingDictionary<PreLoadValue> Images { get; } = new(PreLoaderConfig.MaxCount);
         public FileList Files { get; set; } = FileList.Empty;
         public bool IsReversed { get; set; }
+
+        // Set under Gate once the owner was released for good
+        public bool IsForgotten { get; set; }
+
+        private bool _travelsReversed;
+
+        // Whether the owner's last step went against its direction of travel
+        private bool _lookedBack;
+
+        /// <summary>
+        /// Whether the owner travels backwards through its files. Unlike <see cref="IsReversed"/>, the direction of
+        /// its last step alone, this turns only once two steps in a row went the other way.
+        /// </summary>
+        public bool TravelsReversed
+        {
+            get
+            {
+                lock (Gate)
+                {
+                    return _travelsReversed;
+                }
+            }
+        }
+
+        public void ResetTravel()
+        {
+            lock (Gate)
+            {
+                _travelsReversed = false;
+                _lookedBack = false;
+            }
+        }
+
+        /// <summary>
+        /// Notes a step in a direction. A single step against the direction of travel is a look back, so the
+        /// direction turns on the second one in a row.
+        /// </summary>
+        public void NoteStep(bool reversed)
+        {
+            lock (Gate)
+            {
+                if (reversed == _travelsReversed)
+                {
+                    _lookedBack = false;
+                }
+                else if (_lookedBack)
+                {
+                    _travelsReversed = reversed;
+                    _lookedBack = false;
+                }
+                else
+                {
+                    _lookedBack = true;
+                }
+            }
+        }
     }
 
     private sealed record FileList(FileInfo[] Files, Dictionary<string, int> Positions)

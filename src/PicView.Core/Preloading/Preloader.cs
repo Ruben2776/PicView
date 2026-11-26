@@ -6,8 +6,8 @@ namespace PicView.Core.Preloading;
 /// <summary>
 /// Background worker of <see cref="PicView.Core.Navigation.SharedImageCache"/>.
 /// <para>
-/// Responsible for calculating predictive indices (look-ahead) and loading them, ahead in the direction of travel
-/// first, while at most one preload per owner runs. A preload asked for while one runs follows it, with the list and
+/// Responsible for calculating predictive indices (look-ahead) and loading them, in the direction of the last step
+/// first and deepest in the direction of travel, while at most one preload per owner runs. A preload asked for while one runs follows it, with the list and
 /// position as they were asked for last: an archive's pages are listed as they are extracted, and the page after the
 /// shown one should be loaded by the time Next asks for it.
 /// </para>
@@ -17,15 +17,15 @@ internal sealed class Preloader(Func<uint, FileInfo, Task> load)
     private readonly ConcurrentDictionary<uint, byte> _running = new();
 
     // The preload each owner asked for last and has not run yet
-    private readonly ConcurrentDictionary<uint, Request> _next = new();
+    private readonly ConcurrentDictionary<uint, PreloadRequest> _next = new();
 
     /// <summary>
     /// Loads the files around <paramref name="currentIndex"/> in the background, after the preload running for the
     /// owner, if any.
     /// </summary>
-    public void Preload(uint ownerId, FileInfo[] files, int currentIndex, bool reversed, CancellationToken ct)
+    public void Preload(uint ownerId, PreloadRequest request)
     {
-        _next[ownerId] = new Request(files, currentIndex, reversed, ct);
+        _next[ownerId] = request;
         RunNext(ownerId);
     }
 
@@ -56,8 +56,7 @@ internal sealed class Preloader(Func<uint, FileInfo, Task> load)
         {
             try
             {
-                await PreloadAroundAsync(ownerId, request.Files, request.CurrentIndex, request.Reversed, request.Ct)
-                    .ConfigureAwait(false);
+                await PreloadAroundAsync(ownerId, request).ConfigureAwait(false);
             }
             catch (OperationCanceledException)
             {
@@ -75,9 +74,9 @@ internal sealed class Preloader(Func<uint, FileInfo, Task> load)
         }, CancellationToken.None);
     }
 
-    private async Task PreloadAroundAsync(uint ownerId, FileInfo[] files, int currentIndex, bool reversed,
-        CancellationToken ct)
+    private async Task PreloadAroundAsync(uint ownerId, PreloadRequest request)
     {
+        var (files, currentIndex, reversed, travelsReversed, ct) = request;
         var count = files.Length;
         if (count is 0)
         {
@@ -105,7 +104,9 @@ internal sealed class Preloader(Func<uint, FileInfo, Task> load)
 
         async Task LoopAsync(bool forwards)
         {
-            var iterations = forwards ? PreLoaderConfig.PositiveIterations : PreLoaderConfig.NegativeIterations;
+            // The deep side is the one ahead in the direction of travel, the shallow one what was left behind
+            var isAhead = forwards != travelsReversed;
+            var iterations = isAhead ? PreLoaderConfig.PositiveIterations : PreLoaderConfig.NegativeIterations;
             await Parallel.ForAsync(0, iterations, options, async (i, _) =>
             {
                 var index = forwards
@@ -115,6 +116,12 @@ internal sealed class Preloader(Func<uint, FileInfo, Task> load)
             }).ConfigureAwait(false);
         }
     }
-
-    private readonly record struct Request(FileInfo[] Files, int CurrentIndex, bool Reversed, CancellationToken Ct);
 }
+
+/// <summary>
+/// What to preload for an owner: the files around <paramref name="CurrentIndex"/> in <paramref name="Files"/>.
+/// </summary>
+/// <param name="Reversed">Whether the last step went backwards: that side is loaded first.</param>
+/// <param name="TravelsReversed">Whether the owner travels backwards: that side is loaded deepest.</param>
+internal readonly record struct PreloadRequest(FileInfo[] Files, int CurrentIndex, bool Reversed,
+    bool TravelsReversed, CancellationToken Ct);

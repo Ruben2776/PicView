@@ -15,6 +15,11 @@ internal sealed class PreLoadValue
     private int _isDisposed;
 
     /// <summary>
+    /// The ticket of the value's latest wait for disposal. Read and written under the cache's disposal lock.
+    /// </summary>
+    public long DisposalTicket { get; set; }
+
+    /// <summary>
     /// Marks the value disposed, returning <see langword="false"/> if it already was.
     /// </summary>
     public bool TryMarkDisposed() => Interlocked.Exchange(ref _isDisposed, 1) is 0;

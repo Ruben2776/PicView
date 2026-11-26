@@ -496,12 +496,12 @@ public class Navigation
     public bool IsNavigatingByClicking { get; set; } = false;
 
     /// <summary>
-    /// The number of iterations to process in the forward direction while navigating through items and preloading.
+    /// The number of images to preload ahead in the direction of travel.
     /// </summary>
     public int PositiveIterations { get; set; } = 7;
 
     /// <summary>
-    /// The number of iterations to process in the backwards direction while navigating through items and preloading.
+    /// The number of images to preload behind, against the direction of travel.
     /// </summary>
     public int NegativeIterations { get; set; } = 3;
     

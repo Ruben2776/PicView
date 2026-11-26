@@ -897,6 +897,23 @@ public class TabOwnershipTests : IDisposable
     }
 
     [Fact]
+    public async Task OpenFile_OwnerNoLongerReferencesIt_ShownImageStaysInTheCache()
+    {
+        ComposeServices();
+        CreateFiles();
+        var tab = CreateWindow().WindowTabs.ActiveTab.Value;
+        await OpenAsync(tab, "a.jpg");
+
+        // As when the cache evicts the shown image from the tab's preload window, then the window loses focus
+        _core.SharedCache.ReleaseImages(tab.Id);
+        _core.SharedCache.ForceDisposalQueue();
+
+        Assert.True(_core.SharedCache.TryGetReady(new FileInfo(PathOf("a.jpg")), out var kept),
+            "The image a tab opened and shows was disposed");
+        Assert.Same(tab.Model, kept);
+    }
+
+    [Fact]
     public async Task CloseWindow_WithTabsFollowingIt_ThrowsNothing()
     {
         var unhandled = new ConcurrentQueue<Exception>();

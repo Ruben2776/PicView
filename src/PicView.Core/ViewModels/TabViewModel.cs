@@ -527,33 +527,34 @@ public class TabViewModel : IDisposable
         ImageType.Value = primary.ImageType;
 
         UpdateComparison(pairChanged: true);
-        HoldShown(primary, secondary);
+        HoldShown();
     }
 
     // The cache references an image for the tab only while it is in the tab's preload window, and a preload that ends
     // after the tab turned round can evict the shown image from it. So the tab holds what it shows itself
+    private readonly Lock _shownLeaseGate = new();
     private IDisposable? _shownLease;
     private IDisposable? _shownSecondaryLease;
 
-    private void HoldShown(ImageModel? primary, ImageModel? secondary)
+    /// <summary>
+    /// Holds the images the tab shows now in the cache, and lets go of the ones it held before. Call after the shown
+    /// models change, and after a shown model is put in the cache, which has nothing to hold before that.
+    /// </summary>
+    internal void HoldShown()
     {
-        var cache = IsDisposed ? null : Services?.Cache;
-        // The new ones first, as showing the same image again must not let go of it in between
-        var lease = primary is null ? null : cache?.Hold(primary);
-        var secondaryLease = secondary is null ? null : cache?.Hold(secondary);
-        Interlocked.Exchange(ref _shownLease, lease)?.Dispose();
-        Interlocked.Exchange(ref _shownSecondaryLease, secondaryLease)?.Dispose();
-        if (IsDisposed)
+        // One at a time, and for what the tab shows by then rather than what a caller showed: two threads may show
+        // different images at once, and whichever comes last must leave the shown one held
+        lock (_shownLeaseGate)
         {
-            // Closed meanwhile, so the close did not see these
-            ReleaseShown();
+            var cache = IsDisposed ? null : Services?.Cache;
+            // The new ones first, as showing the same image again must not let go of it in between
+            var lease = Model is { } primary ? cache?.Hold(primary) : null;
+            var secondaryLease = SecondaryModel is { } secondary ? cache?.Hold(secondary) : null;
+            _shownLease?.Dispose();
+            _shownSecondaryLease?.Dispose();
+            _shownLease = lease;
+            _shownSecondaryLease = secondaryLease;
         }
-    }
-
-    private void ReleaseShown()
-    {
-        Interlocked.Exchange(ref _shownLease, null)?.Dispose();
-        Interlocked.Exchange(ref _shownSecondaryLease, null)?.Dispose();
     }
 
     /// <summary>
@@ -1302,6 +1303,7 @@ public class TabViewModel : IDisposable
         if (index > -1 && index < files.Count)
         {
             cache.Put(Id, files[index], Model);
+            HoldShown();
         }
         
         var directory = files.Count > 0 ? files[0].DirectoryName : null;
@@ -1500,7 +1502,7 @@ public class TabViewModel : IDisposable
         FileInfo.Value = null;
         SecondaryFileInfo.Value = null;
         SecondaryModel = null;
-        Interlocked.Exchange(ref _shownSecondaryLease, null)?.Dispose();
+        HoldShown();
         Animation.End();
         // No files, so the position goes too: a new iterator must not light the buttons from the old list's place
         SetPosition(-1, 0);
@@ -1513,7 +1515,8 @@ public class TabViewModel : IDisposable
         _fileWatcherService?.Unwatch(this);
         Thumbnails?.Release(Id);
 
-        ReleaseShown();
+        // Disposed by now, so this lets go of what the tab showed and holds nothing
+        HoldShown();
         ImageIterator?.Dispose();
         _archiveStateSubscription?.Dispose();
         _settingsSubscription?.Dispose();

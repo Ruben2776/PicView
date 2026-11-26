@@ -1,4 +1,5 @@
 using PicView.Core.ArchiveHandling;
+using PicView.Core.DebugTools;
 using PicView.Core.FileSorting;
 using PicView.Core.Models;
 using PicView.Core.Navigation.Interfaces;
@@ -383,6 +384,14 @@ public class ImageIterator(SharedImageCache cache, Thumbnails thumbnails, TabVie
     
     #region Core Navigation Logic
     
+    // A step to another image, backwards when reversed. The cache hears each one, as it loads deepest in the direction
+    // the tab travels; a preload after a change to the list is no step, and tells it nothing
+    private void NoteStep(bool isReversed)
+    {
+        IsReversed = isReversed;
+        Cache.NoteStep(_tab.Id, isReversed);
+    }
+
     // Where the iterator is, told to the tab, which derives whether Next and Prev run from it (ADR-0017)
     private void PublishPosition() => PublishPosition(CurrentIndex, Files.Count);
 
@@ -399,7 +408,7 @@ public class ImageIterator(SharedImageCache cache, Thumbnails thumbnails, TabVie
         var (iteration, isReversed) = showsPair
             ? SideBySidePair.Navigate(from.Index, from.Files.Length, navigateTo, skipAmount, looping)
             : IterationHelper.GetIteration(from.Index, from.Files.Length, navigateTo, skipAmount, looping);
-        IsReversed = isReversed;
+        NoteStep(isReversed);
         if (ShouldNavigateTiffEntry(navigateTo, skipAmount))
         {
             return;
@@ -457,14 +466,16 @@ public class ImageIterator(SharedImageCache cache, Thumbnails thumbnails, TabVie
         {
             await Task.Run(async () =>
             {
-                var thumb = await _thumbnails.GetQuickAsync(targetFile,
-                        _tab.Gallery.Look.CurrentValue.ThumbnailHeight, ct.Token)
-                    .ConfigureAwait(false);
-                if (IsTargetActive(targetFile))
+                var loading = request.AsTask();
+                var thumbnail = QuickThumbnailAsync(targetFile, ct.Token);
+                // An image that is there first is shown as it is: waiting for its thumbnail would only hold it up
+                await Task.WhenAny(loading, thumbnail).ConfigureAwait(false);
+                if (!loading.IsCompleted && await thumbnail.ConfigureAwait(false) is { IsKnown: true } standIn &&
+                    IsTargetActive(targetFile))
                 {
-                    _tab.ShowStandIn(thumb);
+                    _tab.ShowStandIn(standIn.Thumbnail);
                 }
-                var model = await request.ConfigureAwait(false);
+                var model = await loading.ConfigureAwait(false);
                 if (model is not null && IsTargetActive(targetFile))
                 {
                     UpdateModel(model);
@@ -479,6 +490,28 @@ public class ImageIterator(SharedImageCache cache, Thumbnails thumbnails, TabVie
         }
     }
     
+    // The thumbnail the file or the OS already has, null when it has none. Not known when getting it failed or was
+    // cancelled: a Stand-in is optional, so that must neither stop the image from showing nor clear what is shown
+    private async Task<(bool IsKnown, object? Thumbnail)> QuickThumbnailAsync(FileInfo file, CancellationToken ct)
+    {
+        try
+        {
+            var thumbnail = await _thumbnails
+                .GetQuickAsync(file, _tab.Gallery.Look.CurrentValue.ThumbnailHeight, ct)
+                .ConfigureAwait(false);
+            return (true, thumbnail);
+        }
+        catch (OperationCanceledException)
+        {
+            return default;
+        }
+        catch (Exception ex)
+        {
+            DebugHelper.LogDebug(nameof(ImageIterator), nameof(QuickThumbnailAsync), ex);
+            return default;
+        }
+    }
+
     /// <param name="files">The list the indices count in, as <see cref="ShowAloneAsync"/>
     /// takes it.</param>
     private async ValueTask ShowPairAsync(FileInfo[] files, int index, int secondaryIndex, CancellationTokenSource ct)
@@ -588,7 +621,7 @@ public class ImageIterator(SharedImageCache cache, Thumbnails thumbnails, TabVie
     {
         var (iteration, isReversed) = IterationHelper.GetIteration(CurrentIndex, Files.Count,
             forwards ? NavigateTo.Next : NavigateTo.Previous, skipAmount, PairSettings().Looping);
-        IsReversed = isReversed;
+        NoteStep(isReversed);
         await SkipToIndexAsync(iteration, ct).ConfigureAwait(false);
     }
 
@@ -649,7 +682,7 @@ public class ImageIterator(SharedImageCache cache, Thumbnails thumbnails, TabVie
         var (iteration, isReversed) = showsPair
             ? SideBySidePair.Navigate(from.Index, from.Files.Length, to, SkipAmount.One, looping)
             : IterationHelper.GetIteration(from.Index, from.Files.Length, to, SkipAmount.One, looping);
-        IsReversed = isReversed;
+        NoteStep(isReversed);
         if (ShouldNavigateTiffEntry(to, SkipAmount.One))
         {
             return;

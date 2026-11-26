@@ -192,6 +192,22 @@ public class SharedImageCacheTests
     }
 
     [Fact]
+    public void Put_SameModelAgainAfterItsFileWasInvalidated_KeepsItsImage()
+    {
+        // A tab still shows the image of a file PicView rewrote, and a relist keeps what the tab shows in the cache
+        var files = Files(1);
+        _cache.SetFiles(Owner, files);
+        var model = new ImageModel { FileInfo = files[0], Image = new ProbeImage() };
+        _cache.Put(Owner, files[0], model);
+
+        _cache.Invalidate(files[0].FullName);
+        _cache.Put(Owner, files[0], model);
+        _cache.ForceDisposalQueue();
+
+        Assert.False(Probe(model).IsDisposed, "The cache still holds the model under its file");
+    }
+
+    [Fact]
     public async Task Put_SameModelAgain_LoadsNothingAndKeepsIt()
     {
         var files = Files(1);
@@ -315,6 +331,135 @@ public class SharedImageCacheTests
         var expected = Enumerable.Range(1, Settings.Navigation.PositiveIterations).Select(i => files[current + i])
             .Concat(Enumerable.Range(1, Settings.Navigation.NegativeIterations).Select(i => files[current - i]))
             .ToArray();
+        await WaitUntilReady(expected);
+        Assert.False(_cache.TryGetReady(files[current], out _), "Preloading skips the current file");
+    }
+
+    [Fact]
+    public async Task Preload_OneStepBack_StillLoadsDeepForwards()
+    {
+        var files = Files(60);
+        _cache.SetFiles(Owner, files);
+        var (deep, shallow) = (Settings.Navigation.PositiveIterations, Settings.Navigation.NegativeIterations);
+
+        StepTo(files[30], reversed: true);
+
+        await WaitUntilReady(Range(files, 31, deep).Concat(Range(files, 30 - shallow, shallow)));
+        Assert.False(_cache.TryGetReady(files[30 - shallow - 1], out _), "A single step back is not travel backwards");
+    }
+
+    [Fact]
+    public async Task Preload_TwoStepsBack_LoadsDeepBackwardsAndShallowForwards()
+    {
+        var files = Files(60);
+        _cache.SetFiles(Owner, files);
+        var (deep, shallow) = (Settings.Navigation.PositiveIterations, Settings.Navigation.NegativeIterations);
+        // Each step far from the others, so no preload loads what a later one is asked about
+        StepTo(files[50], reversed: true);
+        await WaitUntilReady(Range(files, 51, deep));
+
+        StepTo(files[30], reversed: true);
+
+        await WaitUntilReady(Range(files, 30 - deep, deep).Concat(Range(files, 31, shallow)));
+        Assert.False(_cache.TryGetReady(files[31 + shallow], out _), "Forwards is behind now, so it is the shallow side");
+    }
+
+    [Fact]
+    public async Task Preload_TravelingBackwardsThenTwoStepsForwards_LoadsDeepForwardsAgain()
+    {
+        var files = Files(60);
+        _cache.SetFiles(Owner, files);
+        var (deep, shallow) = (Settings.Navigation.PositiveIterations, Settings.Navigation.NegativeIterations);
+        StepTo(files[55], reversed: true);
+        await WaitUntilReady(Range(files, 55 - shallow, shallow));
+        StepTo(files[40], reversed: true);
+        await WaitUntilReady(Range(files, 40 - deep, deep));
+
+        StepTo(files[20], reversed: false);
+        await WaitUntilReady(Range(files, 20 - deep, deep).Concat(Range(files, 21, shallow)));
+        Assert.False(_cache.TryGetReady(files[21 + shallow], out _), "A single step forwards is not travel forwards");
+
+        StepTo(files[25], reversed: false);
+        await WaitUntilReady(Range(files, 26, deep));
+    }
+
+    [Fact]
+    public async Task Preload_AskedAgainWithoutAStep_KeepsTheDirectionOfTravel()
+    {
+        var files = Files(60);
+        _cache.SetFiles(Owner, files);
+        var (deep, shallow) = (Settings.Navigation.PositiveIterations, Settings.Navigation.NegativeIterations);
+        StepTo(files[50], reversed: true);
+        await WaitUntilReady(Range(files, 51, deep));
+
+        // As when an archive lists more pages after one step back: a preload again, with no step taken
+        _cache.Preload(Owner, files[30], reversed: true, TestContext.Current.CancellationToken);
+
+        await WaitUntilReady(Range(files, 31, deep).Concat(Range(files, 30 - shallow, shallow)));
+        Assert.False(_cache.TryGetReady(files[30 - shallow - 1], out _), "Only a step turns the direction of travel");
+    }
+
+    [Fact]
+    public async Task Preload_TravelResetWhileTravelingBackwards_LoadsDeepForwardsAgain()
+    {
+        var files = Files(60);
+        _cache.SetFiles(Owner, files);
+        var (deep, shallow) = (Settings.Navigation.PositiveIterations, Settings.Navigation.NegativeIterations);
+        StepTo(files[55], reversed: true);
+        await WaitUntilReady(Range(files, 55 - shallow, shallow));
+        StepTo(files[40], reversed: true);
+        await WaitUntilReady(Range(files, 40 - deep, deep));
+
+        // As when the tab opens another folder
+        _cache.ResetTravel(Owner);
+        _cache.Preload(Owner, files[15], reversed: false, TestContext.Current.CancellationToken);
+
+        await WaitUntilReady(Range(files, 16, deep).Concat(Range(files, 15 - shallow, shallow)));
+        Assert.False(_cache.TryGetReady(files[15 - shallow - 1], out _), "Backwards is behind again, the shallow side");
+    }
+
+    [Fact]
+    public async Task HoldReady_ImageReleasedByItsOwner_IsNotDisposedUntilTheLeaseEnds()
+    {
+        var files = Files(1);
+        _cache.SetFiles(Owner, files);
+        var model = await _cache.GetAsync(Owner, files[0], TestContext.Current.CancellationToken);
+
+        var lease = _cache.HoldReady(files[0], out var held);
+        _cache.ReleaseOwner(Owner);
+        _cache.ForceDisposalQueue();
+
+        Assert.NotNull(lease);
+        Assert.Same(model, held);
+        Assert.False(Probe(model!).IsDisposed, "Held by the lease");
+
+        lease.Dispose();
+        _cache.ForceDisposalQueue();
+        Assert.True(Probe(model!).IsDisposed);
+    }
+
+    [Fact]
+    public void HoldReady_FileNotInMemory_HoldsNothing()
+    {
+        var lease = _cache.HoldReady(Files(1)[0], out var held);
+
+        Assert.Null(lease);
+        Assert.Null(held);
+    }
+
+    // A step to a file, then the preload around it, as a tab's iterator does when it shows the next image
+    private void StepTo(FileInfo file, bool reversed)
+    {
+        _cache.NoteStep(Owner, reversed);
+        _cache.Preload(Owner, file, reversed, TestContext.Current.CancellationToken);
+    }
+
+    private static IEnumerable<FileInfo> Range(FileInfo[] files, int start, int count) =>
+        files.Skip(start).Take(count);
+
+    private async Task WaitUntilReady(IEnumerable<FileInfo> files)
+    {
+        var expected = files.ToArray();
         var deadline = DateTime.UtcNow.AddSeconds(5);
         while (!Array.TrueForAll(expected, f => _cache.TryGetReady(f, out _)) && DateTime.UtcNow < deadline)
         {
@@ -322,7 +467,64 @@ public class SharedImageCacheTests
         }
 
         Assert.All(expected, f => Assert.True(_cache.TryGetReady(f, out _), f.Name));
-        Assert.False(_cache.TryGetReady(files[current], out _), "Preloading skips the current file");
+    }
+
+    [Fact]
+    public async Task Release_MoreUnreferencedThanTheCap_DisposesTheOldestAndKeepsTheNewest()
+    {
+        var cache = new SharedImageCache(LoadProbe, new ManualTimeProvider());
+        var window = PicView.Core.Preloading.PreLoaderConfig.MaxCount;
+        var files = Files(window * 3 + 4);
+        cache.SetFiles(Owner, files);
+
+        // As scrolling forwards: every step past the window releases the image farthest behind
+        var models = new ImageModel[files.Length];
+        for (var i = 0; i < files.Length; i++)
+        {
+            models[i] = (await cache.GetAsync(Owner, files[i], TestContext.Current.CancellationToken))!;
+        }
+
+        var released = files.Length - window;
+        var disposed = Enumerable.Range(0, files.Length).Where(i => Probe(models[i]).IsDisposed).ToArray();
+        Assert.Equal(Enumerable.Range(0, released - window), disposed);
+    }
+
+    [Fact]
+    public async Task Release_NothingReleasedAfterwards_DisposedOnceTheDelayEnds()
+    {
+        var clock = new ManualTimeProvider();
+        var cache = new SharedImageCache(LoadProbe, clock);
+        var files = Files(1);
+        cache.SetFiles(Owner, files);
+        var model = await cache.GetAsync(Owner, files[0], TestContext.Current.CancellationToken);
+        cache.ReleaseImages(Owner);
+
+        clock.Advance(TimeSpan.FromSeconds(14));
+        Assert.False(Probe(model!).IsDisposed, "Still within the disposal delay");
+
+        clock.Advance(TimeSpan.FromSeconds(1));
+        Assert.True(Probe(model!).IsDisposed, "The delay ended, with no other release to sweep it");
+    }
+
+    [Fact]
+    public async Task Release_TakenAgainAndReleasedAgain_DelayCountsFromTheLastRelease()
+    {
+        var clock = new ManualTimeProvider();
+        var cache = new SharedImageCache(LoadProbe, clock);
+        var files = Files(1);
+        cache.SetFiles(Owner, files);
+        var model = await cache.GetAsync(Owner, files[0], TestContext.Current.CancellationToken);
+        cache.ReleaseImages(Owner);
+
+        clock.Advance(TimeSpan.FromSeconds(10));
+        await cache.GetAsync(Owner, files[0], TestContext.Current.CancellationToken);
+        cache.ReleaseImages(Owner);
+
+        clock.Advance(TimeSpan.FromSeconds(10));
+        Assert.False(Probe(model!).IsDisposed, "Only 10 seconds since it was last released");
+
+        clock.Advance(TimeSpan.FromSeconds(5));
+        Assert.True(Probe(model!).IsDisposed);
     }
 
     private ImageModel LoadProbe(FileInfo file)

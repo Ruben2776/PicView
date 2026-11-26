@@ -369,6 +369,9 @@ public sealed class TabLoad
             return LoadResult.Failed();
         }
 
+        // Nothing references the opened image until the tab shows it, which a pair does only once its folder is listed
+        // and the other image loaded. Null for a given model, which the cache does not have yet
+        using var opened = cache.Hold(model);
         var (showsPair, looping) = _tab.PairSettings();
         if (!showsPair)
         {
@@ -394,6 +397,8 @@ public sealed class TabLoad
         var (primary, partner) = SideBySidePair.PairAt(index, retrieved.Count, showsPair, looping);
         var iterator = EnsureIterator();
         iterator.Initialize(retrieved, primary, ordering);
+        // Other files than the tab stepped through, so the way it travelled says nothing about these
+        cache.ResetTravel(_tab.Id);
         try
         {
             // The image of the pair that is not the opened file, and where it is
@@ -453,6 +458,8 @@ public sealed class TabLoad
                     cache.Put(_tab.Id, retrieved[otherIndex], otherModel);
                 }
 
+                _tab.HoldShown();
+
                 var currentFile = retrieved[primary];
 
                 cache.Preload(_tab.Id, currentFile, false, _tab.GetTabCancellation().Token);
@@ -498,6 +505,7 @@ public sealed class TabLoad
         cache.ReleaseImages(_tab.Id);
         PutShown(files, _tab.Model);
         PutShown(files, _tab.SecondaryModel);
+        _tab.HoldShown();
         cache.Preload(_tab.Id, files[index], false, _tab.GetTabCancellation().Token);
         // Listed in the order the relist began with, which the window may have changed since
         _tab.FollowListedOrder();

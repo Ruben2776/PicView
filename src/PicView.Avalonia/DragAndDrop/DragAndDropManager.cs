@@ -23,6 +23,9 @@ public static class DragAndDropManager
 {
     private static DragDropView? _dragDropView;
 
+    // Keeps a cached image the drag view shows from being disposed under it, until the view is removed
+    private static IDisposable? _shownCachedImage;
+
     #region Public Entry Points
 
     public static async ValueTask Drop(DragEventArgs e, MainWindow mainWindow)
@@ -115,6 +118,7 @@ public static class DragAndDropManager
 
     public static void RemoveDragDropView(MainWindow mainWindow)
     {
+        Interlocked.Exchange(ref _shownCachedImage, null)?.Dispose();
         if (_dragDropView is null)
         {
             return;
@@ -273,13 +277,26 @@ public static class DragAndDropManager
         var core = await Dispatcher.UIThread.InvokeAsync(() => Application.Current.DataContext as CoreViewModel);
         Bitmap? thumb;
         // Try to get preloaded image first
-        if (core.SharedCache.TryGetReady(fileInfo, out var ready) && ready.Image is Bitmap bmp)
+        var held = core.SharedCache.HoldReady(fileInfo, out var ready);
+        if (ready?.Image is Bitmap bmp)
         {
             thumb = bmp;
-            await Dispatcher.UIThread.InvokeAsync(() => _dragDropView?.UpdateThumbnail(thumb, mainWindow));
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                if (_dragDropView is null)
+                {
+                    // The drag ended meanwhile, so nothing shows the image
+                    held?.Dispose();
+                    return;
+                }
+
+                Interlocked.Exchange(ref _shownCachedImage, held)?.Dispose();
+                _dragDropView.UpdateThumbnail(thumb, mainWindow);
+            });
         }
         else
         {
+            held?.Dispose();
             // A thumbnail first, kept by no one since the drag is brief
             thumb = core.SharedThumbnails is { } thumbnails
                 ? await thumbnails.GetAsync(fileInfo, (uint)(SizeDefaults.WindowMinSize - 30), owner: null)

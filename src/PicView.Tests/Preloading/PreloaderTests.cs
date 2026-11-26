@@ -25,10 +25,10 @@ public class PreloaderTests
         FileInfo[] two = [new("a.jpg"), new("b.jpg")];
         FileInfo[] three = [new("a.jpg"), new("b.jpg"), new("c.jpg")];
 
-        preloader.Preload(1, two, 0, reversed: false, CancellationToken.None);
+        preloader.Preload(1, new PreloadRequest(two, 0, false, false, CancellationToken.None));
         await WaitUntil(() => loaded.Contains("b.jpg"));
         // A page was listed after the shown one while the first preload still runs, as an archive's pages are
-        preloader.Preload(1, three, 0, reversed: false, CancellationToken.None);
+        preloader.Preload(1, new PreloadRequest(three, 0, false, false, CancellationToken.None));
         release.SetResult();
 
         await WaitUntil(() => loaded.Contains("c.jpg"));

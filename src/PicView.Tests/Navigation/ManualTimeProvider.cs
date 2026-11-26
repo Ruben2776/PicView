@@ -11,6 +11,11 @@ internal sealed class ManualTimeProvider : TimeProvider
 
     public override DateTimeOffset GetUtcNow() => _now;
 
+    // The same clock as timestamps, for code that measures time with them
+    public override long GetTimestamp() => _now.UtcTicks;
+
+    public override long TimestampFrequency => TimeSpan.TicksPerSecond;
+
     public override ITimer CreateTimer(TimerCallback callback, object? state, TimeSpan dueTime, TimeSpan period)
     {
         var timer = new ManualTimer(this, callback, state);

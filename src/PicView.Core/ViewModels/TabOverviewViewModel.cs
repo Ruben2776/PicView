@@ -568,11 +568,7 @@ public class TabOverviewViewModel
             return null;
         }
 
-        if (SharedCache.TryGetReady(fileInfo, out var ready) && ready.Image is not null)
-        {
-            return ready.Image;
-        }
-
+        // Asked for through the tab even when it is in memory, so the tab references what it gets
         var tab = ActiveTab.CurrentValue;
         var request = SharedCache.GetAsync(tab.Id, fileInfo, tab.GetTabCancellation().Token);
         // A pending ValueTask cannot be blocked on directly
