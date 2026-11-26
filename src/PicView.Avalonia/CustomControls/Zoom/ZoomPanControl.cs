@@ -55,6 +55,15 @@ public class ZoomPanControl : Decorator
     // keeps the size it asks for, at the control's origin, and the control's size is the area the zoom shows it in
     private bool HasViewportSize => !double.IsNaN(Width) && !double.IsNaN(Height);
 
+    // Whether the last arrange was at a size the Fit gave. Read and written on the UI thread
+    private bool _wasArrangedAtViewportSize;
+
+    /// <summary>
+    /// Whether the window follows the zoom and has not stopped growing, so the control shows the whole child however
+    /// far it is zoomed (ADR-0047). The zoom previewer has nothing to show then.
+    /// </summary>
+    public bool ShowsWholeChildByWindowSize => WindowGrowthLimit > 0 && Scale <= WindowGrowthLimit;
+
     /// <summary>
     /// Whether Space, the crop's pan key, is down. Only the <see cref="ZoomPanHost.Crop"/> host follows it.
     /// </summary>
@@ -265,13 +274,28 @@ public class ZoomPanControl : Decorator
     {
         if (HasViewportSize && Child is not null)
         {
+            _wasArrangedAtViewportSize = true;
             Child.Arrange(new Rect(Child.DesiredSize));
 
             // The control took a new size for the zoom, so the image is placed in it again: centered while it fits
-            // (Bounds is the old size until this returns)
+            // (Bounds is the old size until this returns). At once, also after an animated step inside a window
+            // that had stopped growing, whose transitions are still set
+            SetTransitions(false);
             ConstrainTranslationToBounds(finalSize);
             UpdateChildTransform();
             return finalSize;
+        }
+
+        if (_wasArrangedAtViewportSize)
+        {
+            // The Fit took its size back, as when the setting or AutoFit turns off while zoomed: the child fills
+            // the control again, and the image is placed in the size the control has now
+            _wasArrangedAtViewportSize = false;
+            var arranged = base.ArrangeOverride(finalSize);
+            SetTransitions(false);
+            ConstrainTranslationToBounds(finalSize);
+            UpdateChildTransform();
+            return arranged;
         }
 
         if (!_isPanning)

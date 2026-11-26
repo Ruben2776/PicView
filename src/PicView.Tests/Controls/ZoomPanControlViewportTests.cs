@@ -77,6 +77,42 @@ public class ZoomPanControlViewportTests
     }
 
     [AvaloniaFact]
+    public void ViewportSizeTakenBack_ImageIsPlacedInTheControlsOwnSize()
+    {
+        var (control, child, window) = Show(400, 300);
+        control.SetScaleImmediate(0.5);
+        control.Width = 200;
+        control.Height = 150;
+        Dispatcher.UIThread.RunJobs();
+
+        // As when the setting turns off while zoomed out: the control fills the window again
+        control.Width = control.Height = double.NaN;
+        Dispatcher.UIThread.RunJobs();
+
+        // The 200 by 150 image is centered in the control's own size, not left where the viewport had it
+        Assert.True(control.Bounds.Width > 400);
+        Assert.Equal(new Size(400, 300), child.Bounds.Size);
+        Assert.Equal((control.Bounds.Width - 200) / 2, control.TranslateX, 6);
+        Assert.Equal((control.Bounds.Height - 150) / 2, control.TranslateY, 6);
+        window.Close();
+    }
+
+    [Theory]
+    [InlineData(1.5, 0, false)]
+    [InlineData(1.5, 2, true)]
+    [InlineData(2, 2, true)]
+    [InlineData(2.5, 2, false)]
+    public void ShowsWholeChildByWindowSize_UntilTheWindowHasStoppedGrowing(double scale, double growthLimit,
+        bool expected)
+    {
+        var control = new ZoomPanControl { Child = new Border { Width = 400, Height = 300 } };
+        control.WindowGrowthLimit = growthLimit;
+        control.SetScaleImmediate(scale);
+
+        Assert.Equal(expected, control.ShowsWholeChildByWindowSize);
+    }
+
+    [AvaloniaFact]
     public void NoViewportSize_ChildFillsTheControlAsBefore()
     {
         var child = new Border();

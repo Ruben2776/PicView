@@ -184,7 +184,8 @@ public partial class ZoomPreviewer : UserControl
         }
 
         // Show when zoomed in or out (not at 1.0 scale)
-        var shouldShow = _zoomPanControl.Scale > 1;
+        // Not while the window still grows with the zoom, since the whole image is in view then (ADR-0047)
+        var shouldShow = _zoomPanControl.Scale > 1 && !_zoomPanControl.ShowsWholeChildByWindowSize;
 
         if (shouldShow)
         {
