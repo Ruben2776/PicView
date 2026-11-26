@@ -395,6 +395,102 @@ public class ImageFitterTests
         Assert.Equal(600 - 32 - 26, height);
     }
 
+    #region Zoom Resizes Window (ADR-0047)
+
+    [Fact]
+    public void Fit_WindowZoomFactor_WindowWrapsTheZoomedImage()
+    {
+        var fit = Fit(Input(400, 400) with { WindowZoomFactor = 2 });
+
+        // The image keeps its fitted size and Fit Scale; the window and the area it is shown in take the zoomed size
+        AssertSizes(fit, 800, 858, 400, 400);
+        Assert.Equal(1, fit.Scale, Precision);
+        Assert.Equal(800, fit.ViewportWidth, Precision);
+        Assert.Equal(800, fit.ViewportHeight, Precision);
+    }
+
+    [Fact]
+    public void Fit_WindowZoomFactorPastTheAvailableArea_WindowStopsThere()
+    {
+        // Available area: 1905 wide, 1040 - 15 - 58 = 967 high
+        var fit = Fit(Input(1000, 500) with { WindowZoomFactor = 3 });
+
+        AssertSizes(fit, 1905, 1025, 1000, 500);
+        Assert.Equal(1905, fit.ViewportWidth, Precision);
+        Assert.Equal(967, fit.ViewportHeight, Precision);
+    }
+
+    [Fact]
+    public void Fit_WindowZoomFactor_GrowthLimitIsWhereBothSidesFillTheAvailableArea()
+    {
+        var fit = Fit(Input(1000, 500) with { WindowZoomFactor = 1 });
+
+        // The width is full at 1.905, the height at 1.934
+        Assert.Equal(967 / 500d, fit.WindowGrowthLimit, Precision);
+    }
+
+    [Fact]
+    public void Fit_WindowZoomFactorBelowOne_WindowShrinksWithTheImage()
+    {
+        var fit = Fit(Input(1000, 800) with { WindowZoomFactor = 0.5 });
+
+        AssertSizes(fit, 500, 458, 1000, 800);
+        Assert.Equal(500, fit.ViewportWidth, Precision);
+        Assert.Equal(400, fit.ViewportHeight, Precision);
+    }
+
+    [Fact]
+    public void Fit_WindowZoomFactorBelowOne_WindowKeepsItsMinimumSize()
+    {
+        var fit = Fit(Input(400, 400) with { WindowZoomFactor = 0.25 });
+
+        Assert.Equal(SizeDefaults.WindowMinSize, fit.WindowWidth);
+        Assert.Equal(SizeDefaults.WindowMinSize, fit.WindowHeight);
+        Assert.Equal(100, fit.ViewportWidth, Precision);
+    }
+
+    [Fact]
+    public void Fit_WindowZoomFactorOnATurnedImage_ViewportIsBeforeTheTurn()
+    {
+        var fit = Fit(Input(400, 300) with { WindowZoomFactor = 2, QuarterTurns = 1 });
+
+        // Shown 300 wide and 400 high, so the window is 600 by 800 plus the bars
+        AssertSizes(fit, 600, 858, 400, 300);
+        Assert.Equal(800, fit.ViewportWidth, Precision);
+        Assert.Equal(600, fit.ViewportHeight, Precision);
+    }
+
+    [Fact]
+    public void Fit_WindowZoomFactorOnAPair_WindowWrapsTheZoomedPair()
+    {
+        var fit = Fit(Input(400, 300) with
+        {
+            SecondImageWidth = 400, SecondImageHeight = 300, WindowZoomFactor = 1.5
+        });
+
+        AssertSizes(fit, 1200, 508, 800, 300);
+    }
+
+    [Theory]
+    [InlineData(FitMode.FixedWindow, false)]
+    [InlineData(FitMode.Fullscreen, false)]
+    [InlineData(FitMode.AutoFit, true)]
+    public void Fit_WindowZoomFactor_OnlyAnAutoFitWindowThatDoesNotScrollFollowsIt(FitMode mode, bool scrolls)
+    {
+        var input = Input(400, 300, mode) with
+        {
+            ScrollEnabled = scrolls, WindowContentWidth = 800, WindowContentHeight = 600
+        };
+
+        var fit = Fit(input with { WindowZoomFactor = 2 });
+
+        Assert.Equal(Fit(input), fit);
+        Assert.Equal(0, fit.ViewportWidth);
+        Assert.Equal(0, fit.WindowGrowthLimit);
+    }
+
+    #endregion
+
     [Fact]
     public void StartUpMenuWindowSize_LargeScreen_IsItsOwnSize()
     {

@@ -68,6 +68,12 @@ public readonly record struct FitInput
     public bool ZoomToFit { get; init; }
     public bool ScrollEnabled { get; init; }
 
+    /// <summary>
+    /// The Zoom Factor the window takes its size at when zoom resizes the window (ADR-0047), or 0 when it does not,
+    /// so the window takes the fitted size. Only an AutoFit window that does not scroll follows it.
+    /// </summary>
+    public double WindowZoomFactor { get; init; }
+
     public ScreenSize Screen { get; init; }
 
     /// <summary>

@@ -75,6 +75,43 @@ public class WindowSettingsViewTests
     }
 
     [AvaloniaFact]
+    public void ZoomResizesWindow_Clicked_ChangesOnlyTheActiveMainWindow()
+    {
+        var (core, a, b, _, window) = Create();
+        var button = ((WindowSettingsView)window.Content!).FindControl<TextToggleButton>(
+            "ZoomResizesWindowToggleButton")!;
+        Assert.False(button.IsChecked);
+
+        button.IsChecked = true;
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.True(a.WindowSettings.IsZoomResizingWindow.Value);
+        Assert.False(b.WindowSettings.IsZoomResizingWindow.Value);
+
+        core.MainWindows.ActiveWindow.Value = b;
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.False(button.IsChecked);
+        Assert.True(a.WindowSettings.IsZoomResizingWindow.Value);
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public void ZoomResizesWindow_WithoutAutoFit_IsDisabled()
+    {
+        var (_, a, _, _, window) = Create();
+        var button = ((WindowSettingsView)window.Content!).FindControl<TextToggleButton>(
+            "ZoomResizesWindowToggleButton")!;
+        Assert.False(button.IsEnabled);
+
+        a.WindowModeState.Value = a.WindowModeState.Value.SetAutoFit(true);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.True(button.IsEnabled);
+        window.Close();
+    }
+
+    [AvaloniaFact]
     public void StayCentered_NoActiveMainWindow_DoesNothing()
     {
         var (core, a, b, button, window) = Create();

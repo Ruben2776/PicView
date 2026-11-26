@@ -13,12 +13,19 @@ public sealed class TabZoom : IDisposable
 {
     private readonly ReactiveProperty<int> _level = new(100);
     private readonly ReactiveProperty<int> _factorPercent = new(100);
+    private readonly ReactiveProperty<double> _factor = new(1);
 
     /// <summary>The Fit Scale: pixel size to shown size when fitted. 1 until the first Fit.</summary>
     public double FitScale { get; private set; } = 1;
 
     /// <summary>The Zoom Factor: how far the user has zoomed from the Fit. 1 as fitted.</summary>
-    public double Factor { get; private set; } = 1;
+    public double Factor => _factor.Value;
+
+    /// <summary>
+    /// The Zoom Factor now and each time it changes, on the thread that changed it. The window fitter follows it, so
+    /// a window whose zoom resizes it takes its new size (ADR-0047).
+    /// </summary>
+    public ReadOnlyReactiveProperty<double> FactorValue => _factor;
 
     /// <summary>The Zoom Level: the percent of its pixel size the image is shown at.</summary>
     public ReadOnlyReactiveProperty<int> Level => _level;
@@ -36,7 +43,7 @@ public sealed class TabZoom : IDisposable
     /// <summary>The user zoomed, or the control's zoom was reset.</summary>
     public void SetFactor(double factor)
     {
-        Factor = factor;
+        _factor.Value = factor;
         Recompute();
     }
 
@@ -54,5 +61,6 @@ public sealed class TabZoom : IDisposable
     {
         _level.Dispose();
         _factorPercent.Dispose();
+        _factor.Dispose();
     }
 }

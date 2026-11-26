@@ -36,8 +36,10 @@ public partial class SettingBindingContractTests
                     continue;
                 }
 
-                // Stay Centered has no Action: its control is its one writer, so its binding is TwoWay on purpose
-                if (binding.Contains(StayCenteredBinding, StringComparison.Ordinal))
+                // Stay Centered and Zoom Resizes Window have no Action: each one's control is its one writer, so
+                // its binding is TwoWay on purpose
+                if (binding.Contains(StayCenteredBinding, StringComparison.Ordinal) ||
+                    binding.Contains(ZoomResizesWindowBinding, StringComparison.Ordinal))
                 {
                     continue;
                 }
@@ -107,6 +109,7 @@ public partial class SettingBindingContractTests
     }
 
     private const string StayCenteredBinding = "WindowSettings.IsStayingCentered.";
+    private const string ZoomResizesWindowBinding = "WindowSettings.IsZoomResizingWindow.";
 
     private static bool IsInsideComment(string text, int index)
     {

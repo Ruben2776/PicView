@@ -443,6 +443,7 @@ public class TranslationViewModel
         Zoom.Value = t.Zoom;
         ZoomIn.Value = t.ZoomIn;
         ZoomOut.Value = t.ZoomOut;
+        ZoomResizesWindow.Value = t.ZoomResizesWindow;
         ZoomToFit.Value = t.ZoomToFit;
 
         _languageChanged.OnNext(Unit.Default);
@@ -875,6 +876,7 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> Zoom { get; } = new();
     public BindableReactiveProperty<string?> ZoomIn { get; } = new();
     public BindableReactiveProperty<string?> ZoomOut { get; } = new();
+    public BindableReactiveProperty<string?> ZoomResizesWindow { get; } = new();
     public BindableReactiveProperty<string?> ZoomToFit { get; } = new();
     #endregion strings
 

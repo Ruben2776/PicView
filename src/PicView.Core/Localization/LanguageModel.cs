@@ -552,6 +552,7 @@ public class LanguageModel
     public string? Zoom { get; set; }
     public string? ZoomIn { get; set; }
     public string? ZoomOut { get; set; }
+    public string? ZoomResizesWindow { get; set; }
     public string? ZoomToFit { get; set; }
     
     #endregion

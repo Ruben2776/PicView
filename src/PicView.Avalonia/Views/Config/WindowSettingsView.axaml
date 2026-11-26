@@ -43,6 +43,17 @@
             </StackPanel>
         </Border>
 
+        <Border Classes="searchBorder" ui:SearchProperties.Key="ZoomResizesWindow">
+            <customControls:TextToggleButton
+                Classes="MenuItemHover settingsToggleButton"
+                IsChecked="{CompiledBinding MainWindows.ActiveWindow.Value.WindowSettings.IsZoomResizingWindow.Value,
+                                            Mode=TwoWay}"
+                IsEnabled="{CompiledBinding MainWindows.ActiveWindow.Value.IsAutoFit.Value}"
+                Text="{CompiledBinding Translation.ZoomResizesWindow.Value,
+                                       Mode=OneWay}"
+                x:Name="ZoomResizesWindowToggleButton" />
+        </Border>
+
         <Border Classes="searchBorder" ui:SearchProperties.Key="WindowMargin">
             <StackPanel>
                 <!--  Window spacing  -->

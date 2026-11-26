@@ -81,6 +81,8 @@ public static class SettingsSearchIndex
             t.WindowManagement, "Topmost Always");
         Add(SettingKey.StayCentered, t.StayCentered,
             t.WindowManagement, "Center");
+        Add(SettingKey.ZoomResizesWindow, t.ZoomResizesWindow,
+            t.WindowManagement, t.AutoFitWindow, t.Zoom, "Scale Grow Shrink Follow");
         Add(SettingKey.ConfirmOnEsc, t.ShowConfirmationOnEsc,
             t.WindowManagement, "Escape Exit Close");
         Add(SettingKey.EscLeavesFullscreen, t.EscLeavesFullscreen,

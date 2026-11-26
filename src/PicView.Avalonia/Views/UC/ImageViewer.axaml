@@ -18,7 +18,12 @@
             <LayoutTransformControl.LayoutTransform>
                 <RotateTransform Angle="{Binding Orientation.Degrees.Value}" />
             </LayoutTransformControl.LayoutTransform>
-            <zoom:ZoomPanControl x:Name="ZoomPanControl">
+            <!--  Sized by the Fit only while zoom resizes the window (ADR-0047); NaN otherwise  -->
+            <zoom:ZoomPanControl
+                x:Name="ZoomPanControl"
+                Width="{Binding ParentWindowContext.ViewportWidth.Value}"
+                Height="{Binding ParentWindowContext.ViewportHeight.Value}"
+                WindowGrowthLimit="{Binding ParentWindowContext.WindowGrowthLimit.Value}">
                 <customControls:AutoScrollViewer
                     x:Name="ImageScrollViewer"
                     Width="{Binding ParentWindowContext.ScrollViewerWidth.Value}"

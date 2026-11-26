@@ -72,6 +72,29 @@ public class WindowSettingsTests
     }
 
     [Fact]
+    public void ZoomResizesWindow_IsOffByDefault_AndIsReadStoredAndCopied()
+    {
+        using var defaults = WindowSettings.FromRecord(null);
+        Assert.False(defaults.IsZoomResizingWindow.Value);
+
+        var record = GetDefaults();
+        record.WindowProperties = new WindowProperties { ZoomResizesWindow = true };
+        using var settings = WindowSettings.FromRecord(record);
+        Assert.True(settings.IsZoomResizingWindow.Value);
+
+        using var copy = settings.CopyFor(default);
+        Assert.True(copy.IsZoomResizingWindow.Value);
+        copy.IsZoomResizingWindow.Value = false;
+        Assert.True(settings.IsZoomResizingWindow.Value);
+
+        var stored = GetDefaults();
+        settings.Store(stored, default);
+        Assert.True(stored.WindowProperties!.ZoomResizesWindow);
+        copy.Store(stored, default);
+        Assert.False(stored.WindowProperties.ZoomResizesWindow);
+    }
+
+    [Fact]
     public void CopyFor_TakesTheOpenersValuesAndItsLiveMode_AndIsIndependentAfterwards()
     {
         using var opener = WindowSettings.FromRecord(GetDefaults());

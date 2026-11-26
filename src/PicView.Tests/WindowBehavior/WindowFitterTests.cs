@@ -1757,6 +1757,250 @@ public class WindowFitterTests
         return (following, vm, window, switcher);
     }
 
+    #region Zoom Resizes Window (ADR-0047)
+
+    [AvaloniaFact]
+    public void Follow_ZoomResizesWindow_ZoomStep_WindowTakesTheZoomedSize()
+    {
+        var (fitter, vm, window) = CreateShownZoomWindow(() => Screen(1920, 1040));
+        using var following = fitter.Follow();
+        var tab = vm.WindowTabs.ActiveTab.Value;
+        tab.Display(Model("a.jpg", 400, 400));
+        Dispatcher.UIThread.RunJobs();
+        Assert.Equal(new Size(400, 400), window.ClientSize);
+
+        tab.Zoom.SetFactor(2);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Equal(new Size(800, 800), window.ClientSize);
+        // The image keeps its fitted size and Fit Scale: the Zoom Level is still the Fit Scale times the factor
+        Assert.Equal(400, vm.ImageWidth.Value);
+        Assert.Equal(1, tab.Zoom.FitScale);
+        Assert.Equal(200, tab.Zoom.Level.CurrentValue);
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public void Follow_ZoomResizesWindowOff_ZoomStep_WindowKeepsTheFittedSize()
+    {
+        var (fitter, vm, window) = CreateShownZoomWindow(() => Screen(1920, 1040), zoomResizesWindow: false);
+        using var following = fitter.Follow();
+        var tab = vm.WindowTabs.ActiveTab.Value;
+        tab.Display(Model("a.jpg", 400, 400));
+        Dispatcher.UIThread.RunJobs();
+        var fits = 0;
+        using var counting = fitter.Fits.Subscribe(_ => fits++);
+
+        tab.Zoom.SetFactor(2);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Equal(new Size(400, 400), window.ClientSize);
+        Assert.True(double.IsNaN(vm.ViewportWidth.Value));
+        Assert.Equal(0, vm.WindowGrowthLimit.Value);
+        Assert.Equal(0, fits);
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public void Follow_ZoomResizesWindow_ZoomPastTheAvailableArea_WindowStopsThere()
+    {
+        var (fitter, vm, window) = CreateShownZoomWindow(() => Screen(1000, 700));
+        using var following = fitter.Follow();
+        var tab = vm.WindowTabs.ActiveTab.Value;
+        tab.Display(Model("a.jpg", 400, 400));
+        Dispatcher.UIThread.RunJobs();
+
+        tab.Zoom.SetFactor(2);
+        Dispatcher.UIThread.RunJobs();
+        var stopped = window.ClientSize;
+        tab.Zoom.SetFactor(8);
+        Dispatcher.UIThread.RunJobs();
+
+        // 800 wide fits the work area; the height stops at what the work area, margin and bars leave
+        Assert.Equal(800, stopped.Width);
+        Assert.InRange(stopped.Height, 401, 700 - 15);
+        Assert.Equal(1000 - 15, window.ClientSize.Width);
+        Assert.Equal(stopped.Height, window.ClientSize.Height);
+        Assert.InRange(vm.WindowGrowthLimit.Value, 1.01, 7.99);
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public void Follow_ZoomResizesWindow_ZoomOut_WindowShrinksWithTheImage()
+    {
+        var (fitter, vm, window) = CreateShownZoomWindow(() => Screen(1920, 1040));
+        using var following = fitter.Follow();
+        var tab = vm.WindowTabs.ActiveTab.Value;
+        tab.Display(Model("a.jpg", 800, 800));
+        Dispatcher.UIThread.RunJobs();
+
+        tab.Zoom.SetFactor(0.5);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Equal(new Size(400, 400), window.ClientSize);
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public void Follow_ZoomResizesWindowTurnsOnAndOffWhileZoomed_WindowFollowsAtOnce()
+    {
+        var (fitter, vm, window) = CreateShownZoomWindow(() => Screen(1920, 1040), zoomResizesWindow: false);
+        using var following = fitter.Follow();
+        var tab = vm.WindowTabs.ActiveTab.Value;
+        tab.Display(Model("a.jpg", 400, 400));
+        tab.Zoom.SetFactor(2);
+        Dispatcher.UIThread.RunJobs();
+        Assert.Equal(new Size(400, 400), window.ClientSize);
+
+        vm.WindowSettings.IsZoomResizingWindow.Value = true;
+        Dispatcher.UIThread.RunJobs();
+        Assert.Equal(new Size(800, 800), window.ClientSize);
+
+        vm.WindowSettings.IsZoomResizingWindow.Value = false;
+        Dispatcher.UIThread.RunJobs();
+        Assert.Equal(new Size(400, 400), window.ClientSize);
+        Assert.Equal(2, tab.Zoom.Factor);
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public void Follow_ZoomResizesWindow_NextImageWhileZoomResets_WindowTakesItsFittedSize()
+    {
+        var (fitter, vm, window) = CreateShownZoomWindow(() => Screen(1920, 1040));
+        using var following = fitter.Follow();
+        var tab = vm.WindowTabs.ActiveTab.Value;
+        tab.Display(Model("a.jpg", 400, 400));
+        Dispatcher.UIThread.RunJobs();
+        tab.Zoom.SetFactor(2);
+        Dispatcher.UIThread.RunJobs();
+
+        tab.Display(Model("b.jpg", 500, 300));
+        tab.Zoom.ResetFactor();
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Equal(new Size(500, 300), window.ClientSize);
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public void Follow_ZoomResizesWindow_NextImageWhileZoomIsKept_WindowTakesItsZoomedSize()
+    {
+        var (fitter, vm, window) = CreateShownZoomWindow(() => Screen(1920, 1040));
+        using var following = fitter.Follow();
+        var tab = vm.WindowTabs.ActiveTab.Value;
+        tab.Display(Model("a.jpg", 400, 400));
+        Dispatcher.UIThread.RunJobs();
+        tab.Zoom.SetFactor(2);
+        Dispatcher.UIThread.RunJobs();
+
+        tab.Display(Model("b.jpg", 500, 300));
+        tab.Zoom.SetFactor(2);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Equal(new Size(1000, 600), window.ClientSize);
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public void Follow_ZoomResizesWindow_WhileScrolling_WindowKeepsTheFittedSize()
+    {
+        var (fitter, vm, window) = CreateShownZoomWindow(() => Screen(1920, 1040));
+        vm.WindowSettings.IsScrollingEnabled.Value = true;
+        using var following = fitter.Follow();
+        var tab = vm.WindowTabs.ActiveTab.Value;
+        tab.Display(Model("a.jpg", 400, 400));
+        Dispatcher.UIThread.RunJobs();
+        var fitted = window.ClientSize;
+
+        tab.Zoom.SetFactor(2);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Equal(fitted, window.ClientSize);
+        Assert.True(double.IsNaN(vm.ViewportWidth.Value));
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public void Follow_ZoomResizesWindowWithoutAutoFit_ZoomStep_FitsNothing()
+    {
+        var (fitter, vm, _) = CreateWindow();
+        vm.WindowSettings.IsZoomResizingWindow.Value = true;
+        using var following = fitter.Follow();
+        var tab = vm.WindowTabs.ActiveTab.Value;
+        tab.Display(Model("a.jpg", 400, 300));
+        Dispatcher.UIThread.RunJobs();
+        var fits = 0;
+        using var counting = fitter.Fits.Subscribe(_ => fits++);
+
+        tab.Zoom.SetFactor(2);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Equal(0, fits);
+        Assert.True(double.IsNaN(vm.ViewportWidth.Value));
+    }
+
+    [AvaloniaFact]
+    public void Follow_ZoomResizesWindow_WhileComparing_WindowKeepsTheFittedSize()
+    {
+        var (fitter, vm, window) = CreateShownZoomWindow(() => Screen(1920, 1040));
+        using var following = fitter.Follow();
+        var tab = vm.WindowTabs.ActiveTab.Value;
+        tab.Display(Model("a.jpg", 400, 400), Model("b.jpg", 400, 400));
+        tab.SetComparing(true);
+        Dispatcher.UIThread.RunJobs();
+        Assert.Equal(TabViewKind.Comparison, tab.ViewKind.Value);
+
+        tab.Zoom.SetFactor(2);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.True(double.IsNaN(vm.ViewportWidth.Value));
+        Assert.Equal(0, vm.WindowGrowthLimit.Value);
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public void Follow_ZoomResizesWindowWithoutStayCentered_ZoomStep_KeepsItsCenter()
+    {
+        var (fitter, vm, window) = CreateShownZoomWindow(() => Screen(1920, 1040));
+        using var following = fitter.Follow();
+        var tab = vm.WindowTabs.ActiveTab.Value;
+        tab.Display(Model("a.jpg", 400, 400));
+        Dispatcher.UIThread.RunJobs();
+        window.Position = new PixelPoint(500, 300);
+        var centerBefore = CenterOf(window);
+
+        tab.Zoom.SetFactor(1.5);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Equal(new Size(600, 600), window.ClientSize);
+        Assert.Equal(centerBefore, CenterOf(window));
+        window.Close();
+    }
+
+    // A shown AutoFit window whose content takes the size of the area the zoom shows the image in, as the image
+    // viewer's zoom control does, or the image's fitted size while the window does not follow the zoom
+    private (WindowFitter Fitter, MainWindowViewModel Vm, MainWindow Window) CreateShownZoomWindow(
+        Func<ScreenSize> readScreen, bool zoomResizesWindow = true)
+    {
+        var (fitter, vm, window) = CreateWindow(readScreen);
+        vm.WindowModeState.Value = vm.WindowModeState.Value.SetAutoFit(true);
+        vm.WindowSettings.IsZoomResizingWindow.Value = zoomResizesWindow;
+        var content = new Border { Width = 400, Height = 300 };
+        vm.ImageWidth.CombineLatest(vm.ViewportWidth, static (image, viewport) =>
+                double.IsNaN(viewport) ? image : viewport)
+            .Subscribe(width => content.Width = double.IsNaN(width) ? 400 : width).AddTo(window.Disposables);
+        vm.ImageHeight.CombineLatest(vm.ViewportHeight, static (image, viewport) =>
+                double.IsNaN(viewport) ? image : viewport)
+            .Subscribe(height => content.Height = double.IsNaN(height) ? 300 : height).AddTo(window.Disposables);
+        window.Content = content;
+        window.SizeToContent = SizeToContent.WidthAndHeight;
+        window.Show();
+        Dispatcher.UIThread.RunJobs();
+        return (fitter, vm, window);
+    }
+
+    #endregion
+
     private static PixelPoint CenterOf(Window window) =>
         new(window.Position.X + (int)window.ClientSize.Width / 2, window.Position.Y + (int)window.ClientSize.Height / 2);
 

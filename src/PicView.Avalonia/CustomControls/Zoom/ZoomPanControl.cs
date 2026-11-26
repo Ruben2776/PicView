@@ -38,6 +38,23 @@ public class ZoomPanControl : Decorator
         set => SetValue(HostProperty, value);
     }
 
+    public static readonly StyledProperty<double> WindowGrowthLimitProperty =
+        AvaloniaProperty.Register<ZoomPanControl, double>(nameof(WindowGrowthLimit));
+
+    /// <summary>
+    /// The scale from which the window has stopped growing with the zoom, or 0 when the window does not follow the
+    /// zoom (ADR-0047). A zoom step below it resizes the window, so it is applied at once, never animated.
+    /// </summary>
+    public double WindowGrowthLimit
+    {
+        get => GetValue(WindowGrowthLimitProperty);
+        set => SetValue(WindowGrowthLimitProperty, value);
+    }
+
+    // Whether the Fit gave this control a size of its own, as it does while zoom resizes the window: then the child
+    // keeps the size it asks for, at the control's origin, and the control's size is the area the zoom shows it in
+    private bool HasViewportSize => !double.IsNaN(Width) && !double.IsNaN(Height);
+
     /// <summary>
     /// Whether Space, the crop's pan key, is down. Only the <see cref="ZoomPanHost.Crop"/> host follows it.
     /// </summary>
@@ -232,8 +249,31 @@ public class ZoomPanControl : Decorator
         UpdatePreviewWindow();
     }
 
+    protected override Size MeasureOverride(Size availableSize)
+    {
+        if (!HasViewportSize || Child is null)
+        {
+            return base.MeasureOverride(availableSize);
+        }
+
+        // The child is the image at its fitted size, larger than the control while zoomed out
+        Child.Measure(Size.Infinity);
+        return availableSize;
+    }
+
     protected override Size ArrangeOverride(Size finalSize)
     {
+        if (HasViewportSize && Child is not null)
+        {
+            Child.Arrange(new Rect(Child.DesiredSize));
+
+            // The control took a new size for the zoom, so the image is placed in it again: centered while it fits
+            // (Bounds is the old size until this returns)
+            ConstrainTranslationToBounds(finalSize);
+            UpdateChildTransform();
+            return finalSize;
+        }
+
         if (!_isPanning)
         {
             return base.ArrangeOverride(finalSize);
@@ -244,6 +284,18 @@ public class ZoomPanControl : Decorator
         UpdateChildTransform();
 
         return base.ArrangeOverride(finalSize);
+    }
+
+    protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
+    {
+        base.OnPropertyChanged(change);
+
+        // Arranged again when the Fit takes its size back, since the child then fills the control as before
+        if (change.Property == WidthProperty || change.Property == HeightProperty)
+        {
+            InvalidateMeasure();
+            InvalidateArrange();
+        }
     }
 
     protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
@@ -552,9 +604,18 @@ public class ZoomPanControl : Decorator
     private void SetTransitionsAndScale(double targetScale, Point center, bool animated)
     {
         // The crop's overlay follows the reported scale, which is the target at once, so its zoom is never animated
-        SetTransitions(animated && Host is not ZoomPanHost.Crop);
+        SetTransitions(animated && Host is not ZoomPanHost.Crop &&
+                       !ResizesWindow(Scale, targetScale, WindowGrowthLimit));
         SetScaleImmediate(targetScale, center);
     }
+
+    /// <summary>
+    /// Whether a zoom from <paramref name="fromScale"/> to <paramref name="toScale"/> resizes the window: it does
+    /// while the window follows the zoom and either scale is below <paramref name="growthLimit"/>, the scale from
+    /// which the window has stopped growing; 0 when it does not follow the zoom.
+    /// </summary>
+    internal static bool ResizesWindow(double fromScale, double toScale, double growthLimit) =>
+        growthLimit > 0 && Math.Min(fromScale, toScale) < growthLimit;
 
     /// <summary>
     /// Applies the scale change so that the child point under `controlPoint` remains fixed in control coordinates.
@@ -722,7 +783,9 @@ public class ZoomPanControl : Decorator
     /// <summary>
     /// Ensures the transformed child covers the control area (i.e. prevents panning away until whitespace appears).
     /// </summary>
-    private void ConstrainTranslationToBounds()
+    private void ConstrainTranslationToBounds() => ConstrainTranslationToBounds(Bounds.Size);
+
+    private void ConstrainTranslationToBounds(Size controlSize)
     {
         if (Child == null)
         {
@@ -748,8 +811,8 @@ public class ZoomPanControl : Decorator
         var scaledWidth = childSize.Width * Scale;
         var scaledHeight = childSize.Height * Scale;
 
-        var controlWidth = Bounds.Width;
-        var controlHeight = Bounds.Height;
+        var controlWidth = controlSize.Width;
+        var controlHeight = controlSize.Height;
 
         var desiredTx = TranslateX;
         var desiredTy = TranslateY;

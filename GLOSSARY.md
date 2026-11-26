@@ -266,7 +266,7 @@ _Avoid_: Tag, search tag
 ## Sizing
 
 **AutoFit**:
-The setting of a Normal window where the window takes its size from the image its active tab shows, worked out before the window resizes so it never visibly resizes twice, and again whenever another tab becomes active. A tab that shows no image, such as a Fresh Tab's start-up menu, never changes the window's size: it fills what the window leaves it after the Reserved Space instead. With it off, the window keeps the size the user gave it and the image fits inside it. It is a Window Setting: turning it on or off, or resizing the window by hand, which turns it off, affects only that window.
+The setting of a Normal window where the window takes its size from the image its active tab shows, worked out before the window resizes so it never visibly resizes twice, and again whenever another tab becomes active. A tab that shows no image, such as a Fresh Tab's start-up menu, never changes the window's size: it fills what the window leaves it after the Reserved Space instead. With it off, the window keeps the size the user gave it and the image fits inside it. A zoom changes the window's size only with Zoom Resizes Window. It is a Window Setting: turning it on or off, or resizing the window by hand, which turns it off, affects only that window.
 _Avoid_: Auto-size, auto resize, Manual
 
 **Window Mode**:
@@ -293,6 +293,10 @@ _Avoid_: Monitor size, screen size, working area
 The setting that keeps an AutoFit window centered in its Work Area as it changes size. With it off, the window keeps its own center as it resizes. It is a Window Setting, so each Main Window has its own; the Settings window edits that of the Active Main Window.
 _Avoid_: Keep centered, center window
 
+**Zoom Resizes Window**:
+The setting of an AutoFit window where the window takes the size of the zoomed image: its fitted size times the Zoom Factor, no larger than the Available Area and no smaller than the window's minimum size. Past the Available Area the image zooms inside the window, as it does with the setting off. Every change of the Zoom Factor counts, and a step that resizes the window is never animated. It does nothing without AutoFit, in fullscreen or maximized, while scrolling is on, in a crop or a comparison, or for a tab that shows no image. It is a Window Setting, off by default.
+_Avoid_: Zoom window, window zoom, zoom while resizing
+
 **Placement**:
 Where a Main Window sits. At App Start, an AutoFit window opens centered in the Work Area of the screen it opens on; a window that keeps its size opens at its last position; and a window that starts fullscreen or maximized opens in that state on the last screen it was closed from. A window opened while PicView runs opens on top of the window it was opened from, and takes its size from that window, not from the settings record, and a window opened for a dragged-out tab opens where the cursor is, with AutoFit or without. From then on, an AutoFit window is placed after each change of its size, a Fit included: centered in its Work Area with Stay Centered, else on its own center. Turning AutoFit on places it the same way; turning it off leaves it where it is. Returning to Normal from fullscreen or maximized centers an AutoFit window in the Work Area of the screen it is on, and gives a window that keeps its size its previous size and position back. A fullscreen or maximized window, or one that keeps its size, is otherwise not moved. The window places itself; nothing centers it, except App Start once and the user's Center action.
 _Avoid_: Center the window (as something a path does), window position (for the rule)
@@ -302,7 +306,7 @@ The total gap AutoFit keeps free around the window, beyond what the taskbar, doc
 _Avoid_: Window margin, padding
 
 **Fit**:
-The result of fitting an image, or a side-by-side pair, into the Available Area: its shown size, its Fit Scale, its Scroll Area, and the window size that AutoFit applies. A side-by-side pair is fitted as one image made of both, scaled to the same height. A pair whose second size is not known yet has no Fit, so the window waits instead of resizing twice. The window derives it whenever one of its inputs changes; nothing asks for it.
+The result of fitting an image, or a side-by-side pair, into the Available Area: its shown size, its Fit Scale, its Scroll Area, and the window size that AutoFit applies, which with Zoom Resizes Window is that of the zoomed image. A side-by-side pair is fitted as one image made of both, scaled to the same height. A pair whose second size is not known yet has no Fit, so the window waits instead of resizing twice. The window derives it whenever one of its inputs changes; nothing asks for it.
 _Avoid_: Target size, image size, layout, refit (as something a path asks for)
 
 **Scroll Area**:

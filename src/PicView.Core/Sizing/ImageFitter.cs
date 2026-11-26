@@ -59,13 +59,32 @@ public static class ImageFitter
             scrollWidth = scrollHeight = double.NaN;
         }
 
+        // The window wraps the zoomed image until it fills the Available Area; past that the image zooms inside it
+        var followsZoom = input.WindowZoomFactor > 0 && input.Mode is FitMode.AutoFit && !input.ScrollEnabled &&
+                          viewWidth > 0 && viewHeight > 0;
+        var (viewportWidth, viewportHeight) = followsZoom
+            ? (Math.Min(viewWidth * input.WindowZoomFactor, availableWidth),
+                Math.Min(viewHeight * input.WindowZoomFactor, availableHeight))
+            : (viewWidth, viewHeight);
+
         var reserved = input.ReservedSpace;
-        var windowWidth = Math.Max(viewWidth + reserved.GalleryWidth, SizeDefaults.WindowMinSize);
-        var windowHeight = Math.Max(viewHeight + reserved.Top + reserved.Bottom + reserved.GalleryHeight,
+        var windowWidth = Math.Max(viewportWidth + reserved.GalleryWidth, SizeDefaults.WindowMinSize);
+        var windowHeight = Math.Max(viewportHeight + reserved.Top + reserved.Bottom + reserved.GalleryHeight,
             SizeDefaults.WindowMinSize);
 
-        return new Fit(windowWidth, windowHeight, imageWidth * scale, imageHeight * scale,
+        var fit = new Fit(windowWidth, windowHeight, imageWidth * scale, imageHeight * scale,
             scrollWidth, scrollHeight, scale);
+        if (!followsZoom)
+        {
+            return fit;
+        }
+
+        return fit with
+        {
+            ViewportWidth = isTurned ? viewportHeight : viewportWidth,
+            ViewportHeight = isTurned ? viewportWidth : viewportHeight,
+            WindowGrowthLimit = Math.Max(availableWidth / viewWidth, availableHeight / viewHeight)
+        };
     }
 
     private static Fit FitPair(FitInput input)

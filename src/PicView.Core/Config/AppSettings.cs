@@ -106,6 +106,14 @@ public class WindowProperties
     public bool KeepCentered { get; set; } = false;
 
     /// <summary>
+    /// Whether zooming resizes the window, so it takes the size of the zoomed image.
+    /// </summary>
+    /// <remarks>
+    /// Only applies when <see cref="AutoFit"/> is <c>true</c>.
+    /// </remarks>
+    public bool ZoomResizesWindow { get; set; } = false;
+
+    /// <summary>
     /// The vertical spacing between the taskbar, or the dock, and the top of the window.
     /// </summary>
     /// <remarks>

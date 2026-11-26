@@ -27,7 +27,7 @@ public sealed class WindowSettings : IDisposable
 
     private readonly TranslationViewModel? _translations;
 
-    private WindowSettings(bool isTopMost, bool isStayingCentered, RememberedWindowMode startingMode, NormalBounds bounds, FileOrder fileOrder,
+    private WindowSettings(bool isTopMost, bool isStayingCentered, bool isZoomResizingWindow, RememberedWindowMode startingMode, NormalBounds bounds, FileOrder fileOrder,
         Display display, WindowGallerySettings gallery, TranslationViewModel? translations)
     {
         _translations = translations;
@@ -55,6 +55,7 @@ public sealed class WindowSettings : IDisposable
         FileOrder = new BindableReactiveProperty<FileOrder>(fileOrder);
         IsTopMost = new BindableReactiveProperty<bool>(isTopMost);
         IsStayingCentered = new BindableReactiveProperty<bool>(isStayingCentered);
+        IsZoomResizingWindow = new BindableReactiveProperty<bool>(isZoomResizingWindow);
         StartingMode = startingMode;
         Bounds = bounds;
     }
@@ -115,6 +116,11 @@ public sealed class WindowSettings : IDisposable
     public BindableReactiveProperty<bool> IsStayingCentered { get; }
 
     /// <summary>
+    /// Zoom Resizes Window: whether this window, with AutoFit, takes the size of the zoomed image (ADR-0047).
+    /// </summary>
+    public BindableReactiveProperty<bool> IsZoomResizingWindow { get; }
+
+    /// <summary>
     /// The order this window's tabs list their files in.
     /// </summary>
     public BindableReactiveProperty<FileOrder> FileOrder { get; }
@@ -145,6 +151,7 @@ public sealed class WindowSettings : IDisposable
         return new WindowSettings(
             properties.TopMost,
             properties.KeepCentered,
+            properties.ZoomResizesWindow,
             new RememberedWindowMode(properties.Fullscreen, properties.Maximized, properties.AutoFit),
             new NormalBounds(properties.Left, properties.Top, properties.Width, properties.Height),
             FileSorting.FileOrder.FromRecord(record?.Sorting),
@@ -168,7 +175,7 @@ public sealed class WindowSettings : IDisposable
     /// The settings of a window opened from this one's window, whose remembered mode is <paramref name="openerMode"/>.
     /// </summary>
     public WindowSettings CopyFor(RememberedWindowMode openerMode) =>
-        new(IsTopMost.Value, IsStayingCentered.Value, openerMode, Bounds, FileOrder.Value,
+        new(IsTopMost.Value, IsStayingCentered.Value, IsZoomResizingWindow.Value, openerMode, Bounds, FileOrder.Value,
             new Display(IsSideBySide.Value, IsLooping.Value, IsZoomedToFit.Value, IsScrollingEnabled.Value,
                 ShowInterface.Value, ShowBottomBar.Value, ShowHoverBar.Value, BackgroundChoice.Value,
                 IsConstrainingBackgroundColor.Value),
@@ -182,6 +189,7 @@ public sealed class WindowSettings : IDisposable
         properties.AutoFit = remembered.AutoFit;
         properties.TopMost = IsTopMost.Value;
         properties.KeepCentered = IsStayingCentered.Value;
+        properties.ZoomResizesWindow = IsZoomResizingWindow.Value;
         properties.Left = Bounds.Left;
         properties.Top = Bounds.Top;
         properties.Width = Bounds.Width;
@@ -241,6 +249,7 @@ public sealed class WindowSettings : IDisposable
         Gallery.Dispose();
         IsTopMost.Dispose();
         IsStayingCentered.Dispose();
+        IsZoomResizingWindow.Dispose();
         FileOrder.Dispose();
         IsSideBySide.Dispose();
         IsLooping.Dispose();

@@ -40,6 +40,7 @@ public enum SettingKey
     OpeningMode,
     StayTopMost,
     StayCentered,
+    ZoomResizesWindow,
     ConfirmOnEsc,
     EscLeavesFullscreen,
 

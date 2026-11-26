@@ -49,6 +49,21 @@ public class MainWindowViewModel : IDisposable
     /// </summary>
     public BindableReactiveProperty<double> ImageHeight { get; } = new(double.NaN);
 
+    /// <summary>
+    /// The width of the area the zoomed image is shown in while zoom resizes the window (ADR-0047), before the
+    /// image's quarter turns, or NaN when the window does not follow the zoom. Written by the window's Fit.
+    /// </summary>
+    public BindableReactiveProperty<double> ViewportWidth { get; } = new(double.NaN);
+
+    /// <inheritdoc cref="ViewportWidth"/>
+    public BindableReactiveProperty<double> ViewportHeight { get; } = new(double.NaN);
+
+    /// <summary>
+    /// The Zoom Factor from which the window has stopped growing with the zoom, or 0 when the window does not follow
+    /// the zoom. A zoom step below it resizes the window, so it is not animated. Written by the window's Fit.
+    /// </summary>
+    public BindableReactiveProperty<double> WindowGrowthLimit { get; } = new(0);
+
     public IReadOnlyBindableReactiveProperty<double> TitlebarHeight { get; }
 
     public IReadOnlyBindableReactiveProperty<double> BottombarHeight { get; }
@@ -189,6 +204,9 @@ public class MainWindowViewModel : IDisposable
             WindowMaxHeight,
             ImageWidth,
             ImageHeight,
+            ViewportWidth,
+            ViewportHeight,
+            WindowGrowthLimit,
             TitlebarHeight,
             BottombarHeight,
             WindowModeState,

@@ -189,7 +189,8 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
     /// <summary>
     /// Fits the window again whenever one of the Fit inputs it watches changes: the active tab shows a new image,
     /// another tab becomes active, the active tab is turned or flipped, the tab strip or a bar shows or hides, the
-    /// Window Mode changes, zoom to fit, scrolling or side by side turns on or off, the active tab's gallery changes
+    /// Window Mode changes, zoom to fit, scrolling or side by side turns on or off, Zoom Resizes Window turns on or off
+    /// or, with it on in an AutoFit window, the active tab's Zoom Factor changes, the active tab's gallery changes
     /// its mode, dock, size or stretch, or whether its Expanded Gallery returns to docked, the active tab changes its
     /// Tab View, as a crop opens or closes, or, in a Fixed Window, its content is laid out at another size, or the
     /// window's scaling or position puts it on another screen than the one it was last fitted against. A new image is
@@ -228,6 +229,19 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
             // The window's own Zoom to Fit and scrolling; another window's toggle fits nothing here
             vm.WindowSettings.IsZoomedToFit.Skip(1).Subscribe(_ => FitSoon()),
             vm.WindowSettings.IsScrollingEnabled.Skip(1).Subscribe(_ => FitSoon()),
+            // Zoom Resizes Window (ADR-0047): the setting, and only the shown tab's Zoom Factor while the window
+            // follows it, so a zoom step in any other window fits nothing. The tab may reset its factor off the UI
+            // thread as it shows another image, which FitSoon allows
+            vm.WindowSettings.IsZoomResizingWindow.Skip(1).Subscribe(_ => FitSoon()),
+            vm.WindowTabs.ActiveTab.Select(static tab => tab.Zoom.FactorValue.Skip(1)).Switch()
+                .Subscribe(_ =>
+                {
+                    if (vm.WindowSettings.IsZoomResizingWindow.CurrentValue &&
+                        vm.WindowModeState.CurrentValue.FitMode is FitMode.AutoFit)
+                    {
+                        FitSoon();
+                    }
+                }),
             // Only the shown tab's pair
             vm.WindowTabs.ActiveTab.Select(static t => t.IsShowingPair.Skip(1)).Switch()
                 .Subscribe(_ => FitSoon()),
@@ -712,6 +726,7 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
             // The window's own values as published; nothing writes them to the record until the window closes
             ZoomToFit = vm.WindowSettings.IsZoomedToFit.CurrentValue,
             ScrollEnabled = vm.WindowSettings.IsScrollingEnabled.CurrentValue,
+            WindowZoomFactor = WindowZoomFactor(vm),
             Screen = screen,
             ScreenMargin = vm.GlobalSettings.WindowMargin.CurrentValue,
             WindowContentWidth = contentSize.Width,
@@ -731,6 +746,9 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
         vm.ScrollViewerHeight.Value = fit.ScrollViewerHeight;
         vm.ImageWidth.Value = fit.Width;
         vm.ImageHeight.Value = fit.Height;
+        vm.ViewportWidth.Value = fit.ViewportWidth > 0 ? fit.ViewportWidth : double.NaN;
+        vm.ViewportHeight.Value = fit.ViewportHeight > 0 ? fit.ViewportHeight : double.NaN;
+        vm.WindowGrowthLimit.Value = fit.WindowGrowthLimit;
 
         Apply(vm, WindowSizingPlan.For(state.Mode, state.AutoFit, window.IsVisible, fit, screen));
         var cause = _tabsOwingNewImageFit.Remove(tab) ? FitCause.NewImage : FitCause.Input;
@@ -742,6 +760,16 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
 
         _fits.OnNext(new Fitted(fit, cause));
         return true;
+    }
+
+    // The Zoom Factor the window takes its size at, or 0 when zoom does not resize it (ADR-0047): only the image
+    // viewer's zoom does, since the crop and the comparison zoom inside the window through controls of their own
+    private static double WindowZoomFactor(MainWindowViewModel vm)
+    {
+        var tab = vm.WindowTabs.ActiveTab.CurrentValue;
+        return vm.WindowSettings.IsZoomResizingWindow.CurrentValue && tab.ViewKind.Value is TabViewKind.ImageViewer
+            ? tab.Zoom.Factor
+            : 0;
     }
 
     private void Apply(MainWindowViewModel vm, WindowSizingPlan plan)
