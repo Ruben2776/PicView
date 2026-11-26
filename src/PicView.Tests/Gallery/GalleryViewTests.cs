@@ -259,24 +259,24 @@ public class GalleryViewTests
             gallery.Start();
             var toggle = gallery.ToggleExpandedDisplayModeCommand;
             var toTiles = view.FindControl<IconButton>("ToTilesButton")!;
-            var toColumns = view.FindControl<IconButton>("ToColumnsButton")!;
+            var toGrid = view.FindControl<IconButton>("ToGridButton")!;
             Assert.Same(toggle, toTiles.Command);
-            Assert.Same(toggle, toColumns.Command);
+            Assert.Same(toggle, toGrid.Command);
             Assert.True(toTiles.IsVisible);
-            Assert.False(toColumns.IsVisible);
+            Assert.False(toGrid.IsVisible);
 
             toggle.Execute(Unit.Default);
             Dispatcher.UIThread.RunJobs();
 
             Assert.Equal(GalleryDisplayMode.Masonry, gallery.ExpandedGalleryDisplayMode.Value);
             Assert.False(toTiles.IsVisible);
-            Assert.True(toColumns.IsVisible);
+            Assert.True(toGrid.IsVisible);
 
             toggle.Execute(Unit.Default);
             Dispatcher.UIThread.RunJobs();
 
             Assert.True(toTiles.IsVisible);
-            Assert.False(toColumns.IsVisible);
+            Assert.False(toGrid.IsVisible);
         });
     }
 
@@ -289,14 +289,14 @@ public class GalleryViewTests
         WithShownDockedGallery((_, _, view, _) =>
         {
             Assert.False(view.FindControl<IconButton>("ToTilesButton")!.IsRepeatEnabled);
-            Assert.False(view.FindControl<IconButton>("ToColumnsButton")!.IsRepeatEnabled);
+            Assert.False(view.FindControl<IconButton>("ToGridButton")!.IsRepeatEnabled);
         });
     }
 
     [AvaloniaFact]
     public void ExpandedBeforeTheViewLoads_FillsItsParent()
     {
-        WithShownExpandedGallery(GalleryDisplayMode.Columns, (_, _, view, _) =>
+        WithShownExpandedGallery(GalleryDisplayMode.Grid, (_, _, view, _) =>
         {
             Assert.True(view.IsVisible);
             Assert.Equal(((Control)view.Parent!).Bounds.Size, view.Bounds.Size);
@@ -310,6 +310,7 @@ public class GalleryViewTests
         {
             var scrollViewer = panel.FindAncestorOfType<ScrollViewer>()!;
             Assert.Contains("tiles", view.Classes);
+            Assert.DoesNotContain("grid", view.Classes);
             Assert.Equal(GalleryDisplayMode.Masonry, panel.DisplayMode);
             Assert.Equal(VerticalAlignment.Top, panel.VerticalAlignment);
             Assert.Equal(ScrollBarVisibility.Visible, scrollViewer.VerticalScrollBarVisibility);
@@ -320,16 +321,18 @@ public class GalleryViewTests
     }
 
     [AvaloniaFact]
-    public void Expanded_Columns_HasNoTilesClassAndScrollsHorizontally()
+    public void Expanded_Grid_HasTheGridClassNotTheTilesClassAndScrollsVertically()
     {
-        WithShownExpandedGallery(GalleryDisplayMode.Columns, (_, _, view, panel) =>
+        WithShownExpandedGallery(GalleryDisplayMode.Grid, (_, _, view, panel) =>
         {
             var scrollViewer = panel.FindAncestorOfType<ScrollViewer>()!;
+            Assert.Contains("grid", view.Classes);
             Assert.DoesNotContain("tiles", view.Classes);
-            Assert.Equal(VerticalAlignment.Center, panel.VerticalAlignment);
-            Assert.Equal(ScrollBarVisibility.Visible, scrollViewer.HorizontalScrollBarVisibility);
-            Assert.Equal(ScrollBarVisibility.Disabled, scrollViewer.VerticalScrollBarVisibility);
-            Assert.Equal(0, VerticalScrollBar(panel).Margin.Top);
+            Assert.Equal(VerticalAlignment.Top, panel.VerticalAlignment);
+            Assert.Equal(ScrollBarVisibility.Visible, scrollViewer.VerticalScrollBarVisibility);
+            Assert.Equal(ScrollBarVisibility.Disabled, scrollViewer.HorizontalScrollBarVisibility);
+            // Below the 85x60 button cluster
+            Assert.Equal(60, VerticalScrollBar(panel).Bounds.Top);
         });
     }
 
@@ -343,7 +346,10 @@ public class GalleryViewTests
             WindowGalleryOf(view).ExpandedGalleryDisplayMode.Value = GalleryDisplayMode.Rows;
             RenderFrame(window);
             Assert.DoesNotContain("tiles", view.Classes);
-            Assert.Equal(GalleryDisplayMode.Columns, panel.DisplayMode);
+            // Its record is in Grid, and it is still no grid
+            Assert.DoesNotContain("grid", view.Classes);
+            Assert.DoesNotContain("expanded", view.Classes);
+            Assert.Equal(GalleryDisplayMode.Grid, panel.DisplayMode);
         });
     }
 
@@ -364,7 +370,7 @@ public class GalleryViewTests
     [AvaloniaFact]
     public void DisplayModeChanged_WhileExpanded_ReappliesWithoutAnAnimation()
     {
-        WithShownExpandedGallery(GalleryDisplayMode.Columns, (core, window, view, panel) =>
+        WithShownExpandedGallery(GalleryDisplayMode.Grid, (core, window, view, panel) =>
         {
             var tab = (TabViewModel)view.DataContext!;
             WindowGalleryOf(view).ExpandedGalleryDisplayMode.Value = GalleryDisplayMode.Masonry;
@@ -376,12 +382,12 @@ public class GalleryViewTests
             Assert.True(double.IsNaN(panel.WrapWidthOverride));
             Assert.Equal(view.GetExpandedWrapWidth(tab.Gallery.Appearance.Value), panel.Bounds.Width, 1e-6);
 
-            WindowGalleryOf(view).ExpandedGalleryDisplayMode.Value = GalleryDisplayMode.Columns;
+            WindowGalleryOf(view).ExpandedGalleryDisplayMode.Value = GalleryDisplayMode.Grid;
             RenderFrame(window);
 
             Assert.False(view.IsInAnimation);
             Assert.DoesNotContain("tiles", view.Classes);
-            Assert.Equal(0, VerticalScrollBar(panel).Margin.Top);
+            Assert.Equal(60, VerticalScrollBar(panel).Margin.Top); // below the button cluster in every display mode
         });
     }
 
@@ -430,7 +436,7 @@ public class GalleryViewTests
             var dockedWidth = view.Width;
             Assert.Equal(dock, tab.Gallery.Appearance.Value.Dock);
             Assert.Equal(GalleryDefaults.GetDockedGalleryWidth(Settings.Gallery.DockedGalleryItemSize), dockedWidth);
-            Assert.Equal(GalleryDisplayMode.Columns, panel.DisplayMode);
+            Assert.Equal(GalleryDisplayMode.Grid, panel.DisplayMode);
 
             tab.Gallery.Switcher.ToggleExpanded();
             Dispatcher.UIThread.RunJobs();
@@ -492,7 +498,7 @@ public class GalleryViewTests
     [AvaloniaFact]
     public void DisplayModeChanged_WhileTheExpandedGalleryIsHidden_IsAppliedWhenItShowsAgain()
     {
-        WithShownExpandedGallery(GalleryDisplayMode.Columns, (core, window, view, panel) =>
+        WithShownExpandedGallery(GalleryDisplayMode.Grid, (core, window, view, panel) =>
         {
             var tab = (TabViewModel)view.DataContext!;
             tab.Gallery.Switcher.SetHidden(true);
@@ -504,7 +510,7 @@ public class GalleryViewTests
 
             Assert.False(view.IsVisible);
             Assert.DoesNotContain("tiles", view.Classes);
-            Assert.Equal(GalleryDisplayMode.Columns, panel.DisplayMode);
+            Assert.Equal(GalleryDisplayMode.Grid, panel.DisplayMode);
 
             tab.Gallery.Switcher.SetHidden(false);
             RenderFrame(window);
@@ -518,17 +524,17 @@ public class GalleryViewTests
     }
 
     [AvaloniaFact]
-    public void ExpandedFromClosed_Columns_LocksOnlyTheWrapHeight()
+    public void ExpandedFromClosed_Grid_LocksTheWrapWidthUntilTheAnimationEnds()
     {
-        WithShownExpandedGallery(GalleryDisplayMode.Columns, (_, window, view, panel) =>
+        WithShownExpandedGallery(GalleryDisplayMode.Grid, (_, window, view, panel) =>
         {
             ((TabViewModel)view.DataContext!).Gallery.Switcher.ToggleExpanded();
             Dispatcher.UIThread.RunJobs();
 
             Assert.True(view.IsInAnimation);
-            Assert.True(double.IsNaN(panel.WrapWidthOverride));
-            Assert.False(double.IsNaN(panel.WrapHeightOverride));
+            Assert.False(double.IsNaN(panel.WrapWidthOverride));
             WaitForAnimation(window, view);
+            Assert.True(double.IsNaN(panel.WrapWidthOverride));
         }, startClosed: true);
     }
 

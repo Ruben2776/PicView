@@ -24,7 +24,7 @@ public readonly record struct GalleryAppearanceInputs(
     GalleryStretchMode DockedStretch,
     GalleryStretchMode ExpandedStretch,
     double ItemSpacing,
-    GalleryDisplayMode ExpandedDisplayMode = GalleryDisplayMode.Columns);
+    GalleryDisplayMode ExpandedDisplayMode = GalleryDisplayMode.Grid);
 
 /// <summary>
 ///     How a gallery looks in a given mode and dock position. <see cref="Extent" /> is the docked thickness,
@@ -36,7 +36,6 @@ public readonly record struct GalleryAppearance(
     GalleryDockPosition Dock,
     bool IsShown,
     GalleryOrientation Orientation,
-    bool ScrollsHorizontally,
     bool Wraps,
     double ItemHeight,
     double ItemWidth,
@@ -53,7 +52,13 @@ public readonly record struct GalleryAppearance(
     public double DockedExtent { get; init; }
 
     /// <summary>
-    ///     How the gallery arranges its items. Columns unless the gallery is Expanded, so a Docked or Closed record is
+    ///     Whether the gallery scrolls sideways, which only a gallery docked at the top or the bottom does. The Expanded
+    ///     Gallery scrolls down in every display mode.
+    /// </summary>
+    public bool ScrollsHorizontally => Orientation is GalleryOrientation.Horizontal;
+
+    /// <summary>
+    ///     How the gallery arranges its items. Grid unless the gallery is Expanded, so a Docked or Closed record is
     ///     equal in every display mode and nothing is re-applied to it.
     /// </summary>
     public GalleryDisplayMode DisplayMode { get; init; }
@@ -75,7 +80,6 @@ public readonly record struct GalleryAppearance(
                 return new GalleryAppearance(
                     shownMode, dock, true,
                     horizontal ? GalleryOrientation.Horizontal : GalleryOrientation.Vertical,
-                    horizontal,
                     false,
                     inputs.DockedItemSize,
                     ItemWidthFor(inputs.DockedStretch, inputs.DockedItemSize),
@@ -93,7 +97,6 @@ public readonly record struct GalleryAppearance(
                 return new GalleryAppearance(
                     shownMode, dock, true,
                     GalleryOrientation.Vertical,
-                    !tiles,
                     true,
                     inputs.ExpandedItemSize,
                     tiles ? double.NaN : ItemWidthFor(inputs.ExpandedStretch, inputs.ExpandedItemSize),
@@ -110,7 +113,6 @@ public readonly record struct GalleryAppearance(
                 return new GalleryAppearance(
                     shownMode, dock, false,
                     GalleryOrientation.Vertical,
-                    false,
                     false,
                     0,
                     double.NaN,

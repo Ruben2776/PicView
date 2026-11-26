@@ -64,7 +64,7 @@ public class GallerySettingsViewTests
         var a = NewWindow(core);
         var b = NewWindow(core);
         SetLook(a.WindowSettings.Gallery, GalleryStretchMode.Uniform, GalleryStretchMode.Square,
-            GalleryDisplayMode.Columns, 80, 200);
+            GalleryDisplayMode.Grid, 80, 200);
         // A size between two ticks, which a snap to the tick would round
         SetLook(b.WindowSettings.Gallery, GalleryStretchMode.FillSquare, GalleryStretchMode.UniformToFill,
             GalleryDisplayMode.Rows, 100.5, 120.5);
@@ -235,11 +235,11 @@ public class GallerySettingsViewTests
             // The first window's values, which the page must not still be showing
             Select(page.DockedStretch, GalleryStretchMode.Uniform);
             Select(page.ExpandedStretch, GalleryStretchMode.Square);
-            Select(page.DisplayMode, GalleryDisplayMode.Columns);
+            Select(page.DisplayMode, GalleryDisplayMode.Grid);
 
             Assert.Equal(GalleryStretchMode.Uniform, page.B.WindowSettings.Gallery.DockedGalleryStretchMode.Value);
             Assert.Equal(GalleryStretchMode.Square, page.B.WindowSettings.Gallery.ExpandedGalleryStretchMode.Value);
-            Assert.Equal(GalleryDisplayMode.Columns, page.B.WindowSettings.Gallery.ExpandedGalleryDisplayMode.Value);
+            Assert.Equal(GalleryDisplayMode.Grid, page.B.WindowSettings.Gallery.ExpandedGalleryDisplayMode.Value);
             Assert.Equal(3, page.Commands());
             Assert.Equal(a, LookOf(page.A));
             Assert.Equal(record, RecordLook());

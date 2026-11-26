@@ -270,11 +270,11 @@ public class Gallery
     /// <summary>
     /// How the Expanded Gallery arranges its items. App-wide; the Docked Gallery ignores it.
     /// </summary>
-    public GalleryDisplayMode ExpandedGalleryDisplayMode { get; set; } = GalleryDisplayMode.Columns;
+    public GalleryDisplayMode ExpandedGalleryDisplayMode { get; set; } = GalleryDisplayMode.Grid;
 
     /// <summary>
     /// Whether Rows (true) or Masonry (false) was the last used of the two,
-    /// which is where the Expanded Gallery's switch button goes from Columns.
+    /// which is where the Expanded Gallery's switch button goes from Grid.
     /// </summary>
     public bool RowsWasLastUsedDisplayMode { get; set; }
 

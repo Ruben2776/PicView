@@ -10,7 +10,7 @@ namespace PicView.Tests.Gallery;
 public class GalleryLayoutTests
 {
     private static readonly GalleryLayoutOptions Docked =
-        new(Orientation.Horizontal, IsExpanded: false, ItemHeight: 100, ItemWidth: double.NaN, 0, 0, double.NaN);
+        new(Orientation.Horizontal, IsExpanded: false, ItemHeight: 100, ItemWidth: double.NaN, 0, 0);
 
     private static GalleryItemViewModel Item(uint width, uint height)
     {
@@ -32,8 +32,7 @@ public class GalleryLayoutTests
 
     // Item size 75: a Masonry column is at least 100 wide (75 × 4/3) and the Rows target height is 150 (75 × 2)
     private static readonly GalleryLayoutOptions Masonry = new(Orientation.Vertical, IsExpanded: true, ItemHeight: 75,
-        ItemWidth: double.NaN, ItemSpacing: 10, LineSpacing: 10, WrapHeightOverride: double.NaN,
-        DisplayMode: GalleryDisplayMode.Masonry);
+        ItemWidth: double.NaN, ItemSpacing: 10, LineSpacing: 10, DisplayMode: GalleryDisplayMode.Masonry);
 
     private static readonly GalleryLayoutOptions Rows = Masonry with { DisplayMode = GalleryDisplayMode.Rows };
 
@@ -75,12 +74,87 @@ public class GalleryLayoutTests
     }
 
     [Fact]
-    public void Calculate_Expanded_WrapsIntoColumnsAsWideAsTheirWidestItem()
+    public void Calculate_Grid_FillsEvenColumnsThatShareTheWidthWhateverTheDetails()
     {
         var layout = new GalleryLayout();
-        layout.Calculate([Item(200, 100), Item(100, 100), Item(100, 100)],
-            Docked with { IsExpanded = true, ItemSpacing = 10, LineSpacing = 5 }, new Size(1000, 250));
-        Assert.Equal([new Rect(0, 0, 200, 100), new Rect(0, 110, 200, 100), new Rect(205, 0, 100, 100)], layout.Bounds);
+        // A cell is at least 150 wide, 100 x 3/2: two fit in 350 with 10 between, and share it, 170 each
+        layout.Calculate([Item(200, 100), Item(100, 400), new GalleryItemViewModel()],
+            Docked with { IsExpanded = true, ItemSpacing = 10, LineSpacing = 5 }, new Size(350, 1000));
+        Assert.Equal([new Rect(0, 0, 170, 100), new Rect(180, 0, 170, 100), new Rect(0, 105, 170, 100)], layout.Bounds);
+        Assert.Equal(new Size(350, 205), layout.Extent);
+        Assert.True(layout.ScrollsVertically);
+    }
+
+    [Fact]
+    public void Calculate_GridDetailsRead_MovesNoItem()
+    {
+        var items = Squares(8);
+        var layout = new GalleryLayout();
+        var options = Docked with { IsExpanded = true, ItemSpacing = 10, LineSpacing = 5 };
+        layout.Calculate(items, options, new Size(500, 1000));
+        var before = layout.Bounds.ToArray();
+
+        ((GalleryItemViewModel)items[0]!).SetDetails(new GalleryFileDetails(400, 100));
+        ((GalleryItemViewModel)items[3]!).SetDetails(new GalleryFileDetails(100, 400));
+        layout.Calculate(items, options, new Size(500, 1000));
+
+        Assert.Equal(before, layout.Bounds);
+    }
+
+    [Fact]
+    public void Calculate_GridCellsEndingExactlyAtTheWidth_AllFitInTheRow()
+    {
+        var layout = new GalleryLayout();
+        layout.Calculate(Squares(4),
+            Docked with { IsExpanded = true, ItemWidth = 100, ItemSpacing = 10, LineSpacing = 10 },
+            new Size(320, 1000)); // 100 + 10 + 100 + 10 + 100
+        Assert.Equal<double>([0, 0, 0, 110], layout.Bounds.Select(bounds => bounds.Y));
+    }
+
+    [Fact]
+    public void Calculate_GridNarrowerThanACell_HasOneColumnAsWideAsTheWidth()
+    {
+        var layout = new GalleryLayout();
+        layout.Calculate(Squares(3), Docked with { IsExpanded = true }, new Size(120, 1000));
+        Assert.Equal([new Rect(0, 0, 120, 100), new Rect(0, 100, 120, 100), new Rect(0, 200, 120, 100)], layout.Bounds);
+    }
+
+    // A square stretch sets the item width: the cells keep it, and what is left of the width stays free at the right
+    [Fact]
+    public void Calculate_GridItemWidthSet_KeepsEveryCellThatWide()
+    {
+        var layout = new GalleryLayout();
+        layout.Calculate([Item(400, 100), Item(100, 400), Item(100, 100), Item(100, 100), Item(100, 100)],
+            Docked with { IsExpanded = true, ItemWidth = 100 }, new Size(250, 1000));
+        Assert.Equal<double>([0, 100, 0, 100, 0], layout.Bounds.Select(bounds => bounds.X));
+        Assert.Equal<double>([0, 0, 100, 100, 200], layout.Bounds.Select(bounds => bounds.Y));
+        Assert.All(layout.Bounds, bounds => Assert.Equal(new Size(100, 100), bounds.Size));
+    }
+
+    [Theory]
+    [InlineData(double.NaN, 3)] // not set: the available width, 320, holds three
+    [InlineData(0, 3)]
+    [InlineData(210, 2)]
+    public void Calculate_GridWrapWidthOverride_WrapsAtItWhenSet(double wrapWidth, int perRow)
+    {
+        var layout = new GalleryLayout();
+        layout.Calculate(Squares(6),
+            Docked with
+            {
+                IsExpanded = true, ItemWidth = 100, ItemSpacing = 10, LineSpacing = 10, WrapWidthOverride = wrapWidth
+            },
+            new Size(320, 1000));
+        Assert.Equal(perRow, layout.Bounds.Count(bounds => bounds.Y == 0));
+    }
+
+    [Fact]
+    public void Calculate_GridWithoutAUsableWidth_PlacesOneRow()
+    {
+        var layout = new GalleryLayout();
+        layout.Calculate(Squares(5), Docked with { IsExpanded = true, ItemSpacing = 10 },
+            new Size(double.PositiveInfinity, 1000));
+        Assert.All(layout.Bounds, bounds => Assert.Equal(0, bounds.Y));
+        Assert.Equal(new Size(790, 100), layout.Extent); // five cells of 150, 10 apart
     }
 
     [Theory]
@@ -161,9 +235,9 @@ public class GalleryLayoutTests
     [Theory]
     [InlineData(Orientation.Horizontal, false, false)]
     [InlineData(Orientation.Vertical, false, true)]
-    [InlineData(Orientation.Horizontal, true, false)]
-    [InlineData(Orientation.Vertical, true, false)] // the Expanded Gallery wraps into columns, so it scrolls sideways
-    public void ScrollsVertically_ByOrientationAndMode_IsTrueOnlyInTheVerticalDockedGallery(
+    [InlineData(Orientation.Horizontal, true, true)] // the Expanded Gallery scrolls down whatever the orientation
+    [InlineData(Orientation.Vertical, true, true)]
+    public void ScrollsVertically_ByOrientationAndMode_IsFalseOnlyInTheHorizontalDockedGallery(
         Orientation orientation, bool isExpanded, bool expected)
     {
         var layout = new GalleryLayout();
@@ -172,16 +246,16 @@ public class GalleryLayoutTests
     }
 
     [Theory]
-    [InlineData(Orientation.Horizontal, false, GalleryDisplayMode.Columns, false)]
-    [InlineData(Orientation.Vertical, false, GalleryDisplayMode.Columns, true)]
-    [InlineData(Orientation.Horizontal, true, GalleryDisplayMode.Columns, false)]
-    [InlineData(Orientation.Vertical, true, GalleryDisplayMode.Columns, false)] // Columns wraps, so it scrolls sideways
+    [InlineData(Orientation.Horizontal, false, GalleryDisplayMode.Grid, false)]
+    [InlineData(Orientation.Vertical, false, GalleryDisplayMode.Grid, true)]
+    [InlineData(Orientation.Horizontal, true, GalleryDisplayMode.Grid, true)]
+    [InlineData(Orientation.Vertical, true, GalleryDisplayMode.Grid, true)]
     [InlineData(Orientation.Vertical, true, GalleryDisplayMode.Masonry, true)]
     [InlineData(Orientation.Horizontal, true, GalleryDisplayMode.Masonry, true)]
     [InlineData(Orientation.Vertical, true, GalleryDisplayMode.Rows, true)]
     [InlineData(Orientation.Horizontal, false, GalleryDisplayMode.Masonry, false)] // the Docked Gallery has no display mode
     [InlineData(Orientation.Vertical, false, GalleryDisplayMode.Rows, true)]
-    public void ScrollsVertically_ByOrientationModeAndDisplayMode_IsTrueInTheVerticalDockedGalleryAndInMasonryAndRows(
+    public void ScrollsVertically_ByOrientationModeAndDisplayMode_IsTrueInTheVerticalDockedGalleryAndWhenExpanded(
         Orientation orientation, bool isExpanded, GalleryDisplayMode displayMode, bool expected)
     {
         var layout = new GalleryLayout();
@@ -189,7 +263,7 @@ public class GalleryLayoutTests
             Docked with { Orientation = orientation, IsExpanded = isExpanded, DisplayMode = displayMode },
             new Size(300, 300));
         Assert.Equal(expected, layout.ScrollsVertically);
-        Assert.Equal(expected, GalleryLayout.ScrollsVerticallyFor(orientation, isExpanded, displayMode));
+        Assert.Equal(expected, GalleryLayout.ScrollsVerticallyFor(orientation, isExpanded));
     }
 
     [Theory]
@@ -260,15 +334,25 @@ public class GalleryLayoutTests
 
     [Theory]
     [InlineData(10, 0)]
-    [InlineData(100, 0)]  // as near the first column's middle, 50, as the second's, 150: the lower index wins
-    [InlineData(101, 3)]
-    [InlineData(200, 3)]  // as near the second column's middle as the third's, 250
+    [InlineData(50, 0)]   // as near the first row's top, 0, as the second's, 100: the lower index wins
+    [InlineData(51, 3)]
+    [InlineData(150, 3)]  // as near the second row's top as the third's, 200
     [InlineData(5000, 6)]
-    public void IndexNearest_ExpandedColumns_PicksTheFirstItemOfTheNearestColumn(double position, int expected)
+    public void IndexNearest_Grid_PicksTheFirstItemOfTheRowWhoseTopIsNearest(double position, int expected)
     {
         var layout = new GalleryLayout();
-        layout.Calculate(Squares(9), Docked with { IsExpanded = true }, new Size(1000, 300)); // three columns of three
+        layout.Calculate(Squares(9), Docked with { IsExpanded = true, ItemWidth = 100 }, new Size(300, 1000)); // three rows of three
         Assert.Equal(expected, layout.IndexNearest(position));
+    }
+
+    [Theory]
+    [InlineData(4, 50)]  // the second row's middle, 150, less half the view of 200
+    [InlineData(7, 100)] // the third row's middle, 250, less half the view; the extent, 300, ends there too
+    public void CenterOffset_Grid_CentersTheItemsRowAlongTheHeight(int index, double expected)
+    {
+        var layout = new GalleryLayout();
+        layout.Calculate(Squares(9), Docked with { IsExpanded = true, ItemWidth = 100 }, new Size(300, 1000));
+        Assert.Equal(expected, layout.CenterOffset(index, 200));
     }
 
     [Fact]
@@ -297,12 +381,13 @@ public class GalleryLayoutTests
     }
 
     [Fact]
-    public void IndicesIn_ExpandedColumns_ReturnsFromTheFirstItemToTheLastEvenWhenOnesBetweenMissTheArea()
+    public void IndicesIn_Grid_ReturnsTheRowsTheAreaReaches()
     {
         var layout = new GalleryLayout();
-        layout.Calculate(Squares(9), Docked with { IsExpanded = true }, new Size(1000, 300)); // three columns of three
-        // The top of the first two columns: items 0 and 3 reach it, and items 1 and 2 below item 0 do not
-        Assert.Equal((0, 3), layout.IndicesIn(new Rect(50, 0, 100, 50)));
+        layout.Calculate(Squares(9), Docked with { IsExpanded = true, ItemWidth = 100 }, new Size(300, 1000)); // three rows of three
+        // From the middle of the second row into the third
+        Assert.Equal((3, 8), layout.IndicesIn(new Rect(0, 150, 300, 100)));
+        Assert.Equal((0, 2), layout.IndicesIn(new Rect(0, 0, 300, 100))); // the second row starts where it ends
     }
 
     // At 125% a device pixel is 0.8 DIP: 133.33 and 66.67 DIPs are 166.67 and 83.33 device pixels
@@ -319,15 +404,29 @@ public class GalleryLayoutTests
 
     // Spacings of 5 DIPs are 6.25 device pixels at 125%, which layout rounds to 6
     [Fact]
-    public void Calculate_ExpandedAtAFractionalScale_RoundsColumnWidthsAndSpacingsToWholeDevicePixels()
+    public void Calculate_GridAtAFractionalScale_RoundsWidthsHeightsAndSpacingsToWholeDevicePixels()
     {
         var layout = new GalleryLayout();
-        layout.Calculate([Item(4000, 3000), Item(2000, 3000), Item(1000, 1000)],
+        // 400 DIPs are 500 device pixels: two cells of at least 188 fit, and share the 494 beside their gap
+        layout.Calculate(Squares(3),
             Docked with { IsExpanded = true, ItemSpacing = 5, LineSpacing = 5, LayoutScale = 1.25 },
-            new Size(1000, 250));
-        Assert.Equal<double>([0, 0, 173], DevicePixels(layout.Bounds.Select(bounds => bounds.X), 1.25)); // 167 + 6
-        Assert.Equal<double>([0, 131, 0], DevicePixels(layout.Bounds.Select(bounds => bounds.Y), 1.25)); // 125 + 6
-        Assert.Equal<double>([167, 167, 125], DevicePixels(layout.Bounds.Select(bounds => bounds.Width), 1.25));
+            new Size(400, 1000));
+        Assert.Equal<double>([0, 253, 0], DevicePixels(layout.Bounds.Select(bounds => bounds.X), 1.25)); // 247 + 6
+        Assert.Equal<double>([0, 0, 131], DevicePixels(layout.Bounds.Select(bounds => bounds.Y), 1.25)); // 125 + 6
+        Assert.Equal<double>([247, 247, 247], DevicePixels(layout.Bounds.Select(bounds => bounds.Width), 1.25));
+        AssertOnDevicePixels(layout.Bounds, 1.25);
+    }
+
+    // An item height of 101 DIPs is 126.25 device pixels at 125%, which a row rounds to 126
+    [Fact]
+    public void Calculate_GridItemHeightBetweenDevicePixels_PutsEveryRowOnWholeDevicePixels()
+    {
+        var layout = new GalleryLayout();
+        layout.Calculate(Squares(6),
+            Docked with { IsExpanded = true, ItemHeight = 101, ItemWidth = 101, LineSpacing = 5, LayoutScale = 1.25 },
+            new Size(250, 1000));
+        Assert.Equal<double>([0, 0, 132, 132, 264, 264], DevicePixels(layout.Bounds.Select(bounds => bounds.Y), 1.25));
+        AssertOnDevicePixels(layout.Bounds, 1.25);
     }
 
     // At 125%, item 5 is 250 device pixels wide and the view 375, so the exact centered offset is half a pixel off the

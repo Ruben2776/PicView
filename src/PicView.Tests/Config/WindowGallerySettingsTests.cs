@@ -159,7 +159,7 @@ public class WindowGallerySettingsTests
     {
         using var settings = WindowGallerySettings.FromRecord(null);
         settings.Start();
-        Assert.Equal(GalleryDisplayMode.Columns, settings.ExpandedGalleryDisplayMode.Value);
+        Assert.Equal(GalleryDisplayMode.Grid, settings.ExpandedGalleryDisplayMode.Value);
         Assert.False(settings.RowsWasLastUsedDisplayMode);
 
         settings.ToggleExpandedDisplayModeCommand.Execute(Unit.Default);
@@ -172,23 +172,23 @@ public class WindowGallerySettingsTests
         Assert.True(settings.RowsWasLastUsedDisplayMode);
 
         settings.ToggleExpandedDisplayModeCommand.Execute(Unit.Default);
-        Assert.Equal(GalleryDisplayMode.Columns, settings.ExpandedGalleryDisplayMode.Value);
+        Assert.Equal(GalleryDisplayMode.Grid, settings.ExpandedGalleryDisplayMode.Value);
         Assert.True(settings.RowsWasLastUsedDisplayMode);
-        Assert.True(settings.IsExpandedDisplayModeColumns.Value);
+        Assert.True(settings.IsExpandedDisplayModeGrid.Value);
 
         settings.ToggleExpandedDisplayModeCommand.Execute(Unit.Default);
         Assert.Equal(GalleryDisplayMode.Rows, settings.ExpandedGalleryDisplayMode.Value);
 
         settings.SetExpandedDisplayModeCommand.Execute(GalleryDisplayMode.Masonry);
         Assert.False(settings.RowsWasLastUsedDisplayMode);
-        settings.SetExpandedDisplayModeCommand.Execute(GalleryDisplayMode.Columns);
+        settings.SetExpandedDisplayModeCommand.Execute(GalleryDisplayMode.Grid);
         Assert.False(settings.RowsWasLastUsedDisplayMode);
         settings.ToggleExpandedDisplayModeCommand.Execute(Unit.Default);
         Assert.Equal(GalleryDisplayMode.Masonry, settings.ExpandedGalleryDisplayMode.Value);
 
-        // An unknown mode sets Columns
+        // An unknown mode sets Grid
         settings.SetExpandedDisplayModeCommand.Execute((GalleryDisplayMode)99);
-        Assert.Equal(GalleryDisplayMode.Columns, settings.ExpandedGalleryDisplayMode.Value);
+        Assert.Equal(GalleryDisplayMode.Grid, settings.ExpandedGalleryDisplayMode.Value);
     }
 
     [Fact]
@@ -222,12 +222,12 @@ public class WindowGallerySettingsTests
         settings.ToggleExpandedDisplayModeCommand.Execute(Unit.Default);
         Assert.Equal(GalleryStretchMode.UniformToFill, settings.DockedGalleryStretchMode.Value);
         Assert.Equal(GalleryStretchMode.Uniform, settings.ExpandedGalleryStretchMode.Value);
-        Assert.Equal(GalleryDisplayMode.Columns, settings.ExpandedGalleryDisplayMode.Value);
+        Assert.Equal(GalleryDisplayMode.Grid, settings.ExpandedGalleryDisplayMode.Value);
 
         settings.Start();
         settings.Start();
 
-        // A second Start must not subscribe the toggle twice: two toggles would end back on Columns
+        // A second Start must not subscribe the toggle twice: two toggles would end back on Grid
         settings.ToggleExpandedDisplayModeCommand.Execute(Unit.Default);
         Assert.Equal(GalleryDisplayMode.Masonry, settings.ExpandedGalleryDisplayMode.Value);
     }

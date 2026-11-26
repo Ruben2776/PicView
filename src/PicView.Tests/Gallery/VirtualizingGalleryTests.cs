@@ -84,7 +84,7 @@ public class VirtualizingGalleryTests
     }
 
     [AvaloniaFact]
-    public void ExpandedMode_UsesAvailableHeight_ToWrapColumns()
+    public void ExpandedMode_UsesAvailableWidth_ToWrapRows()
     {
         RunWithDispatcher(Dispatcher.UIThread.InvokeAsync(() =>
         {
@@ -95,8 +95,7 @@ public class VirtualizingGalleryTests
                 ItemWidth = 100,
                 ItemSpacing = 10,
                 LineSpacing = 5,
-                Orientation = Orientation.Vertical,
-                WrapHeightOverride = double.NaN
+                Orientation = Orientation.Vertical
             };
 
             var viewer = new NavigateAbleItemsViewer
@@ -105,13 +104,15 @@ public class VirtualizingGalleryTests
                 ItemsSource = Enumerable.Range(0, 5).Select(i => $"Item {i}").ToList()
             };
 
-            var window = new Window { Width = 500, Height = 250, Content = viewer };
+            // As `Apply` does for an Expanded appearance: without it the panel is measured at an endless width
+            viewer.TemplateApplied += (_, _) => viewer.SetVerticalScrolling();
+            var window = new Window { Width = 250, Height = 500, Content = viewer };
             window.Show();
 
-            // Available height inside viewer is ~250:
-            // Item 0: Y = 0..100 (next at 110)
-            // Item 1: Y = 110..210 (next at 220)
-            // Item 2: 220 + 100 = 320 > 250 -> wraps to column 1 at Y = 0
+            // Available width inside viewer is ~250:
+            // Item 0: X = 0..100 (next at 110)
+            // Item 1: X = 110..210 (next at 220)
+            // Item 2: 220 + 100 = 320 > 250 -> wraps to the second row at X = 0
             var bounds0 = gallery.GetItemBounds(0);
             var bounds1 = gallery.GetItemBounds(1);
             var bounds2 = gallery.GetItemBounds(2);
@@ -120,17 +121,18 @@ public class VirtualizingGalleryTests
             Assert.NotNull(bounds1);
             Assert.NotNull(bounds2);
 
-            Assert.Equal(0, bounds0.Value.Y);
-            Assert.Equal(110, bounds1.Value.Y);
-            Assert.Equal(0, bounds2.Value.Y); // Wrapped
-            Assert.True(bounds2.Value.X > bounds0.Value.X);
+            Assert.Equal(0, bounds0.Value.X);
+            Assert.Equal(110, bounds1.Value.X);
+            Assert.Equal(0, bounds1.Value.Y);
+            Assert.Equal(0, bounds2.Value.X); // Wrapped
+            Assert.Equal(105, bounds2.Value.Y);
 
             window.Close();
         }));
     }
 
     [AvaloniaFact]
-    public void ExpandedMode_UsesWrapHeightOverride_WhenSpecified_AndRestoresWhenCleared()
+    public void ExpandedMode_UsesWrapWidthOverride_WhenSpecified_AndRestoresWhenCleared()
     {
         RunWithDispatcher(Dispatcher.UIThread.InvokeAsync(() =>
         {
@@ -142,7 +144,7 @@ public class VirtualizingGalleryTests
                 ItemSpacing = 10,
                 LineSpacing = 5,
                 Orientation = Orientation.Vertical,
-                WrapHeightOverride = 400 // Override allows 3 items (0..100, 110..210, 220..320)
+                WrapWidthOverride = 400 // Override allows 3 items (0..100, 110..210, 220..320)
             };
 
             var viewer = new NavigateAbleItemsViewer
@@ -151,7 +153,9 @@ public class VirtualizingGalleryTests
                 ItemsSource = Enumerable.Range(0, 5).Select(i => $"Item {i}").ToList()
             };
 
-            var window = new Window { Width = 500, Height = 250, Content = viewer };
+            // As `Apply` does for an Expanded appearance: without it the panel is measured at an endless width
+            viewer.TemplateApplied += (_, _) => viewer.SetVerticalScrolling();
+            var window = new Window { Width = 250, Height = 500, Content = viewer };
             window.Show();
 
             var bounds2WithOverride = gallery.GetItemBounds(2);
@@ -160,16 +164,16 @@ public class VirtualizingGalleryTests
             Assert.NotNull(bounds2WithOverride);
             Assert.NotNull(bounds3WithOverride);
 
-            Assert.Equal(220, bounds2WithOverride.Value.Y); // Stayed in column 0 due to 400 override
-            Assert.Equal(0, bounds3WithOverride.Value.Y);   // Item 3 wrapped (330 + 100 = 430 > 400)
+            Assert.Equal(220, bounds2WithOverride.Value.X); // Stayed in the first row due to 400 override
+            Assert.Equal(0, bounds3WithOverride.Value.X);   // Item 3 wrapped (330 + 100 = 430 > 400)
 
-            // Clear override: should now wrap at window available height = 250
-            gallery.WrapHeightOverride = double.NaN;
+            // Clear override: should now wrap at window available width = 250
+            gallery.WrapWidthOverride = double.NaN;
             window.UpdateLayout();
 
             var bounds2Restored = gallery.GetItemBounds(2);
             Assert.NotNull(bounds2Restored);
-            Assert.Equal(0, bounds2Restored.Value.Y); // Wrapped to column 1 at 250 available height
+            Assert.Equal(0, bounds2Restored.Value.X); // Wrapped to the second row at 250 available width
 
             window.Close();
         }));
@@ -422,16 +426,20 @@ public class VirtualizingGalleryTests
     }
 
     [AvaloniaFact]
-    public void ExpandedGallery_WidthsChangeToTheLeft_KeepsTheCurrentItemInPlace()
+    public void ExpandedGallery_SizesReadBeforeTheCurrentItem_MoveNothing()
     {
         var strip = ShowExpanded(200, 150);
         try
         {
-            var shownAt = CurrentItemX(strip);
+            var bounds = strip.Gallery.ItemBounds.ToArray();
+            var offset = strip.ScrollViewer.Offset;
 
+            // A Grid cell is the same size whatever the image in it
             Widen(strip.Items.Take(150), strip.Gallery);
 
-            Assert.Equal(shownAt, CurrentItemX(strip), Tolerance);
+            Assert.Equal(bounds, strip.Gallery.ItemBounds);
+            Assert.Equal(offset, strip.ScrollViewer.Offset);
+            AssertCenteredOnY(150, strip);
         }
         finally
         {
@@ -445,13 +453,13 @@ public class VirtualizingGalleryTests
         var strip = ShowExpanded(200, 150);
         try
         {
-            var centered = strip.ScrollViewer.Offset.X;
+            var centered = strip.ScrollViewer.Offset.Y;
 
             // A wheel step away and one back, which lands where the panel put the view
-            strip.ScrollTo(centered + 50);
-            strip.ScrollTo(centered);
+            strip.ScrollToY(centered + 50);
+            strip.ScrollToY(centered);
 
-            Assert.Equal(centered, strip.ScrollViewer.Offset.X, Tolerance);
+            Assert.Equal(centered, strip.ScrollViewer.Offset.Y, Tolerance);
         }
         finally
         {
@@ -465,12 +473,12 @@ public class VirtualizingGalleryTests
         var strip = ShowExpanded(200, 150);
         try
         {
-            // The end shows the margin after the last column
-            var end = strip.ScrollViewer.Extent.Width - strip.ViewportWidth;
+            // The end shows the margin after the last row
+            var end = strip.ScrollViewer.Extent.Height - strip.ViewportHeight;
 
-            strip.ScrollTo(end);
+            strip.ScrollToY(end);
 
-            Assert.Equal(end, strip.ScrollViewer.Offset.X, Tolerance);
+            Assert.Equal(end, strip.ScrollViewer.Offset.Y, Tolerance);
         }
         finally
         {
@@ -547,17 +555,17 @@ public class VirtualizingGalleryTests
             strip.ScrollViewer.SetCurrentValue(ScrollViewer.OffsetProperty, new Vector(0, 0));
             Dispatcher.UIThread.RunJobs();
 
-            // Expanded as `Apply` does for an Expanded appearance, which keeps the vertical orientation and adds the margin
-            strip.Viewer.SetHorizontalScrolling();
+            // Expanded as `Apply` does for an Expanded appearance, which keeps the vertical orientation and the
+            // vertical scrolling, and adds the margin
             strip.Gallery.IsExpanded = true;
             strip.Gallery.Margin = new Thickness(15, 40, 15, 5);
+            strip.Gallery.VerticalAlignment = VerticalAlignment.Top;
             strip.Window.Width = 1000;
             strip.Window.Height = 400;
             Dispatcher.UIThread.RunJobs();
 
             // The scroll viewer scrolls over the margin before the items too
-            var middle = 15 + strip.Gallery.GetItemBounds(150)!.Value.Center.X;
-            Assert.Equal(middle - strip.ViewportWidth / 2, strip.ScrollViewer.Offset.X, Tolerance);
+            AssertCenteredOnY(150, strip);
         }
         finally
         {
@@ -571,10 +579,9 @@ public class VirtualizingGalleryTests
         var strip = ShowExpanded(200, 150);
         try
         {
-            strip.ScrollTo(0);
+            strip.ScrollToY(0);
 
             // Docked as `Apply` does for a Docked appearance, which keeps the vertical orientation and drops the margin
-            strip.Viewer.SetVerticalScrolling();
             strip.Gallery.IsExpanded = false;
             strip.Gallery.Margin = default;
             strip.Window.Width = 150;
@@ -631,28 +638,13 @@ public class VirtualizingGalleryTests
     // in batches nearest the current image while it follows. Each batch to the left moves the items on screen and the
     // view by the same amount, so no thumbnail may move on screen, not even by a device pixel
     [AvaloniaTheory]
-    [InlineData(1.0, false)]
-    [InlineData(1.25, false)]
-    [InlineData(1.5, false)]
-    [InlineData(1.0, true)]
-    [InlineData(1.25, true)]
-    [InlineData(1.5, true)]
-    public void SizesReadInBatches_WhileFollowing_LeaveEveryShownThumbnailOnItsDevicePixel(double renderScaling,
-        bool expanded)
+    [InlineData(1.0)]
+    [InlineData(1.25)]
+    [InlineData(1.5)]
+    public void SizesReadInBatches_WhileFollowing_LeaveEveryShownThumbnailOnItsDevicePixel(double renderScaling)
     {
         var strip = ShowStrip(300, 150, show: false);
         strip.Window.SetRenderScaling(renderScaling);
-        if (expanded)
-        {
-            // As ShowExpanded does, with spacings that are fractions of a device pixel at 125%
-            strip.Gallery.IsExpanded = true;
-            strip.Gallery.Orientation = Orientation.Vertical;
-            strip.Gallery.Margin = new Thickness(15, 40, 15, 5);
-            strip.Gallery.ItemSpacing = 5;
-            strip.Gallery.LineSpacing = 5;
-            strip.Window.Height = 400;
-        }
-
         try
         {
             ReadNeighbours(strip, renderScaling);
@@ -1009,16 +1001,14 @@ public class VirtualizingGalleryTests
             strip.Window.Height = 1000;
             Dispatcher.UIThread.RunJobs();
 
-            // Expanded, where all 20 items fit, so the panel never moves the view
-            strip.Viewer.SetHorizontalScrolling();
+            // Expanded, where all 20 items fit in four rows of six, so the panel never moves the view
             strip.Gallery.IsExpanded = true;
             strip.Gallery.Margin = new Thickness(15, 40, 15, 5);
             strip.Window.Width = 1000;
-            strip.Window.Height = 400;
+            strip.Window.Height = 500;
             Dispatcher.UIThread.RunJobs();
 
-            // Docked at the side again, after the expanded columns kept the vertical offset at 0
-            strip.Viewer.SetVerticalScrolling();
+            // Docked at the side again, after the Expanded Gallery kept the vertical offset at 0
             strip.Gallery.IsExpanded = false;
             strip.Gallery.Margin = default;
             strip.Window.Width = 150;
@@ -1037,7 +1027,7 @@ public class VirtualizingGalleryTests
     public void DisplayModeProperties_HaveCorrectDefaults()
     {
         var gallery = new VirtualizingGallery();
-        Assert.Equal(GalleryDisplayMode.Columns, gallery.DisplayMode);
+        Assert.Equal(GalleryDisplayMode.Grid, gallery.DisplayMode);
         Assert.True(double.IsNaN(gallery.WrapWidthOverride));
         Assert.Empty(gallery.ItemBounds);
     }
@@ -1190,15 +1180,13 @@ public class VirtualizingGalleryTests
     }
 
     [AvaloniaFact]
-    public void ColumnsToMasonry_AfterTheUserScrolledSideways_CentersTheCurrentItemOnYWithXAtZero()
+    public void GridToMasonry_AfterTheUserScrolledDown_CentersTheCurrentItemOnYWithXAtZero()
     {
         var strip = ShowExpanded(200, 150);
         try
         {
-            // Far enough that the old view, kept until a new one arrives, lies beside every Masonry item
-            strip.ScrollTo(3000);
+            strip.ScrollToY(0);
             // As `Apply` does for a Masonry appearance
-            strip.Viewer.SetVerticalScrolling();
             strip.Gallery.DisplayMode = GalleryDisplayMode.Masonry;
             Dispatcher.UIThread.RunJobs();
             AssertCenteredOnY(150, strip);
@@ -1211,13 +1199,12 @@ public class VirtualizingGalleryTests
     }
 
     [AvaloniaFact]
-    public void ColumnsToMasonry_WithTheCurrentItemInTheFirstRow_ShowsTheTilesThoughNoScrollIsPending()
+    public void GridToMasonry_WithTheCurrentItemInTheFirstRow_ShowsTheTilesThoughNoScrollIsPending()
     {
         var strip = ShowExpanded(200, 0);
         try
         {
             // As `Apply` does for a Masonry appearance
-            strip.Viewer.SetVerticalScrolling();
             strip.Gallery.DisplayMode = GalleryDisplayMode.Masonry;
             Dispatcher.UIThread.RunJobs();
             // Centering item 0 clamps to 0 on the new axis, where the view already is, so nothing scrolls (Review Focus 3)
@@ -1225,7 +1212,6 @@ public class VirtualizingGalleryTests
             Assert.Equal(0, strip.ScrollViewer.Offset.X);
             Assert.NotNull(strip.Viewer.ContainerFromIndex(0));
             Assert.True(strip.Gallery.RealizedItems.Count > 1);
-            // Masonry puts item 1 beside item 0; Columns had it under item 0
             Assert.Equal(0, Top(strip, 0));
             Assert.Equal(0, Top(strip, 1));
         }
@@ -1238,17 +1224,16 @@ public class VirtualizingGalleryTests
     // Review Focus 3. Item 0 is in Masonry's first row, so centering it clamps to 0, where the view already is on Y:
     // the panel has no scroll of its own pending, and the tiles must appear all the same
     [AvaloniaTheory]
-    [InlineData(0)]    // still following item 0 in Columns: neither offset changes with the switch
-    [InlineData(3000)] // scrolled sideways by the user: the old view, kept until a new one arrives, lies beside every tile
-    public void ColumnsToMasonry_CurrentItemInTheFirstRow_RealizesTheTilesWithNoScrollPending(double scrolledTo)
+    [InlineData(0)]    // still following item 0 in Grid: the offset does not change with the switch
+    [InlineData(1000)] // scrolled down by the user: the old view, kept until a new one arrives, lies below the first tiles
+    public void GridToMasonry_CurrentItemInTheFirstRow_RealizesTheTilesAtTheTop(double scrolledTo)
     {
         var strip = ShowExpanded(200, 0);
         try
         {
-            strip.ScrollTo(scrolledTo);
-            Assert.Equal(scrolledTo, strip.ScrollViewer.Offset.X, Tolerance);
+            strip.ScrollToY(scrolledTo);
+            Assert.Equal(scrolledTo, strip.ScrollViewer.Offset.Y, Tolerance);
             // As `Apply` does for a Masonry appearance
-            strip.Viewer.SetVerticalScrolling();
             strip.Gallery.DisplayMode = GalleryDisplayMode.Masonry;
             Dispatcher.UIThread.RunJobs();
 
@@ -1267,20 +1252,17 @@ public class VirtualizingGalleryTests
     }
 
     [AvaloniaFact]
-    public void MasonryToColumns_AfterTheUserScrolledDown_CentersTheCurrentItemOnXWithYAtZero()
+    public void MasonryToGrid_AfterTheUserScrolledDown_CentersTheCurrentItemOnYWithXAtZero()
     {
         var strip = ShowTiles(200, 150, GalleryDisplayMode.Masonry);
         try
         {
-            // To the end, so the old view, kept until a new one arrives, lies below every column
+            // To the end, so the old view, kept until a new one arrives, lies below every row of the grid
             strip.ScrollToY(strip.ScrollViewer.Extent.Height - strip.ViewportHeight);
-            // As `Apply` does for a Columns appearance
-            strip.Viewer.SetHorizontalScrolling();
-            strip.Gallery.DisplayMode = GalleryDisplayMode.Columns;
+            // As `Apply` does for a Grid appearance
+            strip.Gallery.DisplayMode = GalleryDisplayMode.Grid;
             Dispatcher.UIThread.RunJobs();
-            var middle = 15 + strip.Gallery.GetItemBounds(150)!.Value.Center.X;
-            Assert.Equal(middle - strip.ViewportWidth / 2, strip.ScrollViewer.Offset.X, Tolerance);
-            Assert.Equal(0, strip.ScrollViewer.Offset.Y);
+            AssertCenteredOnY(150, strip);
             Assert.NotNull(strip.Viewer.ContainerFromIndex(150));
         }
         finally
@@ -1385,23 +1367,15 @@ public class VirtualizingGalleryTests
     }
 
     /// <summary>
-    /// <see cref="ShowStrip"/>'s items in the Expanded Gallery's columns instead. Its margin is the app's, which puts the
-    /// panel 15 pixels into what the scroll viewer scrolls.
+    /// <see cref="ShowStrip"/>'s items in the Expanded Gallery's Grid instead, as <see cref="ShowTiles"/> shows them:
+    /// rows of even cells, 100 high, that scroll down. Its margin is the app's, which puts the panel 40 pixels into what the
+    /// scroll viewer scrolls.
     /// </summary>
-    private static Strip ShowExpanded(int count, int currentIndex)
-    {
-        var strip = ShowStrip(count, currentIndex, show: false);
-        strip.Gallery.IsExpanded = true;
-        strip.Gallery.Orientation = Orientation.Vertical;
-        strip.Gallery.Margin = new Thickness(15, 40, 15, 5);
-        strip.Window.Height = 400;
-        strip.Window.Show();
-        Dispatcher.UIThread.RunJobs();
-        return strip;
-    }
+    private static Strip ShowExpanded(int count, int currentIndex) =>
+        ShowTiles(count, currentIndex, GalleryDisplayMode.Grid);
 
     /// <summary>
-    /// <see cref="ShowStrip"/>'s items in the Expanded Gallery's Masonry or Rows, in a 1000 by 600 window, set up as
+    /// <see cref="ShowStrip"/>'s items in the Expanded Gallery, in a 1000 by 600 window, set up as
     /// `Apply` does for such an appearance: scrolling vertically, at the top, with the app's margin.
     /// </summary>
     private static Strip ShowTiles(int count, int currentIndex, GalleryDisplayMode displayMode, double renderScaling = 1)
@@ -1502,21 +1476,21 @@ public class VirtualizingGalleryTests
     }
 
     [AvaloniaFact]
-    public void TileThumbnailHeightFor_ColumnsDockedOrNoSuchIndex_IsZero()
+    public void TileThumbnailHeightFor_GridDockedOrNoSuchIndex_IsZero()
     {
-        var columns = PanelWith(GalleryDisplayMode.Columns, 1.0, Details(6000, 4000), out var columnsWindow);
+        var grid = PanelWith(GalleryDisplayMode.Grid, 1.0, Details(6000, 4000), out var gridWindow);
         var docked = PanelWith(GalleryDisplayMode.Rows, 1.0, Details(6000, 4000), out var dockedWindow, expanded: false);
         var rows = PanelWith(GalleryDisplayMode.Rows, 1.0, Details(6000, 4000), out var rowsWindow);
         try
         {
-            Assert.Equal(0u, columns.TileThumbnailHeightFor(0));
+            Assert.Equal(0u, grid.TileThumbnailHeightFor(0));
             Assert.Equal(0u, docked.TileThumbnailHeightFor(0));
             Assert.Equal(0u, rows.TileThumbnailHeightFor(5));
             Assert.Equal(0u, rows.TileThumbnailHeightFor(-1));
         }
         finally
         {
-            columnsWindow.Close();
+            gridWindow.Close();
             dockedWindow.Close();
             rowsWindow.Close();
         }
@@ -1739,10 +1713,4 @@ public class VirtualizingGalleryTests
 
         return (int)Math.Round(left.X * renderScaling);
     }
-
-    /// <summary>
-    /// Where the current item's container is in the scroll viewer, which is where the user sees it.
-    /// </summary>
-    private static double CurrentItemX(Strip strip) =>
-        strip.Viewer.ContainerFromIndex(strip.Viewer.CurrentItemIndex)!.TranslatePoint(default, strip.ScrollViewer)!.Value.X;
 }

@@ -33,43 +33,43 @@ public class GalleryDisplayModeSwitchingTests
     }
 
     [AvaloniaFact]
-    public void SwitchButtons_InColumns_ShowTheToTilesButtonWithTheToggleCommandAndATooltip()
+    public void SwitchButtons_InGrid_ShowTheToTilesButtonWithTheToggleCommandAndATooltip()
     {
         WithGalleryView((core, gallery, _, view) =>
         {
             Assert.True(TranslationManager.LoadLanguage("en"));
             core.Translation.UpdateLanguage();
             var toTiles = view.FindControl<IconButton>("ToTilesButton")!;
-            var toColumns = view.FindControl<IconButton>("ToColumnsButton")!;
+            var toGrid = view.FindControl<IconButton>("ToGridButton")!;
 
             Assert.True(toTiles.IsVisible);
-            Assert.False(toColumns.IsVisible);
+            Assert.False(toGrid.IsVisible);
             Assert.Same(gallery.ToggleExpandedDisplayModeCommand, toTiles.Command);
-            Assert.Same(gallery.ToggleExpandedDisplayModeCommand, toColumns.Command);
+            Assert.Same(gallery.ToggleExpandedDisplayModeCommand, toGrid.Command);
             Assert.Equal("Switch gallery display mode", ToolTip.GetTip(toTiles));
-            Assert.Equal("Switch gallery display mode", ToolTip.GetTip(toColumns));
+            Assert.Equal("Switch gallery display mode", ToolTip.GetTip(toGrid));
         });
     }
 
     [AvaloniaTheory]
     [InlineData(GalleryDisplayMode.Masonry)]
     [InlineData(GalleryDisplayMode.Rows)]
-    public void SwitchButtons_InMasonryOrRows_ShowTheToColumnsButton(GalleryDisplayMode mode)
+    public void SwitchButtons_InMasonryOrRows_ShowTheToGridButton(GalleryDisplayMode mode)
     {
         WithGalleryView((_, gallery, _, view) =>
         {
             gallery.SetExpandedDisplayModeCommand.Execute(mode);
 
             Assert.False(view.FindControl<IconButton>("ToTilesButton")!.IsVisible);
-            Assert.True(view.FindControl<IconButton>("ToColumnsButton")!.IsVisible);
+            Assert.True(view.FindControl<IconButton>("ToGridButton")!.IsVisible);
         });
     }
 
     [AvaloniaTheory]
-    [InlineData(GalleryDisplayMode.Columns, true)]
+    [InlineData(GalleryDisplayMode.Grid, true)]
     [InlineData(GalleryDisplayMode.Masonry, false)]
     [InlineData(GalleryDisplayMode.Rows, false)]
-    public void GalleryMenu_Expanded_ShowsTheExpandedStretchOnlyInColumns(GalleryDisplayMode mode, bool stretchIsShown)
+    public void GalleryMenu_Expanded_ShowsTheExpandedStretchOnlyInGrid(GalleryDisplayMode mode, bool stretchIsShown)
     {
         WithGalleryView((_, gallery, tab, view) =>
         {
@@ -100,7 +100,7 @@ public class GalleryDisplayModeSwitchingTests
     }
 
     [AvaloniaTheory]
-    [InlineData("DisplayModeColumnsMenuItem", GalleryDisplayMode.Columns)]
+    [InlineData("DisplayModeGridMenuItem", GalleryDisplayMode.Grid)]
     [InlineData("DisplayModeMasonryMenuItem", GalleryDisplayMode.Masonry)]
     [InlineData("DisplayModeRowsMenuItem", GalleryDisplayMode.Rows)]
     public void GalleryMenu_DisplayModeItem_SetsItsModeAndIsTheOnlyOneChecked(string itemName, GalleryDisplayMode mode)
@@ -108,16 +108,16 @@ public class GalleryDisplayModeSwitchingTests
         WithGalleryView((_, gallery, tab, view) =>
         {
             var displayModes = Item(MenuOf(view, tab), "DisplayModeMenuItem");
-            // Start from another mode, so Columns is a change too
+            // Start from another mode, so Grid is a change too
             gallery.SetExpandedDisplayModeCommand.Execute(
-                mode is GalleryDisplayMode.Columns ? GalleryDisplayMode.Rows : GalleryDisplayMode.Columns);
+                mode is GalleryDisplayMode.Grid ? GalleryDisplayMode.Rows : GalleryDisplayMode.Grid);
             var item = Item(displayModes, itemName);
 
             item.Command!.Execute(item.CommandParameter);
 
             // The window's, which it stores only when it closes
             Assert.Equal(mode, gallery.ExpandedGalleryDisplayMode.Value);
-            Assert.Equal(GalleryDisplayMode.Columns, Settings.Gallery.ExpandedGalleryDisplayMode);
+            Assert.Equal(GalleryDisplayMode.Grid, Settings.Gallery.ExpandedGalleryDisplayMode);
             Assert.Equal(MenuItemToggleType.Radio, item.ToggleType);
             Assert.Equal([itemName], displayModes.Items.OfType<MenuItem>().Where(x => x.IsChecked).Select(x => x.Name));
         });
@@ -153,7 +153,7 @@ public class GalleryDisplayModeSwitchingTests
         var displayModes = Item(new GalleryItemContextMenu(), "ItemDisplayModeMenuItem")
             .Items.OfType<MenuItem>().ToList();
 
-        Assert.Equal([GalleryDisplayMode.Columns, GalleryDisplayMode.Masonry, GalleryDisplayMode.Rows],
+        Assert.Equal([GalleryDisplayMode.Grid, GalleryDisplayMode.Masonry, GalleryDisplayMode.Rows],
             displayModes.Select(x => (GalleryDisplayMode)x.CommandParameter!));
         Assert.All(displayModes, x => Assert.Equal(MenuItemToggleType.Radio, x.ToggleType));
     }
@@ -170,28 +170,28 @@ public class GalleryDisplayModeSwitchingTests
 
             Assert.Equal(expected, gallery.ExpandedGalleryDisplayMode.Value);
             Assert.Equal(expected is GalleryDisplayMode.Rows, gallery.RowsWasLastUsedDisplayMode);
-            Assert.Equal(GalleryDisplayMode.Columns, Settings.Gallery.ExpandedGalleryDisplayMode);
+            Assert.Equal(GalleryDisplayMode.Grid, Settings.Gallery.ExpandedGalleryDisplayMode);
         });
     }
 
     [AvaloniaFact]
-    public void SettingsComboBox_PickingColumnsAfterRows_SetsColumnsAndStillRemembersRows()
+    public void SettingsComboBox_PickingGridAfterRows_SetsGridAndStillRemembersRows()
     {
         WithGallerySettings((gallery, view) =>
         {
             var comboBox = view.FindControl<ComboBox>("DisplayModeComboBox")!;
             comboBox.SelectedItem = view.FindControl<ComboBoxItem>("DisplayModeRowsItem");
 
-            comboBox.SelectedItem = view.FindControl<ComboBoxItem>("DisplayModeColumnsItem");
+            comboBox.SelectedItem = view.FindControl<ComboBoxItem>("DisplayModeGridItem");
 
-            Assert.Equal(GalleryDisplayMode.Columns, gallery.ExpandedGalleryDisplayMode.Value);
+            Assert.Equal(GalleryDisplayMode.Grid, gallery.ExpandedGalleryDisplayMode.Value);
             Assert.True(gallery.RowsWasLastUsedDisplayMode);
             Assert.False(Settings.Gallery.RowsWasLastUsedDisplayMode);
         });
     }
 
     [AvaloniaTheory]
-    [InlineData("DisplayModeColumnsItem", GalleryDisplayMode.Columns)]
+    [InlineData("DisplayModeGridItem", GalleryDisplayMode.Grid)]
     [InlineData("DisplayModeMasonryItem", GalleryDisplayMode.Masonry)]
     [InlineData("DisplayModeRowsItem", GalleryDisplayMode.Rows)]
     public void SettingsComboBox_CommandSetsDisplayMode_ShowsIt(string itemName, GalleryDisplayMode mode)
@@ -201,7 +201,7 @@ public class GalleryDisplayModeSwitchingTests
             var comboBox = view.FindControl<ComboBox>("DisplayModeComboBox")!;
 
             // Pick something else in the combo box first, so it has to follow the command rather than keep its selection
-            comboBox.SelectedIndex = mode is GalleryDisplayMode.Columns ? 1 : 0;
+            comboBox.SelectedIndex = mode is GalleryDisplayMode.Grid ? 1 : 0;
             gallery.SetExpandedDisplayModeCommand.Execute(mode);
 
             Assert.Same(view.FindControl<ComboBoxItem>(itemName), comboBox.SelectedItem);
@@ -209,7 +209,7 @@ public class GalleryDisplayModeSwitchingTests
     }
 
     [AvaloniaFact]
-    public void SettingsComboBox_ToggleCommandFromColumns_ShowsMasonry()
+    public void SettingsComboBox_ToggleCommandFromGrid_ShowsMasonry()
     {
         WithGallerySettings((gallery, view) =>
         {
@@ -224,8 +224,8 @@ public class GalleryDisplayModeSwitchingTests
     // runs the command. In every saved state that must write nothing: no new value, no change to which of Masonry and
     // Rows was used last, no save
     [AvaloniaTheory]
-    [InlineData(GalleryDisplayMode.Columns, true, "DisplayModeColumnsItem")]
-    [InlineData(GalleryDisplayMode.Columns, false, "DisplayModeColumnsItem")]
+    [InlineData(GalleryDisplayMode.Grid, true, "DisplayModeGridItem")]
+    [InlineData(GalleryDisplayMode.Grid, false, "DisplayModeGridItem")]
     [InlineData(GalleryDisplayMode.Masonry, false, "DisplayModeMasonryItem")]
     [InlineData(GalleryDisplayMode.Rows, true, "DisplayModeRowsItem")]
     // A file edited by hand, where the last used mode disagrees with the saved one, is left as it is too
@@ -283,7 +283,7 @@ public class GalleryDisplayModeSwitchingTests
         var item = Assert.Single(SettingsSearchIndex.Build(), x => x.Key == SettingKey.GalleryDisplayMode);
 
         Assert.Equal("Gallery display mode", item.Name);
-        Assert.Contains("Columns", item.Keywords);
+        Assert.Contains("Grid", item.Keywords);
         Assert.Contains("Masonry", item.Keywords);
         Assert.Contains("Rows", item.Keywords);
     }

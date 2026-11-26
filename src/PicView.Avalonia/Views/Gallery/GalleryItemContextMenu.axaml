@@ -178,9 +178,9 @@
         </MenuItem.Icon>
         <customControls:StyledMenuItem
             Command="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).WindowSettings.Gallery.SetExpandedDisplayModeCommand}"
-            CommandParameter="{x:Static gallerySettings:GalleryDisplayMode.Columns}"
-            Header="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.Columns.Value, Mode=OneWay}"
-            IsChecked="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).WindowSettings.Gallery.IsExpandedDisplayModeColumns.Value, Mode=OneWay}"
+            CommandParameter="{x:Static gallerySettings:GalleryDisplayMode.Grid}"
+            Header="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.Grid.Value, Mode=OneWay}"
+            IsChecked="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).WindowSettings.Gallery.IsExpandedDisplayModeGrid.Value, Mode=OneWay}"
             ToggleType="Radio" />
         <customControls:StyledMenuItem
             Command="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).WindowSettings.Gallery.SetExpandedDisplayModeCommand}"
@@ -199,7 +199,7 @@
         <MenuItem.IsVisible>
             <MultiBinding Converter="{x:Static BoolConverters.And}">
                 <Binding Path="$parent[Window].((viewModels:MainWindowViewModel)DataContext).WindowTabs.ActiveTab.Value.Gallery.IsGalleryExpanded.Value" />
-                <Binding Path="$parent[Window].((viewModels:MainWindowViewModel)DataContext).WindowSettings.Gallery.IsExpandedDisplayModeColumns.Value" />
+                <Binding Path="$parent[Window].((viewModels:MainWindowViewModel)DataContext).WindowSettings.Gallery.IsExpandedDisplayModeGrid.Value" />
             </MultiBinding>
         </MenuItem.IsVisible>
         <MenuItem.Icon>

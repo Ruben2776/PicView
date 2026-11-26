@@ -1,4 +1,3 @@
-using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Metadata;
@@ -14,9 +13,6 @@ using PicView.Core.ViewModels;
 using R3;
 
 namespace PicView.Avalonia.CustomControls;
-
-[StructLayout(LayoutKind.Auto)]
-public readonly record struct ItemPosition(int Index, Point Position, Size Size);
 
 [TemplatePart("PART_ScrollViewer", typeof(AutoScrollViewer))]
 public class NavigateAbleItemsViewer : ItemsControl
@@ -410,6 +406,9 @@ public class NavigateAbleItemsViewer : ItemsControl
         };
     }
 
+    /// <summary>
+    /// Scrolls the Expanded Gallery, which scrolls down in every display mode, just far enough to show the item.
+    /// </summary>
     public void ScrollItemIntoView(int index)
     {
         if (index < 0 || index >= ItemCount)
@@ -423,76 +422,30 @@ public class NavigateAbleItemsViewer : ItemsControl
             return;
         }
 
-        if (ItemsPanelRoot is not VirtualizingGallery gallery)
+        if (ItemsPanelRoot is not VirtualizingGallery gallery || gallery.GetItemBounds(index) is not { } rect)
         {
             return;
         }
 
-        var bounds = gallery.GetItemBounds(index);
-        if (!bounds.HasValue)
+        // The scroll viewer scrolls over the panel's margin too
+        var top = rect.Top + gallery.Margin.Top;
+        var bottom = rect.Bottom + gallery.Margin.Top;
+        var current = _scrollViewer.Offset;
+        var height = _scrollViewer.Viewport.Height;
+        if (top < current.Y)
         {
-            return;
+            _scrollViewer.SetCurrentValue(ScrollViewer.OffsetProperty, current.WithY(top));
         }
-
-        var rect = bounds.Value;
-        if (IsInVerticalDisplayMode(gallery))
+        else if (bottom > current.Y + height)
         {
-            // The scroll viewer scrolls over the panel's margin too
-            var top = rect.Top + gallery.Margin.Top;
-            var bottom = rect.Bottom + gallery.Margin.Top;
-            var current = _scrollViewer.Offset;
-            var height = _scrollViewer.Viewport.Height;
-            if (top < current.Y)
-            {
-                _scrollViewer.SetCurrentValue(ScrollViewer.OffsetProperty, current.WithY(top));
-            }
-            else if (bottom > current.Y + height)
-            {
-                _scrollViewer.SetCurrentValue(ScrollViewer.OffsetProperty, current.WithY(bottom - height));
-            }
-
-            return;
+            _scrollViewer.SetCurrentValue(ScrollViewer.OffsetProperty, current.WithY(bottom - height));
         }
-
-        var offset = _scrollViewer.Offset;
-        var viewport = _scrollViewer.Viewport;
-        var newX = offset.X;
-        var newY = offset.Y;
-
-        if (_scrollViewer.Extent.Width > viewport.Width)
-        {
-            if (rect.Left < offset.X)
-            {
-                newX = rect.Left;
-            }
-            else if (rect.Right > offset.X + viewport.Width)
-            {
-                newX = rect.Right - viewport.Width;
-            }
-        }
-
-        if (_scrollViewer.Extent.Height > viewport.Height)
-        {
-            if (rect.Top < offset.Y)
-            {
-                newY = rect.Top;
-            }
-            else if (rect.Bottom > offset.Y + viewport.Height)
-            {
-                newY = rect.Bottom - viewport.Height;
-            }
-        }
-
-        _scrollViewer.Offset = new Vector(newX, newY);
     }
 
     private void UpdateSelectionIndex(int index)
     {
         SelectedItemIndex = index;
     }
-
-    // The Expanded Gallery's Masonry and Rows; the side-docked strip also scrolls vertically, but keeps the column rules
-    private static bool IsInVerticalDisplayMode(VirtualizingGallery gallery) => ShowsTiles(gallery);
 
     /// <summary>Whether the panel shows tiles: it is expanded, in Masonry or Rows.</summary>
     internal static bool ShowsTiles(VirtualizingGallery gallery) =>
@@ -633,8 +586,8 @@ public class NavigateAbleItemsViewer : ItemsControl
     #region Spatial Navigation Logic
 
     /// <summary>
-    /// Moves the selection by an arrow key, or to the first or last item. In the Expanded Gallery's Masonry and Rows the
-    /// arrows follow <see cref="GalleryNavigator"/>, with no wrap; elsewhere the column rules below apply.
+    /// Moves the Expanded Gallery's selection by an arrow key, as <see cref="GalleryNavigator"/> says, with no wrap, or
+    /// to the first or last item. Only the Expanded Gallery is navigated by keys, so a docked panel moves nothing.
     /// </summary>
     public void Navigate(NavigationDirection direction)
     {
@@ -655,196 +608,21 @@ public class NavigateAbleItemsViewer : ItemsControl
                 return;
         }
 
+        if (ItemsPanelRoot is not VirtualizingGallery { IsExpanded: true } gallery)
+        {
+            return;
+        }
+
         var startIndex = SelectedItemIndex == -1 ? CurrentItemIndex : SelectedItemIndex;
-        if (startIndex < 0) startIndex = 0;
-        if (startIndex >= ItemCount) startIndex = ItemCount - 1;
+        startIndex = Math.Clamp(startIndex, 0, ItemCount - 1);
 
-        // Before GetItemPositions, which builds a list: this path allocates nothing per key press
-        if (ItemsPanelRoot is VirtualizingGallery gallery && IsInVerticalDisplayMode(gallery))
+        // Reads the panel's bounds in place: this path allocates nothing per key press
+        var target = GalleryNavigator.Neighbor(gallery.ItemBounds, startIndex, direction, gallery.DisplayMode);
+        if (target >= 0 && target < ItemCount)
         {
-            var target = GalleryNavigator.Neighbor(gallery.ItemBounds, startIndex, direction, gallery.DisplayMode);
-            if (target >= 0 && target < ItemCount)
-            {
-                UpdateSelectionIndex(target);
-                ScrollItemIntoView(target);
-            }
-
-            return;
+            UpdateSelectionIndex(target);
+            ScrollItemIntoView(target);
         }
-
-        var items = GetItemPositions();
-        if (items.Count is 0)
-        {
-            return;
-        }
-
-        if (items.TrueForAll(x => x.Index != startIndex))
-        {
-            startIndex = items[^1].Index;
-        }
-
-        var currentItemPos = items.Find(x => x.Index == startIndex);
-
-        // Each rule answers null when there is no such item, so item 0 is a target like any other
-        var targetItem = direction switch
-        {
-            // If there's no item directly above, wrap to the bottom of the previous column
-            NavigationDirection.Up => GetClosestItemAbove(currentItemPos, items) ?? GetBottomItemInPreviousColumn(currentItemPos, items),
-
-            // If there's no item directly below, wrap to the top of the next column
-            NavigationDirection.Down => GetClosestItemBelow(currentItemPos, items) ?? GetTopItemInNextColumn(currentItemPos, items),
-
-            NavigationDirection.Left => GetClosestItemLeft(currentItemPos, items),
-            NavigationDirection.Right => GetClosestItemRight(currentItemPos, items),
-            _ => null
-        };
-
-        if (targetItem is not { } validItem || validItem.Index >= ItemCount || validItem.Index == startIndex)
-        {
-            return;
-        }
-
-        UpdateSelectionIndex(validItem.Index);
-        ScrollItemIntoView(SelectedItemIndex);
-    }
-
-    private List<ItemPosition> GetItemPositions()
-    {
-        var list = new List<ItemPosition>();
-
-        if (ItemsPanelRoot is not VirtualizingGallery gallery)
-        {
-            return list;
-        }
-
-        for (var i = 0; i < ItemCount; i++)
-        {
-            var bounds = gallery.GetItemBounds(i);
-            if (bounds.HasValue)
-            {
-                list.Add(new ItemPosition(i, bounds.Value.Position, bounds.Value.Size));
-            }
-        }
-
-        return list;
-    }
-
-    // In the same column: an item counts as above or below only when it starts where the current one starts
-    private static bool InSameColumn(ItemPosition item, ItemPosition current) =>
-        Math.Abs(item.Position.X - current.Position.X) < 1.0;
-
-    private static ItemPosition? GetClosestItemAbove(ItemPosition currentItem, List<ItemPosition> items)
-    {
-        ItemPosition? best = null;
-        foreach (var item in items)
-        {
-            if (InSameColumn(item, currentItem) && item.Position.Y + item.Size.Height <= currentItem.Position.Y
-                && (best is null || item.Position.Y > best.Value.Position.Y))
-            {
-                best = item;
-            }
-        }
-
-        return best;
-    }
-
-    private static ItemPosition? GetClosestItemBelow(ItemPosition currentItem, List<ItemPosition> items)
-    {
-        ItemPosition? best = null;
-        foreach (var item in items)
-        {
-            if (InSameColumn(item, currentItem) && item.Position.Y >= currentItem.Position.Y + currentItem.Size.Height
-                && (best is null || item.Position.Y < best.Value.Position.Y))
-            {
-                best = item;
-            }
-        }
-
-        return best;
-    }
-
-    // The nearest column to the left, and in it the item nearest in height
-    private static ItemPosition? GetClosestItemLeft(ItemPosition currentItem, List<ItemPosition> items)
-    {
-        ItemPosition? best = null;
-        foreach (var item in items)
-        {
-            if (item.Position.X + item.Size.Width > currentItem.Position.X)
-            {
-                continue;
-            }
-
-            if (best is null || item.Position.X > best.Value.Position.X
-                || (Math.Abs(item.Position.X - best.Value.Position.X) < 1.0
-                    && Math.Abs(item.Position.Y - currentItem.Position.Y) < Math.Abs(best.Value.Position.Y - currentItem.Position.Y)))
-            {
-                best = item;
-            }
-        }
-
-        return best;
-    }
-
-    // The nearest column to the right, and in it the item nearest in height
-    private static ItemPosition? GetClosestItemRight(ItemPosition currentItem, List<ItemPosition> items)
-    {
-        ItemPosition? best = null;
-        foreach (var item in items)
-        {
-            if (item.Position.X < currentItem.Position.X + currentItem.Size.Width)
-            {
-                continue;
-            }
-
-            if (best is null || item.Position.X < best.Value.Position.X
-                || (Math.Abs(item.Position.X - best.Value.Position.X) < 1.0
-                    && Math.Abs(item.Position.Y - currentItem.Position.Y) < Math.Abs(best.Value.Position.Y - currentItem.Position.Y)))
-            {
-                best = item;
-            }
-        }
-
-        return best;
-    }
-
-    private static ItemPosition? GetTopItemInNextColumn(ItemPosition currentItem, List<ItemPosition> items)
-    {
-        ItemPosition? best = null;
-        foreach (var item in items)
-        {
-            if (item.Position.X < currentItem.Position.X + currentItem.Size.Width)
-            {
-                continue;
-            }
-
-            if (best is null || item.Position.X < best.Value.Position.X - 1.0
-                || (Math.Abs(item.Position.X - best.Value.Position.X) < 1.0 && item.Position.Y < best.Value.Position.Y))
-            {
-                best = item;
-            }
-        }
-
-        return best;
-    }
-
-    private static ItemPosition? GetBottomItemInPreviousColumn(ItemPosition currentItem, List<ItemPosition> items)
-    {
-        ItemPosition? best = null;
-        foreach (var item in items)
-        {
-            if (item.Position.X + item.Size.Width > currentItem.Position.X)
-            {
-                continue;
-            }
-
-            if (best is null || item.Position.X > best.Value.Position.X + 1.0
-                || (Math.Abs(item.Position.X - best.Value.Position.X) < 1.0 && item.Position.Y > best.Value.Position.Y))
-            {
-                best = item;
-            }
-        }
-
-        return best;
     }
 
     #endregion

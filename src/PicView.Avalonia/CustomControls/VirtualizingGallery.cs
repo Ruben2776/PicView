@@ -2,7 +2,6 @@ using System.Collections.Specialized;
 using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.Media;
@@ -44,9 +43,6 @@ public class VirtualizingGallery : VirtualizingPanel
     public static readonly StyledProperty<double> LineSpacingProperty =
         AvaloniaProperty.Register<WrapPanel, double>(nameof(LineSpacing));
 
-    public static readonly StyledProperty<double> WrapHeightOverrideProperty =
-        AvaloniaProperty.Register<VirtualizingGallery, double>(nameof(WrapHeightOverride), double.NaN);
-
     /// <summary>
     ///     How the Expanded Gallery arranges its items. It is ignored while the gallery is not expanded.
     /// </summary>
@@ -54,7 +50,8 @@ public class VirtualizingGallery : VirtualizingPanel
         AvaloniaProperty.Register<VirtualizingGallery, GalleryDisplayMode>(nameof(DisplayMode));
 
     /// <summary>
-    ///     The width Masonry and Rows wrap in while the gallery's width animates. NaN to wrap in the available width.
+    ///     The width the Expanded Gallery wraps in while the gallery's width animates. NaN to wrap in the available
+    ///     width.
     /// </summary>
     public static readonly StyledProperty<double> WrapWidthOverrideProperty =
         AvaloniaProperty.Register<VirtualizingGallery, double>(nameof(WrapWidthOverride), double.NaN);
@@ -79,7 +76,6 @@ public class VirtualizingGallery : VirtualizingPanel
             ItemWidthProperty,
             ItemSpacingProperty,
             LineSpacingProperty,
-            WrapHeightOverrideProperty,
             DisplayModeProperty,
             WrapWidthOverrideProperty);
     }
@@ -148,6 +144,13 @@ public class VirtualizingGallery : VirtualizingPanel
     private double _offsetSetByPanel = double.NaN;
 
     /// <summary>
+    ///     The offset along the scroll axis that the panel last asked for and the scroll viewer coerced away, as it does
+    ///     while its extent or viewport lags the layout's. It takes the offset once they catch up, and that move is the
+    ///     panel's own. NaN when the scroll viewer took what was asked, or once the view arrived there.
+    /// </summary>
+    private double _offsetAskedByPanel = double.NaN;
+
+    /// <summary>
     ///     The scroll viewer's offset for the next viewport to compare with, to tell a scroll from a viewport that moved
     ///     over the panel for another reason, such as a new margin or scroll axis. Along the scroll axis it is the offset
     ///     from the last move that counted, so slow steps add up.
@@ -200,12 +203,6 @@ public class VirtualizingGallery : VirtualizingPanel
         set => SetValue(LineSpacingProperty, value);
     }
     
-    public double WrapHeightOverride
-    {
-        get => GetValue(WrapHeightOverrideProperty);
-        set => SetValue(WrapHeightOverrideProperty, value);
-    }
-
     /// <inheritdoc cref="DisplayModeProperty" />
     public GalleryDisplayMode DisplayMode
     {
@@ -249,7 +246,7 @@ public class VirtualizingGallery : VirtualizingPanel
     ///     Whether the panel scrolls along Y rather than X. It reads the panel's own properties, so it is right between
     ///     a change to them and the next measure, when the layout's axis is stale or cleared.
     /// </summary>
-    private bool ScrollsVertically => GalleryLayout.ScrollsVerticallyFor(Orientation, IsExpanded, DisplayMode);
+    private bool ScrollsVertically => GalleryLayout.ScrollsVerticallyFor(Orientation, IsExpanded);
 
     /// <summary>
     ///     A center request: from the next layout on, every layout centers the current item again, until someone else
@@ -276,12 +273,12 @@ public class VirtualizingGallery : VirtualizingPanel
     ///     It reads the last measure and does not lay out.
     /// </summary>
     /// <returns>
-    ///     0 when there is nothing to sharpen: the panel is not expanded, shows Columns, has no bounds for the index,
+    ///     0 when there is nothing to sharpen: the panel is not expanded, shows Grid, has no bounds for the index,
     ///     or the item's details are not read yet.
     /// </returns>
     public uint TileThumbnailHeightFor(int index)
     {
-        if (!IsExpanded || DisplayMode is GalleryDisplayMode.Columns || index < 0 || index >= _layout.Bounds.Count)
+        if (!IsExpanded || DisplayMode is GalleryDisplayMode.Grid || index < 0 || index >= _layout.Bounds.Count)
         {
             return 0;
         }
@@ -306,66 +303,6 @@ public class VirtualizingGallery : VirtualizingPanel
             details.PixelWidth, details.PixelHeight);
     }
 
-    public IReadOnlyList<double> GetIrregularSnapPoints(Orientation orientation, SnapPointsAlignment snapPointsAlignment)
-    {
-        if (_layout.Bounds.Count is 0)
-        {
-            return [];
-        }
-
-        var snapPoints = new List<double>();
-
-        // Only provide snap points when the requested orientation matches our layout's scroll axis
-        var isVerticalDocked = ScrollsVertically;
-        if (isVerticalDocked && orientation is not Orientation.Vertical || !isVerticalDocked && orientation is not Orientation.Horizontal)
-        {
-            return snapPoints;
-        }
-
-        if (!IsExpanded)
-        {
-            // Docked mode: Snap to individual items
-            foreach (var bounds in _layout.Bounds)
-            {
-                var point = isVerticalDocked
-                    ? snapPointsAlignment switch
-                    {
-                        SnapPointsAlignment.Near => bounds.Top,
-                        SnapPointsAlignment.Center => bounds.Center.Y,
-                        SnapPointsAlignment.Far => bounds.Bottom,
-                        _ => bounds.Top
-                    }
-                    : snapPointsAlignment switch
-                    {
-                        SnapPointsAlignment.Near => bounds.Left,
-                        SnapPointsAlignment.Center => bounds.Center.X,
-                        SnapPointsAlignment.Far => bounds.Right,
-                        _ => bounds.Left
-                    };
-                snapPoints.Add(point);
-            }
-        }
-        else
-        {
-            // Expanded mode: Snap to the start of each column
-            var lastX = -1.0;
-            foreach (var bounds in _layout.Bounds.Where(bounds => Math.Abs(bounds.X - lastX) > 1.0))
-            {
-                lastX = bounds.X;
-                var point = snapPointsAlignment switch
-                {
-                    SnapPointsAlignment.Near => bounds.Left,
-                    SnapPointsAlignment.Center => bounds.Center.X,
-                    SnapPointsAlignment.Far => bounds.Right,
-                    _ => bounds.Left
-                };
-                snapPoints.Add(point);
-            }
-        }
-
-        return snapPoints;
-    }
-
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
     {
         base.OnPropertyChanged(change);
@@ -387,7 +324,7 @@ public class VirtualizingGallery : VirtualizingPanel
         else if (change.Property == DisplayModeProperty)
         {
             // A held distance belongs to the other layout, so center the current item in the new one. Keep the
-            // viewport and the containers: between Masonry and Rows the effective viewport can stay identical, so a
+            // viewport and the containers: between two display modes the effective viewport can stay identical, so a
             // panel that waited for a new one would wait forever, and items shown in both keep their containers
             _isFollowing = true;
         }
@@ -468,6 +405,14 @@ public class VirtualizingGallery : VirtualizingPanel
             return true;
         }
 
+        if (Math.Abs(offset - _offsetAskedByPanel) <= SamePositionTolerance)
+        {
+            // The scroll viewer took late what the panel asked for, as when both sides of the window change and the
+            // layout in between sees the new size before the scroll viewer does. The next layout centers or holds anew
+            _offsetAskedByPanel = double.NaN;
+            return true;
+        }
+
         var lastOffset = scrollsVertically ? _lastScrollOffset.Y : _lastScrollOffset.X;
         if (Math.Abs(offset - lastOffset) <= SamePositionTolerance)
         {
@@ -478,7 +423,17 @@ public class VirtualizingGallery : VirtualizingPanel
 
         var extent = scrollsVertically ? scrollViewer.Extent.Height : scrollViewer.Extent.Width;
         var viewport = scrollsVertically ? scrollViewer.Viewport.Height : scrollViewer.Viewport.Width;
-        if (offset < lastOffset && offset >= Math.Max(0, extent - viewport) - SamePositionTolerance)
+        var atEnd = offset >= Math.Max(0, extent - viewport) - SamePositionTolerance;
+        if (offset < _offsetSetByPanel && atEnd)
+        {
+            // The panel's own move, pulled back to the end by the scroll viewer: its viewport lags the layout's, as
+            // when the gallery expands from a side dock, so its end is nearer than the layout's. No one scrolled, and
+            // the next layout centers or holds anew
+            _offsetSetByPanel = double.NaN;
+            return true;
+        }
+
+        if (offset < lastOffset && atEnd)
         {
             // The strip got shorter than the view reached, as when its items are cleared, so the scroll viewer pulled
             // the view back to its new end. No one scrolled
@@ -502,6 +457,7 @@ public class VirtualizingGallery : VirtualizingPanel
         // read since that layout then move the items around it, not it. The middle comes from the scroll viewer's
         // offset, since layout puts the viewport on device pixels, a fraction of a pixel off it at 125% or 150%
         _isFollowing = false;
+        _offsetAskedByPanel = double.NaN;
         HoldItemNearest(offset - marginBefore + length / 2);
         _viewer?.RestartTileRest();
         return true;
@@ -543,6 +499,7 @@ public class VirtualizingGallery : VirtualizingPanel
         var before = scrollsVertically ? offset.Y : offset.X;
         var taken = scrollsVertically ? _scrollViewer.Offset.Y : _scrollViewer.Offset.X;
         _offsetSetByPanel = _layout.ShowsAnotherPixel(before, taken) ? taken : double.NaN;
+        _offsetAskedByPanel = Math.Abs(taken - pendingOffset) > SamePositionTolerance ? pendingOffset : double.NaN;
     }
 
     private static bool HasSize(Rect viewport) => viewport.Width > 0 && viewport.Height > 0;
@@ -575,7 +532,7 @@ public class VirtualizingGallery : VirtualizingPanel
         // 1. Calculate all layout boundaries instantly in memory, on the device pixels layout rounding puts them on
         _layout.Calculate(items,
             new GalleryLayoutOptions(Orientation, IsExpanded, ItemHeight, ItemWidth, ItemSpacing, LineSpacing,
-                WrapHeightOverride, LayoutHelper.GetLayoutScale(this), DisplayMode, WrapWidthOverride),
+                LayoutHelper.GetLayoutScale(this), DisplayMode, WrapWidthOverride),
             availableSize);
 
         _viewer ??= this.FindAncestorOfType<NavigateAbleItemsViewer>();

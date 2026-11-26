@@ -35,8 +35,8 @@ public sealed class WindowGallerySettings : IDisposable
             new BindableReactiveProperty<double>(AcceptedExpandedSize(values.ExpandedGalleryItemSize));
         _rowsWasLastUsedDisplayMode = values.RowsWasLastUsedDisplayMode;
 
-        IsExpandedDisplayModeColumns = ExpandedGalleryDisplayMode
-            .Select(static mode => mode is GalleryDisplayMode.Columns)
+        IsExpandedDisplayModeGrid = ExpandedGalleryDisplayMode
+            .Select(static mode => mode is GalleryDisplayMode.Grid)
             .ToReadOnlyBindableReactiveProperty();
         IsExpandedDisplayModeMasonry = ExpandedGalleryDisplayMode
             .Select(static mode => mode is GalleryDisplayMode.Masonry)
@@ -106,10 +106,10 @@ public sealed class WindowGallerySettings : IDisposable
     /// <summary>The Expanded Gallery's item size, held to the expanded limits once started.</summary>
     public BindableReactiveProperty<double> ExpandedGalleryItemSize { get; }
 
-    /// <summary>Sets the display mode; an unknown value sets Columns.</summary>
+    /// <summary>Sets the display mode; an unknown value sets Grid.</summary>
     public ReactiveCommand<GalleryDisplayMode> SetExpandedDisplayModeCommand { get; } = new();
 
-    /// <summary>Goes from Columns to the last used tile mode, and from a tile mode back to Columns.</summary>
+    /// <summary>Goes from Grid to the last used tile mode, and from a tile mode back to Grid.</summary>
     public ReactiveCommand<Unit> ToggleExpandedDisplayModeCommand { get; } = new();
 
     /// <summary>Sets the Docked Gallery's Thumbnail Stretch; an unknown value is ignored.</summary>
@@ -118,7 +118,7 @@ public sealed class WindowGallerySettings : IDisposable
     /// <summary>Sets the Expanded Gallery's Thumbnail Stretch; an unknown value is ignored.</summary>
     public ReactiveCommand<GalleryStretchMode> SetExpandedStretchModeCommand { get; } = new();
 
-    public IReadOnlyBindableReactiveProperty<bool> IsExpandedDisplayModeColumns { get; }
+    public IReadOnlyBindableReactiveProperty<bool> IsExpandedDisplayModeGrid { get; }
     public IReadOnlyBindableReactiveProperty<bool> IsExpandedDisplayModeMasonry { get; }
     public IReadOnlyBindableReactiveProperty<bool> IsExpandedDisplayModeRows { get; }
 
@@ -294,7 +294,7 @@ public sealed class WindowGallerySettings : IDisposable
         ToggleExpandedDisplayModeCommand.Dispose();
         SetDockedStretchModeCommand.Dispose();
         SetExpandedStretchModeCommand.Dispose();
-        IsExpandedDisplayModeColumns.Dispose();
+        IsExpandedDisplayModeGrid.Dispose();
         IsExpandedDisplayModeMasonry.Dispose();
         IsExpandedDisplayModeRows.Dispose();
         IsExpandedDisplayModeTiles.Dispose();

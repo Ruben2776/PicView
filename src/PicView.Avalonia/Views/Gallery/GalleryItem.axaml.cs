@@ -85,7 +85,7 @@ public partial class GalleryItem : NavigateAbleItem
         UpdateRing();
     }
 
-    // The ring exists only while a tile is marked: Docked and Columns items never get one
+    // The ring exists only while a tile is marked: Docked and Grid items never get one
     private void UpdateRing()
     {
         var brushKey = !IsTile ? null
@@ -170,7 +170,7 @@ public partial class GalleryItem : NavigateAbleItem
     /// <summary>
     /// Shows <paramref name="vm"/>'s thumbnail. A Masonry or Rows tile shows a kept Tile Thumbnail at once, even in place
     /// of a small one it holds, and has its tab keep the small one too; else it shows a kept small one at once. Failing
-    /// that, and in the Docked Gallery and Columns, it loads the small one.
+    /// that, and in the Docked Gallery and Grid, it loads the small one.
     /// </summary>
     /// <param name="vm">The item to show.</param>
     /// <param name="isTile">
@@ -244,7 +244,7 @@ public partial class GalleryItem : NavigateAbleItem
 
             if (!isTile)
             {
-                // The Docked Gallery and Columns, as before Tile Thumbnails. A Tile Thumbnail shown after a switch to
+                // The Docked Gallery and Grid, as before Tile Thumbnails. A Tile Thumbnail shown after a switch to
                 // Masonry or Rows stays
                 if (vm.TileHeightShown is 0)
                 {
@@ -349,7 +349,7 @@ public partial class GalleryItem : NavigateAbleItem
             return;
         }
 
-        // Only a tile shows a Tile Thumbnail: the gallery may have left Masonry and Rows, for Columns or docked
+        // Only a tile shows a Tile Thumbnail: the gallery may have left Masonry and Rows, for Grid or docked
         var panel = this.FindAncestorOfType<VirtualizingGallery>();
         if (thumbnail is null || panel is null || !NavigateAbleItemsViewer.ShowsTiles(panel) ||
             !ReferenceEquals(DataContext, vm))

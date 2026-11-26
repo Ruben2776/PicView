@@ -319,7 +319,7 @@ public class AppLifecycleTests : IAsyncDisposable
 
         // Its commands are its own, started as it opened
         openedGallery.ToggleExpandedDisplayModeCommand.Execute(Unit.Default);
-        Assert.Equal(GalleryDisplayMode.Columns, openedGallery.ExpandedGalleryDisplayMode.Value);
+        Assert.Equal(GalleryDisplayMode.Grid, openedGallery.ExpandedGalleryDisplayMode.Value);
         Assert.Equal(GalleryDisplayMode.Masonry, firstGallery.ExpandedGalleryDisplayMode.Value);
     }
 
@@ -344,7 +344,7 @@ public class AppLifecycleTests : IAsyncDisposable
         await app.MainWindows.CloseAsync(second);
 
         Assert.Equal((100.0, 220.0, GalleryStretchMode.Square, GalleryStretchMode.FillSquare,
-            GalleryDisplayMode.Columns, true), LookOf(Settings.Gallery));
+            GalleryDisplayMode.Grid, true), LookOf(Settings.Gallery));
         Assert.Equal(savesBeforeClose + 1, _sharedFiles.Saves);
         Assert.Equal(recordLook, LookOf(ViewModelOf(first).WindowSettings.Gallery));
     }

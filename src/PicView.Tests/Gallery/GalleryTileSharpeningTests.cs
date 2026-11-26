@@ -308,22 +308,22 @@ public sealed class GalleryTileSharpeningTests : IDisposable
     }
 
     [AvaloniaFact]
-    public void SwitchedToColumns_WhileSharpeningWaits_AsksOnlyForTheGalleryHeight()
+    public void SwitchedToGrid_WhileSharpeningWaits_AsksOnlyForTheGalleryHeight()
     {
         // One slot and the gate closed, so the first tile holds the slot and the others wait for it
         _decoder.DecodeFullGate = new ManualResetEventSlim(false);
         Show(slots: 1);
 
         AdvanceBy(GalleryDefaults.TileSharpenDelayMilliseconds + 10);
-        SwitchDisplayModeTo(GalleryDisplayMode.Columns);
+        SwitchDisplayModeTo(GalleryDisplayMode.Grid);
         OpenGate();
         Rest();
 
         Assert.True(_decoder.Calls.Count(c => c.StartsWith("decode-full:", StringComparison.Ordinal)) <= 1); // at most the one already in its slot
-        // and the one made in its slot lands on no Columns item
+        // and the one made in its slot lands on no Grid item
         Assert.All(RealizedItems(), item => Assert.Equal(0u, ((GalleryItemViewModel)item.DataContext!).TileHeightShown));
         Assert.DoesNotContain(_items, x => x.Image.Value is Bitmap bitmap && bitmap.PixelSize.Height > GalleryHeight);
-        ScrollToEnd(); // new Columns containers
+        ScrollToEnd(); // new Grid containers
         Rest();
         Assert.True(_decoder.Calls.Count(c => c.StartsWith("decode-full:", StringComparison.Ordinal)) <= 1);
     }
@@ -488,7 +488,7 @@ public sealed class GalleryTileSharpeningTests : IDisposable
     {
         // One slot, held by a small thumbnail at the gate, so the others wait for it. The tier holds every file
         _decoder.DecodeGate = new ManualResetEventSlim(false);
-        Show(GalleryDisplayMode.Columns, slots: 1, keepTileThumbnailsAt: 2000, waitForSmallThumbnails: false);
+        Show(GalleryDisplayMode.Grid, slots: 1, keepTileThumbnailsAt: 2000, waitForSmallThumbnails: false);
         Settle(() => _decoder.Calls.Any(c => c.StartsWith("decode:", StringComparison.Ordinal)));
         var subject = _panel!.RealizedItems.Select(x => x.Index).First(i => CallsFor("decode", i) is 0);
         var container = ItemAt(subject);
@@ -534,14 +534,14 @@ public sealed class GalleryTileSharpeningTests : IDisposable
     }
 
     [AvaloniaFact]
-    public void Tiles_BackFromColumns_ShowTheirKeptTileThumbnailsAtOnce()
+    public void Tiles_BackFromGrid_ShowTheirKeptTileThumbnailsAtOnce()
     {
         Show(GalleryDisplayMode.Rows, itemCount: 60);
         Rest();
         var sharp = Shown(0);
         var fullDecodes = _decoder.Calls.Count(c => c.StartsWith("decode-full:", StringComparison.Ordinal));
 
-        SwitchDisplayModeTo(GalleryDisplayMode.Columns);
+        SwitchDisplayModeTo(GalleryDisplayMode.Grid);
         SettleSmallThumbnails();
         SwitchDisplayModeTo(GalleryDisplayMode.Rows);
         SettleSmallThumbnails();

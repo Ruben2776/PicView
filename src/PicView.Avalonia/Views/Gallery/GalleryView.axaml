@@ -38,11 +38,18 @@
         <Style Selector=":is(gallery|GalleryView).tiles customControls|NavigateAbleItem.galleryItem:pointerover /template/ Border#border">
             <Setter Property="BorderThickness" Value="1" />
         </Style>
-        <!--  Masonry and Rows: the vertical scroll bar starts below the 85x60 button cluster at the top right  -->
-        <Style Selector=":is(customControls|GalleryAnimationControl).tiles customControls|NavigateAbleItemsViewer /template/ customControls|AutoScrollViewer#PART_ScrollViewer /template/ ScrollBar#PART_VerticalScrollBar">
+        <!--  Grid: rounded corners, which the thumbnail is clipped to  -->
+        <Style Selector=":is(gallery|GalleryView).grid customControls|NavigateAbleItem.galleryItem">
+            <Setter Property="CornerRadius" Value="6" />
+        </Style>
+        <Style Selector=":is(gallery|GalleryView).grid customControls|NavigateAbleItem.galleryItem /template/ Border#border">
+            <Setter Property="ClipToBounds" Value="True" />
+        </Style>
+        <!--  Expanded: the vertical scroll bar starts below the 85x60 button cluster at the top right  -->
+        <Style Selector=":is(customControls|GalleryAnimationControl).expanded customControls|NavigateAbleItemsViewer /template/ customControls|AutoScrollViewer#PART_ScrollViewer /template/ ScrollBar#PART_VerticalScrollBar">
             <Setter Property="Margin" Value="0,60,0,0" />
         </Style>
-        <!--  The item's tooltip: above it when docked at the bottom and in Columns  -->
+        <!--  The item's tooltip: above it when docked at the bottom and in Grid  -->
         <Style Selector="customControls|NavigateAbleItem.galleryItem Panel#TipHost">
             <Setter Property="ToolTip.Placement" Value="TopEdgeAlignedLeft" />
             <Setter Property="ToolTip.VerticalOffset" Value="0" />
@@ -80,11 +87,11 @@
                     </MenuItem.Icon>
                     <customControls:StyledMenuItem
                         Command="{Binding ParentWindowContext.WindowSettings.Gallery.SetExpandedDisplayModeCommand}"
-                        CommandParameter="{x:Static gallerySettings:GalleryDisplayMode.Columns}"
-                        Header="{Binding ParentWindowContext.Translation.Columns.Value, Mode=OneWay}"
-                        IsChecked="{Binding ParentWindowContext.WindowSettings.Gallery.IsExpandedDisplayModeColumns.Value, Mode=OneWay}"
+                        CommandParameter="{x:Static gallerySettings:GalleryDisplayMode.Grid}"
+                        Header="{Binding ParentWindowContext.Translation.Grid.Value, Mode=OneWay}"
+                        IsChecked="{Binding ParentWindowContext.WindowSettings.Gallery.IsExpandedDisplayModeGrid.Value, Mode=OneWay}"
                         ToggleType="Radio"
-                        x:Name="DisplayModeColumnsMenuItem" />
+                        x:Name="DisplayModeGridMenuItem" />
                     <customControls:StyledMenuItem
                         Command="{Binding ParentWindowContext.WindowSettings.Gallery.SetExpandedDisplayModeCommand}"
                         CommandParameter="{x:Static gallerySettings:GalleryDisplayMode.Masonry}"
@@ -104,7 +111,7 @@
                     <MenuItem.IsVisible>
                         <MultiBinding Converter="{x:Static BoolConverters.And}">
                             <Binding Path="Gallery.IsGalleryExpanded.Value" />
-                            <Binding Path="ParentWindowContext.WindowSettings.Gallery.IsExpandedDisplayModeColumns.Value" />
+                            <Binding Path="ParentWindowContext.WindowSettings.Gallery.IsExpandedDisplayModeGrid.Value" />
                         </MultiBinding>
                     </MenuItem.IsVisible>
                     <MenuItem.Icon>
@@ -276,11 +283,11 @@
                 Command="{CompiledBinding ParentWindowContext.WindowSettings.Gallery.ToggleExpandedDisplayModeCommand}"
                 Foreground="{DynamicResource MainTextColor}"
                 HorizontalAlignment="Stretch"
-                Icon="{StaticResource LayoutPanelLeftImage}"
+                Icon="{StaticResource LayoutGridImage}"
                 IconHeight="18"
                 IconWidth="18"
                 IsRepeatEnabled="False"
-                IsVisible="{CompiledBinding ParentWindowContext.WindowSettings.Gallery.IsExpandedDisplayModeColumns.Value}"
+                IsVisible="{CompiledBinding ParentWindowContext.WindowSettings.Gallery.IsExpandedDisplayModeGrid.Value}"
                 ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.ToggleGalleryDisplayMode.Value,
                                               Mode=OneWay}"
                 VerticalAlignment="Stretch"
@@ -303,13 +310,13 @@
                 </customControls:IconButton.Template>
             </customControls:IconButton>
 
-            <!--  To columns button  -->
+            <!--  To grid button  -->
             <customControls:IconButton
                 Classes="galleryShape"
                 Command="{CompiledBinding ParentWindowContext.WindowSettings.Gallery.ToggleExpandedDisplayModeCommand}"
                 Foreground="{DynamicResource MainTextColor}"
                 HorizontalAlignment="Stretch"
-                Icon="{StaticResource LayoutGridImage}"
+                Icon="{StaticResource LayoutPanelLeftImage}"
                 IconHeight="18"
                 IconWidth="18"
                 IsRepeatEnabled="False"
@@ -317,7 +324,7 @@
                 ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.ToggleGalleryDisplayMode.Value,
                                               Mode=OneWay}"
                 VerticalAlignment="Stretch"
-                x:Name="ToColumnsButton">
+                x:Name="ToGridButton">
                 <customControls:IconButton.Template>
                     <ControlTemplate TargetType="customControls:IconButton">
                         <Panel>

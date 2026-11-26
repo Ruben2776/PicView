@@ -103,14 +103,25 @@ public class GalleryNavigatorTests
     public void Neighbor_RowsUpAndDown_IsTheNearestOverlappingItem(int from, NavigationDirection direction, int expected) =>
         Assert.Equal(expected, GalleryNavigator.Neighbor(RowsBounds, from, direction, GalleryDisplayMode.Rows));
 
-    [Theory]
-    [InlineData(GalleryDisplayMode.Masonry)]
-    [InlineData(GalleryDisplayMode.Columns)]
-    public void Neighbor_LeftAndRightOutsideRows_DoNotCrossRowEnds(GalleryDisplayMode displayMode)
+    [Fact]
+    public void Neighbor_MasonryLeftAndRight_DoNotCrossRowEnds()
     {
+        const GalleryDisplayMode displayMode = GalleryDisplayMode.Masonry;
         Assert.Equal(-1, GalleryNavigator.Neighbor(RowsBounds, 2, NavigationDirection.Right, displayMode));
         Assert.Equal(-1, GalleryNavigator.Neighbor(RowsBounds, 3, NavigationDirection.Left, displayMode));
         Assert.Equal(1, GalleryNavigator.Neighbor(RowsBounds, 0, NavigationDirection.Right, displayMode));
+    }
+
+    // Grid reads like Rows: the ends of a row lead to the row before or after
+    [Fact]
+    public void Neighbor_GridLeftAndRight_AreTheItemBeforeAndAfter()
+    {
+        const GalleryDisplayMode displayMode = GalleryDisplayMode.Grid;
+        Assert.Equal(3, GalleryNavigator.Neighbor(RowsBounds, 2, NavigationDirection.Right, displayMode));
+        Assert.Equal(2, GalleryNavigator.Neighbor(RowsBounds, 3, NavigationDirection.Left, displayMode));
+        Assert.Equal(-1, GalleryNavigator.Neighbor(RowsBounds, 0, NavigationDirection.Left, displayMode));
+        Assert.Equal(-1, GalleryNavigator.Neighbor(RowsBounds, RowsBounds.Length - 1, NavigationDirection.Right,
+            displayMode));
     }
 
     [Theory]

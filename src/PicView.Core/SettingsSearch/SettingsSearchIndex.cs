@@ -102,7 +102,7 @@ public static class SettingsSearchIndex
         Add(SettingKey.GalleryLineSpacing, t.LineSpacing,
             "Margin Padding Gap");
         Add(SettingKey.GalleryDisplayMode, t.GalleryDisplayMode,
-            t.Columns, t.Masonry, t.Rows, "Justified Waterfall Mosaic Tiles Layout");
+            t.Grid, t.Masonry, t.Rows, "Justified Waterfall Mosaic Tiles Layout");
         Add(SettingKey.GalleryThumbnailStretch, t.GalleryThumbnailStretch,
             t.Uniform, t.UniformToFill, t.Square, t.FillSquare, "Crop");
         Add(SettingKey.DockedGalleryThumbnailStretch, t.DockedGalleryThumbnailStretch,

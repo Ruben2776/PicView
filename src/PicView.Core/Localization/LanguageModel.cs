@@ -86,7 +86,6 @@ public class LanguageModel
     public string? ColorPickerToolTooltip { get; set; }
     public string? ColorRepresentation { get; set; }
     public string? ColorTone { get; set; }
-    public string? Columns { get; set; }
     public string? Comment { get; set; }
     public string? Comparison { get; set; }
     public string? ComparisonTooltip { get; set; }
@@ -213,6 +212,7 @@ public class LanguageModel
     public string? GoBackBy100Images { get; set; }
     public string? GoBackBy10Images { get; set; }
     public string? Graphics { get; set; }
+    public string? Grid { get; set; }
     public string? Green { get; set; }
     public string? Hard { get; set; }
     public string? Height { get; set; }

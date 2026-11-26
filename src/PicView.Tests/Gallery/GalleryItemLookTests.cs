@@ -41,11 +41,11 @@ public class GalleryItemLookTests
         TranslationManager.Init();
     }
 
-    // Docked at the bottom (item size 76) and Expanded Columns (150), as they look before anything moves
+    // Docked at the bottom (item size 76) and Expanded Grid (150), as they look before anything moves: alike but for the corners, square when docked and rounded by 6 in Grid, which clips to them
     [AvaloniaTheory]
     [InlineData(false, 76, 74)]
-    [InlineData(true, 150, 148)]
-    public void DockedAndColumns_Item_HasTheBorderedLook(bool expanded, double size, double width)
+    [InlineData(true, 150, 302)] // a Grid cell: the columns share the width, 304 each here
+    public void DockedAndGrid_Item_HasTheBorderedLook(bool expanded, double size, double width)
     {
         WithShownGallery(expanded, (_, _, view, panel) =>
         {
@@ -58,10 +58,11 @@ public class GalleryItemLookTests
             Assert.Equal(size, item.Height);
             Assert.Equal(new Thickness(1), item.Margin);
             Assert.Equal(new Thickness(1), item.BorderThickness);
-            Assert.Equal(new CornerRadius(0), item.CornerRadius);
+            Assert.Equal(new CornerRadius(expanded ? 6 : 0), item.CornerRadius);
             Assert.Equal(ResourceColor("GalleryItemBackgroundColor"), ColorOf(item.Background));
             Assert.Equal(ResourceColor("GalleryItemBorderColor"), ColorOf(item.BorderBrush));
-            // The container is size x size: 1 px free left and right, and the fixed height fills it
+            // The container is as wide as the item is high when docked, and a Grid cell when expanded: 1 px free left
+            // and right, and the fixed height fills it
             Assert.Equal(new Rect(1, 0, width, size), item.Bounds);
             // The thumbnail's panel is 2 px inside the item: the border, then 1 px of space
             Assert.Equal(new Point(2, 2), contentPanel.TranslatePoint(default, item));
@@ -69,7 +70,7 @@ public class GalleryItemLookTests
             // The thumbnail and the motion photo badge and nothing more, even for the current item (index 0)
             Assert.Equal(2, contentPanel.Children.Count);
             Assert.Equal(8, item.GetVisualDescendants().Count());
-            Assert.False(TemplateBorderOf(item).ClipToBounds);
+            Assert.Equal(expanded, TemplateBorderOf(item).ClipToBounds);
         });
     }
 
@@ -296,7 +297,7 @@ public class GalleryItemLookTests
     [AvaloniaTheory]
     [InlineData(true, GalleryDisplayMode.Masonry, true)]
     [InlineData(true, GalleryDisplayMode.Rows, true)]
-    [InlineData(true, GalleryDisplayMode.Columns, false)]
+    [InlineData(true, GalleryDisplayMode.Grid, false)]
     [InlineData(false, GalleryDisplayMode.Masonry, false)]
     public void ThumbnailArrivingAfterTheItemIsShown_FadesInOnlyInTiles(bool expanded, GalleryDisplayMode displayMode,
         bool fades)
@@ -348,7 +349,7 @@ public class GalleryItemLookTests
     // without animation: expanded and hidden before the view loads, then shown, as when a Single Image ends
     private static void WithShownGallery(bool expanded,
         Action<TabViewModel, Window, GalleryView, VirtualizingGallery> test, Action<GalleryView>? beforeShow = null,
-        int itemCount = 3, GalleryDisplayMode displayMode = GalleryDisplayMode.Columns,
+        int itemCount = 3, GalleryDisplayMode displayMode = GalleryDisplayMode.Grid,
         Action<GalleryItemViewModel[]>? prepareItems = null)
     {
         Settings.Gallery.DockPosition = GalleryDockPosition.Bottom;

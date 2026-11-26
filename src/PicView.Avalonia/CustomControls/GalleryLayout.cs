@@ -16,26 +16,26 @@ namespace PicView.Avalonia.CustomControls;
 ///     How the Expanded Gallery lays out its items. The Docked Gallery ignores it.
 /// </param>
 /// <param name="WrapWidthOverride">
-///     The width Masonry and Rows wrap at instead of the available width. NaN, or not above 0, means not set.
+///     The width the Expanded Gallery wraps at instead of the available width. NaN, or not above 0, means not set.
 /// </param>
 [StructLayout(LayoutKind.Auto)]
 public readonly record struct GalleryLayoutOptions(Orientation Orientation, bool IsExpanded, double ItemHeight,
-    double ItemWidth, double ItemSpacing, double LineSpacing, double WrapHeightOverride, double LayoutScale = 1,
-    GalleryDisplayMode DisplayMode = GalleryDisplayMode.Columns, double WrapWidthOverride = double.NaN);
+    double ItemWidth, double ItemSpacing, double LineSpacing, double LayoutScale = 1,
+    GalleryDisplayMode DisplayMode = GalleryDisplayMode.Grid, double WrapWidthOverride = double.NaN);
 
 /// <summary>
 ///     Where each Gallery Item sits, and the offsets along the scroll axis that center or hold one.
-///     The scroll axis is Y in the vertical Docked Gallery and in the Expanded Gallery's Masonry and Rows, and X
-///     everywhere else. In Masonry and Rows every edge is on a whole device pixel, and an item's top never decreases
-///     with its index.
+///     The scroll axis is Y in the Expanded Gallery and in the vertical Docked Gallery, and X in the horizontal
+///     Docked Gallery. In the Expanded Gallery every edge is on a whole device pixel, and an item's top never
+///     decreases with its index.
 ///     <para>
 ///         The bounds are in the panel's coordinates. The offsets are the scroll viewer's, which scrolls over the
 ///         panel's margin too, as the Expanded Gallery has one: the items start that margin into what it scrolls.
 ///     </para>
 ///     <para>
-///         Widths and spacings are whole device pixels, so along a row and across the Expanded Gallery's columns every
-///         item starts on a device pixel, where layout rounding puts its container, and a width read later moves the
-///         items after it by whole device pixels. The offsets that center an item there, and the moves of a view, are
+///         Widths and spacings are whole device pixels, so along a row every item starts on a device pixel, where
+///         layout rounding puts its container, and a width read later moves the items after it by whole device
+///         pixels. The offsets that center an item there, and the moves of a view, are
 ///         whole device pixels too. A view that moves with the items then keeps each one it shows on its pixel: layout
 ///         rounds the strip's origin and each container on their own, and anything off the pixels would round them a
 ///         pixel apart. The side-docked strip stacks its items at their height, which is not rounded, so when the item
@@ -64,7 +64,7 @@ public sealed class GalleryLayout
     private double[] _columnHeights = [];
 
     /// <summary>
-    ///     Whether the last <see cref="Calculate" /> placed Masonry or Rows, whose items are searched by their top.
+    ///     Whether the last <see cref="Calculate" /> placed the Expanded Gallery, whose items are searched by their top.
     /// </summary>
     private bool _searchesByTop;
 
@@ -111,18 +111,17 @@ public sealed class GalleryLayout
 
     /// <summary>
     ///     Whether the last <see cref="Calculate" /> scrolls along Y: it stacked the items in a single column, or placed
-    ///     the Expanded Gallery's Masonry or Rows.
+    ///     the Expanded Gallery.
     /// </summary>
     public bool ScrollsVertically { get; private set; }
 
     /// <summary>
-    ///     Whether a panel with these properties scrolls along Y. That is the vertical Docked Gallery, which stacks its
-    ///     items in a single column, and the Expanded Gallery's Masonry and Rows, whatever the orientation; the
-    ///     horizontal Docked Gallery and the Expanded Gallery's columns scroll along X.
+    ///     Whether a panel with these properties scrolls along Y. That is the Expanded Gallery, whatever the
+    ///     orientation and display mode, and the vertical Docked Gallery, which stacks its items in a single column;
+    ///     the horizontal Docked Gallery scrolls along X.
     /// </summary>
-    public static bool ScrollsVerticallyFor(Orientation orientation, bool isExpanded,
-        GalleryDisplayMode displayMode = GalleryDisplayMode.Columns)
-        => isExpanded ? GalleryDisplayModes.ShowsTiles(displayMode) : orientation == Orientation.Vertical;
+    public static bool ScrollsVerticallyFor(Orientation orientation, bool isExpanded)
+        => isExpanded || orientation == Orientation.Vertical;
 
     /// <summary>
     ///     Places every item, replacing the earlier bounds and extent. Masonry and Rows keep the earlier placement when
@@ -134,20 +133,21 @@ public sealed class GalleryLayout
     ///     The items in order. Each is <see cref="GalleryLayoutOptions.ItemWidth" /> wide when that is set. Otherwise a
     ///     <see cref="GalleryItemViewModel" /> that has its details takes its width from their aspect ratio, and any
     ///     other item is a square. Each width is rounded to whole device pixels. The Expanded Gallery's Masonry and Rows
-    ///     ignore <see cref="GalleryLayoutOptions.ItemWidth" /> and clamp the aspect ratio from 1/3 to 4.
+    ///     ignore <see cref="GalleryLayoutOptions.ItemWidth" /> and clamp the aspect ratio from 1/3 to 4. Its Grid
+    ///     gives every item a cell of the same size, whatever its details.
     /// </param>
     /// <param name="options">The panel's layout properties.</param>
     /// <param name="availableSize">The size the panel was given.</param>
     public void Calculate(IReadOnlyList<object?> items, GalleryLayoutOptions options, Size availableSize)
     {
-        ScrollsVertically = ScrollsVerticallyFor(options.Orientation, options.IsExpanded, options.DisplayMode);
+        ScrollsVertically = ScrollsVerticallyFor(options.Orientation, options.IsExpanded);
         _scale = options.LayoutScale > 0 && double.IsFinite(options.LayoutScale) ? options.LayoutScale : 1;
-        _searchesByTop = options.IsExpanded && GalleryDisplayModes.ShowsTiles(options.DisplayMode);
-        if (_searchesByTop)
+        _searchesByTop = options.IsExpanded;
+        var wrapWidth = double.IsNaN(options.WrapWidthOverride) || options.WrapWidthOverride <= 0
+            ? availableSize.Width
+            : options.WrapWidthOverride;
+        if (options.IsExpanded && GalleryDisplayModes.ShowsTiles(options.DisplayMode))
         {
-            var wrapWidth = double.IsNaN(options.WrapWidthOverride) || options.WrapWidthOverride <= 0
-                ? availableSize.Width
-                : options.WrapWidthOverride;
             var placement = new GalleryPlacementOptions(wrapWidth, options.ItemHeight, options.ItemSpacing,
                 options.LineSpacing, _scale);
             // Read before the items are, so details that arrive while they are read count as arriving after
@@ -186,100 +186,103 @@ public sealed class GalleryLayout
 
         _bounds.Clear();
         ForgetPlacement();
-        var itemSpacing = Snap(options.ItemSpacing);
-        var lineSpacing = Snap(options.LineSpacing);
+        if (options.IsExpanded)
+        {
+            Extent = PlaceGrid(items, options, wrapWidth);
+            return;
+        }
 
-        double currentX = 0;
-        double currentY = 0;
-        double currentColumnMaxWidth = 0;
-        double maxExtentY = 0;
-        var currentColumnStartIndex = 0; // Track where the current column starts
+        double position = 0;
+        if (options.Orientation == Orientation.Vertical)
+        {
+            // Docked at a side: a single column, the items as wide as the strip
+            for (var i = 0; i < items.Count; i++)
+            {
+                _bounds.Add(new Rect(0, position, availableSize.Width, options.ItemHeight));
+                position += options.ItemHeight;
+            }
 
-        // Use the override if provided, otherwise use the actual available height
-        var availableHeight = double.IsNaN(options.WrapHeightOverride) || options.WrapHeightOverride <= 0
-            ? availableSize.Height
-            : options.WrapHeightOverride;
+            Extent = new Size(availableSize.Width, position);
+            return;
+        }
 
+        // Docked at the top or the bottom: a single row, with no spacing
         foreach (var item in items)
         {
-            var itemWidth = options.ItemHeight; // Fallback for square
-
-            // 1. Check if the user forced a specific width (e.g., Square Stretch Mode)
-            if (!double.IsNaN(options.ItemWidth))
-            {
-                itemWidth = options.ItemWidth;
-            }
-            // 2. Otherwise, dynamically calculate based on aspect ratio.
-            // Another thread replaces Details whole, so read it once and take width and height from that one read.
-            else if (item is GalleryItemViewModel { Details: { PixelHeight: > 0 } details })
-            {
-                var aspectRatio = (double)details.PixelWidth / details.PixelHeight;
-                itemWidth = options.ItemHeight * aspectRatio;
-            }
-
-            itemWidth = Snap(itemWidth);
-
-            if (options.IsExpanded)
-            {
-                // Vertical Wrapping: Use the locked availableHeight
-                if (currentY + options.ItemHeight > availableHeight && currentY > 0)
-                {
-                    for (var j = currentColumnStartIndex; j < _bounds.Count; j++)
-                    {
-                        var rect = _bounds[j];
-                        _bounds[j] = new Rect(rect.X, rect.Y, currentColumnMaxWidth, rect.Height);
-                    }
-
-                    currentY = 0;
-                    currentX += currentColumnMaxWidth + lineSpacing;
-                    currentColumnMaxWidth = 0; // Reset for the new column
-                    currentColumnStartIndex = _bounds.Count;
-                }
-
-                _bounds.Add(new Rect(currentX, currentY, itemWidth, options.ItemHeight));
-                currentY += options.ItemHeight + itemSpacing;
-                currentColumnMaxWidth = Math.Max(currentColumnMaxWidth, itemWidth);
-                maxExtentY = Math.Max(maxExtentY, currentY - itemSpacing);
-            }
-            else if (options.Orientation == Orientation.Vertical)
-            {
-                // Vertical Docked Mode (Single Column) - items fill available width
-                _bounds.Add(new Rect(currentX, currentY, availableSize.Width, options.ItemHeight));
-                currentY += options.ItemHeight;
-            }
-            else
-            {
-                // Horizontal Docked Mode (Single Row) - NO SPACING
-                _bounds.Add(new Rect(currentX, currentY, itemWidth, options.ItemHeight));
-                currentX += itemWidth;
-            }
+            var itemWidth = ItemWidthOf(item, options);
+            _bounds.Add(new Rect(position, 0, itemWidth, options.ItemHeight));
+            position += itemWidth;
         }
 
-        switch (options.IsExpanded)
+        Extent = new Size(position, options.ItemHeight);
+    }
+
+    /// <summary>
+    ///     Places the Expanded Gallery's Grid: cells of one size in even columns, filled row by row, whatever the items'
+    ///     details. <see cref="GalleryLayoutOptions.ItemSpacing" /> is between the columns and
+    ///     <see cref="GalleryLayoutOptions.LineSpacing" /> between the rows. A cell is
+    ///     <see cref="GalleryLayoutOptions.ItemWidth" /> wide when that is set, as for a square. Otherwise as many
+    ///     columns as fit at <see cref="GalleryDefaults.GridCellWidthFactor" /> times the item height share the whole
+    ///     wrap width. All maths is in whole device pixels and divided by the scale only when a <see cref="Rect" /> is
+    ///     made, so every edge is on a device pixel.
+    /// </summary>
+    /// <returns>The extent: the wrap width, or the one row without a usable one, by the bottom of the last row.</returns>
+    private Size PlaceGrid(IReadOnlyList<object?> items, GalleryLayoutOptions options, double wrapWidth)
+    {
+        if (items.Count is 0)
         {
-            case true when currentColumnStartIndex < _bounds.Count:
-            {
-                // Apply max width to the very last column
-                for (var j = currentColumnStartIndex; j < _bounds.Count; j++)
-                {
-                    var rect = _bounds[j];
-                    _bounds[j] = new Rect(rect.X, rect.Y, currentColumnMaxWidth, rect.Height);
-                }
-
-                break;
-            }
-            case false:
-                // Exact extent without deducting spacing
-                Extent = options.Orientation == Orientation.Vertical
-                    ? new Size(availableSize.Width, currentY)
-                    : new Size(currentX, options.ItemHeight);
-                return;
+            return default;
         }
 
-        var totalWidth = currentX + currentColumnMaxWidth;
-        // Guard against Infinity if height is temporarily unconstrained during layout passes
-        var totalHeight = double.IsInfinity(availableSize.Height) ? maxExtentY : availableSize.Height;
-        Extent = new Size(totalWidth, totalHeight);
+        var columnGap = Math.Round(options.ItemSpacing * _scale);
+        var rowGap = Math.Round(options.LineSpacing * _scale);
+        var rowHeight = Math.Max(1, Math.Round(options.ItemHeight * _scale));
+        var hasFixedWidth = !double.IsNaN(options.ItemWidth);
+        var cellWidth = Math.Max(1, Math.Round(
+            (hasFixedWidth ? options.ItemWidth : options.ItemHeight * GalleryDefaults.GridCellWidthFactor) * _scale));
+
+        // Without a usable width nothing is ever wider than it: one row
+        var wraps = double.IsFinite(wrapWidth) && wrapWidth > 0;
+        var columns = items.Count;
+        if (wraps)
+        {
+            var width = Math.Floor(wrapWidth * _scale + GalleryPlacementOptions.PixelTolerance);
+            columns = Math.Max(1, (int)Math.Floor((width + columnGap) / (cellWidth + columnGap)));
+            if (!hasFixedWidth)
+            {
+                // The columns share the width; a part of a pixel a column is left over at the right
+                cellWidth = Math.Max(1, Math.Floor((width - (columns - 1) * columnGap) / columns));
+            }
+        }
+
+        for (var i = 0; i < items.Count; i++)
+        {
+            var column = i % columns;
+            var row = i / columns;
+            _bounds.Add(new Rect(column * (cellWidth + columnGap) / _scale, row * (rowHeight + rowGap) / _scale,
+                cellWidth / _scale, rowHeight / _scale));
+        }
+
+        var rows = (items.Count + columns - 1) / columns;
+        return new Size(wraps ? wrapWidth : (columns * cellWidth + (columns - 1) * columnGap) / _scale,
+            (rows * rowHeight + (rows - 1) * rowGap) / _scale);
+    }
+
+    /// <summary>
+    ///     The item's width in whole device pixels: <see cref="GalleryLayoutOptions.ItemWidth" /> when that is set,
+    ///     else from the aspect ratio of its details, else a square.
+    /// </summary>
+    private double ItemWidthOf(object? item, GalleryLayoutOptions options)
+    {
+        if (!double.IsNaN(options.ItemWidth))
+        {
+            return Snap(options.ItemWidth);
+        }
+
+        // Another thread replaces Details whole, so read it once and take width and height from that one read
+        return item is GalleryItemViewModel { Details: { PixelHeight: > 0 } details }
+            ? Snap(options.ItemHeight * ((double)details.PixelWidth / details.PixelHeight))
+            : Snap(options.ItemHeight);
     }
 
     /// <summary>
@@ -392,9 +395,9 @@ public sealed class GalleryLayout
     }
 
     /// <summary>
-    ///     The index of the item whose <see cref="Middle" /> is nearest the position in the Docked Gallery and the
-    ///     Expanded Gallery's columns, or whose top is nearest in Masonry and Rows. When two are equally near, or
-    ///     several share a middle or a top as a column of the Expanded Gallery or a row does, the lowest index wins.
+    ///     The index of the item whose <see cref="Middle" /> is nearest the position in the Docked Gallery, or whose
+    ///     top is nearest in the Expanded Gallery. When two are equally near, or several share a top as a row does,
+    ///     the lowest index wins.
     /// </summary>
     /// <returns>The index, or -1 when there are no bounds.</returns>
     public int IndexNearest(double position)
@@ -422,7 +425,7 @@ public sealed class GalleryLayout
 
     /// <summary>
     ///     The first and last index of the items that intersect the area, as the panel needs to realize them. Items
-    ///     between the two can miss the area, as a column's lower items do in the Expanded Gallery.
+    ///     between the two can miss the area, as the items of a masonry's other columns do.
     /// </summary>
     /// <returns>(-1, -1) when none intersect.</returns>
     public (int First, int Last) IndicesIn(Rect area)
@@ -457,8 +460,8 @@ public sealed class GalleryLayout
     }
 
     /// <summary>
-    ///     The first index whose search position, the <see cref="Middle" /> in the Docked Gallery and the Expanded
-    ///     Gallery's columns and the top in Masonry and Rows, is not before the position, or the count when all are.
+    ///     The first index whose search position, the <see cref="Middle" /> in the Docked Gallery and the top in the
+    ///     Expanded Gallery, is not before the position, or the count when all are.
     ///     The search position never decreases with the index, so this is a binary search.
     /// </summary>
     private int FirstIndexAtOrAfter(double position)
@@ -482,8 +485,8 @@ public sealed class GalleryLayout
     }
 
     /// <summary>
-    ///     What <see cref="IndexNearest" /> compares: the item's top in Masonry and Rows, its <see cref="Middle" />
-    ///     everywhere else.
+    ///     What <see cref="IndexNearest" /> compares: the item's top in the Expanded Gallery, its
+    ///     <see cref="Middle" /> in the Docked Gallery.
     /// </summary>
     private double SearchPosition(int index) => _searchesByTop ? _bounds[index].Y : Middle(index);
 

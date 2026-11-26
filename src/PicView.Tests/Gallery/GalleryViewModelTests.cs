@@ -1,6 +1,5 @@
-using PicView.Core.ViewModels;
 using PicView.Core.Gallery;
-using Xunit;
+using PicView.Core.ViewModels;
 using R3;
 
 namespace PicView.Tests.Gallery;
@@ -242,7 +241,7 @@ public class GalleryViewModelTests
         gallery.Initialize(shared);
         var window = FollowedWindow(gallery);
         gallery.Switcher.ToggleExpanded();
-        Assert.Equal(GalleryDisplayMode.Columns, gallery.Appearance.Value.DisplayMode);
+        Assert.Equal(GalleryDisplayMode.Grid, gallery.Appearance.Value.DisplayMode);
 
         window.SetExpandedDisplayModeCommand.Execute(GalleryDisplayMode.Masonry);
         Assert.Equal(GalleryDisplayMode.Masonry, gallery.Appearance.Value.DisplayMode);
@@ -252,8 +251,8 @@ public class GalleryViewModelTests
         Assert.Equal(GalleryDisplayMode.Rows, gallery.Appearance.Value.DisplayMode);
 
         window.ToggleExpandedDisplayModeCommand.Execute(Unit.Default);
-        Assert.Equal(GalleryDisplayMode.Columns, gallery.Appearance.Value.DisplayMode);
-        Assert.True(gallery.Appearance.Value.ScrollsHorizontally);
+        Assert.Equal(GalleryDisplayMode.Grid, gallery.Appearance.Value.DisplayMode);
+        Assert.False(gallery.Appearance.Value.ScrollsHorizontally);
     }
 
     [Fact]
@@ -344,14 +343,14 @@ public class GalleryViewModelTests
         Assert.Equal(first.Appearance.Value, second.Appearance.Value);
         // What both tabs' switch buttons and checked menu items read
         Assert.True(window.IsExpandedDisplayModeMasonry.Value);
-        Assert.False(window.IsExpandedDisplayModeColumns.Value);
+        Assert.False(window.IsExpandedDisplayModeGrid.Value);
 
         window.ToggleExpandedDisplayModeCommand.Execute(Unit.Default);
 
-        Assert.Equal(GalleryDisplayMode.Columns, first.Appearance.Value.DisplayMode);
-        Assert.True(first.Appearance.Value.ScrollsHorizontally);
+        Assert.Equal(GalleryDisplayMode.Grid, first.Appearance.Value.DisplayMode);
+        Assert.False(first.Appearance.Value.ScrollsHorizontally);
         Assert.Equal(first.Appearance.Value, second.Appearance.Value);
-        Assert.True(window.IsExpandedDisplayModeColumns.Value);
+        Assert.True(window.IsExpandedDisplayModeGrid.Value);
     }
 
     // Review Focus 5. Crop and a Single Image hide the gallery with SetHidden, the Gallery File Limit with SetOverLimit.
@@ -373,7 +372,7 @@ public class GalleryViewModelTests
         Assert.Equal(GalleryMode.Closed, gallery.ShownMode.Value);
         var whileHidden = gallery.Appearance.Value;
         Assert.Equal(GalleryMode.Closed, whileHidden.Mode);
-        Assert.Equal(GalleryDisplayMode.Columns, whileHidden.DisplayMode);
+        Assert.Equal(GalleryDisplayMode.Grid, whileHidden.DisplayMode);
         var published = 0;
         using var subscription = gallery.Appearance.AsObservable().Skip(1).Subscribe(_ => published++);
 

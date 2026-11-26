@@ -128,22 +128,23 @@ public class NavigateAbleItemsViewerTests
         Enumerable.Range(0, count).Select(_ => new GalleryItemViewModel()).ToList();
 
     /// <summary>
-    /// The items in an Expanded Gallery in a 1000 by 400 window, with the app's margin. Columns is as
-    /// VirtualizingGalleryTests.ShowExpanded shows it: 100-high items, three to a column. Masonry and Rows wrap at 300
-    /// with an item size of 60, which gives a masonry three columns of 100, and put 10 between the items of a column.
+    /// The items in an Expanded Gallery in a 1000 by 400 window, with the app's margin, wrapping at 300. Grid has
+    /// 100-high square cells with no spacing, three to a row. Masonry and Rows have an item size of 60, which gives a
+    /// masonry three columns of 100, and put 10 between the items of a column.
     /// </summary>
     private static Shown ShowExpanded(GalleryDisplayMode displayMode, IReadOnlyList<GalleryItemViewModel> items,
         int currentIndex = 0)
     {
-        var tiles = displayMode is not GalleryDisplayMode.Columns;
+        var tiles = displayMode is not GalleryDisplayMode.Grid;
         var gallery = new VirtualizingGallery
         {
             IsExpanded = true,
             Orientation = Orientation.Vertical,
             DisplayMode = displayMode,
             ItemHeight = tiles ? 60 : 100,
+            ItemWidth = tiles ? double.NaN : 100,
             ItemSpacing = tiles ? 10 : 0,
-            WrapWidthOverride = tiles ? 300 : double.NaN,
+            WrapWidthOverride = 300,
             Margin = new Thickness(15, 40, 15, 5)
         };
         var viewer = new NavigateAbleItemsViewer
@@ -155,42 +156,37 @@ public class NavigateAbleItemsViewerTests
         };
         var window = new Window { Width = 1000, Height = 400, Content = viewer };
         window.Show();
-        if (tiles)
-        {
-            viewer.SetVerticalScrolling();
-        }
-
+        viewer.SetVerticalScrolling();
         Dispatcher.UIThread.RunJobs();
         return new Shown(window, viewer, gallery);
     }
 
-    // Pins today's Columns rules
     [AvaloniaFact]
-    public void Navigate_Columns_KeepsItsRules()
+    public void Navigate_Grid_ReadsAlongTheRowsAndStaysInTheColumnUpAndDown()
     {
-        var shown = ShowExpanded(GalleryDisplayMode.Columns, Unsized(200), currentIndex: 150);
+        var shown = ShowExpanded(GalleryDisplayMode.Grid, Unsized(200), currentIndex: 150);
         try
         {
-            // What the test relies on: three squares to a column, so item 150 is the top of column 50
+            // What the test relies on: three squares to a row, so item 150 starts row 50
             var bounds = shown.Gallery.ItemBounds;
-            Assert.Equal(new Rect(5000, 0, 100, 100), bounds[150]);
-            Assert.Equal(new Rect(5000, 200, 100, 100), bounds[152]);
-            Assert.Equal(new Rect(5100, 0, 100, 100), bounds[153]);
+            Assert.Equal(new Rect(0, 5000, 100, 100), bounds[150]);
+            Assert.Equal(new Rect(200, 5000, 100, 100), bounds[152]);
+            Assert.Equal(new Rect(0, 5100, 100, 100), bounds[153]);
 
             // Nothing is selected, so the arrows start from the current item
-            shown.Viewer.Navigate(NavigationDirection.Down);
-            Assert.Equal(151, shown.Viewer.SelectedItemIndex);
-            shown.Viewer.Navigate(NavigationDirection.Down);
-            Assert.Equal(152, shown.Viewer.SelectedItemIndex);
-            // Down from the bottom of a column wraps to the top of the next one
-            shown.Viewer.Navigate(NavigationDirection.Down);
-            Assert.Equal(153, shown.Viewer.SelectedItemIndex);
-            // Up from the top of a column wraps to the bottom of the one before
-            shown.Viewer.Navigate(NavigationDirection.Up);
-            Assert.Equal(152, shown.Viewer.SelectedItemIndex);
             shown.Viewer.Navigate(NavigationDirection.Right);
-            Assert.Equal(155, shown.Viewer.SelectedItemIndex);
+            Assert.Equal(151, shown.Viewer.SelectedItemIndex);
+            shown.Viewer.Navigate(NavigationDirection.Right);
+            Assert.Equal(152, shown.Viewer.SelectedItemIndex);
+            // Right from the end of a row goes to the start of the next one
+            shown.Viewer.Navigate(NavigationDirection.Right);
+            Assert.Equal(153, shown.Viewer.SelectedItemIndex);
+            // Left from the start of a row goes to the end of the one before
             shown.Viewer.Navigate(NavigationDirection.Left);
+            Assert.Equal(152, shown.Viewer.SelectedItemIndex);
+            shown.Viewer.Navigate(NavigationDirection.Down);
+            Assert.Equal(155, shown.Viewer.SelectedItemIndex);
+            shown.Viewer.Navigate(NavigationDirection.Up);
             Assert.Equal(152, shown.Viewer.SelectedItemIndex);
         }
         finally
@@ -200,13 +196,16 @@ public class NavigateAbleItemsViewerTests
     }
 
     [AvaloniaFact]
-    public void Navigate_ColumnsLeftFromTheSecondColumn_ReachesTheFirstItem()
+    public void Navigate_GridUpFromTheFirstRowOrLeftFromTheFirstItem_StaysPut()
     {
-        var shown = ShowExpanded(GalleryDisplayMode.Columns, Unsized(200), currentIndex: 3);
+        var shown = ShowExpanded(GalleryDisplayMode.Grid, Unsized(200));
         try
         {
-            Assert.Equal(new Rect(100, 0, 100, 100), shown.Gallery.ItemBounds[3]);
+            shown.Viewer.SelectedItemIndex = 1;
+            shown.Viewer.Navigate(NavigationDirection.Up);
+            Assert.Equal(1, shown.Viewer.SelectedItemIndex);
 
+            shown.Viewer.SelectedItemIndex = 0;
             shown.Viewer.Navigate(NavigationDirection.Left);
             Assert.Equal(0, shown.Viewer.SelectedItemIndex);
         }
@@ -217,20 +216,26 @@ public class NavigateAbleItemsViewerTests
     }
 
     [AvaloniaFact]
-    public void Navigate_ColumnsDownFromTheEndOfAShortLastColumn_StaysPut()
+    public void Navigate_GridDownWithNothingBelowInAShortLastRow_StaysPut()
     {
-        var shown = ShowExpanded(GalleryDisplayMode.Columns, Unsized(200), currentIndex: 199);
+        var shown = ShowExpanded(GalleryDisplayMode.Grid, Unsized(200), currentIndex: 197);
         try
         {
-            // Two items in the last column: 198 on top, 199 below it
-            Assert.Equal(new Rect(6600, 100, 100, 100), shown.Gallery.ItemBounds[199]);
+            // Two items in the last row, 198 and 199: nothing is under item 197, the third of the row before
+            Assert.Equal(new Rect(200, 6500, 100, 100), shown.Gallery.ItemBounds[197]);
+            Assert.Equal(new Rect(100, 6600, 100, 100), shown.Gallery.ItemBounds[199]);
 
             shown.Viewer.Navigate(NavigationDirection.Down);
-            Assert.NotEqual(197, shown.Viewer.SelectedItemIndex);
-            Assert.True(shown.Viewer.SelectedItemIndex is -1 or 199);
+            Assert.Equal(-1, shown.Viewer.SelectedItemIndex);
+
+            shown.Viewer.SelectedItemIndex = 199;
+            shown.Viewer.Navigate(NavigationDirection.Down);
+            Assert.Equal(199, shown.Viewer.SelectedItemIndex);
+            shown.Viewer.Navigate(NavigationDirection.Right);
+            Assert.Equal(199, shown.Viewer.SelectedItemIndex);
 
             shown.Viewer.Navigate(NavigationDirection.Up);
-            Assert.Equal(198, shown.Viewer.SelectedItemIndex);
+            Assert.Equal(196, shown.Viewer.SelectedItemIndex);
         }
         finally
         {
@@ -238,11 +243,10 @@ public class NavigateAbleItemsViewerTests
         }
     }
 
-    // Pins today's Columns scroll for a target without a container: the panel's coordinates, without its margin
     [AvaloniaFact]
-    public void Navigate_ColumnsToAnItemWithoutAContainer_ScrollsToItsPanelCoordinates()
+    public void Navigate_GridToAnItemWithoutAContainer_ScrollsAllOfItIntoView()
     {
-        var shown = ShowExpanded(GalleryDisplayMode.Columns, Unsized(200), currentIndex: 150);
+        var shown = ShowExpanded(GalleryDisplayMode.Grid, Unsized(200));
         try
         {
             Assert.Null(shown.Viewer.ContainerFromIndex(199));
@@ -251,8 +255,10 @@ public class NavigateAbleItemsViewerTests
             Dispatcher.UIThread.RunJobs();
 
             Assert.Equal(199, shown.Viewer.SelectedItemIndex);
+            Assert.Equal(0, shown.ScrollViewer.Offset.X);
+            // The scroll viewer scrolls over the panel's top margin of 40 too
             var last = shown.Gallery.ItemBounds[199];
-            Assert.Equal(last.Right - shown.ScrollViewer.Viewport.Width, shown.ScrollViewer.Offset.X, Tolerance);
+            Assert.Equal(40 + last.Bottom - shown.ScrollViewer.Viewport.Height, shown.ScrollViewer.Offset.Y, Tolerance);
         }
         finally
         {

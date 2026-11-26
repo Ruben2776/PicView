@@ -1306,12 +1306,12 @@ public class TabOwnershipTests : IDisposable
         other.WindowSettings.Gallery.ToggleExpandedDisplayModeCommand.Execute(Unit.Default);
 
         // Each window toggles from its own mode, and to its own last tile mode
-        Assert.Equal(GalleryDisplayMode.Columns, first.Gallery.Appearance.Value.DisplayMode);
-        Assert.Equal(GalleryDisplayMode.Columns, second.Gallery.Appearance.Value.DisplayMode);
+        Assert.Equal(GalleryDisplayMode.Grid, first.Gallery.Appearance.Value.DisplayMode);
+        Assert.Equal(GalleryDisplayMode.Grid, second.Gallery.Appearance.Value.DisplayMode);
         Assert.Equal(other.WindowSettings.Gallery.ExpandedGalleryDisplayMode.Value,
             otherTab.Gallery.Appearance.Value.DisplayMode);
         Assert.True(GalleryDisplayModes.ShowsTiles(otherTab.Gallery.Appearance.Value.DisplayMode));
-        Assert.Equal(GalleryDisplayMode.Columns, Settings.Gallery.ExpandedGalleryDisplayMode);
+        Assert.Equal(GalleryDisplayMode.Grid, Settings.Gallery.ExpandedGalleryDisplayMode);
     }
 
     [Fact]
@@ -1481,7 +1481,7 @@ public class TabOwnershipTests : IDisposable
 
         var thrown = Record.Exception(() =>
         {
-            window.WindowSettings.Gallery.SetExpandedDisplayModeCommand.Execute(GalleryDisplayMode.Columns);
+            window.WindowSettings.Gallery.SetExpandedDisplayModeCommand.Execute(GalleryDisplayMode.Grid);
             window.WindowSettings.Gallery.SetExpandedStretchModeCommand.Execute(GalleryStretchMode.Square);
             window.WindowSettings.Gallery.SetDockedStretchModeCommand.Execute(GalleryStretchMode.FillSquare);
             window.WindowSettings.Gallery.ExpandedGalleryItemSize.Value = 200;

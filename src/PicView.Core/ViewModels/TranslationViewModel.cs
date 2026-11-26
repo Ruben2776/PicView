@@ -87,7 +87,6 @@ public class TranslationViewModel
         ColorPickerTool.Value = t.ColorPickerTool;
         ColorPickerToolTooltip.Value = t.ColorPickerToolTooltip;
         ColorRepresentation.Value = t.ColorRepresentation;
-        Columns.Value = t.Columns;
         Comment.Value = t.Comment;
         Comparison.Value = t.Comparison;
         ComparisonTooltip.Value = t.ComparisonTooltip;
@@ -161,6 +160,7 @@ public class TranslationViewModel
         GalleryMouseWheel.Value = t.GalleryMouseWheel;
         GallerySettings.Value = t.GallerySettings;
         Gamma.Value = t.Gamma;
+        Grid.Value = t.Grid;
         Green.Value = t.Green;
         GalleryThumbnailStretch.Value = t.GalleryThumbnailStretch;
         GeneralSettings.Value = t.GeneralSettings;
@@ -509,7 +509,6 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> ColorPickerTool { get; } = new();
     public BindableReactiveProperty<string?> ColorPickerToolTooltip { get; } = new();
     public BindableReactiveProperty<string?> ColorRepresentation { get; } = new();
-    public BindableReactiveProperty<string?> Columns { get; } = new();
     public BindableReactiveProperty<string?> Comment { get; } = new();
     public BindableReactiveProperty<string?> Comparison { get; } = new();
     public BindableReactiveProperty<string?> ComparisonTooltip { get; } = new();
@@ -591,6 +590,7 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> GlassTheme { get; } = new();
     public BindableReactiveProperty<string?> GoBackBy100Images { get; } = new();
     public BindableReactiveProperty<string?> GoBackBy10Images { get; } = new();
+    public BindableReactiveProperty<string?> Grid { get; } = new();
     public BindableReactiveProperty<string?> Green { get; } = new();
     public BindableReactiveProperty<string?> Height { get; } = new();
     public BindableReactiveProperty<string?> Help { get; } = new();

@@ -7,7 +7,7 @@ public static class GalleryDefaults
     public const int DefaultExpandedGalleryHeight = 150;
     public const int DefaultDockedGalleryHeight = 76;
     
-    public const int MaxExpandedGalleryItemHeight = 250;
+    public const int MaxExpandedGalleryItemHeight = 350;
     public const int MinExpandedGalleryItemHeight = 50;
     
     public const int MaxDockedGalleryItemHeight = 150;
@@ -38,6 +38,12 @@ public static class GalleryDefaults
 
     /// <summary>The smallest Masonry column width, as a multiple of the item size.</summary>
     public const double MasonryColumnWidthFactor = 4.0 / 3;
+
+    /// <summary>
+    /// The smallest width of a Grid cell, as a multiple of the item size, unless the Thumbnail Stretch makes it a
+    /// square.
+    /// </summary>
+    public const double GridCellWidthFactor = 0.9;
 
     /// <summary>The Rows target height, as a multiple of the item size.</summary>
     public const double RowHeightFactor = 2;

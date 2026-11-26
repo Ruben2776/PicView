@@ -17,17 +17,17 @@ public class GalleryLayoutBenchmarks
 {
     private static readonly GalleryLayoutOptions DockedOptions = new(Orientation.Horizontal, IsExpanded: false,
         ItemHeight: GalleryDefaults.DefaultDockedGalleryHeight, ItemWidth: double.NaN, ItemSpacing: 0,
-        LineSpacing: 0, WrapHeightOverride: double.NaN, LayoutScale: 1.5);
+        LineSpacing: 0, LayoutScale: 1.5);
 
-    private static readonly GalleryLayoutOptions ColumnsOptions = new(Orientation.Vertical, IsExpanded: true,
+    private static readonly GalleryLayoutOptions GridOptions = new(Orientation.Vertical, IsExpanded: true,
         ItemHeight: GalleryDefaults.DefaultExpandedGalleryHeight, ItemWidth: double.NaN, ItemSpacing: 25,
-        LineSpacing: 20, WrapHeightOverride: double.NaN, LayoutScale: 1.5);
+        LineSpacing: 20, LayoutScale: 1.5);
 
     private static readonly GalleryLayoutOptions MasonryOptions =
-        ColumnsOptions with { DisplayMode = GalleryDisplayMode.Masonry };
+        GridOptions with { DisplayMode = GalleryDisplayMode.Masonry };
 
     private static readonly GalleryLayoutOptions RowsOptions =
-        ColumnsOptions with { DisplayMode = GalleryDisplayMode.Rows };
+        GridOptions with { DisplayMode = GalleryDisplayMode.Rows };
 
     private static readonly Size DockedSize = new(1920, GalleryDefaults.DefaultDockedGalleryHeight);
     private static readonly Size ExpandedSize = new(1890, 1000);
@@ -60,11 +60,11 @@ public class GalleryLayoutBenchmarks
         return _layout.Extent;
     }
 
-    /// <summary>The Expanded Gallery in Columns.</summary>
+    /// <summary>The Expanded Gallery in Grid.</summary>
     [Benchmark]
-    public Size Columns()
+    public Size Grid()
     {
-        _layout.Calculate(_items, ColumnsOptions, ExpandedSize);
+        _layout.Calculate(_items, GridOptions, ExpandedSize);
         return _layout.Extent;
     }
 

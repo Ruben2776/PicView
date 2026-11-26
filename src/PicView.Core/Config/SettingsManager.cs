@@ -504,7 +504,7 @@ public static class SettingsManager
             existingSettings.Gallery.DockPosition = GalleryDockPosition.Bottom;
         }
 
-        // A stored number that is not a display mode loads as Columns
+        // A stored number that is not a display mode loads as Grid
         existingSettings.Gallery.ExpandedGalleryDisplayMode =
             GalleryDisplayModes.Validate(existingSettings.Gallery.ExpandedGalleryDisplayMode);
 

@@ -200,7 +200,7 @@ How a gallery's thumbnails are shaped and filled. Uniform shows each whole image
 _Avoid_: Gallery stretch, stretch mode
 
 **Gallery Display Mode**:
-How the Expanded Gallery arranges its Gallery Items: Columns, Masonry or Rows. Columns fills columns of equal-height thumbnails and scrolls sideways. Masonry fills equal-width columns, each thumbnail in its own proportions, and scrolls down. Rows fills rows of equal height across the width and scrolls down. It is a Window Setting, so each Main Window has its own, and the Docked Gallery has none. Masonry and Rows always fill and crop, so Thumbnail Stretch applies only to Columns. The window also remembers which of Masonry and Rows was used last, which is what the Expanded Gallery's switch button goes to from Columns.
+How the Expanded Gallery arranges its Gallery Items: Grid, Masonry or Rows. All three scroll down. Grid fills rows of cells of one size, so the thumbnails line up in even columns; a cell is a square when the Thumbnail Stretch is, and otherwise the columns share the width. Masonry fills equal-width columns, each thumbnail in its own proportions. Rows fills rows of equal height across the whole width. It is a Window Setting, so each Main Window has its own, and the Docked Gallery has none. Masonry and Rows always fill and crop, so Thumbnail Stretch applies only to Grid. The window also remembers which of Masonry and Rows was used last, which is what the Expanded Gallery's switch button goes to from Grid.
 _Avoid_: Gallery layout, view mode, Gallery Mode (that is Closed, Docked or Expanded)
 
 ## Saving

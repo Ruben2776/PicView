@@ -67,7 +67,7 @@ public class GalleryAppearanceTests
 
             Assert.True(a.IsShown);
             Assert.Equal(GalleryOrientation.Vertical, a.Orientation);
-            Assert.True(a.ScrollsHorizontally);
+            Assert.False(a.ScrollsHorizontally);
             Assert.True(a.Wraps);
             Assert.Equal(150, a.ItemHeight);
             Assert.Equal(4, a.ItemSpacing);
@@ -126,7 +126,7 @@ public class GalleryAppearanceTests
     [InlineData(GalleryDisplayMode.Rows)]
     public void For_ExpandedTiles_ScrollsVerticallyAndFillsWhateverTheStretch(GalleryDisplayMode displayMode)
     {
-        var columns = GalleryAppearance.For(GalleryMode.Expanded, GalleryDockPosition.Bottom, Inputs);
+        var grid = GalleryAppearance.For(GalleryMode.Expanded, GalleryDockPosition.Bottom, Inputs);
         foreach (var stretch in Stretches)
         {
             var a = GalleryAppearance.For(GalleryMode.Expanded, GalleryDockPosition.Bottom,
@@ -136,8 +136,8 @@ public class GalleryAppearanceTests
             Assert.False(a.ScrollsHorizontally);
             Assert.True(double.IsNaN(a.ItemWidth));
             Assert.Equal(GalleryStretchMode.UniformToFill, a.Stretch);
-            // Everything else is the Columns record: item height 150, margin (15, 40, 15, 5), wraps
-            Assert.Equal(columns with { ScrollsHorizontally = false }, a with { DisplayMode = GalleryDisplayMode.Columns });
+            // Everything else is the Grid record: item height 150, margin (15, 40, 15, 5), wraps
+            Assert.Equal(grid, a with { DisplayMode = GalleryDisplayMode.Grid });
         }
     }
 
@@ -148,23 +148,24 @@ public class GalleryAppearanceTests
     {
         foreach (var dock in Edges)
         {
-            var columns = GalleryAppearance.For(mode, dock, Inputs);
+            var grid = GalleryAppearance.For(mode, dock, Inputs);
 
-            Assert.Equal(GalleryDisplayMode.Columns, columns.DisplayMode);
-            Assert.Equal(columns, GalleryAppearance.For(mode, dock, Inputs with { ExpandedDisplayMode = GalleryDisplayMode.Masonry }));
-            Assert.Equal(columns, GalleryAppearance.For(mode, dock, Inputs with { ExpandedDisplayMode = GalleryDisplayMode.Rows }));
+            Assert.Equal(GalleryDisplayMode.Grid, grid.DisplayMode);
+            Assert.Equal(grid, GalleryAppearance.For(mode, dock, Inputs with { ExpandedDisplayMode = GalleryDisplayMode.Masonry }));
+            Assert.Equal(grid, GalleryAppearance.For(mode, dock, Inputs with { ExpandedDisplayMode = GalleryDisplayMode.Rows }));
         }
     }
 
     [Fact]
-    public void For_ExpandedColumnsOrUnknownDisplayMode_KeepsTheSavedStretchAndScrollsHorizontally()
+    public void For_ExpandedGridOrUnknownDisplayMode_KeepsTheSavedStretchAndScrollsVertically()
     {
         var inputs = Inputs with { ExpandedStretch = GalleryStretchMode.FillSquare };
 
         var a = GalleryAppearance.For(GalleryMode.Expanded, GalleryDockPosition.Bottom, inputs);
 
-        Assert.Equal(GalleryDisplayMode.Columns, a.DisplayMode);
-        Assert.True(a.ScrollsHorizontally);
+        Assert.Equal(GalleryDisplayMode.Grid, a.DisplayMode);
+        Assert.False(a.ScrollsHorizontally);
+        Assert.Equal(GalleryOrientation.Vertical, a.Orientation);
         Assert.Equal(a.ItemHeight, a.ItemWidth);
         Assert.Equal(GalleryStretchMode.FillSquare, a.Stretch);
         Assert.Equal(a, GalleryAppearance.For(GalleryMode.Expanded, GalleryDockPosition.Bottom,

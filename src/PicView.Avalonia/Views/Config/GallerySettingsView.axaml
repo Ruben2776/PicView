@@ -257,11 +257,11 @@
                     Width="300"
                     x:Name="DisplayModeComboBox">
                     <ComboBoxItem
-                        Content="{CompiledBinding Translation.Columns.Value,
+                        Content="{CompiledBinding Translation.Grid.Value,
                                                   Mode=OneWay}"
                         Foreground="{DynamicResource MainTextColor}"
-                        Tag="{x:Static gallery:GalleryDisplayMode.Columns}"
-                        x:Name="DisplayModeColumnsItem" />
+                        Tag="{x:Static gallery:GalleryDisplayMode.Grid}"
+                        x:Name="DisplayModeGridItem" />
                     <ComboBoxItem
                         Content="{CompiledBinding Translation.Masonry.Value,
                                                   Mode=OneWay}"

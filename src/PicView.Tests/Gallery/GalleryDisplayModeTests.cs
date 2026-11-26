@@ -5,7 +5,7 @@ using PicView.Core.Gallery;
 namespace PicView.Tests.Gallery;
 
 /// <summary>
-/// The Gallery Display Mode: its stored numbers, the switch between Columns and the last used tile mode, and how
+/// The Gallery Display Mode: its stored numbers, the switch between Grid and the last used tile mode, and how
 /// it loads from the settings file.
 /// </summary>
 public class GalleryDisplayModeTests
@@ -13,19 +13,19 @@ public class GalleryDisplayModeTests
     [Fact]
     public void GalleryDisplayMode_Values_KeepTheirStoredNumbers()
     {
-        Assert.Equal(0, (int)GalleryDisplayMode.Columns);
+        Assert.Equal(0, (int)GalleryDisplayMode.Grid);
         Assert.Equal(1, (int)GalleryDisplayMode.Masonry);
         Assert.Equal(2, (int)GalleryDisplayMode.Rows);
     }
 
     [Theory]
-    [InlineData(GalleryDisplayMode.Columns, false, GalleryDisplayMode.Masonry)]
-    [InlineData(GalleryDisplayMode.Columns, true, GalleryDisplayMode.Rows)]
-    [InlineData(GalleryDisplayMode.Masonry, false, GalleryDisplayMode.Columns)]
-    [InlineData(GalleryDisplayMode.Masonry, true, GalleryDisplayMode.Columns)]
-    [InlineData(GalleryDisplayMode.Rows, false, GalleryDisplayMode.Columns)]
-    [InlineData(GalleryDisplayMode.Rows, true, GalleryDisplayMode.Columns)]
-    [InlineData((GalleryDisplayMode)7, true, GalleryDisplayMode.Columns)]
+    [InlineData(GalleryDisplayMode.Grid, false, GalleryDisplayMode.Masonry)]
+    [InlineData(GalleryDisplayMode.Grid, true, GalleryDisplayMode.Rows)]
+    [InlineData(GalleryDisplayMode.Masonry, false, GalleryDisplayMode.Grid)]
+    [InlineData(GalleryDisplayMode.Masonry, true, GalleryDisplayMode.Grid)]
+    [InlineData(GalleryDisplayMode.Rows, false, GalleryDisplayMode.Grid)]
+    [InlineData(GalleryDisplayMode.Rows, true, GalleryDisplayMode.Grid)]
+    [InlineData((GalleryDisplayMode)7, true, GalleryDisplayMode.Grid)]
     public void Toggle_CurrentAndLastUsed_GivesTheOtherSide(GalleryDisplayMode current, bool rowsWasLastUsed,
         GalleryDisplayMode expected)
     {
@@ -33,7 +33,7 @@ public class GalleryDisplayModeTests
     }
 
     [Theory]
-    [InlineData(GalleryDisplayMode.Columns, false)]
+    [InlineData(GalleryDisplayMode.Grid, false)]
     [InlineData(GalleryDisplayMode.Masonry, true)]
     [InlineData(GalleryDisplayMode.Rows, true)]
     [InlineData((GalleryDisplayMode)7, false)]
@@ -43,44 +43,44 @@ public class GalleryDisplayModeTests
     }
 
     [Theory]
-    [InlineData(0, GalleryDisplayMode.Columns)]
+    [InlineData(0, GalleryDisplayMode.Grid)]
     [InlineData(1, GalleryDisplayMode.Masonry)]
     [InlineData(2, GalleryDisplayMode.Rows)]
-    [InlineData(3, GalleryDisplayMode.Columns)]
-    [InlineData(-1, GalleryDisplayMode.Columns)]
-    public void Validate_StoredNumber_IsColumnsUnlessOneOfTheThree(int stored, GalleryDisplayMode expected)
+    [InlineData(3, GalleryDisplayMode.Grid)]
+    [InlineData(-1, GalleryDisplayMode.Grid)]
+    public void Validate_StoredNumber_IsGridUnlessOneOfTheThree(int stored, GalleryDisplayMode expected)
     {
         Assert.Equal(expected, GalleryDisplayModes.Validate((GalleryDisplayMode)stored));
     }
 
     [Fact]
-    public void GetDefaults_DisplayMode_IsColumnsWithMasonryLastUsed()
+    public void GetDefaults_DisplayMode_IsGridWithMasonryLastUsed()
     {
         var gallery = GetDefaults().Gallery!;
 
-        Assert.Equal(GalleryDisplayMode.Columns, gallery.ExpandedGalleryDisplayMode);
+        Assert.Equal(GalleryDisplayMode.Grid, gallery.ExpandedGalleryDisplayMode);
         Assert.False(gallery.RowsWasLastUsedDisplayMode);
     }
 
     [Fact]
-    public void EnsureSettings_DisplayModeMissingFromSavedSettings_IsColumnsWithMasonryLastUsed()
+    public void EnsureSettings_DisplayModeMissingFromSavedSettings_IsGridWithMasonryLastUsed()
     {
         const string json = """{ "Gallery": { "IsGalleryDocked": true } }""";
 
         var loaded = EnsureSettings(JsonSerializer.Deserialize(json, SettingsGenerationContext.Default.AppSettings)!);
 
-        Assert.Equal(GalleryDisplayMode.Columns, loaded.Gallery!.ExpandedGalleryDisplayMode);
+        Assert.Equal(GalleryDisplayMode.Grid, loaded.Gallery!.ExpandedGalleryDisplayMode);
         Assert.False(loaded.Gallery.RowsWasLastUsedDisplayMode);
     }
 
     [Theory]
-    [InlineData(0, GalleryDisplayMode.Columns)]
+    [InlineData(0, GalleryDisplayMode.Grid)]
     [InlineData(1, GalleryDisplayMode.Masonry)]
     [InlineData(2, GalleryDisplayMode.Rows)]
-    [InlineData(3, GalleryDisplayMode.Columns)]
-    [InlineData(99, GalleryDisplayMode.Columns)]
-    [InlineData(-1, GalleryDisplayMode.Columns)]
-    public void EnsureSettings_StoredDisplayModeNumber_LoadsAsThatModeOrColumns(int stored, GalleryDisplayMode expected)
+    [InlineData(3, GalleryDisplayMode.Grid)]
+    [InlineData(99, GalleryDisplayMode.Grid)]
+    [InlineData(-1, GalleryDisplayMode.Grid)]
+    public void EnsureSettings_StoredDisplayModeNumber_LoadsAsThatModeOrGrid(int stored, GalleryDisplayMode expected)
     {
         var json = $$"""{ "Gallery": { "ExpandedGalleryDisplayMode": {{stored}}, "RowsWasLastUsedDisplayMode": true } }""";
 

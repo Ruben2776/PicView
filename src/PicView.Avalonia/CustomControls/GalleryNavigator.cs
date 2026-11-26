@@ -5,7 +5,7 @@ using PicView.Core.Gallery;
 namespace PicView.Avalonia.CustomControls;
 
 /// <summary>
-///     Which Gallery Item an arrow key moves to in the Expanded Gallery's Masonry and Rows display modes.
+///     Which Gallery Item an arrow key moves to in the Expanded Gallery.
 /// </summary>
 public static class GalleryNavigator
 {
@@ -17,8 +17,8 @@ public static class GalleryNavigator
 
     /// <summary>
     ///     The item an arrow key moves to: the nearest item in the direction that overlaps the current one on the
-    ///     other axis, the better centered of two equally near, the lower index when those tie too. Rows' left and
-    ///     right are the item before and after. Nothing wraps. Returns -1 for none.
+    ///     other axis, the better centered of two equally near, the lower index when those tie too. In Grid and Rows,
+    ///     left and right are the item before and after. Nothing wraps. Returns -1 for none.
     /// </summary>
     public static int Neighbor(IReadOnlyList<Rect> bounds, int from, NavigationDirection direction,
         GalleryDisplayMode displayMode)
@@ -30,7 +30,7 @@ public static class GalleryNavigator
             return -1;
         }
 
-        if (displayMode is GalleryDisplayMode.Rows &&
+        if (displayMode is not GalleryDisplayMode.Masonry &&
             direction is (NavigationDirection.Left or NavigationDirection.Right))
         {
             // Reading order, so the ends of a row lead to the row before or after

@@ -1,6 +1,7 @@
-using PicView.Tests.Config;
 using System.Globalization;
 using System.Text.Json;
+using Avalonia.Controls;
+using Avalonia.Data;
 using PicView.Avalonia.SettingsManagement;
 using PicView.Core.Config;
 using PicView.Core.Localization;
@@ -142,7 +143,7 @@ public class LanguageAndSettingsUnitTest
         var en = TranslationManager.GetLanguageModel(new CultureInfo("en-US"));
 
         Assert.Equal("Gallery display mode", en.GalleryDisplayMode);
-        Assert.Equal("Columns", en.Columns);
+        Assert.Equal("Grid", en.Grid);
         Assert.Equal("Masonry", en.Masonry);
         Assert.Equal("Rows", en.Rows);
         Assert.Equal("Switch gallery display mode", en.ToggleGalleryDisplayMode);
@@ -157,7 +158,7 @@ public class LanguageAndSettingsUnitTest
         vm.UpdateLanguage();
 
         Assert.Equal("Gallery display mode", vm.GalleryDisplayMode.Value);
-        Assert.Equal("Columns", vm.Columns.Value);
+        Assert.Equal("Grid", vm.Grid.Value);
         Assert.Equal("Masonry", vm.Masonry.Value);
         Assert.Equal("Rows", vm.Rows.Value);
         Assert.Equal("Switch gallery display mode", vm.ToggleGalleryDisplayMode.Value);
@@ -166,7 +167,7 @@ public class LanguageAndSettingsUnitTest
     [Fact]
     public void LanguageFiles_GalleryDisplayModeKeys_HaveText()
     {
-        string[] keys = ["GalleryDisplayMode", "Columns", "Masonry", "Rows", "ToggleGalleryDisplayMode"];
+        string[] keys = ["GalleryDisplayMode", "Grid", "Masonry", "Rows", "ToggleGalleryDisplayMode"];
 
         foreach (var language in TranslationManager.GetLanguages())
         {
@@ -204,14 +205,14 @@ public class LanguageAndSettingsUnitTest
     [Fact]
     public void ComboBox_WithDisplayMemberBinding_PopulatesSelectionBoxItemTemplate()
     {
-        var cb = new global::Avalonia.Controls.ComboBox();
+        var cb = new ComboBox();
         var items = new List<LanguageItem>
         {
             new("da", "Danish"),
             new("en", "English")
         };
         cb.ItemsSource = items;
-        cb.DisplayMemberBinding = new global::Avalonia.Data.Binding("DisplayName");
+        cb.DisplayMemberBinding = new Binding("DisplayName");
         cb.SelectedIndex = 0;
 
         Assert.NotNull(cb.SelectionBoxItemTemplate);

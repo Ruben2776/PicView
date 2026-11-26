@@ -36,31 +36,10 @@ public class GalleryAnimationControl : UserControl
     public bool IsInAnimation { get; private set; }
 
     /// <summary>
-    /// The height the Expanded Gallery wraps its items in once it fills the parent, for locking the wrap while the
-    /// gallery grows or shrinks.
-    /// </summary>
-    private double GetExpandedWrapHeight(GalleryAppearance expanded)
-    {
-        if (_parentControl is null)
-        {
-            return double.NaN;
-        }
-
-        var availableHeight = _parentControl.Bounds.Height
-            - expanded.Margin.Top
-            - expanded.Margin.Bottom
-            - SizeDefaults.HorizontalScrollbarSize
-            - expanded.Border.Top
-            - expanded.Border.Bottom;
-
-        return Math.Max(0, availableHeight);
-    }
-
-    /// <summary>
-    /// The width the panel gets once the Expanded Gallery fills the parent, for locking the wrap of Masonry and Rows
-    /// while the gallery grows or shrinks. Layout rounds the scroll bar up, and each margin on its own, to whole device
-    /// pixels, so each part is rounded the same way here: rounding their sum is a device pixel off at 125% and 150%,
-    /// and one pixel of width reshuffles a masonry.
+    /// The width the panel gets once the Expanded Gallery fills the parent, for locking the wrap while the gallery
+    /// grows or shrinks. Layout rounds the scroll bar up, and each margin on its own, to whole device pixels, so each
+    /// part is rounded the same way here: rounding their sum is a device pixel off at 125% and 150%, and one pixel of
+    /// width reshuffles a masonry.
     /// </summary>
     internal double GetExpandedWrapWidth(GalleryAppearance expanded)
     {
@@ -174,7 +153,6 @@ public class GalleryAnimationControl : UserControl
             catch (Exception ex)
             {
                 // Fallback
-                _itemsPanel?.WrapHeightOverride = double.NaN;
                 _itemsPanel?.WrapWidthOverride = double.NaN;
                 Apply(to);
                 SetExtent(to);
@@ -244,8 +222,7 @@ public class GalleryAnimationControl : UserControl
             return;
         }
 
-        var dockChanged = _applied.Mode is GalleryMode.Docked && appearance.Mode is GalleryMode.Docked &&
-                          _applied.Dock != appearance.Dock;
+        var expanded = appearance.Mode is GalleryMode.Expanded;
         var showsTiles = GalleryDisplayModes.ShowsTiles(appearance.DisplayMode);
 
         if (_itemsPanel is { } panel)
@@ -260,11 +237,16 @@ public class GalleryAnimationControl : UserControl
             panel.Margin = ToThickness(appearance.Margin);
             panel.ThumbnailStretch = GalleryThumbnailStretch.ToStretch(appearance.Stretch);
             panel.DisplayMode = appearance.DisplayMode;
-            panel.VerticalAlignment = showsTiles ? VerticalAlignment.Top : VerticalAlignment.Center;
+            // The Expanded Gallery scrolls down from the top; a docked strip is centered across its thickness
+            panel.VerticalAlignment = expanded ? VerticalAlignment.Top : VerticalAlignment.Center;
         }
 
+        // What the styles in GalleryView.axaml tell the layouts apart by. A Docked or Closed record is in Grid, so
+        // the mode is asked too
+        Classes.Set("expanded", expanded);
         Classes.Set("tiles", showsTiles);
-        // The edge a Docked Gallery is at, for the Gallery Items' tooltips. Bottom, like Columns, needs no class
+        Classes.Set("grid", expanded && appearance.DisplayMode is GalleryDisplayMode.Grid);
+        // The edge a Docked Gallery is at, for the Gallery Items' tooltips. Bottom, like Grid, needs no class
         var docked = appearance.Mode is GalleryMode.Docked;
         Classes.Set("dockTop", docked && appearance.Dock is GalleryDockPosition.Top);
         Classes.Set("dockLeft", docked && appearance.Dock is GalleryDockPosition.Left);
@@ -288,17 +270,6 @@ public class GalleryAnimationControl : UserControl
         }
 
         IsVisible = true;
-
-        // Moving to another edge wraps at the docked extent for one render pass
-        if (dockChanged && _itemsPanel is { } movedPanel)
-        {
-            movedPanel.WrapHeightOverride = appearance.Extent;
-            Dispatcher.UIThread.Post(() =>
-            {
-                movedPanel.WrapHeightOverride = double.NaN;
-            }, DispatcherPriority.Render);
-        }
-
         _applied = appearance;
     }
 
@@ -367,11 +338,7 @@ public class GalleryAnimationControl : UserControl
         // 2. Wrap as the Expanded Gallery does once it fills the parent, so it doesn't rewrap while it grows or shrinks
         if (transition.LocksWrap && _itemsPanel is not null)
         {
-            var expanded = to.Mode is GalleryMode.Expanded ? to : from;
-            _itemsPanel.WrapHeightOverride = GetExpandedWrapHeight(expanded);
-            _itemsPanel.WrapWidthOverride = GalleryDisplayModes.ShowsTiles(expanded.DisplayMode)
-                ? GetExpandedWrapWidth(expanded)
-                : double.NaN;
+            _itemsPanel.WrapWidthOverride = GetExpandedWrapWidth(to.Mode is GalleryMode.Expanded ? to : from);
         }
 
         // The current item, in the new look
@@ -440,7 +407,6 @@ public class GalleryAnimationControl : UserControl
         // 6. Unlock the wrap and remeasure to match the final bounds
         if (transition.LocksWrap && _itemsPanel is not null)
         {
-            _itemsPanel.WrapHeightOverride = double.NaN;
             _itemsPanel.WrapWidthOverride = double.NaN;
             _itemsPanel.InvalidateMeasure();
         }
