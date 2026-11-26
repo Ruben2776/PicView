@@ -40,6 +40,7 @@
             Click="CloseMenu"
             CornerRadius="50"
             Data="{StaticResource CloseGeometry}"
+            Foreground="{DynamicResource BottomBarForegroundColor}"
             Height="50"
             HorizontalAlignment="Right"
             IconHeight="18"
@@ -72,6 +73,7 @@
                 <customControls:FuncTextBox
                     BorderThickness="1"
                     CornerRadius="3"
+                    Foreground="{DynamicResource MainTextColor}"
                     Margin="0,0,0,5"
                     Padding="35,7,4,7"
                     PlaceholderText="{CompiledBinding Translation.Search.Value,
