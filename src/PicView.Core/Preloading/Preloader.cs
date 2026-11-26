@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Runtime.InteropServices;
 using PicView.Core.DebugTools;
 
 namespace PicView.Core.Preloading;
@@ -123,5 +124,6 @@ internal sealed class Preloader(Func<uint, FileInfo, Task> load)
 /// </summary>
 /// <param name="Reversed">Whether the last step went backwards: that side is loaded first.</param>
 /// <param name="TravelsReversed">Whether the owner travels backwards: that side is loaded deepest.</param>
+[StructLayout(LayoutKind.Auto)]
 internal readonly record struct PreloadRequest(FileInfo[] Files, int CurrentIndex, bool Reversed,
     bool TravelsReversed, CancellationToken Ct);
