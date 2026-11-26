@@ -57,46 +57,7 @@
             </Panel>
         </Border>
 
-        <!--  Bottom file details: hidden unless GalleryView.axaml shows it (expanded Grid only)  -->
-        <Border
-            IsHitTestVisible="False"
-            Padding="5"
-            VerticalAlignment="Bottom"
-            x:Name="FileDetails">
-            <StackPanel Spacing="5">
-                <TextBlock
-                    Classes="txt bold"
-                    Foreground="#fff"
-                    MaxHeight="50"
-                    Text="{Binding FileInfo.Name}">
-                    <TextBlock.Effect>
-                        <DropShadowDirectionEffect Color="#000" ShadowDepth="1" />
-                    </TextBlock.Effect>
-                </TextBlock>
-                <StackPanel Orientation="Horizontal" Spacing="5">
-                    <TextBlock
-                        Classes="txt"
-                        FontSize="11"
-                        Foreground="#fff"
-                        MaxHeight="50"
-                        Text="{Binding FileSize}">
-                        <TextBlock.Effect>
-                            <DropShadowDirectionEffect Color="#000" ShadowDepth="1" />
-                        </TextBlock.Effect>
-                    </TextBlock>
-                    <TextBlock
-                        Classes="txt"
-                        FontSize="11"
-                        Foreground="#fff"
-                        MaxHeight="50"
-                        Text="{Binding ImageSize.Value}">
-                        <TextBlock.Effect>
-                            <DropShadowDirectionEffect Color="#000" ShadowDepth="1" />
-                        </TextBlock.Effect>
-                    </TextBlock>
-                </StackPanel>
-            </StackPanel>
-        </Border>
+        <!--  Grid cells add their file details (GalleryItemFileDetails) here, in GalleryItem.axaml.cs  -->
 
         <ToolTip.Tip>
             <StackPanel MaxWidth="600">

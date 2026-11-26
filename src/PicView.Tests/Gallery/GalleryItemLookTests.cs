@@ -44,7 +44,7 @@ public class GalleryItemLookTests
     // Docked at the bottom (item size 76) and Expanded Grid (150), as they look before anything moves: alike but for the corners, square when docked and rounded by 6 in Grid, which clips to them
     [AvaloniaTheory]
     [InlineData(false, 76, 74)]
-    [InlineData(true, 150, 302)] // a Grid cell: the columns share the width, 304 each here
+    [InlineData(true, 150, 137)] // a Grid cell: the columns share the width, 139 each here
     public void DockedAndGrid_Item_HasTheBorderedLook(bool expanded, double size, double width)
     {
         WithShownGallery(expanded, (_, _, view, panel) =>
@@ -67,9 +67,11 @@ public class GalleryItemLookTests
             // The thumbnail's panel is 2 px inside the item: the border, then 1 px of space
             Assert.Equal(new Point(2, 2), contentPanel.TranslatePoint(default, item));
             Assert.Equal(new Size(width - 4, size - 4), contentPanel.Bounds.Size);
-            // The thumbnail and the motion photo badge and nothing more, even for the current item (index 0)
-            Assert.Equal(2, contentPanel.Children.Count);
-            Assert.Equal(8, item.GetVisualDescendants().Count());
+            // The thumbnail and the motion photo badge, and in Grid the file details: nothing more, even for the
+            // current item (index 0). Docked items never build the details
+            Assert.Equal(expanded ? 3 : 2, contentPanel.Children.Count);
+            Assert.Equal(expanded ? 14 : 8, item.GetVisualDescendants().Count());
+            Assert.Equal(expanded, contentPanel.Children.OfType<GalleryItemFileDetails>().Any());
             Assert.Equal(expanded, TemplateBorderOf(item).ClipToBounds);
         });
     }
@@ -261,6 +263,30 @@ public class GalleryItemLookTests
             menu.RaiseEvent(new RoutedEventArgs(ContextMenu.OpenedEvent));
             Assert.DoesNotContain(":contextMenuOpen", first.Classes);
             Assert.DoesNotContain(":contextMenuOpen", second.Classes);
+        });
+    }
+
+    [AvaloniaFact]
+    public void GridClassRemovedAndAdded_RealizedItems_DropAndRebuildTheirFileDetails()
+    {
+        WithShownGallery(expanded: true, (_, window, view, panel) =>
+        {
+            var item = ItemAt(panel, 0);
+            var details = Assert.Single(ContentPanelOf(item).Children.OfType<GalleryItemFileDetails>());
+            Assert.Same(item.DataContext, details.DataContext);
+
+            view.Classes.Remove("grid");
+            RenderFrame(window);
+
+            Assert.Same(item, ItemAt(panel, 0));
+            Assert.False(item.IsGridCell);
+            Assert.Empty(ContentPanelOf(item).Children.OfType<GalleryItemFileDetails>());
+            Assert.Equal(8, item.GetVisualDescendants().Count());
+
+            view.Classes.Add("grid");
+            RenderFrame(window);
+
+            Assert.Single(ContentPanelOf(item).Children.OfType<GalleryItemFileDetails>());
         });
     }
 

@@ -24,6 +24,10 @@ public partial class GalleryItem : NavigateAbleItem
     public static readonly StyledProperty<bool> IsTileProperty =
         AvaloniaProperty.Register<GalleryItem, bool>(nameof(IsTile));
 
+    /// <summary>Whether the item is an Expanded Grid cell. Only the Grid style in GalleryView.axaml writes it.</summary>
+    public static readonly StyledProperty<bool> IsGridCellProperty =
+        AvaloniaProperty.Register<GalleryItem, bool>(nameof(IsGridCell));
+
     private static readonly DoubleTransition ThumbnailOpacityTransition = new()
         { Property = OpacityProperty, Duration = TimeSpan.FromSeconds(0.32), Easing = new CubicEaseOut() };
     private static readonly TransformOperationsTransition ThumbnailScaleTransition = new()
@@ -39,11 +43,13 @@ public partial class GalleryItem : NavigateAbleItem
     private uint _tileHeightAskedBefore;
     private Border? _ring;
     private string? _ringBrushKey;
+    private GalleryItemFileDetails? _fileDetails;
 
     static GalleryItem()
     {
-        // Nothing runs for an item that never becomes a tile
+        // Nothing runs for an item that never becomes a tile or a Grid cell
         IsTileProperty.Changed.AddClassHandler<GalleryItem>((item, _) => item.OnIsTileChanged());
+        IsGridCellProperty.Changed.AddClassHandler<GalleryItem>((item, _) => item.OnIsGridCellChanged());
     }
 
     public GalleryItem()
@@ -69,7 +75,38 @@ public partial class GalleryItem : NavigateAbleItem
         set => SetValue(IsTileProperty, value);
     }
 
+    public bool IsGridCell
+    {
+        get => GetValue(IsGridCellProperty);
+        set => SetValue(IsGridCellProperty, value);
+    }
+
     protected override void OnMarkChanged() => UpdateRing();
+
+    // The file details exist only while the item is a Grid cell: Docked, Masonry and Rows items never build them
+    private void OnIsGridCellChanged()
+    {
+        var panel = (Panel)GalleryImage.Parent!;
+        if (!IsGridCell)
+        {
+            if (_fileDetails is not null)
+            {
+                panel.Children.Remove(_fileDetails);
+                _fileDetails = null;
+            }
+
+            return;
+        }
+
+        if (_fileDetails is not null)
+        {
+            return;
+        }
+
+        // After the thumbnail and the motion photo badge, below a ring
+        _fileDetails = new GalleryItemFileDetails();
+        panel.Children.Insert(Math.Min(2, panel.Children.Count), _fileDetails);
+    }
 
     private void OnIsTileChanged()
     {

@@ -39,18 +39,13 @@
             <Setter Property="BorderThickness" Value="1" />
         </Style>
         <!--  Grid: rounded corners, which the thumbnail is clipped to  -->
+        <!--  The grid class is set only while expanded; a Grid cell shows its file details at the bottom  -->
         <Style Selector=":is(gallery|GalleryView).grid customControls|NavigateAbleItem.galleryItem">
             <Setter Property="CornerRadius" Value="6" />
+            <Setter Property="gallery:GalleryItem.IsGridCell" Value="True" />
         </Style>
         <Style Selector=":is(gallery|GalleryView).grid customControls|NavigateAbleItem.galleryItem /template/ Border#border">
             <Setter Property="ClipToBounds" Value="True" />
-        </Style>
-        <!--  The file details at the bottom of each item: only in Grid, whose class is set only while expanded  -->
-        <Style Selector="customControls|NavigateAbleItem.galleryItem Border#FileDetails">
-            <Setter Property="IsVisible" Value="False" />
-        </Style>
-        <Style Selector=":is(gallery|GalleryView).grid customControls|NavigateAbleItem.galleryItem Border#FileDetails">
-            <Setter Property="IsVisible" Value="True" />
         </Style>
         <!--  Expanded: the vertical scroll bar starts below the 85x60 button cluster at the top right  -->
         <Style Selector=":is(customControls|GalleryAnimationControl).expanded customControls|NavigateAbleItemsViewer /template/ customControls|AutoScrollViewer#PART_ScrollViewer /template/ ScrollBar#PART_VerticalScrollBar">

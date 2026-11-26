@@ -70,7 +70,7 @@ public sealed class GalleryTileSharpeningTests : IDisposable
 
         var timer = Assert.IsType<DispatcherTileRestTimer>(viewer.TileRestTimer);
         Assert.Equal(TimeSpan.FromMilliseconds(GalleryDefaults.TileSharpenDelayMilliseconds), timer.Interval);
-        Assert.Equal(300, GalleryDefaults.TileSharpenDelayMilliseconds);
+        Assert.Equal(150, GalleryDefaults.TileSharpenDelayMilliseconds);
     }
 
     [AvaloniaFact]

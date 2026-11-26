@@ -1,0 +1,44 @@
+<Border
+    IsHitTestVisible="False"
+    Padding="5"
+    VerticalAlignment="Bottom"
+    x:Class="PicView.Avalonia.Views.Gallery.GalleryItemFileDetails"
+    x:DataType="viewModels:GalleryItemViewModel"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!--  The file details at the bottom of a Grid item. GalleryItem adds it only while it is a Grid cell  -->
+    <StackPanel Spacing="5">
+        <TextBlock
+            Classes="txt bold"
+            Foreground="#fff"
+            MaxHeight="50"
+            Text="{Binding FileInfo.Name}">
+            <TextBlock.Effect>
+                <DropShadowDirectionEffect Color="#000" ShadowDepth="1" />
+            </TextBlock.Effect>
+        </TextBlock>
+        <StackPanel Orientation="Horizontal" Spacing="5">
+            <TextBlock
+                Classes="txt"
+                FontSize="11"
+                Foreground="#fff"
+                MaxHeight="50"
+                Text="{Binding FileSize}">
+                <TextBlock.Effect>
+                    <DropShadowDirectionEffect Color="#000" ShadowDepth="1" />
+                </TextBlock.Effect>
+            </TextBlock>
+            <TextBlock
+                Classes="txt"
+                FontSize="11"
+                Foreground="#fff"
+                MaxHeight="50"
+                Text="{Binding ImageSize.Value}">
+                <TextBlock.Effect>
+                    <DropShadowDirectionEffect Color="#000" ShadowDepth="1" />
+                </TextBlock.Effect>
+            </TextBlock>
+        </StackPanel>
+    </StackPanel>
+</Border>

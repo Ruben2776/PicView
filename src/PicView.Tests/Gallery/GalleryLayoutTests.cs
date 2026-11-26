@@ -77,11 +77,11 @@ public class GalleryLayoutTests
     public void Calculate_Grid_FillsEvenColumnsThatShareTheWidthWhateverTheDetails()
     {
         var layout = new GalleryLayout();
-        // A cell is at least 150 wide, 100 x 3/2: two fit in 350 with 10 between, and share it, 170 each
+        // A cell is at least 90 wide, 100 x 0.9: two fit in 250 with 10 between, and share it, 120 each
         layout.Calculate([Item(200, 100), Item(100, 400), new GalleryItemViewModel()],
-            Docked with { IsExpanded = true, ItemSpacing = 10, LineSpacing = 5 }, new Size(350, 1000));
-        Assert.Equal([new Rect(0, 0, 170, 100), new Rect(180, 0, 170, 100), new Rect(0, 105, 170, 100)], layout.Bounds);
-        Assert.Equal(new Size(350, 205), layout.Extent);
+            Docked with { IsExpanded = true, ItemSpacing = 10, LineSpacing = 5 }, new Size(250, 1000));
+        Assert.Equal([new Rect(0, 0, 120, 100), new Rect(130, 0, 120, 100), new Rect(0, 105, 120, 100)], layout.Bounds);
+        Assert.Equal(new Size(250, 205), layout.Extent);
         Assert.True(layout.ScrollsVertically);
     }
 
@@ -154,7 +154,7 @@ public class GalleryLayoutTests
         layout.Calculate(Squares(5), Docked with { IsExpanded = true, ItemSpacing = 10 },
             new Size(double.PositiveInfinity, 1000));
         Assert.All(layout.Bounds, bounds => Assert.Equal(0, bounds.Y));
-        Assert.Equal(new Size(790, 100), layout.Extent); // five cells of 150, 10 apart
+        Assert.Equal(new Size(490, 100), layout.Extent); // five cells of 90, 10 apart
     }
 
     [Theory]
@@ -407,13 +407,13 @@ public class GalleryLayoutTests
     public void Calculate_GridAtAFractionalScale_RoundsWidthsHeightsAndSpacingsToWholeDevicePixels()
     {
         var layout = new GalleryLayout();
-        // 400 DIPs are 500 device pixels: two cells of at least 188 fit, and share the 494 beside their gap
+        // 200 DIPs are 250 device pixels: two cells of at least 112 fit, and share the 244 beside their gap
         layout.Calculate(Squares(3),
             Docked with { IsExpanded = true, ItemSpacing = 5, LineSpacing = 5, LayoutScale = 1.25 },
-            new Size(400, 1000));
-        Assert.Equal<double>([0, 253, 0], DevicePixels(layout.Bounds.Select(bounds => bounds.X), 1.25)); // 247 + 6
+            new Size(200, 1000));
+        Assert.Equal<double>([0, 128, 0], DevicePixels(layout.Bounds.Select(bounds => bounds.X), 1.25)); // 122 + 6
         Assert.Equal<double>([0, 0, 131], DevicePixels(layout.Bounds.Select(bounds => bounds.Y), 1.25)); // 125 + 6
-        Assert.Equal<double>([247, 247, 247], DevicePixels(layout.Bounds.Select(bounds => bounds.Width), 1.25));
+        Assert.Equal<double>([122, 122, 122], DevicePixels(layout.Bounds.Select(bounds => bounds.Width), 1.25));
         AssertOnDevicePixels(layout.Bounds, 1.25);
     }
 
