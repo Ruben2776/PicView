@@ -321,6 +321,12 @@ public class ImageScaling
     /// When enabled, the application shows two images next to each other for comparison purposes.
     /// </summary>
     public bool ShowImageSideBySide { get; set; } = false;
+
+    /// <summary>
+    /// Whether Side-by-Side shows the second image on the left and the first on the right. Only the placement
+    /// changes: the file order and the images stay the same.
+    /// </summary>
+    public bool IsSideBySideRightToLeft { get; set; } = false;
 }
 
 public enum ComparisonMode

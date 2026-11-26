@@ -2,11 +2,15 @@
     x:Class="PicView.Avalonia.Views.Config.ImageSettingsView"
     x:DataType="viewModels:CoreViewModel"
     xmlns="https://github.com/avaloniaui"
+    xmlns:converters="clr-namespace:PicView.Avalonia.Converters"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
     xmlns:keybindings="using:PicView.Core.Keybindings"
     xmlns:ui="clr-namespace:PicView.Avalonia.UI"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <UserControl.Resources>
+        <converters:BoolToIndexConverter x:Key="BoolToIndexConverter" />
+    </UserControl.Resources>
 
     <StackPanel HorizontalAlignment="Center" Orientation="Vertical">
 
@@ -28,22 +32,11 @@
                 Classes="MenuItemHover settingsToggleButton"
                 Command="{CompiledBinding MainWindows.ActiveWindow.Value.RunActionCommand}"
                 CommandParameter="{x:Static keybindings:Actions.ToggleScroll}"
-                IsChecked="{CompiledBinding MainWindows.ActiveWindow.Value.WindowSettings.IsScrollingEnabled.Value, Mode=OneWay}"
-                Text="{CompiledBinding MainWindows.ActiveWindow.Value.WindowSettings.ScrollingText.Value, Mode=OneWay}"
-                x:Name="ScrollToggleButton" />
-        </Border>
-
-        <!--  Side by side  -->
-        <Border Classes="searchBorder" ui:SearchProperties.Key="SideBySide">
-            <customControls:TextToggleButton
-                Classes="MenuItemHover settingsToggleButton"
-                Command="{CompiledBinding MainWindows.ActiveWindow.Value.RunActionCommand}"
-                CommandParameter="{x:Static keybindings:Actions.SideBySide}"
-                IsChecked="{CompiledBinding MainWindows.ActiveWindow.Value.WindowSettings.IsSideBySide.Value, Mode=OneWay}"
-                Text="{CompiledBinding Translation.SideBySide.Value,
+                IsChecked="{CompiledBinding MainWindows.ActiveWindow.Value.WindowSettings.IsScrollingEnabled.Value,
+                                            Mode=OneWay}"
+                Text="{CompiledBinding MainWindows.ActiveWindow.Value.WindowSettings.ScrollingText.Value,
                                        Mode=OneWay}"
-                x:Name="SideBySideToggleButton" />
-
+                x:Name="ScrollToggleButton" />
         </Border>
 
         <!--  Autoplay motion photos  -->
@@ -55,6 +48,45 @@
                 Text="{CompiledBinding Translation.AutoPlayMotionPhotos.Value,
                                        Mode=OneWay}"
                 x:Name="AutoPlayMotionPhotosToggleButton" />
+        </Border>
+
+        <!--  Side by side  -->
+        <Border Classes="searchBorder" ui:SearchProperties.Key="SideBySide">
+            <customControls:TextToggleButton
+                Classes="MenuItemHover settingsToggleButton"
+                Command="{CompiledBinding MainWindows.ActiveWindow.Value.RunActionCommand}"
+                CommandParameter="{x:Static keybindings:Actions.SideBySide}"
+                IsChecked="{CompiledBinding MainWindows.ActiveWindow.Value.WindowSettings.IsSideBySide.Value,
+                                            Mode=OneWay}"
+                Text="{CompiledBinding Translation.SideBySide.Value,
+                                       Mode=OneWay}"
+                x:Name="SideBySideToggleButton" />
+
+        </Border>
+
+        <!--  Side by side order  -->
+        <Border Classes="searchBorder" ui:SearchProperties.Key="SideBySideOrder">
+            <StackPanel IsEnabled="{CompiledBinding MainWindows.ActiveWindow.Value.WindowSettings.IsSideBySide.Value, Mode=OneWay}">
+                <TextBlock
+                    Classes="txt bold"
+                    Margin="0,20,0,20"
+                    Text="{CompiledBinding Translation.SideBySideOrder.Value,
+                                           Mode=OneWay}" />
+                <ComboBox
+                    BorderThickness="1"
+                    FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
+                    Foreground="{DynamicResource MainTextColor}"
+                    Margin="0,6,0,10"
+                    Padding="5,7,0,7"
+                    SelectedIndex="{CompiledBinding GlobalSettings.IsSideBySideRightToLeft.Value,
+                                                    Mode=TwoWay,
+                                                    Converter={StaticResource BoolToIndexConverter}}"
+                    Width="300"
+                    x:Name="SideBySideOrderBox">
+                    <ComboBoxItem Content="{CompiledBinding Translation.LeftToRight.Value, Mode=OneWay}" Foreground="{DynamicResource MainTextColor}" />
+                    <ComboBoxItem Content="{CompiledBinding Translation.RightToLeft.Value, Mode=OneWay}" Foreground="{DynamicResource MainTextColor}" />
+                </ComboBox>
+            </StackPanel>
         </Border>
 
         <!--  Aliasing  -->

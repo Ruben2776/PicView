@@ -10,6 +10,7 @@
     x:DataType="vm:TabViewModel">
     <UserControl.Resources>
         <converters:DisplayableConverter x:Key="DisplayableConverter" />
+        <converters:SideBySideDockConverter x:Key="SideBySideDockConverter" />
     </UserControl.Resources>
     <!--  The gallery, click arrows, hover bar and gallery shortcut, and the image background, are the NavigableView's  -->
     <Panel x:Name="MainPanel">
@@ -37,7 +38,7 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             LastChildFill="False">
-                            <Grid DockPanel.Dock="Left">
+                            <Grid DockPanel.Dock="{CompiledBinding ParentWindowContext.GlobalSettings.IsSideBySideRightToLeft.Value, Mode=OneWay, Converter={StaticResource SideBySideDockConverter}}">
                                 <customControls:PicBox
                                     x:Name="MainImage"
                                     ImageType="{Binding ImageType.Value}"
@@ -47,7 +48,10 @@
                                                              Converter={StaticResource DisplayableConverter}}" />
                                 <uc:MotionPhotoView x:Name="MotionPhotoView" />
                             </Grid>
-                            <Grid DockPanel.Dock="Right" IsVisible="{CompiledBinding ParentWindowContext.WindowSettings.IsSideBySide.Value, Mode=OneWay}">
+                            <Grid
+                                x:Name="SecondaryImageHost"
+                                DockPanel.Dock="{CompiledBinding ParentWindowContext.GlobalSettings.IsSideBySideRightToLeft.Value, Mode=OneWay, Converter={StaticResource SideBySideDockConverter}, ConverterParameter=Secondary}"
+                                IsVisible="{CompiledBinding ParentWindowContext.WindowSettings.IsSideBySide.Value, Mode=OneWay}">
                                 <customControls:PicBox
                                     x:Name="SecondaryImage"
                                     ImageType="{Binding SecondaryImageType.Value}"

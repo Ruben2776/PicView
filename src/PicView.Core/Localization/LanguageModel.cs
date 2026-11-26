@@ -249,6 +249,7 @@ public class LanguageModel
     public string? LastWriteTime { get; set; }
     public string? Latitude { get; set; }
     public string? Left { get; set; }
+    public string? LeftToRight { get; set; }
     public string? LensMaker { get; set; }
     public string? LensModel { get; set; }
     public string? Lighting { get; set; }
@@ -391,6 +392,7 @@ public class LanguageModel
     public string? RestoreDown { get; set; }
     public string? Reverse { get; set; }
     public string? Right { get; set; }
+    public string? RightToLeft { get; set; }
     public string? Rotated { get; set; }
     public string? RotateLeft { get; set; }
     public string? RotateRight { get; set; }
@@ -460,6 +462,7 @@ public class LanguageModel
     public string? ShutterPriority { get; set; }
     public string? SideBySide { get; set; }
     public string? SideBySideTooltip { get; set; }
+    public string? SideBySideOrder { get; set; }
     public string? Size { get; set; }
     public string? SizeMp { get; set; }
     public string? SizeTooltip { get; set; }

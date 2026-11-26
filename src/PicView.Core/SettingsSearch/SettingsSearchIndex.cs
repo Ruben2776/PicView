@@ -62,6 +62,8 @@ public static class SettingsSearchIndex
             t.ScrollingEnabled, t.ScrollingDisabled, "Scroll");
         Add(SettingKey.SideBySide, t.SideBySide,
             "SideBySide Two Pages Spread");
+        Add(SettingKey.SideBySideOrder, t.SideBySideOrder,
+            t.LeftToRight, t.RightToLeft, "SideBySide Order Reverse Manga Right Left");
         Add(SettingKey.AutoPlayMotionPhotos, t.AutoPlayMotionPhotos,
             t.MotionPhoto, "Motion Photo Live Photo Video Autoplay");
         Add(SettingKey.ImageAliasing, t.ImageAliasing,

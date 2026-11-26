@@ -43,6 +43,11 @@ public class GlobalSettingsViewModel
     public BindableReactiveProperty<double> WindowMargin { get; }
 
     /// <summary>
+    /// Whether every viewer shows its Side-by-Side pair right to left: the first image on the right.
+    /// </summary>
+    public BindableReactiveProperty<bool> IsSideBySideRightToLeft { get; }
+
+    /// <summary>
     /// The margin a negative stored Screen Margin is replaced with, as the first window does before it is sized.
     /// </summary>
     public const double NegativeMarginReplacement = 45;
@@ -91,6 +96,7 @@ public class GlobalSettingsViewModel
         IsShowingTaskbarProgress = new BindableReactiveProperty<bool>(Settings.UIProperties.IsTaskbarProgressEnabled);
         OpeningModeIndex = new BindableReactiveProperty<int>((int)Settings.UIProperties.OpeningMode);
         ShowFadeButtons = new BindableReactiveProperty<bool>(Settings.UIProperties.ShowAltInterfaceButtons);
+        IsSideBySideRightToLeft = new BindableReactiveProperty<bool>(Settings.ImageScaling.IsSideBySideRightToLeft);
         // Built before the first window rewrites a negative stored margin, so it gives the same margin that window does
         WindowMargin = new BindableReactiveProperty<double>(Settings.WindowProperties.Margin < 0 ? NegativeMarginReplacement : Settings.WindowProperties.Margin);
 
@@ -158,6 +164,7 @@ public class GlobalSettingsViewModel
 
             Follow(ShowFadeButtons, value => Settings.UIProperties.ShowAltInterfaceButtons = value);
             Follow(WindowMargin, value => Settings.WindowProperties.Margin = value);
+            Follow(IsSideBySideRightToLeft, value => Settings.ImageScaling.IsSideBySideRightToLeft = value);
             // Through Follow like the others, so a change is saved; an index outside the enum falls back to Scroll
             Follow(GalleryMouseWheelBehavior, value => Settings.Gallery.GalleryMouseWheelBehavior =
                 Enum.IsDefined((GalleryMouseWheel)value) ? (GalleryMouseWheel)value : GalleryMouseWheel.Scroll);

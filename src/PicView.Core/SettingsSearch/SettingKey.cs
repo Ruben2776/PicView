@@ -30,6 +30,7 @@ public enum SettingKey
     // Image
     Scrolling,
     SideBySide,
+    SideBySideOrder,
     AutoPlayMotionPhotos,
     ImageAliasing,
 

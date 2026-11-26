@@ -1,5 +1,5 @@
-﻿using PicView.Core.Gallery;
-using PicView.Core.Config;
+﻿using PicView.Core.Config;
+using PicView.Core.Gallery;
 using PicView.Core.Localization;
 using PicView.Core.ViewModels;
 using R3;
@@ -49,6 +49,7 @@ public class GlobalSettingsViewModelTests
                 all.Add(row);
             }
             all.Add("FadeButtons", s => s.ShowFadeButtons, () => Settings.UIProperties.ShowAltInterfaceButtons);
+            all.Add("SideBySideRightToLeft", s => s.IsSideBySideRightToLeft, () => Settings.ImageScaling.IsSideBySideRightToLeft);
             return all;
         }
     }
@@ -195,6 +196,26 @@ public class GlobalSettingsViewModelTests
 
         Assert.Equal(42, Settings.WindowProperties.Margin);
         Assert.Equal(1, _saves);
+    }
+
+    [Fact]
+    public void IsSideBySideRightToLeft_Changed_WritesTheStoredValueAndSavesOnce()
+    {
+        var settings = New();
+        Assert.False(settings.IsSideBySideRightToLeft.Value);
+
+        settings.IsSideBySideRightToLeft.Value = true;
+
+        Assert.True(Settings.ImageScaling.IsSideBySideRightToLeft);
+        Assert.Equal(1, _saves);
+    }
+
+    [Fact]
+    public void IsSideBySideRightToLeft_StartsAtTheStoredOrder()
+    {
+        Settings.ImageScaling.IsSideBySideRightToLeft = true;
+
+        Assert.True(Unstarted().IsSideBySideRightToLeft.Value);
     }
 
     [Fact]

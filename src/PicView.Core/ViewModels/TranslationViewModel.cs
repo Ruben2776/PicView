@@ -197,6 +197,7 @@ public class TranslationViewModel
         LastImage.Value = t.LastImage;
         Latitude.Value = t.Latitude;
         Left.Value = t.Left;
+        LeftToRight.Value = t.LeftToRight;
         LensMaker.Value = t.LensMaker;
         LensModel.Value = t.LensModel;
         Lighting.Value = t.Lighting;
@@ -317,6 +318,7 @@ public class TranslationViewModel
         RestoreDown.Value = t.RestoreDown;
         Reverse.Value = t.Reverse;
         Right.Value = t.Right;
+        RightToLeft.Value = t.RightToLeft;
         RotateLeft.Value = t.RotateLeft;
         RotateRight.Value = t.RotateRight;
         Rows.Value = t.Rows;
@@ -373,6 +375,7 @@ public class TranslationViewModel
         ShowZoomPreviewer.Value = t.ShowZoomPreviewer;
         SideBySide.Value = t.SideBySide;
         SideBySideTooltip.Value = t.SideBySideTooltip;
+        SideBySideOrder.Value = t.SideBySideOrder;
         SizeMp.Value = t.SizeMp;
         SizeTooltip.Value = t.SizeTooltip;
         SmartPresets.Value = t.SmartPresets;
@@ -619,6 +622,7 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> LastImage { get; } = new();
     public BindableReactiveProperty<string?> Latitude { get; } = new();
     public BindableReactiveProperty<string?> Left { get; } = new();
+    public BindableReactiveProperty<string?> LeftToRight { get; } = new();
     public BindableReactiveProperty<string?> LensMaker { get; } = new();
     public BindableReactiveProperty<string?> LensModel { get; } = new();
     public BindableReactiveProperty<string?> Lighting { get; } = new();
@@ -739,6 +743,7 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> RestoreDown { get; } = new();
     public BindableReactiveProperty<string?> Reverse { get; } = new();
     public BindableReactiveProperty<string?> Right { get; } = new();
+    public BindableReactiveProperty<string?> RightToLeft { get; } = new();
     public BindableReactiveProperty<string?> RotateLeft { get; } = new();
     public BindableReactiveProperty<string?> RotateRight { get; } = new();
     public BindableReactiveProperty<string?> Rows { get; } = new();
@@ -795,6 +800,7 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> ShowZoomPreviewer { get; } = new();
     public BindableReactiveProperty<string?> SideBySide { get; } = new();
     public BindableReactiveProperty<string?> SideBySideTooltip { get; } = new();
+    public BindableReactiveProperty<string?> SideBySideOrder { get; } = new();
     public BindableReactiveProperty<string?> SizeMp { get; } = new();
     public BindableReactiveProperty<string?> SizeTooltip { get; } = new();
     public BindableReactiveProperty<string?> SmartPresets { get; } = new();

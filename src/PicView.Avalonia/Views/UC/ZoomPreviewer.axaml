@@ -10,6 +10,7 @@
     Focusable="False">
     <UserControl.Resources>
         <converters:DisplayableConverter x:Key="DisplayableConverter" />
+        <converters:SideBySideDockConverter x:Key="SideBySideDockConverter" />
     </UserControl.Resources>
     <Border
         x:Name="MainBorder"
@@ -73,13 +74,13 @@
                         LastChildFill="False">
                         <customControls:PicBox
                             x:Name="OverlayImage"
-                            DockPanel.Dock="Left"
+                            DockPanel.Dock="{CompiledBinding ParentWindowContext.GlobalSettings.IsSideBySideRightToLeft.Value, Mode=OneWay, Converter={StaticResource SideBySideDockConverter}}"
                             ImageType="{Binding ImageType.Value}"
                             Source="{CompiledBinding Image.Value,
                                                      Converter={StaticResource DisplayableConverter}}" />
                         <customControls:PicBox
                             x:Name="SecondaryOverlayImage"
-                            DockPanel.Dock="Right"
+                            DockPanel.Dock="{CompiledBinding ParentWindowContext.GlobalSettings.IsSideBySideRightToLeft.Value, Mode=OneWay, Converter={StaticResource SideBySideDockConverter}, ConverterParameter=Secondary}"
                             ImageType="{Binding SecondaryImageType.Value}"
                             IsVisible="{CompiledBinding ParentWindowContext.WindowSettings.IsSideBySide.Value, Mode=OneWay}"
                             Source="{CompiledBinding SecondaryImage.Value,
