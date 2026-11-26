@@ -270,7 +270,7 @@
                     <Setter Property="Fill" Value="{DynamicResource AccentColor}" />
                 </Style>
                 <Style Selector="Button.galleryShape Path.icon">
-                    <Setter Property="Fill" Value="{DynamicResource MainTextColor}" />
+                    <Setter Property="Fill" Value="{DynamicResource BottomBarForegroundColor}" />
                 </Style>
                 <Style Selector="Button.galleryShape:pointerover Path.icon">
                     <Setter Property="Fill" Value="{StaticResource SecondaryTextColor}" />
@@ -281,7 +281,7 @@
             <customControls:IconButton
                 Classes="galleryShape"
                 Command="{CompiledBinding ParentWindowContext.WindowSettings.Gallery.ToggleExpandedDisplayModeCommand}"
-                Foreground="{DynamicResource MainTextColor}"
+                Foreground="{DynamicResource BottomBarForegroundColor}"
                 HorizontalAlignment="Stretch"
                 Icon="{StaticResource LayoutGridImage}"
                 IconHeight="18"
@@ -314,7 +314,7 @@
             <customControls:IconButton
                 Classes="galleryShape"
                 Command="{CompiledBinding ParentWindowContext.WindowSettings.Gallery.ToggleExpandedDisplayModeCommand}"
-                Foreground="{DynamicResource MainTextColor}"
+                Foreground="{DynamicResource BottomBarForegroundColor}"
                 HorizontalAlignment="Stretch"
                 Icon="{StaticResource LayoutPanelLeftImage}"
                 IconHeight="18"
