@@ -1,49 +1,53 @@
 <customControls:NavigateAbleItem
+    Classes="galleryItem"
     x:Class="PicView.Avalonia.Views.Gallery.GalleryItem"
+    x:DataType="viewModels:GalleryItemViewModel"
     xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
-    x:DataType="viewModels:GalleryItemViewModel"
-    Classes="galleryItem">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <!--  Size, margin, padding, border and background come from the styles in GalleryView.axaml  -->
     <!--  GalleryView.axaml places the tooltip for each layout: above the item unless a style there says otherwise; Masonry and Rows have none  -->
     <Panel
-        x:Name="TipHost"
-        MinWidth="25"
         MinHeight="25"
-        ToolTip.HorizontalOffset="0">
+        MinWidth="25"
+        ToolTip.HorizontalOffset="0"
+        x:Name="TipHost">
         <customControls:ThumbImage
-            x:Name="GalleryImage"
             Source="{Binding Image.Value}"
-            Stretch="{CompiledBinding ThumbnailStretch, RelativeSource={RelativeSource FindAncestor, AncestorType=customControls:VirtualizingGallery, Tree=Visual},
-                                      Mode=OneWay}" />
+            Stretch="{CompiledBinding ThumbnailStretch,
+                                      RelativeSource={RelativeSource FindAncestor,
+                                                                     AncestorType=customControls:VirtualizingGallery,
+                                                                     Tree=Visual},
+                                      Mode=OneWay}"
+            x:Name="GalleryImage" />
+
         <!--  Motion photo badge  -->
         <Border
-            Margin="3"
-            Padding="4,3"
-            HorizontalAlignment="Right"
-            VerticalAlignment="Bottom"
             Background="{DynamicResource GalleryItemBackgroundColor}"
             BorderBrush="{DynamicResource GalleryItemBorderColor}"
             BorderThickness="1"
             CornerRadius="3"
+            HorizontalAlignment="Right"
             IsHitTestVisible="False"
-            Opacity="0.9">
+            Margin="3"
+            Opacity="0.9"
+            Padding="4,3"
+            VerticalAlignment="Bottom">
             <Border.IsVisible>
                 <MultiBinding Converter="{x:Static BoolConverters.And}">
                     <Binding Path="IsMotionPhoto.Value" />
                     <Binding Path="$parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.ShowMotionPhotoBadges.Value" />
                 </MultiBinding>
             </Border.IsVisible>
-            <Panel Width="9" Height="9">
+            <Panel Height="9" Width="9">
                 <Path
-                    Width="5.45"
-                    Height="5.45"
                     Data="{StaticResource LivePhotoRingGeometry}"
+                    Height="5.45"
                     Stretch="Uniform"
                     Stroke="{DynamicResource MainTextColor}"
-                    StrokeThickness="1.7" />
+                    StrokeThickness="1.7"
+                    Width="5.45" />
                 <Path
                     Data="{StaticResource LivePhotoGlyphGeometry}"
                     Stretch="Uniform"
@@ -52,39 +56,81 @@
                     StrokeThickness="2" />
             </Panel>
         </Border>
+
+        <!--  Bottom file details: hidden unless GalleryView.axaml shows it (expanded Grid only)  -->
+        <Border
+            IsHitTestVisible="False"
+            Padding="5"
+            VerticalAlignment="Bottom"
+            x:Name="FileDetails">
+            <StackPanel Spacing="5">
+                <TextBlock
+                    Classes="txt bold"
+                    Foreground="#fff"
+                    MaxHeight="50"
+                    Text="{Binding FileInfo.Name}">
+                    <TextBlock.Effect>
+                        <DropShadowDirectionEffect Color="#000" ShadowDepth="1" />
+                    </TextBlock.Effect>
+                </TextBlock>
+                <StackPanel Orientation="Horizontal" Spacing="5">
+                    <TextBlock
+                        Classes="txt"
+                        FontSize="11"
+                        Foreground="#fff"
+                        MaxHeight="50"
+                        Text="{Binding FileSize}">
+                        <TextBlock.Effect>
+                            <DropShadowDirectionEffect Color="#000" ShadowDepth="1" />
+                        </TextBlock.Effect>
+                    </TextBlock>
+                    <TextBlock
+                        Classes="txt"
+                        FontSize="11"
+                        Foreground="#fff"
+                        MaxHeight="50"
+                        Text="{Binding ImageSize.Value}">
+                        <TextBlock.Effect>
+                            <DropShadowDirectionEffect Color="#000" ShadowDepth="1" />
+                        </TextBlock.Effect>
+                    </TextBlock>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
         <ToolTip.Tip>
             <StackPanel MaxWidth="600">
                 <TextBlock
-                    x:Name="FileName"
-                    Margin="2,0,2,6"
                     Classes="txt bold"
                     Foreground="{DynamicResource MainTextColor}"
+                    Margin="2,0,2,6"
                     Text="{CompiledBinding FileName}"
-                    TextWrapping="NoWrap" />
+                    TextWrapping="NoWrap"
+                    x:Name="FileName" />
                 <TextBlock
-                    x:Name="FileLocation"
-                    Margin="2,0,2,2"
                     Classes="txt"
+                    Margin="2,0,2,2"
                     Text="{CompiledBinding FileLocation}"
-                    TextWrapping="NoWrap" />
+                    TextWrapping="NoWrap"
+                    x:Name="FileLocation" />
                 <TextBlock
-                    x:Name="FileSize"
+                    Classes="txt"
                     Margin="2,0,2,2"
-                    Classes="txt"
-                    Text="{CompiledBinding FileSize}"
-                    TextWrapping="NoWrap" />
+                    Text="{CompiledBinding FileSizeLabeled}"
+                    TextWrapping="NoWrap"
+                    x:Name="FileSize" />
                 <TextBlock
-                    x:Name="FileDate"
-                    Margin="2,0,2,4"
                     Classes="txt"
+                    Margin="2,0,2,4"
                     Text="{CompiledBinding FileDate}"
-                    TextWrapping="NoWrap" />
+                    TextWrapping="NoWrap"
+                    x:Name="FileDate" />
                 <TextBlock
-                    x:Name="ImageSize"
-                    Margin="2,0,2,4"
                     Classes="txt"
+                    Margin="2,0,2,4"
                     Text="{CompiledBinding ImageSize.Value}"
-                    TextWrapping="NoWrap" />
+                    TextWrapping="NoWrap"
+                    x:Name="ImageSize" />
             </StackPanel>
         </ToolTip.Tip>
     </Panel>

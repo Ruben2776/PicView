@@ -45,6 +45,13 @@
         <Style Selector=":is(gallery|GalleryView).grid customControls|NavigateAbleItem.galleryItem /template/ Border#border">
             <Setter Property="ClipToBounds" Value="True" />
         </Style>
+        <!--  The file details at the bottom of each item: only in Grid, whose class is set only while expanded  -->
+        <Style Selector="customControls|NavigateAbleItem.galleryItem Border#FileDetails">
+            <Setter Property="IsVisible" Value="False" />
+        </Style>
+        <Style Selector=":is(gallery|GalleryView).grid customControls|NavigateAbleItem.galleryItem Border#FileDetails">
+            <Setter Property="IsVisible" Value="True" />
+        </Style>
         <!--  Expanded: the vertical scroll bar starts below the 85x60 button cluster at the top right  -->
         <Style Selector=":is(customControls|GalleryAnimationControl).expanded customControls|NavigateAbleItemsViewer /template/ customControls|AutoScrollViewer#PART_ScrollViewer /template/ ScrollBar#PART_VerticalScrollBar">
             <Setter Property="Margin" Value="0,60,0,0" />
@@ -73,6 +80,7 @@
     </customControls:GalleryAnimationControl.Styles>
     <Panel>
 
+        <!--  The Context Menu  -->
         <Panel.ContextMenu>
             <ContextMenu>
                 <customControls:StyledMenuItem
@@ -221,14 +229,7 @@
             </ContextMenu>
         </Panel.ContextMenu>
 
-
-        <!--
-            Orientation + close buttons drawn as one shape, 85x60, top right.
-            Orientation: the 35x35 square at x 0-35; its right edge follows the close curve from y 15 to 35.
-            Close: the 50x60 rectangle at x 35-85 with a 45px bottom-left sweep (circle center 80,15).
-            The shapes share the curve, so they never overlap. The buttons have no background, so only their
-            shape Path is hit-tested: hover and clicks follow the shape without a (non-anti-aliased) Clip.
-        -->
+        <!--  Expanded controls  -->
         <Panel
             Height="60"
             HorizontalAlignment="Right"
@@ -237,7 +238,6 @@
             Width="85"
             ZIndex="99">
             <Panel.Styles>
-                <!--  IconButton's style key is RepeatButton, so type selectors must say RepeatButton  -->
                 <Style Selector="RepeatButton.galleryShape">
                     <Setter Property="Background" Value="{DynamicResource PopUpBackgroundColor}" />
                     <Setter Property="Transitions">
@@ -358,7 +358,7 @@
                 </Panel>
             </Button>
 
-            <!--  Borders, drawn once: the orientation button's left and bottom edges, then the curve (which is also the seam between the two)  -->
+            <!--  Borders for button's left and bottom edges (the curve).  -->
             <Path
                 Data="M0.5,0 V34.5 H40 M35.5,0 V15 A44.5,44.5 0 0 0 80,59.5"
                 IsHitTestVisible="False"
@@ -366,6 +366,7 @@
                 StrokeThickness="1" />
         </Panel>
 
+        <!--  The items host  -->
         <customControls:NavigateAbleItemsViewer
             CurrentItemIndex="{CompiledBinding NavigationIndex.Value,
                                                Mode=OneWay}"

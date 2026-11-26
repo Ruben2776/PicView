@@ -37,7 +37,8 @@ public class GalleryItemTextsTests : IDisposable
 
             Assert.Equal(path, item.FileLocation);
             Assert.Equal("photo", item.FileName);
-            Assert.Equal("File size: 100 B", item.FileSize);
+            Assert.Equal("100 B", item.FileSize);
+            Assert.Equal("File size: 100 B", item.FileSizeLabeled);
             Assert.Equal("Modified: 10/31/2026 12:30:45", item.FileDate);
         }
         finally
@@ -54,6 +55,7 @@ public class GalleryItemTextsTests : IDisposable
         Assert.Equal(string.Empty, item.FileLocation);
         Assert.Equal(string.Empty, item.FileName);
         Assert.Equal(string.Empty, item.FileSize);
+        Assert.Equal(string.Empty, item.FileSizeLabeled);
         Assert.Equal(string.Empty, item.FileDate);
     }
 }

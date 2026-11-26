@@ -6,9 +6,6 @@ namespace PicView.Core.ViewModels;
 
 public class GalleryItemViewModel : IDisposable
 {
-    private string? _fileName;
-    private string? _fileSize;
-    private string? _fileDate;
     private GalleryFileDetails? _details;
     private static long _detailsVersion;
 
@@ -32,16 +29,14 @@ public class GalleryItemViewModel : IDisposable
     /// <summary>Whether the file carries a motion photo video (drives the gallery badge).</summary>
     public BindableReactiveProperty<bool> IsMotionPhoto { get; } = new(false);
 
-    private bool _isMotionPhotoChecked;
-
     /// <summary>
     /// Whether <see cref="IsMotionPhoto"/> was detected from the file, so it is not detected again. Detection waits for
     /// the item to be shown with the badges on, so most items are never checked.
     /// </summary>
     internal bool IsMotionPhotoChecked
     {
-        get => Volatile.Read(ref _isMotionPhotoChecked);
-        set => Volatile.Write(ref _isMotionPhotoChecked, value);
+        get => Volatile.Read(ref field);
+        set => Volatile.Write(ref field, value);
     }
 
     public FileInfo? FileInfo { get; set; }
@@ -54,13 +49,19 @@ public class GalleryItemViewModel : IDisposable
 
     /// <summary>The file's name without its extension, or empty for an item without a file.</summary>
     public string FileName =>
-        _fileName ??= FileInfo is null ? string.Empty : Path.GetFileNameWithoutExtension(FileInfo.Name);
+        field ??= FileInfo is null ? string.Empty : Path.GetFileNameWithoutExtension(FileInfo.Name);
 
-    /// <summary>The file's size as a labeled text, or empty for an item without a file.</summary>
-    public string FileSize => _fileSize ??= FileInfo is null ? string.Empty : GalleryThumbInfo.FileSizeText(FileInfo);
+    /// <summary>The file's size, for the Grid's file details, or empty for an item without a file.</summary>
+    public string FileSize => field ??= FileInfo is null ? string.Empty : GalleryThumbInfo.FileSizeText(FileInfo);
+
+    /// <summary>
+    /// The file's size as a labeled text, for the tooltip, or empty for an item without a file. Not kept: it is made
+    /// from <see cref="FileSize"/> only when a tooltip is shown.
+    /// </summary>
+    public string FileSizeLabeled => FileInfo is null ? string.Empty : GalleryThumbInfo.LabeledFileSizeText(FileSize);
 
     /// <summary>The file's modified date as a labeled text, or empty for an item without a file.</summary>
-    public string FileDate => _fileDate ??= FileInfo is null ? string.Empty : GalleryThumbInfo.FileDateText(FileInfo);
+    public string FileDate => field ??= FileInfo is null ? string.Empty : GalleryThumbInfo.FileDateText(FileInfo);
 
     /// <summary>
     /// What the item's file said about itself, or null until it is read. <see cref="SetDetails"/> replaces it whole, so
