@@ -3245,6 +3245,35 @@ public class AppLifecycleTests : IAsyncDisposable
     }
 
     [AvaloniaFact]
+    public async Task FileHistoryPrev_AfterCloseImage_ShowsTheClosedImageAgain()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var window = app.MainWindows.Open[0];
+        var vm = ViewModelOf(window);
+        var tab = vm.WindowTabs.ActiveTab.CurrentValue;
+        var file = Path.Combine(_folder, "closed.png");
+        await File.WriteAllBytesAsync(file, [0x89, 0x50, 0x4E, 0x47], TestContext.Current.CancellationToken);
+        Application.Current!.DataContext = _core;
+        try
+        {
+            await SourceOpener.OpenAsync(window, _core, file);
+            await tab.CloseImageAsync();
+            Assert.Null(tab.Model.FileInfo);
+
+            await vm.ActionRunner!.Run(Actions.FileHistoryPrev);
+
+            Assert.Equal(file, tab.Model.FileInfo?.FullName);
+            Assert.Equal(1, tab.ViewHistory.Count);
+            Assert.Equal(0, tab.ViewHistory.Cursor);
+        }
+        finally
+        {
+            Application.Current.DataContext = null;
+        }
+    }
+
+    [AvaloniaFact]
     public async Task FileHistoryPrev_AfterTwoDownloads_ShowsTheFirstAgainWithItsUrl()
     {
         var app = CreateApp();

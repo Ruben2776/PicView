@@ -1340,7 +1340,8 @@ public class TabViewModel : IDisposable
 
     /// <summary>
     /// Makes the tab fresh again once all the files it browsed were deleted: it stops following their folder, forgets
-    /// its files, the image it shows and its gallery, and shows the start-up menu.
+    /// its files, the image it shows and its gallery, and shows the start-up menu. Its View History is kept, so Back
+    /// shows the image it showed again.
     /// </summary>
     internal ValueTask BecomeFreshAsync()
     {
@@ -1349,6 +1350,8 @@ public class TabViewModel : IDisposable
         Thumbnails?.Release(Id);
         DisposeImageIterator();
         Display(new ImageModel());
+        // The View History is kept, so Back shows what the tab showed again
+        ViewHistory.Leave();
         _hasLostItsFiles = true;
         return ValueTask.CompletedTask;
     }

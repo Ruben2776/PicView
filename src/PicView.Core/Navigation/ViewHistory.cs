@@ -51,6 +51,9 @@ public sealed class ViewHistory(Func<string, bool>? fileExists = null)
     private int _targetId;
     private int _lastStepId;
 
+    // The tab shows nothing now, as after Close image, so the cursor's entry is the one it left: Back shows it again
+    private bool _isLeft;
+
     /// <summary>
     /// The number of entries.
     /// </summary>
@@ -113,12 +116,16 @@ public sealed class ViewHistory(Func<string, bool>? fileExists = null)
     /// allocates nothing.
     /// </summary>
     /// <returns>
-    /// False for a repeat: the cursor's entry shown again. True when the entry was added, or the cursor moved to it.
+    /// False for a repeat: the cursor's entry shown again. True when the entry was added, or the cursor moved to it, or
+    /// the tab shows the entry it left again.
     /// </returns>
     public bool Record(in ViewHistoryEntry entry)
     {
         lock (_lock)
         {
+            var wasLeft = _isLeft;
+            _isLeft = false;
+
             if (_target >= 0)
             {
                 // A step is under way, so the entry may be one on the way to its target. This comes before the repeat
@@ -138,7 +145,8 @@ public sealed class ViewHistory(Func<string, bool>? fileExists = null)
             // A reload, a crop or a file changed on disk shows the same entry again. A pending step stays pending
             if (_cursor >= 0 && _entries[_cursor].Matches(entry))
             {
-                return false;
+                // After a Leave it is not a repeat: the tab showed nothing, and shows the entry it left again
+                return wasLeft;
             }
 
             // Something else shows, so the step ends. As in a browser, what is new drops the entries after the cursor
@@ -229,6 +237,19 @@ public sealed class ViewHistory(Func<string, bool>? fileExists = null)
     }
 
     /// <summary>
+    /// Records that the tab shows nothing now, as after Close image, and keeps every entry. The cursor stays on the entry
+    /// the tab left, so Back shows that entry again, and Forward the one after it. A step under way ends.
+    /// </summary>
+    public void Leave()
+    {
+        lock (_lock)
+        {
+            EndPendingStep();
+            _isLeft = _cursor >= 0;
+        }
+    }
+
+    /// <summary>
     /// Renames the entries for the file <paramref name="oldPath"/> to <paramref name="newPath"/>, which includes every page
     /// of a multi-page TIFF, and every page of an archive when the file is the archive. Paths compare ignoring case, and a
     /// path that only contains the old one is not the old one. If that leaves two neighbors for the same thing, they merge,
@@ -270,9 +291,15 @@ public sealed class ViewHistory(Func<string, bool>? fileExists = null)
 
     // The members below run with the lock held
 
-    // Where a step this way goes: one entry from the target of the step under way, else from the cursor
+    // Where a step this way goes: one entry from the target of the step under way, else from the cursor. After a Leave,
+    // Back goes to the cursor's entry itself, since the tab no longer shows it
     private int StepIndex(bool forwards)
     {
+        if (_target < 0 && _isLeft && !forwards)
+        {
+            return _cursor;
+        }
+
         var origin = _target >= 0 ? _target : _cursor;
         return forwards ? origin + 1 : origin - 1;
     }

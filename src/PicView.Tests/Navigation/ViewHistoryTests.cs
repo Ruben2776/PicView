@@ -302,6 +302,63 @@ public class ViewHistoryTests
     }
 
     [Fact]
+    public void BeginStep_BackAfterLeave_TargetsTheLeftEntry_AndShowingItIsNotARepeat()
+    {
+        RecordAll("a.jpg", "b.jpg");
+        _history.Leave();
+
+        var back = _history.BeginStep(forwards: false)!.Value;
+
+        Assert.Equal("b.jpg", Path.GetFileName(back.Target.Path));
+        Assert.True(_history.Record(back.Target));
+        Assert.Equal(["a.jpg", "b.jpg"], Names());
+        Assert.Equal(1, _history.Cursor);
+        // Shown again, so Back goes on from it as usual
+        Assert.Equal("a.jpg", TargetName(forwards: false));
+    }
+
+    [Fact]
+    public void BeginStep_BackAfterLeave_OnlyEntry_TargetsIt()
+    {
+        RecordAll("a.jpg");
+        _history.Leave();
+
+        Assert.Equal("a.jpg", TargetName(forwards: false));
+    }
+
+    [Fact]
+    public void BeginStep_BackAfterLeave_LeftFileGone_TargetsTheEntryBeforeIt()
+    {
+        RecordAll("a.jpg", "b.jpg");
+        _history.Leave();
+        _missing.Add(PathOf("b.jpg"));
+
+        Assert.Equal("a.jpg", TargetName(forwards: false));
+        Assert.Equal(["a.jpg"], Names());
+    }
+
+    [Fact]
+    public void BeginStep_ForwardAfterLeave_TargetsTheEntryAfterTheLeftOne()
+    {
+        RecordAll("a.jpg", "b.jpg", "c.jpg");
+        _history.Record(_history.BeginStep(forwards: false)!.Value.Target);
+        _history.Leave();
+
+        Assert.Equal("c.jpg", TargetName(forwards: true));
+    }
+
+    [Fact]
+    public void Record_SomethingNewAfterLeave_KeepsTheLeftEntry()
+    {
+        RecordAll("a.jpg", "b.jpg");
+        _history.Leave();
+
+        Assert.True(_history.Record(FileEntry("c.jpg")));
+        Assert.Equal(["a.jpg", "b.jpg", "c.jpg"], Names());
+        Assert.Equal(2, _history.Cursor);
+    }
+
+    [Fact]
     public void BeginStep_ForwardBeforeABackShowed_TargetsTheShownEntryWithNoStepLeft()
     {
         RecordAll("a.jpg", "b.jpg", "c.jpg");
