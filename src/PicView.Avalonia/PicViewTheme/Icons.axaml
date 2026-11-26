@@ -3908,31 +3908,31 @@
         </DrawingGroup>
     </DrawingImage>
 
-    <DrawingImage x:Key="GalleryToVerticalImage">
+    <DrawingImage x:Key="LayoutPanelLeftImage">
         <DrawingImage.Drawing>
             <DrawingGroup>
-                <GeometryDrawing Geometry="F1 M4,8 H9 A1,1,0,0,1,10,9 V20 A1,1,0,0,1,9,21 H4 A1,1,0,0,1,3,20 V9 A1,1,0,0,1,4,8 Z">
+                <GeometryDrawing Geometry="F1 M4,3 H9 A1,1,0,0,1,10,4 V20 A1,1,0,0,1,9,21 H4 A1,1,0,0,1,3,20 V4 A1,1,0,0,1,4,3 Z">
                     <GeometryDrawing.Pen>
                         <Pen
-                            Brush="#FF000000"
+                            Brush="{DynamicResource MainTextColor}"
                             LineCap="Round"
                             LineJoin="Round"
                             Thickness="2" />
                     </GeometryDrawing.Pen>
                 </GeometryDrawing>
-                <GeometryDrawing Geometry="F1 m15,2 l-3,3 l-3,-3">
+                <GeometryDrawing Geometry="F1 M15,3 H20 A1,1,0,0,1,21,4 V9 A1,1,0,0,1,20,10 H15 A1,1,0,0,1,14,9 V4 A1,1,0,0,1,15,3 Z">
                     <GeometryDrawing.Pen>
                         <Pen
-                            Brush="#FF000000"
+                            Brush="{DynamicResource MainTextColor}"
                             LineCap="Round"
                             LineJoin="Round"
                             Thickness="2" />
                     </GeometryDrawing.Pen>
                 </GeometryDrawing>
-                <GeometryDrawing Geometry="F1 M15,8 H20 A1,1,0,0,1,21,9 V20 A1,1,0,0,1,20,21 H15 A1,1,0,0,1,14,20 V9 A1,1,0,0,1,15,8 Z">
+                <GeometryDrawing Geometry="F1 M15,14 H20 A1,1,0,0,1,21,15 V20 A1,1,0,0,1,20,21 H15 A1,1,0,0,1,14,20 V15 A1,1,0,0,1,15,14 Z">
                     <GeometryDrawing.Pen>
                         <Pen
-                            Brush="#FF000000"
+                            Brush="{DynamicResource MainTextColor}"
                             LineCap="Round"
                             LineJoin="Round"
                             Thickness="2" />
@@ -3942,31 +3942,40 @@
         </DrawingImage.Drawing>
     </DrawingImage>
 
-    <DrawingImage x:Key="ToGalleryHorizontalImage">
+    <DrawingImage x:Key="LayoutGridImage">
         <DrawingImage.Drawing>
             <DrawingGroup>
-                <GeometryDrawing Geometry="F1 M9,3 H20 A1,1,0,0,1,21,4 V9 A1,1,0,0,1,20,10 H9 A1,1,0,0,1,8,9 V4 A1,1,0,0,1,9,3 Z">
+                <GeometryDrawing Geometry="F1 M4,3 H9 A1,1,0,0,1,10,4 V9 A1,1,0,0,1,9,10 H4 A1,1,0,0,1,3,9 V4 A1,1,0,0,1,4,3 Z">
                     <GeometryDrawing.Pen>
                         <Pen
-                            Brush="#FF000000"
+                            Brush="{DynamicResource MainTextColor}"
                             LineCap="Round"
                             LineJoin="Round"
                             Thickness="2" />
                     </GeometryDrawing.Pen>
                 </GeometryDrawing>
-                <GeometryDrawing Geometry="F1 m2,9 l3,3 l-3,3">
+                <GeometryDrawing Geometry="F1 M15,3 H20 A1,1,0,0,1,21,4 V9 A1,1,0,0,1,20,10 H15 A1,1,0,0,1,14,9 V4 A1,1,0,0,1,15,3 Z">
                     <GeometryDrawing.Pen>
                         <Pen
-                            Brush="#FF000000"
+                            Brush="{DynamicResource MainTextColor}"
                             LineCap="Round"
                             LineJoin="Round"
                             Thickness="2" />
                     </GeometryDrawing.Pen>
                 </GeometryDrawing>
-                <GeometryDrawing Geometry="F1 M9,14 H20 A1,1,0,0,1,21,15 V20 A1,1,0,0,1,20,21 H9 A1,1,0,0,1,8,20 V15 A1,1,0,0,1,9,14 Z">
+                <GeometryDrawing Geometry="F1 M15,14 H20 A1,1,0,0,1,21,15 V20 A1,1,0,0,1,20,21 H15 A1,1,0,0,1,14,20 V15 A1,1,0,0,1,15,14 Z">
                     <GeometryDrawing.Pen>
                         <Pen
-                            Brush="#FF000000"
+                            Brush="{DynamicResource MainTextColor}"
+                            LineCap="Round"
+                            LineJoin="Round"
+                            Thickness="2" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+                <GeometryDrawing Geometry="F1 M4,14 H9 A1,1,0,0,1,10,15 V20 A1,1,0,0,1,9,21 H4 A1,1,0,0,1,3,20 V15 A1,1,0,0,1,4,14 Z">
+                    <GeometryDrawing.Pen>
+                        <Pen
+                            Brush="{DynamicResource MainTextColor}"
                             LineCap="Round"
                             LineJoin="Round"
                             Thickness="2" />

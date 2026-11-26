@@ -274,9 +274,9 @@
             <customControls:IconButton
                 Classes="galleryShape"
                 Command="{CompiledBinding ParentWindowContext.WindowSettings.Gallery.ToggleExpandedDisplayModeCommand}"
-                Foreground="{StaticResource MainTextColor}"
+                Foreground="{DynamicResource MainTextColor}"
                 HorizontalAlignment="Stretch"
-                Icon="{StaticResource GalleryToVerticalImage}"
+                Icon="{StaticResource LayoutPanelLeftImage}"
                 IconHeight="18"
                 IconWidth="18"
                 IsRepeatEnabled="False"
@@ -307,9 +307,9 @@
             <customControls:IconButton
                 Classes="galleryShape"
                 Command="{CompiledBinding ParentWindowContext.WindowSettings.Gallery.ToggleExpandedDisplayModeCommand}"
-                Foreground="{StaticResource MainTextColor}"
+                Foreground="{DynamicResource MainTextColor}"
                 HorizontalAlignment="Stretch"
-                Icon="{StaticResource ToGalleryHorizontalImage}"
+                Icon="{StaticResource LayoutGridImage}"
                 IconHeight="18"
                 IconWidth="18"
                 IsRepeatEnabled="False"
@@ -355,7 +355,7 @@
             <Path
                 Data="M0.5,0 V34.5 H40 M35.5,0 V15 A44.5,44.5 0 0 0 80,59.5"
                 IsHitTestVisible="False"
-                Stroke="{DynamicResource PopUpMainBorderColor}"
+                Stroke="{DynamicResource GalleryItemBorderColor}"
                 StrokeThickness="1" />
         </Panel>
 
