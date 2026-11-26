@@ -36,17 +36,17 @@ public readonly record struct PixelReading(int X, int Y, uint? Argb)
     {
         get
         {
-            var position = string.Create(CultureInfo.InvariantCulture, $"X: {X} Y: {Y}");
+            var place = string.Create(CultureInfo.InvariantCulture, $"X: {X} Y: {Y}");
             if (Argb is not { } argb)
             {
-                return position;
+                return place;
             }
 
             var alpha = argb >> 24;
             var rgb = argb & 0xFFFFFF;
             return alpha is 0xFF
-                ? string.Create(CultureInfo.InvariantCulture, $"{position}  #{rgb:X6}")
-                : string.Create(CultureInfo.InvariantCulture, $"{position}  #{rgb:X6}{alpha:X2}");
+                ? string.Create(CultureInfo.InvariantCulture, $"{place}  #{rgb:X6}")
+                : string.Create(CultureInfo.InvariantCulture, $"{place}  #{rgb:X6}{alpha:X2}");
         }
     }
 }

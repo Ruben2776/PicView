@@ -32,7 +32,11 @@ public sealed class ComparisonViewModel : IDisposable
     private (double X, double Y) _alignA1, _alignB1, _alignA2;
 
     // The mode Pixel Info was turned on from, which turning it off goes back to
-    private ComparisonMode _modeBeforePixelInfo = ComparisonMode.Difference;
+    // The default mode when the comparison starts in Pixel Info, so there is none before it
+    private ComparisonMode _modeBeforePixelInfo = new ComparisonSettings().Mode;
+
+    // The modes Next cycles through: all but Pixel Info, the last
+    private const int CycledModes = (int)ComparisonMode.PixelInfo;
 
     private bool _isDisposed;
 
@@ -161,7 +165,7 @@ public sealed class ComparisonViewModel : IDisposable
     /// cycle: it has its own button, and the mode after it is the first.
     /// </summary>
     public static ComparisonMode Next(ComparisonMode mode) =>
-        mode is ComparisonMode.PixelInfo ? ComparisonMode.Overlay : (ComparisonMode)(((int)mode + 1) % 5);
+        mode is ComparisonMode.PixelInfo ? ComparisonMode.Overlay : (ComparisonMode)(((int)mode + 1) % CycledModes);
 
     public void SetMode(ComparisonMode mode) => Mode.Value = mode;
 

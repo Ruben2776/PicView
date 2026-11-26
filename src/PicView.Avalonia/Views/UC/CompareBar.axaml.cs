@@ -100,6 +100,14 @@ public partial class CompareBar : UserControl, IDisposable
         HoverUnlessActive(AlignButton, comparison.IsAligning);
         HoverUnlessActive(PixelInfoButton, comparison.IsPixelInfo);
 
+        // Shown while there is an alignment, but not in Pixel Info, which shows A alone
+        comparison.HasAlignment.AsObservable()
+            .SubscribeOnUIThread(ShowResetAlign, DebugHelper.LogError(nameof(CompareBar), nameof(ShowResetAlign)))
+            .AddTo(ref _subscriptions);
+        comparison.IsPixelInfo.AsObservable()
+            .SubscribeOnUIThread(ShowResetAlign, DebugHelper.LogError(nameof(CompareBar), nameof(ShowResetAlign)))
+            .AddTo(ref _subscriptions);
+
         comparison.AlignmentStep.AsObservable()
             .SubscribeOnUIThread(() =>
             {
@@ -295,6 +303,10 @@ public partial class CompareBar : UserControl, IDisposable
     private void OnAlignClick(object? sender, RoutedEventArgs e) => Comparison?.ToggleAligning();
 
     private void OnResetAlignClick(object? sender, RoutedEventArgs e) => Comparison?.ResetAlignment();
+
+    private void ShowResetAlign() =>
+        ResetAlignButton.IsVisible = Comparison is { } comparison && comparison.HasAlignment.Value &&
+                                     !comparison.IsPixelInfo.Value;
 
     private void OnPixelInfoClick(object? sender, RoutedEventArgs e) => Comparison?.TogglePixelInfo();
 

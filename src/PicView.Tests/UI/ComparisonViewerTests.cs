@@ -60,18 +60,75 @@ public class ComparisonViewerTests
     });
 
     [AvaloniaFact]
-    public void PixelInfoMode_ShowsAAlone() => WithWindow((window, _, tab) =>
+    public void PixelInfoMode_APair_ShowsAAlone() => WithWindow((window, _, tab) =>
     {
         var viewer = Host(window, tab, configure: static comparison => comparison.SetMode(ComparisonMode.PixelInfo));
-        var b = Part<PicBox>(viewer, "ImageB");
 
         Assert.True(Part<PicBox>(viewer, "ImageA").IsEffectivelyVisible);
-        Assert.False(b.IsVisible);
+        Assert.False(Part<PicBox>(viewer, "ImageB").IsVisible);
+    });
+
+    [AvaloniaFact]
+    public void PixelInfoMode_TurnedOff_ShowsBAgain() => WithWindow((window, _, tab) =>
+    {
+        var viewer = Host(window, tab, configure: static comparison => comparison.SetMode(ComparisonMode.PixelInfo));
 
         viewer.Comparison.TogglePixelInfo();
         Settle(window);
 
-        Assert.True(b.IsVisible);
+        Assert.True(Part<PicBox>(viewer, "ImageB").IsVisible);
+    });
+
+    [AvaloniaFact]
+    public void PixelInfoMode_QuarterTurnUnderAStillPointer_ReadsThePixelNowUnderIt() => WithWindow(
+        (window, vm, tab) =>
+        {
+            // Every pixel of the 2 by 2 image has its own color, so the reading names the pixel
+            vm.ImageWidth.Value = 200;
+            vm.ImageHeight.Value = 200;
+            var viewer = Host(window, tab, a: Quadrants("a.png"),
+                configure: static comparison => comparison.SetMode(ComparisonMode.PixelInfo));
+            // Over the top left quarter of the image as shown
+            var pointer = OverPixel(viewer, window, 0, 0, 2, 2);
+            window.MouseMove(pointer);
+            Settle(window);
+            Assert.Equal("X: 0 Y: 0  #110000", viewer.Comparison.PixelInfoText.Value);
+
+            // Turned right, the image's bottom left pixel is shown at the top left
+            tab.Orientation.TurnRight();
+            Settle(window);
+            Assert.Equal("X: 0 Y: 1  #330000", viewer.Comparison.PixelInfoText.Value);
+
+            // Flipped as well, another pixel again is under the pointer
+            tab.Orientation.Flip();
+            Settle(window);
+            var flipped = OverPixelNow(viewer, window, pointer, 2, 2);
+            Assert.NotEqual("X: 0 Y: 1  ", flipped);
+            Assert.StartsWith(flipped, viewer.Comparison.PixelInfoText.Value, StringComparison.Ordinal);
+        });
+
+    [AvaloniaFact]
+    public void PixelInfoMode_ZoomedUnderAStillPointer_ReadsThePixelNowUnderIt() => WithWindow((window, vm, tab) =>
+    {
+        vm.ImageWidth.Value = 400;
+        vm.ImageHeight.Value = 200;
+        var viewer = Host(window, tab, a: Painted("a.png", 4, 2, (0, 0, 0xFF102030), (1, 0, 0xFF3A7BD5)),
+            configure: static comparison => comparison.SetMode(ComparisonMode.PixelInfo));
+        Part<ZoomPreviewer>(viewer, "ZoomPreview").IsVisible = false;
+        var pointer = OverPixel(viewer, window, 1, 0, 4, 2);
+        window.MouseMove(pointer);
+        Settle(window);
+        Assert.Equal("X: 1 Y: 0  #3A7BD5", viewer.Comparison.PixelInfoText.Value);
+
+        // Zoomed about the image's top left corner, the first pixel grows under the pointer
+        var a = Part<PicBox>(viewer, "ImageA");
+        var zoom = Part<ZoomPanControl>(viewer, "ZoomPanControl");
+        zoom.SetScaleImmediate(3.0, a.TranslatePoint(default, zoom));
+        Settle(window);
+
+        var zoomed = OverPixelNow(viewer, window, pointer, 4, 2);
+        Assert.Equal("X: 0 Y: 0  ", zoomed);
+        Assert.StartsWith(zoomed, viewer.Comparison.PixelInfoText.Value, StringComparison.Ordinal);
     });
 
     [AvaloniaFact]
@@ -766,6 +823,20 @@ public class ComparisonViewerTests
         return a.TranslatePoint(
             new Point(a.Bounds.Width * (x + 0.5) / width, a.Bounds.Height * (y + 0.5) / height), window)!.Value;
     }
+
+    // The place of the pixel of A now under a point of the window, as Pixel Info writes it before the color
+    private static string OverPixelNow(ComparisonViewer viewer, Window window, Point point, int width, int height)
+    {
+        var a = Part<PicBox>(viewer, "ImageA");
+        var at = window.TranslatePoint(point, a)!.Value;
+        var x = (int)(at.X / a.Bounds.Width * width);
+        var y = (int)(at.Y / a.Bounds.Height * height);
+        return $"X: {x} Y: {y}  ";
+    }
+
+    // A 2 by 2 bitmap whose pixels are #110000, #220000 in the top row and #330000, #440000 in the bottom
+    private static ImageModel Quadrants(string name) => Painted(name, 2, 2,
+        (0, 0, 0xFF110000), (1, 0, 0xFF220000), (0, 1, 0xFF330000), (1, 1, 0xFF440000));
 
     // An opaque bitmap, black but for the pixels given as 0xAARRGGBB
     private static ImageModel Painted(string name, int width, int height,

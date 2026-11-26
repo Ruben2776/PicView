@@ -360,18 +360,28 @@ public class ComparisonViewModelTests
         => Assert.Equal(ComparisonMode.Overlay, ComparisonViewModel.Next(ComparisonMode.PixelInfo));
 
     [Fact]
-    public void TogglePixelInfo_TurnsItOnThenBackToTheModeBefore()
+    public void TogglePixelInfo_FromAnotherMode_TurnsPixelInfoOnAndSavesIt()
     {
         using var vm = New(Model("a.jpg"), Model("b.jpg"));
         vm.SetMode(ComparisonMode.Split);
 
         vm.TogglePixelInfo();
+
         Assert.True(vm.IsPixelInfo.Value);
         Assert.False(vm.IsSplit.Value);
         Assert.False(vm.IsStacked.Value);
         Assert.Equal(ComparisonMode.PixelInfo, Settings.Comparison!.Mode);
+    }
+
+    [Fact]
+    public void TogglePixelInfo_WhileOn_GoesBackToTheModeBefore()
+    {
+        using var vm = New(Model("a.jpg"), Model("b.jpg"));
+        vm.SetMode(ComparisonMode.Split);
+        vm.TogglePixelInfo();
 
         vm.TogglePixelInfo();
+
         Assert.False(vm.IsPixelInfo.Value);
         Assert.True(vm.IsSplit.Value);
         Assert.True(vm.IsStacked.Value);
@@ -425,10 +435,17 @@ public class ComparisonViewModelTests
     }
 
     [Fact]
-    public void PixelInfoText_StartsAtTheFirstPixelAndShowsThePixelRead()
+    public void PixelInfoText_NothingRead_IsTheFirstPixelsPlace()
     {
         using var vm = New(Model("a.jpg"), Model("b.jpg"));
+
         Assert.Equal("X: 0 Y: 0", vm.PixelInfoText.Value);
+    }
+
+    [Fact]
+    public void ShowPixel_AReading_IsWrittenAsThePixelInfoText()
+    {
+        using var vm = New(Model("a.jpg"), Model("b.jpg"));
 
         vm.ShowPixel(new PicView.Core.Comparison.PixelReading(12, 34, 0xFF102030));
 

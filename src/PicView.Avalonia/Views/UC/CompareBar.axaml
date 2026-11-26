@@ -443,7 +443,6 @@
                         Icon="{StaticResource ResetImage}"
                         IconHeight="12"
                         IconWidth="12"
-                        IsVisible="{CompiledBinding Comparison.HasAlignment.Value}"
                         ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.ResetAlignment.Value}"
                         customControls:ContextualStackPanel.IsContextual="True"
                         x:Name="ResetAlignButton" />

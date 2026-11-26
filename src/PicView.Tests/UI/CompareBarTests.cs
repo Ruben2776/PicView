@@ -374,6 +374,30 @@ public class CompareBarTests
     });
 
     [AvaloniaFact]
+    public void CompareBar_PixelInfoModeWithAnAlignment_HidesResetAlignment() => WithWindow((window, _, tab) =>
+    {
+        var bar = Compare(window, tab, ComparisonMode.Overlay);
+        var comparison = tab.Comparison!;
+        comparison.ToggleAligning();
+        comparison.AddAlignmentPoint(0, 0);
+        comparison.AddAlignmentPoint(1, 1);
+        comparison.AddAlignmentPoint(10, 0);
+        comparison.AddAlignmentPoint(11, 1);
+        Settle(window);
+        var reset = Assert.IsAssignableFrom<Button>(bar.FindControl<Button>("ResetAlignButton"));
+        Assert.True(comparison.HasAlignment.Value);
+        Assert.True(reset.IsVisible);
+
+        comparison.TogglePixelInfo();
+        Settle(window);
+        Assert.False(reset.IsVisible);
+
+        comparison.TogglePixelInfo();
+        Settle(window);
+        Assert.True(reset.IsVisible);
+    });
+
+    [AvaloniaFact]
     public void CompareBar_AtTheSidePixelInfo_KeepsItsThickness() => WithWindow((window, _, tab) =>
     {
         Settings.Comparison!.BarPosition = ComparisonBarPosition.Left;
