@@ -7,6 +7,7 @@ using Avalonia.VisualTree;
 using PicView.Avalonia.Crop;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.DragAndDrop;
+using PicView.Avalonia.Input;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.Views.UC;
 using PicView.Avalonia.WindowBehavior;
@@ -20,6 +21,18 @@ namespace PicView.Avalonia.Views.Main;
 
 public partial class MainView : UserControl
 {
+    /// <summary>
+    /// Runs the Contextual Action an item of the Animation menu names in its <c>Tag</c>, as its Keybind would on an
+    /// animated image.
+    /// </summary>
+    private void AnimationMenuItem_OnClick(object? sender, global::Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (DataContext is MainWindowViewModel vm && sender is MenuItem { Tag: string contextualAction })
+        {
+            AnimatedImageActions.TryRun(TopLevel.GetTopLevel(this) as MainWindow, vm, contextualAction);
+        }
+    }
+
     public MainView()
     {
         InitializeComponent();

@@ -20,6 +20,13 @@ public sealed class ContextualActionHandler(MainWindow window, MainWindowViewMod
     public const string Cancel = "Cancel";
     public const string PlayPause = "PlayPause";
 
+    // Frame Step and Playback Speed of an animated image
+    public const string NextFrame = "NextFrame";
+    public const string PrevFrame = "PrevFrame";
+    public const string SpeedUp = "SpeedUp";
+    public const string SlowDown = "SlowDown";
+    public const string ResetSpeed = "ResetSpeed";
+
     /// <summary>
     /// Not a bindable Contextual Action: dispatch gives it to the fixed <see cref="InputDispatch.CopyKeybind"/>.
     /// </summary>
@@ -77,8 +84,9 @@ public sealed class ContextualActionHandler(MainWindow window, MainWindowViewMod
                 // A stopped motion photo leaves Cancel to the next mode
                 return imageViewer.StopMotionPhotoIfPlaying();
 
-            // TODO: Give the animated image keybinds their meanings here, such as PlayPause and frame stepping.
-            // Until then an animated image claims nothing, so its Keybinds fall through as usual.
+            // An animated image claims these and nothing else, so its other Keybinds fall through as usual
+            case (InputMode.AnimatedImage, PlayPause or NextFrame or PrevFrame or SpeedUp or SlowDown or ResetSpeed):
+                return AnimatedImageActions.TryRun(window, vm, contextualAction);
 
             case (InputMode.Gallery, Up):
                 activeTab.Gallery.Navigate(NavigateTo.Up);

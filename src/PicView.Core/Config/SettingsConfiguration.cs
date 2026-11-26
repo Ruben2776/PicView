@@ -4,5 +4,5 @@ namespace PicView.Core.Config;
 
 public class SettingsConfiguration() : ConfigFile("UserSettings.json")
 {
-    public const double CurrentSettingsVersion = 3.2;
+    public const double CurrentSettingsVersion = 3.3;
 }

@@ -287,6 +287,64 @@ public class KeymapTests
                                               }
                                               """;
 
+    private const string DefaultsWithAnimation = """
+                                                 {
+                                                   "Contextual": {
+                                                     "Space": "PlayPause",
+                                                     "OemPeriod": "NextFrame",
+                                                     "OemComma": "PrevFrame",
+                                                     "Ctrl+Up": "SpeedUp",
+                                                     "Ctrl+Down": "SlowDown"
+                                                   }
+                                                 }
+                                                 """;
+
+    private static Keymap WithAnimation(string userJson) =>
+        Keymap.FromJson(userJson, DefaultsWithAnimation)
+            .WithAnimationKeybinds(Keymap.FromJson(null, DefaultsWithAnimation));
+
+    [Fact]
+    public void WithAnimationKeybinds_FileFromBefore_GainsTheDefaultKeybinds()
+    {
+        var keymap = WithAnimation("""{ "Right": "Next", "Contextual": { "P": "PlayPause" } }""");
+
+        Assert.Equal("NextFrame", keymap.ResolveContextual(new Keybind(Key.OemPeriod)));
+        Assert.Equal("PrevFrame", keymap.ResolveContextual(new Keybind(Key.OemComma)));
+        Assert.Equal("SpeedUp", keymap.ResolveContextual(new Keybind(Key.Up, KeyModifiers.Control)));
+        Assert.Equal("SlowDown", keymap.ResolveContextual(new Keybind(Key.Down, KeyModifiers.Control)));
+        // What the file bound stays, and PlayPause does not gain its default Keybind back
+        Assert.Equal("PlayPause", keymap.ResolveContextual(new Keybind(Key.P)));
+        Assert.Null(keymap.ResolveContextual(new Keybind(Key.Space)));
+        Assert.Equal(KeymapResolution.Action("Next"), keymap.Resolve(new Keybind(Key.Right)));
+    }
+
+    [Fact]
+    public void WithAnimationKeybinds_KeybindAlreadyContextual_KeepsItsAction()
+    {
+        var keymap = WithAnimation("""{ "Contextual": { "OemPeriod": "Confirm" } }""");
+
+        Assert.Equal("Confirm", keymap.ResolveContextual(new Keybind(Key.OemPeriod)));
+        Assert.Equal("PrevFrame", keymap.ResolveContextual(new Keybind(Key.OemComma)));
+    }
+
+    [Fact]
+    public void WithAnimationKeybinds_OrdinaryActionOnTheSameKeybind_StaysAsTheFallThrough()
+    {
+        var keymap = WithAnimation("""{ "Ctrl+Up": "ScrollToTop", "Contextual": {} }""");
+
+        var ctrlUp = new Keybind(Key.Up, KeyModifiers.Control);
+        Assert.Equal("SpeedUp", keymap.ResolveContextual(ctrlUp));
+        Assert.Equal(KeymapResolution.Action("ScrollToTop"), keymap.Resolve(ctrlUp));
+    }
+
+    [Fact]
+    public void WithAnimationKeybinds_NothingToAdd_ReturnsSameKeymap()
+    {
+        var keymap = Keymap.FromJson(null, DefaultsWithAnimation);
+
+        Assert.Same(keymap, keymap.WithAnimationKeybinds(keymap));
+    }
+
     private static Keymap Migrated(string userJson) =>
         Keymap.FromJson(userJson, DefaultsWithArrows)
             .WithContextualNavigation(Keymap.FromJson(null, DefaultsWithArrows));

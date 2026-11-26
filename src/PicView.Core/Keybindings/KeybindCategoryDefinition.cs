@@ -46,7 +46,7 @@ public static class KeybindCategoryDefinition
     /// form a separate layer, so a Keybind can be bound to one of them and to an ordinary Action.
     /// </summary>
     public static IReadOnlyList<string> ContextualActionNames { get; } =
-        ["Confirm", "PlayPause", "Up", "Down", "Left", "Right"];
+        ["Confirm", "PlayPause", "NextFrame", "PrevFrame", "SpeedUp", "SlowDown", "ResetSpeed", "Up", "Down", "Left", "Right"];
 
     /// <summary>
     /// Actions that need a still image, which non-blocking Input Modes such as a playing motion photo disallow.
@@ -306,6 +306,11 @@ public static class KeybindCategoryDefinition
     [
         ("Confirm", t.Confirm ?? string.Empty),
         ("PlayPause", t.PlayPause ?? string.Empty),
+        ("NextFrame", t.NextFrame ?? string.Empty),
+        ("PrevFrame", t.PrevFrame ?? string.Empty),
+        ("SpeedUp", t.SpeedUp ?? string.Empty),
+        ("SlowDown", t.SlowDown ?? string.Empty),
+        ("ResetSpeed", t.NormalSpeed ?? string.Empty),
         ("Up", t.Up ?? string.Empty),
         ("Down", t.Down ?? string.Empty),
         ("Left", t.Left ?? string.Empty),

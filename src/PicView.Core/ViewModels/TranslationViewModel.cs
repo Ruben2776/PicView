@@ -39,6 +39,7 @@ public class TranslationViewModel
         AlignStepB2.Value = t.AlignStepB2;
         AllowZoomOut.Value = t.AllowZoomOut;
         Altitude.Value = t.Altitude;
+        Animation.Value = t.Animation;
         Appearance.Value = t.Appearance;
         ApplicationShortcuts.Value = t.ApplicationShortcuts;
         ApplicationStartup.Value = t.ApplicationStartup;
@@ -238,11 +239,13 @@ public class TranslationViewModel
         NextArchive.Value = t.NextArchive;
         NextFileInHistory.Value = t.NextFileInHistory;
         NextFolder.Value = t.NextFolder;
+        NextFrame.Value = t.NextFrame;
         NextImage.Value = t.NextImage;
         NoConversion.Value = t.NoConversion;
         None.Value = t.None;
         NoResize.Value = t.NoResize;
         Normal.Value = t.Normal;
+        NormalSpeed.Value = t.NormalSpeed;
         NormalWindow.Value = t.NormalWindow;
         OldMovie.Value = t.OldMovie;
         Open.Value = t.Open;
@@ -285,6 +288,7 @@ public class TranslationViewModel
         Posterize.Value = t.Posterize;
         PrevArchive.Value = t.PrevArchive;
         PrevFolder.Value = t.PrevFolder;
+        PrevFrame.Value = t.PrevFrame;
         PrevImage.Value = t.PrevImage;
         PreviousFileInHistory.Value = t.PreviousFileInHistory;
         Print.Value = t.Print;
@@ -378,6 +382,8 @@ public class TranslationViewModel
         SideBySideOrder.Value = t.SideBySideOrder;
         SizeMp.Value = t.SizeMp;
         SizeTooltip.Value = t.SizeTooltip;
+        SpeedUp.Value = t.SpeedUp;
+        SlowDown.Value = t.SlowDown;
         SmartPresets.Value = t.SmartPresets;
         Software.Value = t.Software;
         Solarize.Value = t.Solarize;
@@ -464,6 +470,7 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> AlignStepB2 { get; } = new();
     public BindableReactiveProperty<string?> AllowZoomOut { get; } = new();
     public BindableReactiveProperty<string?> Altitude { get; } = new();
+    public BindableReactiveProperty<string?> Animation { get; } = new();
     public BindableReactiveProperty<string?> Appearance { get; } = new();
     public BindableReactiveProperty<string?> ApplicationShortcuts { get; } = new();
     public BindableReactiveProperty<string?> ApplicationStartup { get; } = new();
@@ -663,11 +670,13 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> NextArchive { get; } = new();
     public BindableReactiveProperty<string?> NextFileInHistory { get; } = new();
     public BindableReactiveProperty<string?> NextFolder { get; } = new();
+    public BindableReactiveProperty<string?> NextFrame { get; } = new();
     public BindableReactiveProperty<string?> NextImage { get; } = new();
     public BindableReactiveProperty<string?> NoConversion { get; } = new();
     public BindableReactiveProperty<string?> None { get; } = new();
     public BindableReactiveProperty<string?> NoResize { get; } = new();
     public BindableReactiveProperty<string?> Normal { get; } = new();
+    public BindableReactiveProperty<string?> NormalSpeed { get; } = new();
     public BindableReactiveProperty<string?> NormalWindow { get; } = new();
     public BindableReactiveProperty<string?> OldMovie { get; } = new();
     public BindableReactiveProperty<string?> Open { get; } = new();
@@ -710,6 +719,7 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> PressKey { get; } = new();
     public BindableReactiveProperty<string?> PrevArchive { get; } = new();
     public BindableReactiveProperty<string?> PrevFolder { get; } = new();
+    public BindableReactiveProperty<string?> PrevFrame { get; } = new();
     public BindableReactiveProperty<string?> PrevImage { get; } = new();
     public BindableReactiveProperty<string?> PreviousFileInHistory { get; } = new();
     public BindableReactiveProperty<string?> Print { get; } = new();
@@ -803,6 +813,8 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> SideBySideOrder { get; } = new();
     public BindableReactiveProperty<string?> SizeMp { get; } = new();
     public BindableReactiveProperty<string?> SizeTooltip { get; } = new();
+    public BindableReactiveProperty<string?> SpeedUp { get; } = new();
+    public BindableReactiveProperty<string?> SlowDown { get; } = new();
     public BindableReactiveProperty<string?> SmartPresets { get; } = new();
     public BindableReactiveProperty<string?> Software { get; } = new();
     public BindableReactiveProperty<string?> Solarize { get; } = new();

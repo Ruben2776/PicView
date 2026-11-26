@@ -6,15 +6,16 @@ namespace PicView.Core.Animation;
 ///     Playback state of one animated image: position, pause and speed. Animations always loop.
 ///     Safe to call <see cref="Advance" /> from the compositor thread while the UI thread changes state.
 /// </summary>
-public sealed class AnimationPlayback(FileInfo file, ImageType imageType)
+public sealed class AnimationPlayback(FileInfo file, ImageType imageType, double speed = AnimationPlayback.NormalSpeed)
 {
     public const double MinSpeed = 0.25;
+    public const double NormalSpeed = 1.0;
     public const double MaxSpeed = 4.0;
 
     private readonly Lock _lock = new();
     private bool _isPaused;
     private long _positionTicks;
-    private double _speed = 1.0;
+    private double _speed = double.IsNaN(speed) ? NormalSpeed : Math.Clamp(speed, MinSpeed, MaxSpeed);
     private FrameTimeline? _timeline;
 
     public FileInfo File { get; } = file;

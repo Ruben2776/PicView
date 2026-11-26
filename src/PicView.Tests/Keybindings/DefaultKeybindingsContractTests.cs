@@ -34,8 +34,10 @@ public class DefaultKeybindingsContractTests
     {
         var keymap = Keymap.FromJson(null, DefaultKeybindings);
 
-        Assert.All(KeybindCategoryDefinition.ContextualActionNames,
+        // ResetSpeed is left for the user to bind: the Animation menu runs it
+        Assert.All(KeybindCategoryDefinition.ContextualActionNames.Where(name => name is not "ResetSpeed"),
             name => Assert.NotEmpty(keymap.KeybindsFor(name)));
+        Assert.Empty(keymap.KeybindsFor("ResetSpeed"));
         Assert.All(keymap.ContextualBindings.Values,
             name => Assert.True(KeybindCategoryDefinition.IsContextualAction(name), name));
     }

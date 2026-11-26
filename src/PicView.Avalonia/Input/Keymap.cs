@@ -353,6 +353,30 @@ public sealed class Keymap : IEquatable<Keymap>
     }
 
     /// <summary>
+    /// Migrates a keymap from before the Frame Step and Playback Speed Contextual Actions: their Keybinds in
+    /// <paramref name="defaults"/> are added where the contextual layer leaves them free. A Keybind the user gave
+    /// another Contextual Action keeps it.
+    /// </summary>
+    /// <returns>This keymap when nothing needs adding.</returns>
+    public Keymap WithAnimationKeybinds(Keymap defaults)
+    {
+        Dictionary<Keybind, string>? contextual = null;
+        foreach (var (keybind, action) in defaults._contextual)
+        {
+            if (action is ContextualActionHandler.NextFrame or ContextualActionHandler.PrevFrame
+                    or ContextualActionHandler.SpeedUp or ContextualActionHandler.SlowDown
+                    or ContextualActionHandler.ResetSpeed &&
+                !_contextual.ContainsKey(keybind))
+            {
+                contextual ??= new Dictionary<Keybind, string>(_contextual);
+                contextual[keybind] = action;
+            }
+        }
+
+        return contextual is null ? this : new Keymap(_actions, contextual.ToFrozenDictionary());
+    }
+
+    /// <summary>
     /// Whether binding the arrow Contextual Action <paramref name="contextualAction"/> to <paramref name="keybind"/>
     /// leaves the key doing what it did: the ordinary layer binds it to nothing, or to the Action the arrow falls
     /// through to. Other Contextual Actions always do.

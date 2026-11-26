@@ -12,10 +12,10 @@ Before this, `PicBox.Render` opened a new `FileStream` on the file and built a n
 ## Consequences
 
 - A Stand-in ends the playbacks: `ShowStandIn`, and so `ShowLoading`, sets both to null, so the animation of the image it replaced does not play over a loading thumbnail or an Effects render. The next `Display` makes new ones.
-- Pause and speed do not carry to the next image: each shown file gets a new playback, playing at speed 1.0. Whether they should is a question for issue 222.
+- Pause does not carry to the next image: each shown file gets a new playback, playing. Issue 222 settled the speed: the **Playback Speed** belongs to the tab (`TabAnimation.Speed`), so a new playback starts at it, and it is not a saved setting. A paused next image would look like a broken file, and a forgotten 0.25× in the settings would look like a bug.
 - The zoom previewer and the crop control show the still image. Their `PicBox` controls bind no playback.
 - Stepping back on a long GIF replays it from its first frame, since the GIF decoder draws each frame over the one before it.
 - The playback keeps its position, pause and speed when its `PicBox` leaves the visual tree and comes back, as on a tab switch; the decoder is opened again.
-- Nothing calls `TogglePause`, `Step` or `SetSpeed` yet. Issue 222 adds the Actions, keybinds and interface; `InputMode.AnimatedImage` stays derived from the image type.
+- Issue 222 added what calls them: the Animated Image Input Mode claims the Contextual Actions `PlayPause`, `NextFrame`, `PrevFrame`, `SpeedUp`, `SlowDown` and `ResetSpeed`, and the Animation submenu of the Image menu runs the same six, both through `AnimatedImageActions`. The speed moves in steps of 0.25×, 0.5×, 1×, 2× and 4×. `InputMode.AnimatedImage` stays derived from the image type, now of either side, since both play together.
 - `PicView.Core/Animation` holds no Avalonia or SkiaSharp type and stays AOT-compatible; the frame clock is tested there without a bitmap.
 - The comparison viewer (ADR-0032) binds no `Playback`, so both of its images are still: the first frame is compared. Before, image A animated there through its `ImageType`. Giving a comparison playbacks of its own is left for when it is wanted.

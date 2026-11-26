@@ -8,6 +8,7 @@
     xmlns:buttons="clr-namespace:PicView.Avalonia.Views.UC.Buttons"
     xmlns:converters="clr-namespace:PicView.Avalonia.Converters"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
+    xmlns:input="clr-namespace:PicView.Avalonia.Input"
     xmlns:keybindings="using:PicView.Core.Keybindings"
     xmlns:uc="clr-namespace:PicView.Avalonia.Views.UC"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
@@ -590,11 +591,7 @@
 
             <Separator />
 
-            <customControls:StyledMenuItem
-                Header="{Binding Translation.SetAsWallpaper.Value}"
-                IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.Image.Value,
-                                            Converter={x:Static ObjectConverters.IsNotNull},
-                                            FallbackValue=False}">
+            <customControls:StyledMenuItem Header="{Binding Translation.SetAsWallpaper.Value}" IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.Image.Value, Converter={x:Static ObjectConverters.IsNotNull}, FallbackValue=False}">
                 <MenuItem.Icon>
                     <Image Classes="WallpaperImage" />
                 </MenuItem.Icon>
@@ -696,6 +693,63 @@
                         Source="{StaticResource ImageOutLine}"
                         Width="13" />
                 </MenuItem.Icon>
+
+                <!--  Animation: pause, Frame Step and Playback Speed of an animated image  -->
+                <Separator IsVisible="{CompiledBinding WindowTabs.ActiveTab.Value.Animation.IsActive.Value, FallbackValue=False, Mode=OneWay}" />
+                <customControls:StyledMenuItem
+                    Header="{CompiledBinding Translation.Animation.Value,
+                                             Mode=OneWay}"
+                    IsVisible="{CompiledBinding WindowTabs.ActiveTab.Value.Animation.IsActive.Value,
+                                                FallbackValue=False,
+                                                Mode=OneWay}"
+                    x:Name="AnimationMenuItem">
+
+                    <customControls:StyledMenuItem
+                        Click="AnimationMenuItem_OnClick"
+                        Header="{CompiledBinding Translation.PlayPause.Value,
+                                                 Mode=OneWay}"
+                        StaysOpenOnClick="True"
+                        Tag="{x:Static input:ContextualActionHandler.PlayPause}" />
+
+                    <Separator />
+
+                    <customControls:StyledMenuItem
+                        Click="AnimationMenuItem_OnClick"
+                        Header="{CompiledBinding Translation.NextFrame.Value,
+                                                 Mode=OneWay}"
+                        StaysOpenOnClick="True"
+                        Tag="{x:Static input:ContextualActionHandler.NextFrame}" />
+
+                    <customControls:StyledMenuItem
+                        Click="AnimationMenuItem_OnClick"
+                        Header="{CompiledBinding Translation.PrevFrame.Value,
+                                                 Mode=OneWay}"
+                        StaysOpenOnClick="True"
+                        Tag="{x:Static input:ContextualActionHandler.PrevFrame}" />
+
+                    <Separator />
+
+                    <customControls:StyledMenuItem
+                        Click="AnimationMenuItem_OnClick"
+                        Header="{CompiledBinding Translation.SpeedUp.Value,
+                                                 Mode=OneWay}"
+                        StaysOpenOnClick="True"
+                        Tag="{x:Static input:ContextualActionHandler.SpeedUp}" />
+
+                    <customControls:StyledMenuItem
+                        Click="AnimationMenuItem_OnClick"
+                        Header="{CompiledBinding Translation.SlowDown.Value,
+                                                 Mode=OneWay}"
+                        StaysOpenOnClick="True"
+                        Tag="{x:Static input:ContextualActionHandler.SlowDown}" />
+
+                    <customControls:StyledMenuItem
+                        Click="AnimationMenuItem_OnClick"
+                        Header="{CompiledBinding Translation.NormalSpeed.Value,
+                                                 Mode=OneWay}"
+                        StaysOpenOnClick="True"
+                        Tag="{x:Static input:ContextualActionHandler.ResetSpeed}" />
+                </customControls:StyledMenuItem>
 
                 <!--  File properties  -->
                 <customControls:StyledMenuItem
@@ -802,6 +856,8 @@
                         <Path Classes="RotateRightPath" />
                     </MenuItem.Icon>
                 </customControls:StyledMenuItem>
+
+
             </customControls:StyledMenuItem>
 
             <Separator />

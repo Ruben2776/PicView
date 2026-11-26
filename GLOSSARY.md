@@ -25,7 +25,7 @@ The single mode a window is in, which decides what its Keybinds do. It follows f
 _Avoid_: Context, state, focus, dialog mode
 
 **Contextual Action**:
-A generic Action, such as `Confirm`, `Cancel`, `PlayPause` or the arrows `Up`, `Down`, `Left` and `Right`, whose meaning comes from the current Input Mode. When the mode gives it no meaning, each lower-ranked Non-blocking Input Mode that also applies is asked in turn, then Normal, and when none gives it a meaning, its Keybind falls through to the ordinary Action bound to the same Keybind. A Blocking Input Mode asks no other mode. This is why Escape stops a playing motion photo, before it closes the window, and why the arrow keys move through the Expanded Gallery but otherwise scroll a tall image, rotate it, or go to the previous or next file. `Cancel` (Escape) and `Copy` (the platform's copy keys) are fixed to their keys; the others can be rebound.
+A generic Action, such as `Confirm`, `Cancel`, `PlayPause`, `NextFrame`, `SpeedUp` or the arrows `Up`, `Down`, `Left` and `Right`, whose meaning comes from the current Input Mode. When the mode gives it no meaning, each lower-ranked Non-blocking Input Mode that also applies is asked in turn, then Normal, and when none gives it a meaning, its Keybind falls through to the ordinary Action bound to the same Keybind. A Blocking Input Mode asks no other mode. This is why Escape stops a playing motion photo, before it closes the window, and why the arrow keys move through the Expanded Gallery but otherwise scroll a tall image, rotate it, or go to the previous or next file. `Cancel` (Escape) and `Copy` (the platform's copy keys) are fixed to their keys; the others can be rebound.
 _Avoid_: Mode action, special key
 
 **Blocking Input Mode**:
@@ -156,8 +156,16 @@ A Thumbnail made for the size a Masonry or Rows tile shows it at, in device pixe
 _Avoid_: Sharp thumbnail, full-size thumbnail, HQ thumbnail
 
 **Animation Playback**:
-The paused state, speed and position of one animated file a Tab shows. A Tab has one for the shown image and one for the image beside it when viewing side by side. Each shown file gets a new one, which starts playing from its first frame; a Stand-in ends them. It always loops.
+The paused state, speed and position of one animated file a Tab shows. A Tab has one for the shown image and one for the image beside it when viewing side by side. Each shown file gets a new one, which starts playing from its first frame at the Tab's Playback Speed; a Stand-in ends them. It always loops.
 _Avoid_: Animation instance, GIF instance, animation state
+
+**Playback Speed**:
+How fast a Tab plays its animated images, as a multiple of the speed the file asks for: 0.25×, 0.5×, 1×, 2× or 4×. `SpeedUp` and `SlowDown` move one step, `ResetSpeed` returns to 1×. It belongs to the Tab, so it carries to the next animated image shown there, and a new Tab starts at 1×. It is not a saved setting. Whether an image is paused does not carry.
+_Avoid_: Frame rate, frame delay, animation speed
+
+**Frame Step**:
+Pausing an animated image and moving it one frame forward or back, `NextFrame` and `PrevFrame`. It wraps from the last frame to the first and back.
+_Avoid_: Frame advance, fast-forward, rewind, seek
 
 **AI Metadata**:
 What an AI image generator stored in the image about how it made it: the prompt, the negative prompt, the generation settings and the raw text or JSON they came from. Automatic1111 and its forks, ComfyUI, NovelAI and InvokeAI write it, in a PNG text chunk, the Exif UserComment, the JPEG comment, or hidden in the pixels. Only the Automatic1111 kind in a PNG's `parameters` chunk or a JPEG's or WebP's UserComment can be edited.

@@ -30,6 +30,7 @@ public class LanguageModel
     public string? AllowZoomOut { get; set; }
     public string? Alt { get; set; }
     public string? Altitude { get; set; }
+    public string? Animation { get; set; }
     public string? AperturePriority { get; set; }
     public string? Appearance { get; set; }
     public string? ApplicationShortcuts { get; set; }
@@ -196,6 +197,7 @@ public class LanguageModel
     public string? FocalLength35mm { get; set; }
     public string? Folder { get; set; }
     public string? Forward { get; set; }
+    public string? Frame { get; set; }
     public string? Fstop { get; set; }
     public string? FullPath { get; set; }
     public string? Fullscreen { get; set; }
@@ -300,6 +302,7 @@ public class LanguageModel
     public string? NextArchive { get; set; }
     public string? NextFileInHistory { get; set; }
     public string? NextFolder { get; set; }
+    public string? NextFrame { get; set; }
     public string? NextImage { get; set; }
     public string? NoChange { get; set; }
     public string? NoConversion { get; set; }
@@ -308,6 +311,7 @@ public class LanguageModel
     public string? None { get; set; }
     public string? NoResize { get; set; }
     public string? Normal { get; set; }
+    public string? NormalSpeed { get; set; }
     public string? NormalWindow { get; set; }
     public string? NotDefined { get; set; }
     public string? NoUpdateFound { get; set; }
@@ -357,6 +361,7 @@ public class LanguageModel
     public string? PressKey { get; set; }
     public string? PrevArchive { get; set; }
     public string? PrevFolder { get; set; }
+    public string? PrevFrame { get; set; }
     public string? PrevImage { get; set; }
     public string? PreviousFileInHistory { get; set; }
     public string? Print { get; set; }
@@ -466,6 +471,7 @@ public class LanguageModel
     public string? Size { get; set; }
     public string? SizeMp { get; set; }
     public string? SizeTooltip { get; set; }
+    public string? SlowDown { get; set; }
     public string? SmartPresets { get; set; }
     public string? Soft { get; set; }
     public string? SoftMatte { get; set; }
@@ -473,6 +479,7 @@ public class LanguageModel
     public string? Solarize { get; set; }
     public string? SortFilesBy { get; set; }
     public string? Space { get; set; }
+    public string? SpeedUp { get; set; }
     public string? Split { get; set; }
     public string? Square { get; set; }
     public string? Start { get; set; }

@@ -20,6 +20,11 @@ public static class Keymaps
     /// </summary>
     private const double GalleryNavigationKeybindsVersion = 3.1;
 
+    /// <summary>
+    /// The settings version that added the Frame Step and Playback Speed Contextual Actions.
+    /// </summary>
+    private const double AnimationKeybindsVersion = 3.3;
+
     private static Keymap _current = Keymap.Empty;
 
     /// <summary>
@@ -48,6 +53,12 @@ public static class Keymaps
         {
             // Keybindings files from before Up and Down were contextual keep rotating and gain gallery Left and Right
             keymap = keymap.WithContextualNavigation(Defaults(platform));
+        }
+
+        if (bytes is not null && LoadedSettingsVersion < AnimationKeybindsVersion)
+        {
+            // Keybindings files from before animated images could be stepped and sped up gain the default Keybinds
+            keymap = keymap.WithAnimationKeybinds(Defaults(platform));
         }
 
         Replace(keymap);

@@ -24,10 +24,16 @@ public static class InputModes
             IsRenaming: vm.IsEditableTitlebarOpen.CurrentValue,
             IsCropping: activeTab?.CropService?.IsCropping ?? false,
             IsMotionPhotoActive: activeTab?.CurrentView.Value is NavigableView { Viewer: ImageViewer { IsMotionPhotoActive: true } },
-            IsAnimatedImageActive: activeTab?.Model?.ImageType is
-                ImageType.AnimatedGif or ImageType.AnimatedWebp or ImageType.AnimatedAvif,
+            IsAnimatedImageActive: IsAnimated(activeTab?.Model?.ImageType) ||
+                                   IsAnimated(activeTab?.SecondaryImageType.CurrentValue),
             IsGalleryExpanded: activeTab?.Gallery.IsGalleryExpanded.CurrentValue ?? false);
     }
+
+    /// <summary>
+    /// The image beside the shown one counts, since both play and are paused, stepped and sped up together.
+    /// </summary>
+    private static bool IsAnimated(ImageType? imageType) =>
+        imageType is ImageType.AnimatedGif or ImageType.AnimatedWebp or ImageType.AnimatedAvif;
 
     /// <summary>
     /// A pop-up stays in the main panel while it animates closed, and some are hidden instead of removed.

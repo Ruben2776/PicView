@@ -1,4 +1,8 @@
+using System.Globalization;
 using PicView.Avalonia.Input;
+using PicView.Core.Animation;
+using PicView.Core.ImageDecoding;
+using PicView.Core.Models;
 using PicView.Core.IPlatform;
 using PicView.Core.Navigation;
 using PicView.Core.ViewModels;
@@ -126,6 +130,130 @@ public class ContextualActionHandlerTests
         tab.Gallery.Switcher.ToggleExpanded();
 
         Assert.False(await handler.TryRunAsync(InputMode.Gallery, ContextualActionHandler.PlayPause));
+    }
+
+    /// <summary>Shows an animated image with three frames, as once a decoder has opened the file.</summary>
+    private static AnimationPlayback ShowAnimatedImage(TabViewModel tab)
+    {
+        tab.Display(new ImageModel
+            { FileInfo = new FileInfo("a.gif"), Image = new object(), ImageType = ImageType.AnimatedGif });
+        var playback = tab.Animation.Primary.Value!;
+        var frame = TimeSpan.FromMilliseconds(100);
+        playback.Attach(new FrameTimeline([frame, frame, frame]));
+        return playback;
+    }
+
+    [Fact]
+    public async Task AnimatedImage_PlayPause_PausesAndResumes()
+    {
+        var (handler, _) = CreateHandler(out var tab);
+        var playback = ShowAnimatedImage(tab);
+
+        Assert.True(await handler.TryRunAsync(InputMode.AnimatedImage, ContextualActionHandler.PlayPause));
+        Assert.True(playback.IsPaused);
+
+        Assert.True(await handler.TryRunAsync(InputMode.AnimatedImage, ContextualActionHandler.PlayPause));
+        Assert.False(playback.IsPaused);
+    }
+
+    [Fact]
+    public async Task AnimatedImage_NextAndPrevFrame_PauseAndStepWrapping()
+    {
+        var (handler, _) = CreateHandler(out var tab);
+        var playback = ShowAnimatedImage(tab);
+
+        Assert.True(await handler.TryRunAsync(InputMode.AnimatedImage, ContextualActionHandler.NextFrame));
+        Assert.True(playback.IsPaused);
+        Assert.Equal(1, playback.CurrentFrame);
+
+        Assert.True(await handler.TryRunAsync(InputMode.AnimatedImage, ContextualActionHandler.PrevFrame));
+        Assert.True(await handler.TryRunAsync(InputMode.AnimatedImage, ContextualActionHandler.PrevFrame));
+        Assert.Equal(2, playback.CurrentFrame);
+    }
+
+    [Fact]
+    public async Task AnimatedImage_SpeedActions_MoveThePlaybackSpeed()
+    {
+        var (handler, _) = CreateHandler(out var tab);
+        var playback = ShowAnimatedImage(tab);
+
+        Assert.True(await handler.TryRunAsync(InputMode.AnimatedImage, ContextualActionHandler.SlowDown));
+        Assert.True(await handler.TryRunAsync(InputMode.AnimatedImage, ContextualActionHandler.SlowDown));
+        Assert.Equal(0.25, playback.Speed);
+
+        Assert.True(await handler.TryRunAsync(InputMode.AnimatedImage, ContextualActionHandler.SpeedUp));
+        Assert.Equal(0.5, playback.Speed);
+
+        Assert.True(await handler.TryRunAsync(InputMode.AnimatedImage, ContextualActionHandler.ResetSpeed));
+        Assert.Equal(1, playback.Speed);
+        Assert.False(playback.IsPaused);
+    }
+
+    [Theory]
+    [InlineData(ContextualActionHandler.Up)]
+    [InlineData(ContextualActionHandler.Down)]
+    [InlineData(ContextualActionHandler.Left)]
+    [InlineData(ContextualActionHandler.Right)]
+    [InlineData(ContextualActionHandler.Confirm)]
+    [InlineData(ContextualActionHandler.Cancel)]
+    public async Task AnimatedImage_OtherContextualActions_AreNotClaimed(string action)
+    {
+        // So the arrows keep rotating and going to the next file on an animated image
+        var (handler, _) = CreateHandler(out var tab);
+        ShowAnimatedImage(tab);
+
+        Assert.False(await handler.TryRunAsync(InputMode.AnimatedImage, action));
+    }
+
+    [Theory]
+    [InlineData(ContextualActionHandler.PlayPause)]
+    [InlineData(ContextualActionHandler.NextFrame)]
+    [InlineData(ContextualActionHandler.SpeedUp)]
+    public async Task AnimatedImage_WithNoPlayback_IsNotClaimed(string action)
+    {
+        // As while a Stand-in shows, so Space falls through to its ordinary Action
+        var (handler, _) = CreateHandler(out var tab);
+        ShowAnimatedImage(tab);
+        tab.ShowStandIn(new object());
+
+        Assert.False(await handler.TryRunAsync(InputMode.AnimatedImage, action));
+    }
+
+    [Theory]
+    [InlineData(ContextualActionHandler.NextFrame)]
+    [InlineData(ContextualActionHandler.SpeedUp)]
+    public async Task Normal_AnimationActions_AreNotClaimed(string action)
+    {
+        var (handler, _) = CreateHandler(out var tab);
+        ShowAnimatedImage(tab);
+
+        Assert.False(await handler.TryRunAsync(InputMode.Normal, action));
+    }
+
+    [Theory]
+    [InlineData(0.25, "0.25×")]
+    [InlineData(0.5, "0.5×")]
+    [InlineData(1, "1×")]
+    [InlineData(4, "4×")]
+    public void FormatSpeed_DropsTrailingZeros(double speed, string expected)
+    {
+        var culture = CultureInfo.CurrentCulture;
+        CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
+        try
+        {
+            Assert.Equal(expected, AnimatedImageActions.FormatSpeed(speed));
+        }
+        finally
+        {
+            CultureInfo.CurrentCulture = culture;
+        }
+    }
+
+    [Fact]
+    public void FormatFrame_CountsFromOne()
+    {
+        Assert.Equal("Frame 1 / 12", AnimatedImageActions.FormatFrame("Frame", 0, 12));
+        Assert.Equal("12 / 12", AnimatedImageActions.FormatFrame(null, 11, 12));
     }
 
     [Theory]

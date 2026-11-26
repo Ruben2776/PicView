@@ -281,6 +281,122 @@ public class TabAnimationTests
     }
 
     [Fact]
+    public void SpeedUp_MovesOneStepAtATime_AndStaysAtTheFastest()
+    {
+        _tab.Display(Model("a.gif", ImageType.AnimatedGif));
+
+        Assert.Equal(2, _tab.Animation.SpeedUp());
+        Assert.Equal(4, _tab.Animation.SpeedUp());
+        Assert.Equal(4, _tab.Animation.SpeedUp());
+        Assert.Equal(4, _tab.Animation.Primary.Value!.Speed);
+    }
+
+    [Fact]
+    public void SlowDown_MovesOneStepAtATime_AndStaysAtTheSlowest()
+    {
+        _tab.Display(Model("a.gif", ImageType.AnimatedGif));
+
+        Assert.Equal(0.5, _tab.Animation.SlowDown());
+        Assert.Equal(0.25, _tab.Animation.SlowDown());
+        Assert.Equal(0.25, _tab.Animation.SlowDown());
+        Assert.Equal(0.25, _tab.Animation.Primary.Value!.Speed);
+    }
+
+    [Fact]
+    public void SpeedUpAndSlowDown_FromASpeedBetweenSteps_GoToTheNearestStepThatWay()
+    {
+        _tab.Display(Model("a.gif", ImageType.AnimatedGif));
+        _tab.Animation.SetSpeed(1.5);
+
+        Assert.Equal(2, _tab.Animation.SpeedUp());
+
+        _tab.Animation.SetSpeed(1.5);
+
+        Assert.Equal(1, _tab.Animation.SlowDown());
+    }
+
+    [Fact]
+    public void ResetSpeed_ReturnsToNormal()
+    {
+        _tab.Display(Model("a.gif", ImageType.AnimatedGif));
+        _tab.Animation.SlowDown();
+
+        _tab.Animation.ResetSpeed();
+
+        Assert.Equal(1, _tab.Animation.Speed);
+        Assert.Equal(1, _tab.Animation.Primary.Value!.Speed);
+    }
+
+    [Fact]
+    public void Display_NextAnimatedImage_KeepsTheSpeedButNotThePause()
+    {
+        _tab.Display(Model("a.gif", ImageType.AnimatedGif));
+        _tab.Animation.SlowDown();
+        _tab.Animation.TogglePause();
+
+        _tab.Display(Model("b.webp", ImageType.AnimatedWebp));
+
+        var playback = _tab.Animation.Primary.Value!;
+        Assert.Equal(0.5, playback.Speed);
+        Assert.False(playback.IsPaused);
+    }
+
+    [Fact]
+    public void Display_StillImageInBetween_KeepsTheSpeed()
+    {
+        _tab.Display(Model("a.gif", ImageType.AnimatedGif));
+        _tab.Animation.SpeedUp();
+
+        _tab.Display(Model("b.jpg", ImageType.Bitmap));
+        DisplaySideBySide(Model("c.gif", ImageType.AnimatedGif), Model("d.gif", ImageType.AnimatedGif));
+
+        Assert.Equal(2, _tab.Animation.Primary.Value!.Speed);
+        Assert.Equal(2, _tab.Animation.Secondary.Value!.Speed);
+    }
+
+    [Fact]
+    public void UpdateShownFile_KeepsTheSpeed()
+    {
+        var primary = Model("a.gif", ImageType.AnimatedGif);
+        _tab.Display(primary);
+        _tab.Animation.SpeedUp();
+
+        Assert.True(_tab.UpdateShownFile(primary.FileInfo!.FullName, new FileInfo("c.gif")));
+
+        Assert.Equal(2, _tab.Animation.Primary.Value!.Speed);
+    }
+
+    [Fact]
+    public void AnotherTab_StartsAtNormalSpeed()
+    {
+        _tab.Display(Model("a.gif", ImageType.AnimatedGif));
+        _tab.Animation.SpeedUp();
+        var other = new TabViewModel(null!);
+
+        other.Display(Model("a.gif", ImageType.AnimatedGif));
+
+        Assert.Equal(1, other.Animation.Primary.Value!.Speed);
+    }
+
+    [Fact]
+    public void IsActive_FollowsWhetherAnAnimatedImageIsShown()
+    {
+        Assert.False(_tab.Animation.IsActive.Value);
+
+        DisplaySideBySide(Model("a.jpg", ImageType.Bitmap), Model("b.gif", ImageType.AnimatedGif));
+        Assert.True(_tab.Animation.IsActive.Value);
+
+        _tab.ShowStandIn(new object());
+        Assert.False(_tab.Animation.IsActive.Value);
+
+        _tab.Display(Model("a.gif", ImageType.AnimatedGif));
+        Assert.True(_tab.Animation.IsActive.Value);
+
+        _tab.Display(Model("a.jpg", ImageType.Bitmap));
+        Assert.False(_tab.Animation.IsActive.Value);
+    }
+
+    [Fact]
     public void Commands_WithNoPlayback_DoNothing()
     {
         _tab.Animation.TogglePause();

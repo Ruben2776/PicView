@@ -141,7 +141,10 @@ public class KeybindCategoryDefinitionTests
 
         Assert.Equal(KeybindCategoryDefinition.ContextualActionNames, entries.Select(e => e.FunctionName));
         Assert.Equal(
-            ["Confirm", "Play / pause", languageModel.Up, languageModel.Down, languageModel.Left, languageModel.Right],
+            [
+                "Confirm", "Play / pause", "Next frame", "Previous frame", "Speed up", "Slow down", "Normal speed",
+                languageModel.Up, languageModel.Down, languageModel.Left, languageModel.Right
+            ],
             entries.Select(e => e.DisplayName));
     }
 
