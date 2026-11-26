@@ -110,7 +110,8 @@
                 <Rectangle
                     DockPanel.Dock="Right"
                     Fill="{DynamicResource ToolWindowButtonBorderColor}"
-                    Width="1" />
+                    Width="1"
+                    x:Name="SettingsRectangle" />
                 <buttons:SettingsMenuButton DockPanel.Dock="Right" x:Name="SettingsButton" />
 
                 <TextBlock

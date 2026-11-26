@@ -28,6 +28,10 @@ public partial class SettingsWindow : GenericWindow
                 SettingsButton.BorderBrush = new SolidColorBrush(color);
             }
         }
+        else
+        {
+            SettingsRectangle.IsVisible = false;
+        }
         ThemeManager.ApplyAcrylic(this, SettingsView);
         Loaded += delegate
         {
