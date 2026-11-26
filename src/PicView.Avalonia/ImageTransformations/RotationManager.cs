@@ -9,11 +9,17 @@ namespace PicView.Avalonia.ImageTransformations;
 
 /// <summary>
 /// Turns and flips the image the window's active tab shows, through the tab's Orientation, and resets its zoom.
+/// None of these act while the tab's gallery is expanded, since it covers the image.
 /// </summary>
 public static class RotationManager
 {
     public static void ResetZoomAndRotations(MainWindowViewModel vm, MainWindow mainWindow)
     {
+        if (IsGalleryExpanded(vm))
+        {
+            return;
+        }
+
         switch (vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.Value)
         {
             case NavigableView { Viewer: { } viewer }:
@@ -29,6 +35,11 @@ public static class RotationManager
     
     public static void ResetZoom(MainWindowViewModel vm)
     {
+        if (IsGalleryExpanded(vm))
+        {
+            return;
+        }
+
         switch (vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.Value)
         {
             case NavigableView { Viewer: { } viewer }:
@@ -55,7 +66,7 @@ public static class RotationManager
     {
         var tab = vm.WindowTabs.ActiveTab.CurrentValue;
         var view = tab.CurrentView.Value;
-        if (view is not (NavigableView { Viewer.HasImage: true } or CropControl))
+        if (tab.Gallery.IsGalleryExpanded.CurrentValue || view is not (NavigableView { Viewer.HasImage: true } or CropControl))
         {
             return;
         }
@@ -74,7 +85,7 @@ public static class RotationManager
     private static void Turn(MainWindowViewModel vm, MainWindow mainWindow, Action<TabOrientation> turn)
     {
         var tab = vm.WindowTabs.ActiveTab.CurrentValue;
-        if (tab.CurrentView.Value is not (NavigableView { Viewer.HasImage: true } or CropControl))
+        if (tab.Gallery.IsGalleryExpanded.CurrentValue || tab.CurrentView.Value is not (NavigableView { Viewer.HasImage: true } or CropControl))
         {
             return;
         }
@@ -90,4 +101,10 @@ public static class RotationManager
                 DispatcherPriority.Background);
         }
     }
+
+    /// <summary>
+    /// Whether the active tab's gallery is expanded over the image.
+    /// </summary>
+    internal static bool IsGalleryExpanded(MainWindowViewModel vm) =>
+        vm.WindowTabs.ActiveTab.CurrentValue.Gallery.IsGalleryExpanded.CurrentValue;
 }

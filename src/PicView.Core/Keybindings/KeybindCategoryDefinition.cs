@@ -61,6 +61,16 @@ public static class KeybindCategoryDefinition
         StillImageActionNames.Contains(Canonicalize(action), StringComparer.Ordinal);
 
     /// <summary>
+    /// Whether <paramref name="action"/> zooms, turns or flips the shown image, which the expanded gallery
+    /// disallows since it covers the image.
+    /// </summary>
+    /// <remarks>A pattern rather than a lookup, since it runs on every Keybind and must not allocate.</remarks>
+    public static bool TransformsImage(string action) =>
+        Canonicalize(action) is Actions.ZoomIn or Actions.ZoomOut or Actions.ResetZoom or Actions.ResetZoomAndRotations
+            or Actions.RotateLeft or Actions.RotateRight or Actions.Rotate0 or Actions.Rotate90 or Actions.Rotate180
+            or Actions.Rotate270 or Actions.Flip;
+
+    /// <summary>
     /// Whether <paramref name="action"/> is a Window Action: its only effect is to open a window of its own, or
     /// bring it forward when it is open. Blocking Input Modes such as Crop let these run, since the window works
     /// outside the main view.

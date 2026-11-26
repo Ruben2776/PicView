@@ -1,4 +1,5 @@
 using Avalonia.Threading;
+using PicView.Avalonia.ImageTransformations;
 using PicView.Core.ViewModels;
 
 namespace PicView.Avalonia.Input;
@@ -17,9 +18,12 @@ public static class ViewerActions
 
     public static ValueTask ScrollToBottom(MainWindowViewModel vm) => OnUiThread(vm, ScrollToBottomOf);
 
-    public static ValueTask ZoomIn(MainWindowViewModel vm) => OnUiThread(vm, ZoomInOf);
+    // The expanded gallery covers the image, so it is not zoomed
+    public static ValueTask ZoomIn(MainWindowViewModel vm) =>
+        RotationManager.IsGalleryExpanded(vm) ? ValueTask.CompletedTask : OnUiThread(vm, ZoomInOf);
 
-    public static ValueTask ZoomOut(MainWindowViewModel vm) => OnUiThread(vm, ZoomOutOf);
+    public static ValueTask ZoomOut(MainWindowViewModel vm) =>
+        RotationManager.IsGalleryExpanded(vm) ? ValueTask.CompletedTask : OnUiThread(vm, ZoomOutOf);
 
     internal static void ScrollLine(IZoomScrollTarget? target, bool down) => target?.ScrollLine(down);
 

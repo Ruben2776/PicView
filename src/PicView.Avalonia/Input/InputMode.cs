@@ -103,5 +103,14 @@ public static class InputModeExtensions
         /// </summary>
         public bool DisallowsStillImageActions() =>
             mode is InputMode.Gallery or InputMode.MotionPhoto or InputMode.AnimatedImage;
+
+        /// <summary>
+        /// Whether the non-blocking <paramref name="mode"/> disallows the ordinary <paramref name="action"/>: an
+        /// Action that needs a still image outside Normal, and, in the expanded gallery that covers the image, the
+        /// zoom, turn and flip Actions.
+        /// </summary>
+        public bool Disallows(string action) =>
+            (mode.DisallowsStillImageActions() && KeybindCategoryDefinition.NeedsStillImage(action)) ||
+            (mode is InputMode.Gallery && KeybindCategoryDefinition.TransformsImage(action));
     }
 }

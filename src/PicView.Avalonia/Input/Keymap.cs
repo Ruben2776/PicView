@@ -1,4 +1,5 @@
 using System.Collections.Frozen;
+using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using Avalonia.Input;
@@ -171,7 +172,8 @@ public sealed class Keymap : IEquatable<Keymap>
 
     /// <summary>
     /// Resolves <paramref name="keybind"/> as it acts in <paramref name="mode"/>: a blocking Input Mode lets only
-    /// the ordinary Actions it handles run, and a non-blocking one disallows Actions that need a still image.
+    /// the ordinary Actions it handles run, and a non-blocking one disallows the Actions it cannot run, such as those
+    /// that need a still image.
     /// </summary>
     public KeymapResolution Resolve(Keybind keybind, InputMode mode)
     {
@@ -181,9 +183,7 @@ public sealed class Keymap : IEquatable<Keymap>
             return resolution.Value is { } action && mode.Allows(action) ? resolution : KeymapResolution.None;
         }
 
-        return mode.DisallowsStillImageActions() && KeybindCategoryDefinition.NeedsStillImage(resolution.Value ?? string.Empty)
-            ? KeymapResolution.None
-            : resolution;
+        return resolution.Value is { } ordinary && mode.Disallows(ordinary) ? KeymapResolution.None : resolution;
     }
 
     public KeymapResolution Resolve(Keybind keybind) =>
@@ -398,7 +398,7 @@ public sealed class Keymap : IEquatable<Keymap>
             writer.WriteEndObject();
         }
 
-        return System.Text.Encoding.UTF8.GetString(stream.ToArray());
+        return Encoding.UTF8.GetString(stream.ToArray());
     }
 
     private static void WriteEntries(Utf8JsonWriter writer, FrozenDictionary<Keybind, string> layer)

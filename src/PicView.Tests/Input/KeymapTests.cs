@@ -181,6 +181,31 @@ public class KeymapTests
         Assert.Equal(KeymapResolution.Action("RotateRight"), keymap.Resolve(new Keybind(Key.R), mode));
     }
 
+    [Theory]
+    [InlineData("ZoomIn")]
+    [InlineData("ZoomOut")]
+    [InlineData("ResetZoom")]
+    [InlineData("ResetZoomAndRotations")]
+    [InlineData("RotateLeft")]
+    [InlineData("RotateRight")]
+    [InlineData("Rotate90")]
+    [InlineData("Flip")]
+    public void Resolve_InGallery_DisallowsZoomTurnAndFlip(string action)
+    {
+        var keymap = Keymap.FromJson(null, Defaults).Assign(new Keybind(Key.F9), action);
+
+        Assert.Equal(KeymapResolution.None, keymap.Resolve(new Keybind(Key.F9), InputMode.Gallery));
+        Assert.Equal(KeymapResolution.Action(action), keymap.Resolve(new Keybind(Key.F9), InputMode.Normal));
+    }
+
+    [Fact]
+    public void Resolve_InGallery_ResolvesOtherActions()
+    {
+        var keymap = Keymap.FromJson(null, Defaults);
+
+        Assert.Equal(KeymapResolution.Action("Next"), keymap.Resolve(new Keybind(Key.Right), InputMode.Gallery));
+    }
+
     [Fact]
     public void Resolve_InNormal_AllowsActionsThatNeedAStillImage()
     {
