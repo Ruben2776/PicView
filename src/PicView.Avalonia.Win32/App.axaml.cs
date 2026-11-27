@@ -107,6 +107,11 @@ public class App : Application, IPlatformSpecificService
         return FileListRetriever.RetrieveFiles(fileInfo, new FileOrdering(order, CompareStrings));
     }
 
+    /// <summary>
+    /// How Windows Explorer's open windows show a folder (ADR-0050).
+    /// </summary>
+    public IFolderOrderSource FolderOrders { get; } = new PicView.Core.WindowsNT.FileSorting.ExplorerFolderOrder();
+
     public int CompareStrings(string str1, string str2)
     {
         return NativeMethods.StrCmpLogicalW(str1, str2);

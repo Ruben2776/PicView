@@ -10,6 +10,25 @@ The Load asks where it lists: `TabLoad.ListAroundAsync` for a file and for a rel
 
 Follow Explorer Sorting is an App Setting, `Sorting.FollowExplorerSorting` in the settings file, on by default, so a settings file from before it follows. It publishes its changes as `GlobalSettingsViewModel.IsFollowingExplorerSorting` (ADR-0020). Turned on, `DirectoryOrders.FollowAllAsync` asks for every folder a tab lists now. Turned off, every directory keeps the order it has.
 
+## On Windows
+
+`ExplorerFolderOrder` (`PicView.Core.WindowsNT/FileSorting`) is the Windows source, offered by the Win32 app's platform service. It enumerates the shell's open windows (`IShellWindows`), and for each one whose folder view is on the directory reads the first sort column with its direction and the group column with its direction (`IFolderView2::GetSortColumns`, `GetGroupBy`). The folder a view shows is compared by its file system path, without case, so a search result, a library or another path to the same folder is not a match.
+
+`ExplorerSort` turns what was read into a `FileOrder`, and is the part that is unit tested:
+
+| Explorer column | File Order field |
+|---|---|
+| Name | Name |
+| Size | File size |
+| Date modified | Last write time |
+| Date created | Creation time |
+| Date accessed | Last access time |
+| Type, Date, Date taken and every other column | none: not followed |
+
+A view grouped by another column than it is sorted by, or with its groups in the other direction, is not followed, since the groups come first and no one field and direction gives that order. When several views show the folder, as two Explorer windows or two Explorer tabs do, the folder is followed only when every one of them gives the same order.
+
+The interfaces are called through their vtables with function pointers. `IShellWindows` is an `IDispatch` interface, which source-generated COM does not declare, and function pointers need no marshalling code under Native AOT.
+
 ## Considered Options
 
 - **Take the literal item order of the Explorer view.** It would match Explorer for any column and any grouping. No `FileOrdering` reproduces such a list, so a created or renamed file could only be appended, as under Random, and a re-sort could not restore it (ADR-0039's guarantee). A `FileOrder` keeps inserts where a sort would put them, at the cost of the columns it has no field for.
@@ -28,4 +47,10 @@ Follow Explorer Sorting is an App Setting, `Sorting.FollowExplorerSorting` in th
 - The answer is only as good as the source's mapping: a view the source cannot express as a `FileOrder` gives null, and the folder opens as if no window showed it.
 - `LoadOptions.FollowedOrder` is the one way a caller that lists for the Load can pass the order on; files given without it are of a directory that starts with the default.
 - `WindowSettingRecordReadsTests` lets `Sorting.FollowExplorerSorting` be read anywhere, as `IncludeSubDirectories` is: both are App Settings of their own and not the Default File Order.
-- Tested with a fake `IFolderOrderSource`. `QuickLoad`'s two asks at App Start are not covered by a test.
+- Explorer's Type column sorts by the type's name, so `.jpg` and `.jpeg` are one type; mapping it to the Extension field would give an order that is nearly Explorer's, which reads as a bug, so it is left out.
+- Telling which Explorer tab is in front needs a call that only works from a single-threaded apartment and rests on undocumented behaviour, so the views are required to agree instead of the front one winning.
+- Only the first sort column is read, and files that tie on it go by name, then by path (ADR-0039), which may not be how Explorer breaks the tie.
+- The item is in the sort submenu of the main context menu and of the title bar menu, hidden where no file manager is asked (`GlobalSettingsViewModel.CanFollowExplorerSorting`), and absent from the macOS native menu. `ToggleFollowExplorerSorting` is its Action, with no default key.
+- The other languages show the English text for the item until it is translated; Danish has its own.
+- Tested with a fake `IFolderOrderSource`, and `ExplorerSort` with views given as data. `QuickLoad`'s two asks at App Start are not covered by a test.
+- The live read was checked once on Windows 11 against one Explorer window sorted by name, from the test host and from a pool thread. Other columns, grouped views, several Explorer tabs on one folder, an elevated PicView and the Native AOT build were not run.

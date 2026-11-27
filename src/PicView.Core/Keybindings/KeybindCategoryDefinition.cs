@@ -222,6 +222,7 @@ public static class KeybindCategoryDefinition
         (Actions.SortFilesRandomly, t.Random ?? string.Empty),
         (Actions.SortFilesAscending, t.Ascending ?? string.Empty),
         (Actions.SortFilesDescending, t.Descending ?? string.Empty),
+        (Actions.ToggleFollowExplorerSorting, t.FollowExplorerSorting ?? string.Empty),
     ];
 
     public static List<(string FunctionName, string DisplayName)> GetCopyEntries(LanguageModel t) =>

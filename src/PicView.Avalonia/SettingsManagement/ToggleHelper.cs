@@ -80,6 +80,9 @@ public static class ToggleHelper
     public static ValueTask ToggleSubdirectories(MainWindowViewModel vm) =>
         Toggle(vm.GlobalSettings.IsIncludingSubdirectories);
 
+    public static ValueTask ToggleFollowExplorerSorting(MainWindowViewModel vm) =>
+        Toggle(vm.GlobalSettings.IsFollowingExplorerSorting);
+
     public static ValueTask ToggleBottomToolbar(MainWindowViewModel vm) =>
         Toggle(vm.WindowSettings, static s => s.ShowBottomBar);
 

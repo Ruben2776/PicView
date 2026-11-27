@@ -436,6 +436,50 @@ public class AppLifecycleTests : IAsyncDisposable
             settings.ExpandedGalleryDisplayMode.Value, settings.RowsWasLastUsedDisplayMode);
 
     [AvaloniaFact]
+    public async Task FollowExplorerSortingAction_TogglesTheSetting_AndTurnedOnAsksTheFileManagerForEveryListedFolder()
+    {
+        var fileManager = new RecordingFileManager();
+        _core.InitializeNavigation(
+            TestTabServices.For(_core.SharedCache, null,
+                new RecordingWatcher(), platform: new NoPlatform(),
+                globalSettings: _core.GlobalSettings) with
+            {
+                Orders = new DirectoryOrders(fileManager)
+            },
+            new NavigationService());
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        await WaitUntilOpenedAsync(app.MainWindows.Open[0]);
+        var vm = ViewModelOf(app.MainWindows.Open[0]);
+        // A folder the tab lists, as after a Load there
+        var folder = DirectoryOrders.KeyOf(Path.GetTempPath())!;
+        vm.WindowTabs.ActiveTab.Value.ListDirectory(folder);
+        Assert.True(Settings.Sorting.FollowExplorerSorting);
+
+        await vm.ActionRunner!.Run(Actions.ToggleFollowExplorerSorting);
+
+        Assert.False(Settings.Sorting.FollowExplorerSorting);
+        Assert.False(_core.GlobalSettings.IsFollowingExplorerSorting.Value);
+        Assert.Empty(fileManager.Asked);
+
+        await vm.ActionRunner.Run(Actions.ToggleFollowExplorerSorting);
+
+        Assert.True(Settings.Sorting.FollowExplorerSorting);
+        await WaitUntilAsync(() => fileManager.Asked.Contains(folder));
+    }
+
+    private sealed class RecordingFileManager : IFolderOrderSource
+    {
+        public System.Collections.Concurrent.ConcurrentQueue<string> Asked { get; } = new();
+
+        public FileOrder? OrderOf(string directory)
+        {
+            Asked.Enqueue(directory);
+            return null;
+        }
+    }
+
+    [AvaloniaFact]
     public async Task StartAsync_SubdirectoriesToggledOnTheStartUpMenu_WritesAndRestartsTheWatches()
     {
         var watcher = new RecordingWatcher();

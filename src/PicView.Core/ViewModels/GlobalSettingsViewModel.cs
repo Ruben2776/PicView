@@ -26,6 +26,11 @@ public class GlobalSettingsViewModel
     /// </summary>
     public BindableReactiveProperty<bool> IsFollowingExplorerSorting { get; }
 
+    /// <summary>
+    /// Only Windows has a file manager PicView asks, so the item is hidden elsewhere.
+    /// </summary>
+    public bool CanFollowExplorerSorting { get; } = OperatingSystem.IsWindows();
+
     public BindableReactiveProperty<bool> IsFileHistoryEnabled { get; }
 
     public BindableReactiveProperty<bool> IsShowingFullPathInTitleBar { get; }

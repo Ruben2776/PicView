@@ -816,6 +816,18 @@
                             Theme="{StaticResource MainBg}"
                             ToggleType="Radio" />
 
+                        <Separator IsVisible="{Binding GlobalSettings.CanFollowExplorerSorting}" />
+
+                        <!--  Follow Windows Explorer sorting  -->
+                        <customControls:StyledMenuItem
+                            Command="{Binding RunActionCommand}"
+                            CommandParameter="{x:Static keybindings:Actions.ToggleFollowExplorerSorting}"
+                            Header="{Binding Translation.FollowExplorerSorting.Value, Mode=OneWay}"
+                            IsChecked="{Binding GlobalSettings.IsFollowingExplorerSorting.Value, Mode=OneWay}"
+                            IsVisible="{Binding GlobalSettings.CanFollowExplorerSorting}"
+                            Theme="{StaticResource MainBg}"
+                            ToggleType="CheckBox" />
+
                     </customControls:StyledMenuItem>
                 </customControls:StyledMenuItem>
 

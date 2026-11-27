@@ -203,6 +203,18 @@
                     IsChecked="{CompiledBinding !WindowTabs.IsAscending.Value,
                                                 Mode=OneWay}"
                     ToggleType="Radio" />
+
+                <Separator IsVisible="{CompiledBinding GlobalSettings.CanFollowExplorerSorting}" />
+
+                <!--  Follow Windows Explorer sorting  -->
+                <customControls:StyledMenuItem
+                    Command="{CompiledBinding RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.ToggleFollowExplorerSorting}"
+                    Header="{CompiledBinding Translation.FollowExplorerSorting.Value,
+                                             Mode=OneWay}"
+                    IsChecked="{Binding GlobalSettings.IsFollowingExplorerSorting.Value, Mode=OneWay}"
+                    IsVisible="{CompiledBinding GlobalSettings.CanFollowExplorerSorting}"
+                    ToggleType="CheckBox" />
             </customControls:StyledMenuItem>
 
             <Separator />

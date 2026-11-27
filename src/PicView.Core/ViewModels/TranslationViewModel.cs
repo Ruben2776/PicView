@@ -153,6 +153,7 @@ public class TranslationViewModel
         FocalLength.Value = t.FocalLength;
         FocalLength35mm.Value = t.FocalLength35mm;
         Folder.Value = t.Folder;
+        FollowExplorerSorting.Value = t.FollowExplorerSorting;
         Forward.Value = t.Forward;
         Fstop.Value = t.Fstop;
         Fullscreen.Value = t.Fullscreen;
@@ -586,6 +587,7 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> FocalLength { get; } = new();
     public BindableReactiveProperty<string?> FocalLength35mm { get; } = new();
     public BindableReactiveProperty<string?> Folder { get; } = new();
+    public BindableReactiveProperty<string?> FollowExplorerSorting { get; } = new();
     public BindableReactiveProperty<string?> Forward { get; } = new();
     public BindableReactiveProperty<string?> Fstop { get; } = new();
     public BindableReactiveProperty<string?> FullPath { get; } = new();

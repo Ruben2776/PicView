@@ -196,6 +196,7 @@ public class LanguageModel
     public string? FocalLength { get; set; }
     public string? FocalLength35mm { get; set; }
     public string? Folder { get; set; }
+    public string? FollowExplorerSorting { get; set; }
     public string? Forward { get; set; }
     public string? Frame { get; set; }
     public string? Fstop { get; set; }
