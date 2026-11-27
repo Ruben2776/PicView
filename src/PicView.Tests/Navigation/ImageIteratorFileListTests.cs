@@ -283,7 +283,7 @@ public class ImageIteratorFileListTests : IDisposable
     }
 
     [Fact]
-    public void Insert_ListMadeWithOneOrder_UsesThatOrder_WhateverTheWindowSaysNow()
+    public void Insert_ListMadeWithOneOrder_UsesThatOrder_WhateverTheDefaultSaysNow()
     {
         var (folder, files) = CreateFiles(("a.jpg", 30, Written), ("b.jpg", 10, Written), ("c.jpg", 20, Written),
             ("d.jpg", 15, Written));
@@ -291,14 +291,13 @@ public class ImageIteratorFileListTests : IDisposable
         {
             var tab = new TabViewModel(new MainWindowViewModel(null!, null!, null!, null!),
                 TestTabServices.For(_cache, null));
-            var window = tab.CurrentWindowSettings.CurrentValue!;
-            window.FileOrder.Value = new FileOrder(SortFilesBy.FileSize, true);
-            // Not the tab's own iterator, which follows its window's order and sorts again when it changes
+            TestOrderings.SetDefault(SortFilesBy.FileSize);
+            // Not the tab's own iterator, which is sorted again when its directory's order changes
             var iterator = new ImageIterator(_cache, TestTabServices.NoThumbnails(_cache), tab);
-            // Listed in the window's order, which the list keeps without being told it
+            // Listed in the order the tab has now, which the list keeps without being told it
             iterator.Initialize(tab.CurrentOrdering().Sort(files.Take(3)), 0);
 
-            window.FileOrder.Value = new FileOrder(SortFilesBy.Name, false);
+            TestOrderings.SetDefault(SortFilesBy.Name, false);
             var index = iterator.Insert(Named(files, "d.jpg"));
 
             Assert.Equal(1, index);

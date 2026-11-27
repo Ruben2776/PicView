@@ -48,17 +48,7 @@ public class TabOverviewViewModel
     public TabOverviewViewModel(MainWindowViewModel parentVm, TabViewModel? firstTab = null)
     {
         _parentVm = parentVm;
-        // Made before the window's tabs, which are made with it
-        _fileOrder = parentVm?.WindowSettings.FileOrder ??
-                     new BindableReactiveProperty<FileOrder>(FileOrder.FromAppSettings(Settings));
-        IsSortedByName = IsSortedBy(SortFilesBy.Name);
-        IsSortedByFileSize = IsSortedBy(SortFilesBy.FileSize);
-        IsSortedByCreationTime = IsSortedBy(SortFilesBy.CreationTime);
-        IsSortedByExtension = IsSortedBy(SortFilesBy.Extension);
-        IsSortedByLastAccessTime = IsSortedBy(SortFilesBy.LastAccessTime);
-        IsSortedByLastWriteTime = IsSortedBy(SortFilesBy.LastWriteTime);
-        IsSortedByRandomization = IsSortedBy(SortFilesBy.Random);
-        IsAscending = _fileOrder.Select(static order => order.Ascending).ToReadOnlyBindableReactiveProperty();
+        _orders = parentVm?.Core?.Services?.Orders ?? new DirectoryOrders();
 
         if (firstTab is null)
         {
@@ -75,6 +65,22 @@ public class TabOverviewViewModel
             ActiveTab = new BindableReactiveProperty<TabViewModel>(firstTab);
         }
         ActiveTab.Value.IsSelected = true;
+
+        // The order of the directory the active tab lists, again when the tab, its directory or that directory's order
+        // changes. A tab that lists nothing has the Default File Order
+        _fileOrder = ActiveTab
+            .Select(static Observable<string?> (tab) => tab.ListedDirectory)
+            .Switch()
+            .CombineLatest(_orders.Changed.Prepend(Unit.Default), (directory, _) => _orders.OrderOf(directory))
+            .ToReadOnlyReactiveProperty(_orders.OrderOf(ActiveTab.Value.ListedDirectory.CurrentValue));
+        IsSortedByName = IsSortedBy(SortFilesBy.Name);
+        IsSortedByFileSize = IsSortedBy(SortFilesBy.FileSize);
+        IsSortedByCreationTime = IsSortedBy(SortFilesBy.CreationTime);
+        IsSortedByExtension = IsSortedBy(SortFilesBy.Extension);
+        IsSortedByLastAccessTime = IsSortedBy(SortFilesBy.LastAccessTime);
+        IsSortedByLastWriteTime = IsSortedBy(SortFilesBy.LastWriteTime);
+        IsSortedByRandomization = IsSortedBy(SortFilesBy.Random);
+        IsAscending = _fileOrder.Select(static order => order.Ascending).ToReadOnlyBindableReactiveProperty();
         Tabs.Value.CollectionChanged += (_, _) => _isTabStripShown.Value = Tabs.Value.Count > 1;
     }
 
@@ -512,8 +518,12 @@ public class TabOverviewViewModel
 
     #region Sort
 
-    // The window's File Order, or this overview's own, seeded from the record, for an overview without a window
-    private readonly BindableReactiveProperty<FileOrder> _fileOrder;
+    // The File Order of each Listed Directory, which every Main Window shares; this overview's own without services,
+    // where no tab is listed in it and each follows the Default File Order
+    private readonly DirectoryOrders _orders;
+
+    // The File Order of the directory the active tab lists
+    private readonly ReadOnlyReactiveProperty<FileOrder> _fileOrder;
 
     // Using converters fails on macOS NativeMenu, so each check mark is a bool of its own, derived from the order
     public IReadOnlyBindableReactiveProperty<bool> IsSortedByName { get; }
@@ -529,30 +539,37 @@ public class TabOverviewViewModel
         _fileOrder.Select(order => order.By == by).ToReadOnlyBindableReactiveProperty();
 
     /// <summary>
-    /// Sorts this window's files by <paramref name="sortOrder"/>: sets the window's File Order, which every tab of this
-    /// window follows, and no tab of another. Asked for Random again, the files are shuffled again.
+    /// Sorts the files of the directory the active tab lists by <paramref name="sortOrder"/>: sets that directory's
+    /// File Order, which every tab that lists it follows, in any Main Window, and no tab of another directory. It also
+    /// becomes the Default File Order. Asked for Random again, the files are shuffled again. A tab that lists nothing
+    /// sets the Default File Order alone.
     /// </summary>
-    /// <returns>A task that ends once this window's tabs have sorted their files again.</returns>
+    /// <returns>A task that ends once every tab that lists the directory has sorted its files again.</returns>
     public ValueTask SortAsync(SortFilesBy sortOrder)
     {
-        var order = _fileOrder.Value with { By = sortOrder };
-        return SortAsync(order, reshuffle: order == _fileOrder.Value && sortOrder is SortFilesBy.Random);
+        var current = CurrentOrder();
+        var order = current with { By = sortOrder };
+        return SortAsync(order, reshuffle: order == current && sortOrder is SortFilesBy.Random);
     }
 
     /// <summary>
-    /// Sorts this window's files ascending or descending: sets the window's File Order, as
+    /// Sorts the files of the directory the active tab lists ascending or descending, as
     /// <see cref="SortAsync(SortFilesBy)"/> does.
     /// </summary>
-    /// <returns>A task that ends once this window's tabs have sorted their files again.</returns>
+    /// <returns>A task that ends once every tab that lists the directory has sorted its files again.</returns>
     public ValueTask SortAsync(bool ascending) =>
-        SortAsync(_fileOrder.Value with { Ascending = ascending }, reshuffle: false);
+        SortAsync(CurrentOrder() with { Ascending = ascending }, reshuffle: false);
+
+    // Read from the directory, not the check marks, which follow it and may not have heard yet
+    private FileOrder CurrentOrder() => _orders.OrderOf(ActiveTab.Value.ListedDirectory.CurrentValue);
 
     private async ValueTask SortAsync(FileOrder order, bool reshuffle)
     {
-        // Each tab that follows the order starts sorting as it is set, so asking it again joins that run
-        _fileOrder.Value = order;
-        foreach (var tab in Tabs.Value.ToArray())
+        var tab = ActiveTab.Value;
+        await _orders.SortAsync(tab.ListedDirectory.CurrentValue, order, reshuffle).ConfigureAwait(false);
+        if (tab.Services is null)
         {
+            // A tab without services is listed nowhere and follows the Default File Order, which is set now
             await tab.ResortAsync(reshuffle).ConfigureAwait(false);
         }
     }

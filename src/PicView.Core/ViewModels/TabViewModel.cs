@@ -97,14 +97,54 @@ public class TabViewModel : IDisposable
             .Select(settings => settings is null ? Observable.Return(withoutWindow) : settings.Follow(pick))
             .Switch();
 
+    private readonly ReactiveProperty<string?> _listedDirectory = new(null);
+
     /// <summary>
-    /// The ordering this tab lists with now: its window's File Order (the record's for a tab without a window) with its
-    /// platform's name comparison (ordinal for a tab without services).
+    /// The Listed Directory: the directory this tab's Load listed its files from, or the archive it opened, by the
+    /// name <see cref="DirectoryOrders"/> keeps its File Order under. Null for a tab that lists nothing. Only the
+    /// tab's Load and its folder changes set it, with the list.
     /// </summary>
-    internal FileOrdering CurrentOrdering()
+    public ReadOnlyReactiveProperty<string?> ListedDirectory => _listedDirectory;
+
+    /// <summary>
+    /// Records the directory the tab's files were listed from, which the tab shares its File Order with every other
+    /// tab that lists it. Null for a tab that lists nothing any more.
+    /// </summary>
+    /// <param name="carried">The order a directory no tab listed starts with, as a renamed folder keeps its own;
+    /// the Default File Order otherwise.</param>
+    internal void ListDirectory(string? directory, FileOrder? carried = null)
     {
-        // The record may not be loaded yet for a tab without a window
-        var order = _currentWindowSettings.CurrentValue?.FileOrder.Value ?? FileOrder.FromAppSettings(Settings);
+        var previous = _listedDirectory.CurrentValue;
+        if (Services?.Orders is not { } orders)
+        {
+            _listedDirectory.Value = DirectoryOrders.KeyOf(directory);
+            return;
+        }
+
+        if (directory is null)
+        {
+            orders.Leave(this, previous);
+            _listedDirectory.Value = null;
+            return;
+        }
+
+        _listedDirectory.Value = orders.Enter(this, directory, previous, carried);
+    }
+
+    /// <summary>
+    /// The ordering this tab lists with now: the File Order of its Listed Directory (the Default File Order for a tab
+    /// that lists nothing) with its platform's name comparison (ordinal for a tab without services).
+    /// </summary>
+    internal FileOrdering CurrentOrdering() => OrderingFor(_listedDirectory.CurrentValue);
+
+    /// <summary>
+    /// The ordering a Load of this tab lists <paramref name="directory"/> with: that directory's File Order with the
+    /// tab's name comparison.
+    /// </summary>
+    internal FileOrdering OrderingFor(string? directory)
+    {
+        // The record may not be loaded yet for a tab without services
+        var order = Services?.Orders.OrderOf(directory) ?? FileOrder.FromAppSettings(Settings);
         // A tab's services may lack a platform in tests, as its Load allows
         Func<string, string, int> compareNames = Services?.Platform is { } platform
             ? platform.CompareStrings
@@ -814,7 +854,7 @@ public class TabViewModel : IDisposable
     private bool _isPairCheckRequested;
 
     /// <summary>
-    /// The re-sort that runs now, or the last one, which ends once the tab's files are in its window's File Order.
+    /// The re-sort that runs now, or the last one, which ends once the tab's files are in its directory's File Order.
     /// </summary>
     internal Task Resorting
     {
@@ -828,7 +868,7 @@ public class TabViewModel : IDisposable
     }
 
     /// <summary>
-    /// Sorts the files this tab browses into its window's File Order in memory, off the caller's thread, keeping the
+    /// Sorts the files this tab browses into its directory's File Order in memory, off the caller's thread, keeping the
     /// Shown File; with a pair shown, the pair at its new place is shown, without a Load. A tab without files changes
     /// nothing, as its next load lists in that order. A tab showing a Single Image sorts its files and shows nothing
     /// again. Asked again while a re-sort runs, that run sorts once more when it ends, so any number of changes
@@ -962,9 +1002,9 @@ public class TabViewModel : IDisposable
     }
 
     /// <summary>
-    /// Sorts the files again when a load listed them in an order the tab's window no longer has, as when the window's
-    /// order changed, or the tab moved to another window, while the load listed. Called by the tab's Load after it
-    /// gives the iterator a list.
+    /// Sorts the files again when a load listed them in an order their directory no longer has, as when it was sorted,
+    /// or first listed by a tab while the Default File Order changed, while the load listed. Called by the tab's Load
+    /// after it gives the iterator a list and records the Listed Directory.
     /// </summary>
     /// <param name="showedPair">Whether the load showed what it listed, so a pair it showed is checked against the
     /// list, which a re-sort may have changed after the load chose the pair.</param>
@@ -981,15 +1021,6 @@ public class TabViewModel : IDisposable
         }
     }
 
-    // Follows the File Order of the window the tab is in, re-sorting when it is not the order the files are in
-    private void FollowFileOrder(FileOrder order)
-    {
-        if (ImageIterator is { Files.Count: > 0 } iterator && iterator.Ordering.Order != order)
-        {
-            _ = ResortAsync();
-        }
-    }
-
     /// <summary>
     /// Whether a pair is shown (the window's Side-by-Side or this tab's comparing) and whether the window loops, as the
     /// window the tab is in publishes them, or the record's settings for a tab without a window.
@@ -1002,7 +1033,8 @@ public class TabViewModel : IDisposable
     /// <summary>
     /// Follows the settings the tab reads, once: the looping of the window the tab is in derives Next and Prev again,
     /// showing a pair (the window's Side-by-Side or this tab's comparing) derives them and has the shown file iterated
-    /// to again, including subdirectories lists the folder again, and the window's File Order sorts its files again.
+    /// to again, and including subdirectories lists the folder again. The File Order is not followed here: the tab's
+    /// Listed Directory has it, and <see cref="DirectoryOrders"/> sorts the tab's files again when it changes.
     /// The window's settings switch to the next window's when the tab moves there, which catches up in the same way.
     /// </summary>
     private void FollowSettings()
@@ -1036,8 +1068,7 @@ public class TabViewModel : IDisposable
                 {
                     await Task.Run(() => Load.LoadAsync(file.FullName, new LoadOptions(Relist: true)).AsTask(), x).ConfigureAwait(false);
                 }
-            }),
-            FollowWindowSetting(static w => w.FileOrder, FileOrder.FromAppSettings(Settings)).Subscribe(FollowFileOrder));
+            }));
     }
 
     /// <summary>
@@ -1502,6 +1533,8 @@ public class TabViewModel : IDisposable
         _fileWatcherService?.Unwatch(this);
         ImageIterator?.Dispose();
         ImageIterator = null;
+        // No files, so no directory is listed, and its File Order goes with its last tab
+        ListDirectory(null);
         FileInfo.Value = null;
         SecondaryFileInfo.Value = null;
         SecondaryModel = null;
@@ -1521,6 +1554,7 @@ public class TabViewModel : IDisposable
         // Disposed by now, so this lets go of what the tab showed and holds nothing
         HoldShown();
         ImageIterator?.Dispose();
+        Services?.Orders.Leave(this, _listedDirectory.CurrentValue);
         _archiveStateSubscription?.Dispose();
         _settingsSubscription?.Dispose();
         Archives.Cleanup();

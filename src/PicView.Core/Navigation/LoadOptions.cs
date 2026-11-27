@@ -31,7 +31,11 @@ namespace PicView.Core.Navigation;
 /// </param>
 /// <param name="ListedWith">
 /// The ordering <paramref name="Files"/> were listed with, which the tab's file list keeps, so the tab sorts them again
-/// when its window's order changed since. Null for files listed in the tab's ordering when the Load gives them to it.
+/// when their directory's order changed since. Null for files in the order of the directory they are of.
+/// </param>
+/// <param name="ListedDirectory">
+/// The directory <paramref name="Files"/> were listed from, which becomes the tab's Listed Directory. Null for the
+/// file's own folder.
 /// </param>
 [StructLayout(LayoutKind.Auto)]
 public readonly record struct LoadOptions(
@@ -41,7 +45,8 @@ public readonly record struct LoadOptions(
     ImageModel? Model = null,
     IReadOnlyList<FileInfo>? Files = null,
     ImageModel? SecondaryModel = null,
-    FileSorting.FileOrdering? ListedWith = null);
+    FileSorting.FileOrdering? ListedWith = null,
+    string? ListedDirectory = null);
 
 /// <summary>
 /// How a <see cref="TabLoad"/> ended.

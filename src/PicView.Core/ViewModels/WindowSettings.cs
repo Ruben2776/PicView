@@ -27,7 +27,7 @@ public sealed class WindowSettings : IDisposable
 
     private readonly TranslationViewModel? _translations;
 
-    private WindowSettings(bool isTopMost, bool isStayingCentered, bool isZoomResizingWindow, RememberedWindowMode startingMode, NormalBounds bounds, FileOrder fileOrder,
+    private WindowSettings(bool isTopMost, bool isStayingCentered, bool isZoomResizingWindow, RememberedWindowMode startingMode, NormalBounds bounds,
         Display display, WindowGallerySettings gallery, TranslationViewModel? translations)
     {
         _translations = translations;
@@ -52,7 +52,6 @@ public sealed class WindowSettings : IDisposable
         BottomBarText = TextOf(ShowBottomBar, translations?.HideBottomToolbar, translations?.ShowBottomToolbar);
         HoverBarText = TextOf(ShowHoverBar, translations?.HideHoverNavigationBar, translations?.ShowHoverNavigationBar);
 
-        FileOrder = new BindableReactiveProperty<FileOrder>(fileOrder);
         IsTopMost = new BindableReactiveProperty<bool>(isTopMost);
         IsStayingCentered = new BindableReactiveProperty<bool>(isStayingCentered);
         IsZoomResizingWindow = new BindableReactiveProperty<bool>(isZoomResizingWindow);
@@ -121,11 +120,6 @@ public sealed class WindowSettings : IDisposable
     public BindableReactiveProperty<bool> IsZoomResizingWindow { get; }
 
     /// <summary>
-    /// The order this window's tabs list their files in.
-    /// </summary>
-    public BindableReactiveProperty<FileOrder> FileOrder { get; }
-
-    /// <summary>
     /// The mode the window starts in. Never changes; the live mode is the window's WindowModeState.
     /// </summary>
     public RememberedWindowMode StartingMode { get; }
@@ -154,7 +148,6 @@ public sealed class WindowSettings : IDisposable
             properties.ZoomResizesWindow,
             new RememberedWindowMode(properties.Fullscreen, properties.Maximized, properties.AutoFit),
             new NormalBounds(properties.Left, properties.Top, properties.Width, properties.Height),
-            FileSorting.FileOrder.FromRecord(record?.Sorting),
             new Display(scaling.ShowImageSideBySide, ui.Looping, scaling.ZoomToFit, zoom.ScrollEnabled, ui.ShowInterface,
                 ui.ShowBottomNavBar, ui.ShowHoverNavigationBar, ui.BgColorChoice, ui.IsConstrainBackgroundColorEnabled),
             WindowGallerySettings.FromRecord(record?.Gallery), translations);
@@ -175,7 +168,7 @@ public sealed class WindowSettings : IDisposable
     /// The settings of a window opened from this one's window, whose remembered mode is <paramref name="openerMode"/>.
     /// </summary>
     public WindowSettings CopyFor(RememberedWindowMode openerMode) =>
-        new(IsTopMost.Value, IsStayingCentered.Value, IsZoomResizingWindow.Value, openerMode, Bounds, FileOrder.Value,
+        new(IsTopMost.Value, IsStayingCentered.Value, IsZoomResizingWindow.Value, openerMode, Bounds,
             new Display(IsSideBySide.Value, IsLooping.Value, IsZoomedToFit.Value, IsScrollingEnabled.Value,
                 ShowInterface.Value, ShowBottomBar.Value, ShowHoverBar.Value, BackgroundChoice.Value,
                 IsConstrainingBackgroundColor.Value),
@@ -194,7 +187,6 @@ public sealed class WindowSettings : IDisposable
         properties.Top = Bounds.Top;
         properties.Width = Bounds.Width;
         properties.Height = Bounds.Height;
-        FileOrder.Value.StoreTo(record.Sorting ??= new Sorting());
 
         // Only the nine values: the rest of these groups are app-wide settings
         var ui = record.UIProperties ??= new UIProperties();
@@ -250,7 +242,6 @@ public sealed class WindowSettings : IDisposable
         IsTopMost.Dispose();
         IsStayingCentered.Dispose();
         IsZoomResizingWindow.Dispose();
-        FileOrder.Dispose();
         IsSideBySide.Dispose();
         IsLooping.Dispose();
         IsZoomedToFit.Dispose();

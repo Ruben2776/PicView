@@ -253,10 +253,13 @@ public class WindowInitializer(IWindowProvider provider, MainWindow mainWindow) 
         config.Load();
         // CurrentCore found this Main Window's view model above
         var opener = (MainWindowViewModel)mainWindow.DataContext!;
-        // Listed in the File Order this Main Window has as it opens the batch resize
-        var order = opener.WindowSettings.FileOrder.Value;
+        // Listed in the File Order of the directory it is pointed at
+        var orders = core.Services?.Orders;
         var batch = new BatchResizeViewModel(FilePicker.SelectDirectory, FilePicker.SelectFile,
-            file => core.PlatformService.GetFiles(file, order), core.PlatformService.LocateOnDisk,
+            file => core.PlatformService.GetFiles(file,
+                orders?.OrderOf(Directory.Exists(file.FullName) ? file.FullName : file.DirectoryName) ??
+                PicView.Core.FileSorting.DirectoryOrders.Default),
+            core.PlatformService.LocateOnDisk,
             config.WindowProperties ?? new BatchResizeWindowConfig.BatchResizeWindowProperties());
         // The files around what this Main Window shows
         if (opener.WindowTabs.ActiveTab.CurrentValue is { } tab)

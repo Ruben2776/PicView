@@ -38,6 +38,8 @@ internal sealed class FolderChanges(TabViewModel tab)
             return ValueTask.CompletedTask;
         }
 
+        FollowListedDirectory(oldFolder, newFolder);
+
         // The shown images are the same, only their paths changed
         if (tab.Model.FileInfo is { } shown &&
             FolderChange.PathInRenamedFolder(shown.FullName, oldFolder, newFolder) is { } shownPath)
@@ -51,6 +53,24 @@ internal sealed class FolderChanges(TabViewModel tab)
         }
 
         return ValueTask.CompletedTask;
+    }
+
+    // The Listed Directory under its new name keeps its File Order, which the first tab to follow takes there
+    private void FollowListedDirectory(string oldFolder, string newFolder)
+    {
+        if (tab.ListedDirectory.CurrentValue is not { } listed)
+        {
+            return;
+        }
+
+        var renamed = string.Equals(listed, Path.TrimEndingDirectorySeparator(oldFolder),
+            StringComparison.OrdinalIgnoreCase)
+            ? newFolder
+            : FolderChange.PathInRenamedFolder(listed, oldFolder, newFolder);
+        if (renamed is not null)
+        {
+            tab.ListDirectory(renamed, tab.CurrentOrdering().Order);
+        }
     }
 
     /// <summary>

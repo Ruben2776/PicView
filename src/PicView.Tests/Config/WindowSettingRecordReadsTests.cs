@@ -53,11 +53,10 @@ public partial class WindowSettingRecordReadsTests
         @"PicView.Avalonia.MacOS/Views/SettingsWindow.axaml.cs"
     ];
 
-    // Exempt because they seed the window's File Order from the record and store it back, or define the record;
+    // Exempt because they read the Default File Order from the record and write it back, or define the record;
     // a new entry needs the same reason. Paths are relative to src.
     private static readonly string[] SortingAllowedFiles =
     [
-        @"PicView.Core/ViewModels/WindowSettings.cs",
         @"PicView.Core/FileSorting/FileOrder.cs",
         @"PicView.Core/Config/AppSettings.cs",
         @"PicView.Core/Config/SettingsManager.cs"
@@ -199,12 +198,13 @@ public partial class WindowSettingRecordReadsTests
     }
 
     [Fact]
-    public void ProductionCode_ReadsTheSortOnlyThroughTheWindow()
+    public void ProductionCode_ReadsTheSortOnlyThroughTheDirectoryOrders()
     {
         var offenders = FindOffenders(OffendsSorting, SortingAllowedFiles);
 
         Assert.True(offenders.Count == 0,
-            "The sort field and direction belong to the window (WindowSettings.FileOrder), not the record:" +
+            "The sort field and direction belong to the Listed Directory (DirectoryOrders); the record holds only " +
+            "the Default File Order, read through FileOrder:" +
             Environment.NewLine + string.Join(Environment.NewLine, offenders));
     }
 

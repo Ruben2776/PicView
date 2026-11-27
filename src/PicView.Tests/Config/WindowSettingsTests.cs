@@ -142,66 +142,26 @@ public class WindowSettingsTests
     }
 
     [Fact]
-    public void FromRecord_ReadsTheFileOrder()
+    public void Store_LeavesTheSortingGroupAlone()
     {
+        // The File Order is its directory's and the Default File Order is written by a sort, so a closing window
+        // stores neither
         var record = GetDefaults();
-        record.Sorting = new Sorting { SortPreference = 5, Ascending = false };
-        using var settings = WindowSettings.FromRecord(record);
-        Assert.Equal(new FileOrder(SortFilesBy.LastWriteTime, false), settings.FileOrder.Value);
-    }
-
-    [Fact]
-    public void FromRecord_NoSorting_IsNameAscending()
-    {
-        using var fromNull = WindowSettings.FromRecord(null);
-        using var fromEmpty = WindowSettings.FromRecord(new AppSettings { Sorting = null });
-        Assert.Equal(new FileOrder(SortFilesBy.Name, true), fromNull.FileOrder.Value);
-        Assert.Equal(new FileOrder(SortFilesBy.Name, true), fromEmpty.FileOrder.Value);
-    }
-
-    [Fact]
-    public void Store_WritesTheFileOrderAndLeavesSubdirectoriesAlone()
-    {
-        var record = GetDefaults();
-        record.Sorting = new Sorting { IncludeSubDirectories = true, SortPreference = 0, Ascending = true };
+        record.Sorting = new Sorting { IncludeSubDirectories = true, SortPreference = 4, Ascending = false };
         using var settings = WindowSettings.FromRecord(GetDefaults());
-        settings.FileOrder.Value = new FileOrder(SortFilesBy.FileSize, false);
         settings.Store(record, default);
-        Assert.Equal(1, record.Sorting.SortPreference);
+        Assert.Equal(4, record.Sorting.SortPreference);
         Assert.False(record.Sorting.Ascending);
         Assert.True(record.Sorting.IncludeSubDirectories);
     }
 
     [Fact]
-    public void Store_RecordWithoutSorting_CreatesTheGroup()
+    public void Store_RecordWithoutSorting_CreatesNoGroup()
     {
         var record = new AppSettings { Sorting = null };
         using var settings = WindowSettings.FromRecord(null);
-        settings.FileOrder.Value = new FileOrder(SortFilesBy.Extension, true);
         settings.Store(record, default);
-        Assert.NotNull(record.Sorting);
-        Assert.Equal(3, record.Sorting.SortPreference);
-        Assert.True(record.Sorting.Ascending);
-    }
-
-    [Fact]
-    public void CopyFor_TakesTheOpenersFileOrder_AndIsIndependentAfterwards()
-    {
-        using var opener = WindowSettings.FromRecord(GetDefaults());
-        opener.FileOrder.Value = new FileOrder(SortFilesBy.CreationTime, false);
-        using var copy = opener.CopyFor(default);
-        Assert.Equal(new FileOrder(SortFilesBy.CreationTime, false), copy.FileOrder.Value);
-        copy.FileOrder.Value = new FileOrder(SortFilesBy.Random, true);
-        Assert.Equal(new FileOrder(SortFilesBy.CreationTime, false), opener.FileOrder.Value);
-    }
-
-    [Fact]
-    public void FileOrderChange_WritesNothingToTheRecord()
-    {
-        using var settings = WindowSettings.FromRecord(Settings);
-        var before = (Settings.Sorting!.SortPreference, Settings.Sorting.Ascending);
-        settings.FileOrder.Value = new FileOrder(SortFilesBy.LastAccessTime, !before.Ascending);
-        Assert.Equal(before, (Settings.Sorting.SortPreference, Settings.Sorting.Ascending));
+        Assert.Null(record.Sorting);
     }
 
     [Fact]

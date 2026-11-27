@@ -15,4 +15,10 @@ public sealed record TabServices(
     IFileWatcherService Watcher,
     IImageModelLoader ImageLoader,
     IPlatformSpecificService Platform,
-    GlobalSettingsViewModel GlobalSettings);
+    GlobalSettingsViewModel GlobalSettings)
+{
+    /// <summary>
+    /// The File Order of each Listed Directory, which the tabs made with these services share.
+    /// </summary>
+    public FileSorting.DirectoryOrders Orders { get; init; } = new();
+}

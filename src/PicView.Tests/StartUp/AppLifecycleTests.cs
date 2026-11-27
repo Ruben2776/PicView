@@ -1053,7 +1053,7 @@ public class AppLifecycleTests : IAsyncDisposable
     }
 
     [AvaloniaFact]
-    public async Task SortAction_InOneMainWindow_LeavesTheOtherAlone()
+    public async Task SortAction_OnATabThatListsNothing_SetsTheDefaultFileOrder_WhichEveryMainWindowShows()
     {
         Settings.Sorting.SortPreference = (int)SortFilesBy.Name;
         Settings.Sorting.Ascending = true;
@@ -1067,48 +1067,19 @@ public class AppLifecycleTests : IAsyncDisposable
         await firstVm.ActionRunner!.Run(Actions.SortFilesBySize);
         await firstVm.ActionRunner.Run(Actions.SortFilesDescending);
 
-        Assert.Equal(new FileOrder(SortFilesBy.FileSize, false), firstVm.WindowSettings.FileOrder.Value);
         Assert.True(firstVm.WindowTabs.IsSortedByFileSize.Value);
         Assert.False(firstVm.WindowTabs.IsSortedByName.Value);
         Assert.False(firstVm.WindowTabs.IsAscending.Value);
-        Assert.Equal(new FileOrder(SortFilesBy.Name, true), secondVm.WindowSettings.FileOrder.Value);
-        Assert.True(secondVm.WindowTabs.IsSortedByName.Value);
-        Assert.False(secondVm.WindowTabs.IsSortedByFileSize.Value);
-        Assert.True(secondVm.WindowTabs.IsAscending.Value);
-        Assert.Equal((int)SortFilesBy.Name, Settings.Sorting.SortPreference);
-        Assert.True(Settings.Sorting.Ascending);
-    }
-
-    [AvaloniaFact]
-    public async Task NewWindowFromASortedOne_StartsWithItsOrder_AndTheRecordIsUntouchedUntilClose()
-    {
-        Settings.Sorting.SortPreference = (int)SortFilesBy.Name;
-        Settings.Sorting.Ascending = true;
-        var app = CreateApp();
-        await app.StartAsync(settingsExists: true, []);
-        var first = app.MainWindows.Open[0];
-        var firstVm = ViewModelOf(first);
-        await firstVm.ActionRunner!.Run(Actions.SortFilesByExtension);
-        await firstVm.ActionRunner.Run(Actions.SortFilesDescending);
-
-        var opened = await app.MainWindows.OpenNewAsync(first);
-        var openedVm = ViewModelOf(opened);
-
-        Assert.Equal(new FileOrder(SortFilesBy.Extension, false), openedVm.WindowSettings.FileOrder.Value);
-        Assert.True(openedVm.WindowTabs.IsSortedByExtension.Value);
-        Assert.False(openedVm.WindowTabs.IsSortedByName.Value);
-        Assert.False(openedVm.WindowTabs.IsAscending.Value);
-        Assert.Equal((int)SortFilesBy.Name, Settings.Sorting.SortPreference);
-        Assert.True(Settings.Sorting.Ascending);
-
-        await app.MainWindows.CloseAsync(opened);
-
-        Assert.Equal((int)SortFilesBy.Extension, Settings.Sorting.SortPreference);
+        Assert.True(secondVm.WindowTabs.IsSortedByFileSize.Value);
+        Assert.False(secondVm.WindowTabs.IsSortedByName.Value);
+        Assert.False(secondVm.WindowTabs.IsAscending.Value);
+        // Written as the sort is made, not when a window closes
+        Assert.Equal((int)SortFilesBy.FileSize, Settings.Sorting.SortPreference);
         Assert.False(Settings.Sorting.Ascending);
     }
 
     [AvaloniaFact]
-    public async Task CloseAsync_StoresTheWindowsFileOrder()
+    public async Task CloseAsync_LeavesTheDefaultFileOrderASortSet()
     {
         Settings.Sorting.SortPreference = (int)SortFilesBy.Name;
         Settings.Sorting.Ascending = true;
@@ -1118,14 +1089,12 @@ public class AppLifecycleTests : IAsyncDisposable
         var second = await app.MainWindows.OpenNewAsync(first);
         await ViewModelOf(second).ActionRunner!.Run(Actions.SortFilesByLastWriteTime);
         await ViewModelOf(second).ActionRunner!.Run(Actions.SortFilesDescending);
-        var savesBeforeClose = _sharedFiles.Saves;
-
+        // The first window closes last, and a window stores no order of its own over the default
         await app.MainWindows.CloseAsync(second);
 
         Assert.Equal((int)SortFilesBy.LastWriteTime, Settings.Sorting.SortPreference);
         Assert.False(Settings.Sorting.Ascending);
-        Assert.Equal(savesBeforeClose + 1, _sharedFiles.Saves);
-        Assert.Equal(new FileOrder(SortFilesBy.Name, true), ViewModelOf(first).WindowSettings.FileOrder.Value);
+        Assert.True(ViewModelOf(first).WindowTabs.IsSortedByLastWriteTime.Value);
     }
 
     [AvaloniaFact]

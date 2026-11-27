@@ -574,7 +574,7 @@ public class TabLoadTests : IDisposable
 
     private static readonly string[] FivePagesInOrder = ["b.jpg", "d.jpg", "a.jpg", "e.jpg", "c.jpg"];
 
-    // Loads the five pages' archive into a tab whose window orders by the field given, once every page is listed. The
+    // Loads the five pages' archive into a tab while the Default File Order is the field given, once every page is listed. The
     // entries named in withoutTime have their modified time cleared
     private async Task<(TabViewModel Tab, RecordingEntryWriter Writer, LoadResult Result)> LoadFivePagesAsync(
         SortFilesBy by, bool ascending = true, string? startEntry = null, string[]? withoutTime = null)
@@ -587,7 +587,7 @@ public class TabLoadTests : IDisposable
 
         var writer = new RecordingEntryWriter();
         var tab = CreateTab(_testDirectory, writer: writer);
-        tab.CurrentWindowSettings.CurrentValue!.FileOrder.Value = new FileOrder(by, ascending);
+        TestOrderings.SetDefault(by, ascending);
         var result = await tab.Load.LoadAsync(zip, new LoadOptions(ArchiveEntry: startEntry));
         await WaitUntil(() => tab.Archives.State.Value is not ExtractionState.Extracting && writer.Written.Length >= 5,
             () => string.Join(", ", writer.Written));
@@ -1016,7 +1016,7 @@ public class TabLoadTests : IDisposable
         Settings.Navigation.IsRespectingArchiveStructure = false;
         var zip = await CreateZipWithEntriesAsync($"same_names_{ascending}.zip", TwoVolumes);
         var tab = CreateTab(_testDirectory);
-        tab.CurrentWindowSettings.CurrentValue!.FileOrder.Value = new FileOrder(SortFilesBy.Name, ascending);
+        TestOrderings.SetDefault(SortFilesBy.Name, ascending);
         string[] entryOrder =
         [
             "Volume 01/001.jpg", "Volume 02/001.jpg", "Volume 01/002.jpg",

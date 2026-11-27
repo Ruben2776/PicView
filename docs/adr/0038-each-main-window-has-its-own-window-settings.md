@@ -27,3 +27,4 @@ Before this, every Setting was app-wide. `WindowModeSwitcher.Change` wrote Fulls
 - Updated by ADR-0039: the File Order joined the Window Settings, and the first tab's `FollowWindow` now runs after the tab is in the window's tabs, so a follower finds it there.
 - Superseded in part by ADR-0040: nine more Settings are Window Settings (Side-by-Side, looping, Zoom to Fit, scrolling, the three interface settings and the image background), so `GlobalSettingsViewModel` publishes five settings, not thirteen, and those nine are no longer App Settings.
 - Superseded in part by ADR-0041: the gallery's look, the dock edge and the start-docked choice are Window Settings in `WindowSettings.Gallery`, so no slice of the design is left and every Setting its table lists is a Window Setting.
+- Superseded in part by ADR-0048: the File Order is no longer a Window Setting. It belongs to the Listed Directory, and `WindowSettings.FileOrder` is gone.
