@@ -1,3 +1,4 @@
+using System.Runtime.ExceptionServices;
 using System.Runtime.InteropServices;
 using PicView.Core.DebugTools;
 using PicView.Core.FileSorting;
@@ -7,7 +8,9 @@ namespace PicView.Core.WindowsNT.FileSorting;
 /// <summary>
 /// The order Windows Explorer's open windows show a folder in, read from each Explorer view of it through the shell's
 /// COM interfaces. The calls go to the Explorer process, so they can wait on it: call from a pool thread, and bound
-/// the wait. The interfaces are called through their vtables, as <c>IShellWindows</c> is an <c>IDispatch</c>
+/// the wait. The views are read on a thread of their own in a single-threaded apartment, as an Explorer tab only tells
+/// its window to one (<c>IOleWindow::GetWindow</c> is input-synchronous), and the window tells which of an Explorer
+/// window's tabs is shown. The interfaces are called through their vtables, as <c>IShellWindows</c> is an <c>IDispatch</c>
 /// interface, which source-generated COM does not declare, and plain function pointers need no marshalling code
 /// under Native AOT.
 /// </summary>
@@ -20,12 +23,15 @@ public sealed unsafe partial class ExplorerFolderOrder : IFolderOrderSource
     private static readonly Guid IidShellBrowser = new("000214E2-0000-0000-C000-000000000046");
     private static readonly Guid IidFolderView2 = new("1AF3A467-214F-4298-908E-06B03E0B39F9");
     private static readonly Guid IidPersistFolder2 = new("1AC3D9F0-175C-11D1-95BE-00609797EA4F");
+    private static readonly Guid IidWebBrowserApp = new("0002DF05-0000-0000-C000-000000000046");
 
     // Vtable slots, counted from IUnknown's three
     private const int ShellWindowsGetCount = 7;         // after IDispatch's four
     private const int ShellWindowsItem = 8;
+    private const int WebBrowserAppGetHwnd = 37;        // after IDispatch's four, IWebBrowser's 25 and five of its own
     private const int ServiceProviderQueryService = 3;
     private const int ShellBrowserQueryActiveShellView = 15; // after IOleWindow's two and ten of its own
+    private const int OleWindowGetWindow = 3;           // IShellBrowser starts with IOleWindow
     private const int FolderViewGetFolder = 5;
     private const int FolderView2GetGroupBy = 18;       // after IFolderView's fourteen and SetGroupBy
     private const int FolderView2GetSortColumnCount = 26;
@@ -38,6 +44,10 @@ public sealed unsafe partial class ExplorerFolderOrder : IFolderOrderSource
     private const ushort VtI4 = 3;
     private const int LongPath = 32768;
     private const int MostSortColumns = 8;
+    private const uint NextWindow = 2;                  // GW_HWNDNEXT
+    private const int MostWindows = 4096;
+    private const int NotInFront = int.MaxValue;
+    private const string TabWindowClass = "ShellTabWindowClass";
 
     [StructLayout(LayoutKind.Sequential)]
     private struct SortColumn
@@ -71,6 +81,15 @@ public sealed unsafe partial class ExplorerFolderOrder : IFolderOrderSource
     [return: MarshalAs(UnmanagedType.Bool)]
     private static partial bool SHGetPathFromIDListEx(nint idList, char* path, uint pathLength, uint options);
 
+    [LibraryImport("user32.dll")]
+    private static partial nint FindWindowExW(nint parent, nint after, char* className, char* title);
+
+    [LibraryImport("user32.dll")]
+    private static partial nint GetTopWindow(nint parent);
+
+    [LibraryImport("user32.dll")]
+    private static partial nint GetWindow(nint window, uint which);
+
     /// <inheritdoc />
     public FileOrder? OrderOf(string directory)
     {
@@ -81,7 +100,7 @@ public sealed unsafe partial class ExplorerFolderOrder : IFolderOrderSource
 
         try
         {
-            return ExplorerSort.Agreed(ViewsOf(key));
+            return ExplorerSort.Followed(ViewsOf(key));
         }
         catch (Exception e)
         {
@@ -93,11 +112,44 @@ public sealed unsafe partial class ExplorerFolderOrder : IFolderOrderSource
 
     /// <summary>
     /// How each Explorer view that shows <paramref name="directory"/> shows it: one per Explorer tab on it, in any
-    /// Explorer window.
+    /// Explorer window, with whether its window shows that tab now and how far in front the window is.
     /// </summary>
-    internal static List<ExplorerView> ViewsOf(string directory)
+    public static List<ExplorerView> ViewsOf(string directory)
+    {
+        if (Thread.CurrentThread.GetApartmentState() is ApartmentState.STA)
+        {
+            return ReadViews(directory);
+        }
+
+        List<ExplorerView> views = [];
+        ExceptionDispatchInfo? failure = null;
+        var thread = new Thread(() =>
+        {
+            try
+            {
+                views = ReadViews(directory);
+            }
+            catch (Exception e)
+            {
+                failure = ExceptionDispatchInfo.Capture(e);
+            }
+        })
+        {
+            IsBackground = true,
+            Name = nameof(ExplorerFolderOrder)
+        };
+        thread.SetApartmentState(ApartmentState.STA);
+        thread.Start();
+        thread.Join();
+        failure?.Throw();
+        return views;
+    }
+
+    private static List<ExplorerView> ReadViews(string directory)
     {
         var views = new List<ExplorerView>();
+        // The Explorer window of each view, beside it
+        var roots = new List<nint>();
         var result = CoCreateInstance(ClsidShellWindows, 0, ClsctxLocalServer, IidShellWindows, out var windows);
         if (result == CoENotInitialized)
         {
@@ -135,9 +187,10 @@ public sealed unsafe partial class ExplorerFolderOrder : IFolderOrderSource
 
                 try
                 {
-                    if (ViewOf(entry, directory, path) is { } view)
+                    if (ViewOf(entry, directory, path, out var root) is { } view)
                     {
                         views.Add(view);
+                        roots.Add(root);
                     }
                 }
                 finally
@@ -151,14 +204,48 @@ public sealed unsafe partial class ExplorerFolderOrder : IFolderOrderSource
             Marshal.Release(windows);
         }
 
+        // One view needs no telling apart
+        if (views.Count > 1)
+        {
+            for (var i = 0; i < views.Count; i++)
+            {
+                views[i] = views[i] with { Depth = DepthOf(roots[i]) };
+            }
+        }
+
         return views;
+    }
+
+    // How many top-level windows are in front of the window, which the desktop keeps in the order they were last
+    // used in
+    private static int DepthOf(nint root)
+    {
+        if (root == 0)
+        {
+            return NotInFront;
+        }
+
+        var window = GetTopWindow(0);
+        // Bounded, as the windows change order while they are walked
+        for (var depth = 0; window != 0 && depth < MostWindows; depth++)
+        {
+            if (window == root)
+            {
+                return depth;
+            }
+
+            window = GetWindow(window, NextWindow);
+        }
+
+        return NotInFront;
     }
 
     // How the Explorer view of one shell window shows the directory, or null when it shows another folder, or is
     // not a folder view at all
-    private static ExplorerView? ViewOf(nint entry, string directory, char[] pathBuffer)
+    private static ExplorerView? ViewOf(nint entry, string directory, char[] pathBuffer, out nint root)
     {
-        nint provider = 0, browser = 0, shellView = 0, folderView = 0;
+        root = 0;
+        nint provider = 0, browser = 0, shellView = 0, folderView = 0, app = 0;
         try
         {
             if (Marshal.QueryInterface(entry, in IidServiceProvider, out provider) != Ok || provider == 0)
@@ -193,10 +280,39 @@ public sealed unsafe partial class ExplorerFolderOrder : IFolderOrderSource
                 return null;
             }
 
-            return Read(folderView);
+            // The Explorer window the view is in, which every tab of it gives
+            if (Marshal.QueryInterface(entry, in IidWebBrowserApp, out app) == Ok && app != 0)
+            {
+                nint window = 0;
+                var getHwnd = (delegate* unmanaged[Stdcall]<nint, nint*, int>)Slot(app, WebBrowserAppGetHwnd);
+                if (getHwnd(app, &window) == Ok)
+                {
+                    root = window;
+                }
+            }
+
+            // Each tab has a window of its own in the Explorer window, and the tab shown is the first of them. A
+            // tab that does not tell its window, as to a thread in another apartment than a single-threaded one, or
+            // an Explorer window without tabs, counts as shown
+            nint tabWindow = 0;
+            var getWindow = (delegate* unmanaged[Stdcall]<nint, nint*, int>)Slot(browser, OleWindowGetWindow);
+            var isShown = true;
+            if (root != 0 && getWindow(browser, &tabWindow) == Ok && tabWindow != 0)
+            {
+                nint shownTab;
+                fixed (char* tabClass = TabWindowClass)
+                {
+                    shownTab = FindWindowExW(root, 0, tabClass, null);
+                }
+
+                isShown = shownTab == 0 || shownTab == tabWindow;
+            }
+
+            return Read(folderView) with { IsShown = isShown };
         }
         finally
         {
+            Release(app);
             Release(folderView);
             Release(shellView);
             Release(browser);

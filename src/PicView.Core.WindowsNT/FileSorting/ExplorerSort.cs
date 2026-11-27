@@ -25,7 +25,18 @@ public struct ShellPropertyKey(Guid formatId, uint propertyId) : IEquatable<Shel
 /// is grouped by, if any, with the direction of the groups.
 /// </summary>
 public readonly record struct ExplorerView(ShellPropertyKey? SortedBy, bool Ascending, ShellPropertyKey? GroupedBy,
-    bool GroupsAscending = true);
+    bool GroupsAscending = true)
+{
+    /// <summary>
+    /// Whether the view is the one its Explorer window shows now, and not a tab behind another.
+    /// </summary>
+    public bool IsShown { get; init; } = true;
+
+    /// <summary>
+    /// How many windows are in front of the view's Explorer window: the least is the window last used.
+    /// </summary>
+    public int Depth { get; init; }
+}
 
 /// <summary>
 /// The File Order an Explorer view's sort is, where it is one.
@@ -78,6 +89,25 @@ public static class ExplorerSort
         }
 
         return new FileOrder(field, view.Ascending);
+    }
+
+    /// <summary>
+    /// The order a folder is followed in: that of the view its frontmost Explorer window shows, as that is the one
+    /// the user sees and last used, or null when no File Order gives it. When every view of the folder is a tab
+    /// behind another, the order they agree on.
+    /// </summary>
+    public static FileOrder? Followed(IReadOnlyList<ExplorerView> views)
+    {
+        ExplorerView? front = null;
+        foreach (var view in views)
+        {
+            if (view.IsShown && (front is not { } shown || view.Depth < shown.Depth))
+            {
+                front = view;
+            }
+        }
+
+        return front is { } followed ? ToFileOrder(followed) : Agreed(views);
     }
 
     /// <summary>

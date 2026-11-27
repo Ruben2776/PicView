@@ -124,6 +124,46 @@ public class ExplorerSortTests
     }
 
     [Fact]
+    public void Followed_ViewsThatDiffer_IsTheOneTheFrontmostWindowShows()
+    {
+        var bySize = new ExplorerView(ExplorerSort.Size, false, null) { Depth = 9 };
+        var byDate = new ExplorerView(ExplorerSort.Date, true, null) { Depth = 2 };
+
+        Assert.Equal(new FileOrder(SortFilesBy.Date, true), ExplorerSort.Followed([bySize, byDate]));
+        Assert.Equal(new FileOrder(SortFilesBy.Date, true), ExplorerSort.Followed([byDate, bySize]));
+    }
+
+    [Fact]
+    public void Followed_ATabBehindAnother_IsPassedOverForAShownOne_HoweverFarInFrontItsWindowIs()
+    {
+        var behind = new ExplorerView(ExplorerSort.Size, false, null) { IsShown = false, Depth = 0 };
+        var shown = new ExplorerView(ExplorerSort.Date, true, null) { Depth = 5 };
+
+        Assert.Equal(new FileOrder(SortFilesBy.Date, true), ExplorerSort.Followed([behind, shown]));
+    }
+
+    [Fact]
+    public void Followed_FrontmostViewWithoutAFileOrder_IsNull()
+    {
+        // What the user sees is in no File Order, and another window's order is not what they see
+        var front = new ExplorerView(DateTaken, false, null) { Depth = 1 };
+        var back = new ExplorerView(ExplorerSort.Size, false, null) { Depth = 4 };
+
+        Assert.Null(ExplorerSort.Followed([front, back]));
+    }
+
+    [Fact]
+    public void Followed_OnlyTabsBehindOthers_IsTheOrderTheyAgreeOn()
+    {
+        var bySize = new ExplorerView(ExplorerSort.Size, false, null) { IsShown = false };
+        var byName = new ExplorerView(ExplorerSort.Name, true, null) { IsShown = false };
+
+        Assert.Equal(new FileOrder(SortFilesBy.FileSize, false), ExplorerSort.Followed([bySize, bySize]));
+        Assert.Null(ExplorerSort.Followed([bySize, byName]));
+        Assert.Null(ExplorerSort.Followed([]));
+    }
+
+    [Fact]
     public void OrderOf_AFolderNoExplorerWindowShows_IsNull_AndThrowsNothing()
     {
         // The one call that reaches the real shell: a folder made a moment ago, which no window can show
