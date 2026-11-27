@@ -32,6 +32,15 @@ public class ImageIterator(SharedImageCache cache, Thumbnails thumbnails, TabVie
     /// <inheritdoc />
     public FileOrdering Ordering => Volatile.Read(ref _ordering);
 
+    /// <inheritdoc />
+    public (IReadOnlyList<FileInfo> Files, FileOrdering Ordering) Snapshot()
+    {
+        lock (_filesLock)
+        {
+            return (_files, _ordering);
+        }
+    }
+
     public int CurrentIndex { get; private set; } = -1;
     public int SecondaryCurrentIndex { get; private set; } = -1;
     public bool IsReversed { get; private set; }

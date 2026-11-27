@@ -38,6 +38,12 @@ public interface IImageIterator : IDisposable
     FileOrdering Ordering { get; }
 
     /// <summary>
+    /// The file list and the ordering it is in, read together, so a re-sort between the two cannot give a list in one
+    /// order with the name of another. A Load of another tab takes its listing from this (ADR-0049).
+    /// </summary>
+    (IReadOnlyList<FileInfo> Files, FileOrdering Ordering) Snapshot();
+
+    /// <summary>
     /// Initializes the iterator with a new list of files and a starting position.
     /// </summary>
     /// <param name="ordering">The ordering <paramref name="files"/> are in, which the caller listed them with; null for

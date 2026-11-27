@@ -89,6 +89,21 @@ public class FileWatcherService(
         }
     }
 
+    /// <inheritdoc />
+    public bool IsWatching(TabViewModel tab, string directory)
+    {
+        if (FileSorting.DirectoryOrders.KeyOf(directory) is not { } key)
+        {
+            return false;
+        }
+
+        lock (_lock)
+        {
+            return _watchers.TryGetValue(key, out var entry) &&
+                   entry.Subscribers.Exists(wr => wr.TryGetTarget(out var watching) && ReferenceEquals(watching, tab));
+        }
+    }
+
     /// <summary>
     /// Starts every folder watch again with the current Include Subdirectories setting, keeping the tabs watching it.
     /// </summary>

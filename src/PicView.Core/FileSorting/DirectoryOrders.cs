@@ -167,6 +167,22 @@ public sealed class DirectoryOrders
     }
 
     /// <summary>
+    /// The tabs that list <paramref name="directory"/> now.
+    /// </summary>
+    internal TabViewModel[] TabsListing(string? directory)
+    {
+        if (KeyOf(directory) is not { } key)
+        {
+            return [];
+        }
+
+        lock (_gate)
+        {
+            return _entries.TryGetValue(key, out var entry) ? Live(entry) : [];
+        }
+    }
+
+    /// <summary>
     /// The directories tabs list now.
     /// </summary>
     public string[] Listed()

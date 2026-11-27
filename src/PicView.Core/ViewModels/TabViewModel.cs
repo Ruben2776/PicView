@@ -112,8 +112,15 @@ public class TabViewModel : IDisposable
     /// </summary>
     /// <param name="carried">The order a directory no tab listed starts with, as a renamed folder keeps its own;
     /// the Default File Order otherwise.</param>
-    internal void ListDirectory(string? directory, FileOrder? carried = null)
+    /// <param name="withSubdirectories">Whether the files were listed with the subfolders' files; null keeps what
+    /// the tab had, as a renamed folder is not listed again.</param>
+    internal void ListDirectory(string? directory, FileOrder? carried = null, bool? withSubdirectories = null)
     {
+        if (withSubdirectories is { } listedWith)
+        {
+            IsListedWithSubdirectories = listedWith;
+        }
+
         var previous = _listedDirectory.CurrentValue;
         if (Services?.Orders is not { } orders)
         {
@@ -130,6 +137,12 @@ public class TabViewModel : IDisposable
 
         _listedDirectory.Value = orders.Enter(this, directory, previous, carried);
     }
+
+    /// <summary>
+    /// Whether the files of the Listed Directory were listed with its subfolders' files, as Include Subdirectories
+    /// was when the Load listed them.
+    /// </summary>
+    internal bool IsListedWithSubdirectories { get; private set; }
 
     /// <summary>
     /// The ordering this tab lists with now: the File Order of its Listed Directory (the Default File Order for a tab

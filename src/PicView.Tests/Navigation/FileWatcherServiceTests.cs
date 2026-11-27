@@ -68,6 +68,25 @@ public class FileWatcherServiceTests : IDisposable
     }
 
     [Fact]
+    public void IsWatching_IsTrueOnlyForTheFolderTheTabWatches_UntilItStops()
+    {
+        var watching = CreateTab(_testDirectory);
+        var other = CreateTab(_testDirectory);
+        _service.Watch(watching);
+
+        Assert.True(_service.IsWatching(watching, _testDirectory));
+        Assert.True(_service.IsWatching(watching, _testDirectory + Path.DirectorySeparatorChar));
+        Assert.True(_service.IsWatching(watching, _testDirectory.ToUpperInvariant()));
+        Assert.False(_service.IsWatching(other, _testDirectory));
+        Assert.False(_service.IsWatching(watching, Path.Combine(_testDirectory, "sub")));
+        Assert.False(_service.IsWatching(watching, ""));
+
+        _service.Unwatch(watching);
+
+        Assert.False(_service.IsWatching(watching, _testDirectory));
+    }
+
+    [Fact]
     public async Task Watch_ExtractionFolderOfTheTabsArchive_StartsNoWatch()
     {
         // The tab's Archive Openings list each page as it is written (ADR-0013), so the watcher leaves the folder alone

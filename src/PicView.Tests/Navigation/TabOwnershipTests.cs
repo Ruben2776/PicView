@@ -1418,6 +1418,168 @@ public class TabOwnershipTests : IDisposable
         Assert.Equal([renamed], orders.Listed());
     }
 
+    #region A Load reuses a listing another tab holds
+
+    // Whether both tabs list the very same FileInfo objects in the same places, which a listing from the disk never
+    // gives, as it makes its own
+    private static bool HaveTheSameFiles(TabViewModel a, TabViewModel b)
+    {
+        var first = a.ImageIterator!.Files;
+        var second = b.ImageIterator!.Files;
+        return first.Count == second.Count && first.Zip(second).All(pair => ReferenceEquals(pair.First, pair.Second));
+    }
+
+    [Fact]
+    public async Task Load_IntoADirectoryAnotherTabListsAndWatches_TakesThatTabsFilesInTheirOrder()
+    {
+        ComposeServices(watcher: new WatchingFileWatcher());
+        CreateFiles();
+        var window = CreateWindow();
+        var first = window.WindowTabs.ActiveTab.Value;
+        await OpenAsync(first, "a.jpg");
+        await window.WindowTabs.SortAsync(SortFilesBy.FileSize);
+        var second = window.WindowTabs.CreateTab();
+
+        await OpenAsync(second, "c.jpg");
+
+        Assert.True(HaveTheSameFiles(first, second));
+        Assert.Equal(BySize, NamesOf(second));
+        Assert.Equal(new FileOrder(SortFilesBy.FileSize, true), second.ImageIterator!.Ordering.Order);
+        Assert.Equal("c.jpg", ListedAtShownIndex(second));
+        Assert.Equal(_folder, second.ListedDirectory.CurrentValue);
+        // Equal lists, not one list: each tab has its own
+        Assert.NotSame(first.ImageIterator!.Files, second.ImageIterator.Files);
+    }
+
+    [Fact]
+    public async Task Load_OfAFolderAnotherTabListsAndWatches_TakesThatTabsFiles()
+    {
+        ComposeServices(watcher: new WatchingFileWatcher());
+        CreateFiles();
+        var window = CreateWindow();
+        var first = window.WindowTabs.ActiveTab.Value;
+        await OpenAsync(first, "c.jpg");
+        var second = window.WindowTabs.CreateTab();
+
+        Assert.True((await second.Load.LoadAsync(_folder)).IsLoaded);
+
+        Assert.True(HaveTheSameFiles(first, second));
+        Assert.Equal("a.jpg", second.FileInfo.CurrentValue?.Name);
+    }
+
+    [Fact]
+    public async Task Load_AfterTakingAnotherTabsFiles_ChangesOfOneListLeaveTheOtherAlone()
+    {
+        ComposeServices(watcher: new WatchingFileWatcher());
+        CreateFiles();
+        var window = CreateWindow();
+        var first = window.WindowTabs.ActiveTab.Value;
+        await OpenAsync(first, "a.jpg");
+        var second = window.WindowTabs.CreateTab();
+        await OpenAsync(second, "c.jpg");
+
+        second.ImageIterator!.Remove(PathOf("d.jpg"));
+
+        Assert.Equal(ByName, NamesOf(first));
+        Assert.Equal(["a.jpg", "b.jpg", "c.jpg"], NamesOf(second));
+    }
+
+    [Fact]
+    public async Task Load_IntoADirectoryAnotherTabListsButDoesNotWatch_ListsItFromTheDisk()
+    {
+        // The suite's watcher cannot tell what a tab watches, so no list is one a watch has kept
+        ComposeServices();
+        CreateFiles();
+        var window = CreateWindow();
+        var first = window.WindowTabs.ActiveTab.Value;
+        await OpenAsync(first, "a.jpg");
+        var second = window.WindowTabs.CreateTab();
+
+        await OpenAsync(second, "c.jpg");
+
+        Assert.Equal(ByName, NamesOf(second));
+        Assert.False(HaveTheSameFiles(first, second));
+    }
+
+    [Fact]
+    public async Task Load_OfAFileTheOtherTabsListLacks_ListsTheDirectoryFromTheDisk()
+    {
+        ComposeServices(watcher: new WatchingFileWatcher());
+        CreateFiles();
+        var window = CreateWindow();
+        var first = window.WindowTabs.ActiveTab.Value;
+        await OpenAsync(first, "a.jpg");
+        // Written after the first tab listed, and its watch has not said so
+        File.WriteAllBytes(PathOf("e.jpg"), new byte[5]);
+        var second = window.WindowTabs.CreateTab();
+
+        await OpenAsync(second, "e.jpg");
+
+        Assert.Equal(["a.jpg", "b.jpg", "c.jpg", "d.jpg", "e.jpg"], NamesOf(second));
+        Assert.Equal(ByName, NamesOf(first));
+    }
+
+    [Fact]
+    public async Task Load_WithSubdirectoriesIncludedSinceTheOtherTabListed_ListsTheDirectoryFromTheDisk()
+    {
+        ComposeServices(watcher: new WatchingFileWatcher());
+        CreateFiles();
+        Directory.CreateDirectory(PathOf("sub"));
+        File.WriteAllBytes(Path.Combine(PathOf("sub"), "z.jpg"), new byte[5]);
+        var window = CreateWindow();
+        var first = window.WindowTabs.ActiveTab.Value;
+        await OpenAsync(first, "a.jpg");
+        // The record alone, so the first tab does not list again as it does when the setting is toggled
+        Settings.Sorting.IncludeSubDirectories = true;
+        var second = window.WindowTabs.CreateTab();
+
+        await OpenAsync(second, "c.jpg");
+
+        Assert.Equal(["a.jpg", "b.jpg", "c.jpg", "d.jpg", "z.jpg"], NamesOf(second));
+        Assert.Equal(ByName, NamesOf(first));
+        Assert.True(second.IsListedWithSubdirectories);
+        Assert.False(first.IsListedWithSubdirectories);
+    }
+
+    [Fact]
+    public async Task Relist_WithAnotherTabOnTheDirectory_ListsItFromTheDisk()
+    {
+        ComposeServices(watcher: new WatchingFileWatcher());
+        CreateFiles();
+        var window = CreateWindow();
+        var first = window.WindowTabs.ActiveTab.Value;
+        await OpenAsync(first, "a.jpg");
+        var second = window.WindowTabs.CreateTab();
+        await OpenAsync(second, "c.jpg");
+        // Neither watch says so, as a missed file event
+        File.WriteAllBytes(PathOf("e.jpg"), new byte[5]);
+
+        var relisted = await second.Load.LoadAsync(PathOf("c.jpg"), new LoadOptions(Relist: true));
+
+        Assert.True(relisted.IsLoaded);
+        Assert.Equal(["a.jpg", "b.jpg", "c.jpg", "d.jpg", "e.jpg"], NamesOf(second));
+        Assert.Equal("c.jpg", ListedAtShownIndex(second));
+    }
+
+    [Fact]
+    public async Task Load_IntoAnotherDirectoryThanTheOtherTabLists_TakesNothingFromIt()
+    {
+        ComposeServices(watcher: new WatchingFileWatcher());
+        CreateFiles();
+        CreateOtherFiles();
+        var window = CreateWindow();
+        var first = window.WindowTabs.ActiveTab.Value;
+        await OpenAsync(first, "a.jpg");
+        var second = window.WindowTabs.CreateTab();
+
+        await OpenInOtherAsync(second, "a.jpg");
+
+        Assert.Equal(OtherFolder, second.ImageIterator!.Files[0].DirectoryName);
+        Assert.Equal(_folder, first.ImageIterator!.Files[0].DirectoryName);
+    }
+
+    #endregion
+
     // Name, FileSize, CreationTime, Extension, LastAccessTime, LastWriteTime, Randomization
     #region The gallery's look follows its window
 
@@ -1940,9 +2102,30 @@ public class TabOwnershipTests : IDisposable
     private static readonly TimeSpan WaitLimit = TimeSpan.FromSeconds(10);
 
     // The tabs' services, which their Load lists the folder with in their window's order
-    private void ComposeServices(IPlatformSpecificService? platform = null) =>
-        _core.InitializeNavigation(TestTabServices.For(_core.SharedCache, platform: platform),
+    private void ComposeServices(IPlatformSpecificService? platform = null, IFileWatcherService? watcher = null) =>
+        _core.InitializeNavigation(TestTabServices.For(_core.SharedCache, platform: platform, watcher: watcher),
             new NavigationService());
+
+    // Says which folder each tab watches, as the real watcher does, and reports no file event
+    private sealed class WatchingFileWatcher : IFileWatcherService
+    {
+        private readonly ConcurrentDictionary<TabViewModel, string> _watched = new();
+
+        public void Watch(TabViewModel tab, string? directory = null)
+        {
+            if (directory is not null)
+            {
+                _watched[tab] = directory;
+            }
+        }
+
+        public void Unwatch(TabViewModel tab) => _watched.TryRemove(tab, out _);
+        public void RestartWatches() { }
+
+        public bool IsWatching(TabViewModel tab, string directory) =>
+            _watched.TryGetValue(tab, out var watched) &&
+            string.Equals(watched, directory, StringComparison.OrdinalIgnoreCase);
+    }
 
     // Holds every name comparison while closed, so a test can change the order while a listing or a sort by name runs
     private sealed class GatedPlatform : TestTabServices.OrdinalPlatform, IDisposable

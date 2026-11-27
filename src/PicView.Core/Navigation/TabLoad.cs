@@ -192,8 +192,7 @@ public sealed class TabLoad
 
     private async ValueTask<LoadResult> LoadFolderAsync(string folder, Run run)
     {
-        var ordering = _tab.OrderingFor(folder);
-        var files = await Task.Run(() => FileListRetriever.RetrieveFiles(new FileInfo(folder), ordering), run.Token)
+        var (files, ordering, withSubdirectories) = await Task.Run(() => ListFolder(folder), run.Token)
             .ConfigureAwait(false);
         if (!IsCurrent(run))
         {
@@ -205,7 +204,8 @@ public sealed class TabLoad
             return LoadResult.Failed();
         }
 
-        return await ShowThenListAsync(files[0], files, null, null, null, run, ordering, folder).ConfigureAwait(false);
+        return await ShowThenListAsync(files[0], files, null, null, null, run, ordering, folder, withSubdirectories)
+            .ConfigureAwait(false);
     }
 
     private async ValueTask<LoadResult> LoadArchiveAsync(string archive, string? startEntry, Run run)
@@ -349,7 +349,7 @@ public sealed class TabLoad
     /// the pages of; null for the folder of <paramref name="file"/>.</param>
     private async ValueTask<LoadResult> ShowThenListAsync(FileInfo file, IReadOnlyList<FileInfo>? files,
         ImageModel? given, ImageModel? givenSecondary, string? rootDirectory, Run run, FileOrdering? listedWith = null,
-        string? listedDirectory = null)
+        string? listedDirectory = null, bool? withSubdirectories = null)
     {
         // A newer load that began meanwhile watches its own folder, which this one must not stop
         if (!IsCurrent(run))
@@ -392,7 +392,7 @@ public sealed class TabLoad
         listedDirectory ??= file.DirectoryName;
         if (retrieved is null)
         {
-            (retrieved, ordering, listedDirectory) = ListAround(file, rootDirectory);
+            (retrieved, ordering, listedDirectory, withSubdirectories) = ListAround(file, rootDirectory, reuse: true);
         }
 
         // Not the order of the directory the tab lists until now, which its iterator would take
@@ -407,8 +407,10 @@ public sealed class TabLoad
         var (primary, partner) = SideBySidePair.PairAt(index, retrieved.Count, showsPair, looping);
         var iterator = EnsureIterator();
         iterator.Initialize(retrieved, primary, ordering);
-        // With the list, so the tab's order is its directory's from here; a change of it meanwhile is followed below
-        _tab.ListDirectory(listedDirectory);
+        // With the list, so the tab's order is its directory's from here; a change of it meanwhile is followed below.
+        // Files the caller listed are taken as listed with the setting as it is now
+        _tab.ListDirectory(listedDirectory,
+            withSubdirectories: withSubdirectories ?? Settings.Sorting.IncludeSubDirectories);
         // Other files than the tab stepped through, so the way it travelled says nothing about these
         cache.ResetTravel(_tab.Id);
         try
@@ -493,8 +495,9 @@ public sealed class TabLoad
     /// </summary>
     private async ValueTask<LoadResult> RelistAsync(FileInfo file, string? rootDirectory, Run run)
     {
-        var (files, ordering, listedDirectory) =
-            await Task.Run(() => ListAround(file, rootDirectory), run.Token).ConfigureAwait(false);
+        // From the disk, never from another tab's list: a relist is how the folder is read again
+        var (files, ordering, listedDirectory, withSubdirectories) =
+            await Task.Run(() => ListAround(file, rootDirectory, reuse: false), run.Token).ConfigureAwait(false);
         if (!IsCurrent(run))
         {
             return LoadResult.Superseded;
@@ -513,7 +516,7 @@ public sealed class TabLoad
         var iterator = EnsureIterator();
         watcher.Unwatch(_tab);
         iterator.Initialize(files, index, ordering);
-        _tab.ListDirectory(listedDirectory);
+        _tab.ListDirectory(listedDirectory, withSubdirectories: withSubdirectories);
         watcher.Watch(_tab, shown.DirectoryName);
         cache.ReleaseImages(_tab.Id);
         PutShown(files, _tab.Model);
@@ -539,23 +542,88 @@ public sealed class TabLoad
     /// and the listing has it, else those of the file's own folder, each in the File Order of the directory listed,
     /// with that ordering and directory.
     /// </summary>
-    private (List<FileInfo> Files, FileOrdering Ordering, string? Directory) ListAround(FileInfo file,
-        string? rootDirectory)
+    /// <param name="reuse">Whether the list of another tab that lists the same directory is taken instead of listing
+    /// it again (ADR-0049).</param>
+    private (IReadOnlyList<FileInfo> Files, FileOrdering Ordering, string? Directory, bool WithSubdirectories)
+        ListAround(FileInfo file, string? rootDirectory, bool reuse)
     {
+        // Read once, so the listing and what the tab records of it agree when the setting changes meanwhile
+        var withSubdirectories = Settings.Sorting.IncludeSubDirectories;
         if (rootDirectory is not null && IsInside(file, rootDirectory))
         {
+            if (reuse && ListedByAnotherTab(rootDirectory, withSubdirectories, file) is { } rootListing)
+            {
+                return (rootListing.Files, rootListing.Ordering, rootDirectory, withSubdirectories);
+            }
+
             var rootOrdering = _tab.OrderingFor(rootDirectory);
             var fromRoot = FileListRetriever.RetrieveFiles(new FileInfo(rootDirectory), rootOrdering);
             // Without subdirectories, a file deeper in the root is not listed from it
             if (SideBySidePair.IndexOf(fromRoot, file) is not null)
             {
-                return (fromRoot, rootOrdering, rootDirectory);
+                return (fromRoot, rootOrdering, rootDirectory, withSubdirectories);
             }
         }
 
         var folder = file.DirectoryName;
+        if (reuse && ListedByAnotherTab(folder, withSubdirectories, file) is { } listing)
+        {
+            return (listing.Files, listing.Ordering, folder, withSubdirectories);
+        }
+
         var ordering = _tab.OrderingFor(folder);
-        return (FileListRetriever.RetrieveFiles(file, ordering), ordering, folder);
+        return (FileListRetriever.RetrieveFiles(file, ordering), ordering, folder, withSubdirectories);
+    }
+
+    // The files of an opened folder, from another tab that lists it or from the disk
+    private (IReadOnlyList<FileInfo> Files, FileOrdering Ordering, bool WithSubdirectories) ListFolder(string folder)
+    {
+        var withSubdirectories = Settings.Sorting.IncludeSubDirectories;
+        if (ListedByAnotherTab(folder, withSubdirectories, null) is { } listing)
+        {
+            return (listing.Files, listing.Ordering, withSubdirectories);
+        }
+
+        var ordering = _tab.OrderingFor(folder);
+        return (FileListRetriever.RetrieveFiles(new FileInfo(folder), ordering), ordering, withSubdirectories);
+    }
+
+    /// <summary>
+    /// The list another tab has of <paramref name="directory"/>, with the ordering it is in, when that list is one a
+    /// listing now would give: listed with the same Include Subdirectories, and kept as the folder has it by that
+    /// tab's own watch of the directory. Null when no tab has such a list, or it lacks <paramref name="file"/>, as
+    /// one written a moment ago; the directory is then listed from the disk.
+    /// </summary>
+    private (IReadOnlyList<FileInfo> Files, FileOrdering Ordering)? ListedByAnotherTab(string? directory,
+        bool withSubdirectories, FileInfo? file)
+    {
+        if (DirectoryOrders.KeyOf(directory) is not { } key)
+        {
+            return null;
+        }
+
+        foreach (var other in _services.Orders.TabsListing(key))
+        {
+            if (ReferenceEquals(other, _tab) || other.IsDisposed ||
+                other.IsListedWithSubdirectories != withSubdirectories ||
+                !_services.Watcher.IsWatching(other, key) || other.ImageIterator is not { } iterator)
+            {
+                continue;
+            }
+
+            var (files, ordering) = iterator.Snapshot();
+            // A tab that left the directory while its list was read has another directory's files
+            if (files.Count is 0 ||
+                !string.Equals(other.ListedDirectory.CurrentValue, key, StringComparison.OrdinalIgnoreCase) ||
+                (file is not null && SideBySidePair.IndexOf(files, file) is null))
+            {
+                continue;
+            }
+
+            return (files, ordering);
+        }
+
+        return null;
     }
 
     private static bool IsModelOf(ImageModel? model, FileInfo file) =>

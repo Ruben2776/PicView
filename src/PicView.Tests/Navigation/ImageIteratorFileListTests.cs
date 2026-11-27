@@ -283,6 +283,24 @@ public class ImageIteratorFileListTests : IDisposable
     }
 
     [Fact]
+    public void Snapshot_GivesTheListWithTheOrderingItIsIn()
+    {
+        var byName = OrderingBy(SortFilesBy.Name);
+        var descending = OrderingBy(SortFilesBy.Name, false);
+        _iterator.Initialize(byName.Sort([File("a.jpg"), File("b.jpg"), File("c.jpg")]), 0, byName);
+
+        var listed = _iterator.Snapshot();
+        _iterator.Resort(descending);
+        var resorted = _iterator.Snapshot();
+
+        Assert.Same(byName, listed.Ordering);
+        Assert.Equal(["a.jpg", "b.jpg", "c.jpg"], listed.Files.Select(f => f.Name));
+        Assert.Same(descending, resorted.Ordering);
+        Assert.Equal(["c.jpg", "b.jpg", "a.jpg"], resorted.Files.Select(f => f.Name));
+        Assert.Same(_iterator.Files, resorted.Files);
+    }
+
+    [Fact]
     public void Insert_ListMadeWithOneOrder_UsesThatOrder_WhateverTheDefaultSaysNow()
     {
         var (folder, files) = CreateFiles(("a.jpg", 30, Written), ("b.jpg", 10, Written), ("c.jpg", 20, Written),
