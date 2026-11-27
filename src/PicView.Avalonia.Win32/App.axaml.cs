@@ -112,6 +112,11 @@ public class App : Application, IPlatformSpecificService
     /// </summary>
     public IFolderOrderSource FolderOrders { get; } = new PicView.Core.WindowsNT.FileSorting.ExplorerFolderOrder();
 
+    /// <summary>
+    /// The date Windows Explorer shows for a file in its Date column (ADR-0051).
+    /// </summary>
+    public IFileDateSource FileDates { get; } = new PicView.Core.WindowsNT.FileSorting.ShellFileDates();
+
     public int CompareStrings(string str1, string str2)
     {
         return NativeMethods.StrCmpLogicalW(str1, str2);

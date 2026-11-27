@@ -1858,6 +1858,128 @@ public class TabOwnershipTests : IDisposable
 
     #endregion
 
+    #region The Date order takes the dates the file manager shows
+
+    // Shows the date a test gives a file by name, and none for the rest
+    private sealed class FakeFileDates : IFileDateSource
+    {
+        public ConcurrentDictionary<string, DateTime> Dates { get; } = new(StringComparer.OrdinalIgnoreCase);
+        public ConcurrentQueue<string> Asked { get; } = new();
+
+        public DateTime? DateOf(string path)
+        {
+            Asked.Enqueue(Path.GetFileName(path));
+            return Dates.TryGetValue(Path.GetFileName(path), out var date) ? date : null;
+        }
+    }
+
+    // The four files with file system dates a day apart in the order of their names, so by Date they are a, b, c, d
+    // until the file manager says otherwise
+    private void CreateDatedFiles()
+    {
+        CreateFiles();
+        var day = new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        foreach (var name in ByName)
+        {
+            day = day.AddDays(1);
+            File.SetCreationTimeUtc(PathOf(name), day);
+            File.SetLastWriteTimeUtc(PathOf(name), day);
+        }
+    }
+
+    [Fact]
+    public async Task Load_OfAFolderInDateOrder_ReadsTheDatesTheFileManagerShows_AndSortsAgainByThem()
+    {
+        var fileDates = new FakeFileDates();
+        // d was taken long before its file was written, as a photo copied here later
+        fileDates.Dates["d.jpg"] = new DateTime(2001, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        ComposeServices(fileDates: fileDates);
+        CreateDatedFiles();
+        TestOrderings.SetDefault(SortFilesBy.Date);
+        var tab = CreateWindow().WindowTabs.ActiveTab.Value;
+        var changes = new ConcurrentQueue<FileListChange>();
+        tab.Initialize(changes.Enqueue);
+
+        await OpenAsync(tab, "c.jpg");
+        await tab.ReadingDates;
+        await tab.Resorting;
+
+        Assert.Equal(["d.jpg", "a.jpg", "b.jpg", "c.jpg"], NamesOf(tab));
+        Assert.Equal("c.jpg", tab.FileInfo.CurrentValue?.Name);
+        Assert.Equal("c.jpg", ListedAtShownIndex(tab));
+        Assert.Equal(ByName, fileDates.Asked.Order());
+        // Listed, then sorted again once the dates were read
+        Assert.Equal([FileListChangeKind.Listed, FileListChangeKind.Listed], changes.Select(c => c.Kind));
+    }
+
+    [Fact]
+    public async Task Load_OfAFolderWhoseDatesWereRead_ListsItByThemAtOnce_AndReadsNoneAgain()
+    {
+        var fileDates = new FakeFileDates();
+        fileDates.Dates["d.jpg"] = new DateTime(2001, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        ComposeServices(fileDates: fileDates);
+        CreateDatedFiles();
+        TestOrderings.SetDefault(SortFilesBy.Date);
+        var window = CreateWindow();
+        var first = window.WindowTabs.ActiveTab.Value;
+        await OpenAsync(first, "c.jpg");
+        await first.ReadingDates;
+        await first.Resorting;
+        var asked = fileDates.Asked.Count;
+        var second = window.WindowTabs.CreateTab();
+        var changes = new ConcurrentQueue<FileListChange>();
+        second.Initialize(changes.Enqueue);
+
+        await OpenAsync(second, "a.jpg");
+        await second.ReadingDates;
+        await second.Resorting;
+
+        Assert.Equal(["d.jpg", "a.jpg", "b.jpg", "c.jpg"], NamesOf(second));
+        // Only d has a date to read; the others are asked for again and still have none, which sorts nothing
+        Assert.Equal(FileListChangeKind.Listed, Assert.Single(changes).Kind);
+        Assert.Equal(asked + 3, fileDates.Asked.Count);
+    }
+
+    [Fact]
+    public async Task Sort_ToDate_ReadsTheDates_AndSortsByThem()
+    {
+        var fileDates = new FakeFileDates();
+        fileDates.Dates["d.jpg"] = new DateTime(2001, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        ComposeServices(fileDates: fileDates);
+        CreateDatedFiles();
+        var window = CreateWindow();
+        var tab = window.WindowTabs.ActiveTab.Value;
+        await OpenAsync(tab, "c.jpg");
+        Assert.Empty(fileDates.Asked);
+
+        await window.WindowTabs.SortAsync(SortFilesBy.Date);
+        await tab.ReadingDates;
+        await tab.Resorting;
+
+        Assert.Equal(["d.jpg", "a.jpg", "b.jpg", "c.jpg"], NamesOf(tab));
+        Assert.Equal("c.jpg", ListedAtShownIndex(tab));
+    }
+
+    [Fact]
+    public async Task Load_InDateOrder_WithNoDatesToRead_KeepsTheFileSystemsOrder_AndSortsOnce()
+    {
+        ComposeServices();
+        CreateDatedFiles();
+        TestOrderings.SetDefault(SortFilesBy.Date, false);
+        var tab = CreateWindow().WindowTabs.ActiveTab.Value;
+        var changes = new ConcurrentQueue<FileListChange>();
+        tab.Initialize(changes.Enqueue);
+
+        await OpenAsync(tab, "c.jpg");
+        await tab.ReadingDates;
+        await tab.Resorting;
+
+        Assert.Equal(ByName.Reverse(), NamesOf(tab));
+        Assert.Equal(FileListChangeKind.Listed, Assert.Single(changes).Kind);
+    }
+
+    #endregion
+
     // Name, FileSize, CreationTime, Extension, LastAccessTime, LastWriteTime, Randomization
     #region The gallery's look follows its window
 
@@ -2381,10 +2503,11 @@ public class TabOwnershipTests : IDisposable
 
     // The tabs' services, which their Load lists the folder with in their window's order
     private void ComposeServices(IPlatformSpecificService? platform = null, IFileWatcherService? watcher = null,
-        IFolderOrderSource? fileManager = null, TimeSpan? askLimit = null) =>
+        IFolderOrderSource? fileManager = null, TimeSpan? askLimit = null, IFileDateSource? fileDates = null) =>
         _core.InitializeNavigation(TestTabServices.For(_core.SharedCache, platform: platform, watcher: watcher) with
             {
-                Orders = new DirectoryOrders(fileManager, askLimit)
+                Orders = new DirectoryOrders(fileManager, askLimit),
+                Dates = new FileDates(fileDates)
             },
             new NavigationService());
 

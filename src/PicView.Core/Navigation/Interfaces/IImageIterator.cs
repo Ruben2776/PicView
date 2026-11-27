@@ -99,7 +99,9 @@ public interface IImageIterator : IDisposable
     /// reports it as a Listed change. Does nothing when the order is the one the list already has, unless it is Random.
     /// It reads nothing from the disk but what the ordering compares, and loads nothing.
     /// </summary>
-    void Resort(FileOrdering ordering);
+    /// <param name="again">Whether the files are sorted even when the list is in this order by name already, as when
+    /// what the order compares has changed under it: the Date field, once dates are read.</param>
+    void Resort(FileOrdering ordering, bool again = false);
 
     /// <summary>
     /// Gives the files in the folder <paramref name="oldFolder"/> their paths under <paramref name="newFolder"/>, after

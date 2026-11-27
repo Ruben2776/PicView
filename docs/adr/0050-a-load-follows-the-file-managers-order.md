@@ -26,7 +26,7 @@ Follow Explorer Sorting is an App Setting, `Sorting.FollowExplorerSorting` in th
 | Date | Date |
 | Type, Date taken and every other column | none: not followed |
 
-Date (`System.ItemDate`) is the column a picture folder is sorted by unless another is chosen. Explorer shows in it the date taken of a file that has one, and else the earlier of its creation and last write time; a file with no usable time has no date and is listed first when ascending. The Date field of a File Order (`FileOrdering.DateOf`) gives the same from what the file system says: the earlier of the two times, and no date, which goes before every dated file, for a file with either of them missing.
+Date (`System.ItemDate`) is the column a picture folder is sorted by unless another is chosen. Explorer shows in it the date taken of a file that has one, and else the earlier of its creation and last write time; a file with no usable time has no date and is listed first when ascending. The Date field of a File Order (`FileOrdering.DateOf`) gives the same: the date read from Explorer once it is read (ADR-0051), and until then what the file system says, the earlier of the two times, and no date, which goes before every dated file, for a file with either of them missing.
 
 A view grouped by another column than it is sorted by, or with its groups in the other direction, is not followed, since the groups come first and no one field and direction gives that order. When several views show the folder, as two Explorer windows or two Explorer tabs do, the folder is followed only when every one of them gives the same order.
 
@@ -51,7 +51,7 @@ The interfaces are called through their vtables with function pointers. `IShellW
 - The answer is only as good as the source's mapping: a view the source cannot express as a `FileOrder` gives null, and the folder opens as if no window showed it.
 - `LoadOptions.FollowedOrder` is the one way a caller that lists for the Load can pass the order on; files given without it are of a directory that starts with the default.
 - `WindowSettingRecordReadsTests` lets `Sorting.FollowExplorerSorting` be read anywhere, as `IncludeSubDirectories` is: both are App Settings of their own and not the Default File Order.
-- Dates taken are not read yet, as reading one through the shell costs about 3 ms a file, which is too slow to do before the list shows. Until they are, a file with a date taken is placed by the earlier of its creation and last write time, so a folder with such files, sorted by Date, does not yet match Explorer exactly. Reading them in the background and sorting again is a later step.
+- Dates taken are read after the list shows, in the background, and the files sorted again where that changes their order (ADR-0051), as reading one through the shell costs about 3 ms a file.
 - Date is a field like the others: `SortFilesByDate` is its Action, in the sort category of the keybindings, with an item in the sort submenus and the macOS native menu, labeled with the existing `Date` translation. It is 7 in `Sorting.SortPreference`, which a version from before it reads as Name.
 - An archive's pages go by their entry's modified time under Date, as under the other date fields, and an extracted page's file, stamped with that time on its creation and last write time, has the same date.
 - Explorer's Type column sorts by the type's name, so `.jpg` and `.jpeg` are one type; mapping it to the Extension field would give an order that is nearly Explorer's, which reads as a bug, so it is left out.

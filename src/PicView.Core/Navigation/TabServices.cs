@@ -21,4 +21,9 @@ public sealed record TabServices(
     /// The File Order of each Listed Directory, which the tabs made with these services share.
     /// </summary>
     public FileSorting.DirectoryOrders Orders { get; init; } = new();
+
+    /// <summary>
+    /// The dates read from the file manager, which the Date field of a File Order sorts by (ADR-0051).
+    /// </summary>
+    public FileSorting.FileDates Dates { get; init; } = new();
 }

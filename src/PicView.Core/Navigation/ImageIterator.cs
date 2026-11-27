@@ -279,7 +279,7 @@ public class ImageIterator(SharedImageCache cache, Thumbnails thumbnails, TabVie
     }
 
     /// <inheritdoc />
-    public void Resort(FileOrdering ordering)
+    public void Resort(FileOrdering ordering, bool again = false)
     {
         ArgumentNullException.ThrowIfNull(ordering);
         var (showsPair, looping) = PairSettings();
@@ -290,7 +290,7 @@ public class ImageIterator(SharedImageCache cache, Thumbnails thumbnails, TabVie
             var listed = Volatile.Read(ref _files);
             // An empty list has no order to publish, and one emptied meanwhile was dropped by the tab, whose next
             // iterator reuses the gallery coordinator a Listed change would reach
-            if (listed.Length is 0 || IsSameOrder(ordering))
+            if (listed.Length is 0 || (!again && IsSameOrder(ordering)))
             {
                 return;
             }
@@ -303,7 +303,7 @@ public class ImageIterator(SharedImageCache cache, Thumbnails thumbnails, TabVie
                     continue;
                 }
 
-                if (IsSameOrder(ordering))
+                if (!again && IsSameOrder(ordering))
                 {
                     return;
                 }

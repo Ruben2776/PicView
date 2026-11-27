@@ -520,7 +520,8 @@ public sealed class AppLifecycle
             new TabServices(_core.SharedCache, thumbnails, fileWatcher, imageLoader,
                 platform, _core.GlobalSettings)
             {
-                Orders = new PicView.Core.FileSorting.DirectoryOrders(platform.FolderOrders)
+                Orders = new PicView.Core.FileSorting.DirectoryOrders(platform.FolderOrders),
+                Dates = new PicView.Core.FileSorting.FileDates(platform.FileDates)
             },
             navigation);
     }

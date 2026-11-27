@@ -175,7 +175,8 @@ public class TabViewModel : IDisposable
         Func<string, string, int> compareNames = Services?.Platform is { } platform
             ? platform.CompareStrings
             : string.CompareOrdinal;
-        return new FileOrdering(order, compareNames);
+        // The Date field sorts by the dates read from the file manager, where there are any
+        return new FileOrdering(order, compareNames, Services?.Dates is { CanRead: true } dates ? dates.Known : null);
     }
 
     /// Unique identifier for this tab.
@@ -878,6 +879,7 @@ public class TabViewModel : IDisposable
     private bool _isResortRequested;
     private bool _isReshuffleRequested;
     private bool _isPairCheckRequested;
+    private bool _isRedateRequested;
 
     /// <summary>
     /// The re-sort that runs now, or the last one, which ends once the tab's files are in its directory's File Order.
@@ -903,14 +905,17 @@ public class TabViewModel : IDisposable
     /// <param name="reshuffle">Whether files already in a Random order are shuffled again.</param>
     /// <param name="checksPair">Whether a shown pair that is not the one the list gives its shown file is shown again
     /// even when the files are in the order already, as after a load showed a pair it chose before a re-sort.</param>
+    /// <param name="redate">Whether files in a Date order are sorted again though the order is the same, as their
+    /// dates have been read since.</param>
     /// <returns>The run, which ends once the files are in the order.</returns>
-    internal Task ResortAsync(bool reshuffle = false, bool checksPair = false)
+    internal Task ResortAsync(bool reshuffle = false, bool checksPair = false, bool redate = false)
     {
         lock (_resortGate)
         {
             _isResortRequested = true;
             _isReshuffleRequested |= reshuffle;
             _isPairCheckRequested |= checksPair;
+            _isRedateRequested |= redate;
             if (!_isResortRunning)
             {
                 _isResortRunning = true;
@@ -927,6 +932,7 @@ public class TabViewModel : IDisposable
         {
             bool reshuffle;
             bool checksPair;
+            bool redate;
             lock (_resortGate)
             {
                 if (!_isResortRequested || IsDisposed)
@@ -935,6 +941,7 @@ public class TabViewModel : IDisposable
                     _isResortRequested = false;
                     _isReshuffleRequested = false;
                     _isPairCheckRequested = false;
+                    _isRedateRequested = false;
                     return;
                 }
 
@@ -943,11 +950,13 @@ public class TabViewModel : IDisposable
                 _isReshuffleRequested = false;
                 checksPair = _isPairCheckRequested;
                 _isPairCheckRequested = false;
+                redate = _isRedateRequested;
+                _isRedateRequested = false;
             }
 
             try
             {
-                await ResortOnceAsync(reshuffle, checksPair).ConfigureAwait(false);
+                await ResortOnceAsync(reshuffle, checksPair, redate).ConfigureAwait(false);
             }
             catch (Exception e)
             {
@@ -956,7 +965,7 @@ public class TabViewModel : IDisposable
         }
     }
 
-    private async ValueTask ResortOnceAsync(bool reshuffle, bool checksPair)
+    private async ValueTask ResortOnceAsync(bool reshuffle, bool checksPair, bool redate)
     {
         if (IsDisposed || ImageIterator is not { Files.Count: > 0 } iterator)
         {
@@ -965,7 +974,8 @@ public class TabViewModel : IDisposable
 
         var ordering = CurrentOrdering();
         var isShuffledAgain = reshuffle && ordering.Order.By is SortFilesBy.Random;
-        if (ordering.Order == iterator.Ordering.Order && !isShuffledAgain)
+        var isDatedAgain = redate && ordering.Order.By is SortFilesBy.Date;
+        if (ordering.Order == iterator.Ordering.Order && !isShuffledAgain && !isDatedAgain)
         {
             // In the order already, though a load may have shown a pair it chose before a re-sort it did not see
             if (checksPair && SingleImageType is SingleImageType.None && PairSettings().ShowsPair &&
@@ -977,7 +987,13 @@ public class TabViewModel : IDisposable
             return;
         }
 
-        iterator.Resort(ordering);
+        iterator.Resort(ordering, isDatedAgain);
+        if (!isDatedAgain)
+        {
+            // Sorted by Date now, perhaps, with dates not read yet
+            ReadDates();
+        }
+
         // A tab closed meanwhile has released its images, and a Single Image is shown instead of the files, with the
         // gallery hidden, so neither shows the files again nor preloads them
         if (IsDisposed || SingleImageType is not SingleImageType.None)
@@ -1045,6 +1061,56 @@ public class TabViewModel : IDisposable
         {
             _ = ResortAsync(checksPair: showedPair);
         }
+
+        ReadDates();
+    }
+
+    private Task _readingDates = Task.CompletedTask;
+
+    /// <summary>
+    /// The last read of the files' dates this tab started, which ends once they are read and, where that changed
+    /// their order, a re-sort is asked for.
+    /// </summary>
+    internal Task ReadingDates => Volatile.Read(ref _readingDates);
+
+    /// <summary>
+    /// Reads the dates the file manager shows for the files this tab browses, when they are in a Date order, in the
+    /// background, and sorts them again when the dates read put them in another order than the file system's dates
+    /// did (ADR-0051). Dates read before, by this tab or another, are not read again, so then the files are only
+    /// checked. An archive's pages are not read: their dates are their entries'.
+    /// </summary>
+    private void ReadDates()
+    {
+        if (IsDisposed || Services?.Dates is not { CanRead: true } dates ||
+            ImageIterator is not { Files.Count: > 0 } iterator || iterator.Ordering.Order.By is not SortFilesBy.Date ||
+            iterator.Files[0].DirectoryName is not { } folder || Archives.IsExtractionFolder(folder))
+        {
+            return;
+        }
+
+        var files = iterator.Files;
+        Volatile.Write(ref _readingDates, Task.Run(async () =>
+        {
+            try
+            {
+                await dates.ReadAsync(files).ConfigureAwait(false);
+                if (IsDisposed || ImageIterator is not { } current)
+                {
+                    return;
+                }
+
+                // With the dates read, not the ordering the list was made with, which may know of none
+                var ordering = CurrentOrdering();
+                if (ordering.Order.By is SortFilesBy.Date && !ordering.IsSorted(current.Files))
+                {
+                    await ResortAsync(redate: true).ConfigureAwait(false);
+                }
+            }
+            catch (Exception e)
+            {
+                DebugHelper.LogDebug(nameof(TabViewModel), nameof(ReadDates), e);
+            }
+        }));
     }
 
     /// <summary>

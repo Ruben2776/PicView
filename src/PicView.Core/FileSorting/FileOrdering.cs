@@ -8,7 +8,10 @@ public readonly record struct ArchiveEntryOrderKey(string Name, string Key, long
 /// <summary>
 /// A <see cref="FileOrder"/> with the name comparison to apply it with: the one comparison for files and archive entries.
 /// </summary>
-public sealed class FileOrdering(FileOrder order, Func<string, string, int> compareNames)
+/// <param name="knownDate">The date read from the file manager for a file, which the Date field takes before the
+/// file system's; null, or a null result, where none was read.</param>
+public sealed class FileOrdering(FileOrder order, Func<string, string, int> compareNames,
+    Func<FileInfo, DateTime?>? knownDate = null)
 {
     // What the file system reports for a file that does not exist.
     private static readonly DateTime MissingFileTime = DateTime.FromFileTimeUtc(0);
@@ -77,6 +80,28 @@ public sealed class FileOrdering(FileOrder order, Func<string, string, int> comp
         // The comparison ends in the full path, so no two distinct files tie and an unstable sort cannot reorder any.
         list.Sort(Compare);
         return list;
+    }
+
+    /// <summary>
+    /// Whether <paramref name="files"/> are in this order now, as they stop being when what a field compares changes
+    /// under them: the Date field, once dates are read. Random has no order to be out of.
+    /// </summary>
+    public bool IsSorted(IReadOnlyList<FileInfo> files)
+    {
+        if (Order.By == SortFilesBy.Random)
+        {
+            return true;
+        }
+
+        for (var i = 1; i < files.Count; i++)
+        {
+            if (Compare(files[i - 1], files[i]) > 0)
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /// <summary>
@@ -170,8 +195,13 @@ public sealed class FileOrdering(FileOrder order, Func<string, string, int> comp
     /// none for it, and goes before every dated file. The one place the Date field takes a file's date from, so a
     /// date taken, once known, has one place to take precedence in.
     /// </summary>
-    private static DateTime DateOf(FileInfo file)
+    private DateTime DateOf(FileInfo file)
     {
+        if (knownDate?.Invoke(file) is { } known)
+        {
+            return known;
+        }
+
         try
         {
             var created = file.CreationTimeUtc;

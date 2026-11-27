@@ -21,6 +21,12 @@ public interface IPlatformSpecificService
     /// </summary>
     IFolderOrderSource? FolderOrders => null;
 
+    /// <summary>
+    /// Reads the date this platform's file manager shows for a file, as Windows Explorer's Date column. Null on a
+    /// platform where the file system's dates are all there is.
+    /// </summary>
+    IFileDateSource? FileDates => null;
+
     void OpenWith(string path);
 
     void LocateOnDisk(string path);
