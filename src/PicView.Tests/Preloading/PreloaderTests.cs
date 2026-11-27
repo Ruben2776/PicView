@@ -34,6 +34,29 @@ public class PreloaderTests
         await WaitUntil(() => loaded.Contains("c.jpg"));
     }
 
+    [Fact]
+    public async Task Preload_AskedAgainWhileRunning_SkipsWhatTheRunningOneHasNotStarted()
+    {
+        var loaded = new ConcurrentQueue<string>();
+        var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var preloader = new Preloader(async (_, file) =>
+        {
+            loaded.Enqueue(file.Name);
+            await release.Task;
+        });
+        var files = Enumerable.Range(0, 100).Select(i => new FileInfo($"{i}.jpg")).ToArray();
+
+        preloader.Preload(1, new PreloadRequest(files, 10, false, false, CancellationToken.None));
+        await WaitUntil(() => loaded.Contains("11.jpg"));
+        // Navigated far away while the first preload still loads the side ahead, its side behind not started
+        preloader.Preload(1, new PreloadRequest(files, 50, false, false, CancellationToken.None));
+        release.SetResult();
+
+        // The side behind is loaded last, so the second preload has started all of its loads by now
+        await WaitUntil(() => loaded.Contains("49.jpg"));
+        Assert.DoesNotContain("9.jpg", loaded);
+    }
+
     private static async Task WaitUntil(Func<bool> condition)
     {
         var deadline = DateTime.UtcNow + WaitLimit;

@@ -10,7 +10,8 @@ namespace PicView.Core.Preloading;
 /// Responsible for calculating predictive indices (look-ahead) and loading them, in the direction of the last step
 /// first and deepest in the direction of travel, while at most one preload per owner runs. A preload asked for while one runs follows it, with the list and
 /// position as they were asked for last: an archive's pages are listed as they are extracted, and the page after the
-/// shown one should be loaded by the time Next asks for it.
+/// shown one should be loaded by the time Next asks for it. The running one starts no more loads from then on, as
+/// the owner may have moved away from the files it was asked to load: the one that follows loads what is still near.
 /// </para>
 /// </summary>
 internal sealed class Preloader(Func<uint, FileInfo, Task> load)
@@ -110,6 +111,12 @@ internal sealed class Preloader(Func<uint, FileInfo, Task> load)
             var iterations = isAhead ? PreLoaderConfig.PositiveIterations : PreLoaderConfig.NegativeIterations;
             await Parallel.ForAsync(0, iterations, options, async (i, _) =>
             {
+                // Superseded: the owner's token is only cancelled when it leaves the folder or closes, not by a step
+                if (_next.ContainsKey(ownerId))
+                {
+                    return;
+                }
+
                 var index = forwards
                     ? (currentIndex + 1 + i) % count
                     : ((currentIndex - 1 - i) % count + count) % count;
