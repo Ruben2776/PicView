@@ -18,12 +18,15 @@ public static class ViewerActions
 
     public static ValueTask ScrollToBottom(MainWindowViewModel vm) => OnUiThread(vm, ScrollToBottomOf);
 
-    // The expanded gallery covers the image, so it is not zoomed
+    // The expanded gallery covers the image, and scrolling shows it at its fitted width, so neither is zoomed
     public static ValueTask ZoomIn(MainWindowViewModel vm) =>
-        RotationManager.IsGalleryExpanded(vm) ? ValueTask.CompletedTask : OnUiThread(vm, ZoomInOf);
+        CannotZoom(vm) ? ValueTask.CompletedTask : OnUiThread(vm, ZoomInOf);
 
     public static ValueTask ZoomOut(MainWindowViewModel vm) =>
-        RotationManager.IsGalleryExpanded(vm) ? ValueTask.CompletedTask : OnUiThread(vm, ZoomOutOf);
+        CannotZoom(vm) ? ValueTask.CompletedTask : OnUiThread(vm, ZoomOutOf);
+
+    private static bool CannotZoom(MainWindowViewModel vm) =>
+        vm.WindowSettings.IsScrollingEnabled.CurrentValue || RotationManager.IsGalleryExpanded(vm);
 
     internal static void ScrollLine(IZoomScrollTarget? target, bool down) => target?.ScrollLine(down);
 

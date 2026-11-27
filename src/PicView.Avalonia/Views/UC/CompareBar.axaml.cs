@@ -76,8 +76,14 @@ public partial class CompareBar : UserControl, IDisposable
             .SubscribeOnUIThread(() =>
             {
                 ZoomPercentText.Text = $"{tab.Zoom.FactorPercent.CurrentValue}%";
-                ZoomOutButton.IsEnabled = !(Settings.Zoom.AvoidZoomingOut && tab.Zoom.Factor <= 1.001);
+                ShowZoomButtons(tab);
             }, DebugHelper.LogError(nameof(CompareBar), nameof(TabZoom.FactorPercent)))
+            .AddTo(ref _subscriptions);
+
+        // Its window's scrolling: the bar is attached again, and so subscribes again, when its tab moves window
+        tab.ParentWindowContext?.WindowSettings.IsScrollingEnabled
+            .SubscribeOnUIThread(() => ShowZoomButtons(tab),
+                DebugHelper.LogError(nameof(CompareBar), nameof(ShowZoomButtons)))
             .AddTo(ref _subscriptions);
 
         if (tab.Comparison is not { } comparison)
@@ -303,6 +309,14 @@ public partial class CompareBar : UserControl, IDisposable
     private void OnAlignClick(object? sender, RoutedEventArgs e) => Comparison?.ToggleAligning();
 
     private void OnResetAlignClick(object? sender, RoutedEventArgs e) => Comparison?.ResetAlignment();
+
+    // Scrolling shows the images at their fitted width, so neither button zooms while it is on
+    private void ShowZoomButtons(TabViewModel tab)
+    {
+        var isScrolling = tab.ParentWindowContext?.WindowSettings.IsScrollingEnabled.Value ?? false;
+        ZoomInButton.IsEnabled = !isScrolling;
+        ZoomOutButton.IsEnabled = !isScrolling && !(Settings.Zoom.AvoidZoomingOut && tab.Zoom.Factor <= 1.001);
+    }
 
     private void ShowResetAlign() =>
         ResetAlignButton.IsVisible = Comparison is { } comparison && comparison.HasAlignment.Value &&

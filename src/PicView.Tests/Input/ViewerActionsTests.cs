@@ -1,5 +1,8 @@
 using Avalonia;
 using PicView.Avalonia.Input;
+using PicView.Core.IPlatform;
+using PicView.Core.ViewModels;
+using R3;
 
 namespace PicView.Tests.Input;
 
@@ -76,6 +79,47 @@ public class ViewerActionsTests
         ViewerActions.ScrollToBottom(none);
         ViewerActions.ZoomIn(none);
         ViewerActions.ZoomOut(none);
+    }
+
+    [AvaloniaTheory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task Zoom_WithoutScrolling_ZoomsTheActiveTabsViewer(bool zoomIn)
+    {
+        var (vm, viewer) = WindowShowing();
+
+        await (zoomIn ? ViewerActions.ZoomIn(vm) : ViewerActions.ZoomOut(vm));
+
+        Assert.Equal([zoomIn ? "ZoomIn" : "ZoomOut"], viewer.Calls);
+    }
+
+    [AvaloniaTheory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task Zoom_WhileScrolling_DoesNothing(bool zoomIn)
+    {
+        var (vm, viewer) = WindowShowing();
+        vm.WindowSettings.IsScrollingEnabled.Value = true;
+
+        await (zoomIn ? ViewerActions.ZoomIn(vm) : ViewerActions.ZoomOut(vm));
+
+        Assert.Empty(viewer.Calls);
+    }
+
+    private static (MainWindowViewModel Vm, RecordingViewer Viewer) WindowShowing()
+    {
+        SetDefaults();
+        var vm = new MainWindowViewModel(null!, null!, null!, null!);
+        var viewer = new RecordingViewer();
+        vm.WindowTabs.ActiveTab.CurrentValue.SetViews(new FakeViews(viewer));
+        return (vm, viewer);
+    }
+
+    private sealed class FakeViews(object view) : ITabViews
+    {
+        public IReadOnlyBindableReactiveProperty<object?> View { get; } = new BindableReactiveProperty<object?>(view);
+
+        public void Dispose() { }
     }
 
     private sealed class RecordingViewer : IZoomScrollTarget

@@ -780,15 +780,23 @@
                     Icon="{StaticResource ZoomOutImage}"
                     IconHeight="16"
                     IconWidth="18"
-                    IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.Image.Value,
-                                                Converter={x:Static ObjectConverters.IsNotNull},
-                                                FallbackValue=False,
-                                                Mode=OneWay}"
                     IsTabStop="False"
                     ToolTip.HorizontalOffset="15"
                     ToolTip.Tip="{CompiledBinding Translation.ZoomOut.Value}"
                     Width="38"
-                    x:Name="ZoomOutButton" />
+                    x:Name="ZoomOutButton">
+                    <!--  Disabled on the start-up menu, with no image, and while scrolling, which shows the image at its fitted width  -->
+                    <customControls:IconButton.IsEnabled>
+                        <MultiBinding Converter="{x:Static BoolConverters.And}">
+                            <Binding
+                                Converter="{x:Static ObjectConverters.IsNotNull}"
+                                FallbackValue="False"
+                                Mode="OneWay"
+                                Path="WindowTabs.ActiveTab.Value.Image.Value" />
+                            <Binding Mode="OneWay" Path="!WindowSettings.IsScrollingEnabled.Value" />
+                        </MultiBinding>
+                    </customControls:IconButton.IsEnabled>
+                </customControls:IconButton>
 
                 <customControls:IconButton
                     Background="{DynamicResource BottomBarToolBtnBackground}"
@@ -803,15 +811,23 @@
                     Icon="{StaticResource ZoomImage}"
                     IconHeight="16"
                     IconWidth="18"
-                    IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.Image.Value,
-                                                Converter={x:Static ObjectConverters.IsNotNull},
-                                                FallbackValue=False,
-                                                Mode=OneWay}"
                     IsTabStop="False"
                     ToolTip.HorizontalOffset="15"
                     ToolTip.Tip="{CompiledBinding Translation.ZoomIn.Value}"
                     Width="38"
-                    x:Name="ZoomInButton" />
+                    x:Name="ZoomInButton">
+                    <!--  Disabled on the start-up menu, with no image, and while scrolling, which shows the image at its fitted width  -->
+                    <customControls:IconButton.IsEnabled>
+                        <MultiBinding Converter="{x:Static BoolConverters.And}">
+                            <Binding
+                                Converter="{x:Static ObjectConverters.IsNotNull}"
+                                FallbackValue="False"
+                                Mode="OneWay"
+                                Path="WindowTabs.ActiveTab.Value.Image.Value" />
+                            <Binding Mode="OneWay" Path="!WindowSettings.IsScrollingEnabled.Value" />
+                        </MultiBinding>
+                    </customControls:IconButton.IsEnabled>
+                </customControls:IconButton>
 
                 <customControls:IconButton
                     Background="{DynamicResource BottomBarToolBtnBackground}"
@@ -826,15 +842,23 @@
                     Icon="{StaticResource RefreshCcwOff}"
                     IconHeight="17"
                     IconWidth="17"
-                    IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.Image.Value,
-                                                Converter={x:Static ObjectConverters.IsNotNull},
-                                                FallbackValue=False,
-                                                Mode=OneWay}"
                     IsTabStop="False"
                     ToolTip.HorizontalOffset="15"
                     ToolTip.Tip="{CompiledBinding Translation.ResetZoom.Value}"
                     Width="38"
-                    x:Name="ResetZoomButton" />
+                    x:Name="ResetZoomButton">
+                    <!--  Disabled on the start-up menu, with no image, and while scrolling, as the zoom buttons are  -->
+                    <customControls:IconButton.IsEnabled>
+                        <MultiBinding Converter="{x:Static BoolConverters.And}">
+                            <Binding
+                                Converter="{x:Static ObjectConverters.IsNotNull}"
+                                FallbackValue="False"
+                                Mode="OneWay"
+                                Path="WindowTabs.ActiveTab.Value.Image.Value" />
+                            <Binding Mode="OneWay" Path="!WindowSettings.IsScrollingEnabled.Value" />
+                        </MultiBinding>
+                    </customControls:IconButton.IsEnabled>
+                </customControls:IconButton>
 
                 <customControls:IconButton
                     Background="{DynamicResource BottomBarNavBtnBackground}"

@@ -55,6 +55,8 @@
                 Icon="{StaticResource ZoomOutImage}"
                 IconHeight="18"
                 IconWidth="21"
+                IsEnabled="{CompiledBinding !ParentWindowContext.WindowSettings.IsScrollingEnabled.Value,
+                                            Mode=OneWay}"
                 IsTabStop="False" />
 
             <customControls:IconButton
@@ -71,6 +73,8 @@
                 Icon="{StaticResource ZoomImage}"
                 IconHeight="18"
                 IconWidth="21"
+                IsEnabled="{CompiledBinding !ParentWindowContext.WindowSettings.IsScrollingEnabled.Value,
+                                            Mode=OneWay}"
                 IsTabStop="False" />
 
             <customControls:IconButton
