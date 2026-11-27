@@ -379,6 +379,9 @@ public class TabOverviewViewModel
         {
             Release(tab);
         }
+
+        // The directory orders outlive every window, so a closed window stops following them
+        _fileOrder.Dispose();
     }
 
     private void Release(TabViewModel tab)

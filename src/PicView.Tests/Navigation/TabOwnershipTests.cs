@@ -1348,6 +1348,22 @@ public class TabOwnershipTests : IDisposable
     }
 
     [Fact]
+    public async Task CheckMarks_OfAClosedWindow_NoLongerFollowTheDirectoryOrders()
+    {
+        ComposeServices();
+        var closed = CreateWindow();
+        var open = CreateWindow();
+        closed.WindowTabs.TearDown();
+
+        await open.WindowTabs.SortAsync(SortFilesBy.FileSize);
+
+        Assert.True(open.WindowTabs.IsSortedByFileSize.Value);
+        // The orders are the application's and outlive the window, which must not be held by following them
+        Assert.False(closed.WindowTabs.IsSortedByFileSize.Value);
+        Assert.True(closed.WindowTabs.IsSortedByName.Value);
+    }
+
+    [Fact]
     public async Task CheckMarks_AreThoseOfTheActiveTabsDirectory_InEachWindow()
     {
         ComposeServices();

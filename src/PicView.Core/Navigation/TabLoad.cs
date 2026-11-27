@@ -188,7 +188,6 @@ public sealed class TabLoad
         run.IsShown = IsModelOf(_tab.Model, file) || IsModelOf(_tab.SecondaryModel, file);
         return run.IsShown ? LoadResult.Loaded : LoadResult.Failed();
 
-        // TODO: Figure out way to share file list, if another tab is already in the same directory
         // AsTask, because Task.Run waits for a Task but returns a ValueTask without awaiting it
     }
 
