@@ -11,7 +11,6 @@ namespace PicView.Tests.FileSorting;
 public class ExplorerSortTests
 {
     private static readonly ShellPropertyKey DateTaken = new(new Guid("14B81DA1-0135-4D31-96D9-6CBFC9671A99"), 36867);
-    private static readonly ShellPropertyKey ItemDate = new(new Guid("F7DB74B4-4287-4103-AFBA-F1B13DCD75CF"), 100);
 
     public static TheoryData<string, SortFilesBy> Columns => new()
     {
@@ -20,6 +19,7 @@ public class ExplorerSortTests
         { nameof(ExplorerSort.DateModified), SortFilesBy.LastWriteTime },
         { nameof(ExplorerSort.DateCreated), SortFilesBy.CreationTime },
         { nameof(ExplorerSort.DateAccessed), SortFilesBy.LastAccessTime },
+        { nameof(ExplorerSort.Date), SortFilesBy.Date },
     };
 
     private static ShellPropertyKey KeyOf(string column) => column switch
@@ -29,6 +29,7 @@ public class ExplorerSortTests
         nameof(ExplorerSort.DateModified) => ExplorerSort.DateModified,
         nameof(ExplorerSort.DateCreated) => ExplorerSort.DateCreated,
         nameof(ExplorerSort.DateAccessed) => ExplorerSort.DateAccessed,
+        nameof(ExplorerSort.Date) => ExplorerSort.Date,
         _ => throw new ArgumentOutOfRangeException(nameof(column))
     };
 
@@ -48,7 +49,18 @@ public class ExplorerSortTests
         // Type sorts by the type's name, so .jpg and .jpeg are one, which the Extension field does not give
         Assert.Null(ExplorerSort.ToFileOrder(new ExplorerView(ExplorerSort.TypeText, true, null)));
         Assert.Null(ExplorerSort.ToFileOrder(new ExplorerView(DateTaken, true, null)));
-        Assert.Null(ExplorerSort.ToFileOrder(new ExplorerView(ItemDate, false, null)));
+    }
+
+    [Fact]
+    public void Date_IsTheShellsItemDateProperty() =>
+        Assert.Equal(new ShellPropertyKey(new Guid("F7DB74B4-4287-4103-AFBA-F1B13DCD75CF"), 100), ExplorerSort.Date);
+
+    [Fact]
+    public void ToFileOrder_GroupedAndSortedByDate_InTheSameDirection_IsDate()
+    {
+        var view = new ExplorerView(ExplorerSort.Date, false, ExplorerSort.Date, false);
+
+        Assert.Equal(new FileOrder(SortFilesBy.Date, false), ExplorerSort.ToFileOrder(view));
     }
 
     [Fact]

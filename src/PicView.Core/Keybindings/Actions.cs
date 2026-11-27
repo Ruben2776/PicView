@@ -93,6 +93,7 @@ public static class Actions
     public const string SortFilesByCreationTime = nameof(SortFilesByCreationTime);
     public const string SortFilesByLastAccessTime = nameof(SortFilesByLastAccessTime);
     public const string SortFilesByLastWriteTime = nameof(SortFilesByLastWriteTime);
+    public const string SortFilesByDate = nameof(SortFilesByDate);
     public const string SortFilesRandomly = nameof(SortFilesRandomly);
     public const string SortFilesAscending = nameof(SortFilesAscending);
     public const string SortFilesDescending = nameof(SortFilesDescending);

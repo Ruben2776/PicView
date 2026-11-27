@@ -452,7 +452,8 @@ public class Sorting
     /// 3 => Extension,
     /// 4 => LastAccessTime,
     /// 5 => LastWriteTime,
-    /// 6 => Random
+    /// 6 => Random,
+    /// 7 => Date
     /// </remarks>
     public int SortPreference { get; set; } = 0;
 

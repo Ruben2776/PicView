@@ -170,6 +170,16 @@
                     IsChecked="{Binding WindowTabs.IsSortedByLastWriteTime.Value, Mode=OneWay}"
                     ToggleType="Radio" />
 
+                <!--  Sort files by date  -->
+                <customControls:StyledMenuItem
+                    Command="{CompiledBinding RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.SortFilesByDate}"
+                    GroupName="SortType"
+                    Header="{CompiledBinding Translation.Date.Value,
+                                             Mode=OneWay}"
+                    IsChecked="{Binding WindowTabs.IsSortedByDate.Value, Mode=OneWay}"
+                    ToggleType="Radio" />
+
                 <!--  Sort files randomly  -->
                 <customControls:StyledMenuItem
                     Command="{CompiledBinding RunActionCommand}"

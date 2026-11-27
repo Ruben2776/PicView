@@ -1123,6 +1123,23 @@ public class AppLifecycleTests : IAsyncDisposable
     }
 
     [AvaloniaFact]
+    public async Task SortFilesByDateAction_SetsTheDateField_AndItsCheckMark()
+    {
+        Settings.Sorting.SortPreference = (int)SortFilesBy.Name;
+        Settings.Sorting.Ascending = true;
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var vm = ViewModelOf(app.MainWindows.Open[0]);
+
+        await vm.ActionRunner!.Run(Actions.SortFilesByDate);
+
+        Assert.True(vm.WindowTabs.IsSortedByDate.Value);
+        Assert.False(vm.WindowTabs.IsSortedByName.Value);
+        Assert.Equal((int)SortFilesBy.Date, Settings.Sorting.SortPreference);
+        Assert.True(Settings.Sorting.Ascending);
+    }
+
+    [AvaloniaFact]
     public async Task CloseAsync_LeavesTheDefaultFileOrderASortSet()
     {
         Settings.Sorting.SortPreference = (int)SortFilesBy.Name;

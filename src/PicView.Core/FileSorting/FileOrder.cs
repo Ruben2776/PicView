@@ -17,7 +17,7 @@ public readonly record struct FileOrder(SortFilesBy By, bool Ascending)
             return new FileOrder(SortFilesBy.Name, true);
         }
 
-        var by = sorting.SortPreference is >= (int)SortFilesBy.Name and <= (int)SortFilesBy.Random
+        var by = sorting.SortPreference is >= (int)SortFilesBy.Name and <= (int)SortFilesBy.Date
             ? (SortFilesBy)sorting.SortPreference
             : SortFilesBy.Name;
         return new FileOrder(by, sorting.Ascending);

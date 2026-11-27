@@ -120,6 +120,7 @@ public sealed class FileOrdering(FileOrder order, Func<string, string, int> comp
         SortFilesBy.CreationTime => TimeOf(a, SortFilesBy.CreationTime).CompareTo(TimeOf(b, SortFilesBy.CreationTime)),
         SortFilesBy.LastAccessTime => TimeOf(a, SortFilesBy.LastAccessTime).CompareTo(TimeOf(b, SortFilesBy.LastAccessTime)),
         SortFilesBy.LastWriteTime => TimeOf(a, SortFilesBy.LastWriteTime).CompareTo(TimeOf(b, SortFilesBy.LastWriteTime)),
+        SortFilesBy.Date => DateOf(a).CompareTo(DateOf(b)),
         SortFilesBy.Extension => CompareExtensions(a.Name, b.Name),
         _ => compareNames(a.Name, b.Name)
     };
@@ -127,7 +128,7 @@ public sealed class FileOrdering(FileOrder order, Func<string, string, int> comp
     private int CompareField(in ArchiveEntryOrderKey a, in ArchiveEntryOrderKey b) => Order.By switch
     {
         SortFilesBy.FileSize => a.Size.CompareTo(b.Size),
-        SortFilesBy.CreationTime or SortFilesBy.LastAccessTime or SortFilesBy.LastWriteTime =>
+        SortFilesBy.CreationTime or SortFilesBy.LastAccessTime or SortFilesBy.LastWriteTime or SortFilesBy.Date =>
             (a.Modified ?? DateTime.MinValue).CompareTo(b.Modified ?? DateTime.MinValue),
         SortFilesBy.Extension => CompareExtensions(a.Name, b.Name),
         _ => compareNames(a.Name, b.Name)
@@ -156,6 +157,31 @@ public sealed class FileOrdering(FileOrder order, Func<string, string, int> comp
                 _ => file.LastWriteTimeUtc
             };
             return time == MissingFileTime ? DateTime.MinValue : time;
+        }
+        catch (Exception e) when (e is IOException or UnauthorizedAccessException)
+        {
+            return DateTime.MinValue;
+        }
+    }
+
+    /// <summary>
+    /// The date the file manager shows for <paramref name="file"/>, as far as the file system gives it: the earlier of
+    /// its creation and last write time. A file with either of them missing has no date, as the file manager shows
+    /// none for it, and goes before every dated file. The one place the Date field takes a file's date from, so a
+    /// date taken, once known, has one place to take precedence in.
+    /// </summary>
+    private static DateTime DateOf(FileInfo file)
+    {
+        try
+        {
+            var created = file.CreationTimeUtc;
+            var written = file.LastWriteTimeUtc;
+            if (created == MissingFileTime || written == MissingFileTime)
+            {
+                return DateTime.MinValue;
+            }
+
+            return created < written ? created : written;
         }
         catch (Exception e) when (e is IOException or UnauthorizedAccessException)
         {

@@ -80,6 +80,7 @@ public class TabOverviewViewModel
         IsSortedByLastAccessTime = IsSortedBy(SortFilesBy.LastAccessTime);
         IsSortedByLastWriteTime = IsSortedBy(SortFilesBy.LastWriteTime);
         IsSortedByRandomization = IsSortedBy(SortFilesBy.Random);
+        IsSortedByDate = IsSortedBy(SortFilesBy.Date);
         IsAscending = _fileOrder.Select(static order => order.Ascending).ToReadOnlyBindableReactiveProperty();
         Tabs.Value.CollectionChanged += (_, _) => _isTabStripShown.Value = Tabs.Value.Count > 1;
     }
@@ -536,6 +537,7 @@ public class TabOverviewViewModel
     public IReadOnlyBindableReactiveProperty<bool> IsSortedByLastAccessTime { get; }
     public IReadOnlyBindableReactiveProperty<bool> IsSortedByLastWriteTime { get; }
     public IReadOnlyBindableReactiveProperty<bool> IsSortedByRandomization { get; }
+    public IReadOnlyBindableReactiveProperty<bool> IsSortedByDate { get; }
     public IReadOnlyBindableReactiveProperty<bool> IsAscending { get; }
 
     private IReadOnlyBindableReactiveProperty<bool> IsSortedBy(SortFilesBy by) =>

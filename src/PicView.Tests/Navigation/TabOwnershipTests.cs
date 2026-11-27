@@ -1336,15 +1336,29 @@ public class TabOwnershipTests : IDisposable
         Settings.Sorting.Ascending = false;
         var tabs = CreateWindow().WindowTabs;
 
-        Assert.Equal([false, true, false, false, false, false, false], CheckMarksOf(tabs));
+        Assert.Equal([false, true, false, false, false, false, false, false], CheckMarksOf(tabs));
         Assert.False(tabs.IsAscending.Value);
 
         await tabs.SortAsync(SortFilesBy.Random);
         await tabs.SortAsync(ascending: true);
 
-        Assert.Equal([false, false, false, false, false, false, true], CheckMarksOf(tabs));
+        Assert.Equal([false, false, false, false, false, false, true, false], CheckMarksOf(tabs));
         Assert.True(tabs.IsAscending.Value);
         Assert.Equal(new FileOrder(SortFilesBy.Random, true), DirectoryOrders.Default);
+    }
+
+    [Fact]
+    public async Task CheckMarks_SortedByDate_MarkDateAlone()
+    {
+        ComposeServices();
+        CreateFiles();
+        var window = CreateWindow();
+        await OpenAsync(window.WindowTabs.ActiveTab.Value, "a.jpg");
+
+        await window.WindowTabs.SortAsync(SortFilesBy.Date);
+
+        Assert.Equal([false, false, false, false, false, false, false, true], CheckMarksOf(window.WindowTabs));
+        Assert.Equal(SortFilesBy.Date, window.WindowTabs.ActiveTab.Value.ImageIterator!.Ordering.Order.By);
     }
 
     [Fact]
@@ -1377,9 +1391,9 @@ public class TabOwnershipTests : IDisposable
         await sorted.WindowTabs.SortAsync(SortFilesBy.LastWriteTime);
         await sorted.WindowTabs.SortAsync(ascending: false);
 
-        Assert.Equal([false, false, false, false, false, true, false], CheckMarksOf(sorted.WindowTabs));
+        Assert.Equal([false, false, false, false, false, true, false, false], CheckMarksOf(sorted.WindowTabs));
         Assert.False(sorted.WindowTabs.IsAscending.Value);
-        Assert.Equal([true, false, false, false, false, false, false], CheckMarksOf(other.WindowTabs));
+        Assert.Equal([true, false, false, false, false, false, false, false], CheckMarksOf(other.WindowTabs));
         Assert.True(other.WindowTabs.IsAscending.Value);
     }
 
@@ -1397,18 +1411,18 @@ public class TabOwnershipTests : IDisposable
         await OpenInOtherAsync(second, "a.jpg");
         await _core.Services!.Orders.SetAsync(OtherFolder, new FileOrder(SortFilesBy.Extension, false));
 
-        Assert.Equal([false, false, false, true, false, false, false], CheckMarksOf(window.WindowTabs));
+        Assert.Equal([false, false, false, true, false, false, false, false], CheckMarksOf(window.WindowTabs));
         Assert.False(window.WindowTabs.IsAscending.Value);
 
         window.WindowTabs.ActiveTab.Value = first;
 
-        Assert.Equal([false, true, false, false, false, false, false], CheckMarksOf(window.WindowTabs));
+        Assert.Equal([false, true, false, false, false, false, false, false], CheckMarksOf(window.WindowTabs));
         Assert.True(window.WindowTabs.IsAscending.Value);
 
         // The first tab goes to the other directory, whose order it takes and shows
         await OpenInOtherAsync(first, "b.jpg");
 
-        Assert.Equal([false, false, false, true, false, false, false], CheckMarksOf(window.WindowTabs));
+        Assert.Equal([false, false, false, true, false, false, false, false], CheckMarksOf(window.WindowTabs));
         Assert.Equal(new FileOrder(SortFilesBy.Extension, false), first.ImageIterator!.Ordering.Order);
     }
 
@@ -2359,7 +2373,7 @@ public class TabOwnershipTests : IDisposable
     [
         tabs.IsSortedByName.Value, tabs.IsSortedByFileSize.Value, tabs.IsSortedByCreationTime.Value,
         tabs.IsSortedByExtension.Value, tabs.IsSortedByLastAccessTime.Value, tabs.IsSortedByLastWriteTime.Value,
-        tabs.IsSortedByRandomization.Value
+        tabs.IsSortedByRandomization.Value, tabs.IsSortedByDate.Value
     ];
 
     // Bounds each wait on a gate, so a failing test fails instead of hanging the run

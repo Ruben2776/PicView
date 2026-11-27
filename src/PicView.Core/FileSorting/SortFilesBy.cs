@@ -37,5 +37,11 @@ public enum SortFilesBy
     /// <summary>
     /// Sort files randomly.
     /// </summary>
-    Random = 6
+    Random = 6,
+
+    /// <summary>
+    /// Sort files by the date the file manager shows for them: the date taken when known, else the earlier of the
+    /// creation and last write time.
+    /// </summary>
+    Date = 7
 }

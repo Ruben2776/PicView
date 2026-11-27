@@ -1216,9 +1216,10 @@ public class ArchiveExtractionServiceTests
     [Theory]
     [InlineData(SortFilesBy.CreationTime)]
     [InlineData(SortFilesBy.LastAccessTime)]
+    [InlineData(SortFilesBy.Date)]
     public async Task PrepareArchiveAsync_SortedByCreationTime_FallsBackToModifiedTime(SortFilesBy by)
     {
-        // An entry keeps no creation or access time, so those orders go by when it was modified
+        // An entry keeps no creation or access time, so those orders, and Date, go by when it was modified
         var zipPath = CreateOrderedZip(ThreePages);
         var service = new ArchiveExtractionService();
         try
@@ -1405,6 +1406,49 @@ public class ArchiveExtractionServiceTests
             // By the instants: the local time is the earlier one when the zone is ahead of UTC
             Assert.Equal(offset > TimeSpan.Zero ? ["local.jpg", "utc.jpg"] : ["utc.jpg", "local.jpg"],
                 keys.Select(k => k.Name));
+        }
+        finally
+        {
+            Directory.Delete(folder, true);
+        }
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void EntriesByDate_WithAndWithoutAModifiedTime_OrderTheSameByKeyAndOnDisk(bool ascending)
+    {
+        // A page's file is stamped with its entry's time on its creation and last write time, so the earlier of the
+        // two, which Date goes by, is that time, and the entries without one tie and go by name
+        (string Name, DateTime? Modified)[] pages =
+            [("d.jpg", null), ("c.jpg", Day2), ("b.jpg", Day1), ("a.jpg", null)];
+        var ordering = TestOrderings.By(SortFilesBy.Date, ascending);
+        var keys = new List<ArchiveEntryOrderKey>();
+        var folder = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(),
+            "PicViewEntryDates_" + Guid.NewGuid().ToString("N"))).FullName;
+        try
+        {
+            var files = new List<FileInfo>();
+            foreach (var (name, time) in pages)
+            {
+                var modified = ArchiveExtractionService.ModifiedTimeOf(time);
+                keys.Add(new ArchiveEntryOrderKey(name, name, 1, modified));
+                var path = Path.Combine(folder, name);
+                using (var stream = File.Create(path))
+                {
+                    stream.WriteByte(1);
+                    stream.Flush();
+                    ArchiveExtractionService.StampModifiedTime(stream, modified);
+                }
+                files.Add(new FileInfo(path));
+            }
+
+            keys.Sort((x, y) => ordering.Compare(x, y));
+            var onDisk = ordering.Sort(files);
+
+            string[] expected = ["a.jpg", "d.jpg", "b.jpg", "c.jpg"];
+            Assert.Equal(ascending ? expected : expected.Reverse(), keys.Select(k => k.Name));
+            Assert.Equal(keys.Select(k => k.Name), onDisk.Select(f => f.Name));
         }
         finally
         {

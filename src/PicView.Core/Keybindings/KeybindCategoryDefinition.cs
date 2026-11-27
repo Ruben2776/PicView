@@ -231,6 +231,7 @@ public static class KeybindCategoryDefinition
         (Actions.SortFilesByExtension, t.FileExtension ?? string.Empty),
         (Actions.SortFilesByCreationTime, t.Created ?? string.Empty),
         (Actions.SortFilesByLastAccessTime, t.LastAccessTime ?? string.Empty),
+        (Actions.SortFilesByDate, t.Date ?? string.Empty),
         (Actions.SortFilesRandomly, t.Random ?? string.Empty),
         (Actions.SortFilesAscending, t.Ascending ?? string.Empty),
         (Actions.SortFilesDescending, t.Descending ?? string.Empty),

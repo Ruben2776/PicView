@@ -109,6 +109,7 @@ public class TranslationViewModel
         Crop.Value = t.Crop;
         CtrlToZoom.Value = t.CtrlToZoom;
         DarkTheme.Value = t.DarkTheme;
+        Date.Value = t.Date;
         DateTaken.Value = t.DateTaken;
         Dehaze.Value = t.Dehaze;
         DeleteFavorite.Value = t.DeleteFavorite;
@@ -543,6 +544,7 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> Crop { get; } = new();
     public BindableReactiveProperty<string?> CtrlToZoom { get; } = new();
     public BindableReactiveProperty<string?> DarkTheme { get; } = new();
+    public BindableReactiveProperty<string?> Date { get; } = new();
     public BindableReactiveProperty<string?> DateTaken { get; } = new();
     public BindableReactiveProperty<string?> Dehaze { get; } = new();
     public BindableReactiveProperty<string?> DeleteFavorite { get; } = new();

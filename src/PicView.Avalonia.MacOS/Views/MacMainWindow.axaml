@@ -480,6 +480,15 @@
                                 IsChecked="{Binding WindowTabs.IsSortedByLastWriteTime.Value, Mode=OneWay}"
                                 ToggleType="Radio" />
 
+                            <!--  Sort files by date  -->
+                            <NativeMenuItem
+                                Command="{CompiledBinding RunActionCommand}"
+                                CommandParameter="{x:Static keybindings:Actions.SortFilesByDate}"
+                                Header="{CompiledBinding Translation.Date.Value,
+                                                         Mode=OneWay}"
+                                IsChecked="{Binding WindowTabs.IsSortedByDate.Value, Mode=OneWay}"
+                                ToggleType="Radio" />
+
                             <!--  Sort files randomly  -->
                             <NativeMenuItem
                                 Command="{CompiledBinding RunActionCommand}"

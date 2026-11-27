@@ -786,6 +786,16 @@
                             Theme="{StaticResource MainBg}"
                             ToggleType="Radio" />
 
+                        <!--  Sort files by date  -->
+                        <customControls:StyledMenuItem
+                            Command="{Binding RunActionCommand}"
+                            CommandParameter="{x:Static keybindings:Actions.SortFilesByDate}"
+                            GroupName="Sort"
+                            Header="{Binding Translation.Date.Value, Mode=OneWay}"
+                            IsChecked="{Binding WindowTabs.IsSortedByDate.Value, Mode=OneWay}"
+                            Theme="{StaticResource MainBg}"
+                            ToggleType="Radio" />
+
                         <!--  Sort files randomly  -->
                         <customControls:StyledMenuItem
                             Command="{Binding RunActionCommand}"

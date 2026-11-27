@@ -193,6 +193,7 @@ public class FunctionsMapper : IActionRunner
             Actions.SortFilesByCreationTime => SortFilesByCreationTime,
             Actions.SortFilesByLastAccessTime => SortFilesByLastAccessTime,
             Actions.SortFilesByLastWriteTime => SortFilesByLastWriteTime,
+            Actions.SortFilesByDate => SortFilesByDate,
             Actions.SortFilesBySize => SortFilesBySize,
             Actions.SortFilesByExtension => SortFilesByExtension,
             Actions.SortFilesRandomly => SortFilesRandomly,
@@ -855,6 +856,10 @@ public class FunctionsMapper : IActionRunner
     /// <inheritdoc cref="TabOverviewViewModel.SortAsync(SortFilesBy)" />
     private async ValueTask SortFilesByLastWriteTime() =>
         await _vm.WindowTabs.SortAsync(SortFilesBy.LastWriteTime).ConfigureAwait(false);
+
+    /// <inheritdoc cref="TabOverviewViewModel.SortAsync(SortFilesBy)" />
+    private async ValueTask SortFilesByDate() =>
+        await _vm.WindowTabs.SortAsync(SortFilesBy.Date).ConfigureAwait(false);
 
     /// <inheritdoc cref="TabOverviewViewModel.SortAsync(SortFilesBy)" />
     private async ValueTask SortFilesBySize() =>

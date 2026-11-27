@@ -35,6 +35,12 @@ public static class ExplorerSort
     // The storage property set, which holds the columns a File Order has a field for
     private static readonly Guid Storage = new("B725F130-47EF-101A-A5F1-02608C9EEBAC");
 
+    /// <summary>
+    /// System.ItemDate: the Date column, which picture folders are sorted by unless another is chosen. It shows the
+    /// date taken of a file that has one, and else the earlier of its creation and last write time.
+    /// </summary>
+    public static readonly ShellPropertyKey Date = new(new Guid("F7DB74B4-4287-4103-AFBA-F1B13DCD75CF"), 100);
+
     /// <summary>System.ItemNameDisplay: the Name column.</summary>
     public static readonly ShellPropertyKey Name = new(Storage, 10);
 
@@ -55,7 +61,7 @@ public static class ExplorerSort
 
     /// <summary>
     /// The File Order <paramref name="view"/> shows its folder in, or null when no File Order gives it: a column
-    /// with no field (Type, Date, Date taken and the rest), or a view grouped by another column than it is sorted by,
+    /// with no field (Type, Date taken and the rest), or a view grouped by another column than it is sorted by,
     /// or in the other direction, which orders the groups first.
     /// </summary>
     public static FileOrder? ToFileOrder(in ExplorerView view)
@@ -119,6 +125,11 @@ public static class ExplorerSort
         if (key.Equals(DateAccessed))
         {
             return SortFilesBy.LastAccessTime;
+        }
+
+        if (key.Equals(Date))
+        {
+            return SortFilesBy.Date;
         }
 
         return null;
