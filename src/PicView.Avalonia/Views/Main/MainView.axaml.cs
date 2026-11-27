@@ -2,6 +2,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using PicView.Avalonia.Crop;
@@ -25,7 +26,7 @@ public partial class MainView : UserControl
     /// Runs the Contextual Action an item of the Animation menu names in its <c>Tag</c>, as its Keybind would on an
     /// animated image.
     /// </summary>
-    private void AnimationMenuItem_OnClick(object? sender, global::Avalonia.Interactivity.RoutedEventArgs e)
+    private void AnimationMenuItem_OnClick(object? sender, RoutedEventArgs e)
     {
         if (DataContext is MainWindowViewModel vm && sender is MenuItem { Tag: string contextualAction })
         {
@@ -161,15 +162,10 @@ public partial class MainView : UserControl
                     {
                         return;
                     }
-                    if (nav.HoverBar.BottomBorder.IsPointerOver)
+                    if (nav.HoverBar.BottomBorder.IsPointerOver || nav.GalleryView.IsPointerOver)
                     {
                         return;
                     }
-                    if (nav.GalleryView.IsPointerOver || nav.BarHost.IsPointerOver)
-                    {
-                        return;
-                    }
-
                     break;
                 }
             }
