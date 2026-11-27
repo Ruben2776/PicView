@@ -46,13 +46,14 @@ public static class QuickLoad
                     break;
                 case FileTypeResolver.LoadAbleFileType.Directory:
                     // Listed once: the tab's Load browses these files instead of listing the folder again
-                    var ordering = new FileOrdering(OrderOf(core, check.Value.Data),
+                    var folderFollowed = await FollowAsync(core, check.Value.Data).ConfigureAwait(false);
+                    var ordering = new FileOrdering(folderFollowed ?? OrderOf(core, check.Value.Data),
                         core.PlatformService.CompareStrings);
                     var files = FileListRetriever.RetrieveFiles(new FileInfo(check.Value.Data), ordering);
                     result = files.Count is 0
                         ? LoadResult.Failed()
                         : await LoadFileAsync(mainWindow, core, files[0], continueFromLeftOff,
-                            new ListedFiles(files, ordering, check.Value.Data)).ConfigureAwait(false);
+                            new ListedFiles(files, ordering, check.Value.Data, folderFollowed)).ConfigureAwait(false);
                     break;
                 case FileTypeResolver.LoadAbleFileType.Zip:
                 case FileTypeResolver.LoadAbleFileType.Web:
@@ -129,7 +130,12 @@ public static class QuickLoad
             // Listed once, to find the image beside the opened one; the tab's Load browses the same files
             var listFrom = rootDirectory is null ? fileInfo : new FileInfo(rootDirectory);
             var directory = rootDirectory ?? fileInfo.DirectoryName;
-            listed ??= ListedFiles.Of(core, listFrom, OrderOf(core, directory), directory);
+            if (listed is null)
+            {
+                var followed = await FollowAsync(core, directory).ConfigureAwait(false);
+                listed = ListedFiles.Of(core, listFrom, followed ?? OrderOf(core, directory), directory, followed);
+            }
+
             result = await LoadSideBySideAsync(mainWindow, core, vm, tab, fileInfo, listed.Value, rootDirectory)
                 .ConfigureAwait(false);
         }
@@ -203,7 +209,8 @@ public static class QuickLoad
         var model = await decoding.ConfigureAwait(false);
         return await ShowThroughTheLoadAsync(core, tab, fileInfo,
             new LoadOptions(Model: model, Files: listed?.Files, RootDirectory: rootDirectory,
-                ListedWith: listed?.Ordering, ListedDirectory: listed?.Directory)).ConfigureAwait(false);
+                ListedWith: listed?.Ordering, ListedDirectory: listed?.Directory,
+                FollowedOrder: listed?.Followed)).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -275,7 +282,7 @@ public static class QuickLoad
         var second = await decodingSecond.ConfigureAwait(false);
         var result = await ShowThroughTheLoadAsync(core, tab, fileInfo,
             new LoadOptions(Model: first, SecondaryModel: second, Files: files, RootDirectory: rootDirectory,
-                ListedWith: listed.Ordering, ListedDirectory: listed.Directory))
+                ListedWith: listed.Ordering, ListedDirectory: listed.Directory, FollowedOrder: listed.Followed))
             .ConfigureAwait(false);
 
         Dispatcher.UIThread.Post(() =>
@@ -318,16 +325,25 @@ public static class QuickLoad
 
     /// <summary>
     /// Files listed before the tab's Load, with the ordering they were listed in, which the tab's list keeps so it sorts
-    /// them again when their directory's order changed since, and the directory they were listed from.
+    /// them again when their directory's order changed since, the directory they were listed from, and the order taken
+    /// from the file manager for it, if any.
     /// </summary>
-    private readonly record struct ListedFiles(List<FileInfo> Files, FileOrdering Ordering, string? Directory)
+    private readonly record struct ListedFiles(List<FileInfo> Files, FileOrdering Ordering, string? Directory,
+        FileOrder? Followed)
     {
-        public static ListedFiles Of(CoreViewModel core, FileInfo listFrom, FileOrder order, string? directory)
+        public static ListedFiles Of(CoreViewModel core, FileInfo listFrom, FileOrder order, string? directory,
+            FileOrder? followed)
         {
             var ordering = new FileOrdering(order, core.PlatformService.CompareStrings);
-            return new ListedFiles(core.PlatformService.GetFiles(listFrom, order), ordering, directory);
+            return new ListedFiles(core.PlatformService.GetFiles(listFrom, order), ordering, directory, followed);
         }
     }
+
+    // The order the file manager shows the directory in, as the tab's Load asks before it lists (ADR-0050)
+    private static async ValueTask<FileOrder?> FollowAsync(CoreViewModel core, string? directory) =>
+        core.Services?.Orders is { } orders
+            ? await Task.Run(() => orders.FollowAsync(directory).AsTask()).ConfigureAwait(false)
+            : null;
 
     // The File Order of a directory before any tab lists it at App Start: the Default File Order, unless a tab of an
     // earlier window lists it

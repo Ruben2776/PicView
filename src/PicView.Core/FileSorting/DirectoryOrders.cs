@@ -1,3 +1,4 @@
+using PicView.Core.DebugTools;
 using PicView.Core.ViewModels;
 using R3;
 
@@ -7,8 +8,16 @@ namespace PicView.Core.FileSorting;
 /// The File Order of each Listed Directory, shared by every tab that lists it, in any Main Window. A directory has an
 /// order while a tab lists it; one no tab lists has the Default File Order.
 /// </summary>
-public sealed class DirectoryOrders
+/// <param name="fileManager">The order the platform's file manager shows a folder in; null where it is not asked.</param>
+/// <param name="askLimit">How long a Load waits for the file manager's answer; half a second by default.</param>
+public sealed class DirectoryOrders(IFolderOrderSource? fileManager = null, TimeSpan? askLimit = null)
 {
+    private readonly TimeSpan _askLimit = askLimit ?? TimeSpan.FromMilliseconds(500);
+
+    // An ask that outran the limit and has not come back: while the file manager hangs, it is not asked again, so
+    // one thread waits on it and not one per Load
+    private Task? _unanswered;
+
     private readonly Lock _gate = new();
     private readonly Dictionary<string, Entry> _entries = new(StringComparer.OrdinalIgnoreCase);
     private readonly Subject<Unit> _changed = new();
@@ -164,6 +173,113 @@ public sealed class DirectoryOrders
         }
 
         await Task.WhenAll(sorting).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Gives <paramref name="directory"/> the order the file manager shows it in now, when following is on and it
+    /// shows the folder in an order a File Order gives (ADR-0050): the tabs that list the directory start sorting
+    /// their files again, and the Default File Order is not touched. Waits no longer than the ask limit.
+    /// </summary>
+    /// <returns>The order taken from the file manager, which a directory no tab lists yet starts with through
+    /// <see cref="Enter"/>; null when nothing was taken, and the directory keeps the order it has.</returns>
+    public ValueTask<FileOrder?> FollowAsync(string? directory, CancellationToken ct = default) =>
+        Settings.Sorting.FollowExplorerSorting ? TakeAsync(directory, ct) : ValueTask.FromResult<FileOrder?>(null);
+
+    /// <summary>
+    /// Asks the file manager for every directory tabs list now, as when following is turned on. Archives are not
+    /// asked for.
+    /// </summary>
+    public async ValueTask FollowAllAsync(CancellationToken ct = default)
+    {
+        foreach (var directory in Listed())
+        {
+            if (Directory.Exists(directory))
+            {
+                await TakeAsync(directory, ct).ConfigureAwait(false);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Whether the file manager answers: false while an ask that outran the limit has not come back.
+    /// </summary>
+    internal bool IsAnswering
+    {
+        get
+        {
+            lock (_gate)
+            {
+                return _unanswered is not { IsCompleted: false };
+            }
+        }
+    }
+
+    private async ValueTask<FileOrder?> TakeAsync(string? directory, CancellationToken ct)
+    {
+        if (fileManager is null || KeyOf(directory) is not { } key)
+        {
+            return null;
+        }
+
+        Task<FileOrder?> asking;
+        lock (_gate)
+        {
+            if (_unanswered is { IsCompleted: false })
+            {
+                return null;
+            }
+
+            _unanswered = null;
+            asking = Task.Run(() => fileManager.OrderOf(key), CancellationToken.None);
+        }
+
+        FileOrder? order;
+        try
+        {
+            order = await asking.WaitAsync(_askLimit, ct).ConfigureAwait(false);
+        }
+        catch (TimeoutException e)
+        {
+            lock (_gate)
+            {
+                _unanswered = asking;
+            }
+
+            DebugHelper.LogDebug(nameof(DirectoryOrders), nameof(FollowAsync), e);
+            return null;
+        }
+        catch (Exception e) when (e is not OperationCanceledException)
+        {
+            DebugHelper.LogDebug(nameof(DirectoryOrders), nameof(FollowAsync), e);
+            return null;
+        }
+
+        if (order is not { } followed)
+        {
+            return null;
+        }
+
+        TabViewModel[] tabs = [];
+        lock (_gate)
+        {
+            if (_entries.TryGetValue(key, out var entry) && entry.Order != followed)
+            {
+                entry.Order = followed;
+                tabs = Live(entry);
+            }
+        }
+
+        if (tabs.Length > 0)
+        {
+            _changed.OnNext(Unit.Default);
+            // Not waited for: the Load that asked lists in this order itself, and the others sort beside it
+            foreach (var tab in tabs)
+            {
+                _ = tab.ResortAsync();
+            }
+        }
+
+        return followed;
     }
 
     /// <summary>

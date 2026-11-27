@@ -1580,6 +1580,218 @@ public class TabOwnershipTests : IDisposable
 
     #endregion
 
+    #region A Load follows the file manager's order
+
+    private static readonly FileOrder BySizeOrder = new(SortFilesBy.FileSize, true);
+    private static readonly FileOrder ByNameOrder = new(SortFilesBy.Name, true);
+
+    [Fact]
+    public async Task Load_OfAFolderTheFileManagerShowsBySize_ListsItBySize_AndLeavesTheDefaultAlone()
+    {
+        var fileManager = new FakeFileManager();
+        fileManager.Shown[_folder] = BySizeOrder;
+        ComposeServices(fileManager: fileManager);
+        CreateFiles();
+        var window = CreateWindow();
+        var tab = window.WindowTabs.ActiveTab.Value;
+
+        await OpenAsync(tab, "c.jpg");
+        await tab.Resorting;
+
+        Assert.Equal(BySize, NamesOf(tab));
+        Assert.Equal("c.jpg", ListedAtShownIndex(tab));
+        Assert.Equal(BySizeOrder, _core.Services!.Orders.OrderOf(_folder));
+        Assert.Equal(ByNameOrder, DirectoryOrders.Default);
+        Assert.Equal([_folder], fileManager.Asked);
+        Assert.True(window.WindowTabs.IsSortedByFileSize.Value);
+    }
+
+    [Fact]
+    public async Task Load_OfAnOpenedFolderTheFileManagerShowsDescending_ListsItDescending()
+    {
+        var fileManager = new FakeFileManager();
+        fileManager.Shown[_folder] = new FileOrder(SortFilesBy.Name, false);
+        ComposeServices(fileManager: fileManager);
+        CreateFiles();
+        var tab = CreateWindow().WindowTabs.ActiveTab.Value;
+
+        Assert.True((await tab.Load.LoadAsync(_folder)).IsLoaded);
+        await tab.Resorting;
+
+        Assert.Equal(ByName.Reverse(), NamesOf(tab));
+        Assert.Equal("d.jpg", tab.FileInfo.CurrentValue?.Name);
+    }
+
+    [Fact]
+    public async Task Load_WithFollowingOff_DoesNotAskTheFileManager()
+    {
+        Settings.Sorting.FollowExplorerSorting = false;
+        var fileManager = new FakeFileManager();
+        fileManager.Shown[_folder] = BySizeOrder;
+        ComposeServices(fileManager: fileManager);
+        CreateFiles();
+        var tab = CreateWindow().WindowTabs.ActiveTab.Value;
+
+        await OpenAsync(tab, "c.jpg");
+
+        Assert.Equal(ByName, NamesOf(tab));
+        Assert.Empty(fileManager.Asked);
+    }
+
+    [Fact]
+    public async Task Load_OfAFolderTheFileManagerDoesNotShow_UsesTheDefaultFileOrder()
+    {
+        var fileManager = new FakeFileManager();
+        ComposeServices(fileManager: fileManager);
+        CreateFiles();
+        TestOrderings.SetDefault(SortFilesBy.FileSize, false);
+        var tab = CreateWindow().WindowTabs.ActiveTab.Value;
+
+        await OpenAsync(tab, "c.jpg");
+
+        Assert.Equal(BySize.Reverse(), NamesOf(tab));
+        Assert.Equal([_folder], fileManager.Asked);
+    }
+
+    [Fact]
+    public async Task Load_IntoADirectoryAnotherTabSortedByHand_TheFileManagersOrderWins_ForBothTabs()
+    {
+        var fileManager = new FakeFileManager();
+        ComposeServices(fileManager: fileManager);
+        CreateFiles();
+        var window = CreateWindow();
+        var first = window.WindowTabs.ActiveTab.Value;
+        await OpenAsync(first, "a.jpg");
+        await window.WindowTabs.SortAsync(SortFilesBy.FileSize);
+        // Sorted in the file manager since, where the second file is opened from
+        var shown = new FileOrder(SortFilesBy.Name, false);
+        fileManager.Shown[_folder] = shown;
+        var second = window.WindowTabs.CreateTab();
+
+        await OpenAsync(second, "c.jpg");
+        await second.Resorting;
+        await first.Resorting;
+
+        Assert.Equal(ByName.Reverse(), NamesOf(second));
+        Assert.Equal(ByName.Reverse(), NamesOf(first));
+        Assert.Equal("a.jpg", ListedAtShownIndex(first));
+        Assert.Equal(shown, _core.Services!.Orders.OrderOf(_folder));
+        // The sort by hand is still the default, which the file manager's order never becomes
+        Assert.Equal(BySizeOrder, DirectoryOrders.Default);
+    }
+
+    [Fact]
+    public async Task Sort_FromTheMenu_AfterTheFileManagersOrderWasTaken_SetsTheDirectorysOrder()
+    {
+        var fileManager = new FakeFileManager();
+        fileManager.Shown[_folder] = BySizeOrder;
+        ComposeServices(fileManager: fileManager);
+        CreateFiles();
+        var window = CreateWindow();
+        var tab = window.WindowTabs.ActiveTab.Value;
+        await OpenAsync(tab, "c.jpg");
+        await tab.Resorting;
+
+        await window.WindowTabs.SortAsync(SortFilesBy.Name);
+
+        Assert.Equal(ByName, NamesOf(tab));
+        Assert.Equal([_folder], fileManager.Asked);
+    }
+
+    [Fact]
+    public async Task Relist_AsksTheFileManagerAgain_AndTakesItsNewOrder()
+    {
+        var fileManager = new FakeFileManager();
+        ComposeServices(fileManager: fileManager);
+        CreateFiles();
+        var tab = CreateWindow().WindowTabs.ActiveTab.Value;
+        await OpenAsync(tab, "c.jpg");
+        Assert.Equal(ByName, NamesOf(tab));
+        fileManager.Shown[_folder] = BySizeOrder;
+
+        var relisted = await tab.Load.LoadAsync(PathOf("c.jpg"), new LoadOptions(Relist: true));
+        await tab.Resorting;
+
+        Assert.True(relisted.IsLoaded);
+        Assert.Equal(BySize, NamesOf(tab));
+        Assert.Equal("c.jpg", ListedAtShownIndex(tab));
+    }
+
+    [Fact]
+    public async Task Load_WhileTheFileManagerDoesNotAnswer_ListsWithoutIt_AndDoesNotAskAgainUntilItAnswers()
+    {
+        var fileManager = new FakeFileManager();
+        fileManager.Shown[_folder] = BySizeOrder;
+        ComposeServices(fileManager: fileManager, askLimit: TimeSpan.FromMilliseconds(50));
+        CreateFiles();
+        CreateOtherFiles();
+        var window = CreateWindow();
+        var tab = window.WindowTabs.ActiveTab.Value;
+        fileManager.Answering.Reset();
+        try
+        {
+            await OpenAsync(tab, "c.jpg");
+
+            Assert.Equal(ByName, NamesOf(tab));
+
+            // Another folder, while the first ask still waits: not asked, so no second thread waits on it
+            await OpenInOtherAsync(tab, "a.jpg");
+
+            Assert.Equal([_folder], fileManager.Asked);
+        }
+        finally
+        {
+            fileManager.Answering.Set();
+        }
+
+        // Answered late, the first ask changes nothing; the next Load asks again
+        await WaitUntilAsync(() => _core.Services!.Orders.IsAnswering);
+        await OpenAsync(tab, "c.jpg");
+        await tab.Resorting;
+
+        Assert.Equal(BySize, NamesOf(tab));
+    }
+
+    [Fact]
+    public async Task Load_WhenTheFileManagerThrows_ListsWithoutIt()
+    {
+        var fileManager = new FakeFileManager { Throws = true };
+        ComposeServices(fileManager: fileManager);
+        CreateFiles();
+        var tab = CreateWindow().WindowTabs.ActiveTab.Value;
+
+        await OpenAsync(tab, "c.jpg");
+
+        Assert.Equal(ByName, NamesOf(tab));
+    }
+
+    [Fact]
+    public async Task FollowAllAsync_GivesEveryListedFolderTheFileManagersOrder_WhateverTheSettingSays()
+    {
+        Settings.Sorting.FollowExplorerSorting = false;
+        var fileManager = new FakeFileManager();
+        ComposeServices(fileManager: fileManager);
+        CreateFiles();
+        CreateOtherFiles();
+        var window = CreateWindow();
+        var first = window.WindowTabs.ActiveTab.Value;
+        var second = window.WindowTabs.CreateTab();
+        await OpenAsync(first, "a.jpg");
+        await OpenInOtherAsync(second, "a.jpg");
+        fileManager.Shown[_folder] = BySizeOrder;
+
+        // As turning the setting on does, which the write-through may not have stored yet
+        await _core.Services!.Orders.FollowAllAsync(TestContext.Current.CancellationToken);
+        await first.Resorting;
+        await second.Resorting;
+
+        Assert.Equal(BySize, NamesOf(first));
+        Assert.Equal(ByName, NamesOf(second));
+        Assert.Equal(2, fileManager.Asked.Count);
+    }
+
+    #endregion
+
     // Name, FileSize, CreationTime, Extension, LastAccessTime, LastWriteTime, Randomization
     #region The gallery's look follows its window
 
@@ -2102,9 +2314,36 @@ public class TabOwnershipTests : IDisposable
     private static readonly TimeSpan WaitLimit = TimeSpan.FromSeconds(10);
 
     // The tabs' services, which their Load lists the folder with in their window's order
-    private void ComposeServices(IPlatformSpecificService? platform = null, IFileWatcherService? watcher = null) =>
-        _core.InitializeNavigation(TestTabServices.For(_core.SharedCache, platform: platform, watcher: watcher),
+    private void ComposeServices(IPlatformSpecificService? platform = null, IFileWatcherService? watcher = null,
+        IFolderOrderSource? fileManager = null, TimeSpan? askLimit = null) =>
+        _core.InitializeNavigation(TestTabServices.For(_core.SharedCache, platform: platform, watcher: watcher) with
+            {
+                Orders = new DirectoryOrders(fileManager, askLimit)
+            },
             new NavigationService());
+
+    // A file manager that shows the folders a test says, in the order it says, and records what it was asked
+    private sealed class FakeFileManager : IFolderOrderSource
+    {
+        public ConcurrentDictionary<string, FileOrder> Shown { get; } = new(StringComparer.OrdinalIgnoreCase);
+        public ConcurrentQueue<string> Asked { get; } = new();
+
+        // Closed, an ask waits here, as on a file manager that does not answer
+        public ManualResetEventSlim Answering { get; } = new(true);
+        public bool Throws { get; set; }
+
+        public FileOrder? OrderOf(string directory)
+        {
+            Asked.Enqueue(directory);
+            Answering.Wait(WaitLimit);
+            if (Throws)
+            {
+                throw new InvalidOperationException("The file manager is gone");
+            }
+
+            return Shown.TryGetValue(directory, out var order) ? order : null;
+        }
+    }
 
     // Says which folder each tab watches, as the real watcher does, and reports no file event
     private sealed class WatchingFileWatcher : IFileWatcherService

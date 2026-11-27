@@ -460,6 +460,12 @@ public class Sorting
     /// Indicates whether subdirectories should be included during sorting and navigation.
     /// </summary>
     public bool IncludeSubDirectories { get; set; } = false;
+
+    /// <summary>
+    /// Whether a folder is listed in the order the platform's file manager shows it in, when it shows it: Windows
+    /// Explorer's sort. On unless turned off, so a settings file without it follows.
+    /// </summary>
+    public bool FollowExplorerSorting { get; set; } = true;
 }
 
 public class StartUp

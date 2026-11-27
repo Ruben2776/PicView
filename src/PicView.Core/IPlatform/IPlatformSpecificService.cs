@@ -15,6 +15,12 @@ public interface IPlatformSpecificService
 
     int CompareStrings(string str1, string str2);
 
+    /// <summary>
+    /// The order this platform's file manager shows a folder in, as Windows Explorer's open windows do. Null on a
+    /// platform whose file manager is not asked.
+    /// </summary>
+    IFolderOrderSource? FolderOrders => null;
+
     void OpenWith(string path);
 
     void LocateOnDisk(string path);

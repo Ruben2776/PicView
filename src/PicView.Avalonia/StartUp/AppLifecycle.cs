@@ -483,6 +483,16 @@ public sealed class AppLifecycle
             // Every tab's watch follows the setting
             _ = settings.IsIncludingSubdirectories.Skip(1).Subscribe(_ => fileWatcher.RestartWatches());
         }
+
+        if (_core.Services?.Orders is { } orders)
+        {
+            // Turned on, every folder a tab lists takes the order the file manager shows it in now. Turned off, each
+            // keeps the order it has
+            _ = settings.IsFollowingExplorerSorting.Skip(1).Where(static following => following)
+                .SubscribeAwait(async (_, ct) => await Task.Run(() => orders.FollowAllAsync(ct).AsTask(), ct)
+                        .ConfigureAwait(false),
+                    DebugHelper.LogError(nameof(AppLifecycle), nameof(FollowSharedSettings)));
+        }
     }
 
     /// <summary>
@@ -508,7 +518,10 @@ public sealed class AppLifecycle
         var navigation = new NavigationService();
         _core.InitializeNavigation(
             new TabServices(_core.SharedCache, thumbnails, fileWatcher, imageLoader,
-                platform, _core.GlobalSettings),
+                platform, _core.GlobalSettings)
+            {
+                Orders = new PicView.Core.FileSorting.DirectoryOrders(platform.FolderOrders)
+            },
             navigation);
     }
 

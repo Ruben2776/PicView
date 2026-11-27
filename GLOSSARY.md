@@ -228,7 +228,7 @@ _Avoid_: Undo copy, .bak file
 ## Settings
 
 **Setting**:
-A value the user chooses that PicView remembers between runs, stored in one record saved whole. The four menu toggles and the Opening Mode choice, which are App Settings, publish their changes: one bindable each, which writes the stored value and saves, and what reacts to it subscribes. The rest are read from the record. A Window Setting is stored only when its window closes. Every Setting is one or the other.
+A value the user chooses that PicView remembers between runs, stored in one record saved whole. The five menu toggles and the Opening Mode choice, which are App Settings, publish their changes: one bindable each, which writes the stored value and saves, and what reacts to it subscribes. The rest are read from the record. A Window Setting is stored only when its window closes. Every Setting is one or the other.
 _Avoid_: Option, preference, flag, mirror (for the bindable), flip (for toggling)
 
 **Window Setting**:
@@ -236,7 +236,7 @@ A Setting that belongs to one Main Window: the Window Mode, AutoFit, top most, S
 _Avoid_: Per-window option, window preference, local setting
 
 **File Order**:
-The order the tabs that list a Listed Directory list its files in: a field (name, size, extension, creation, last access or last write time, or Random) and a direction. It belongs to the directory, so every tab that lists it, in any Main Window, has the same one, and a sort from the menu sets that of the active tab's Listed Directory; each of those tabs re-sorts the files it browses in memory and keeps its Shown File, and tabs of other directories are not touched. A directory has an order while a tab lists it: the first tab to list it gives it the Default File Order, and it is forgotten when its last tab leaves. It is not a Setting and is not stored. Files that tie on the field go by name, then by path, so a file created or renamed lands in one place only; under Random a new file goes last, a renamed one keeps its place, and each tab has its own shuffle. An archive's pages follow the order of their archive, from what the archive says of each entry.
+The order the tabs that list a Listed Directory list its files in: a field (name, size, extension, creation, last access or last write time, or Random) and a direction. It belongs to the directory, so every tab that lists it, in any Main Window, has the same one, and a sort from the menu sets that of the active tab's Listed Directory; each of those tabs re-sorts the files it browses in memory and keeps its Shown File, and tabs of other directories are not touched. A directory has an order while a tab lists it: the first tab to list it gives it the Default File Order, or the file manager's order with Follow Explorer Sorting on, and it is forgotten when its last tab leaves. It is not a Setting and is not stored. Files that tie on the field go by name, then by path, so a file created or renamed lands in one place only; under Random a new file goes last, a renamed one keeps its place, and each tab has its own shuffle. An archive's pages follow the order of their archive, from what the archive says of each entry.
 _Avoid_: Sort order, sort preference, sorting
 
 **Listed Directory**:
@@ -246,6 +246,10 @@ _Avoid_: Current folder, tab directory, watched folder (the file watcher follows
 **Default File Order**:
 The File Order a Listed Directory starts with when no tab lists it yet, and the one a tab that lists nothing shows and sets. It is an App Setting, kept in the settings file, and every sort from the menu writes it, so a folder opened later, or after a restart, starts in the order last chosen.
 _Avoid_: Global sort, window order
+
+**Follow Explorer Sorting**:
+An App Setting, on by default, that makes a Load that lists a folder ask the platform's file manager how it shows that folder, and give the Listed Directory that order: on Windows, the sort of an Explorer window open on it. The file manager's order wins over the order the directory had, for every tab that lists it, and never becomes the Default File Order. A folder the file manager does not show, or shows in an order no File Order gives, keeps its own order or starts with the default. Archives are never asked for, and nothing is asked on macOS and Linux.
+_Avoid_: Shell sort, sync sorting, Explorer order (for the File Order a directory took)
 
 **App Setting**:
 A Setting that belongs to PicView as a whole: every Setting that is not a Window Setting. One value serves every Main Window, and a change is written to the record and saved at once.

@@ -7,7 +7,7 @@ using R3;
 namespace PicView.Core.ViewModels;
 
 /// <summary>
-/// The four toggled settings and the Opening Mode publish their changes (ADR-0020): each is a bindable over its stored value, and the
+/// The five toggled settings and the Opening Mode publish their changes (ADR-0020): each is a bindable over its stored value, and the
 /// write-through here is the one writer of that stored value, followed by one coalesced save. The constructor
 /// subscribes nothing: the write-throughs start in two groups, <see cref="InitializeActionSettings"/> and
 /// <see cref="InitializeExtraSettings"/>, so a change before them writes and saves nothing.
@@ -20,6 +20,11 @@ public class GlobalSettingsViewModel
     private readonly CoalescedSave _coalescedSave;
 
     public BindableReactiveProperty<bool> IsIncludingSubdirectories { get; }
+
+    /// <summary>
+    /// Whether a folder is listed in the order Windows Explorer shows it in (ADR-0050).
+    /// </summary>
+    public BindableReactiveProperty<bool> IsFollowingExplorerSorting { get; }
 
     public BindableReactiveProperty<bool> IsFileHistoryEnabled { get; }
 
@@ -91,6 +96,7 @@ public class GlobalSettingsViewModel
         _coalescedSave = new CoalescedSave(save ?? SaveSettingsAsync, nameof(GlobalSettingsViewModel));
 
         IsIncludingSubdirectories = new BindableReactiveProperty<bool>(Settings.Sorting.IncludeSubDirectories);
+        IsFollowingExplorerSorting = new BindableReactiveProperty<bool>(Settings.Sorting.FollowExplorerSorting);
         IsFileHistoryEnabled = new BindableReactiveProperty<bool>(Settings.Navigation.IsFileHistoryEnabled);
         IsShowingFullPathInTitleBar = new BindableReactiveProperty<bool>(Settings.UIProperties.ShowFullPathInTitleBar);
         IsShowingTaskbarProgress = new BindableReactiveProperty<bool>(Settings.UIProperties.IsTaskbarProgressEnabled);
@@ -104,7 +110,7 @@ public class GlobalSettingsViewModel
     }
 
     /// <summary>
-    /// Starts the write-throughs of the four settings the Actions toggle and of the Opening Mode. Idempotent and safe from any thread;
+    /// Starts the write-throughs of the five settings the Actions toggle and of the Opening Mode. Idempotent and safe from any thread;
     /// a concurrent caller returns only after the subscriptions exist.
     /// </summary>
     public void InitializeActionSettings()
@@ -117,6 +123,7 @@ public class GlobalSettingsViewModel
             }
 
             Follow(IsIncludingSubdirectories, value => Settings.Sorting.IncludeSubDirectories = value);
+            Follow(IsFollowingExplorerSorting, value => Settings.Sorting.FollowExplorerSorting = value);
             Follow(IsFileHistoryEnabled, value => Settings.Navigation.IsFileHistoryEnabled = value, rephrases: true);
             Follow(IsShowingFullPathInTitleBar, value => Settings.UIProperties.ShowFullPathInTitleBar = value);
             Follow(IsShowingTaskbarProgress, value => Settings.UIProperties.IsTaskbarProgressEnabled = value);

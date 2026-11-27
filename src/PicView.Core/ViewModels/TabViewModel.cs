@@ -154,10 +154,15 @@ public class TabViewModel : IDisposable
     /// The ordering a Load of this tab lists <paramref name="directory"/> with: that directory's File Order with the
     /// tab's name comparison.
     /// </summary>
-    internal FileOrdering OrderingFor(string? directory)
-    {
+    internal FileOrdering OrderingFor(string? directory) =>
         // The record may not be loaded yet for a tab without services
-        var order = Services?.Orders.OrderOf(directory) ?? FileOrder.FromAppSettings(Settings);
+        OrderingWith(Services?.Orders.OrderOf(directory) ?? FileOrder.FromAppSettings(Settings));
+
+    /// <summary>
+    /// The <paramref name="order"/> with the tab's name comparison.
+    /// </summary>
+    internal FileOrdering OrderingWith(FileOrder order)
+    {
         // A tab's services may lack a platform in tests, as its Load allows
         Func<string, string, int> compareNames = Services?.Platform is { } platform
             ? platform.CompareStrings

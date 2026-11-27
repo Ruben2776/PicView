@@ -37,6 +37,10 @@ namespace PicView.Core.Navigation;
 /// The directory <paramref name="Files"/> were listed from, which becomes the tab's Listed Directory. Null for the
 /// file's own folder.
 /// </param>
+/// <param name="FollowedOrder">
+/// The order the caller took from the platform's file manager for <paramref name="ListedDirectory"/> before it listed
+/// <paramref name="Files"/>, which the directory starts with when no tab lists it yet. Null when it took none.
+/// </param>
 [StructLayout(LayoutKind.Auto)]
 public readonly record struct LoadOptions(
     string? RootDirectory = null,
@@ -46,7 +50,8 @@ public readonly record struct LoadOptions(
     IReadOnlyList<FileInfo>? Files = null,
     ImageModel? SecondaryModel = null,
     FileSorting.FileOrdering? ListedWith = null,
-    string? ListedDirectory = null);
+    string? ListedDirectory = null,
+    FileSorting.FileOrder? FollowedOrder = null);
 
 /// <summary>
 /// How a <see cref="TabLoad"/> ended.
