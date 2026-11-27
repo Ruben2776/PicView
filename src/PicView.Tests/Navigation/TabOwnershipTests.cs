@@ -1715,6 +1715,42 @@ public class TabOwnershipTests : IDisposable
     }
 
     [Fact]
+    public async Task Sort_OfTheDirectionOnly_InAFolderInTheFileManagersOrder_LeavesTheDefaultsFieldAlone()
+    {
+        var fileManager = new FakeFileManager();
+        fileManager.Shown[_folder] = BySizeOrder;
+        ComposeServices(fileManager: fileManager);
+        CreateFiles();
+        var window = CreateWindow();
+        var tab = window.WindowTabs.ActiveTab.Value;
+        await OpenAsync(tab, "c.jpg");
+        await tab.Resorting;
+
+        await window.WindowTabs.SortAsync(ascending: false);
+
+        // The folder is by size, as the file manager shows it, now descending; size was never chosen here
+        Assert.Equal(BySize.Reverse(), NamesOf(tab));
+        Assert.Equal(new FileOrder(SortFilesBy.Name, false), DirectoryOrders.Default);
+    }
+
+    [Fact]
+    public async Task ListDirectory_OnAClosedTab_ListsNothing()
+    {
+        ComposeServices();
+        CreateFiles();
+        var window = CreateWindow();
+        var tab = window.WindowTabs.CreateTab();
+        await OpenAsync(tab, "a.jpg");
+        window.WindowTabs.CloseTab(tab);
+
+        // As a Load that passed its last check before the tab closed
+        tab.ListDirectory(_folder);
+
+        Assert.Null(tab.ListedDirectory.CurrentValue);
+        Assert.Empty(_core.Services!.Orders.Listed());
+    }
+
+    [Fact]
     public async Task Relist_AsksTheFileManagerAgain_AndTakesItsNewOrder()
     {
         var fileManager = new FakeFileManager();

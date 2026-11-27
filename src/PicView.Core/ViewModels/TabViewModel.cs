@@ -116,27 +116,35 @@ public class TabViewModel : IDisposable
     /// the tab had, as a renamed folder is not listed again.</param>
     internal void ListDirectory(string? directory, FileOrder? carried = null, bool? withSubdirectories = null)
     {
-        if (withSubdirectories is { } listedWith)
+        // One at a time: a superseded Load past its last check, the Load after it and a folder rename can each come
+        // here, and what the tab is recorded under must be what it says it lists
+        lock (_listedGate)
         {
-            IsListedWithSubdirectories = listedWith;
-        }
+            if (withSubdirectories is { } listedWith)
+            {
+                IsListedWithSubdirectories = listedWith;
+            }
 
-        var previous = _listedDirectory.CurrentValue;
-        if (Services?.Orders is not { } orders)
-        {
-            _listedDirectory.Value = DirectoryOrders.KeyOf(directory);
-            return;
-        }
+            var previous = _listedDirectory.CurrentValue;
+            if (Services?.Orders is not { } orders)
+            {
+                _listedDirectory.Value = DirectoryOrders.KeyOf(directory);
+                return;
+            }
 
-        if (directory is null)
-        {
-            orders.Leave(this, previous);
-            _listedDirectory.Value = null;
-            return;
-        }
+            // A tab closed while its Load listed lists nothing, so the directory is not kept for it
+            if (directory is null || IsDisposed)
+            {
+                orders.Leave(this, previous);
+                _listedDirectory.Value = null;
+                return;
+            }
 
-        _listedDirectory.Value = orders.Enter(this, directory, previous, carried);
+            _listedDirectory.Value = orders.Enter(this, directory, previous, carried);
+        }
     }
+
+    private readonly Lock _listedGate = new();
 
     /// <summary>
     /// Whether the files of the Listed Directory were listed with its subfolders' files, as Include Subdirectories
@@ -1572,7 +1580,8 @@ public class TabViewModel : IDisposable
         // Disposed by now, so this lets go of what the tab showed and holds nothing
         HoldShown();
         ImageIterator?.Dispose();
-        Services?.Orders.Leave(this, _listedDirectory.CurrentValue);
+        // After the flag above, so a Load that records its directory from here on records none
+        ListDirectory(null);
         _archiveStateSubscription?.Dispose();
         _settingsSubscription?.Dispose();
         Archives.Cleanup();

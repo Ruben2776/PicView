@@ -40,6 +40,7 @@ The interfaces are called through their vtables with function pointers. `IShellW
 ## Consequences
 
 - The file manager's order wins over a sort made in PicView earlier: opening another file from the folder, or reloading, asks again and re-sorts every tab on the directory. A sort from the menu then holds until the next Load that lists the folder.
+- A menu sort writes to the Default File Order only what was chosen, the field or the direction (`DirectoryOrders.SortAsync`'s `asDefault`). Choosing Descending in a folder Explorer shows by size makes that folder size descending and the default's direction descending, and leaves the default's field as it was.
 - Stepping to the next or previous folder is a Load that lists, so with an Explorer window on that folder the order can change, field and direction, from one folder to the next.
 - The first image does not wait for the answer when it shows before the listing, which is every Load of one image. Where the Load lists first, an opened folder and Side-by-Side, the image waits for the answer, at most the half second.
 - An ask that outruns the limit is left to finish on its pool thread, and the file manager is not asked again until it has, so a hung Explorer holds one thread and not one per Load. Loads meanwhile are not followed.

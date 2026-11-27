@@ -37,6 +37,7 @@ public sealed unsafe partial class ExplorerFolderOrder : IFolderOrderSource
     private const int CoENotInitialized = unchecked((int)0x800401F0);
     private const ushort VtI4 = 3;
     private const int LongPath = 32768;
+    private const int MostSortColumns = 8;
 
     [StructLayout(LayoutKind.Sequential)]
     private struct SortColumn
@@ -100,7 +101,8 @@ public sealed unsafe partial class ExplorerFolderOrder : IFolderOrderSource
         var result = CoCreateInstance(ClsidShellWindows, 0, ClsctxLocalServer, IidShellWindows, out var windows);
         if (result == CoENotInitialized)
         {
-            // A thread no one gave an apartment, which a pool thread has: multithreaded, as the pool's are
+            // A thread no one gave an apartment, which a pool thread has: multithreaded, as the pool's are. Left
+            // initialized, as the thread goes back to the pool, whose threads are
             _ = CoInitializeEx(0, 0);
             result = CoCreateInstance(ClsidShellWindows, 0, ClsctxLocalServer, IidShellWindows, out windows);
         }
@@ -120,6 +122,8 @@ public sealed unsafe partial class ExplorerFolderOrder : IFolderOrderSource
             }
 
             var item = (delegate* unmanaged[Stdcall]<nint, Variant, nint*, int>)Slot(windows, ShellWindowsItem);
+            // One buffer for the paths of every window
+            var path = new char[LongPath];
             for (var i = 0; i < count; i++)
             {
                 nint entry = 0;
@@ -131,7 +135,7 @@ public sealed unsafe partial class ExplorerFolderOrder : IFolderOrderSource
 
                 try
                 {
-                    if (ViewOf(entry, directory) is { } view)
+                    if (ViewOf(entry, directory, path) is { } view)
                     {
                         views.Add(view);
                     }
@@ -152,7 +156,7 @@ public sealed unsafe partial class ExplorerFolderOrder : IFolderOrderSource
 
     // How the Explorer view of one shell window shows the directory, or null when it shows another folder, or is
     // not a folder view at all
-    private static ExplorerView? ViewOf(nint entry, string directory)
+    private static ExplorerView? ViewOf(nint entry, string directory, char[] pathBuffer)
     {
         nint provider = 0, browser = 0, shellView = 0, folderView = 0;
         try
@@ -183,7 +187,7 @@ public sealed unsafe partial class ExplorerFolderOrder : IFolderOrderSource
                 return null;
             }
 
-            if (!string.Equals(DirectoryOrders.KeyOf(PathOf(folderView)), directory,
+            if (!string.Equals(DirectoryOrders.KeyOf(PathOf(folderView, pathBuffer)), directory,
                     StringComparison.OrdinalIgnoreCase))
             {
                 return null;
@@ -201,7 +205,7 @@ public sealed unsafe partial class ExplorerFolderOrder : IFolderOrderSource
     }
 
     // The file system path of the folder a view shows; null for a folder that has none, as search results
-    private static string? PathOf(nint folderView)
+    private static string? PathOf(nint folderView, char[] buffer)
     {
         nint folder = 0, idList = 0;
         try
@@ -221,10 +225,9 @@ public sealed unsafe partial class ExplorerFolderOrder : IFolderOrderSource
                 return null;
             }
 
-            var buffer = new char[LongPath];
             fixed (char* path = buffer)
             {
-                return SHGetPathFromIDListEx(idList, path, LongPath, 0) ? new string(path) : null;
+                return SHGetPathFromIDListEx(idList, path, (uint)buffer.Length, 0) ? new string(path) : null;
             }
         }
         finally
@@ -248,10 +251,12 @@ public sealed unsafe partial class ExplorerFolderOrder : IFolderOrderSource
             Slot(folderView, FolderView2GetSortColumnCount);
         if (getSortColumnCount(folderView, &count) == Ok && count > 0)
         {
-            var columns = stackalloc SortColumn[1];
+            // Room for every column the view is sorted by, of which the first is the one read, as a view sorted by
+            // more than one may not answer into less. A view sorted by more than these is not followed
+            var columns = stackalloc SortColumn[MostSortColumns];
             var getSortColumns = (delegate* unmanaged[Stdcall]<nint, SortColumn*, int, int>)
                 Slot(folderView, FolderView2GetSortColumns);
-            if (getSortColumns(folderView, columns, 1) == Ok)
+            if (count <= MostSortColumns && getSortColumns(folderView, columns, count) == Ok)
             {
                 sortedBy = columns[0].Key;
                 // SORT_ASCENDING is 1 and SORT_DESCENDING is -1

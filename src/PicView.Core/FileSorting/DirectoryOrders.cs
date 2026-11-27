@@ -103,6 +103,8 @@ public sealed class DirectoryOrders(IFolderOrderSource? fileManager = null, Time
                 _entries[key] = entry;
             }
 
+            // Tabs that were collected without leaving go as another enters
+            entry.Tabs.RemoveAll(static reference => !reference.TryGetTarget(out _));
             if (!Holds(entry, tab))
             {
                 entry.Tabs.Add(new WeakReference<TabViewModel>(tab));
@@ -137,10 +139,13 @@ public sealed class DirectoryOrders(IFolderOrderSource? fileManager = null, Time
     /// tab that lists the directory sorts its files again, and no tab of another directory does.
     /// </summary>
     /// <param name="reshuffle">Whether files already in a Random order are shuffled again.</param>
+    /// <param name="asDefault">The order that becomes the Default File Order instead, when only part of
+    /// <paramref name="order"/> was chosen and the rest is the directory's own, as it can be the file manager's.</param>
     /// <returns>A task that ends once every tab listing the directory has sorted its files again.</returns>
-    public async ValueTask SortAsync(string? directory, FileOrder order, bool reshuffle = false)
+    public async ValueTask SortAsync(string? directory, FileOrder order, bool reshuffle = false,
+        FileOrder? asDefault = null)
     {
-        order.StoreAsDefault(Settings);
+        (asDefault ?? order).StoreAsDefault(Settings);
         await SetAsync(directory, order, reshuffle).ConfigureAwait(false);
     }
 

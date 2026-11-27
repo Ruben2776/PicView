@@ -552,7 +552,8 @@ public class TabOverviewViewModel
     {
         var current = CurrentOrder();
         var order = current with { By = sortOrder };
-        return SortAsync(order, reshuffle: order == current && sortOrder is SortFilesBy.Random);
+        return SortAsync(order, DirectoryOrders.Default with { By = sortOrder },
+            reshuffle: order == current && sortOrder is SortFilesBy.Random);
     }
 
     /// <summary>
@@ -561,15 +562,18 @@ public class TabOverviewViewModel
     /// </summary>
     /// <returns>A task that ends once every tab that lists the directory has sorted its files again.</returns>
     public ValueTask SortAsync(bool ascending) =>
-        SortAsync(CurrentOrder() with { Ascending = ascending }, reshuffle: false);
+        SortAsync(CurrentOrder() with { Ascending = ascending }, DirectoryOrders.Default with { Ascending = ascending },
+            reshuffle: false);
 
     // Read from the directory, not the check marks, which follow it and may not have heard yet
     private FileOrder CurrentOrder() => _orders.OrderOf(ActiveTab.Value.ListedDirectory.CurrentValue);
 
-    private async ValueTask SortAsync(FileOrder order, bool reshuffle)
+    // The default takes only what was chosen, the field or the direction: the other half of the directory's order can
+    // be the file manager's, which never becomes the default (ADR-0050)
+    private async ValueTask SortAsync(FileOrder order, FileOrder asDefault, bool reshuffle)
     {
         var tab = ActiveTab.Value;
-        await _orders.SortAsync(tab.ListedDirectory.CurrentValue, order, reshuffle).ConfigureAwait(false);
+        await _orders.SortAsync(tab.ListedDirectory.CurrentValue, order, reshuffle, asDefault).ConfigureAwait(false);
         if (tab.Services is null)
         {
             // A tab without services is listed nowhere and follows the Default File Order, which is set now
