@@ -310,11 +310,11 @@ public partial class CompareBar : UserControl, IDisposable
 
     private void OnResetAlignClick(object? sender, RoutedEventArgs e) => Comparison?.ResetAlignment();
 
-    // Scrolling shows the images at their fitted width, so neither button zooms while it is on
+    // Scrolling shows the images at their fitted width, so no zoom button works while it is on
     private void ShowZoomButtons(TabViewModel tab)
     {
         var isScrolling = tab.ParentWindowContext?.WindowSettings.IsScrollingEnabled.Value ?? false;
-        ZoomInButton.IsEnabled = !isScrolling;
+        ZoomInButton.IsEnabled = ResetZoomButton.IsEnabled = !isScrolling;
         ZoomOutButton.IsEnabled = !isScrolling && !(Settings.Zoom.AvoidZoomingOut && tab.Zoom.Factor <= 1.001);
     }
 
