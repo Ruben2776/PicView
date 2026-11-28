@@ -148,5 +148,125 @@ public class FinderSortTests
 
         Assert.Null(FinderSort.Followed(windows, Folder));
     }
+
+    private static FinderSavedView Saved(string? group = null, string? icon = null, string? list = null, bool? ascending = null) =>
+        new(group, icon, list, ascending);
+
+    private static FinderWindow ViewOf(string view) => ListView("elsn") with { View = FinderSort.Code(view) };
+
+    public static TheoryData<string, SortFilesBy, bool> Groups => new()
+    {
+        { "Date Last Opened", SortFilesBy.LastAccessTime, false },
+        { "Date Modified", SortFilesBy.LastWriteTime, false },
+        { "Date Created", SortFilesBy.CreationTime, false },
+        { "Size", SortFilesBy.FileSize, false },
+        { "Kind", SortFilesBy.Extension, true },
+        { "Name", SortFilesBy.Name, true },
+    };
+
+    [Theory]
+    [MemberData(nameof(Groups))]
+    public void Grouped_IsFollowedByItsGroupField_WhateverTheViewAndItsSort(string group, SortFilesBy field, bool ascending)
+    {
+        var expected = new FileOrder(field, ascending);
+        var saved = Saved(group);
+
+        Assert.Equal(expected, FinderSort.ToFileOrder(ListView("elss"), saved));
+        Assert.Equal(expected, FinderSort.ToFileOrder(IconView("mdta"), saved));
+        Assert.Equal(expected, FinderSort.ToFileOrder(ViewOf("clvw"), saved));
+        Assert.Equal(expected, FinderSort.ToFileOrder(ViewOf("flvw"), saved));
+    }
+
+    [Theory]
+    [InlineData("Date Added")]
+    [InlineData("Application")]
+    [InlineData("Tags")]
+    [InlineData("Dato sidst \u00e5bnet")]
+    public void Grouped_ByAFieldWithNoCounterpartOrAnUnknownOne_IsNotFollowed(string group) =>
+        Assert.Null(FinderSort.ToFileOrder(ListView("elsn"), Saved(group)));
+
+    [Theory]
+    [InlineData("None")]
+    [InlineData(null)]
+    public void NotGrouped_IsFollowedAsTheViewIs(string? group) =>
+        Assert.Equal(new FileOrder(SortFilesBy.FileSize, false),
+            FinderSort.ToFileOrder(ListView("elss", ascending: false), Saved(group)));
+
+    [Fact]
+    public void IconView_NotArranged_SavedAsDateLastOpened_IsLastAccessTimeNewestFirst() =>
+        Assert.Equal(new FileOrder(SortFilesBy.LastAccessTime, false),
+            FinderSort.ToFileOrder(IconView("narr"), Saved(icon: "dateLastOpened")));
+
+    [Theory]
+    [InlineData("dateAdded")]
+    [InlineData("none")]
+    [InlineData(null)]
+    public void IconView_NotArranged_SavedAsAnythingElse_IsNotFollowed(string? icon) =>
+        Assert.Null(FinderSort.ToFileOrder(IconView("narr"), Saved(icon: icon)));
+
+    [Theory]
+    [InlineData("dateModified")]
+    [InlineData("name")]
+    [InlineData("size")]
+    public void IconView_NotArranged_SavedValueScriptingWouldHaveNamed_IsStale_AndNotFollowed(string icon) =>
+        Assert.Null(FinderSort.ToFileOrder(IconView("narr"), Saved(icon: icon)));
+
+    [Fact]
+    public void IconView_Arranged_IgnoresTheSavedArrangement() =>
+        Assert.Equal(new FileOrder(SortFilesBy.LastWriteTime, false),
+            FinderSort.ToFileOrder(IconView("mdta"), Saved(icon: "dateLastOpened")));
+
+    [Theory]
+    [InlineData(false, false)]
+    [InlineData(true, true)]
+    [InlineData(null, false)]
+    public void ListView_Name_SavedAsDateLastOpened_IsLastAccessTime_InTheSavedDirection(bool? saved, bool expected) =>
+        Assert.Equal(new FileOrder(SortFilesBy.LastAccessTime, expected),
+            FinderSort.ToFileOrder(ListView("elsn"), Saved(list: "dateLastOpened", ascending: saved)));
+
+    [Theory]
+    [InlineData("dateAdded")]
+    [InlineData("label")]
+    [InlineData("comments")]
+    [InlineData("version")]
+    public void ListView_Name_SavedAsAColumnWithNoCounterpart_IsNotFollowed(string list) =>
+        Assert.Null(FinderSort.ToFileOrder(ListView("elsn"), Saved(list: list)));
+
+    [Theory]
+    [InlineData("name")]
+    [InlineData("dateModified")]
+    [InlineData("size")]
+    [InlineData("somethingNew")]
+    [InlineData(null)]
+    public void ListView_Name_SavedAsNameOrStaleOrUnknown_StaysName_InTheWindowsDirection(string? list)
+    {
+        Assert.Equal(new FileOrder(SortFilesBy.Name, true), FinderSort.ToFileOrder(ListView("elsn"), Saved(list: list)));
+        Assert.Equal(new FileOrder(SortFilesBy.Name, false),
+            FinderSort.ToFileOrder(ListView("elsn", ascending: false), Saved(list: list)));
+    }
+
+    [Fact]
+    public void ListView_ColumnOtherThanName_IgnoresTheSavedColumn() =>
+        Assert.Equal(new FileOrder(SortFilesBy.LastWriteTime, true),
+            FinderSort.ToFileOrder(ListView("elsm"), Saved(list: "dateLastOpened")));
+
+    [Fact]
+    public void NoSavedView_IsAsScriptingAloneSays()
+    {
+        foreach (var window in new[] { ListView("elsn"), IconView("mdta"), IconView("narr") })
+        {
+            Assert.Equal(FinderSort.ToFileOrder(window), FinderSort.ToFileOrder(window, null));
+        }
+    }
+
+    [Fact]
+    public void Followed_UsesTheSavedViewForTheFirstWindowOnTheFolder()
+    {
+        const string other = "/Users/someone/Other";
+        FinderWindow[] windows = [ListView("elsn", folder: other), IconView("narr"), ListView("elss")];
+
+        Assert.Equal(new FileOrder(SortFilesBy.LastAccessTime, false),
+            FinderSort.Followed(windows, Folder, Saved(icon: "dateLastOpened")));
+    }
 }
 #endif

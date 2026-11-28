@@ -74,21 +74,53 @@ public static class FinderSort
     }
 
     /// <summary>
+    /// The File Order <paramref name="window"/> shows its folder in, by scripting alone: <see cref="ToFileOrder(in FinderWindow, FinderSavedView?)"/>
+    /// with no saved view.
+    /// </summary>
+    public static FileOrder? ToFileOrder(in FinderWindow window) => ToFileOrder(window, null);
+
+    /// <summary>
     /// The File Order <paramref name="window"/> shows its folder in, or null when no File Order gives it: a view
     /// other than the list view and the icon view, a column or an arrangement with no field (Tags, not arranged and
-    /// the rest), or a direction not known. An icon view has no direction of its own: Finder sorts Name and Kind
-    /// ascending, and Size and the dates descending.
+    /// the rest), a direction not known, or a group with no field. An icon view has no direction of its own: Finder
+    /// sorts Name and Kind ascending, and Size and the dates descending. <paramref name="saved"/>, the folder's
+    /// saved view, tells what scripting cannot: how the folder is grouped, which wins in any view; an icon view not
+    /// arranged but saved as arranged by Date Last Opened; and a list view sorted by Name that is saved as sorted by
+    /// Date Last Opened, which scripting answers as Name.
     /// </summary>
-    public static FileOrder? ToFileOrder(in FinderWindow window)
+    public static FileOrder? ToFileOrder(in FinderWindow window, FinderSavedView? saved)
     {
+        if (saved?.GroupBy is { } group && !string.Equals(group, NotGrouped, StringComparison.Ordinal))
+        {
+            return GroupOrder(group);
+        }
+
         if (window.View == IconView)
         {
+            if (window.Arrangement == NotArranged)
+            {
+                return string.Equals(saved?.IconArrangeBy, SavedDateLastOpened, StringComparison.Ordinal) ? new FileOrder(SortFilesBy.LastAccessTime, false) : null;
+            }
+
             return ArrangementOrder(window.Arrangement);
         }
 
         if (window.View != ListView || FieldOf(window.SortedBy) is not { } field)
         {
             return null;
+        }
+
+        if (window.SortedBy == Name && saved?.ListSortColumn is { } column)
+        {
+            if (string.Equals(column, SavedDateLastOpened, StringComparison.Ordinal))
+            {
+                return new FileOrder(SortFilesBy.LastAccessTime, saved.Value.ListSortAscending ?? false);
+            }
+
+            if (column is SavedDateAdded or SavedLabel or SavedComments or SavedVersion)
+            {
+                return null;
+            }
         }
 
         if (window.Direction == Normal)
@@ -103,14 +135,15 @@ public static class FinderSort
     /// The order <paramref name="directory"/> is followed in: that of the first of <paramref name="windows"/>, which
     /// come front to back, that shows it, as that is the one the user sees and last used. Null when none shows it, or
     /// when the one in front is in no File Order, as a window behind it is not what the user sees.
+    /// <paramref name="saved"/> is the saved view of <paramref name="directory"/>, if read.
     /// </summary>
-    public static FileOrder? Followed(ReadOnlySpan<FinderWindow> windows, string directory)
+    public static FileOrder? Followed(ReadOnlySpan<FinderWindow> windows, string directory, FinderSavedView? saved = null)
     {
         foreach (ref readonly var window in windows)
         {
             if (Shows(window.Folder, directory))
             {
-                return ToFileOrder(window);
+                return ToFileOrder(window, saved);
             }
         }
 
@@ -127,6 +160,25 @@ public static class FinderSort
 
     // A disk may keep a name with its accents apart from their letters, and Finder may not tell it the same way
     private static string Composed(string path) => path.IsNormalized() ? path : path.Normalize();
+
+    // The strings Finder saves a view with, compared as written. Only Date Last Opened is confirmed of the groups.
+    private const string NotGrouped = "None";
+    private const string SavedDateLastOpened = "dateLastOpened";
+    private const string SavedDateAdded = "dateAdded";
+    private const string SavedLabel = "label";
+    private const string SavedComments = "comments";
+    private const string SavedVersion = "version";
+
+    private static FileOrder? GroupOrder(string group) => group switch
+    {
+        "Date Last Opened" => new FileOrder(SortFilesBy.LastAccessTime, false),
+        "Date Modified" => new FileOrder(SortFilesBy.LastWriteTime, false),
+        "Date Created" => new FileOrder(SortFilesBy.CreationTime, false),
+        "Size" => new FileOrder(SortFilesBy.FileSize, false),
+        "Kind" => new FileOrder(SortFilesBy.Extension, true),
+        "Name" => new FileOrder(SortFilesBy.Name, true),
+        _ => null
+    };
 
     private static FileOrder? ArrangementOrder(uint arrangement)
     {
