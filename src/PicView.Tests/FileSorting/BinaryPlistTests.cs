@@ -37,6 +37,81 @@ public class BinaryPlistTests
     public void TryReadColumnAscending_ListWithNoColumns_IsFalse() =>
         Assert.False(BinaryPlist.TryReadColumnAscending(FinderPlistFixtures.Icon, "name", out _));
 
+    [Fact]
+    public void TryReadString_NotAscii_IsRead()
+    {
+        Assert.True(BinaryPlist.TryReadString(FinderPlistFixtures.NotAscii, "größe", out var value));
+        Assert.Equal("Ünïcode", value);
+        Assert.False(BinaryPlist.TryReadString(FinderPlistFixtures.NotAscii, "grosse", out _));
+    }
+
+    [Fact]
+    public void TryReadColumnAscending_NotAsciiIdentifier_IsRead()
+    {
+        Assert.True(BinaryPlist.TryReadColumnAscending(FinderPlistFixtures.NotAscii, "Größe", out var ascending));
+        Assert.True(ascending);
+        Assert.False(BinaryPlist.TryReadColumnAscending(FinderPlistFixtures.NotAscii, "Grosse", out _));
+    }
+
+    /// <summary>An array of many references to one large dictionary with no identifier must not cost quadratic time.</summary>
+    [Fact]
+    public void TryReadColumnAscending_ManyColumnsOfOneLargeDictionary_IsFalseAtOnce()
+    {
+        const int keys = 12000, columns = 25000;
+        var plist = ColumnsOfOneDictionary(keys, columns);
+
+        var watch = System.Diagnostics.Stopwatch.StartNew();
+        Assert.False(BinaryPlist.TryReadColumnAscending(plist, "name", out _));
+        Assert.True(watch.Elapsed < TimeSpan.FromSeconds(1), $"took {watch.Elapsed}");
+    }
+
+    /// <summary>
+    /// A list of two-byte offsets and references: object 0 the top dictionary, 1 "columns", 2 the array of
+    /// <paramref name="columns"/> references to 3, a dictionary of <paramref name="keys"/> entries that all map "k" to "k".
+    /// </summary>
+    private static byte[] ColumnsOfOneDictionary(int keys, int columns)
+    {
+        using var stream = new MemoryStream();
+        stream.Write("bplist00"u8);
+        var offsets = new int[5];
+
+        void Reference(int value) { stream.WriteByte((byte)(value >> 8)); stream.WriteByte((byte)value); }
+        void Count(byte type, int count)
+        {
+            stream.WriteByte((byte)(type | 0x0F));
+            stream.WriteByte(0x11);
+            Reference(count);
+        }
+
+        offsets[0] = (int)stream.Length;
+        stream.WriteByte(0xD1);
+        Reference(1);
+        Reference(2);
+        offsets[1] = (int)stream.Length;
+        stream.WriteByte(0x57);
+        stream.Write("columns"u8);
+        offsets[2] = (int)stream.Length;
+        Count(0xA0, columns);
+        for (var i = 0; i < columns; i++) Reference(3);
+        offsets[3] = (int)stream.Length;
+        Count(0xD0, keys);
+        for (var i = 0; i < keys * 2; i++) Reference(4);
+        offsets[4] = (int)stream.Length;
+        stream.WriteByte(0x51);
+        stream.WriteByte((byte)'k');
+
+        var table = (int)stream.Length;
+        foreach (var offset in offsets) Reference(offset);
+
+        Span<byte> trailer = stackalloc byte[32];
+        trailer[6] = 2;
+        trailer[7] = 2;
+        System.Buffers.Binary.BinaryPrimitives.WriteUInt64BigEndian(trailer[8..], 5);
+        System.Buffers.Binary.BinaryPrimitives.WriteUInt64BigEndian(trailer[24..], (ulong)table);
+        stream.Write(trailer);
+        return stream.ToArray();
+    }
+
     private static void AssertColumns(byte[] plist)
     {
         Assert.True(BinaryPlist.TryReadColumnAscending(plist, "dateLastOpened", out var ascending));
@@ -80,7 +155,7 @@ public class BinaryPlistTests
         for (var length = 0; length < whole.Length; length++)
         {
             var found = BinaryPlist.TryReadString(whole.AsSpan(0, length), "arrangeBy", out var value);
-            Assert.False(found && value != "dateLastOpened", $"length {length} gave {value}");
+            Assert.False(found && !string.Equals(value, "dateLastOpened", StringComparison.Ordinal), $"length {length} gave {value}");
         }
 
         Assert.True(BinaryPlist.TryReadString(whole, "arrangeBy", out _));

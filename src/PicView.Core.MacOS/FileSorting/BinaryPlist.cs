@@ -11,6 +11,10 @@ internal static class BinaryPlist
     private const int HeaderLength = 8;
     private const int TrailerLength = 32;
 
+    // Finder's dictionaries and column arrays hold a few dozen entries. A cap keeps a crafted list, whose entries
+    // may all point at one large dictionary, from making the lookups quadratic.
+    private const int MaxContainerCount = 1024;
+
     private const byte FalseMarker = 0x08;
     private const byte TrueMarker = 0x09;
     private const byte AsciiStringType = 0x50;
@@ -163,7 +167,7 @@ internal static class BinaryPlist
             }
 
             var references = type == DictionaryType ? count * 2 : count;
-            if (references > _trailerStart || dataStart + references * _referenceSize > _trailerStart)
+            if (count > MaxContainerCount || dataStart + references * _referenceSize > _trailerStart)
             {
                 return false;
             }
@@ -258,14 +262,7 @@ internal static class BinaryPlist
                 return false;
             }
 
-            value = string.Create((int)count, _bytes.Slice((int)dataStart, (int)count * 2).ToArray(),
-                static (chars, data) =>
-                {
-                    for (var i = 0; i < chars.Length; i++)
-                    {
-                        chars[i] = (char)((data[i * 2] << 8) | data[i * 2 + 1]);
-                    }
-                });
+            value = System.Text.Encoding.BigEndianUnicode.GetString(_bytes.Slice((int)dataStart, (int)count * 2));
             return true;
         }
 

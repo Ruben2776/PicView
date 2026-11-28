@@ -24,5 +24,12 @@ internal static class FinderPlistFixtures
     /// </summary>
     internal static readonly byte[] ListOld = Convert.FromBase64String(
         "YnBsaXN0MDDSAQIDBFdjb2x1bW5zWnNvcnRDb2x1bW7SBAUGC1RuYW1lXmRhdGVMYXN0T3BlbmVk0gcICQpVaW5kZXhZYXNjZW5kaW5nEAAJ0gcIDA0QBQgIDRUgJSo5PkROUFFWWAAAAAAAAAEBAAAAAAAAAA4AAAAAAAAAAAAAAAAAAABZ");
+
+    /// <summary>
+    /// <c>{ "größe" = "Ünïcode"; columns = ( { identifier = "Größe"; ascending = true; } ); }</c>: strings that are
+    /// not ASCII, which a binary property list keeps as UTF-16.
+    /// </summary>
+    internal static readonly byte[] NotAscii = Convert.FromBase64String(
+        "YnBsaXN0MDDSAQIDBGUAZwByAPYA3wBlV2NvbHVtbnNnANwAbgDvAGMAbwBkAGWhBdIGBwgJWWFzY2VuZGluZ1ppZGVudGlmaWVyCWUARwByAPYA3wBlCA0YIC8xNkBLTAAAAAAAAAEBAAAAAAAAAAoAAAAAAAAAAAAAAAAAAABX");
 }
 #endif
