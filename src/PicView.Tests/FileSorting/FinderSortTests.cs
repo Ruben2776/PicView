@@ -32,7 +32,6 @@ public class FinderSortTests
     }
 
     [Theory]
-    [InlineData("elsk")] // Kind
     [InlineData("elsl")] // Tags
     [InlineData("elsC")] // Comments
     [InlineData("elsv")] // Version
@@ -40,14 +39,52 @@ public class FinderSortTests
         Assert.Null(FinderSort.ToFileOrder(ListView(column)));
 
     [Theory]
-    [InlineData("icnv")] // icon view
     [InlineData("clvw")] // column view
     [InlineData("flvw")] // gallery view
-    public void ToFileOrder_ViewOtherThanTheListView_IsNotFollowed(string view)
+    public void ToFileOrder_ColumnOrGalleryView_IsNotFollowed(string view)
     {
         var window = ListView("elsn") with { View = FinderSort.Code(view) };
 
         Assert.Null(FinderSort.ToFileOrder(window));
+    }
+
+    public static TheoryData<string, SortFilesBy, bool> Arrangements => new()
+    {
+        { "nama", SortFilesBy.Name, true },
+        { "kina", SortFilesBy.Extension, true },
+        { "siza", SortFilesBy.FileSize, false },
+        { "mdta", SortFilesBy.LastWriteTime, false },
+        { "cdta", SortFilesBy.CreationTime, false },
+    };
+
+    private static FinderWindow IconView(string arrangement, string? folder = Folder) =>
+        new(folder, FinderSort.IconView, 0, 0, FinderSort.Code(arrangement));
+
+    [Theory]
+    [MemberData(nameof(Arrangements))]
+    public void ToFileOrder_IconView_IsItsArrangement_InFindersFixedDirection(string arrangement, SortFilesBy field, bool ascending) =>
+        Assert.Equal(new FileOrder(field, ascending), FinderSort.ToFileOrder(IconView(arrangement)));
+
+    [Theory]
+    [InlineData("narr")] // not arranged
+    [InlineData("grda")] // snap to grid
+    [InlineData("laba")] // by tags
+    public void ToFileOrder_IconViewWithNoArrangementAFieldGives_IsNotFollowed(string arrangement) =>
+        Assert.Null(FinderSort.ToFileOrder(IconView(arrangement)));
+
+    [Fact]
+    public void ToFileOrder_IconView_IgnoresTheListViewsSortColumn()
+    {
+        var window = IconView("mdta") with { SortedBy = FinderSort.Name, Direction = FinderSort.Normal };
+
+        Assert.Equal(new FileOrder(SortFilesBy.LastWriteTime, false), FinderSort.ToFileOrder(window));
+    }
+
+    [Fact]
+    public void ToFileOrder_ListViewByKind_IsExtension_InTheWindowsDirection()
+    {
+        Assert.Equal(new FileOrder(SortFilesBy.Extension, true), FinderSort.ToFileOrder(ListView("elsk")));
+        Assert.Equal(new FileOrder(SortFilesBy.Extension, false), FinderSort.ToFileOrder(ListView("elsk", ascending: false)));
     }
 
     [Fact]
@@ -70,7 +107,7 @@ public class FinderSortTests
     [Fact]
     public void Followed_FrontWindowInNoFileOrder_IsNotFollowed_ThoughOneBehindItIs()
     {
-        FinderWindow[] windows = [ListView("elsk"), ListView("elsn")];
+        FinderWindow[] windows = [ListView("elsl"), ListView("elsn")];
 
         Assert.Null(FinderSort.Followed(windows, Folder));
     }
