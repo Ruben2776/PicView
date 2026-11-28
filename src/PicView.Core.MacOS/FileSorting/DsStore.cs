@@ -41,12 +41,16 @@ public static class DsStore
     private static ReadOnlySpan<byte> UstrType => "ustr"u8;
     private static ReadOnlySpan<byte> BlobType => "blob"u8;
 
-    /// <summary>The view Finder saved for <paramref name="folderName"/> in the <c>.DS_Store</c> <paramref name="file"/>.</summary>
+    /// <summary>
+    /// The view Finder saved for <paramref name="folderName"/> in the <c>.DS_Store</c> <paramref name="file"/>.
+    /// </summary>
     /// <param name="file">The bytes of the <c>.DS_Store</c> of the folder's parent.</param>
     /// <param name="folderName">
     /// The folder's name, matched without case and whichever way either writes an accented letter.
     /// </param>
-    /// <returns>Null when the file is not a <c>.DS_Store</c>, is malformed, or holds no setting for the folder.</returns>
+    /// <returns>
+    /// Null when the file is not a <c>.DS_Store</c>, is malformed, or holds no setting for the folder.
+    /// </returns>
     public static FinderSavedView? ViewOf(ReadOnlySpan<byte> file, string folderName)
     {
         if (!IsValidUtf16(folderName) || !TryReadTree(file, out var addresses, out var root))
@@ -104,7 +108,9 @@ public static class DsStore
         return true;
     }
 
-    /// <summary>The block number of the entry named <paramref name="name"/> in the bookkeeping block's directory.</summary>
+    /// <summary>
+    /// The block number of the entry named <paramref name="name"/> in the bookkeeping block's directory.
+    /// </summary>
     private static bool TryFindNamedBlock(ReadOnlySpan<byte> directory, ReadOnlySpan<byte> name, out uint block)
     {
         block = 0;

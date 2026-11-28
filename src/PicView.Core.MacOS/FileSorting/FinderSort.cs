@@ -12,7 +12,12 @@ namespace PicView.Core.MacOS.FileSorting;
 /// <param name="SortedBy">The column a list view is sorted by.</param>
 /// <param name="Direction">The direction a list view is sorted in.</param>
 /// <param name="Arrangement">How an icon view arranges its items; 0 when not read.</param>
-public readonly record struct FinderWindow(string? Folder, uint View, uint SortedBy, uint Direction, uint Arrangement = 0);
+public readonly record struct FinderWindow(
+    string? Folder,
+    uint View,
+    uint SortedBy,
+    uint Direction,
+    uint Arrangement = 0);
 
 /// <summary>
 /// The File Order a Finder window's sort is, where it is one (ADR-0050, On macOS).
@@ -31,10 +36,11 @@ public static class FinderSort
 
     // The strings Finder saves a list view's sort column and an icon view's arrangement with, compared as written
     private const string SavedDateLastOpened = "dateLastOpened";
-    private const string SavedDateAdded = "dateAdded";
-    private const string SavedLabel = "label";
-    private const string SavedComments = "comments";
-    private const string SavedVersion = "version";
+    private const string SavedName = "name";
+    private const string SavedDateModified = "dateModified";
+    private const string SavedDateCreated = "dateCreated";
+    private const string SavedSize = "size";
+    private const string SavedKind = "kind";
 
     /// <summary>The list view: its sort is the column it is sorted by, in the direction it is sorted in.</summary>
     public static readonly uint ListView = Code("lsvw");
@@ -60,7 +66,9 @@ public static class FinderSort
     /// <summary>An icon view not arranged: its items sit where the user put them.</summary>
     public static readonly uint NotArranged = Code("narr");
 
-    /// <summary>The Name column. Finder also answers it for a column its scripting has no name for, as Date Added.</summary>
+    /// <summary>
+    /// The Name column. Finder also answers it for a column its scripting has no name for, as Date Added.
+    /// </summary>
     public static readonly uint Name = Code("elsn");
 
     /// <summary>The Size column.</summary>
@@ -91,8 +99,8 @@ public static class FinderSort
     }
 
     /// <summary>
-    /// The File Order <paramref name="window"/> shows its folder in, by scripting alone: <see cref="ToFileOrder(in FinderWindow, FinderSavedView?)"/>
-    /// with no saved view.
+    /// The File Order <paramref name="window"/> shows its folder in, by scripting alone:
+    /// <see cref="ToFileOrder(in FinderWindow, FinderSavedView?)"/> with no saved view.
     /// </summary>
     public static FileOrder? ToFileOrder(in FinderWindow window) => ToFileOrder(window, null);
 
@@ -102,9 +110,11 @@ public static class FinderSort
     /// the rest), a direction not known, or a group with no field. An icon view has no direction of its own: Finder
     /// sorts Name and Kind ascending, and Size and the dates descending. <paramref name="saved"/>, the folder's
     /// saved view, tells what scripting cannot: how the folder is grouped, which wins in any view; an icon view not
-    /// arranged but saved as arranged by Date Last Opened; and a list view sorted by Name that is saved as sorted by
-    /// Date Last Opened, which scripting answers as Name. Only a missing group name and "None" mean the folder is not
-    /// grouped; an empty name, as any one not known, is a group with no field and is not followed.
+    /// arranged but saved as arranged by Date Last Opened; and a list view sorted by Name, which scripting also
+    /// answers for a column it has no word for. That list view is Date Last Opened when saved so, and Name when saved
+    /// as Name or as a column scripting would have named, which is then behind Finder; any other saved column leaves
+    /// the folder not followed. Only a missing group name and "None" mean the folder is not grouped; an empty name,
+    /// as any one not known, is a group with no field and is not followed.
     /// </summary>
     public static FileOrder? ToFileOrder(in FinderWindow window, FinderSavedView? saved)
     {
@@ -117,7 +127,9 @@ public static class FinderSort
         {
             if (window.Arrangement == NotArranged)
             {
-                return string.Equals(saved?.IconArrangeBy, SavedDateLastOpened, StringComparison.Ordinal) ? new FileOrder(SortFilesBy.LastAccessTime, false) : null;
+                return string.Equals(saved?.IconArrangeBy, SavedDateLastOpened, StringComparison.Ordinal)
+                    ? new FileOrder(SortFilesBy.LastAccessTime, false)
+                    : null;
             }
 
             return ArrangementOrder(window.Arrangement);
@@ -135,7 +147,7 @@ public static class FinderSort
                 return new FileOrder(SortFilesBy.LastAccessTime, saved.Value.ListSortAscending ?? false);
             }
 
-            if (column is SavedDateAdded or SavedLabel or SavedComments or SavedVersion)
+            if (column is not (SavedName or SavedDateModified or SavedDateCreated or SavedSize or SavedKind))
             {
                 return null;
             }
@@ -155,7 +167,10 @@ public static class FinderSort
     /// when the one in front is in no File Order, as a window behind it is not what the user sees.
     /// <paramref name="saved"/> is the saved view of <paramref name="directory"/>, if read.
     /// </summary>
-    public static FileOrder? Followed(ReadOnlySpan<FinderWindow> windows, string directory, FinderSavedView? saved = null)
+    public static FileOrder? Followed(
+        ReadOnlySpan<FinderWindow> windows,
+        string directory,
+        FinderSavedView? saved = null)
     {
         foreach (ref readonly var window in windows)
         {

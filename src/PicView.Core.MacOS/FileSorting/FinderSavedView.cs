@@ -5,7 +5,9 @@ namespace PicView.Core.MacOS.FileSorting;
 /// file holds no such setting for the folder.
 /// </summary>
 /// <param name="GroupBy">What the folder's items are grouped by: the <c>GRP0</c> record, as Finder names it.</param>
-/// <param name="IconArrangeBy">How the folder's icon view is arranged: the <c>arrangeBy</c> of its <c>icvp</c> record.</param>
+/// <param name="IconArrangeBy">
+/// How the folder's icon view is arranged: the <c>arrangeBy</c> of its <c>icvp</c> record.
+/// </param>
 /// <param name="ListSortColumn">
 /// The column the folder's list view is sorted by: the <c>sortColumn</c> of its <c>lsvC</c> record, else of its
 /// older <c>lsvp</c> record.

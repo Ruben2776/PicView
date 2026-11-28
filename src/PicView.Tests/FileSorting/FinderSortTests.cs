@@ -149,7 +149,8 @@ public class FinderSortTests
         Assert.Null(FinderSort.Followed(windows, Folder));
     }
 
-    private static FinderSavedView Saved(string? group = null, string? icon = null, string? list = null, bool? ascending = null) =>
+    private static FinderSavedView Saved(string? group = null, string? icon = null, string? list = null,
+        bool? ascending = null) =>
         new(group, icon, list, ascending);
 
     private static FinderWindow ViewOf(string view) => ListView("elsn") with { View = FinderSort.Code(view) };
@@ -213,6 +214,10 @@ public class FinderSortTests
         Assert.Null(FinderSort.ToFileOrder(IconView("narr"), Saved(icon: icon)));
 
     [Fact]
+    public void IconView_ArrangementNotRead_IsNotFollowed_ThoughSavedAsDateLastOpened() =>
+        Assert.Null(FinderSort.ToFileOrder(IconView("narr") with { Arrangement = 0 }, Saved(icon: "dateLastOpened")));
+
+    [Fact]
     public void IconView_Arranged_IgnoresTheSavedArrangement() =>
         Assert.Equal(new FileOrder(SortFilesBy.LastWriteTime, false),
             FinderSort.ToFileOrder(IconView("mdta"), Saved(icon: "dateLastOpened")));
@@ -230,16 +235,20 @@ public class FinderSortTests
     [InlineData("label")]
     [InlineData("comments")]
     [InlineData("version")]
-    public void ListView_Name_SavedAsAColumnWithNoCounterpart_IsNotFollowed(string list) =>
+    [InlineData("somethingNew")]
+    [InlineData("shareOwner")]
+    [InlineData("")]
+    public void ListView_Name_SavedAsAColumnWithNoCounterpartOrAnUnknownOne_IsNotFollowed(string list) =>
         Assert.Null(FinderSort.ToFileOrder(ListView("elsn"), Saved(list: list)));
 
     [Theory]
     [InlineData("name")]
     [InlineData("dateModified")]
+    [InlineData("dateCreated")]
     [InlineData("size")]
-    [InlineData("somethingNew")]
+    [InlineData("kind")]
     [InlineData(null)]
-    public void ListView_Name_SavedAsNameOrStaleOrUnknown_StaysName_InTheWindowsDirection(string? list)
+    public void ListView_Name_SavedAsNameOrStale_StaysName_InTheWindowsDirection(string? list)
     {
         Assert.Equal(new FileOrder(SortFilesBy.Name, true), FinderSort.ToFileOrder(ListView("elsn"), Saved(list: list)));
         Assert.Equal(new FileOrder(SortFilesBy.Name, false),

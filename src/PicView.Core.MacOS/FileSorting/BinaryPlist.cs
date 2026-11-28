@@ -1,3 +1,5 @@
+using System.Text;
+
 namespace PicView.Core.MacOS.FileSorting;
 
 /// <summary>
@@ -132,7 +134,9 @@ internal static class BinaryPlist
             return true;
         }
 
-        /// <summary>The value of <paramref name="key"/> in the dictionary object at <paramref name="dictionary"/>.</summary>
+        /// <summary>
+        /// The value of <paramref name="key"/> in the dictionary object at <paramref name="dictionary"/>.
+        /// </summary>
         public bool TryFindValue(long dictionary, string key, out long valueIndex)
         {
             valueIndex = 0;
@@ -176,7 +180,9 @@ internal static class BinaryPlist
             return true;
         }
 
-        /// <summary>The object index in reference number <paramref name="n"/> of the list starting at <paramref name="refs"/>.</summary>
+        /// <summary>
+        /// The object index in reference number <paramref name="n"/> of the list starting at <paramref name="refs"/>.
+        /// </summary>
         public bool TryReadReference(long refs, long n, out long index)
         {
             index = ReadBigEndian(_bytes.Slice((int)(refs + n * _referenceSize), _referenceSize), _referenceSize);
@@ -253,7 +259,7 @@ internal static class BinaryPlist
                     return false;
                 }
 
-                value = System.Text.Encoding.ASCII.GetString(_bytes.Slice((int)dataStart, (int)count));
+                value = Encoding.ASCII.GetString(_bytes.Slice((int)dataStart, (int)count));
                 return true;
             }
 
@@ -262,7 +268,7 @@ internal static class BinaryPlist
                 return false;
             }
 
-            value = System.Text.Encoding.BigEndianUnicode.GetString(_bytes.Slice((int)dataStart, (int)count * 2));
+            value = Encoding.BigEndianUnicode.GetString(_bytes.Slice((int)dataStart, (int)count * 2));
             return true;
         }
 
@@ -279,7 +285,9 @@ internal static class BinaryPlist
             return offset is >= HeaderLength && offset < _trailerStart;
         }
 
-        /// <summary>The type nibble and the count of the object at <paramref name="index"/>, and where its data starts.</summary>
+        /// <summary>
+        /// The type nibble and the count of the object at <paramref name="index"/>, and where its data starts.
+        /// </summary>
         private bool TryReadHeader(long index, out byte type, out long count, out long dataStart)
         {
             type = 0;

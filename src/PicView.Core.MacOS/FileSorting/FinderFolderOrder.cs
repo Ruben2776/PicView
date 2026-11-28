@@ -126,8 +126,8 @@ public sealed unsafe partial class FinderFolderOrder : IFolderOrderSource
 
     /// <summary>
     /// The order of the Finder window furthest in front that shows <paramref name="directory"/>, or null: when none
-    /// shows it, when that one is not in a list view or is sorted by a column no File Order has a field for, or when
-    /// Finder could not be asked.
+    /// shows it, when that one is in a view, sort, arrangement or group no File Order gives, or when Finder could not
+    /// be asked.
     /// </summary>
     public FileOrder? OrderOf(string directory)
     {
@@ -206,14 +206,9 @@ public sealed unsafe partial class FinderFolderOrder : IFolderOrderSource
             // No file: the usual case, and no answer
             return null;
         }
-        catch (Exception e) when (e is IOException or UnauthorizedAccessException)
-        {
-            // A file that is there but cannot be read, or is in the middle of a write: no answer
-            DebugHelper.LogDebug(nameof(FinderFolderOrder), nameof(SavedView), e);
-            return null;
-        }
         catch (Exception e)
         {
+            // A file that is there but cannot be read, or is in the middle of a write: no answer
             DebugHelper.LogDebug(nameof(FinderFolderOrder), nameof(SavedView), e);
             return null;
         }
