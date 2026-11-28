@@ -44,6 +44,8 @@ public sealed unsafe partial class FinderFolderOrder : IFolderOrderSource
     private static readonly uint SortColumn = FinderSort.Code("srtc");
     private static readonly uint ColumnName = FinderSort.Code("pnam");
     private static readonly uint SortDirection = FinderSort.Code("sord");
+    private static readonly uint IconViewOptions = FinderSort.Code("icop");
+    private static readonly uint IconArrangement = FinderSort.Code("iarr");
 
     private const int Ok = 0;
     private const int NotPermitted = -1743;             // errAEEventNotPermitted: the user refused
@@ -186,7 +188,7 @@ public sealed unsafe partial class FinderFolderOrder : IFolderOrderSource
         var found = false;
         for (var i = 0; i < count; i++)
         {
-            uint column = 0, direction = 0;
+            uint column = 0, direction = 0, arrangement = 0;
             if (!found && FinderSort.Shows(folders[i], asked))
             {
                 found = true;
@@ -197,9 +199,13 @@ public sealed unsafe partial class FinderFolderOrder : IFolderOrderSource
                     direction = Code(Property(SortDirection,
                         Property(SortColumn, Property(ListViewOptions, Window(i + 1)))), deadline);
                 }
+                else if (views[i] == FinderSort.IconView)
+                {
+                    arrangement = Code(Property(IconArrangement, Property(IconViewOptions, Window(i + 1))), deadline);
+                }
             }
 
-            windows[i] = new FinderWindow(folders[i], views[i], column, direction);
+            windows[i] = new FinderWindow(folders[i], views[i], column, direction, arrangement);
         }
 
         return windows;
