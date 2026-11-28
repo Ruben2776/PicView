@@ -9,10 +9,10 @@ namespace PicView.Core.MacOS.FileSorting;
 /// <summary>
 /// The order Finder shows a folder in, from two sources (ADR-0050, On macOS): its open windows, asked with Apple
 /// Events, and the view it saved for the folder in its parent's <c>.DS_Store</c>, which is read only for a folder a
-/// window shows. The events are sent in-process with <c>AESendMessage</c>, which may be called from any thread and takes a timeout, and wait on
-/// the Finder process: call from a pool thread. One ask has half a second for all of its events together. macOS asks
-/// the user to let PicView control Finder only in <see cref="RequestAccess"/>: an event never raises that question,
-/// and until the user has allowed it every event fails, which reads as no answer.
+/// window shows. The events are sent in-process with <c>AESendMessage</c>, which may be called from any thread and
+/// takes a timeout, and wait on the Finder process: call from a pool thread. One ask has half a second for all of
+/// its events together. macOS asks the user to let PicView control Finder only in <see cref="RequestAccess"/>: an
+/// event never raises that question, and until the user has allowed it every event fails, which reads as no answer.
 /// </summary>
 public sealed unsafe partial class FinderFolderOrder : IFolderOrderSource
 {
@@ -201,9 +201,15 @@ public sealed unsafe partial class FinderFolderOrder : IFolderOrderSource
             stream.ReadExactly(bytes);
             return DsStore.ViewOf(bytes, name);
         }
+        catch (Exception e) when (e is FileNotFoundException or DirectoryNotFoundException)
+        {
+            // No file: the usual case, and no answer
+            return null;
+        }
         catch (Exception e) when (e is IOException or UnauthorizedAccessException)
         {
-            // No file, or one in the middle of a write: no answer
+            // A file that is there but cannot be read, or is in the middle of a write: no answer
+            DebugHelper.LogDebug(nameof(FinderFolderOrder), nameof(SavedView), e);
             return null;
         }
         catch (Exception e)
@@ -279,7 +285,8 @@ public sealed unsafe partial class FinderFolderOrder : IFolderOrderSource
                 }
                 else if (views[i] == FinderSort.IconView)
                 {
-                    arrangement = Code(Property(IconArrangement, Property(IconViewOptions, Window(i + 1))), deadline);
+                    arrangement = Code(Property(IconArrangement,
+                        Property(IconViewOptions, Window(i + 1))), deadline);
                 }
             }
 

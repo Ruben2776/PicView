@@ -182,6 +182,7 @@ public class FinderSortTests
     [InlineData("Application")]
     [InlineData("Tags")]
     [InlineData("Dato sidst \u00e5bnet")]
+    [InlineData("")]
     public void Grouped_ByAFieldWithNoCounterpartOrAnUnknownOne_IsNotFollowed(string group) =>
         Assert.Null(FinderSort.ToFileOrder(ListView("elsn"), Saved(group)));
 
@@ -253,10 +254,9 @@ public class FinderSortTests
     [Fact]
     public void NoSavedView_IsAsScriptingAloneSays()
     {
-        foreach (var window in new[] { ListView("elsn"), IconView("mdta"), IconView("narr") })
-        {
-            Assert.Equal(FinderSort.ToFileOrder(window), FinderSort.ToFileOrder(window, null));
-        }
+        Assert.Equal(new FileOrder(SortFilesBy.Name, true), FinderSort.ToFileOrder(ListView("elsn"), null));
+        Assert.Equal(new FileOrder(SortFilesBy.LastWriteTime, false), FinderSort.ToFileOrder(IconView("mdta"), null));
+        Assert.Null(FinderSort.ToFileOrder(IconView("narr"), null));
     }
 
     [Fact]

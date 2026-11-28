@@ -19,6 +19,23 @@ public readonly record struct FinderWindow(string? Folder, uint View, uint Sorte
 /// </summary>
 public static class FinderSort
 {
+    // The names Finder writes for a group field, fixed and not translated. "Date Last Opened", "Kind" and "None" were
+    // read from a real saved file; the others are the names found in Finder itself.
+    private const string NotGrouped = "None";
+    private const string GroupDateLastOpened = "Date Last Opened";
+    private const string GroupDateModified = "Date Modified";
+    private const string GroupDateCreated = "Date Created";
+    private const string GroupSize = "Size";
+    private const string GroupKind = "Kind";
+    private const string GroupName = "Name";
+
+    // The strings Finder saves a list view's sort column and an icon view's arrangement with, compared as written
+    private const string SavedDateLastOpened = "dateLastOpened";
+    private const string SavedDateAdded = "dateAdded";
+    private const string SavedLabel = "label";
+    private const string SavedComments = "comments";
+    private const string SavedVersion = "version";
+
     /// <summary>The list view: its sort is the column it is sorted by, in the direction it is sorted in.</summary>
     public static readonly uint ListView = Code("lsvw");
 
@@ -86,7 +103,8 @@ public static class FinderSort
     /// sorts Name and Kind ascending, and Size and the dates descending. <paramref name="saved"/>, the folder's
     /// saved view, tells what scripting cannot: how the folder is grouped, which wins in any view; an icon view not
     /// arranged but saved as arranged by Date Last Opened; and a list view sorted by Name that is saved as sorted by
-    /// Date Last Opened, which scripting answers as Name.
+    /// Date Last Opened, which scripting answers as Name. Only a missing group name and "None" mean the folder is not
+    /// grouped; an empty name, as any one not known, is a group with no field and is not followed.
     /// </summary>
     public static FileOrder? ToFileOrder(in FinderWindow window, FinderSavedView? saved)
     {
@@ -161,22 +179,14 @@ public static class FinderSort
     // A disk may keep a name with its accents apart from their letters, and Finder may not tell it the same way
     private static string Composed(string path) => path.IsNormalized() ? path : path.Normalize();
 
-    // The strings Finder saves a view with, compared as written. Only Date Last Opened is confirmed of the groups.
-    private const string NotGrouped = "None";
-    private const string SavedDateLastOpened = "dateLastOpened";
-    private const string SavedDateAdded = "dateAdded";
-    private const string SavedLabel = "label";
-    private const string SavedComments = "comments";
-    private const string SavedVersion = "version";
-
     private static FileOrder? GroupOrder(string group) => group switch
     {
-        "Date Last Opened" => new FileOrder(SortFilesBy.LastAccessTime, false),
-        "Date Modified" => new FileOrder(SortFilesBy.LastWriteTime, false),
-        "Date Created" => new FileOrder(SortFilesBy.CreationTime, false),
-        "Size" => new FileOrder(SortFilesBy.FileSize, false),
-        "Kind" => new FileOrder(SortFilesBy.Extension, true),
-        "Name" => new FileOrder(SortFilesBy.Name, true),
+        GroupDateLastOpened => new FileOrder(SortFilesBy.LastAccessTime, false),
+        GroupDateModified => new FileOrder(SortFilesBy.LastWriteTime, false),
+        GroupDateCreated => new FileOrder(SortFilesBy.CreationTime, false),
+        GroupSize => new FileOrder(SortFilesBy.FileSize, false),
+        GroupKind => new FileOrder(SortFilesBy.Extension, true),
+        GroupName => new FileOrder(SortFilesBy.Name, true),
         _ => null
     };
 

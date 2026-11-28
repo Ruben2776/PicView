@@ -37,6 +37,14 @@ public class FinderSavedFileTests : IDisposable
         Assert.Equal(expected, FinderFolderOrder.SavedViewLocation("/Users/someone/Pictures/Characters/"));
     }
 
+    [Fact]
+    public void SavedViewLocation_FolderInTheRoot_IsTheRootsDsStore() =>
+        Assert.Equal(("/.DS_Store", "Pictures"), FinderFolderOrder.SavedViewLocation("/Pictures"));
+
+    [Fact]
+    public void SavedViewLocation_SeveralTrailingSeparators_IsNullAndDoesNotThrow() =>
+        Assert.Null(FinderFolderOrder.SavedViewLocation("/Users/someone/Pictures/Characters//"));
+
     [Theory]
     [InlineData("/")]
     [InlineData("")]
