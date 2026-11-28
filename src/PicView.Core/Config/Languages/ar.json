@@ -185,6 +185,7 @@
   "FocalLength35mm": "البعد البؤري 35 مم",
   "Folder": "مجلد",
   "FollowSystemSorting": "اتباع ترتيب ملفات النظام",
+  "FollowSystemSortingNotAllowed": "PicView is not allowed to ask Finder. Allow it in System Settings, Privacy & Security, Automation.",
   "Forward": "للأمام",
   "Frame": "الإطار",
   "Fstop": "F-stop",

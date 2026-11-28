@@ -185,6 +185,7 @@
   "FocalLength35mm": "Distância focal de 35 mm",
   "Folder": "Pasta",
   "FollowSystemSorting": "Seguir a ordenação de arquivos do sistema",
+  "FollowSystemSortingNotAllowed": "PicView is not allowed to ask Finder. Allow it in System Settings, Privacy & Security, Automation.",
   "Forward": "Para frente",
   "Frame": "Quadro",
   "Fstop": "F-stop",

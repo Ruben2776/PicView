@@ -185,6 +185,7 @@
   "FocalLength35mm": "Fokusna dužina 35mm",
   "Folder": "Folder",
   "FollowSystemSorting": "Prati sortiranje datoteka sistema",
+  "FollowSystemSortingNotAllowed": "PicView is not allowed to ask Finder. Allow it in System Settings, Privacy & Security, Automation.",
   "Forward": "Napred",
   "Frame": "Kadar",
   "Fstop": "F-stop",

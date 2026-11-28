@@ -197,6 +197,7 @@ public class LanguageModel
     public string? FocalLength35mm { get; set; }
     public string? Folder { get; set; }
     public string? FollowSystemSorting { get; set; }
+    public string? FollowSystemSortingNotAllowed { get; set; }
     public string? Forward { get; set; }
     public string? Frame { get; set; }
     public string? Fstop { get; set; }

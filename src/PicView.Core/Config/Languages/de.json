@@ -185,6 +185,7 @@
   "FocalLength35mm": "Brennweite (35mm)",
   "Folder": "Ordner",
   "FollowSystemSorting": "Dateisortierung des Systems übernehmen",
+  "FollowSystemSortingNotAllowed": "PicView is not allowed to ask Finder. Allow it in System Settings, Privacy & Security, Automation.",
   "Forward": "Vorwärts",
   "Frame": "Einzelbild",
   "Fstop": "F-Stop",

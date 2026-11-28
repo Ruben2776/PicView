@@ -22,14 +22,15 @@ public class GlobalSettingsViewModel
     public BindableReactiveProperty<bool> IsIncludingSubdirectories { get; }
 
     /// <summary>
-    /// Whether a folder is listed in the order Windows Explorer shows it in (ADR-0050).
+    /// Whether a folder is listed in the order the platform's file manager shows it in (ADR-0050).
     /// </summary>
     public BindableReactiveProperty<bool> IsFollowingSystemSorting { get; }
 
     /// <summary>
-    /// Only Windows has a file manager PicView asks, so the item is hidden elsewhere.
+    /// Whether the platform has a file manager PicView asks, as Windows and macOS do; the item is hidden where it
+    /// has none. Set once, with the services every tab shares, before a window binds to it.
     /// </summary>
-    public bool CanFollowSystemSorting { get; } = OperatingSystem.IsWindows();
+    public bool CanFollowSystemSorting { get; set; }
 
     public BindableReactiveProperty<bool> IsFileHistoryEnabled { get; }
 

@@ -470,14 +470,61 @@ public class AppLifecycleTests : IAsyncDisposable
         Assert.Empty(fileManager.Asked);
     }
 
+    [AvaloniaFact]
+    public async Task FollowSystemSortingAction_AccessToTheFileManagerRefused_AsksForNoFolder_AndSaysWhereToAllowIt()
+    {
+        var fileManager = new RecordingFileManager { Allows = false };
+        _core.InitializeNavigation(
+            TestTabServices.For(_core.SharedCache, null,
+                new RecordingWatcher(), platform: new NoPlatform(),
+                globalSettings: _core.GlobalSettings) with
+            {
+                Orders = new DirectoryOrders(fileManager)
+            },
+            new NavigationService());
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        await WaitUntilOpenedAsync(app.MainWindows.Open[0]);
+        var vm = ViewModelOf(app.MainWindows.Open[0]);
+        vm.WindowTabs.ActiveTab.Value.ListDirectory(DirectoryOrders.KeyOf(Path.GetTempPath())!);
+        _core.MainWindows.ActiveWindow.Value = vm;
+        vm.ToolTip ??= new PicView.Core.ViewModels.ToolTipViewModel();
+        // The window takes each message as it comes, so they are kept here
+        var shown = new System.Collections.Concurrent.ConcurrentQueue<string?>();
+        using var showing = vm.ToolTip.ToolTipMessageSource.Subscribe(shown.Enqueue);
+        await WaitUntilAsync(() =>
+            PicView.Core.Localization.TranslationManager.Translation.FollowSystemSortingNotAllowed is { Length: > 0 });
+
+        await vm.ActionRunner!.Run(Actions.ToggleFollowSystemSorting);
+
+        await WaitUntilAsync(() => shown.Contains(
+            PicView.Core.Localization.TranslationManager.Translation.FollowSystemSortingNotAllowed));
+        Assert.Equal(1, fileManager.AccessRequests);
+        Assert.Empty(fileManager.Asked);
+        // The setting stays on: a refusal reads as no answer
+        Assert.True(Settings.Sorting.FollowSystemSorting);
+    }
+
     private sealed class RecordingFileManager : IFolderOrderSource
     {
+        private int _accessRequests;
+
         public System.Collections.Concurrent.ConcurrentQueue<string> Asked { get; } = new();
+
+        public bool Allows { get; init; } = true;
+
+        public int AccessRequests => Volatile.Read(ref _accessRequests);
 
         public FileOrder? OrderOf(string directory)
         {
             Asked.Enqueue(directory);
             return null;
+        }
+
+        public bool RequestAccess()
+        {
+            Interlocked.Increment(ref _accessRequests);
+            return Allows;
         }
     }
 

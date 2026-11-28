@@ -119,6 +119,11 @@ public class App : Application, IPlatformSpecificService
         return FileListRetriever.RetrieveFiles(fileInfo, new FileOrdering(order, CompareStrings));
     }
 
+    /// <summary>
+    /// How Finder's open windows show a folder (ADR-0050).
+    /// </summary>
+    public IFolderOrderSource FolderOrders { get; } = new PicView.Core.MacOS.FileSorting.FinderFolderOrder();
+
     public int CompareStrings(string str1, string str2)
     {
         return NaturalStringComparer.Compare(str1, str2);

@@ -81,8 +81,8 @@ public static class ToggleHelper
         Toggle(vm.GlobalSettings.IsIncludingSubdirectories);
 
     /// <summary>
-    /// Does nothing where there is no file manager to follow: turned on there, it would disable the sort options
-    /// with no menu item to turn it off again.
+    /// Does nothing where there is no file manager to follow, as on Linux: turned on there, it would disable the
+    /// sort options with no menu item to turn it off again.
     /// </summary>
     public static ValueTask ToggleFollowSystemSorting(MainWindowViewModel vm) =>
         vm.GlobalSettings.CanFollowSystemSorting

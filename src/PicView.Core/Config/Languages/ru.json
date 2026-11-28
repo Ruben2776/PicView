@@ -185,6 +185,7 @@
   "FocalLength35mm": "Фокусное расстояние (35 мм)",
   "Folder": "Папка",
   "FollowSystemSorting": "Использовать сортировку файлов системы",
+  "FollowSystemSortingNotAllowed": "PicView is not allowed to ask Finder. Allow it in System Settings, Privacy & Security, Automation.",
   "Forward": "Вперед",
   "Frame": "Кадр",
   "Fstop": "F-стоп",

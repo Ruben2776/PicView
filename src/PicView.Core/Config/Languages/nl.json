@@ -185,6 +185,7 @@
   "FocalLength35mm": "Brandpuntsafstand 35mm",
   "Folder": "Map",
   "FollowSystemSorting": "Bestandssortering van het systeem volgen",
+  "FollowSystemSortingNotAllowed": "PicView is not allowed to ask Finder. Allow it in System Settings, Privacy & Security, Automation.",
   "Forward": "Vooruit",
   "Frame": "Frame",
   "Fstop": "F-getal",

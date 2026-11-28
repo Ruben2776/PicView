@@ -185,6 +185,7 @@
   "FocalLength35mm": "Distància focal 35 mm",
   "Folder": "Carpeta",
   "FollowSystemSorting": "Segueix l'ordenació de fitxers del sistema",
+  "FollowSystemSortingNotAllowed": "PicView is not allowed to ask Finder. Allow it in System Settings, Privacy & Security, Automation.",
   "Forward": "Endavant",
   "Frame": "Fotograma",
   "Fstop": "Obertura",

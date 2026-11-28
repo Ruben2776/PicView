@@ -185,6 +185,7 @@
   "FocalLength35mm": "Goriščna razdalja 35mm",
   "Folder": "Mapa",
   "FollowSystemSorting": "Sledi razvrščanju datotek v sistemu",
+  "FollowSystemSortingNotAllowed": "PicView is not allowed to ask Finder. Allow it in System Settings, Privacy & Security, Automation.",
   "Forward": "Naprej",
   "Frame": "Sličica",
   "Fstop": "F-stopen",

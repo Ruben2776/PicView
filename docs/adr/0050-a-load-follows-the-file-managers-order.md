@@ -2,7 +2,7 @@
 
 With **Follow System Sorting** on, a Load that lists a folder first asks the platform's file manager how it shows that folder, and gives the **Listed Directory** that order (issue #328). On Windows the file manager is Explorer: a folder sorted by date modified, descending, in an open Explorer window is browsed in that order in PicView.
 
-The seam is `IFolderOrderSource` (`PicView.Core/FileSorting`): `OrderOf(directory)` gives the `FileOrder` the file manager shows the folder in, or null. A platform offers one through `IPlatformSpecificService.FolderOrders`, which is null by default, and `AppLifecycle` gives it to the one `DirectoryOrders` (ADR-0048). macOS and Linux offer none, so nothing is asked there.
+The seam is `IFolderOrderSource` (`PicView.Core/FileSorting`): `OrderOf(directory)` gives the `FileOrder` the file manager shows the folder in, or null. A platform offers one through `IPlatformSpecificService.FolderOrders`, which is null by default, and `AppLifecycle` gives it to the one `DirectoryOrders` (ADR-0048). On macOS the file manager is Finder (see On macOS). Linux offers none, so nothing is asked there.
 
 `DirectoryOrders.FollowAsync(directory)` asks, off the caller's thread, and waits no longer than half a second. With an answer, a directory tabs already list takes that order and those tabs start sorting again; the answer is returned, and the Load lists in it and hands it to `TabViewModel.ListDirectory`, so a directory no tab listed starts with it. Without an answer the directory keeps the order it has, or starts with the **Default File Order**. So at a Load the order is, in turn: the file manager's, the directory's own, the default.
 
@@ -32,6 +32,48 @@ A view grouped by another column than it is sorted by, or with its groups in the
 
 The interfaces are called through their vtables with function pointers. `IShellWindows` is an `IDispatch` interface, which source-generated COM does not declare, and function pointers need no marshalling code under Native AOT.
 
+## On macOS
+
+`FinderFolderOrder` (`PicView.Core.MacOS/FileSorting`) is the macOS source, offered by the macOS app's platform service. It asks Finder, over Apple Events, for its open windows: the folder each shows, its view, and for a list view the sort column with its direction. Finder's scripting is the one source that is live and needs no more of the user than the Automation consent ("PicView wants to control Finder"). It was read on macOS 27: a click on a column header showed in the next answer.
+
+| Finder column | File Order field |
+|---|---|
+| Name | Name |
+| Size | File size |
+| Date Modified | Last write time |
+| Date Created | Creation time |
+| Kind, Tags, Comments, Version | none: not followed |
+| Date Added, Date Last Opened | cannot be told from Name (see below) |
+
+`FinderSort` turns what was read into a `FileOrder`, and is the part that is unit tested. Only a list view is followed. An icon view gives what it is arranged by with no direction, and a column or gallery view gives nothing. A Finder tab is a window of its own to scripting, and the windows come front to back, so the first one on the folder decides, as the view in front does on Windows. The folder a window shows is compared by its resolved path, without case; a search, a smart folder or a tag view is not a match.
+
+Consent is asked for when the setting is turned on, so the prompt follows the user's own click, and never while the setting is off: `IFolderOrderSource.RequestAccess`, which only the macOS source answers with anything but yes (`AEDeterminePermissionToAutomateTarget`), is called before `FollowAllAsync` (`AppLifecycle.FollowFileManagerAsync`). A denial reads as no answer: the setting stays on, no folder is followed, and turning it on while denied shows one message, `FollowSystemSortingNotAllowed`, that points to System Settings, Privacy & Security, Automation. `Info.plist` says why PicView asks, in `NSAppleEventsUsageDescription`, without which macOS refuses the events of a signed app.
+
+macOS offers no `IFileDateSource`: Finder has no column like Explorer's Date, so no Finder column maps to the Date field, which stays the earlier of the two file system times there.
+
+### Considered on macOS
+
+- **Read the folder's saved view state from `.DS_Store`.** It needs no consent and works with Finder closed. The format is undocumented, and Finder writes it late: the file of a folder whose sort was changed twice in a day was still two weeks old.
+- **Read the column headers through Accessibility.** It would see every column. The user has to grant "control this computer" by hand in System Settings, and header names are localized.
+- **Never follow an answer of Name**, to rule out the blind spot below. The most common sort would then never be followed.
+
+### Consequences on macOS
+
+- Finder's scripting has no Date Added column and answers Name for a view sorted by it, with the view's direction; Date Last Opened and Tags are expected to do the same. Such a folder is followed as Name, which is not what Finder shows.
+- Whether a view uses groups cannot be read, so a grouped list view is followed by its sort column though its groups come first.
+- Finder sorts names with its own localized comparison and PicView with `NaturalStringComparer`, so a folder followed by Name can differ from Finder where punctuation or accents decide.
+- Finder is asked with Apple Events sent in-process (`AESendMessage`, as `NSAppleEventDescriptor.sendEvent` does), four of them: the folder, the view, the sort column and its direction, each of every Finder window at once. Timed on macOS 27 with ten windows open, from a background thread while the main thread was blocked: 0.19 seconds for the first ask of a process and 0.07 after, well inside the half second a Load waits, which stays the same on every platform. Each event carries its own timeout.
+- From .NET the same ask took 30 to 90 milliseconds, read on a pool thread of the test host against ten open windows. The view of every window and the folder of every window are one event each, and the sort column and its direction are asked of the one window that is followed. Where Finder refuses the folders of all windows at once, as it may for a window that shows no folder on a disk, each window is asked for its own; that path was not run against such a window.
+- The Apple Event functions are called with `LibraryImport` and plain structures, the descriptor packed to two bytes as the headers declare it, so no Objective-C runtime call is made.
+- The answers are four-character codes (`lsvw` for a list view, `elsn`, `elss`, `elsm` and `elsc` for the name, size, modification date and creation date columns, `snrm` and `srvs` for the direction), so nothing read depends on Finder's language. Each column code was checked against Finder's own name for it.
+- `osascript` was timed too: 0.46 seconds for the same four events, of which 0.05 is the process and 0.13 its first contact with Finder, and 1.2 seconds with a loop over the windows. Too near the limit.
+- `NSAppleScript` in-process took 0.11 seconds on the main thread, but off it one ask timed out after two minutes with the main thread blocked, and took up to 0.67 seconds with it running. It is documented for the main thread only, where a slow Finder would hold the interface.
+
+- Finder's normal direction is ascending and its reversed descending: a window sorted by Size that Finder told as reversed showed the largest files first. The date columns are taken to go the same way, which was not checked against a window.
+- The item is shown wherever the platform offers a source: `GlobalSettingsViewModel.CanFollowSystemSorting` is `DirectoryOrders.CanFollow`, set with the services every tab shares, and the Action is listed for Windows and macOS. In the macOS native menu the sort items are disabled while following, as in the other menus.
+- The message for a denial is in English in every language but Danish until it is translated.
+- Tested with `FinderSortTests`, with windows given as data, and a refusal with a fake source in `AppLifecycleTests`. The consent prompt, a real denial and the built app were not run.
+
 ## Considered Options
 
 - **Take the literal item order of the Explorer view.** It would match Explorer for any column and any grouping. No `FileOrdering` reproduces such a list, so a created or renamed file could only be appended, as under Random, and a re-sort could not restore it (ADR-0039's guarantee). A `FileOrder` keeps inserts where a sort would put them, at the cost of the columns it has no field for.
@@ -58,7 +100,7 @@ The interfaces are called through their vtables with function pointers. `IShellW
 - The views were first required to agree, which left a folder unfollowed whenever a second Explorer window or a forgotten tab showed it in another order, as the first real use found. The view in front wins instead. Telling it needs a call that only works from a single-threaded apartment (`IOleWindow::GetWindow`, which is input-synchronous), so `ExplorerFolderOrder` reads the views on a thread of its own in one, and it rests on undocumented behaviour: each Explorer tab has a `ShellTabWindowClass` window in its Explorer window, the first of which is the tab shown. Where that stops holding, every tab counts as shown and the window in front decides alone.
 - Which window is furthest in front is its place among the desktop's top-level windows, so an Explorer window used last is followed though PicView was opened from elsewhere.
 - Only the first sort column is read, and files that tie on it go by name, then by path (ADR-0039), which may not be how Explorer breaks the tie.
-- The item is in the sort submenu of the main context menu and of the title bar menu, hidden where no file manager is asked (`GlobalSettingsViewModel.CanFollowSystemSorting`), and absent from the macOS native menu. `ToggleFollowSystemSorting` is its Action, with no default key.
+- The item is in the sort submenu of the main context menu and of the title bar menu, hidden where the platform offers no source (`GlobalSettingsViewModel.CanFollowSystemSorting`), and in the macOS native menu as well. `ToggleFollowSystemSorting` is its Action, with no default key.
 - The other languages show the English text for the item until it is translated; Danish has its own.
 - Tested with a fake `IFolderOrderSource`, and `ExplorerSort` with views given as data. `QuickLoad`'s two asks at App Start are not covered by a test.
 - The live read was checked on Windows 11 from the test host, from a pool thread: against one Explorer window sorted by name and by Date, against two Explorer windows on one folder in different orders, each brought to the front in turn, and with the front one's tab put behind a new tab. Grouped views, an elevated PicView and the Native AOT build were not run.

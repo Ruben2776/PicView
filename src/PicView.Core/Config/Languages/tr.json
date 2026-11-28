@@ -185,6 +185,7 @@
   "FocalLength35mm": "35mm odak uzaklığı",
   "Folder": "Klasör",
   "FollowSystemSorting": "Sistemin dosya sıralamasını izle",
+  "FollowSystemSortingNotAllowed": "PicView is not allowed to ask Finder. Allow it in System Settings, Privacy & Security, Automation.",
   "Forward": "İleri",
   "Frame": "Kare",
   "Fstop": "F-stop",

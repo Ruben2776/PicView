@@ -68,6 +68,7 @@ public class CoreViewModel
 
         Services = services;
         SharedNavigationService = navigation;
+        GlobalSettings.CanFollowSystemSorting = services.Orders.CanFollow;
     }
 
     // --- Globally Shared State ---

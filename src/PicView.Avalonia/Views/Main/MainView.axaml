@@ -226,7 +226,7 @@
 
                 <Separator IsVisible="{CompiledBinding GlobalSettings.CanFollowSystemSorting}" />
 
-                <!--  Follow Windows Explorer sorting  -->
+                <!--  Follow the file manager's sorting  -->
                 <customControls:StyledMenuItem
                     Command="{CompiledBinding RunActionCommand}"
                     CommandParameter="{x:Static keybindings:Actions.ToggleFollowSystemSorting}"

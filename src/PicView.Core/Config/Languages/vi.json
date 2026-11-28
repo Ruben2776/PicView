@@ -185,6 +185,7 @@
   "FocalLength35mm": "Tiêu cự 35mm",
   "Folder": "Thư mục",
   "FollowSystemSorting": "Theo cách sắp xếp tệp của hệ thống",
+  "FollowSystemSortingNotAllowed": "PicView is not allowed to ask Finder. Allow it in System Settings, Privacy & Security, Automation.",
   "Forward": "Trước",
   "Frame": "Khung hình",
   "Fstop": "Chỉ số Khẩu độ",

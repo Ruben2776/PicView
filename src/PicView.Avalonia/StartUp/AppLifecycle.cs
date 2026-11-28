@@ -489,9 +489,27 @@ public sealed class AppLifecycle
             // Turned on, every folder a tab lists takes the order the file manager shows it in now. Turned off, each
             // keeps the order it has
             _ = settings.IsFollowingSystemSorting.Skip(1).Where(static following => following)
-                .SubscribeAwait(async (_, ct) => await Task.Run(() => orders.FollowAllAsync(ct).AsTask(), ct)
+                .SubscribeAwait(async (_, ct) => await Task.Run(() => FollowFileManagerAsync(orders, ct), ct)
                         .ConfigureAwait(false),
                     DebugHelper.LogError(nameof(AppLifecycle), nameof(FollowSharedSettings)));
+        }
+    }
+
+    // The user is asked to let PicView ask the file manager here, where the platform wants that, so the question
+    // follows their own click. Refused, the setting stays on and no folder is followed, and they are told where to
+    // allow it
+    private async Task FollowFileManagerAsync(PicView.Core.FileSorting.DirectoryOrders orders, CancellationToken ct)
+    {
+        if (orders.RequestAccess())
+        {
+            await orders.FollowAllAsync(ct).ConfigureAwait(false);
+            return;
+        }
+
+        if (_core.MainWindows.ActiveWindow.CurrentValue is { ToolTip: not null } active &&
+            PicView.Core.Localization.TranslationManager.Translation.FollowSystemSortingNotAllowed is { Length: > 0 } message)
+        {
+            PicView.Avalonia.UI.TooltipHelper.ShowTooltipMessage(active, message, center: true, TimeSpan.FromSeconds(8));
         }
     }
 

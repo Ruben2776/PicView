@@ -206,6 +206,28 @@ public sealed class DirectoryOrders(IFolderOrderSource? fileManager = null, Time
     }
 
     /// <summary>
+    /// Whether this platform has a file manager to ask, and so whether following can be turned on at all.
+    /// </summary>
+    public bool CanFollow => fileManager is not null;
+
+    /// <summary>
+    /// Asks the user to let PicView ask the file manager, where the platform wants their consent. False when they
+    /// refuse, or refused before. May wait on their answer, so not for the UI thread.
+    /// </summary>
+    public bool RequestAccess()
+    {
+        try
+        {
+            return fileManager?.RequestAccess() ?? true;
+        }
+        catch (Exception e)
+        {
+            DebugHelper.LogDebug(nameof(DirectoryOrders), nameof(RequestAccess), e);
+            return true;
+        }
+    }
+
+    /// <summary>
     /// Whether the file manager answers: false while an ask that outran the limit has not come back.
     /// </summary>
     internal bool IsAnswering

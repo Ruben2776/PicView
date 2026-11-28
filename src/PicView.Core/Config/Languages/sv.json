@@ -185,6 +185,7 @@
   "FocalLength35mm": "Brännvidd 35mm",
   "Folder": "Mapp",
   "FollowSystemSorting": "Följ systemets filsortering",
+  "FollowSystemSortingNotAllowed": "PicView is not allowed to ask Finder. Allow it in System Settings, Privacy & Security, Automation.",
   "Forward": "Framåt",
   "Frame": "Bildruta",
   "Fstop": "Bländarsteg",

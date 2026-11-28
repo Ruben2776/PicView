@@ -248,7 +248,7 @@ The File Order a Listed Directory starts with when no tab lists it yet, and the 
 _Avoid_: Global sort, window order
 
 **Follow System Sorting**:
-An App Setting, off by default, that makes a Load that lists a folder ask the platform's file manager how it shows that folder, and give the Listed Directory that order: on Windows, the sort of an Explorer window open on it, and of the one furthest in front, in the tab it shows, when several are. The file manager's order wins over the order the directory had, for every tab that lists it, and never becomes the Default File Order. A folder the file manager does not show, or shows in an order no File Order gives, keeps its own order or starts with the default. Archives are never asked for, and nothing is asked on macOS and Linux.
+An App Setting, off by default, that makes a Load that lists a folder ask the platform's file manager how it shows that folder, and give the Listed Directory that order: on Windows, the sort of an Explorer window open on it, and of the one furthest in front, in the tab it shows, when several are; on macOS, the sort of a Finder window open on it in list view, and of the window or tab furthest in front when several are. The file manager's order wins over the order the directory had, for every tab that lists it, and never becomes the Default File Order. A folder the file manager does not show, or shows in an order no File Order gives, keeps its own order or starts with the default. Archives are never asked for, and nothing is asked on Linux.
 _Avoid_: Shell sort, sync sorting, Explorer order (for the File Order a directory took)
 
 **App Setting**:

@@ -185,6 +185,7 @@
   "FocalLength35mm": "Longueur focale 35mm",
   "Folder": "Dossier",
   "FollowSystemSorting": "Suivre le tri des fichiers du système",
+  "FollowSystemSortingNotAllowed": "PicView is not allowed to ask Finder. Allow it in System Settings, Privacy & Security, Automation.",
   "Forward": "Suivant",
   "Frame": "Trame",
   "Fstop": "F-stop",

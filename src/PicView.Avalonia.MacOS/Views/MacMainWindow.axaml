@@ -433,6 +433,7 @@
                                 Header="{CompiledBinding Translation.FileName.Value,
                                                          Mode=OneWay}"
                                 IsChecked="{Binding WindowTabs.IsSortedByName.Value, Mode=OneWay}"
+                                IsEnabled="{Binding !GlobalSettings.IsFollowingSystemSorting.Value, Mode=OneWay}"
                                 ToggleType="Radio" />
 
                             <!--  Sort files by size  -->
@@ -442,6 +443,7 @@
                                 Header="{CompiledBinding Translation.FileSize.Value,
                                                          Mode=OneWay}"
                                 IsChecked="{Binding WindowTabs.IsSortedByFileSize.Value, Mode=OneWay}"
+                                IsEnabled="{Binding !GlobalSettings.IsFollowingSystemSorting.Value, Mode=OneWay}"
                                 ToggleType="Radio" />
 
                             <!--  Sort files by extension  -->
@@ -451,6 +453,7 @@
                                 Header="{CompiledBinding Translation.FileExtension.Value,
                                                          Mode=OneWay}"
                                 IsChecked="{Binding WindowTabs.IsSortedByExtension.Value, Mode=OneWay}"
+                                IsEnabled="{Binding !GlobalSettings.IsFollowingSystemSorting.Value, Mode=OneWay}"
                                 ToggleType="Radio" />
 
                             <!--  Sort files by creation time  -->
@@ -460,6 +463,7 @@
                                 Header="{CompiledBinding Translation.Created.Value,
                                                          Mode=OneWay}"
                                 IsChecked="{Binding WindowTabs.IsSortedByCreationTime.Value, Mode=OneWay}"
+                                IsEnabled="{Binding !GlobalSettings.IsFollowingSystemSorting.Value, Mode=OneWay}"
                                 ToggleType="Radio" />
 
                             <!--  Sort files by last access time  -->
@@ -469,6 +473,7 @@
                                 Header="{CompiledBinding Translation.LastAccessTime.Value,
                                                          Mode=OneWay}"
                                 IsChecked="{Binding WindowTabs.IsSortedByLastAccessTime.Value, Mode=OneWay}"
+                                IsEnabled="{Binding !GlobalSettings.IsFollowingSystemSorting.Value, Mode=OneWay}"
                                 ToggleType="Radio" />
 
                             <!--  Sort files by last write time  -->
@@ -478,6 +483,7 @@
                                 Header="{CompiledBinding Translation.Modified.Value,
                                                          Mode=OneWay}"
                                 IsChecked="{Binding WindowTabs.IsSortedByLastWriteTime.Value, Mode=OneWay}"
+                                IsEnabled="{Binding !GlobalSettings.IsFollowingSystemSorting.Value, Mode=OneWay}"
                                 ToggleType="Radio" />
 
                             <!--  Sort files by date  -->
@@ -487,6 +493,7 @@
                                 Header="{CompiledBinding Translation.Date.Value,
                                                          Mode=OneWay}"
                                 IsChecked="{Binding WindowTabs.IsSortedByDate.Value, Mode=OneWay}"
+                                IsEnabled="{Binding !GlobalSettings.IsFollowingSystemSorting.Value, Mode=OneWay}"
                                 ToggleType="Radio" />
 
                             <!--  Sort files randomly  -->
@@ -496,6 +503,7 @@
                                 Header="{CompiledBinding Translation.Random.Value,
                                                          Mode=OneWay}"
                                 IsChecked="{Binding WindowTabs.IsSortedByRandomization.Value, Mode=OneWay}"
+                                IsEnabled="{Binding !GlobalSettings.IsFollowingSystemSorting.Value, Mode=OneWay}"
                                 ToggleType="Radio" />
 
                             <NativeMenuItemSeparator />
@@ -508,6 +516,7 @@
                                                          Mode=OneWay}"
                                 IsChecked="{CompiledBinding WindowTabs.IsAscending.Value,
                                                             Mode=OneWay}"
+                                IsEnabled="{Binding !GlobalSettings.IsFollowingSystemSorting.Value, Mode=OneWay}"
                                 ToggleType="Radio" />
 
                             <!--  Sort files descending  -->
@@ -518,7 +527,19 @@
                                                          Mode=OneWay}"
                                 IsChecked="{CompiledBinding !WindowTabs.IsAscending.Value,
                                                             Mode=OneWay}"
+                                IsEnabled="{Binding !GlobalSettings.IsFollowingSystemSorting.Value, Mode=OneWay}"
                                 ToggleType="Radio" />
+
+                            <NativeMenuItemSeparator />
+
+                            <!--  Follow the sorting of Finder  -->
+                            <NativeMenuItem
+                                Command="{CompiledBinding RunActionCommand}"
+                                CommandParameter="{x:Static keybindings:Actions.ToggleFollowSystemSorting}"
+                                Header="{CompiledBinding Translation.FollowSystemSorting.Value,
+                                                         Mode=OneWay}"
+                                IsChecked="{Binding GlobalSettings.IsFollowingSystemSorting.Value, Mode=OneWay}"
+                                ToggleType="CheckBox" />
                         </NativeMenu>
                     </NativeMenuItem>
 

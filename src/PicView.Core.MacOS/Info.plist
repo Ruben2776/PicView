@@ -24,6 +24,8 @@
         <string>{{appVersion}}</string>
         <key>LSMinimumSystemVersion</key>
         <string>10.15</string>
+        <key>NSAppleEventsUsageDescription</key>
+        <string>PicView asks Finder how a folder is sorted, to list its files in the same order.</string>
         <key>NSHighResolutionCapable</key>
         <true/>
         <key>LSArchitecturePriority</key>

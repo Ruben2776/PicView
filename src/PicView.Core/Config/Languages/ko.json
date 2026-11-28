@@ -185,6 +185,7 @@
   "FocalLength35mm": "35mm 초점 거리",
   "Folder": "폴더",
   "FollowSystemSorting": "시스템 파일 정렬 따르기",
+  "FollowSystemSortingNotAllowed": "PicView is not allowed to ask Finder. Allow it in System Settings, Privacy & Security, Automation.",
   "Forward": "앞으로",
   "Frame": "프레임",
   "Fstop": "F 값",

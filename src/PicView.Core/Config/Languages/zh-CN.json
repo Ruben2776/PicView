@@ -185,6 +185,7 @@
   "FocalLength35mm": "35mm 焦距",
   "Folder": "文件夹",
   "FollowSystemSorting": "跟随系统文件排序",
+  "FollowSystemSortingNotAllowed": "PicView is not allowed to ask Finder. Allow it in System Settings, Privacy & Security, Automation.",
   "Forward": "向前",
   "Frame": "帧",
   "Fstop": "F 值",

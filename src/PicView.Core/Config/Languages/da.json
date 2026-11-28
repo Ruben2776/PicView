@@ -186,6 +186,7 @@
   "FocalLength35mm": "Brændvidde 35mm",
   "Folder": "Mappe",
   "FollowSystemSorting": "Følg systemets filsortering",
+  "FollowSystemSortingNotAllowed": "PicView har ikke tilladelse til at spørge Finder. Tillad det i Systemindstillinger, Anonymitet & sikkerhed, Automatisering.",
   "Forward": "Fremad",
   "Frame": "Frame",
   "Fstop": "F-stop",

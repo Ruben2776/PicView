@@ -185,6 +185,7 @@
   "FocalLength35mm": "Długość ogniskowej (35mm)",
   "Folder": "Folder",
   "FollowSystemSorting": "Stosuj sortowanie plików systemu",
+  "FollowSystemSortingNotAllowed": "PicView is not allowed to ask Finder. Allow it in System Settings, Privacy & Security, Automation.",
   "Forward": "Do przodu",
   "Frame": "Klatka",
   "Fstop": "F-stop",

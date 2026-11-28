@@ -215,8 +215,8 @@ public static class KeybindCategoryDefinition
     public static List<(string FunctionName, string DisplayName)> GetSortFilesEntries(LanguageModel t)
     {
         List<(string FunctionName, string DisplayName)> entries = GetSortEntries(t);
-        // Only Windows has a file manager that is asked, as the menu item is only shown there
-        if (OperatingSystem.IsWindows())
+        // Only Windows and macOS have a file manager that is asked, as the menu item is only shown there
+        if (OperatingSystem.IsWindows() || OperatingSystem.IsMacOS())
         {
             entries.Add((Actions.ToggleFollowSystemSorting, t.FollowSystemSorting ?? string.Empty));
         }
