@@ -1,6 +1,6 @@
 # A Load Follows the File Manager's Order
 
-With **Follow Explorer Sorting** on, a Load that lists a folder first asks the platform's file manager how it shows that folder, and gives the **Listed Directory** that order (issue #328). On Windows the file manager is Explorer: a folder sorted by date modified, descending, in an open Explorer window is browsed in that order in PicView.
+With **Follow System Sorting** on, a Load that lists a folder first asks the platform's file manager how it shows that folder, and gives the **Listed Directory** that order (issue #328). On Windows the file manager is Explorer: a folder sorted by date modified, descending, in an open Explorer window is browsed in that order in PicView.
 
 The seam is `IFolderOrderSource` (`PicView.Core/FileSorting`): `OrderOf(directory)` gives the `FileOrder` the file manager shows the folder in, or null. A platform offers one through `IPlatformSpecificService.FolderOrders`, which is null by default, and `AppLifecycle` gives it to the one `DirectoryOrders` (ADR-0048). macOS and Linux offer none, so nothing is asked there.
 
@@ -8,7 +8,7 @@ The seam is `IFolderOrderSource` (`PicView.Core/FileSorting`): `OrderOf(director
 
 The Load asks where it lists: `TabLoad.ListAroundAsync` for a file and for a reload, `ListFolderAsync` for an opened folder, and `QuickLoad` where App Start lists before the tab's Load does (an opened folder, and Side-by-Side), which passes what it took in `LoadOptions.FollowedOrder`. A Load that steps to a file already in the tab's list lists nothing and asks nothing. An archive is never asked for.
 
-Follow Explorer Sorting is an App Setting, `Sorting.FollowExplorerSorting` in the settings file, on by default, so a settings file from before it follows. It publishes its changes as `GlobalSettingsViewModel.IsFollowingExplorerSorting` (ADR-0020). Turned on, `DirectoryOrders.FollowAllAsync` asks for every folder a tab lists now. Turned off, every directory keeps the order it has.
+Follow System Sorting is an App Setting, `Sorting.FollowSystemSorting` in the settings file, off by default, so a folder keeps the order PicView gives it until the user turns following on. It publishes its changes as `GlobalSettingsViewModel.IsFollowingSystemSorting` (ADR-0020). Turned on, `DirectoryOrders.FollowAllAsync` asks for every folder a tab lists now. Turned off, every directory keeps the order it has.
 
 ## On Windows
 
@@ -50,7 +50,7 @@ The interfaces are called through their vtables with function pointers. `IShellW
 - Any failure of the source is logged with `DebugHelper.LogDebug` and reads as no answer.
 - The answer is only as good as the source's mapping: a view the source cannot express as a `FileOrder` gives null, and the folder opens as if no window showed it.
 - `LoadOptions.FollowedOrder` is the one way a caller that lists for the Load can pass the order on; files given without it are of a directory that starts with the default.
-- `WindowSettingRecordReadsTests` lets `Sorting.FollowExplorerSorting` be read anywhere, as `IncludeSubDirectories` is: both are App Settings of their own and not the Default File Order.
+- `WindowSettingRecordReadsTests` lets `Sorting.FollowSystemSorting` be read anywhere, as `IncludeSubDirectories` is: both are App Settings of their own and not the Default File Order.
 - Dates taken are read after the list shows, in the background, and the files sorted again where that changes their order (ADR-0051), as reading one through the shell costs about 3 ms a file.
 - Date is a field like the others: `SortFilesByDate` is its Action, in the sort category of the keybindings, with an item in the sort submenus and the macOS native menu, labeled with the existing `Date` translation. It is 7 in `Sorting.SortPreference`, which a version from before it reads as Name.
 - An archive's pages go by their entry's modified time under Date, as under the other date fields, and an extracted page's file, stamped with that time on its creation and last write time, has the same date.
@@ -58,7 +58,7 @@ The interfaces are called through their vtables with function pointers. `IShellW
 - The views were first required to agree, which left a folder unfollowed whenever a second Explorer window or a forgotten tab showed it in another order, as the first real use found. The view in front wins instead. Telling it needs a call that only works from a single-threaded apartment (`IOleWindow::GetWindow`, which is input-synchronous), so `ExplorerFolderOrder` reads the views on a thread of its own in one, and it rests on undocumented behaviour: each Explorer tab has a `ShellTabWindowClass` window in its Explorer window, the first of which is the tab shown. Where that stops holding, every tab counts as shown and the window in front decides alone.
 - Which window is furthest in front is its place among the desktop's top-level windows, so an Explorer window used last is followed though PicView was opened from elsewhere.
 - Only the first sort column is read, and files that tie on it go by name, then by path (ADR-0039), which may not be how Explorer breaks the tie.
-- The item is in the sort submenu of the main context menu and of the title bar menu, hidden where no file manager is asked (`GlobalSettingsViewModel.CanFollowExplorerSorting`), and absent from the macOS native menu. `ToggleFollowExplorerSorting` is its Action, with no default key.
+- The item is in the sort submenu of the main context menu and of the title bar menu, hidden where no file manager is asked (`GlobalSettingsViewModel.CanFollowSystemSorting`), and absent from the macOS native menu. `ToggleFollowSystemSorting` is its Action, with no default key.
 - The other languages show the English text for the item until it is translated; Danish has its own.
 - Tested with a fake `IFolderOrderSource`, and `ExplorerSort` with views given as data. `QuickLoad`'s two asks at App Start are not covered by a test.
 - The live read was checked on Windows 11 from the test host, from a pool thread: against one Explorer window sorted by name and by Date, against two Explorer windows on one folder in different orders, each brought to the front in turn, and with the front one's tab put behind a new tab. Grouped views, an elevated PicView and the Native AOT build were not run.

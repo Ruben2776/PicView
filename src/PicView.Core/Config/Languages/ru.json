@@ -184,7 +184,7 @@
   "FocalLength": "Фокусное расстояние",
   "FocalLength35mm": "Фокусное расстояние (35 мм)",
   "Folder": "Папка",
-  "FollowExplorerSorting": "Follow Windows Explorer sorting",
+  "FollowSystemSorting": "Использовать сортировку файлов системы",
   "Forward": "Вперед",
   "Frame": "Кадр",
   "Fstop": "F-стоп",

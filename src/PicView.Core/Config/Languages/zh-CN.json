@@ -184,7 +184,7 @@
   "FocalLength": "焦距",
   "FocalLength35mm": "35mm 焦距",
   "Folder": "文件夹",
-  "FollowExplorerSorting": "Follow Windows Explorer sorting",
+  "FollowSystemSorting": "跟随系统文件排序",
   "Forward": "向前",
   "Frame": "帧",
   "Fstop": "F 值",

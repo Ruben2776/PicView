@@ -12,11 +12,11 @@ public partial class WindowSettingRecordReadsTests
     private static partial Regex AppWideRead();
 
     // A mention of the record's Sorting group; its two members that are not the Default File Order
-    // (IncludeSubDirectories and FollowExplorerSorting, App Settings of their own) are stripped first.
+    // (IncludeSubDirectories and FollowSystemSorting, App Settings of their own) are stripped first.
     [GeneratedRegex(@"\.Sorting\b")]
     private static partial Regex SortingGroup();
 
-    [GeneratedRegex(@"[!?]?\.Sorting[!?]?\.(IncludeSubDirectories|FollowExplorerSorting)\b")]
+    [GeneratedRegex(@"[!?]?\.Sorting[!?]?\.(IncludeSubDirectories|FollowSystemSorting)\b")]
     private static partial Regex IncludeSubDirectoriesRead();
 
     // The nine record properties that moved onto the window, read or written through their group. The groups also
@@ -190,7 +190,7 @@ public partial class WindowSettingRecordReadsTests
     [InlineData("if (Settings.Sorting.IncludeSubDirectories)", false)]
     [InlineData("if (Settings.Sorting!.IncludeSubDirectories)", false)]
     [InlineData("if (Settings.Sorting?.IncludeSubDirectories == true)", false)]
-    [InlineData("if (Settings.Sorting.FollowExplorerSorting)", false)]
+    [InlineData("if (Settings.Sorting.FollowSystemSorting)", false)]
     [InlineData("// Settings.Sorting.SortPreference", false)]
     [InlineData("/// Settings.Sorting.Ascending", false)]
     [InlineData("var x = tab.CurrentOrdering();", false)]

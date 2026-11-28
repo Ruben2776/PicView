@@ -24,12 +24,12 @@ public class GlobalSettingsViewModel
     /// <summary>
     /// Whether a folder is listed in the order Windows Explorer shows it in (ADR-0050).
     /// </summary>
-    public BindableReactiveProperty<bool> IsFollowingExplorerSorting { get; }
+    public BindableReactiveProperty<bool> IsFollowingSystemSorting { get; }
 
     /// <summary>
     /// Only Windows has a file manager PicView asks, so the item is hidden elsewhere.
     /// </summary>
-    public bool CanFollowExplorerSorting { get; } = OperatingSystem.IsWindows();
+    public bool CanFollowSystemSorting { get; } = OperatingSystem.IsWindows();
 
     public BindableReactiveProperty<bool> IsFileHistoryEnabled { get; }
 
@@ -101,7 +101,7 @@ public class GlobalSettingsViewModel
         _coalescedSave = new CoalescedSave(save ?? SaveSettingsAsync, nameof(GlobalSettingsViewModel));
 
         IsIncludingSubdirectories = new BindableReactiveProperty<bool>(Settings.Sorting.IncludeSubDirectories);
-        IsFollowingExplorerSorting = new BindableReactiveProperty<bool>(Settings.Sorting.FollowExplorerSorting);
+        IsFollowingSystemSorting = new BindableReactiveProperty<bool>(Settings.Sorting.FollowSystemSorting);
         IsFileHistoryEnabled = new BindableReactiveProperty<bool>(Settings.Navigation.IsFileHistoryEnabled);
         IsShowingFullPathInTitleBar = new BindableReactiveProperty<bool>(Settings.UIProperties.ShowFullPathInTitleBar);
         IsShowingTaskbarProgress = new BindableReactiveProperty<bool>(Settings.UIProperties.IsTaskbarProgressEnabled);
@@ -128,7 +128,7 @@ public class GlobalSettingsViewModel
             }
 
             Follow(IsIncludingSubdirectories, value => Settings.Sorting.IncludeSubDirectories = value);
-            Follow(IsFollowingExplorerSorting, value => Settings.Sorting.FollowExplorerSorting = value);
+            Follow(IsFollowingSystemSorting, value => Settings.Sorting.FollowSystemSorting = value);
             Follow(IsFileHistoryEnabled, value => Settings.Navigation.IsFileHistoryEnabled = value, rephrases: true);
             Follow(IsShowingFullPathInTitleBar, value => Settings.UIProperties.ShowFullPathInTitleBar = value);
             Follow(IsShowingTaskbarProgress, value => Settings.UIProperties.IsTaskbarProgressEnabled = value);

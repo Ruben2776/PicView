@@ -188,7 +188,7 @@ public sealed class DirectoryOrders(IFolderOrderSource? fileManager = null, Time
     /// <returns>The order taken from the file manager, which a directory no tab lists yet starts with through
     /// <see cref="Enter"/>; null when nothing was taken, and the directory keeps the order it has.</returns>
     public ValueTask<FileOrder?> FollowAsync(string? directory, CancellationToken ct = default) =>
-        Settings.Sorting.FollowExplorerSorting ? TakeAsync(directory, ct) : ValueTask.FromResult<FileOrder?>(null);
+        Settings.Sorting.FollowSystemSorting ? TakeAsync(directory, ct) : ValueTask.FromResult<FileOrder?>(null);
 
     /// <summary>
     /// Asks the file manager for every directory tabs list now, as when following is turned on. Archives are not

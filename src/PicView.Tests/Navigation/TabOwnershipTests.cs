@@ -1618,6 +1618,7 @@ public class TabOwnershipTests : IDisposable
     [Fact]
     public async Task Load_OfAFolderTheFileManagerShowsBySize_ListsItBySize_AndLeavesTheDefaultAlone()
     {
+        Settings.Sorting.FollowSystemSorting = true;
         var fileManager = new FakeFileManager();
         fileManager.Shown[_folder] = BySizeOrder;
         ComposeServices(fileManager: fileManager);
@@ -1639,6 +1640,7 @@ public class TabOwnershipTests : IDisposable
     [Fact]
     public async Task Load_OfAnOpenedFolderTheFileManagerShowsDescending_ListsItDescending()
     {
+        Settings.Sorting.FollowSystemSorting = true;
         var fileManager = new FakeFileManager();
         fileManager.Shown[_folder] = new FileOrder(SortFilesBy.Name, false);
         ComposeServices(fileManager: fileManager);
@@ -1655,7 +1657,7 @@ public class TabOwnershipTests : IDisposable
     [Fact]
     public async Task Load_WithFollowingOff_DoesNotAskTheFileManager()
     {
-        Settings.Sorting.FollowExplorerSorting = false;
+        Settings.Sorting.FollowSystemSorting = false;
         var fileManager = new FakeFileManager();
         fileManager.Shown[_folder] = BySizeOrder;
         ComposeServices(fileManager: fileManager);
@@ -1671,6 +1673,7 @@ public class TabOwnershipTests : IDisposable
     [Fact]
     public async Task Load_OfAFolderTheFileManagerDoesNotShow_UsesTheDefaultFileOrder()
     {
+        Settings.Sorting.FollowSystemSorting = true;
         var fileManager = new FakeFileManager();
         ComposeServices(fileManager: fileManager);
         CreateFiles();
@@ -1686,6 +1689,7 @@ public class TabOwnershipTests : IDisposable
     [Fact]
     public async Task Load_IntoADirectoryAnotherTabSortedByHand_TheFileManagersOrderWins_ForBothTabs()
     {
+        Settings.Sorting.FollowSystemSorting = true;
         var fileManager = new FakeFileManager();
         ComposeServices(fileManager: fileManager);
         CreateFiles();
@@ -1713,6 +1717,7 @@ public class TabOwnershipTests : IDisposable
     [Fact]
     public async Task Sort_FromTheMenu_AfterTheFileManagersOrderWasTaken_SetsTheDirectorysOrder()
     {
+        Settings.Sorting.FollowSystemSorting = true;
         var fileManager = new FakeFileManager();
         fileManager.Shown[_folder] = BySizeOrder;
         ComposeServices(fileManager: fileManager);
@@ -1731,6 +1736,7 @@ public class TabOwnershipTests : IDisposable
     [Fact]
     public async Task Sort_OfTheDirectionOnly_InAFolderInTheFileManagersOrder_LeavesTheDefaultsFieldAlone()
     {
+        Settings.Sorting.FollowSystemSorting = true;
         var fileManager = new FakeFileManager();
         fileManager.Shown[_folder] = BySizeOrder;
         ComposeServices(fileManager: fileManager);
@@ -1767,6 +1773,7 @@ public class TabOwnershipTests : IDisposable
     [Fact]
     public async Task Relist_AsksTheFileManagerAgain_AndTakesItsNewOrder()
     {
+        Settings.Sorting.FollowSystemSorting = true;
         var fileManager = new FakeFileManager();
         ComposeServices(fileManager: fileManager);
         CreateFiles();
@@ -1786,6 +1793,7 @@ public class TabOwnershipTests : IDisposable
     [Fact]
     public async Task Load_WhileTheFileManagerDoesNotAnswer_ListsWithoutIt_AndDoesNotAskAgainUntilItAnswers()
     {
+        Settings.Sorting.FollowSystemSorting = true;
         var fileManager = new FakeFileManager();
         fileManager.Shown[_folder] = BySizeOrder;
         ComposeServices(fileManager: fileManager, askLimit: TimeSpan.FromMilliseconds(50));
@@ -1821,6 +1829,7 @@ public class TabOwnershipTests : IDisposable
     [Fact]
     public async Task Load_WhenTheFileManagerThrows_ListsWithoutIt()
     {
+        Settings.Sorting.FollowSystemSorting = true;
         var fileManager = new FakeFileManager { Throws = true };
         ComposeServices(fileManager: fileManager);
         CreateFiles();
@@ -1834,7 +1843,7 @@ public class TabOwnershipTests : IDisposable
     [Fact]
     public async Task FollowAllAsync_GivesEveryListedFolderTheFileManagersOrder_WhateverTheSettingSays()
     {
-        Settings.Sorting.FollowExplorerSorting = false;
+        Settings.Sorting.FollowSystemSorting = false;
         var fileManager = new FakeFileManager();
         ComposeServices(fileManager: fileManager);
         CreateFiles();

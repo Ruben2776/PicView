@@ -184,7 +184,7 @@
   "FocalLength": "焦点距離",
   "FocalLength35mm": "焦点距離 35mm",
   "Folder": "フォルダー",
-  "FollowExplorerSorting": "Follow Windows Explorer sorting",
+  "FollowSystemSorting": "システムのファイル並べ替えに従う",
   "Forward": "前へ",
   "Frame": "フレーム",
   "Fstop": "F-ストップ",

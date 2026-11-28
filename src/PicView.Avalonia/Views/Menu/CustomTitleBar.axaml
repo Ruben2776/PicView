@@ -733,7 +733,7 @@
                             GroupName="Sort"
                             Header="{Binding Translation.FileName.Value, Mode=OneWay}"
                             IsChecked="{Binding WindowTabs.IsSortedByName.Value, Mode=OneWay}"
-                            IsEnabled="{Binding !GlobalSettings.IsFollowingExplorerSorting.Value, Mode=OneWay}"
+                            IsEnabled="{Binding !GlobalSettings.IsFollowingSystemSorting.Value, Mode=OneWay}"
                             Theme="{StaticResource MainBg}"
                             ToggleType="Radio" />
 
@@ -744,7 +744,7 @@
                             GroupName="Sort"
                             Header="{Binding Translation.FileSize.Value, Mode=OneWay}"
                             IsChecked="{Binding WindowTabs.IsSortedByFileSize.Value, Mode=OneWay}"
-                            IsEnabled="{Binding !GlobalSettings.IsFollowingExplorerSorting.Value, Mode=OneWay}"
+                            IsEnabled="{Binding !GlobalSettings.IsFollowingSystemSorting.Value, Mode=OneWay}"
                             Theme="{StaticResource MainBg}"
                             ToggleType="Radio" />
 
@@ -755,7 +755,7 @@
                             GroupName="Sort"
                             Header="{Binding Translation.FileExtension.Value, Mode=OneWay}"
                             IsChecked="{Binding WindowTabs.IsSortedByExtension.Value, Mode=OneWay}"
-                            IsEnabled="{Binding !GlobalSettings.IsFollowingExplorerSorting.Value, Mode=OneWay}"
+                            IsEnabled="{Binding !GlobalSettings.IsFollowingSystemSorting.Value, Mode=OneWay}"
                             Theme="{StaticResource MainBg}"
                             ToggleType="Radio" />
 
@@ -766,7 +766,7 @@
                             GroupName="Sort"
                             Header="{Binding Translation.Created.Value, Mode=OneWay}"
                             IsChecked="{Binding WindowTabs.IsSortedByCreationTime.Value, Mode=OneWay}"
-                            IsEnabled="{Binding !GlobalSettings.IsFollowingExplorerSorting.Value, Mode=OneWay}"
+                            IsEnabled="{Binding !GlobalSettings.IsFollowingSystemSorting.Value, Mode=OneWay}"
                             Theme="{StaticResource MainBg}"
                             ToggleType="Radio" />
 
@@ -777,7 +777,7 @@
                             GroupName="Sort"
                             Header="{Binding Translation.LastAccessTime.Value, Mode=OneWay}"
                             IsChecked="{Binding WindowTabs.IsSortedByLastAccessTime.Value, Mode=OneWay}"
-                            IsEnabled="{Binding !GlobalSettings.IsFollowingExplorerSorting.Value, Mode=OneWay}"
+                            IsEnabled="{Binding !GlobalSettings.IsFollowingSystemSorting.Value, Mode=OneWay}"
                             Theme="{StaticResource MainBg}"
                             ToggleType="Radio" />
 
@@ -788,7 +788,7 @@
                             GroupName="Sort"
                             Header="{Binding Translation.Modified.Value, Mode=OneWay}"
                             IsChecked="{Binding WindowTabs.IsSortedByLastWriteTime.Value, Mode=OneWay}"
-                            IsEnabled="{Binding !GlobalSettings.IsFollowingExplorerSorting.Value, Mode=OneWay}"
+                            IsEnabled="{Binding !GlobalSettings.IsFollowingSystemSorting.Value, Mode=OneWay}"
                             Theme="{StaticResource MainBg}"
                             ToggleType="Radio" />
 
@@ -799,7 +799,7 @@
                             GroupName="Sort"
                             Header="{Binding Translation.Date.Value, Mode=OneWay}"
                             IsChecked="{Binding WindowTabs.IsSortedByDate.Value, Mode=OneWay}"
-                            IsEnabled="{Binding !GlobalSettings.IsFollowingExplorerSorting.Value, Mode=OneWay}"
+                            IsEnabled="{Binding !GlobalSettings.IsFollowingSystemSorting.Value, Mode=OneWay}"
                             Theme="{StaticResource MainBg}"
                             ToggleType="Radio" />
 
@@ -810,7 +810,7 @@
                             GroupName="Sort"
                             Header="{Binding Translation.Random.Value, Mode=OneWay}"
                             IsChecked="{Binding WindowTabs.IsSortedByRandomization.Value, Mode=OneWay}"
-                            IsEnabled="{Binding !GlobalSettings.IsFollowingExplorerSorting.Value, Mode=OneWay}"
+                            IsEnabled="{Binding !GlobalSettings.IsFollowingSystemSorting.Value, Mode=OneWay}"
                             Theme="{StaticResource MainBg}"
                             ToggleType="Radio" />
 
@@ -821,7 +821,7 @@
                             GroupName="Order"
                             Header="{Binding Translation.Ascending.Value, Mode=OneWay}"
                             IsChecked="{Binding WindowTabs.IsAscending.Value, Mode=OneWay}"
-                            IsEnabled="{Binding !GlobalSettings.IsFollowingExplorerSorting.Value, Mode=OneWay}"
+                            IsEnabled="{Binding !GlobalSettings.IsFollowingSystemSorting.Value, Mode=OneWay}"
                             Theme="{StaticResource MainBg}"
                             ToggleType="Radio" />
 
@@ -832,19 +832,19 @@
                             GroupName="Order"
                             Header="{Binding Translation.Descending.Value, Mode=OneWay}"
                             IsChecked="{Binding !WindowTabs.IsAscending.Value, Mode=OneWay}"
-                            IsEnabled="{Binding !GlobalSettings.IsFollowingExplorerSorting.Value, Mode=OneWay}"
+                            IsEnabled="{Binding !GlobalSettings.IsFollowingSystemSorting.Value, Mode=OneWay}"
                             Theme="{StaticResource MainBg}"
                             ToggleType="Radio" />
 
-                        <Separator IsVisible="{Binding GlobalSettings.CanFollowExplorerSorting}" />
+                        <Separator IsVisible="{Binding GlobalSettings.CanFollowSystemSorting}" />
 
                         <!--  Follow Windows Explorer sorting  -->
                         <customControls:StyledMenuItem
                             Command="{Binding RunActionCommand}"
-                            CommandParameter="{x:Static keybindings:Actions.ToggleFollowExplorerSorting}"
-                            Header="{Binding Translation.FollowExplorerSorting.Value, Mode=OneWay}"
-                            IsChecked="{Binding GlobalSettings.IsFollowingExplorerSorting.Value, Mode=OneWay}"
-                            IsVisible="{Binding GlobalSettings.CanFollowExplorerSorting}"
+                            CommandParameter="{x:Static keybindings:Actions.ToggleFollowSystemSorting}"
+                            Header="{Binding Translation.FollowSystemSorting.Value, Mode=OneWay}"
+                            IsChecked="{Binding GlobalSettings.IsFollowingSystemSorting.Value, Mode=OneWay}"
+                            IsVisible="{Binding GlobalSettings.CanFollowSystemSorting}"
                             Theme="{StaticResource MainBg}"
                             ToggleType="CheckBox" />
 

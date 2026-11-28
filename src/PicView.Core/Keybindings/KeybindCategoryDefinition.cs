@@ -218,7 +218,7 @@ public static class KeybindCategoryDefinition
         // Only Windows has a file manager that is asked, as the menu item is only shown there
         if (OperatingSystem.IsWindows())
         {
-            entries.Add((Actions.ToggleFollowExplorerSorting, t.FollowExplorerSorting ?? string.Empty));
+            entries.Add((Actions.ToggleFollowSystemSorting, t.FollowSystemSorting ?? string.Empty));
         }
 
         return entries;

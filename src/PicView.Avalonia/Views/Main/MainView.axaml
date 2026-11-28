@@ -118,7 +118,7 @@
                     Header="{CompiledBinding Translation.FileName.Value,
                                              Mode=OneWay}"
                     IsChecked="{Binding WindowTabs.IsSortedByName.Value, Mode=OneWay}"
-                    IsEnabled="{Binding !GlobalSettings.IsFollowingExplorerSorting.Value, Mode=OneWay}"
+                    IsEnabled="{Binding !GlobalSettings.IsFollowingSystemSorting.Value, Mode=OneWay}"
                     ToggleType="Radio" />
 
                 <!--  Sort files by size  -->
@@ -129,7 +129,7 @@
                     Header="{CompiledBinding Translation.FileSize.Value,
                                              Mode=OneWay}"
                     IsChecked="{Binding WindowTabs.IsSortedByFileSize.Value, Mode=OneWay}"
-                    IsEnabled="{Binding !GlobalSettings.IsFollowingExplorerSorting.Value, Mode=OneWay}"
+                    IsEnabled="{Binding !GlobalSettings.IsFollowingSystemSorting.Value, Mode=OneWay}"
                     ToggleType="Radio" />
 
                 <!--  Sort files by extension  -->
@@ -140,7 +140,7 @@
                     Header="{CompiledBinding Translation.FileExtension.Value,
                                              Mode=OneWay}"
                     IsChecked="{Binding WindowTabs.IsSortedByExtension.Value, Mode=OneWay}"
-                    IsEnabled="{Binding !GlobalSettings.IsFollowingExplorerSorting.Value, Mode=OneWay}"
+                    IsEnabled="{Binding !GlobalSettings.IsFollowingSystemSorting.Value, Mode=OneWay}"
                     ToggleType="Radio" />
 
                 <!--  Sort files by creation time  -->
@@ -151,7 +151,7 @@
                     Header="{CompiledBinding Translation.Created.Value,
                                              Mode=OneWay}"
                     IsChecked="{Binding WindowTabs.IsSortedByCreationTime.Value, Mode=OneWay}"
-                    IsEnabled="{Binding !GlobalSettings.IsFollowingExplorerSorting.Value, Mode=OneWay}"
+                    IsEnabled="{Binding !GlobalSettings.IsFollowingSystemSorting.Value, Mode=OneWay}"
                     ToggleType="Radio" />
 
                 <!--  Sort files by last access time  -->
@@ -162,7 +162,7 @@
                     Header="{CompiledBinding Translation.LastAccessTime.Value,
                                              Mode=OneWay}"
                     IsChecked="{Binding WindowTabs.IsSortedByLastAccessTime.Value, Mode=OneWay}"
-                    IsEnabled="{Binding !GlobalSettings.IsFollowingExplorerSorting.Value, Mode=OneWay}"
+                    IsEnabled="{Binding !GlobalSettings.IsFollowingSystemSorting.Value, Mode=OneWay}"
                     ToggleType="Radio" />
 
                 <!--  Sort files by last write time  -->
@@ -173,7 +173,7 @@
                     Header="{CompiledBinding Translation.Modified.Value,
                                              Mode=OneWay}"
                     IsChecked="{Binding WindowTabs.IsSortedByLastWriteTime.Value, Mode=OneWay}"
-                    IsEnabled="{Binding !GlobalSettings.IsFollowingExplorerSorting.Value, Mode=OneWay}"
+                    IsEnabled="{Binding !GlobalSettings.IsFollowingSystemSorting.Value, Mode=OneWay}"
                     ToggleType="Radio" />
 
                 <!--  Sort files by date  -->
@@ -184,7 +184,7 @@
                     Header="{CompiledBinding Translation.Date.Value,
                                              Mode=OneWay}"
                     IsChecked="{Binding WindowTabs.IsSortedByDate.Value, Mode=OneWay}"
-                    IsEnabled="{Binding !GlobalSettings.IsFollowingExplorerSorting.Value, Mode=OneWay}"
+                    IsEnabled="{Binding !GlobalSettings.IsFollowingSystemSorting.Value, Mode=OneWay}"
                     ToggleType="Radio" />
 
                 <!--  Sort files randomly  -->
@@ -195,7 +195,7 @@
                     Header="{CompiledBinding Translation.Random.Value,
                                              Mode=OneWay}"
                     IsChecked="{Binding WindowTabs.IsSortedByRandomization.Value, Mode=OneWay}"
-                    IsEnabled="{Binding !GlobalSettings.IsFollowingExplorerSorting.Value, Mode=OneWay}"
+                    IsEnabled="{Binding !GlobalSettings.IsFollowingSystemSorting.Value, Mode=OneWay}"
                     ToggleType="Radio" />
 
                 <Separator />
@@ -209,7 +209,7 @@
                                              Mode=OneWay}"
                     IsChecked="{CompiledBinding WindowTabs.IsAscending.Value,
                                                 Mode=OneWay}"
-                    IsEnabled="{Binding !GlobalSettings.IsFollowingExplorerSorting.Value, Mode=OneWay}"
+                    IsEnabled="{Binding !GlobalSettings.IsFollowingSystemSorting.Value, Mode=OneWay}"
                     ToggleType="Radio" />
 
                 <!--  Sort files descending  -->
@@ -221,19 +221,19 @@
                                              Mode=OneWay}"
                     IsChecked="{CompiledBinding !WindowTabs.IsAscending.Value,
                                                 Mode=OneWay}"
-                    IsEnabled="{Binding !GlobalSettings.IsFollowingExplorerSorting.Value, Mode=OneWay}"
+                    IsEnabled="{Binding !GlobalSettings.IsFollowingSystemSorting.Value, Mode=OneWay}"
                     ToggleType="Radio" />
 
-                <Separator IsVisible="{CompiledBinding GlobalSettings.CanFollowExplorerSorting}" />
+                <Separator IsVisible="{CompiledBinding GlobalSettings.CanFollowSystemSorting}" />
 
                 <!--  Follow Windows Explorer sorting  -->
                 <customControls:StyledMenuItem
                     Command="{CompiledBinding RunActionCommand}"
-                    CommandParameter="{x:Static keybindings:Actions.ToggleFollowExplorerSorting}"
-                    Header="{CompiledBinding Translation.FollowExplorerSorting.Value,
+                    CommandParameter="{x:Static keybindings:Actions.ToggleFollowSystemSorting}"
+                    Header="{CompiledBinding Translation.FollowSystemSorting.Value,
                                              Mode=OneWay}"
-                    IsChecked="{Binding GlobalSettings.IsFollowingExplorerSorting.Value, Mode=OneWay}"
-                    IsVisible="{CompiledBinding GlobalSettings.CanFollowExplorerSorting}"
+                    IsChecked="{Binding GlobalSettings.IsFollowingSystemSorting.Value, Mode=OneWay}"
+                    IsVisible="{CompiledBinding GlobalSettings.CanFollowSystemSorting}"
                     ToggleType="CheckBox" />
             </customControls:StyledMenuItem>
 

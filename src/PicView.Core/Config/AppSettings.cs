@@ -463,11 +463,9 @@ public class Sorting
     public bool IncludeSubDirectories { get; set; } = false;
 
     /// <summary>
-    /// Whether a folder is listed in the order the platform's file manager shows it in, when it shows it: Windows
-    /// Explorer's sort. On Windows it is on unless turned off, so a settings file without it follows; elsewhere
-    /// there is nothing to follow, so it is off and the sort options stay the user's to pick.
+    /// Whether a folder is listed in the order the platform's file manager shows it in.
     /// </summary>
-    public bool FollowExplorerSorting { get; set; } = OperatingSystem.IsWindows();
+    public bool FollowSystemSorting { get; set; } = false;
 }
 
 public class StartUp

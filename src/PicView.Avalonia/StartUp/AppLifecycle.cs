@@ -488,7 +488,7 @@ public sealed class AppLifecycle
         {
             // Turned on, every folder a tab lists takes the order the file manager shows it in now. Turned off, each
             // keeps the order it has
-            _ = settings.IsFollowingExplorerSorting.Skip(1).Where(static following => following)
+            _ = settings.IsFollowingSystemSorting.Skip(1).Where(static following => following)
                 .SubscribeAwait(async (_, ct) => await Task.Run(() => orders.FollowAllAsync(ct).AsTask(), ct)
                         .ConfigureAwait(false),
                     DebugHelper.LogError(nameof(AppLifecycle), nameof(FollowSharedSettings)));

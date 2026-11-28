@@ -84,9 +84,9 @@ public static class ToggleHelper
     /// Does nothing where there is no file manager to follow: turned on there, it would disable the sort options
     /// with no menu item to turn it off again.
     /// </summary>
-    public static ValueTask ToggleFollowExplorerSorting(MainWindowViewModel vm) =>
-        vm.GlobalSettings.CanFollowExplorerSorting
-            ? Toggle(vm.GlobalSettings.IsFollowingExplorerSorting)
+    public static ValueTask ToggleFollowSystemSorting(MainWindowViewModel vm) =>
+        vm.GlobalSettings.CanFollowSystemSorting
+            ? Toggle(vm.GlobalSettings.IsFollowingSystemSorting)
             : ValueTask.CompletedTask;
 
     public static ValueTask ToggleBottomToolbar(MainWindowViewModel vm) =>

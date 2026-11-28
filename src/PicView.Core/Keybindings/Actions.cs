@@ -97,7 +97,7 @@ public static class Actions
     public const string SortFilesRandomly = nameof(SortFilesRandomly);
     public const string SortFilesAscending = nameof(SortFilesAscending);
     public const string SortFilesDescending = nameof(SortFilesDescending);
-    public const string ToggleFollowExplorerSorting = nameof(ToggleFollowExplorerSorting);
+    public const string ToggleFollowSystemSorting = nameof(ToggleFollowSystemSorting);
 
     // Copy
     public const string CopyFile = nameof(CopyFile);

@@ -184,7 +184,7 @@
   "FocalLength": "Brennweite",
   "FocalLength35mm": "Brennweite (35mm)",
   "Folder": "Ordner",
-  "FollowExplorerSorting": "Follow Windows Explorer sorting",
+  "FollowSystemSorting": "Dateisortierung des Systems übernehmen",
   "Forward": "Vorwärts",
   "Frame": "Einzelbild",
   "Fstop": "F-Stop",

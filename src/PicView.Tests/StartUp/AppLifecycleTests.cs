@@ -436,7 +436,7 @@ public class AppLifecycleTests : IAsyncDisposable
             settings.ExpandedGalleryDisplayMode.Value, settings.RowsWasLastUsedDisplayMode);
 
     [AvaloniaFact]
-    public async Task FollowExplorerSortingAction_TogglesTheSetting_AndTurnedOnAsksTheFileManagerForEveryListedFolder()
+    public async Task FollowSystemSortingAction_TogglesTheSetting_AndTurnedOnAsksTheFileManagerForEveryListedFolder()
     {
         var fileManager = new RecordingFileManager();
         _core.InitializeNavigation(
@@ -454,18 +454,20 @@ public class AppLifecycleTests : IAsyncDisposable
         // A folder the tab lists, as after a Load there
         var folder = DirectoryOrders.KeyOf(Path.GetTempPath())!;
         vm.WindowTabs.ActiveTab.Value.ListDirectory(folder);
-        Assert.True(Settings.Sorting.FollowExplorerSorting);
+        Assert.False(Settings.Sorting.FollowSystemSorting);
 
-        await vm.ActionRunner!.Run(Actions.ToggleFollowExplorerSorting);
+        await vm.ActionRunner!.Run(Actions.ToggleFollowSystemSorting);
 
-        Assert.False(Settings.Sorting.FollowExplorerSorting);
-        Assert.False(_core.GlobalSettings.IsFollowingExplorerSorting.Value);
-        Assert.Empty(fileManager.Asked);
-
-        await vm.ActionRunner.Run(Actions.ToggleFollowExplorerSorting);
-
-        Assert.True(Settings.Sorting.FollowExplorerSorting);
+        Assert.True(Settings.Sorting.FollowSystemSorting);
+        Assert.True(_core.GlobalSettings.IsFollowingSystemSorting.Value);
         await WaitUntilAsync(() => fileManager.Asked.Contains(folder));
+
+        fileManager.Asked.Clear();
+        await vm.ActionRunner.Run(Actions.ToggleFollowSystemSorting);
+
+        Assert.False(Settings.Sorting.FollowSystemSorting);
+        Assert.False(_core.GlobalSettings.IsFollowingSystemSorting.Value);
+        Assert.Empty(fileManager.Asked);
     }
 
     private sealed class RecordingFileManager : IFolderOrderSource

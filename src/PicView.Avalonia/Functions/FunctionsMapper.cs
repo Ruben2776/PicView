@@ -262,7 +262,7 @@ public class FunctionsMapper : IActionRunner
             Actions.ToggleHoverBar => ToggleHoverBar,
             Actions.ToggleShowFullPathInTitleBar => ToggleShowFullPathInTitleBar,
             Actions.ToggleSubdirectories => ToggleSubdirectories,
-            Actions.ToggleFollowExplorerSorting => ToggleFollowExplorerSorting,
+            Actions.ToggleFollowSystemSorting => ToggleFollowSystemSorting,
             Actions.ToggleTaskbarProgress => ToggleTaskbarProgress,
 
             _ when KeybindCategoryDefinition.FavoriteSlot(functionName) is { } slot => () => OpenFavorite(slot),
@@ -576,8 +576,8 @@ public class FunctionsMapper : IActionRunner
     private ValueTask ToggleSubdirectories() =>
         ToggleHelper.ToggleSubdirectories(_vm);
 
-    private ValueTask ToggleFollowExplorerSorting() =>
-        ToggleHelper.ToggleFollowExplorerSorting(_vm);
+    private ValueTask ToggleFollowSystemSorting() =>
+        ToggleHelper.ToggleFollowSystemSorting(_vm);
 
     private ValueTask ToggleBottomToolbar() =>
         ToggleHelper.ToggleBottomToolbar(_vm);
