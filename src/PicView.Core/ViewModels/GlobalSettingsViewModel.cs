@@ -30,7 +30,7 @@ public class GlobalSettingsViewModel
     /// Whether the platform has a file manager PicView asks, as Windows and macOS do; the item is hidden where it
     /// has none. Set once, with the services every tab shares, before a window binds to it.
     /// </summary>
-    public bool CanFollowSystemSorting { get; set; }
+    public bool CanFollowSystemSorting { get; internal set; }
 
     public BindableReactiveProperty<bool> IsFileHistoryEnabled { get; }
 

@@ -447,6 +447,8 @@ public class AppLifecycleTests : IAsyncDisposable
                 Orders = new DirectoryOrders(fileManager)
             },
             new NavigationService());
+        // The item is shown where there is a file manager to ask
+        Assert.True(_core.GlobalSettings.CanFollowSystemSorting);
         var app = CreateApp();
         await app.StartAsync(settingsExists: true, []);
         await WaitUntilOpenedAsync(app.MainWindows.Open[0]);
@@ -537,6 +539,8 @@ public class AppLifecycleTests : IAsyncDisposable
                 watcher, platform: new NoPlatform(),
                 globalSettings: _core.GlobalSettings),
             new NavigationService());
+        // No file manager to ask, so nothing to follow
+        Assert.False(_core.GlobalSettings.CanFollowSystemSorting);
         var app = CreateApp();
         await app.StartAsync(settingsExists: true, []);
         await WaitUntilOpenedAsync(app.MainWindows.Open[0]);

@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
 using PicView.Core.DebugTools;
@@ -8,8 +9,9 @@ namespace PicView.Core.MacOS.FileSorting;
 /// <summary>
 /// The order Finder's open windows show a folder in, asked of Finder with Apple Events (ADR-0050, On macOS). The events
 /// are sent in-process with <c>AESendMessage</c>, which may be called from any thread and takes a timeout, and wait on
-/// the Finder process: call from a pool thread, and bound the wait. macOS asks the user once to let PicView control
-/// Finder, and refused, every event fails, which reads as no answer.
+/// the Finder process: call from a pool thread. One ask has half a second for all of its events together. macOS asks
+/// the user to let PicView control Finder only in <see cref="RequestAccess"/>: an event never raises that question,
+/// and until the user has allowed it every event fails, which reads as no answer.
 /// </summary>
 public sealed unsafe partial class FinderFolderOrder : IFolderOrderSource
 {
@@ -47,9 +49,11 @@ public sealed unsafe partial class FinderFolderOrder : IFolderOrderSource
     private const int NotPermitted = -1743;             // errAEEventNotPermitted: the user refused
     private const int WaitReply = 0x3;                  // kAEWaitReply
     private const int NeverInteract = 0x10;             // kAENeverInteract
+    private const int NeverAskConsent = 0x20000;        // kAEDoNotPromptForUserConsent
+    private const int TimedOut = -1712;                 // errAETimeout
     private const short AnyReturnId = -1;               // kAutoGenerateReturnID
     private const int AnyTransaction = 0;               // kAnyTransactionID
-    private const int HalfASecond = 30;                 // in ticks, a sixtieth of a second each
+    private const int TicksASecond = 60;                // an Apple Event's timeout is in ticks
     private const int MostWindows = 64;
 
     // An AEDesc. The Apple Event headers pack their structures to two bytes, so the pointer follows the type at once
@@ -130,7 +134,9 @@ public sealed unsafe partial class FinderFolderOrder : IFolderOrderSource
         try
         {
             var asked = Resolved(directory);
-            var windows = Windows(asked);
+            // For every event of the ask together, so a slow Finder with many windows holds the thread no longer
+            var deadline = Stopwatch.GetTimestamp() + Stopwatch.Frequency / 2;
+            var windows = Windows(asked, deadline);
             return windows is null ? null : FinderSort.Followed(windows, asked);
         }
         catch (Exception e)
@@ -167,26 +173,30 @@ public sealed unsafe partial class FinderFolderOrder : IFolderOrderSource
 
     // Finder's windows, front to back, with the sort read only of the first that shows the folder, as no other is
     // followed. Null when Finder did not tell its windows
-    private static FinderWindow[]? Windows(string asked)
+    private static FinderWindow[]? Windows(string asked, long deadline)
     {
-        if (Codes(Property(CurrentView, EveryWindow())) is not { Length: > 0 } views)
+        if (Codes(Property(CurrentView, EveryWindow()), deadline) is not { Length: > 0 } views)
         {
             return null;
         }
 
         var count = Math.Min(views.Length, MostWindows);
-        var folders = Folders(count);
+        var folders = Folders(count, asked, deadline);
         var windows = new FinderWindow[count];
-        var read = false;
+        var found = false;
         for (var i = 0; i < count; i++)
         {
             uint column = 0, direction = 0;
-            if (!read && views[i] == FinderSort.ListView && FinderSort.Shows(folders[i], asked))
+            if (!found && FinderSort.Shows(folders[i], asked))
             {
-                read = true;
-                column = Code(Property(ColumnName, Property(SortColumn, Property(ListViewOptions, Window(i + 1)))));
-                direction = Code(Property(SortDirection,
-                    Property(SortColumn, Property(ListViewOptions, Window(i + 1)))));
+                found = true;
+                if (views[i] == FinderSort.ListView)
+                {
+                    column = Code(Property(ColumnName,
+                        Property(SortColumn, Property(ListViewOptions, Window(i + 1)))), deadline);
+                    direction = Code(Property(SortDirection,
+                        Property(SortColumn, Property(ListViewOptions, Window(i + 1)))), deadline);
+                }
             }
 
             windows[i] = new FinderWindow(folders[i], views[i], column, direction);
@@ -195,12 +205,13 @@ public sealed unsafe partial class FinderFolderOrder : IFolderOrderSource
         return windows;
     }
 
-    // The folder each window shows. All are asked for at once, and one by one where that fails, as it does when a
-    // window shows what is no folder on a disk
-    private static string?[] Folders(int count)
+    // The folder each window shows. All are asked for at once. Where Finder refuses that, as it does when a window
+    // shows what is no folder on a disk, each is asked for its own, front to back and no further than the first that
+    // shows the folder asked for, as no window behind it is followed
+    private static string?[] Folders(int count, string asked, long deadline)
     {
         var folders = new string?[count];
-        if (Get(Property(Target, EveryWindow()), TypeAlias, out var all) == Ok)
+        if (Get(Property(Target, EveryWindow()), TypeAlias, deadline, out var all) == Ok)
         {
             var told = false;
             try
@@ -234,10 +245,22 @@ public sealed unsafe partial class FinderFolderOrder : IFolderOrderSource
 
         for (var i = 0; i < count; i++)
         {
-            if (Get(Property(Target, Window(i + 1)), TypeAlias, out var one) == Ok)
+            var status = Get(Property(Target, Window(i + 1)), TypeAlias, deadline, out var one);
+            if (status == TimedOut)
             {
-                folders[i] = PathOf(&one);
-                AEDisposeDesc(&one);
+                break;
+            }
+
+            if (status != Ok)
+            {
+                continue;
+            }
+
+            folders[i] = PathOf(&one);
+            AEDisposeDesc(&one);
+            if (FinderSort.Shows(folders[i], asked))
+            {
+                break;
             }
         }
 
@@ -278,9 +301,9 @@ public sealed unsafe partial class FinderFolderOrder : IFolderOrderSource
     }
 
     // The codes Finder answers a request for one of every window with; null when it gives none
-    private static uint[]? Codes(Descriptor what)
+    private static uint[]? Codes(Descriptor what, long deadline)
     {
-        if (Get(what, 0, out var answer) != Ok)
+        if (Get(what, 0, deadline, out var answer) != Ok)
         {
             return null;
         }
@@ -313,9 +336,9 @@ public sealed unsafe partial class FinderFolderOrder : IFolderOrderSource
     }
 
     // The code Finder answers a request with; 0 when it gives none
-    private static uint Code(Descriptor what)
+    private static uint Code(Descriptor what, long deadline)
     {
-        if (Get(what, 0, out var answer) != Ok)
+        if (Get(what, 0, deadline, out var answer) != Ok)
         {
             return 0;
         }
@@ -339,14 +362,20 @@ public sealed unsafe partial class FinderFolderOrder : IFolderOrderSource
         return AECountItems(list, &count) == Ok ? (int)count : 0;
     }
 
-    // Sends Finder a request for what, which it disposes of, and waits half a second for the answer. The answer is
-    // the caller's to dispose of when the result is Ok
-    private static int Get(Descriptor what, uint requested, out Descriptor answer)
+    // Sends Finder a request for what, which it disposes of, and waits for the answer until the deadline, which is a
+    // Stopwatch timestamp; past it nothing is sent. The answer is the caller's to dispose of when the result is Ok
+    private static int Get(Descriptor what, uint requested, long deadline, out Descriptor answer)
     {
         answer = default;
-        Descriptor finder = default, request = default, reply = default;
+        Descriptor finder = Application(), request = Application(), reply = Application();
         try
         {
+            var ticksLeft = (deadline - Stopwatch.GetTimestamp()) * TicksASecond / Stopwatch.Frequency;
+            if (ticksLeft <= 0)
+            {
+                return TimedOut;
+            }
+
             finder = Finder();
             int status = AECreateAppleEvent(CoreSuite, GetData, &finder, AnyReturnId, AnyTransaction, &request);
             if (status != Ok)
@@ -371,7 +400,7 @@ public sealed unsafe partial class FinderFolderOrder : IFolderOrderSource
                 return status;
             }
 
-            status = AESendMessage(&request, &reply, WaitReply | NeverInteract, HalfASecond);
+            status = AESendMessage(&request, &reply, WaitReply | NeverInteract | NeverAskConsent, (nint)ticksLeft);
             if (status != Ok)
             {
                 return status;
@@ -443,6 +472,7 @@ public sealed unsafe partial class FinderFolderOrder : IFolderOrderSource
         return Specifier(ByProperty, ByProperty, name, of);
     }
 
+    // The null descriptor: the application itself as a container, and a descriptor that holds nothing yet
     private static Descriptor Application() => new() { Type = TypeNull };
 
     // Disposes of the key and the container, whether it succeeds or not

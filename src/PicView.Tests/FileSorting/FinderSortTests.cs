@@ -95,6 +95,16 @@ public class FinderSortTests
     }
 
     [Fact]
+    public void Followed_MatchesAnAccentedFolder_HoweverEitherSideWritesTheAccent()
+    {
+        const string composed = "/Users/someone/Bl\u00E5";
+        const string decomposed = "/Users/someone/Bla\u030A";
+        FinderWindow[] windows = [ListView("elss", folder: decomposed)];
+
+        Assert.Equal(new FileOrder(SortFilesBy.FileSize, true), FinderSort.Followed(windows, composed));
+    }
+
+    [Fact]
     public void Followed_SubfolderOfTheFolder_IsNotAMatch()
     {
         FinderWindow[] windows = [ListView("elsn", folder: Folder + "/Avatar")];

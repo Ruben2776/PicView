@@ -87,11 +87,14 @@ public static class FinderSort
 
     /// <summary>
     /// Whether <paramref name="folder"/>, as a window shows it, is <paramref name="directory"/>: the same path,
-    /// without case and whatever separator ends either.
+    /// without case, whatever separator ends either, and whichever way either writes an accented letter.
     /// </summary>
     public static bool Shows(string? folder, string directory) =>
         DirectoryOrders.KeyOf(folder) is { } shown && DirectoryOrders.KeyOf(directory) is { } asked &&
-        string.Equals(shown, asked, StringComparison.OrdinalIgnoreCase);
+        string.Equals(Composed(shown), Composed(asked), StringComparison.OrdinalIgnoreCase);
+
+    // A disk may keep a name with its accents apart from their letters, and Finder may not tell it the same way
+    private static string Composed(string path) => path.IsNormalized() ? path : path.Normalize();
 
     private static SortFilesBy? FieldOf(uint column)
     {
