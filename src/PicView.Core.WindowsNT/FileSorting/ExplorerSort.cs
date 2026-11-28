@@ -18,6 +18,16 @@ public struct ShellPropertyKey(Guid formatId, uint propertyId) : IEquatable<Shel
     public readonly override bool Equals(object? obj) => obj is ShellPropertyKey other && Equals(other);
 
     public readonly override int GetHashCode() => HashCode.Combine(FormatId, PropertyId);
+
+    public static bool operator ==(ShellPropertyKey left, ShellPropertyKey right)
+    {
+        return left.Equals(right);
+    }
+
+    public static bool operator !=(ShellPropertyKey left, ShellPropertyKey right)
+    {
+        return !(left == right);
+    }
 }
 
 /// <summary>
@@ -44,13 +54,13 @@ public readonly record struct ExplorerView(ShellPropertyKey? SortedBy, bool Asce
 public static class ExplorerSort
 {
     // The storage property set, which holds the columns a File Order has a field for
-    private static readonly Guid Storage = new("B725F130-47EF-101A-A5F1-02608C9EEBAC");
+    private static readonly Guid Storage = new(0xB725F130, 0x47EF, 0x101A, 0xA5, 0xF1, 0x2, 0x60, 0x8C, 0x9E, 0xEB, 0xAC) /* B725F130-47EF-101A-A5F1-02608C9EEBAC */;
 
     /// <summary>
     /// System.ItemDate: the Date column, which picture folders are sorted by unless another is chosen. It shows the
     /// date taken of a file that has one, and else the earlier of its creation and last write time.
     /// </summary>
-    public static readonly ShellPropertyKey Date = new(new Guid("F7DB74B4-4287-4103-AFBA-F1B13DCD75CF"), 100);
+    public static readonly ShellPropertyKey Date = new(new Guid(0xF7DB74B4, 0x4287, 0x4103, 0xAF, 0xBA, 0xF1, 0xB1, 0x3D, 0xCD, 0x75, 0xCF) /* F7DB74B4-4287-4103-AFBA-F1B13DCD75CF */, 100);
 
     /// <summary>System.ItemNameDisplay: the Name column.</summary>
     public static readonly ShellPropertyKey Name = new(Storage, 10);

@@ -16,14 +16,14 @@ namespace PicView.Core.WindowsNT.FileSorting;
 /// </summary>
 public sealed unsafe partial class ExplorerFolderOrder : IFolderOrderSource
 {
-    private static readonly Guid ClsidShellWindows = new("9BA05972-F6A8-11CF-A442-00A0C90A8F39");
-    private static readonly Guid IidShellWindows = new("85CB6900-4D95-11CF-960C-0080C7F4EE85");
-    private static readonly Guid IidServiceProvider = new("6D5140C1-7436-11CE-8034-00AA006009FA");
-    private static readonly Guid SidTopLevelBrowser = new("4C96BE40-915C-11CF-99D3-00AA004AE837");
-    private static readonly Guid IidShellBrowser = new("000214E2-0000-0000-C000-000000000046");
-    private static readonly Guid IidFolderView2 = new("1AF3A467-214F-4298-908E-06B03E0B39F9");
-    private static readonly Guid IidPersistFolder2 = new("1AC3D9F0-175C-11D1-95BE-00609797EA4F");
-    private static readonly Guid IidWebBrowserApp = new("0002DF05-0000-0000-C000-000000000046");
+    private static readonly Guid ClsidShellWindows = new(0x9BA05972, 0xF6A8, 0x11CF, 0xA4, 0x42, 0x0, 0xA0, 0xC9, 0xA, 0x8F, 0x39) /* 9BA05972-F6A8-11CF-A442-00A0C90A8F39 */;
+    private static readonly Guid IidShellWindows = new(0x85CB6900, 0x4D95, 0x11CF, 0x96, 0xC, 0x0, 0x80, 0xC7, 0xF4, 0xEE, 0x85) /* 85CB6900-4D95-11CF-960C-0080C7F4EE85 */;
+    private static readonly Guid IidServiceProvider = new(0x6D5140C1, 0x7436, 0x11CE, 0x80, 0x34, 0x0, 0xAA, 0x0, 0x60, 0x9, 0xFA) /* 6D5140C1-7436-11CE-8034-00AA006009FA */;
+    private static readonly Guid SidTopLevelBrowser = new(0x4C96BE40, 0x915C, 0x11CF, 0x99, 0xD3, 0x0, 0xAA, 0x0, 0x4A, 0xE8, 0x37) /* 4C96BE40-915C-11CF-99D3-00AA004AE837 */;
+    private static readonly Guid IidShellBrowser = new(0x214E2, 0x0, 0x0, 0xC0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x46) /* 000214E2-0000-0000-C000-000000000046 */;
+    private static readonly Guid IidFolderView2 = new(0x1AF3A467, 0x214F, 0x4298, 0x90, 0x8E, 0x6, 0xB0, 0x3E, 0xB, 0x39, 0xF9) /* 1AF3A467-214F-4298-908E-06B03E0B39F9 */;
+    private static readonly Guid IidPersistFolder2 = new(0x1AC3D9F0, 0x175C, 0x11D1, 0x95, 0xBE, 0x0, 0x60, 0x97, 0x97, 0xEA, 0x4F) /* 1AC3D9F0-175C-11D1-95BE-00609797EA4F */;
+    private static readonly Guid IidWebBrowserApp = new(0x2DF05, 0x0, 0x0, 0xC0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x46) /* 0002DF05-0000-0000-C000-000000000046 */;
 
     // Vtable slots, counted from IUnknown's three
     private const int ShellWindowsGetCount = 7;         // after IDispatch's four

@@ -10,7 +10,7 @@ namespace PicView.Core.WindowsNT.FileSorting;
 /// </summary>
 public sealed unsafe partial class ShellFileDates : IFileDateSource
 {
-    private static readonly Guid IidShellItem2 = new("7E9FB0D3-919F-4307-AB2E-9B1860310C93");
+    private static readonly Guid IidShellItem2 = new(0x7E9FB0D3, 0x919F, 0x4307, 0xAB, 0x2E, 0x9B, 0x18, 0x60, 0x31, 0xC, 0x93) /* 7E9FB0D3-919F-4307-AB2E-9B1860310C93 */;
 
     // After IUnknown's three and IShellItem's five, the eighth of IShellItem2's own
     private const int ShellItem2GetFileTime = 15;
