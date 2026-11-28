@@ -464,9 +464,10 @@ public class Sorting
 
     /// <summary>
     /// Whether a folder is listed in the order the platform's file manager shows it in, when it shows it: Windows
-    /// Explorer's sort. On unless turned off, so a settings file without it follows.
+    /// Explorer's sort. On Windows it is on unless turned off, so a settings file without it follows; elsewhere
+    /// there is nothing to follow, so it is off and the sort options stay the user's to pick.
     /// </summary>
-    public bool FollowExplorerSorting { get; set; } = true;
+    public bool FollowExplorerSorting { get; set; } = OperatingSystem.IsWindows();
 }
 
 public class StartUp

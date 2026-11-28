@@ -733,6 +733,7 @@
                             GroupName="Sort"
                             Header="{Binding Translation.FileName.Value, Mode=OneWay}"
                             IsChecked="{Binding WindowTabs.IsSortedByName.Value, Mode=OneWay}"
+                            IsEnabled="{Binding !GlobalSettings.IsFollowingExplorerSorting.Value, Mode=OneWay}"
                             Theme="{StaticResource MainBg}"
                             ToggleType="Radio" />
 
@@ -743,6 +744,7 @@
                             GroupName="Sort"
                             Header="{Binding Translation.FileSize.Value, Mode=OneWay}"
                             IsChecked="{Binding WindowTabs.IsSortedByFileSize.Value, Mode=OneWay}"
+                            IsEnabled="{Binding !GlobalSettings.IsFollowingExplorerSorting.Value, Mode=OneWay}"
                             Theme="{StaticResource MainBg}"
                             ToggleType="Radio" />
 
@@ -753,6 +755,7 @@
                             GroupName="Sort"
                             Header="{Binding Translation.FileExtension.Value, Mode=OneWay}"
                             IsChecked="{Binding WindowTabs.IsSortedByExtension.Value, Mode=OneWay}"
+                            IsEnabled="{Binding !GlobalSettings.IsFollowingExplorerSorting.Value, Mode=OneWay}"
                             Theme="{StaticResource MainBg}"
                             ToggleType="Radio" />
 
@@ -763,6 +766,7 @@
                             GroupName="Sort"
                             Header="{Binding Translation.Created.Value, Mode=OneWay}"
                             IsChecked="{Binding WindowTabs.IsSortedByCreationTime.Value, Mode=OneWay}"
+                            IsEnabled="{Binding !GlobalSettings.IsFollowingExplorerSorting.Value, Mode=OneWay}"
                             Theme="{StaticResource MainBg}"
                             ToggleType="Radio" />
 
@@ -773,6 +777,7 @@
                             GroupName="Sort"
                             Header="{Binding Translation.LastAccessTime.Value, Mode=OneWay}"
                             IsChecked="{Binding WindowTabs.IsSortedByLastAccessTime.Value, Mode=OneWay}"
+                            IsEnabled="{Binding !GlobalSettings.IsFollowingExplorerSorting.Value, Mode=OneWay}"
                             Theme="{StaticResource MainBg}"
                             ToggleType="Radio" />
 
@@ -783,6 +788,7 @@
                             GroupName="Sort"
                             Header="{Binding Translation.Modified.Value, Mode=OneWay}"
                             IsChecked="{Binding WindowTabs.IsSortedByLastWriteTime.Value, Mode=OneWay}"
+                            IsEnabled="{Binding !GlobalSettings.IsFollowingExplorerSorting.Value, Mode=OneWay}"
                             Theme="{StaticResource MainBg}"
                             ToggleType="Radio" />
 
@@ -793,6 +799,7 @@
                             GroupName="Sort"
                             Header="{Binding Translation.Date.Value, Mode=OneWay}"
                             IsChecked="{Binding WindowTabs.IsSortedByDate.Value, Mode=OneWay}"
+                            IsEnabled="{Binding !GlobalSettings.IsFollowingExplorerSorting.Value, Mode=OneWay}"
                             Theme="{StaticResource MainBg}"
                             ToggleType="Radio" />
 
@@ -803,6 +810,7 @@
                             GroupName="Sort"
                             Header="{Binding Translation.Random.Value, Mode=OneWay}"
                             IsChecked="{Binding WindowTabs.IsSortedByRandomization.Value, Mode=OneWay}"
+                            IsEnabled="{Binding !GlobalSettings.IsFollowingExplorerSorting.Value, Mode=OneWay}"
                             Theme="{StaticResource MainBg}"
                             ToggleType="Radio" />
 
@@ -813,6 +821,7 @@
                             GroupName="Order"
                             Header="{Binding Translation.Ascending.Value, Mode=OneWay}"
                             IsChecked="{Binding WindowTabs.IsAscending.Value, Mode=OneWay}"
+                            IsEnabled="{Binding !GlobalSettings.IsFollowingExplorerSorting.Value, Mode=OneWay}"
                             Theme="{StaticResource MainBg}"
                             ToggleType="Radio" />
 
@@ -823,6 +832,7 @@
                             GroupName="Order"
                             Header="{Binding Translation.Descending.Value, Mode=OneWay}"
                             IsChecked="{Binding !WindowTabs.IsAscending.Value, Mode=OneWay}"
+                            IsEnabled="{Binding !GlobalSettings.IsFollowingExplorerSorting.Value, Mode=OneWay}"
                             Theme="{StaticResource MainBg}"
                             ToggleType="Radio" />
 
