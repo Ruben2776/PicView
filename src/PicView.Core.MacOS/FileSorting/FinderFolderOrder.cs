@@ -7,8 +7,9 @@ using PicView.Core.FileSorting;
 namespace PicView.Core.MacOS.FileSorting;
 
 /// <summary>
-/// The order Finder's open windows show a folder in, asked of Finder with Apple Events (ADR-0050, On macOS). The events
-/// are sent in-process with <c>AESendMessage</c>, which may be called from any thread and takes a timeout, and wait on
+/// The order Finder shows a folder in, from two sources (ADR-0050, On macOS): its open windows, asked with Apple
+/// Events, and the view it saved for the folder in its parent's <c>.DS_Store</c>, which is read only for a folder a
+/// window shows. The events are sent in-process with <c>AESendMessage</c>, which may be called from any thread and takes a timeout, and wait on
 /// the Finder process: call from a pool thread. One ask has half a second for all of its events together. macOS asks
 /// the user to let PicView control Finder only in <see cref="RequestAccess"/>: an event never raises that question,
 /// and until the user has allowed it every event fails, which reads as no answer.
@@ -57,6 +58,8 @@ public sealed unsafe partial class FinderFolderOrder : IFolderOrderSource
     private const int AnyTransaction = 0;               // kAnyTransactionID
     private const int TicksASecond = 60;                // an Apple Event's timeout is in ticks
     private const int MostWindows = 64;
+    private const int MostSavedBytes = 4 * 1024 * 1024; // a longer .DS_Store is not read
+    private const string SavedViewFile = ".DS_Store";
 
     // An AEDesc. The Apple Event headers pack their structures to two bytes, so the pointer follows the type at once
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
@@ -139,13 +142,88 @@ public sealed unsafe partial class FinderFolderOrder : IFolderOrderSource
             // For every event of the ask together, so a slow Finder with many windows holds the thread no longer
             var deadline = Stopwatch.GetTimestamp() + Stopwatch.Frequency / 2;
             var windows = Windows(asked, deadline);
-            return windows is null ? null : FinderSort.Followed(windows, asked);
+            if (windows is null)
+            {
+                return null;
+            }
+
+            FinderSavedView? saved = null;
+            if (Stopwatch.GetTimestamp() < deadline && ShownBy(windows, asked))
+            {
+                saved = SavedView(asked);
+            }
+
+            return FinderSort.Followed(windows, asked, saved);
         }
         catch (Exception e)
         {
             DebugHelper.LogDebug(nameof(FinderFolderOrder), nameof(OrderOf), e);
             return null;
         }
+    }
+
+    /// <summary>
+    /// The <c>.DS_Store</c> that holds the saved view of <paramref name="directory"/>, which is its parent's, and the
+    /// name the folder has in it; null for a folder with no parent.
+    /// </summary>
+    internal static (string File, string Name)? SavedViewLocation(string directory)
+    {
+        var trimmed = Path.TrimEndingDirectorySeparator(directory);
+        var parent = Path.GetDirectoryName(trimmed);
+        var name = Path.GetFileName(trimmed);
+        return string.IsNullOrEmpty(parent) || name.Length == 0
+            ? null
+            : (Path.Combine(parent, SavedViewFile), name);
+    }
+
+    /// <summary>
+    /// What Finder saved for <paramref name="directory"/> in its parent's <c>.DS_Store</c>. Null when the file is
+    /// missing, cannot be read, is longer than 4 MiB, or holds nothing for the folder. Never throws: Finder may be
+    /// writing the file as it is read.
+    /// </summary>
+    internal static FinderSavedView? SavedView(string directory)
+    {
+        try
+        {
+            if (SavedViewLocation(directory) is not var (file, name))
+            {
+                return null;
+            }
+
+            using var stream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            var length = stream.Length;
+            if (length is <= 0 or > MostSavedBytes)
+            {
+                return null;
+            }
+
+            var bytes = new byte[length];
+            stream.ReadExactly(bytes);
+            return DsStore.ViewOf(bytes, name);
+        }
+        catch (Exception e) when (e is IOException or UnauthorizedAccessException)
+        {
+            // No file, or one in the middle of a write: no answer
+            return null;
+        }
+        catch (Exception e)
+        {
+            DebugHelper.LogDebug(nameof(FinderFolderOrder), nameof(SavedView), e);
+            return null;
+        }
+    }
+
+    private static bool ShownBy(FinderWindow[] windows, string directory)
+    {
+        foreach (var window in windows)
+        {
+            if (FinderSort.Shows(window.Folder, directory))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /// <summary>
